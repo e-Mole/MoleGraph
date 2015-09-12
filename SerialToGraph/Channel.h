@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QGroupBox.h>
+#include <QGroupBox>
 
 class QLabel;
 class QCheckBox;

@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent),
 	m_serialPort()
 {
-	m_serialPort.OpenMySerialPort();
+	m_serialPort.FindAndOpenMySerialPort();
 	this->setCentralWidget(new Plot(this, m_serialPort));
 }
 

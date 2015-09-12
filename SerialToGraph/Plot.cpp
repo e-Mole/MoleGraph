@@ -335,7 +335,7 @@ void Plot::start()
 
     m_serialPort.SetEnabledChannels(enabledChannels);
 
-	m_slider->setRange(0, 0);
+    m_slider->setRange(0, 0);
 
 	//m_serialPort.Clear(); //FIXME: workaround something is in buffer
     m_drawTimer->start(100);
@@ -454,7 +454,7 @@ void Plot::connectToDevice()
 	if (!m_serialPort.IsDeviceConnected())
 	{
 		qDebug() << "device will be connected";
-		m_serialPort.OpenMySerialPort();
+        m_serialPort.FindAndOpenMySerialPort();
 	}
 }
 

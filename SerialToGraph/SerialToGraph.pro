@@ -18,11 +18,15 @@ SOURCES += main.cpp\
     qcustomplot/qcustomplot.cpp \
     SerialPort.cpp \
     ChannelSettings.cpp \
-    Channel.cpp
+    Channel.cpp \
+    PortListDialog.cpp \
+    PortListWidget.cpp
 
 HEADERS  += MainWindow.h \
     Plot.h \
     qcustomplot/qcustomplot.h \
     SerialPort.h \
     ChannelSettings.h \
-    Channel.h
+    Channel.h \
+    PortListDialog.h \
+    PortListWidget.h

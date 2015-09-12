@@ -2,7 +2,26 @@
 #define SERIALPORT_H
 
 #include <QObject>
+#include <QtCore/QDebug>
 #include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+
+class ExtendedSerialPortInfo : public QSerialPortInfo
+{
+public:
+    ExtendedSerialPortInfo(QSerialPortInfo const &info) :
+        QSerialPortInfo(info),
+        m_preferred(false)
+    {
+        if (info.manufacturer() == "wch.cn")
+        {
+            qDebug() << info.portName() << "looks like my port";
+            m_preferred = true;
+        }
+    }
+
+    bool m_preferred;
+};
 
 class SerialPort : public QObject
 {
@@ -25,7 +44,8 @@ public:
 	explicit SerialPort(QObject *parent = 0);
 	~SerialPort();
 
-	bool OpenMySerialPort();
+    bool OpenSerialPort(QSerialPortInfo const& info);
+    bool FindAndOpenMySerialPort();
 
 	void ReadAll(QByteArray &array);
 	void Write(Instructions instruction, std::string const &data);

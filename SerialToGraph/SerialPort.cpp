@@ -1,9 +1,8 @@
 #include "SerialPort.h"
-#include <string>
-#include <QtCore/QDebug>
-#include <QtSerialPort/QSerialPortInfo>
+#include <PortListDialog.h>
 #include <QThread>
-
+#include <QList>
+#include <string>
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
 SerialPort::SerialPort(QObject *parent) : QObject(parent)
@@ -16,52 +15,78 @@ SerialPort::~SerialPort()
     Stop();
 }
 
-bool SerialPort::OpenMySerialPort()
+bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
 {
-	foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
-	{
-		if (info.manufacturer() == "wch.cn")
-		{
-			qDebug() << info.portName() << "looks like my port";
-			m_serialPort.setPortName(info.portName());
-            m_serialPort.setBaudRate(QSerialPort::Baud115200);
-            m_serialPort.setDataBits(QSerialPort::Data8);
-			m_serialPort.setParity(QSerialPort::NoParity);
-			m_serialPort.setStopBits(QSerialPort::OneStop);
-            m_serialPort.setFlowControl(QSerialPort::NoFlowControl);
-            m_serialPort.setReadBufferSize(0);
-            if (m_serialPort.open(QIODevice::ReadWrite))
-			{
-				QThread::sleep(3); //arduino is reseted after serial port connection I have to wait to be ready
+    m_serialPort.setPort(info);
+    m_serialPort.setBaudRate(QSerialPort::Baud115200);
 
-                Write(INS_GET_VERSION, "");
-				QByteArray array;
-				unsigned counter = RESPONSE_WAITING;
-				while (!m_serialPort.waitForReadyRead(1))
-				{
-					if (0 == --counter)
-					{
-						qDebug() << "no response";
-						return false;
-					}
-				}
+    if (m_serialPort.open(QIODevice::ReadWrite))
+    {
+        QThread::sleep(3); //arduino is reseted after serial port connection I have to wait to be ready
 
-                ReadAll(array);
-                if (array.toStdString() == "ATG_1")
-				{
-					qDebug() << "hardware found";
-					PortConnectivityChanged(true);
-					return true;
-                }
+        Write(INS_GET_VERSION, "");
+        QByteArray array;
+        unsigned counter = RESPONSE_WAITING;
+        while (!m_serialPort.waitForReadyRead(1))
+        {
+            if (0 == --counter)
+            {
+                qDebug() << "no response from serial port";
+                m_serialPort.close();
+                return false;
+            }
+        }
 
-				m_serialPort.close();
-				return false;
-			}
-		}
-	}
+        ReadAll(array);
+        if (array.toStdString() != "ATG_1")
+        {
+            qDebug() << "unknown protocol version";
+            m_serialPort.close();
+            return false;
+        }
 
-	qDebug() << "hardware not found";
-	return false;
+        PortConnectivityChanged(true);
+        return true;
+    }
+
+    qDebug() << "unable to open port " << info.portName();
+    return false;
+}
+
+bool SerialPort::FindAndOpenMySerialPort()
+{
+    QList<ExtendedSerialPortInfo> portInfos;
+    QList<QSerialPortInfo> prefferedPortInfos;
+
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        portInfos.push_back(info);
+        if (portInfos.last().m_preferred)
+            prefferedPortInfos.push_back(info);
+    }
+
+    if (1 == prefferedPortInfos.size())
+        return OpenSerialPort(prefferedPortInfos.last());
+
+    if (portInfos.empty())
+    {
+        qDebug() << "hardware not found";
+        return false;
+    }
+
+    if (prefferedPortInfos.size() > 1)
+        qDebug() << "morethen one preferred port found";
+    else if (!portInfos.empty())
+        qDebug() << "found unpreffered serial ports only";
+
+    PortListDialog portListDialog(*this, portInfos);
+    if (QDialog::Rejected == portListDialog.exec())
+    {
+
+        qDebug() << "hardware not found";
+        return false;
+    }
+    return true;
 }
 
 void SerialPort::ReadAll(QByteArray &array)

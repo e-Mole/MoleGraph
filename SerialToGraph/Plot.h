@@ -3,20 +3,16 @@
 
 #include <QWidget>
 #include <QQueue>
-#include <QLineEdit>
 #include <stdint.h>
-#include <QLabel>
+
 class QCustomPlot;
 class QTimer;
 class SerialPort;
-class QVBoxLayout;
 class QString;
 class QColor;
 class QSlider;
 class QPushButton;
-class QCheckBox;
 class QBoxLayout;
-class QComboBox;
 class Channel;
 
 class Plot : public QWidget

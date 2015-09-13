@@ -5,20 +5,14 @@
 #include <math.h>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <SerialPort.h>
 #include <QtCore/QDebug>
 #include <QByteArray>
-#include <QFileDialog>
-#include <QCheckBox>
 #include <QColor>
 #include <QSlider>
 #include <QFile>
 #include <QBoxLayout>
-#include <QComboBox>
 #include <QMessageBox>
-#include <QShortcut>
-#include <QKeySequence>
 #include <Channel.h>
 
 Plot::Plot(QWidget *parent, SerialPort &serialPort) :

@@ -10,7 +10,7 @@ class QTimer;
 class SerialPort;
 class QString;
 class QColor;
-class QSlider;
+class QScrollBar;
 class QPushButton;
 class QBoxLayout;
 class Channel;
@@ -50,7 +50,7 @@ class Plot : public QWidget
 	unsigned m_counter;
 
 
-    QSlider *m_slider;
+    QScrollBar *m_scrollBar;
     unsigned m_periodTypeIndex;
 	QPushButton *m_connectButton;
 	Channel *m_sampleChannel;

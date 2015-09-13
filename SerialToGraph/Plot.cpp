@@ -9,7 +9,7 @@
 #include <QtCore/QDebug>
 #include <QByteArray>
 #include <QColor>
-#include <QSlider>
+#include <QScrollBar>
 #include <QFile>
 #include <QBoxLayout>
 #include <QMessageBox>
@@ -23,13 +23,11 @@ Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	m_maxY(0),
     m_period(0),
     m_counter(0),
-    m_slider(NULL),
+    m_scrollBar(NULL),
     m_periodTypeIndex(0),
 	m_connectButton(NULL),
 	m_sampleChannel(NULL)
 {
-    setMinimumHeight(600);
-    setMinimumWidth(800);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
     QHBoxLayout *documentLayout = new QHBoxLayout(this);
@@ -78,14 +76,15 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
     m_customPlot->yAxis->setRange(0, 1);
 
 	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    m_customPlot->setMinimumSize(700, 500);
 }
 
 void Plot::_InitializeSlider(QBoxLayout *graphLayout)
 {
-    m_slider = new QSlider(Qt::Horizontal, this);
-    m_slider->setRange(0,0);
-    graphLayout->addWidget(m_slider);
-    connect(m_slider, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
+    m_scrollBar = new QScrollBar(Qt::Horizontal, this);
+    m_scrollBar->setRange(0,0);
+    graphLayout->addWidget(m_scrollBar);
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
 }
 
 void Plot::_InitializeChannelSideBar(QBoxLayout *channelLayout)
@@ -191,11 +190,11 @@ void Plot::draw()
 		m_customPlot->graph(i)->setData(m_x, m_channels[i]->m_values);
 
 
-    m_slider->setRange(0, m_x.last());
+    m_scrollBar->setRange(0, m_x.last());
 
-    if (m_slider->value() == lastPos)
+    if (m_scrollBar->value() == lastPos)
     {
-        m_slider->setValue(m_x.last());
+        m_scrollBar->setValue(m_x.last());
         if (0 == m_x.last()) //slider value was not changed but I have first (initial) values and want to display them
             redrawMarks(0);
     }
@@ -254,7 +253,7 @@ void Plot::start()
 
     m_serialPort.SetEnabledChannels(enabledChannels);
 
-    m_slider->setRange(0, 0);
+    m_scrollBar->setRange(0, 0);
 
 	//m_serialPort.Clear(); //FIXME: workaround something is in buffer
     m_drawTimer->start(100);

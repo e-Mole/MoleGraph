@@ -14,6 +14,8 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow(QWidget *parent = 0);
 	~MainWindow();
+protected slots:
+    void buttonLineLocationChanged(Qt::DockWidgetArea area);
 };
 
 #endif // MAINWINDOW_H

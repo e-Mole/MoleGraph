@@ -50,16 +50,12 @@ class Plot : public QWidget
 
 	QVector<Channel*> m_channels;
 
-	QLineEdit *m_period;
+    unsigned m_period;
 	unsigned m_counter;
 
 
     QSlider *m_slider;
-    QPushButton *m_startButton;
-    QPushButton *m_stopButton;
-    QComboBox *m_periodType;
-    QLabel *m_periodUnits;
-	QLabel *m_connectivityLabel;
+    unsigned m_periodTypeIndex;
 	QPushButton *m_connectButton;
 	Channel *m_sampleChannel;
 public:
@@ -69,17 +65,18 @@ public:
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
+    void startEnabled(bool enabled);
 protected slots:
 	void draw();
 	void start();
 	void stop();
-    void exportPngSlot();
-    void exportCsvSlot();
+    void exportPng(QString const &fileName);
+    void exportCsv(QString const &fileName);
     void redrawMarks(int pos);
 	void channelStateChanged();
     void periodTypeChanged(int index);
-	void connectivityStateChange(bool connected);
 	void connectToDevice();
+    void periodChanged(unsigned period);
 };
 
 #endif // PLOT_H

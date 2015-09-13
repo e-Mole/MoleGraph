@@ -1,9 +1,14 @@
 #include "SerialPort.h"
 #include <PortListDialog.h>
-#include <QThread>
+#include <QCoreApplication>
+#include <QFileInfo>
 #include <QList>
-#include <string>
+#include <QMessageBox>
+#include <QThread>
 #include <QSettings>
+#include <QString>
+#include <string>
+
 
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
@@ -124,6 +129,13 @@ void SerialPort::ReadAll(QByteArray &array)
 void SerialPort::_LineIssueSolver()
 {
 	m_serialPort.close();
+
+    QMessageBox::warning(
+        NULL,
+        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+        tr("You are working in an offline mode. To estabilish a connection, please, reconnect an Arduino device and restart the application.")
+    );
+
 	PortConnectivityChanged(false);
 }
 

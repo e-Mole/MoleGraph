@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     ChannelSettings.cpp \
     Channel.cpp \
     PortListDialog.cpp \
-    PortListWidget.cpp
+    PortListWidget.cpp \
+    ButtonLine.cpp
 
 HEADERS  += MainWindow.h \
     Plot.h \
@@ -29,4 +30,5 @@ HEADERS  += MainWindow.h \
     ChannelSettings.h \
     Channel.h \
     PortListDialog.h \
-    PortListWidget.h
+    PortListWidget.h \
+    ButtonLine.h

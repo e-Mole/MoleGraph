@@ -27,27 +27,23 @@ Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	m_serialPort(serialPort),
 	m_minY(0),
 	m_maxY(0),
-	m_period(NULL),
+    m_period(0),
     m_counter(0),
     m_slider(NULL),
-    m_startButton(NULL),
-	m_stopButton(NULL),
-    m_periodType(NULL),
-	m_periodUnits(NULL),
-	m_connectivityLabel(NULL),
+    m_periodTypeIndex(0),
 	m_connectButton(NULL),
 	m_sampleChannel(NULL)
 {
-	setMinimumHeight(600);
-	setMinimumWidth(800);
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	_InitializeButtonLine(mainLayout);
-	QHBoxLayout *documentLayout = new QHBoxLayout(this);
-	mainLayout->addLayout(documentLayout);
+    setMinimumHeight(600);
+    setMinimumWidth(800);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
+    QHBoxLayout *documentLayout = new QHBoxLayout(this);
+    mainLayout->addLayout(documentLayout);
     QVBoxLayout *graphLayout = new QVBoxLayout(this);
-	documentLayout->addLayout(graphLayout);
+    documentLayout->addLayout(graphLayout);
     QVBoxLayout *channelLayout = new QVBoxLayout(this);
-	documentLayout->addLayout(channelLayout);
+    documentLayout->addLayout(channelLayout);
 
 
 	_InitializePolt(graphLayout);
@@ -113,70 +109,9 @@ void Plot::_InitializeChannelSideBar(QBoxLayout *channelLayout)
 	channelLayout->insertStretch(m_channels.size() + 1, 1); //+sample Nr.
 }
 
-void Plot::_InitializeButtonLine(QBoxLayout *graphLayout)
-{
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    graphLayout->addLayout(buttonLayout);
-
-    m_periodType = new QComboBox(this);
-    m_periodType->addItem(tr("Frequency"));
-    m_periodType->addItem(tr("Time"));
-    buttonLayout->addWidget(m_periodType);
-    connect(m_periodType, SIGNAL(currentIndexChanged(int)), this, SLOT(periodTypeChanged(int)));
-
-    m_period = new  QLineEdit(this);
-    m_period->setValidator( new QDoubleValidator(1, 1500, 3, this));
-    m_period->setMaxLength(6);
-	m_period->setText("1");
-    m_period->setFixedWidth(50);
-    m_period->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    buttonLayout->addWidget(m_period);
-
-    m_periodUnits = new QLabel(tr("Hz"),this);
-    m_periodUnits->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    buttonLayout->addWidget(m_periodUnits);
-
-    m_startButton = new QPushButton(tr("Start"), this);
-    m_startButton->setDisabled(true);
-    buttonLayout->addWidget(m_startButton);
-    connect(m_startButton, SIGNAL(clicked()), this, SLOT(start()));
-
-	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
-	connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
-
-    m_stopButton = new QPushButton(tr("Stop"), this);
-    m_stopButton->setDisabled(true);
-    buttonLayout->addWidget(m_stopButton);
-    connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
-
-	connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
-
-    QPushButton *exportButtonPng = new QPushButton(tr("Export to PNG"), this);
-    buttonLayout->addWidget(exportButtonPng);
-    connect(exportButtonPng, SIGNAL(clicked()), this, SLOT(exportPngSlot()));
-
-    QPushButton *exportButtonCsv = new QPushButton(tr("Export to CSV"), this);
-    buttonLayout->addWidget(exportButtonCsv);
-    connect(exportButtonCsv, SIGNAL(clicked()), this, SLOT(exportCsvSlot()));
-
-
-	m_connectivityLabel = new QLabel("", this);
-	m_connectivityLabel->setMargin(5);
-	buttonLayout->addWidget(m_connectivityLabel);
-
-	//m_connectButton = new QPushButton(tr("Connect"), this);
-	//buttonLayout->addWidget(m_connectButton);
-	//connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectToDevice()));
-
-	connectivityStateChange(m_serialPort.IsDeviceConnected());
-	connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), this, SLOT(connectivityStateChange(bool)));
-	buttonLayout->insertStretch(5, 1);
-
-}
-
 void Plot::periodTypeChanged(int index)
 {
-        m_periodUnits->setText((0 == index) ?  tr("Hz") : tr("s"));
+        m_periodTypeIndex = index;
 }
 
 void Plot::_InitializeGraphs(unsigned index, QColor color)
@@ -289,9 +224,7 @@ void Plot::start()
 			tr("Close"));
 		return;
 	}
-    m_startButton->setDisabled(true);
-    m_stopButton->setEnabled(true);
-    m_period->setDisabled(true);
+
     for(int i = 0; i < m_channels.size(); i++)
 		m_channels[i]->m_enabled->setDisabled(true);
 
@@ -308,23 +241,15 @@ void Plot::start()
 	m_queue.clear();
 	m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
 
-    if (0 == (unsigned)(m_period->text().toInt()))
+    if (0 == m_periodTypeIndex)
     {
-            m_period->setText("1");
-            qDebug() << "empty period field replaced by 1";
-    }
-
-    if (0 == m_periodType->currentIndex())
-    {
-        unsigned frequency = (unsigned)(m_period->text().toInt());
-        m_serialPort.SetFrequency(frequency);
-        qDebug() << "frequency set to:" << frequency << " Hz";
+        m_serialPort.SetFrequency(m_period);
+        qDebug() << "frequency set to:" << m_period << " Hz";
     }
     else
     {
-        unsigned time = (unsigned)(m_period->text().toInt());
-        m_serialPort.SetTime(time);
-        qDebug() << "time set to:" << time << " s";
+        m_serialPort.SetTime(m_period);
+        qDebug() << "time set to:" << m_period << " s";
     }
 
     unsigned enabledChannels = 0;
@@ -344,9 +269,7 @@ void Plot::start()
 
 void Plot::stop()
 {
-    m_stopButton->setDisabled(true);
-    m_startButton->setEnabled(true);
-    m_period->setEnabled(true);
+
     for(int i = 0; i < m_channels.size(); i++)
 		m_channels[i]->m_enabled->setEnabled(true);
 
@@ -356,22 +279,13 @@ void Plot::stop()
 
 }
 
-void Plot::exportPngSlot()
+void Plot::exportPng(QString const &fileName)
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Export graph to"), "./", "*.png");
-    if (!fileName.contains(".png", Qt::CaseInsensitive))
-            fileName += ".png";
-
-    if (0 != fileName.size())
-		m_customPlot->savePng(fileName);
+    m_customPlot->savePng(fileName);
 }
 
-void Plot::exportCsvSlot()
+void Plot::exportCsv(QString const &fileName)
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export graph to"), "./", "*.csv");
-    if (!fileName.contains(".csv", Qt::CaseInsensitive))
-            fileName += ".csv";
-
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     unsigned lineNr = 0;
@@ -422,29 +336,7 @@ void Plot::channelStateChanged()
 	foreach (Channel *channel, m_channels)
 		anyChecked |= channel->m_enabled->isChecked();
 
-     m_startButton->setEnabled(anyChecked);
-}
-
-void Plot::connectivityStateChange(bool connected)
-{
-	if (connected)
-	{
-		m_connectivityLabel->setStyleSheet("QLabel { background-color : green; color : white; }");
-		m_connectivityLabel->setText(tr("Connected"));
-		//m_connectButton->setDisabled(true);
-	}
-	else
-	{
-		m_connectivityLabel->setStyleSheet("QLabel { background-color : red; color : yellow; }");
-		m_connectivityLabel->setText(tr("Disconnected"));
-        QMessageBox::warning(
-			this,
-			QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-            tr("You are working in an offline mode. To estabilish a connection, please, reconnect an Arduino device and restart the application.")
-		);
-		//m_connectButton->setEnabled(true);
-	}
-	m_connectivityLabel->repaint();
+    startEnabled(anyChecked);
 }
 
 void Plot::connectToDevice()
@@ -456,5 +348,10 @@ void Plot::connectToDevice()
 		qDebug() << "device will be connected";
         m_serialPort.FindAndOpenMySerialPort();
 	}
+}
+
+void Plot::periodChanged(unsigned period)
+{
+    m_period = period;
 }
 

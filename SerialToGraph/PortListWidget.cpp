@@ -3,6 +3,7 @@
 #include <QRadioButton>
 #include <QGridLayout>
 #include <QLabel>
+#include <QSettings>
 #include <SerialPort.h>
 #include <QMessageBox>
 
@@ -18,9 +19,10 @@ namespace {
         }
     };
 }
-PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos) :
+PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos, QSettings &settings) :
     QWidget(parent),
-    m_serialPort(port)
+    m_serialPort(port),
+    m_settings(settings)
 {
     QGridLayout *layout = new QGridLayout(this);
     setLayout(layout);
@@ -47,7 +49,10 @@ void PortListWidget::portSelected()
 {
     this->setCursor(QCursor(Qt::WaitCursor));
     if (m_serialPort.OpenSerialPort(((RadioButtonWithInfo *)sender())->m_info))
+    {
         selectedValidPort();
+        m_settings.setValue("lastSerialPort", ((RadioButtonWithInfo *)sender())->m_info.portName());
+    }
     else
     {
         QMessageBox::information(this, tr("Wrong port"), tr("the port doesn't respond properly. Please, check if the device is connected and the port read/write permitions."));

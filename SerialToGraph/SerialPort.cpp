@@ -3,9 +3,30 @@
 #include <QThread>
 #include <QList>
 #include <string>
+#include <QSettings>
+
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
-SerialPort::SerialPort(QObject *parent) : QObject(parent)
+ExtendedSerialPortInfo::ExtendedSerialPortInfo(QSerialPortInfo const &info, QSettings const &settings) :
+    QSerialPortInfo(info),
+    m_preferred(false),
+    m_lastUsed(false)
+{
+    if (info.portName() == settings.value("lastSerialPort", ""))
+    {
+        m_preferred = true;
+        m_lastUsed = true;
+    }
+    else if (info.manufacturer() == "wch.cn")
+    {
+        qDebug() << info.portName() << "looks like my port";
+        m_preferred = true;
+    }
+}
+
+SerialPort::SerialPort(QSettings &settings, QObject *parent) :
+    QObject(parent),
+    m_settings(settings)
 {
 
 }
@@ -57,16 +78,22 @@ bool SerialPort::FindAndOpenMySerialPort()
 {
     QList<ExtendedSerialPortInfo> portInfos;
     QList<QSerialPortInfo> prefferedPortInfos;
-
+    ExtendedSerialPortInfo *lastPort = NULL;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-        portInfos.push_back(info);
+        portInfos.push_back(ExtendedSerialPortInfo(info, m_settings));
+
         if (portInfos.last().m_preferred)
             prefferedPortInfos.push_back(info);
+        if (portInfos.last().m_preferred)
+            lastPort = &portInfos.last();
     }
 
-    if (1 == prefferedPortInfos.size())
-        return OpenSerialPort(prefferedPortInfos.last());
+    if (NULL != lastPort && OpenSerialPort(*lastPort))
+        return true;
+
+    if (1 == prefferedPortInfos.size() && OpenSerialPort(prefferedPortInfos.last()))
+        return true;
 
     if (portInfos.empty())
     {
@@ -79,7 +106,7 @@ bool SerialPort::FindAndOpenMySerialPort()
     else if (!portInfos.empty())
         qDebug() << "found unpreffered serial ports only";
 
-    PortListDialog portListDialog(*this, portInfos);
+    PortListDialog portListDialog(*this, portInfos, m_settings);
     if (QDialog::Rejected == portListDialog.exec())
     {
 

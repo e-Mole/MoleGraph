@@ -437,10 +437,10 @@ void Plot::connectivityStateChange(bool connected)
 	{
 		m_connectivityLabel->setStyleSheet("QLabel { background-color : red; color : yellow; }");
 		m_connectivityLabel->setText(tr("Disconnected"));
-		QMessageBox::warning(
+        QMessageBox::warning(
 			this,
 			QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-			tr("You are working in offline mode. To estabilish a connection, please, reconnect an Arduino device and restart the application.")
+            tr("You are working in an offline mode. To estabilish a connection, please, reconnect an Arduino device and restart the application.")
 		);
 		//m_connectButton->setEnabled(true);
 	}

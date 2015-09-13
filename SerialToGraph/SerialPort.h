@@ -6,21 +6,14 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+class QSettings;
 class ExtendedSerialPortInfo : public QSerialPortInfo
 {
 public:
-    ExtendedSerialPortInfo(QSerialPortInfo const &info) :
-        QSerialPortInfo(info),
-        m_preferred(false)
-    {
-        if (info.manufacturer() == "wch.cn")
-        {
-            qDebug() << info.portName() << "looks like my port";
-            m_preferred = true;
-        }
-    }
+    ExtendedSerialPortInfo(QSerialPortInfo const &info, QSettings const &settings);
 
     bool m_preferred;
+    bool m_lastUsed;
 };
 
 class SerialPort : public QObject
@@ -30,6 +23,7 @@ class SerialPort : public QObject
 	void _LineIssueSolver();
 
 	QSerialPort m_serialPort;
+    QSettings &m_settings;
 public:
     enum Instructions
     {
@@ -41,7 +35,7 @@ public:
         INS_STOP = 6
     };
 
-	explicit SerialPort(QObject *parent = 0);
+    SerialPort(QSettings &settings, QObject *parent = 0);
 	~SerialPort();
 
     bool OpenSerialPort(QSerialPortInfo const& info);

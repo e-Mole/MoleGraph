@@ -4,7 +4,8 @@
 #include <QTimer>
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent),
-	m_serialPort()
+    m_settings("eMole", "ArduinoToGraph"),
+    m_serialPort(m_settings)
 {
 	m_serialPort.FindAndOpenMySerialPort();
 	this->setCentralWidget(new Plot(this, m_serialPort));

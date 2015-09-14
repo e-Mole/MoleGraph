@@ -103,6 +103,7 @@ bool SerialPort::FindAndOpenMySerialPort()
     if (portInfos.empty())
     {
         qDebug() << "hardware not found";
+        _LineIssueSolver();
         return false;
     }
 
@@ -116,8 +117,10 @@ bool SerialPort::FindAndOpenMySerialPort()
     {
 
         qDebug() << "hardware not found";
+        _LineIssueSolver();
         return false;
     }
+
     return true;
 }
 

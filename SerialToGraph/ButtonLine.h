@@ -1,11 +1,11 @@
 #ifndef BUTTONLINE_H
 #define BUTTONLINE_H
 
-#include <QDockWidget>
+#include <QWidget>
 class QLineEdit;
 class QPushButton;
 class QLabel;
-class ButtonLine : public QDockWidget
+class ButtonLine : public QWidget
 {
     Q_OBJECT
 

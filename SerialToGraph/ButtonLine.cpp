@@ -11,17 +11,15 @@
 
 
 ButtonLine::ButtonLine(QWidget *parent) :
-    QDockWidget(parent),
+    QWidget(parent),
     m_period(NULL),
     m_periodUnits(NULL),
     m_startButton(NULL),
     m_stopButton(NULL),
     m_connectivityLabel(NULL)
 {
-    QWidget *mainWidget = new QWidget(this); //I dont understand why, but here must be an interface widget
-    setWidget(mainWidget);
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    mainWidget->setLayout(buttonLayout);
+    setLayout(buttonLayout);
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));

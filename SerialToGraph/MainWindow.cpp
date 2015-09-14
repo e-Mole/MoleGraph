@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <ButtonLine.h>
 #include "Plot.h"
+#include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
 
@@ -13,10 +14,13 @@ MainWindow::MainWindow(QWidget *parent):
     Plot* plot = new Plot(this, m_serialPort);
     this->setCentralWidget(plot);
 
+    QDockWidget *buttonDock = new QDockWidget(this);
+    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
+
     ButtonLine* buttonLine = new ButtonLine(this);
     buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
     connect(buttonLine, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
-    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonLine);
+    buttonDock->setWidget(buttonLine);
 
     connect(buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
     connect(buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));

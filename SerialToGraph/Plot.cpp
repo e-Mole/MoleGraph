@@ -77,6 +77,9 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
 
 	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     m_customPlot->setMinimumSize(700, 500);
+    //QCPAxis *deleteme = m_customPlot->axisRect()->addAxis(QCPAxis::atLeft);
+    //deleteme->setTickLabelColor(QColor("#6050F8"));
+    //deleteme->setLabel("delete me");
 }
 
 void Plot::_InitializeSlider(QBoxLayout *graphLayout)

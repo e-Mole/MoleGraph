@@ -81,7 +81,7 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
 
 bool SerialPort::FindAndOpenMySerialPort()
 {
-    QList<ExtendedSerialPortInfo> portInfos;
+	QList<ExtendedSerialPortInfo> portInfos;
     QList<QSerialPortInfo> prefferedPortInfos;
     ExtendedSerialPortInfo *lastPort = NULL;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -189,7 +189,7 @@ void SerialPort::Stop()
 	Write(INS_STOP, "");
 }
 
-void SerialPort::SetEnabledChannels(unsigned char channels)
+void SerialPort::SetSelectedChannels(unsigned char channels)
 {
 	std::string tmp;
 	tmp.append((char const *)&channels, 1);

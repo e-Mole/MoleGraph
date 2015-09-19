@@ -15,6 +15,9 @@ class ButtonLine : public QWidget
     QPushButton *m_stopButton;
     QLabel *m_connectivityLabel;
 
+	bool m_connected;
+	bool m_enabledBChannels;
+
 public:
     explicit ButtonLine(QWidget *parent = 0);
 

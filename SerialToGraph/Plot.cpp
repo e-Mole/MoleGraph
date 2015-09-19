@@ -1,10 +1,11 @@
 #include "Plot.h"
+#include <math.h>
+#include <Channel.h>
 #include "qcustomplot/qcustomplot.h"
 #include <QTimer>
 #include <QThread>
-#include <math.h>
+
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <SerialPort.h>
 #include <QtCore/QDebug>
 #include <QByteArray>
@@ -13,7 +14,7 @@
 #include <QFile>
 #include <QBoxLayout>
 #include <QMessageBox>
-#include <Channel.h>
+#include <QVBoxLayout>
 
 Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	QWidget(parent),
@@ -21,28 +22,24 @@ Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	m_serialPort(serialPort),
 	m_minY(0),
 	m_maxY(0),
-    m_period(0),
-    m_counter(0),
-    m_scrollBar(NULL),
-    m_periodTypeIndex(0),
+	m_period(0),
+	m_counter(0),
+	m_scrollBar(NULL),
+	m_periodTypeIndex(0),
 	m_connectButton(NULL),
 	m_sampleChannel(NULL)
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    QHBoxLayout *documentLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(documentLayout);
-    QVBoxLayout *graphLayout = new QVBoxLayout(this);
-    documentLayout->addLayout(graphLayout);
-    QVBoxLayout *channelLayout = new QVBoxLayout(this);
-    documentLayout->addLayout(channelLayout);
-
+	QHBoxLayout *documentLayout = new QHBoxLayout(this);
+	mainLayout->addLayout(documentLayout);
+	QVBoxLayout *graphLayout = new QVBoxLayout(this);
+	documentLayout->addLayout(graphLayout);
 
 	_InitializePolt(graphLayout);
 	_InitializeSlider(graphLayout);
-    _InitializeChannelSideBar(channelLayout);
 
-    m_drawTimer = new QTimer(this);
+	m_drawTimer = new QTimer(this);
 	connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 }
 
@@ -53,56 +50,42 @@ Plot::~Plot()
 
 void Plot::_InitializePolt(QBoxLayout *graphLayout)
 {
-    m_customPlot = new QCustomPlot(this);
-    graphLayout->addWidget(m_customPlot);
+	m_customPlot = new QCustomPlot(this);
+	graphLayout->addWidget(m_customPlot);
 
-    for (int i = 0; i < 16; i++)
-    {
-        m_customPlot->addGraph();
-    }
+	for (int i = 0; i < 16; i++)
+	{
+		m_customPlot->addGraph();
+	}
 
-    _InitializeGraphs(0, Qt::red);
-    _InitializeGraphs(1, Qt::blue);
-    _InitializeGraphs(2, Qt::darkGreen);
-    _InitializeGraphs(3, Qt::black);
-    _InitializeGraphs(4, Qt::magenta);
-    _InitializeGraphs(5, Qt::cyan);
-    _InitializeGraphs(6, Qt::green);
-    _InitializeGraphs(7, Qt::darkRed);
-
-    m_customPlot->xAxis->setLabel(tr("sample"));
-    m_customPlot->yAxis->setLabel(tr("amplitude"));
-    m_customPlot->xAxis->setRange(0, 1);
-    m_customPlot->yAxis->setRange(0, 1);
+	m_customPlot->yAxis->setLabel(tr("amplitude"));
+	m_customPlot->xAxis->setRange(0, 1);
+	m_customPlot->yAxis->setRange(0, 1);
 
 	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    m_customPlot->setMinimumSize(700, 500);
-    //QCPAxis *deleteme = m_customPlot->axisRect()->addAxis(QCPAxis::atLeft);
-    //deleteme->setTickLabelColor(QColor("#6050F8"));
-    //deleteme->setLabel("delete me");
+	m_customPlot->setMinimumSize(700, 500);
+	//QCPAxis *deleteme = m_customPlot->axisRect()->addAxis(QCPAxis::atLeft);
+	//deleteme->setTickLabelColor(QColor("#6050F8"));
+	//deleteme->setLabel("delete me");
 }
 
+void Plot::addYChannel(Channel *channel)
+{
+	_InitializeGraphs(channel->GetIndex(), channel->GetColor());
+	m_channels.push_back(channel);
+}
+
+void Plot::addXChannel(Channel *channel)
+{
+	m_customPlot->xAxis->setLabel(channel->GetName());
+	m_sampleChannel = channel;
+}
 void Plot::_InitializeSlider(QBoxLayout *graphLayout)
 {
     m_scrollBar = new QScrollBar(Qt::Horizontal, this);
     m_scrollBar->setRange(0,0);
     graphLayout->addWidget(m_scrollBar);
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
-}
-
-void Plot::_InitializeChannelSideBar(QBoxLayout *channelLayout)
-{
-	m_sampleChannel = new Channel(this, m_customPlot->xAxis->label(), Qt::black, true);
-	channelLayout->addWidget(m_sampleChannel);
-	m_channels.resize(8);
-	for (int i = 0; i < m_channels.size(); i++)
-	{
-		m_channels[i] = new Channel(this, QString(tr("channel %1")).arg(i), m_customPlot->graph(i)->pen().color(), false);
-		channelLayout->addWidget(m_channels[i]);
-		connect(m_channels[i], SIGNAL(enableChanged()), this, SLOT(channelStateChanged()));
-	}
-
-	channelLayout->insertStretch(m_channels.size() + 1, 1); //+sample Nr.
 }
 
 void Plot::periodTypeChanged(int index)
@@ -112,11 +95,11 @@ void Plot::periodTypeChanged(int index)
 
 void Plot::_InitializeGraphs(unsigned index, QColor color)
 {
-    m_customPlot->graph(index)->setPen(QPen(color));
+	m_customPlot->graph(index)->setPen(QPen(color));
 
-    m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
-    m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
-    m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
+	m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
+	m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
+	m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
 }
 
 bool Plot::_FillGraphItem(GraphItem &item)
@@ -138,18 +121,18 @@ bool Plot::_FillGraphItem(GraphItem &item)
 
 void Plot::redrawMarks(int pos)
 {
-    for (int i = 0; i < m_channels.size(); i++)
-    {
-        m_customPlot->graph(i + 8)->clearData();
-		if (m_channels[i]->m_values.size() > pos)
-        {
-			m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->m_values[pos]);
-			m_channels[i]->m_selectedValue->setText(QString("%1").arg(m_channels[i]->m_values[pos]));
-        }
-    }
+	for (int i = 0; i < m_channels.size(); i++)
+	{
+		m_customPlot->graph(i + 8)->clearData();
+		if ((int)m_channels[i]->GetValueCount() > pos)
+		{
+			m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
+			m_channels[i]->SelectValue(pos);
+		}
+	}
 
-	m_sampleChannel->m_selectedValue->setText(QString("%1").arg(pos));
-    m_customPlot->replot(QCustomPlot::rpImmediate);
+	m_sampleChannel->SelectValue(pos);
+	m_customPlot->replot(QCustomPlot::rpImmediate);
 }
 
 void Plot::draw()
@@ -178,7 +161,10 @@ void Plot::draw()
         }
         lastChannel = item.channel;
 
-		m_channels[item.channel]->m_values.push_back(item.value);
+		m_channels[item.channel]->AddValue(item.value);
+
+		QCPData newData(m_x.last(), item.value);
+		m_customPlot->graph(item.channel)->data()->insert(newData.key, newData);
 
 		if (item.value > m_maxY)
 			m_maxY = item.value;
@@ -189,13 +175,9 @@ void Plot::draw()
     m_customPlot->xAxis->setRange(0, (m_x.size()-1) /*+ ((double)m_x.size() / (double)100)*/ );
 	m_customPlot->yAxis->setRange(m_minY - abs(m_minY /10), m_maxY + abs(m_maxY / 10));
 
-    for (int i = 0; i < m_channels.size(); i++)
-		m_customPlot->graph(i)->setData(m_x, m_channels[i]->m_values);
-
-
     m_scrollBar->setRange(0, m_x.last());
 
-    if (m_scrollBar->value() == lastPos)
+	if ((unsigned)m_scrollBar->value() == lastPos)
     {
         m_scrollBar->setValue(m_x.last());
         if (0 == m_x.last()) //slider value was not changed but I have first (initial) values and want to display them
@@ -221,8 +203,8 @@ void Plot::start()
 		return;
 	}
 
-    for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->m_enabled->setDisabled(true);
+	for(int i = 0; i < m_channels.size(); i++)
+		m_channels[i]->Enable(false);
 
 	m_customPlot->xAxis->setLabel(m_sampleChannel->title());
 	m_counter = 0;
@@ -230,8 +212,7 @@ void Plot::start()
 
     for (int i = 0; i < m_channels.size(); i++)
     {
-		m_channels[i]->m_values.clear();
-		m_channels[i]->m_selectedValue->setText("0");
+		m_channels[i]->ClearValues();
     }
 
 	m_queue.clear();
@@ -248,13 +229,13 @@ void Plot::start()
         qDebug() << "time set to:" << m_period << " s";
     }
 
-    unsigned enabledChannels = 0;
-    for (unsigned i = 0; i < m_channels.size(); i++)
-		enabledChannels |= ((m_channels[i]->m_enabled->isChecked()) << i);
+	unsigned selectedChannels = 0;
+	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
+		selectedChannels |= ((m_channels[i]->IsSelected()) << i);
 
-    qDebug() << "enabled channels:" << enabledChannels;
+	qDebug() << "selected channels:" << selectedChannels;
 
-    m_serialPort.SetEnabledChannels(enabledChannels);
+	m_serialPort.SetSelectedChannels(selectedChannels);
 
     m_scrollBar->setRange(0, 0);
 
@@ -267,7 +248,7 @@ void Plot::stop()
 {
 
     for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->m_enabled->setEnabled(true);
+		m_channels[i]->Enable(true);
 
 	m_serialPort.Stop();
 	m_drawTimer->stop();
@@ -288,10 +269,10 @@ void Plot::exportCsv(QString const &fileName)
 
 	file.write(m_customPlot->xAxis->label().toStdString().c_str());
 	file.write(";");
-    for (unsigned i = 0; i < m_channels.size(); i++)
+	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
     {
 		file.write(m_channels[i]->title().toStdString().c_str());
-        if (i == m_channels.size() - 1)
+		if (i == (unsigned)m_channels.size() - 1)
              file.write("\n");
         else
              file.write(";");
@@ -302,15 +283,15 @@ void Plot::exportCsv(QString const &fileName)
     {
         bool haveData = false;
 		std::string lineContent = QString("%1;").arg(sampleNr++).toStdString();
-        for (unsigned i = 0; i < m_channels.size(); i++)
+		for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
         {
-			if (m_channels[i]->m_values.size() > lineNr)
+			if (m_channels[i]-> GetValueCount() > lineNr)
             {
-				lineContent.append(QString("%1").arg(m_channels[i]->m_values[lineNr]).toStdString());
+				lineContent.append(QString("%1").arg(m_channels[i]->GetValue(lineNr)).toStdString());
                 haveData = true;
             }
 
-            if (i == m_channels.size() - 1)
+			if (i == (unsigned)m_channels.size() - 1)
                 lineContent.append("\n");
             else
                 lineContent.append(";");
@@ -324,26 +305,6 @@ void Plot::exportCsv(QString const &fileName)
             break;
     }
     file.close();
-}
-
-void Plot::channelStateChanged()
-{
-    bool anyChecked = false;
-	foreach (Channel *channel, m_channels)
-		anyChecked |= channel->m_enabled->isChecked();
-
-    startEnabled(anyChecked);
-}
-
-void Plot::connectToDevice()
-{
-	//I connect device in a timer to be able react to disconnetion or start the application without the connection
-	//I don't care that the timer is runnig all the time. It is triggered once per second so it is not any performance issue
-	if (!m_serialPort.IsDeviceConnected())
-	{
-		qDebug() << "device will be connected";
-        m_serialPort.FindAndOpenMySerialPort();
-	}
 }
 
 void Plot::periodChanged(unsigned period)

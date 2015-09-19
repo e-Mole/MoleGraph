@@ -53,7 +53,7 @@ public:
     void SetTime(unsigned time);
 	void Start();
 	void Stop();
-	void SetEnabledChannels(unsigned char channels);
+	void SetSelectedChannels(unsigned char channels);
 	bool IsDeviceConnected()
 	{ return m_serialPort.isOpen(); }
 signals:

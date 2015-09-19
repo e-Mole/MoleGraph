@@ -16,7 +16,9 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_periodUnits(NULL),
     m_startButton(NULL),
     m_stopButton(NULL),
-    m_connectivityLabel(NULL)
+	m_connectivityLabel(NULL),
+	m_connected(false),
+	m_enabledBChannels(false)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     setLayout(buttonLayout);
@@ -83,7 +85,7 @@ void ButtonLine::startButtonPressed()
 void ButtonLine::stopButtonPressed()
 {
     m_stopButton->setDisabled(true);
-    m_startButton->setEnabled(true);
+	m_startButton->setEnabled(m_enabledBChannels && m_connected);
     m_period->setEnabled(true);
     stop();
 }
@@ -100,7 +102,8 @@ void ButtonLine::periodLineEditChanged(const QString &text)
 
 void ButtonLine::enableStartButton(bool enabled)
 {
-    m_startButton->setEnabled(enabled);
+	m_enabledBChannels = enabled;
+	m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }
 
 void ButtonLine::changePeriodUnits(int periodType)
@@ -130,6 +133,7 @@ void ButtonLine::exportCsvSlot()
 
 void ButtonLine::connectivityStateChange(bool connected)
 {
+	m_connected = connected;
     if (connected)
     {
         m_connectivityLabel->setStyleSheet("QLabel { background-color : green; color : white; }");
@@ -141,5 +145,7 @@ void ButtonLine::connectivityStateChange(bool connected)
         m_connectivityLabel->setText(tr("Disconnected"));
     }
     m_connectivityLabel->repaint();
+
+	m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }
 

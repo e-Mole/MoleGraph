@@ -16,6 +16,7 @@ public:
 	~MainWindow();
 protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
+	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);
 };
 
 #endif // MAINWINDOW_H

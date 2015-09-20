@@ -8,34 +8,47 @@
 #include <QCheckBox>
 #include <QGridLayout>
 
-ChannelSettings::ChannelSettings(const QString &title, bool selected, bool xAxis, QWidget * parent, Qt::WindowFlags f) :
-    QDialog(parent, f),
-    m_name(NULL)
+ChannelSettings::ChannelSettings
+(
+	const QString &title,
+	const QString &units,
+	bool selected,
+	bool xAxis,
+	bool toRightSide,
+	QWidget * parent,
+	Qt::WindowFlags f
+) :
+	QDialog(parent, f),
+	m_name(NULL)
 {
     setWindowTitle(tr("Channel settings"));
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	QGridLayout *gridLaout = new QGridLayout(this);
 	mainLayout->addLayout(gridLaout);
 
-
+	unsigned row = 0;
 	QLabel *nameLabel = new QLabel(tr("Title"), this);
-	gridLaout->addWidget(nameLabel, 0,0);
+	gridLaout->addWidget(nameLabel, row,0);
     m_name = new QLineEdit(title, this);
-	gridLaout->addWidget(m_name, 0, 1);
+	gridLaout->addWidget(m_name, row++, 1);
 
+	QLabel *unitsLabel = new QLabel(tr("Units"), this);
+	gridLaout->addWidget(unitsLabel, row,0);
+	m_units = new QLineEdit(units, this);
+	gridLaout->addWidget(m_units, row++, 1);
 
 	QLabel *selectedLabel = new QLabel(tr("Selected"), this);
-	gridLaout->addWidget(selectedLabel, 1, 0);
+	gridLaout->addWidget(selectedLabel, row, 0);
 	m_selected = new QCheckBox(this);
 	m_selected->setChecked(selected);
-	gridLaout->addWidget(m_selected, 1, 1);
+	gridLaout->addWidget(m_selected, row++, 1);
 
-	/*QLabel *xAxisLabel = new QLabel(tr("X-axes"), this);
-	gridLaout->addWidget(xAxisLabel, 2, 0);
-	m_xAxis = new QCheckBox(this);
-	m_xAxis->setChecked(xAxis);
-	gridLaout->addWidget(m_xAxis, 2, 1);
-*/
+	QLabel *toRigtSideLabel = new QLabel(tr("To right side"), this);
+	gridLaout->addWidget(toRigtSideLabel, row, 0);
+	m_toRightSide = new QCheckBox(this);
+	m_toRightSide->setChecked(toRightSide);
+	gridLaout->addWidget(m_toRightSide, row++, 1);
+
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     mainLayout->addLayout(buttonLayout);
 
@@ -56,4 +69,9 @@ QString ChannelSettings::GetName()
 bool ChannelSettings::GetSelected()
 {
 	return m_selected-> isChecked();
+}
+
+QString ChannelSettings::GetUnits()
+{
+	return m_units->text();
 }

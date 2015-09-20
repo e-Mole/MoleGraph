@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent):
 
 	connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), plot, SLOT(addYChannel(Channel*)));
 	connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), plot, SLOT(addXChannel(Channel*)));
+	connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
 	channelSideBar->Initialize();
 }

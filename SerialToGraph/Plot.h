@@ -7,6 +7,7 @@
 #include <QVector>
 
 class Channel;
+class QCPAxis;
 class QCustomPlot;
 class QTimer;
 class SerialPort;
@@ -28,8 +29,9 @@ class Plot : public QWidget
 
     void _InitializePolt(QBoxLayout *graphLayout);
     void _InitializeSlider(QBoxLayout *graphLayout);
-    void _InitializeGraphs(unsigned index, QColor color);
+	void _InitializeGraphs(Channel *channel);
 	bool _FillGraphItem(GraphItem &item);
+	void _SetAxis(QCPAxis *axis, Channel *channel);
 
 	QCustomPlot *m_customPlot;
 
@@ -51,6 +53,8 @@ class Plot : public QWidget
 	QPushButton *m_connectButton;
 
 	QVector<Channel *> m_channels;
+	QVector<QCPAxis *> m_yLeftAxis;
+	QVector<QCPAxis *> m_yRightAxis;
 	Channel *m_sampleChannel;
 public:
 	Plot(QWidget *parent, SerialPort &serialPort);
@@ -63,6 +67,7 @@ signals:
 public slots:
 	void addYChannel(Channel *channel);
 	void addXChannel(Channel *channel);
+	void updateChannel(Channel *channel);
 protected slots:
 	void draw();
 	void start();

@@ -30,7 +30,7 @@ Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	m_sampleChannel(NULL)
 {
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-
+	mainLayout->setMargin(1);
 	QHBoxLayout *documentLayout = new QHBoxLayout(this);
 	mainLayout->addLayout(documentLayout);
 	QVBoxLayout *graphLayout = new QVBoxLayout(this);
@@ -58,20 +58,17 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
 		m_customPlot->addGraph();
 	}
 
-	m_customPlot->yAxis->setLabel(tr("amplitude"));
+	//m_customPlot->yAxis->setVisible(false);
 	m_customPlot->xAxis->setRange(0, 1);
-	m_customPlot->yAxis->setRange(0, 1);
+	//m_customPlot->yAxis->setRange(0, 1);
 
 	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 	m_customPlot->setMinimumSize(700, 500);
-	//QCPAxis *deleteme = m_customPlot->axisRect()->addAxis(QCPAxis::atLeft);
-	//deleteme->setTickLabelColor(QColor("#6050F8"));
-	//deleteme->setLabel("delete me");
 }
 
 void Plot::addYChannel(Channel *channel)
 {
-	_InitializeGraphs(channel->GetIndex(), channel->GetColor());
+	_InitializeGraphs(channel);
 	m_channels.push_back(channel);
 }
 
@@ -93,13 +90,27 @@ void Plot::periodTypeChanged(int index)
         m_periodTypeIndex = index;
 }
 
-void Plot::_InitializeGraphs(unsigned index, QColor color)
+void Plot::_InitializeGraphs(Channel *channel)
 {
+	unsigned index = channel->GetIndex();
+	QColor &color = channel->GetColor();
 	m_customPlot->graph(index)->setPen(QPen(color));
 
 	m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
 	m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
 	m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
+
+	m_yLeftAxis.push_back(m_customPlot->axisRect()->addAxis(QCPAxis::atLeft));
+	m_yLeftAxis.last()->setTickLabelColor(color);
+	m_yLeftAxis.last()->setLabel(channel->GetName());
+	m_yLeftAxis.last()->setRange(0, 1);
+	m_yLeftAxis.last()->setVisible(channel->IsSelected() && !channel->ToRightSide());
+
+	m_yRightAxis.push_back(m_customPlot->axisRect()->addAxis(QCPAxis::atRight));
+	m_yRightAxis.last()->setTickLabelColor(color);
+	m_yRightAxis.last()->setLabel(channel->GetName());
+	m_yRightAxis.last()->setRange(0, 1);
+	m_yRightAxis.last()->setVisible(channel->IsSelected() && channel->ToRightSide());
 }
 
 bool Plot::_FillGraphItem(GraphItem &item)
@@ -173,6 +184,7 @@ void Plot::draw()
 	}
 
     m_customPlot->xAxis->setRange(0, (m_x.size()-1) /*+ ((double)m_x.size() / (double)100)*/ );
+	//FIXME:concrete axis
 	m_customPlot->yAxis->setRange(m_minY - abs(m_minY /10), m_maxY + abs(m_maxY / 10));
 
     m_scrollBar->setRange(0, m_x.last());
@@ -312,3 +324,24 @@ void Plot::periodChanged(unsigned period)
     m_period = period;
 }
 
+void Plot::_SetAxis(QCPAxis *axis, Channel *channel)
+{
+	axis->setVisible(channel->IsSelected());
+	axis->setLabel(channel->GetUnits());
+}
+
+void Plot::updateChannel(Channel *channel)
+{
+	if (channel->ToRightSide())
+	{
+		m_yLeftAxis[channel->GetIndex()]->setVisible(false);
+		_SetAxis(m_yRightAxis[channel->GetIndex()], channel);
+	}
+	else
+	{
+		m_yRightAxis[channel->GetIndex()]->setVisible(false);
+		_SetAxis(m_yLeftAxis[channel->GetIndex()], channel);
+	}
+
+	m_customPlot->replot(QCustomPlot::rpImmediate);
+}

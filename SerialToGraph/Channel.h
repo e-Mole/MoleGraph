@@ -23,6 +23,8 @@ class Channel : public QGroupBox
 	QLabel *m_selectedValue;
 	QCheckBox *m_enabled;
 	QColor m_color;
+	QString m_units;
+	bool m_toRightSide;
 
 public:
 	Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
@@ -32,6 +34,9 @@ public:
 	QColor &GetColor() { return m_color; }
 	unsigned GetIndex() { return m_index; }
 	QString GetName();
+	QString GetUnits();
+	bool ToRightSide()
+	{ return m_toRightSide; }
 
 	unsigned GetValueCount()
 	{ return m_values.size();}
@@ -45,7 +50,7 @@ public:
 
 	void Enable(bool enable);
 signals:
-	void enableChanged();
+	void stateChanged();
 private slots:
 	void checkBoxStateChanged(int state);
 };

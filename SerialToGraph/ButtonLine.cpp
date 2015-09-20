@@ -21,6 +21,7 @@ ButtonLine::ButtonLine(QWidget *parent) :
 	m_enabledBChannels(false)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+	buttonLayout->setMargin(1);
     setLayout(buttonLayout);
 
     QComboBox *periodType = new QComboBox(this);

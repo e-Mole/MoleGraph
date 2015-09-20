@@ -13,7 +13,8 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 	m_index(index),
 	m_selectedValue(NULL),
 	m_enabled(NULL),
-	m_color(color)
+	m_color(color),
+	m_toRightSide(false)
 {
 	setMaximumHeight(55);
 	setMinimumWidth(80);
@@ -61,17 +62,19 @@ Channel::~Channel()
 
 void Channel::checkBoxStateChanged(int state)
 {
-	enableChanged();
+	stateChanged();
 }
 
 void Channel::mousePressEvent(QMouseEvent * event)
 {
 	ChannelSettings *settings = new ChannelSettings(
-		title(), m_enabled->isChecked(), false, this);
+		title(), m_units, m_enabled->isChecked(), false, this);
 	if (QDialog::Accepted == settings->exec())
 	{
 		setTitle(settings->GetName());
 		m_enabled->setChecked(settings->GetSelected());
+		m_units = settings->GetUnits();
+		stateChanged();
 	}
 }
 
@@ -83,6 +86,11 @@ bool Channel::IsSelected()
 QString Channel::GetName()
 {
 	return this->title();
+}
+
+QString Channel::GetUnits()
+{
+	return m_units;
 }
 
 void Channel::SelectValue(unsigned index)

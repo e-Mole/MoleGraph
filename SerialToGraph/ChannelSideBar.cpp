@@ -10,6 +10,7 @@ ChannelSideBar::ChannelSideBar(QWidget *parent) :
 	m_sampleChannel(NULL)
 {
 	QVBoxLayout *channelLayout = new QVBoxLayout(this);
+	channelLayout->setMargin(1);
 	this->setLayout(channelLayout);
 }
 
@@ -25,10 +26,10 @@ void ChannelSideBar::Initialize()
 	XChannelAdded(m_sampleChannel);
 	layout->addWidget(m_sampleChannel);
 
+	layout->addWidget(_AddChannel(Qt::black));
 	layout->addWidget(_AddChannel(Qt::red));
 	layout->addWidget(_AddChannel(Qt::blue));
 	layout->addWidget(_AddChannel(Qt::darkGreen));
-	layout->addWidget(_AddChannel(Qt::black));
 	layout->addWidget(_AddChannel(Qt::magenta));
 	layout->addWidget(_AddChannel(Qt::cyan));
 	layout->addWidget(_AddChannel(Qt::green));
@@ -47,7 +48,7 @@ Channel *ChannelSideBar::_AddChannel(Qt::GlobalColor color)
 
 	order++;
 
-	connect(m_channels.last(), SIGNAL(enableChanged()), this, SLOT(channelStateChanged()));
+	connect(m_channels.last(), SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
 
 	YChannelAdded(m_channels.last());
 
@@ -60,5 +61,5 @@ void ChannelSideBar::channelStateChanged()
 	foreach (Channel *channel, m_channels)
 		anySelected |= channel->IsSelected();
 
-	anyChannelEnabled(anySelected);
+	channelStateChanged((Channel *)sender());
 }

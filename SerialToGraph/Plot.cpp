@@ -1,27 +1,31 @@
 #include "Plot.h"
-#include <math.h>
-#include <Channel.h>
-#include "qcustomplot/qcustomplot.h"
-#include <QTimer>
-#include <QThread>
 
-#include <QHBoxLayout>
-#include <SerialPort.h>
-#include <QtCore/QDebug>
+#include <cmath>
+#include <Channel.h>
+#include <limits.h>
+#include <math.h>
+#include <QBoxLayout>
 #include <QByteArray>
 #include <QColor>
-#include <QScrollBar>
+#include <qcustomplot/qcustomplot.h>
+#include <QDebug>
+#include <QHBoxLayout>
 #include <QFile>
-#include <QBoxLayout>
 #include <QMessageBox>
+#include <QScrollBar>
+#include <QtCore/QDebug>
+#include <QTimer>
+#include <QThread>
 #include <QVBoxLayout>
+#include <SerialPort.h>
+
+#define RESCALE_MARGIN_RATIO 50
+#define AXES_LABEL_PADDING 1
 
 Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	QWidget(parent),
 	m_customPlot(NULL),
 	m_serialPort(serialPort),
-	m_minY(0),
-	m_maxY(0),
 	m_period(0),
 	m_counter(0),
 	m_scrollBar(NULL),
@@ -55,15 +59,20 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
 
 	for (int i = 0; i < 16; i++)
 	{
-		m_customPlot->addGraph();
+        m_customPlot->addGraph();
 	}
 
-	//m_customPlot->yAxis->setVisible(false);
 	m_customPlot->xAxis->setRange(0, 1);
-	//m_customPlot->yAxis->setRange(0, 1);
-
-	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
 	m_customPlot->setMinimumSize(700, 500);
+
+    m_customPlot->yAxis->setVisible(false);
+    m_customPlot->xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
+
+    _SetAxisColor(m_customPlot->xAxis, Qt::black);
+
+    connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+    selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
 void Plot::addYChannel(Channel *channel)
@@ -90,27 +99,58 @@ void Plot::periodTypeChanged(int index)
         m_periodTypeIndex = index;
 }
 
+QString Plot::_GetAxisName(QString const &units, unsigned index)
+{
+    QString channels;
+    bool first =true;
+    unsigned count = 0;
+    bool addMiddle = false;
+    for (unsigned i = 0; i < m_channels.size(); i++)
+    {
+
+        if (m_channels[i]->IsSelected() && index == m_channels[i]->GetAxisNumber())
+        {
+            count++;
+            if (!first)
+            {
+                if (i+1 != m_channels.size() && m_channels[i+1]->IsSelected() && index == m_channels[i+1]->GetAxisNumber() &&
+                    i != 0 && m_channels[i-1]->IsSelected() && index == m_channels[i-1]->GetAxisNumber())
+                {
+                    addMiddle = true;
+                    continue;
+                }
+                channels += ", ";
+            }
+            else
+                first = false;
+
+            if (addMiddle)
+            {
+                channels += ".. ,";
+                addMiddle = false;
+            }
+
+            channels += m_channels[i]->GetName();
+        }
+    }
+
+    if (0 == units.size())
+        return channels ;
+
+    return channels + " [" + units + "]" ;
+}
+
 void Plot::_InitializeGraphs(Channel *channel)
 {
 	unsigned index = channel->GetIndex();
 	QColor &color = channel->GetColor();
 	m_customPlot->graph(index)->setPen(QPen(color));
+    //m_customPlot->graph(index)->setAntialiased(false);
 
 	m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
 	m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
 	m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
-
-	m_yLeftAxis.push_back(m_customPlot->axisRect()->addAxis(QCPAxis::atLeft));
-	m_yLeftAxis.last()->setTickLabelColor(color);
-	m_yLeftAxis.last()->setLabel(channel->GetName());
-	m_yLeftAxis.last()->setRange(0, 1);
-	m_yLeftAxis.last()->setVisible(channel->IsSelected() && !channel->ToRightSide());
-
-	m_yRightAxis.push_back(m_customPlot->axisRect()->addAxis(QCPAxis::atRight));
-	m_yRightAxis.last()->setTickLabelColor(color);
-	m_yRightAxis.last()->setLabel(channel->GetName());
-	m_yRightAxis.last()->setRange(0, 1);
-	m_yRightAxis.last()->setVisible(channel->IsSelected() && channel->ToRightSide());
+    //m_customPlot->graph(index + 8)->setAntialiased(false);
 }
 
 bool Plot::_FillGraphItem(GraphItem &item)
@@ -118,7 +158,7 @@ bool Plot::_FillGraphItem(GraphItem &item)
 	if (m_queue.size() < 5)
 		return false;
 
-	item.channel = m_queue.dequeue();
+    item.channelIndex = m_queue.dequeue();
 	char value[4];
 	value[0] = m_queue.dequeue();
 	value[1] = m_queue.dequeue();
@@ -135,14 +175,14 @@ void Plot::redrawMarks(int pos)
 	for (int i = 0; i < m_channels.size(); i++)
 	{
 		m_customPlot->graph(i + 8)->clearData();
-		if ((int)m_channels[i]->GetValueCount() > pos)
+        if ((int)m_channels[i]->GetValueCount() > pos)
 		{
-			m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
-			m_channels[i]->SelectValue(pos);
+            m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
+            m_channels[i]->SelectValue(pos);
 		}
 	}
 
-	m_sampleChannel->SelectValue(pos);
+    m_sampleChannel->SelectValue(pos);
 	m_customPlot->replot(QCustomPlot::rpImmediate);
 }
 
@@ -161,32 +201,30 @@ void Plot::draw()
     for (int i = 0; i< array.size(); i++)
          m_queue.enqueue(array[i]);
 
-    unsigned lastChannel = 100; //just huge number
+    unsigned lastChannelIndex = 100; //just huge number
     unsigned count = 0;
     while (_FillGraphItem(item))
 	{
         count ++;
-        if (item.channel <= lastChannel)
+        if (item.channelIndex <= lastChannelIndex)
         {
+            m_sampleChannel->AddValue(m_x.size());
 			m_x.push_back(m_x.size());
         }
-        lastChannel = item.channel;
 
-		m_channels[item.channel]->AddValue(item.value);
+        lastChannelIndex = item.channelIndex;
+
+        Channel *channel = m_channels[item.channelIndex];
+        channel->AddValue(item.value);
 
 		QCPData newData(m_x.last(), item.value);
-		m_customPlot->graph(item.channel)->data()->insert(newData.key, newData);
+        m_customPlot->graph(item.channelIndex)->data()->insert(newData.key, newData);
 
-		if (item.value > m_maxY)
-			m_maxY = item.value;
-		if (item.value < m_minY)
-			m_minY = item.value;
-	}
+        //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
+        _RescaleAxisWithMargin(channel->GetAxisNumber());
+    }
 
-    m_customPlot->xAxis->setRange(0, (m_x.size()-1) /*+ ((double)m_x.size() / (double)100)*/ );
-	//FIXME:concrete axis
-	m_customPlot->yAxis->setRange(m_minY - abs(m_minY /10), m_maxY + abs(m_maxY / 10));
-
+    m_customPlot->xAxis->setRange(0, (m_x.size()-1));
     m_scrollBar->setRange(0, m_x.last());
 
 	if ((unsigned)m_scrollBar->value() == lastPos)
@@ -216,7 +254,7 @@ void Plot::start()
 	}
 
 	for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->Enable(false);
+        m_channels[i]->setEnabled(false);
 
 	m_customPlot->xAxis->setLabel(m_sampleChannel->title());
 	m_counter = 0;
@@ -251,7 +289,6 @@ void Plot::start()
 
     m_scrollBar->setRange(0, 0);
 
-	//m_serialPort.Clear(); //FIXME: workaround something is in buffer
     m_drawTimer->start(100);
     m_serialPort.Start();
 }
@@ -260,7 +297,7 @@ void Plot::stop()
 {
 
     for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->Enable(true);
+        m_channels[i]->setEnabled(true);
 
 	m_serialPort.Stop();
 	m_drawTimer->stop();
@@ -324,24 +361,172 @@ void Plot::periodChanged(unsigned period)
     m_period = period;
 }
 
-void Plot::_SetAxis(QCPAxis *axis, Channel *channel)
+void Plot::_RemoveVerticalAxes()
 {
-	axis->setVisible(channel->IsSelected());
-	axis->setLabel(channel->GetUnits());
+    foreach (QCPAxis* axis, m_customPlot->axisRect()->axes())
+    {
+        //if (axis == m_customPlot->yAxis)
+        //    continue;
+        if (QCPAxis::atLeft == axis->axisType() || QCPAxis::atRight == axis->axisType())
+        {
+            m_customPlot->axisRect()->removeAxis(axis);
+        }
+    }
+
+    m_yAxis.clear();
+}
+
+void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
+{
+    axis->setTickLabelColor(color);
+    axis->setLabelColor(color);
+
+    QPen pen = axis->selectedBasePen();
+    pen.setColor(Qt::black);
+    axis->setSelectedBasePen(pen);
+    axis->setSelectedTickLabelColor(color);
+
+    /*QFont font = axis->selectedLabelFont();
+    font.setBold(false);
+    axis->setSelectedLabelFont(font);*/
+    axis->setSelectedLabelColor(color);
+
+}
+
+void Plot::_InitializeAxis(QCPAxis *axis, Channel *channel)
+{
+     _SetAxisColor(axis, channel->GetColor());
+
+    axis->setLabel(_GetAxisName(channel->GetUnits(), channel->GetAxisNumber()));
+    axis->setRange(channel->GetAxisMin(), channel->GetAxisMax());
+    axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
+    axis->grid()->setVisible(false);
+    axis->setLabelPadding(AXES_LABEL_PADDING);
+    m_yAxis[channel->GetAxisNumber()] = axis;
+}
+
+void Plot::_StoreRangesToChannels()
+{
+    foreach (Channel *channel, m_channels)
+    {
+        QMap<unsigned,  QCPAxis *>::iterator it = m_yAxis.find(channel->GetAxisNumber());
+
+        if (!channel->IsAttached() && it != m_yAxis.end())
+           channel->SetAxisRange(it.value()->range().lower, it.value()->range().upper);
+    }
+}
+
+void Plot::_UpdateAxes(Channel *channel)
+{
+    //store ranges per channel because all y axes will be removed
+    _StoreRangesToChannels();
+
+    //it is necessery to update all access because we want to have always the same order
+    //and some of them could be attached and are not any more
+    _RemoveVerticalAxes();
+
+    foreach (Channel * channel, m_channels)
+    {
+        if (channel->IsSelected())
+        {
+            if (!channel->IsAttached())
+            {
+               _InitializeAxis(
+                    m_customPlot->axisRect()->addAxis(channel->ToRightSide() ? QCPAxis::atRight : QCPAxis::atLeft),
+                    channel);
+            }
+        }
+    }
+
+    foreach (Channel *channel, m_channels)
+    {
+        if (channel->IsSelected())
+        {
+           QCPAxis *axis = m_yAxis[channel->GetAxisNumber()];
+           m_customPlot->graph(channel->GetIndex())->setValueAxis(axis);
+           m_customPlot->graph(channel->GetIndex()+8)->setValueAxis(axis);
+           m_customPlot->graph(channel->GetIndex())->setVisible(true);
+        }
+        else
+        {
+            m_customPlot->graph(channel->GetIndex())->setVisible(false);
+        }
+    }
+
+    if (0 != m_yAxis.size())
+    {
+        //just for case it has been selected
+        m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
+
+        m_yAxis.first()->setSelectedParts(QCPAxis::spTickLabels);
+    }
+
+    selectionChanged(); //initialize zoom and drag according current selection
+}
+
+void Plot::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
+{
+    m_customPlot->axisRect()->setRangeZoomAxes(xAxis, yAxis);
+    m_customPlot->axisRect()->setRangeDragAxes(xAxis, yAxis);
+}
+
+void Plot::selectionChanged()
+{
+    if (0 == m_customPlot->selectedAxes().size())
+    {
+        _SetDragAndZoom(NULL, NULL);
+        return;
+    }
+
+
+    m_customPlot->selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
+
+    if (m_customPlot->selectedAxes().first() == m_customPlot->xAxis)
+    {
+
+        _SetDragAndZoom(m_customPlot->xAxis, NULL);
+        return;
+    }
+
+    _SetDragAndZoom(NULL, m_customPlot->selectedAxes().first());
+
+    foreach (QCPAxis *axis, m_yAxis)
+    {
+        axis->grid()->setVisible(false);
+    }
+    m_customPlot->selectedAxes().first()->grid()->setVisible(true);
+
 }
 
 void Plot::updateChannel(Channel *channel)
 {
-	if (channel->ToRightSide())
-	{
-		m_yLeftAxis[channel->GetIndex()]->setVisible(false);
-		_SetAxis(m_yRightAxis[channel->GetIndex()], channel);
-	}
-	else
-	{
-		m_yRightAxis[channel->GetIndex()]->setVisible(false);
-		_SetAxis(m_yLeftAxis[channel->GetIndex()], channel);
-	}
+    _UpdateAxes(channel);
+    m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsSelected());
+    m_customPlot->replot(QCustomPlot::rpImmediate);
 
-	m_customPlot->replot(QCustomPlot::rpImmediate);
+
+}
+
+
+void Plot::_RescaleAxisWithMargin(unsigned axisNumber)
+{
+    double lower = std::numeric_limits<double>::max();
+    double upper = -std::numeric_limits<double>::max();
+
+    foreach (Channel *channel, m_channels)
+    {
+        if (channel->IsSelected() && channel->GetAxisNumber() == axisNumber)
+        {
+            if (channel->GetMinValue() < lower)
+                lower = channel->GetMinValue();
+            if (channel->GetMaxValue() > upper)
+                upper = channel->GetMaxValue();
+        }
+    }
+    //m_yAxis[axisNumber]->rescale();
+    double margin = std::abs(upper - lower) / RESCALE_MARGIN_RATIO;
+    if (0 == margin) //upper and lower are the same
+        margin = std::abs(upper / RESCALE_MARGIN_RATIO);
+
+    m_yAxis[axisNumber]->setRange(lower - margin, upper + margin);
 }

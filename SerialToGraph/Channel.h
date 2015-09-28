@@ -25,6 +25,12 @@ class Channel : public QGroupBox
 	QColor m_color;
 	QString m_units;
 	bool m_toRightSide;
+    unsigned m_axisNumber;
+    double m_channelMinValue;
+    double m_channelMaxValue;
+    double m_axisMinValue;
+    double m_axisMaxValue;
+    unsigned m_attachedTo;
 
 public:
 	Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
@@ -48,11 +54,42 @@ public:
 	void AddValue( double value);
 	void ClearValues();
 
-	void Enable(bool enable);
+    void SetAxisNumber(unsigned number)
+    { m_axisNumber = number; }
+
+    unsigned GetAxisNumber()
+    { return m_axisNumber; }
+
+    double GetMinValue()
+    { return m_channelMinValue; }
+
+    double GetMaxValue()
+    { return m_channelMaxValue; }
+
+    void SetAxisRange(double min, double max);
+
+    double GetAxisMin()
+    { return m_axisMinValue; }
+
+    double GetAxisMax()
+    { return m_axisMaxValue; }
+
+    void SetAttachedTo(unsigned channelIndex)
+    { m_attachedTo = channelIndex; }
+
+    void ResetAttachedTo()
+    {   m_attachedTo = ~0; }
+
+    bool IsAttached()
+    {   return m_attachedTo != ~0; }
+
+    unsigned AttachedTo()
+    {   return m_attachedTo; }
+
 signals:
 	void stateChanged();
 private slots:
-	void checkBoxStateChanged(int state);
+    void checkBoxClicked(bool checked);
 };
 
 #endif // CHANNEL_H

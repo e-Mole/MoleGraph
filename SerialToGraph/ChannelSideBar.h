@@ -7,7 +7,7 @@
 class Channel;
 class ChannelSideBar : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 	Channel *_AddChannel(Qt::GlobalColor color);
 

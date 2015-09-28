@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPalette>
 #include <QString>
+#include <limits>
 
 Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples) :
 	QGroupBox(name, parent),
@@ -14,8 +15,15 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 	m_selectedValue(NULL),
 	m_enabled(NULL),
 	m_color(color),
-	m_toRightSide(false)
+    m_toRightSide(false),
+    m_axisNumber(0),
+    m_channelMinValue(std::numeric_limits<double>::max()),
+    m_channelMaxValue(-std::numeric_limits<double>::max()),
+    m_axisMinValue(0),
+    m_axisMaxValue(1)
 {
+    ResetAttachedTo();
+
 	setMaximumHeight(55);
 	setMinimumWidth(80);
 
@@ -27,7 +35,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 	{
 		m_enabled = new QCheckBox(this);
 		groupBoxLayout->addWidget(m_enabled);
-		connect(m_enabled, SIGNAL(stateChanged(int)), this, SLOT(checkBoxStateChanged(int)));
+        connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
 	}
 
 	m_selectedValue = new QLabel(this);
@@ -60,20 +68,21 @@ Channel::~Channel()
 
 }
 
-void Channel::checkBoxStateChanged(int state)
+void Channel::checkBoxClicked(bool checked)
 {
 	stateChanged();
 }
 
 void Channel::mousePressEvent(QMouseEvent * event)
 {
-	ChannelSettings *settings = new ChannelSettings(
-		title(), m_units, m_enabled->isChecked(), false, this);
+    ChannelSettings *settings = new ChannelSettings(
+        title(), m_units, m_enabled->isChecked(), false, m_toRightSide, this);
 	if (QDialog::Accepted == settings->exec())
 	{
 		setTitle(settings->GetName());
 		m_enabled->setChecked(settings->GetSelected());
 		m_units = settings->GetUnits();
+        m_toRightSide = settings->IsSetToRightSide();
 		stateChanged();
 	}
 }
@@ -101,15 +110,22 @@ void Channel::SelectValue(unsigned index)
 void Channel::AddValue( double value)
 {
 	m_values.push_back(value);
-}
 
-void Channel::Enable(bool enable)
-{
-	this->Enable(enable);
+    if (value < m_channelMinValue)
+        m_channelMinValue = value;
+
+    if (value > m_channelMaxValue)
+        m_channelMaxValue = value;
 }
 
 void Channel::ClearValues()
 {
 	m_values.clear();
 	_DisplayNAValue();
+}
+
+void Channel::SetAxisRange(double min, double max)
+{
+    m_axisMinValue = min;
+    m_axisMaxValue = max;
 }

@@ -5,6 +5,7 @@
 #include <QQueue>
 #include <stdint.h>
 #include <QVector>
+#include <QMap>
 
 class Channel;
 class QCPAxis;
@@ -23,15 +24,22 @@ class Plot : public QWidget
 
 	struct GraphItem
 	{
-		uint8_t channel;
+        uint8_t channelIndex;
 		float value;
 	};
 
     void _InitializePolt(QBoxLayout *graphLayout);
     void _InitializeSlider(QBoxLayout *graphLayout);
+    QString _GetAxisName(const QString &units, unsigned index);
+    void _SetAxisColor(QCPAxis *axis, QColor const & color);
+    void _InitializeAxis(QCPAxis *axis, Channel *channel);
 	void _InitializeGraphs(Channel *channel);
-	bool _FillGraphItem(GraphItem &item);
-	void _SetAxis(QCPAxis *axis, Channel *channel);
+    bool _FillGraphItem(GraphItem &item);
+    void _StoreRangesToChannels();
+    void _UpdateAxes(Channel *channel);
+    void _RemoveVerticalAxes();
+    void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
+    void _RescaleAxisWithMargin(unsigned axisNumber);
 
 	QCustomPlot *m_customPlot;
 
@@ -41,8 +49,6 @@ class Plot : public QWidget
 	QQueue<unsigned char> m_queue;
 
 	QVector<double> m_x;
-	double m_minY;
-	double m_maxY;
 
     unsigned m_period;
 	unsigned m_counter;
@@ -53,9 +59,10 @@ class Plot : public QWidget
 	QPushButton *m_connectButton;
 
 	QVector<Channel *> m_channels;
-	QVector<QCPAxis *> m_yLeftAxis;
-	QVector<QCPAxis *> m_yRightAxis;
 	Channel *m_sampleChannel;
+
+    QMap<unsigned,  QCPAxis *> m_yAxis; //axis number as a key
+
 public:
 	Plot(QWidget *parent, SerialPort &serialPort);
 	~Plot();
@@ -74,9 +81,10 @@ protected slots:
 	void stop();
 	void exportPng(QString const &fileName);
 	void exportCsv(QString const &fileName);
-	void redrawMarks(int pos);
+    void redrawMarks(int pos);
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
+    void selectionChanged();
 };
 
 #endif // PLOT_H

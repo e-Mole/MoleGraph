@@ -121,18 +121,18 @@ bool Plot::_FillGraphItem(GraphItem &item)
 
 void Plot::redrawMarks(int pos)
 {
-	for (int i = 0; i < m_channels.size(); i++)
-	{
-		m_customPlot->graph(i + 8)->clearData();
-		if ((int)m_channels[i]->GetValueCount() > pos)
-		{
-			m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
-			m_channels[i]->SelectValue(pos);
-		}
-	}
+    for (int i = 0; i < m_channels.size(); i++)
+    {
+        m_customPlot->graph(i + 8)->clearData();
+        if ((int)m_channels[i]->GetValueCount() > pos)
+        {
+            m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
+            m_channels[i]->SelectValue(pos);
+        }
+    }
 
-	m_sampleChannel->SelectValue(pos);
-	m_customPlot->replot(QCustomPlot::rpImmediate);
+    m_sampleChannel->SelectValue(pos);
+    m_customPlot->replot(QCustomPlot::rpImmediate);
 }
 
 void Plot::draw()
@@ -157,6 +157,7 @@ void Plot::draw()
         count ++;
         if (item.channel <= lastChannel)
         {
+            m_sampleChannel->AddValue(m_x.size());
 			m_x.push_back(m_x.size());
         }
         lastChannel = item.channel;
@@ -204,7 +205,7 @@ void Plot::start()
 	}
 
 	for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->Enable(false);
+        m_channels[i]->setEnabled(false);
 
 	m_customPlot->xAxis->setLabel(m_sampleChannel->title());
 	m_counter = 0;
@@ -248,7 +249,7 @@ void Plot::stop()
 {
 
     for(int i = 0; i < m_channels.size(); i++)
-		m_channels[i]->Enable(true);
+        m_channels[i]->setEnabled(true);
 
 	m_serialPort.Stop();
 	m_drawTimer->stop();

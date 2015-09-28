@@ -42,8 +42,6 @@ public:
 	void SelectValue(unsigned index);
 	void AddValue( double value);
 	void ClearValues();
-
-	void Enable(bool enable);
 signals:
 	void enableChanged();
 private slots:

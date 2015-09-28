@@ -95,11 +95,6 @@ void Channel::AddValue( double value)
 	m_values.push_back(value);
 }
 
-void Channel::Enable(bool enable)
-{
-	this->Enable(enable);
-}
-
 void Channel::ClearValues()
 {
 	m_values.clear();

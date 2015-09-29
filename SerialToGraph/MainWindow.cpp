@@ -5,29 +5,43 @@
 #include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 
-MainWindow::MainWindow(QWidget *parent):
+MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
 	m_settings("eMole", "ArduinoToGraph"),
 	m_serialPort(m_settings)
 {
+    //QLocale locale = QLocale(QLocale::Czech);
+    //QLocale::setDefault(locale);
+
+    QTranslator *translator = new QTranslator(this);
+    application.removeTranslator(translator);
+    if (translator->load("./serialToGraph_cs.qm"))
+        application.installTranslator(translator);
 
 	m_serialPort.FindAndOpenMySerialPort();
 	Plot* plot = new Plot(this, m_serialPort);
 	this->setCentralWidget(plot);
 
-	QDockWidget *buttonDock = new QDockWidget(this);
+    QDockWidget *buttonDock = new QDockWidget(this);
+
 	this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
 	ButtonLine* buttonLine = new ButtonLine(this);
 	buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
-	buttonDock->setWidget(buttonLine);
+    connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
+    buttonDock->setWidget(buttonLine);
 
 	QDockWidget *channelDock = new QDockWidget(this);
 	this->addDockWidget((Qt::DockWidgetArea)m_settings.value("channelSideBarLocation", Qt::RightDockWidgetArea).toInt(), channelDock);
 	ChannelSideBar *channelSideBar = new ChannelSideBar(this);
 	connect(channelDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(channelSideBaeLocationChanged(Qt::DockWidgetArea)));
-	channelDock->setWidget(channelSideBar);
+    connect(channelDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
+
+    channelDock->setWidget(channelSideBar);
 
 	connect(buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
 	connect(buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));
@@ -48,6 +62,13 @@ MainWindow::MainWindow(QWidget *parent):
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::dockVisibilityChanged(bool visible)
+{
+    //we don't want to hide dock because there is no way how to visible it again
+    if (!visible)
+       ((QDockWidget *)sender())->setVisible(true);
 }
 
 void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)

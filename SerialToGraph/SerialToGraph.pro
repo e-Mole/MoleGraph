@@ -34,3 +34,5 @@ HEADERS  += MainWindow.h \
     PortListWidget.h \
     ButtonLine.h \
     ChannelSideBar.h
+
+TRANSLATIONS = languages/serialToGraph_cs.ts

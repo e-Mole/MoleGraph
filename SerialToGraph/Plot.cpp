@@ -18,6 +18,7 @@
 #include <QThread>
 #include <QVBoxLayout>
 #include <SerialPort.h>
+#include <QCoreApplication>
 
 #define RESCALE_MARGIN_RATIO 50
 #define AXES_LABEL_PADDING 1
@@ -172,18 +173,18 @@ bool Plot::_FillGraphItem(GraphItem &item)
 
 void Plot::redrawMarks(int pos)
 {
-	for (int i = 0; i < m_channels.size(); i++)
-	{
-		m_customPlot->graph(i + 8)->clearData();
+    for (int i = 0; i < m_channels.size(); i++)
+    {
+        m_customPlot->graph(i + 8)->clearData();
         if ((int)m_channels[i]->GetValueCount() > pos)
-		{
+        {
             m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
             m_channels[i]->SelectValue(pos);
-		}
-	}
+        }
+    }
 
     m_sampleChannel->SelectValue(pos);
-	m_customPlot->replot(QCustomPlot::rpImmediate);
+    m_customPlot->replot(QCustomPlot::rpImmediate);
 }
 
 void Plot::draw()
@@ -246,10 +247,7 @@ void Plot::start()
 {
 	if (!m_serialPort.IsDeviceConnected())
 	{
-		QMessageBox::critical(this,
-			tr("Device not connected"),
-			tr("Arduino device was not found on any serial port. Please, check the connectivity or unpug and plug it aagain."),
-			tr("Close"));
+        m_serialPort.LineIssueSolver();
 		return;
 	}
 
@@ -270,12 +268,21 @@ void Plot::start()
 
     if (0 == m_periodTypeIndex)
     {
-        m_serialPort.SetFrequency(m_period);
+        if (!m_serialPort.SetFrequency(m_period))
+        {
+            m_serialPort.LineIssueSolver();
+            return;
+        }
+
         qDebug() << "frequency set to:" << m_period << " Hz";
     }
     else
     {
-        m_serialPort.SetTime(m_period);
+        if (!m_serialPort.SetTime(m_period))
+        {
+            m_serialPort.LineIssueSolver();
+            return;
+        }
         qDebug() << "time set to:" << m_period << " s";
     }
 
@@ -290,7 +297,12 @@ void Plot::start()
     m_scrollBar->setRange(0, 0);
 
     m_drawTimer->start(100);
-    m_serialPort.Start();
+    if (!m_serialPort.Start())
+    {
+        m_drawTimer->stop();
+        m_serialPort.LineIssueSolver();
+        return;
+    }
 }
 
 void Plot::stop()

@@ -5,6 +5,7 @@
 #include <QSettings>
 #include <SerialPort.h>
 
+class QApplication;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -12,11 +13,12 @@ class MainWindow : public QMainWindow
     QSettings m_settings;
 	SerialPort m_serialPort;
 public:
-	MainWindow(QWidget *parent = 0);
+    MainWindow(QApplication const &application, QWidget *parent = 0);
 	~MainWindow();
 protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
 	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);
+    void dockVisibilityChanged(bool visible);
 };
 
 #endif // MAINWINDOW_H

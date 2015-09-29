@@ -6,6 +6,8 @@
 #include <QSettings>
 #include <SerialPort.h>
 #include <QMessageBox>
+#include <QCoreApplication>
+#include <QFileInfo>
 
 namespace {
     struct RadioButtonWithInfo : public QRadioButton
@@ -55,7 +57,10 @@ void PortListWidget::portSelected()
     }
     else
     {
-        QMessageBox::information(this, tr("Wrong port"), tr("the port doesn't respond properly. Please, check if the device is connected and the port read/write permitions."));
+        QMessageBox::information(
+            this,
+            QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+            tr("the port doesn't respond properly. Please, check if the device is connected and the port read/write permitions."));
         ((QRadioButton *)sender())->setChecked(false);
     }
     this->setCursor(QCursor(Qt::ArrowCursor));

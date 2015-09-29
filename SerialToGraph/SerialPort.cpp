@@ -103,7 +103,7 @@ bool SerialPort::FindAndOpenMySerialPort()
     if (portInfos.empty())
     {
         qDebug() << "hardware not found";
-        _LineIssueSolver();
+        LineIssueSolver();
         return false;
     }
 
@@ -117,7 +117,7 @@ bool SerialPort::FindAndOpenMySerialPort()
     {
 
         qDebug() << "hardware not found";
-        _LineIssueSolver();
+        LineIssueSolver();
         return false;
     }
 
@@ -129,23 +129,23 @@ void SerialPort::ReadAll(QByteArray &array)
     array = m_serialPort.readAll();
 }
 
-void SerialPort::_LineIssueSolver()
+void SerialPort::LineIssueSolver()
 {
 	m_serialPort.close();
 
     QMessageBox::warning(
         NULL,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        tr("You are working in an offline mode. To estabilish a connection, please, reconnect an Arduino device and restart the application.")
+        tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
     );
 
 	PortConnectivityChanged(false);
 }
 
-void SerialPort::Write(Instructions instruction, std::string const &data)
+bool SerialPort::Write(Instructions instruction, std::string const &data)
 {
 	if (!m_serialPort.isOpen())
-		return;
+        return false;
 
     qDebug() << "writen instruction:" << instruction << " data size:" <<
         m_serialPort.write((char const *)&instruction , 1);
@@ -163,30 +163,31 @@ void SerialPort::Write(Instructions instruction, std::string const &data)
 		//_LineIssueSolver();
 	  }
     }
+    return true;
 }
 
-void SerialPort::SetFrequency(unsigned frequency)
+bool SerialPort::SetFrequency(unsigned frequency)
 {
 	std::string tmp;
     tmp.append((char const *)&frequency, 2);
-    Write(INS_SET_FREQUENCY, tmp);
+    return Write(INS_SET_FREQUENCY, tmp);
 }
 
-void SerialPort::SetTime(unsigned time)
+bool SerialPort::SetTime(unsigned time)
 {
     std::string tmp;
     tmp.append((char const *)&time, 2);
-    Write(INS_SET_TIME, tmp);
+    return Write(INS_SET_TIME, tmp);
 }
 
-void SerialPort::Start()
+bool SerialPort::Start()
 {
-	Write(INS_START, "");
+    return Write(INS_START, "");
 }
 
-void SerialPort::Stop()
+bool SerialPort::Stop()
 {
-	Write(INS_STOP, "");
+    return Write(INS_STOP, "");
 }
 
 void SerialPort::SetSelectedChannels(unsigned char channels)

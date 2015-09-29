@@ -15,6 +15,7 @@
 #include <QBoxLayout>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QCoreApplication>
 
 Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	QWidget(parent),
@@ -58,7 +59,7 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
 		m_customPlot->addGraph();
 	}
 
-	m_customPlot->yAxis->setLabel(tr("amplitude"));
+    m_customPlot->yAxis->setLabel(tr("amplitude"));
 	m_customPlot->xAxis->setRange(0, 1);
 	m_customPlot->yAxis->setRange(0, 1);
 
@@ -197,10 +198,7 @@ void Plot::start()
 {
 	if (!m_serialPort.IsDeviceConnected())
 	{
-		QMessageBox::critical(this,
-			tr("Device not connected"),
-			tr("Arduino device was not found on any serial port. Please, check the connectivity or unpug and plug it aagain."),
-			tr("Close"));
+        m_serialPort.LineIssueSolver();
 		return;
 	}
 
@@ -221,12 +219,21 @@ void Plot::start()
 
     if (0 == m_periodTypeIndex)
     {
-        m_serialPort.SetFrequency(m_period);
+        if (!m_serialPort.SetFrequency(m_period))
+        {
+            m_serialPort.LineIssueSolver();
+            return;
+        }
+
         qDebug() << "frequency set to:" << m_period << " Hz";
     }
     else
     {
-        m_serialPort.SetTime(m_period);
+        if (!m_serialPort.SetTime(m_period))
+        {
+            m_serialPort.LineIssueSolver();
+            return;
+        }
         qDebug() << "time set to:" << m_period << " s";
     }
 
@@ -242,7 +249,12 @@ void Plot::start()
 
 	//m_serialPort.Clear(); //FIXME: workaround something is in buffer
     m_drawTimer->start(100);
-    m_serialPort.Start();
+    if (!m_serialPort.Start())
+    {
+        m_drawTimer->stop();
+        m_serialPort.LineIssueSolver();
+        return;
+    }
 }
 
 void Plot::stop()

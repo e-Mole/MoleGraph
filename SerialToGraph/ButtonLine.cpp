@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QWidget>
+#include <QCoreApplication>
+#include <QFileInfo>
 
 
 ButtonLine::ButtonLine(QWidget *parent) :
@@ -113,7 +115,10 @@ void ButtonLine::changePeriodUnits(int periodType)
 
 void ButtonLine::exportPngSlot()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export graph to"), "./", "*.png");
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+        "./", "*.png");
     if (!fileName.contains(".png", Qt::CaseInsensitive))
             fileName += ".png";
 
@@ -123,7 +128,10 @@ void ButtonLine::exportPngSlot()
 
 void ButtonLine::exportCsvSlot()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export graph to"), "./", "*.csv");
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+        "./", "*.csv");
     if (!fileName.contains(".csv", Qt::CaseInsensitive))
             fileName += ".csv";
 

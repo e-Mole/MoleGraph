@@ -5,12 +5,22 @@
 #include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 
-MainWindow::MainWindow(QWidget *parent):
+MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
 	m_settings("eMole", "ArduinoToGraph"),
 	m_serialPort(m_settings)
 {
+    //QLocale locale = QLocale(QLocale::Czech);
+    //QLocale::setDefault(locale);
+
+    QTranslator *translator = new QTranslator(this);
+    application.removeTranslator(translator);
+    if (translator->load("./serialToGraph_cs.qm"))
+        application.installTranslator(translator);
 
 	m_serialPort.FindAndOpenMySerialPort();
 	Plot* plot = new Plot(this, m_serialPort);

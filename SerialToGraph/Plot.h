@@ -30,6 +30,7 @@ class Plot : public QWidget
     void _InitializeSlider(QBoxLayout *graphLayout);
     void _InitializeGraphs(unsigned index, QColor color);
 	bool _FillGraphItem(GraphItem &item);
+    void _ShowConnectionFail();
 
 	QCustomPlot *m_customPlot;
 

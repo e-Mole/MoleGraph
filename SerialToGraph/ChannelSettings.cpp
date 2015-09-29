@@ -39,11 +39,11 @@ ChannelSettings::ChannelSettings(const QString &title, bool selected, bool xAxis
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     mainLayout->addLayout(buttonLayout);
 
-    QPushButton *store = new QPushButton(tr("store"), this);
+    QPushButton *store = new QPushButton(tr("Store"), this);
     buttonLayout->addWidget(store);
     connect(store, SIGNAL(clicked(bool)), this, SLOT(accept()));
 
-    QPushButton *cancel = new QPushButton(tr("cancel"), this);
+    QPushButton *cancel = new QPushButton(tr("Cancel"), this);
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
 }

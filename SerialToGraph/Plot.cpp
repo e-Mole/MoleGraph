@@ -411,7 +411,6 @@ void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
 {
     axis->setTickLabelColor(color);
     axis->setLabelColor(color);
-
     QPen pen = axis->selectedBasePen();
     pen.setColor(Qt::black);
     axis->setSelectedBasePen(pen);
@@ -422,6 +421,13 @@ void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
     axis->setSelectedLabelFont(font);*/
     axis->setSelectedLabelColor(color);
 
+    pen = axis->selectedTickPen();
+    pen.setColor(Qt::black);
+    axis->setSelectedTickPen(pen);
+
+    pen = axis->selectedSubTickPen();
+    pen.setColor(Qt::black);
+    axis->setSelectedSubTickPen(pen);
 }
 
 void Plot::_InitializeAxis(QCPAxis *axis, Channel *channel)

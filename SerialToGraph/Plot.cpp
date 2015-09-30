@@ -7,7 +7,6 @@
 #include <QBoxLayout>
 #include <QByteArray>
 #include <QColor>
-#include <qcustomplot/qcustomplot.h>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFile>
@@ -73,7 +72,27 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+    connect(
+        m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)),
+        this, SLOT(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)));
+    //TODO:click to graph could cause rescalling of all axes, there is no signal emited for it.
+
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
+}
+
+void Plot::axisDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part, QMouseEvent *event)
+{
+
+    if (axis == m_customPlot->xAxis)
+    {
+        m_customPlot->xAxis->rescale();
+        return;
+    }
+
+    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
+    for (;it != m_yAxes.end(); ++it)
+        if (it.value() == axis)
+            _RescaleAxisWithMargin(it.key());
 }
 
 void Plot::addYChannel(Channel *channel)
@@ -385,7 +404,7 @@ void Plot::_RemoveVerticalAxes()
         }
     }
 
-    m_yAxis.clear();
+    m_yAxes.clear();
 }
 
 void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
@@ -414,16 +433,16 @@ void Plot::_InitializeAxis(QCPAxis *axis, Channel *channel)
     axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
     axis->grid()->setVisible(false);
     axis->setLabelPadding(AXES_LABEL_PADDING);
-    m_yAxis[channel->GetAxisNumber()] = axis;
+    m_yAxes[channel->GetAxisNumber()] = axis;
 }
 
 void Plot::_StoreRangesToChannels()
 {
     foreach (Channel *channel, m_channels)
     {
-        QMap<unsigned,  QCPAxis *>::iterator it = m_yAxis.find(channel->GetAxisNumber());
+        QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.find(channel->GetAxisNumber());
 
-        if (!channel->IsAttached() && it != m_yAxis.end())
+        if (!channel->IsAttached() && it != m_yAxes.end())
            channel->SetAxisRange(it.value()->range().lower, it.value()->range().upper);
     }
 }
@@ -454,7 +473,7 @@ void Plot::_UpdateAxes(Channel *channel)
     {
         if (channel->IsSelected())
         {
-           QCPAxis *axis = m_yAxis[channel->GetAxisNumber()];
+           QCPAxis *axis = m_yAxes[channel->GetAxisNumber()];
            m_customPlot->graph(channel->GetIndex())->setValueAxis(axis);
            m_customPlot->graph(channel->GetIndex()+8)->setValueAxis(axis);
            m_customPlot->graph(channel->GetIndex())->setVisible(true);
@@ -465,12 +484,12 @@ void Plot::_UpdateAxes(Channel *channel)
         }
     }
 
-    if (0 != m_yAxis.size())
+    if (0 != m_yAxes.size())
     {
         //just for case it has been selected
         m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
 
-        m_yAxis.first()->setSelectedParts(QCPAxis::spTickLabels);
+        m_yAxes.first()->setSelectedParts(QCPAxis::spTickLabels);
     }
 
     selectionChanged(); //initialize zoom and drag according current selection
@@ -502,7 +521,7 @@ void Plot::selectionChanged()
 
     _SetDragAndZoom(NULL, m_customPlot->selectedAxes().first());
 
-    foreach (QCPAxis *axis, m_yAxis)
+    foreach (QCPAxis *axis, m_yAxes)
     {
         axis->grid()->setVisible(false);
     }
@@ -540,5 +559,5 @@ void Plot::_RescaleAxisWithMargin(unsigned axisNumber)
     if (0 == margin) //upper and lower are the same
         margin = std::abs(upper / RESCALE_MARGIN_RATIO);
 
-    m_yAxis[axisNumber]->setRange(lower - margin, upper + margin);
+    m_yAxes[axisNumber]->setRange(lower - margin, upper + margin);
 }

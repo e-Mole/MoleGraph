@@ -1,6 +1,7 @@
 #ifndef PLOT_H
 #define PLOT_H
 
+#include <qcustomplot/qcustomplot.h>
 #include <QWidget>
 #include <QQueue>
 #include <stdint.h>
@@ -8,7 +9,6 @@
 #include <QMap>
 
 class Channel;
-class QCPAxis;
 class QCustomPlot;
 class QTimer;
 class SerialPort;
@@ -17,7 +17,8 @@ class QColor;
 class QScrollBar;
 class QPushButton;
 class QBoxLayout;
-
+class QCPAbstractItem;
+class QMouseEvent;
 class Plot : public QWidget
 {
 	Q_OBJECT
@@ -61,7 +62,7 @@ class Plot : public QWidget
 	QVector<Channel *> m_channels;
 	Channel *m_sampleChannel;
 
-    QMap<unsigned,  QCPAxis *> m_yAxis; //axis number as a key
+    QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
 
 public:
 	Plot(QWidget *parent, SerialPort &serialPort);
@@ -85,6 +86,7 @@ protected slots:
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();
+    void axisDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part, QMouseEvent *event);
 };
 
 #endif // PLOT_H

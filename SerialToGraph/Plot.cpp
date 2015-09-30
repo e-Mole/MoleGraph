@@ -7,6 +7,7 @@
 #include <QBoxLayout>
 #include <QByteArray>
 #include <QColor>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFile>
@@ -16,8 +17,9 @@
 #include <QTimer>
 #include <QThread>
 #include <QVBoxLayout>
+#include <QWidget>
 #include <SerialPort.h>
-#include <QCoreApplication>
+
 
 #define RESCALE_MARGIN_RATIO 50
 #define AXES_LABEL_PADDING 1
@@ -110,6 +112,7 @@ void Plot::_InitializeSlider(QBoxLayout *graphLayout)
 {
     m_scrollBar = new QScrollBar(Qt::Horizontal, this);
     m_scrollBar->setRange(0,0);
+    m_scrollBar->setFocusPolicy(Qt::StrongFocus);
     graphLayout->addWidget(m_scrollBar);
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
 }

@@ -27,16 +27,19 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	this->setCentralWidget(plot);
 
     QDockWidget *buttonDock = new QDockWidget(this);
+    buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
 
-	this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-	ButtonLine* buttonLine = new ButtonLine(this);
+    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
+    ButtonLine* buttonLine = new ButtonLine(this);
 	buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
     buttonDock->setWidget(buttonLine);
 
 	QDockWidget *channelDock = new QDockWidget(this);
-	this->addDockWidget((Qt::DockWidgetArea)m_settings.value("channelSideBarLocation", Qt::RightDockWidgetArea).toInt(), channelDock);
+    channelDock->setAllowedAreas(Qt::LeftDockWidgetArea| Qt::RightDockWidgetArea);
+
+    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("channelSideBarLocation", Qt::RightDockWidgetArea).toInt(), channelDock, Qt::Vertical);
 	ChannelSideBar *channelSideBar = new ChannelSideBar(this);
 	connect(channelDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(channelSideBaeLocationChanged(Qt::DockWidgetArea)));
     connect(channelDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));

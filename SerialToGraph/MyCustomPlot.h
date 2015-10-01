@@ -10,6 +10,7 @@ class MyCustomPlot : public QCustomPlot
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
 public:
     MyCustomPlot(QWidget *parent);
 

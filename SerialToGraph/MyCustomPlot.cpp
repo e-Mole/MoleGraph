@@ -6,6 +6,15 @@ MyCustomPlot::MyCustomPlot(QWidget *parent) :
 
 }
 
+void MyCustomPlot::mousePressEvent(QMouseEvent *event)
+{
+    //to deselect all of plotables when user click out of axes
+    foreach (QCPAxis *axis, axisRect()->axes())
+        foreach (QCPAbstractPlottable*plotable, axis->plottables())
+            plotable->setSelected(false);
+
+    QCustomPlot::mousePressEvent(event);
+}
 void MyCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QVariant details;

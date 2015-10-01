@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    Plot.cpp \
     qcustomplot/qcustomplot.cpp \
     SerialPort.cpp \
     ChannelSettings.cpp \
@@ -22,10 +21,11 @@ SOURCES += main.cpp\
     PortListDialog.cpp \
     PortListWidget.cpp \
     ButtonLine.cpp \
-    ChannelSideBar.cpp
+    ChannelSideBar.cpp \
+    MyCustomPlot.cpp \
+    Grap.cpp
 
 HEADERS  += MainWindow.h \
-    Plot.h \
     qcustomplot/qcustomplot.h \
     SerialPort.h \
     ChannelSettings.h \
@@ -33,6 +33,8 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     ButtonLine.h \
-    ChannelSideBar.h
+    ChannelSideBar.h \
+    MyCustomPlot.h \
+    Graph.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

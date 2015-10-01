@@ -1,9 +1,10 @@
-#include "Plot.h"
+#include "Graph.h"
 
 #include <cmath>
 #include <Channel.h>
 #include <limits.h>
 #include <math.h>
+#include <MyCustomPlot.h>
 #include <QBoxLayout>
 #include <QByteArray>
 #include <QColor>
@@ -24,7 +25,7 @@
 #define RESCALE_MARGIN_RATIO 50
 #define AXES_LABEL_PADDING 1
 
-Plot::Plot(QWidget *parent, SerialPort &serialPort) :
+Graph::Graph(QWidget *parent, SerialPort &serialPort) :
 	QWidget(parent),
 	m_customPlot(NULL),
 	m_serialPort(serialPort),
@@ -49,14 +50,14 @@ Plot::Plot(QWidget *parent, SerialPort &serialPort) :
 	connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 }
 
-Plot::~Plot()
+Graph::~Graph()
 {
 
 }
 
-void Plot::_InitializePolt(QBoxLayout *graphLayout)
+void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
-	m_customPlot = new QCustomPlot(this);
+    m_customPlot = new MyCustomPlot(this);
 	graphLayout->addWidget(m_customPlot);
 
 	for (int i = 0; i < 16; i++)
@@ -74,15 +75,13 @@ void Plot::_InitializePolt(QBoxLayout *graphLayout)
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
-    connect(
-        m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)),
-        this, SLOT(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)));
-    //TODO:click to graph could cause rescalling of all axes, there is no signal emited for it.
+    connect(m_customPlot, SIGNAL(outOfAxesDoubleClick()), this, SLOT(outOfAxesDoubleClick()));
+    connect(m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*)),this, SLOT(axisDoubleClick(QCPAxis*)));
 
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
-void Plot::axisDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part, QMouseEvent *event)
+void Graph::axisDoubleClick(QCPAxis *axis)
 {
 
     if (axis == m_customPlot->xAxis)
@@ -97,18 +96,27 @@ void Plot::axisDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part, QMouseEv
             _RescaleAxisWithMargin(it.key());
 }
 
-void Plot::addYChannel(Channel *channel)
+void Graph::outOfAxesDoubleClick()
+{
+    m_customPlot->xAxis->rescale();
+
+    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
+    for (;it != m_yAxes.end(); ++it)
+        _RescaleAxisWithMargin(it.key());
+}
+
+void Graph::addYChannel(Channel *channel)
 {
 	_InitializeGraphs(channel);
 	m_channels.push_back(channel);
 }
 
-void Plot::addXChannel(Channel *channel)
+void Graph::addXChannel(Channel *channel)
 {
 	m_customPlot->xAxis->setLabel(channel->GetName());
 	m_sampleChannel = channel;
 }
-void Plot::_InitializeSlider(QBoxLayout *graphLayout)
+void Graph::_InitializeSlider(QBoxLayout *graphLayout)
 {
     m_scrollBar = new QScrollBar(Qt::Horizontal, this);
     m_scrollBar->setRange(0,0);
@@ -117,12 +125,12 @@ void Plot::_InitializeSlider(QBoxLayout *graphLayout)
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
 }
 
-void Plot::periodTypeChanged(int index)
+void Graph::periodTypeChanged(int index)
 {
         m_periodTypeIndex = index;
 }
 
-QString Plot::_GetAxisName(QString const &units, unsigned index)
+QString Graph::_GetAxisName(QString const &units, unsigned index)
 {
     QString channels;
     bool first =true;
@@ -163,7 +171,7 @@ QString Plot::_GetAxisName(QString const &units, unsigned index)
     return channels + " [" + units + "]" ;
 }
 
-void Plot::_InitializeGraphs(Channel *channel)
+void Graph::_InitializeGraphs(Channel *channel)
 {
 	unsigned index = channel->GetIndex();
 	QColor &color = channel->GetColor();
@@ -176,7 +184,7 @@ void Plot::_InitializeGraphs(Channel *channel)
     //m_customPlot->graph(index + 8)->setAntialiased(false);
 }
 
-bool Plot::_FillGraphItem(GraphItem &item)
+bool Graph::_FillGraphItem(GraphItem &item)
 {
 	if (m_queue.size() < 5)
 		return false;
@@ -193,7 +201,7 @@ bool Plot::_FillGraphItem(GraphItem &item)
 	return true;
 }
 
-void Plot::redrawMarks(int pos)
+void Graph::redrawMarks(int pos)
 {
     for (int i = 0; i < m_channels.size(); i++)
     {
@@ -206,10 +214,10 @@ void Plot::redrawMarks(int pos)
     }
 
     m_sampleChannel->SelectValue(pos);
-    m_customPlot->replot(QCustomPlot::rpImmediate);
+    m_customPlot->replot(MyCustomPlot::rpImmediate);
 }
 
-void Plot::draw()
+void Graph::draw()
 {
     unsigned lastPos = (m_x.size() > 0) ? m_x.last() : 0;
 	GraphItem item;
@@ -260,12 +268,12 @@ void Plot::draw()
     {
         //if slider value is changed graph is redrown by slider. I have to redraw plot there because of moving by the slider
         //else i have to redraw it here
-        m_customPlot->replot(QCustomPlot::rpImmediate);
+        m_customPlot->replot(MyCustomPlot::rpImmediate);
 
     }
 }
 
-void Plot::start()
+void Graph::start()
 {
 	if (!m_serialPort.IsDeviceConnected())
 	{
@@ -327,7 +335,7 @@ void Plot::start()
     }
 }
 
-void Plot::stop()
+void Graph::stop()
 {
 
     for(int i = 0; i < m_channels.size(); i++)
@@ -339,12 +347,12 @@ void Plot::stop()
 
 }
 
-void Plot::exportPng(QString const &fileName)
+void Graph::exportPng(QString const &fileName)
 {
     m_customPlot->savePng(fileName);
 }
 
-void Plot::exportCsv(QString const &fileName)
+void Graph::exportCsv(QString const &fileName)
 {
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
@@ -390,12 +398,12 @@ void Plot::exportCsv(QString const &fileName)
     file.close();
 }
 
-void Plot::periodChanged(unsigned period)
+void Graph::periodChanged(unsigned period)
 {
     m_period = period;
 }
 
-void Plot::_RemoveVerticalAxes()
+void Graph::_RemoveVerticalAxes()
 {
     foreach (QCPAxis* axis, m_customPlot->axisRect()->axes())
     {
@@ -410,7 +418,7 @@ void Plot::_RemoveVerticalAxes()
     m_yAxes.clear();
 }
 
-void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
+void Graph::_SetAxisColor(QCPAxis *axis, QColor const & color)
 {
     axis->setTickLabelColor(color);
     axis->setLabelColor(color);
@@ -433,7 +441,7 @@ void Plot::_SetAxisColor(QCPAxis *axis, QColor const & color)
     axis->setSelectedSubTickPen(pen);
 }
 
-void Plot::_InitializeAxis(QCPAxis *axis, Channel *channel)
+void Graph::_InitializeAxis(QCPAxis *axis, Channel *channel)
 {
      _SetAxisColor(axis, channel->GetColor());
 
@@ -445,7 +453,7 @@ void Plot::_InitializeAxis(QCPAxis *axis, Channel *channel)
     m_yAxes[channel->GetAxisNumber()] = axis;
 }
 
-void Plot::_StoreRangesToChannels()
+void Graph::_StoreRangesToChannels()
 {
     foreach (Channel *channel, m_channels)
     {
@@ -456,7 +464,7 @@ void Plot::_StoreRangesToChannels()
     }
 }
 
-void Plot::_UpdateAxes(Channel *channel)
+void Graph::_UpdateAxes(Channel *channel)
 {
     //store ranges per channel because all y axes will be removed
     _StoreRangesToChannels();
@@ -504,13 +512,13 @@ void Plot::_UpdateAxes(Channel *channel)
     selectionChanged(); //initialize zoom and drag according current selection
 }
 
-void Plot::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
+void Graph::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
 {
     m_customPlot->axisRect()->setRangeZoomAxes(xAxis, yAxis);
     m_customPlot->axisRect()->setRangeDragAxes(xAxis, yAxis);
 }
 
-void Plot::selectionChanged()
+void Graph::selectionChanged()
 {
     if (0 == m_customPlot->selectedAxes().size())
     {
@@ -538,17 +546,17 @@ void Plot::selectionChanged()
 
 }
 
-void Plot::updateChannel(Channel *channel)
+void Graph::updateChannel(Channel *channel)
 {
     _UpdateAxes(channel);
     m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsSelected());
-    m_customPlot->replot(QCustomPlot::rpImmediate);
+    m_customPlot->replot(MyCustomPlot::rpImmediate);
 
 
 }
 
 
-void Plot::_RescaleAxisWithMargin(unsigned axisNumber)
+void Graph::_RescaleAxisWithMargin(unsigned axisNumber)
 {
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();

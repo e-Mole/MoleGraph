@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include <ButtonLine.h>
 #include <ChannelSideBar.h>
-#include <Plot.h>
+#include <Graph.h>
 #include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
@@ -23,7 +23,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         application.installTranslator(translator);
 
 	m_serialPort.FindAndOpenMySerialPort();
-	Plot* plot = new Plot(this, m_serialPort);
+    Graph* plot = new Graph(this, m_serialPort);
 	this->setCentralWidget(plot);
 
     QDockWidget *buttonDock = new QDockWidget(this);

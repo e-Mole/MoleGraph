@@ -1,6 +1,5 @@
 #ifndef PLOT_H
 #define PLOT_H
-
 #include <qcustomplot/qcustomplot.h>
 #include <QWidget>
 #include <QQueue>
@@ -9,7 +8,7 @@
 #include <QMap>
 
 class Channel;
-class QCustomPlot;
+class MyCustomPlot;
 class QTimer;
 class SerialPort;
 class QString;
@@ -19,7 +18,7 @@ class QPushButton;
 class QBoxLayout;
 class QCPAbstractItem;
 class QMouseEvent;
-class Plot : public QWidget
+class Graph : public QWidget
 {
 	Q_OBJECT
 
@@ -42,7 +41,7 @@ class Plot : public QWidget
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RescaleAxisWithMargin(unsigned axisNumber);
 
-	QCustomPlot *m_customPlot;
+    MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;
 
@@ -65,8 +64,8 @@ class Plot : public QWidget
     QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
 
 public:
-	Plot(QWidget *parent, SerialPort &serialPort);
-	~Plot();
+    Graph(QWidget *parent, SerialPort &serialPort);
+    ~Graph();
 
 signals:
 	void startRequestTimer(int msec);
@@ -86,7 +85,8 @@ protected slots:
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();
-    void axisDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part, QMouseEvent *event);
+    void outOfAxesDoubleClick();
+    void axisDoubleClick(QCPAxis *axis);
 };
 
 #endif // PLOT_H

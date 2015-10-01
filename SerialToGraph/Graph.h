@@ -85,8 +85,8 @@ protected slots:
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();
-    void outOfAxesDoubleClick();
-    void axisDoubleClick(QCPAxis *axis);
+    void rescaleAllAxes();
+    void rescaleAxis(QCPAxis *axis);
 };
 
 #endif // PLOT_H

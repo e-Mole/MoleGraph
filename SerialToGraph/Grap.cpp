@@ -75,13 +75,13 @@ void Graph::_InitializePolt(QBoxLayout *graphLayout)
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
-    connect(m_customPlot, SIGNAL(outOfAxesDoubleClick()), this, SLOT(outOfAxesDoubleClick()));
-    connect(m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*)),this, SLOT(axisDoubleClick(QCPAxis*)));
+    connect(m_customPlot, SIGNAL(rescaleAllAxes()), this, SLOT(rescaleAllAxes()));
+    connect(m_customPlot, SIGNAL(rescaleAxis(QCPAxis*)),this, SLOT(rescaleAxis(QCPAxis*)));
 
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
-void Graph::axisDoubleClick(QCPAxis *axis)
+void Graph::rescaleAxis(QCPAxis *axis)
 {
 
     if (axis == m_customPlot->xAxis)
@@ -96,7 +96,7 @@ void Graph::axisDoubleClick(QCPAxis *axis)
             _RescaleAxisWithMargin(it.key());
 }
 
-void Graph::outOfAxesDoubleClick()
+void Graph::rescaleAllAxes()
 {
     m_customPlot->xAxis->rescale();
 
@@ -560,9 +560,11 @@ void Graph::updateChannel(Channel *channel)
 {
     _UpdateAxes(channel);
     m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsSelected());
+
+    //FIXME: quick solution. axis should not be rescaled in the case its name is changed
+    rescaleAllAxes();
+
     m_customPlot->replot(MyCustomPlot::rpImmediate);
-
-
 }
 
 

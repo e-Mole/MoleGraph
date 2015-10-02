@@ -75,8 +75,8 @@ void Graph::_InitializePolt(QBoxLayout *graphLayout)
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
-    connect(m_customPlot, SIGNAL(rescaleAllAxes()), this, SLOT(rescaleAllAxes()));
-    connect(m_customPlot, SIGNAL(rescaleAxis(QCPAxis*)),this, SLOT(rescaleAxis(QCPAxis*)));
+    connect(m_customPlot, SIGNAL(outOfAxesDoubleClick()), this, SLOT(rescaleAllAxes()));
+    connect(m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*)),this, SLOT(rescaleAxis(QCPAxis*)));
 
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
@@ -192,7 +192,7 @@ void Graph::_InitializeGraphs(Channel *channel)
 
 bool Graph::_FillGraphItem(GraphItem &item)
 {
-	if (m_queue.size() < 5)
+    if (m_queue.size() < 5)
 		return false;
 
     item.channelIndex = m_queue.dequeue();
@@ -294,10 +294,12 @@ void Graph::start()
 	m_counter = 0;
 	m_x.clear();
 
-    for (int i = 0; i < m_channels.size(); i++)
+    foreach (Channel *channel, m_channels)
     {
-		m_channels[i]->ClearValues();
+        channel->ClearValues();
     }
+    for (int i = 0; i< m_customPlot->graphCount(); i++)
+        m_customPlot->graph(i)->data()->clear();
 
 	m_queue.clear();
 	m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now

@@ -9,6 +9,7 @@ enum Instructions
   INS_STOP = 6
 };
 
+unsigned counter =  0;
 unsigned char g_enabledChannels = 0;
 unsigned g_requiredTime = 0;
 unsigned g_currentTime = 0;
@@ -88,6 +89,7 @@ void DemoUpdate()
     g_channel0 = 0;
     g_channel1 = (-100 == g_channel1) ? 100 : -100;
   } 
+  g_channel2 = 1.0 / (float)(++counter);
 }
 void UpdateChannels()
 {

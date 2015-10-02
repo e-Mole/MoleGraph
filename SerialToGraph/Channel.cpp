@@ -1,5 +1,6 @@
 #include "Channel.h"
 #include <ChannelSettings.h>
+#include <cmath>
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QColor>
@@ -29,12 +30,12 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 
 	QHBoxLayout *groupBoxLayout = new QHBoxLayout(this);
 	setLayout(groupBoxLayout);
-
+    groupBoxLayout->setMargin(4);
 
 	if (!samples)
 	{
 		m_enabled = new QCheckBox(this);
-		groupBoxLayout->addWidget(m_enabled);
+        groupBoxLayout->addWidget(m_enabled);
         connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
 	}
 
@@ -53,7 +54,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 		m_selectedValue->setStyleSheet("QLabel { background-color : white;}");
 		m_selectedValue->setPalette(palette);
 		m_selectedValue->setEnabled(false);
-		m_selectedValue->setMinimumWidth(35);
+        m_selectedValue->setFixedWidth(80);
 		m_selectedValue->setMargin(2);
 	}
 }
@@ -104,7 +105,14 @@ QString Channel::GetUnits()
 
 void Channel::SelectValue(unsigned index)
 {
-	m_selectedValue->setText(QString("%1").arg(m_values[index]));
+    double absValue = std::abs(m_values[index]);
+
+    if (absValue < 0.0001 && absValue != 0)
+        m_selectedValue->setText(QString::number(m_values[index], 'e', 3));
+    else if (absValue < 1)
+        m_selectedValue->setText(QString::number(m_values[index], 'g', 4));
+    else
+        m_selectedValue->setText(QString::number(m_values[index], 'g', 6));
 }
 
 void Channel::AddValue( double value)

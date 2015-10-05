@@ -13,7 +13,7 @@ ChannelSettings::ChannelSettings
 	const QString &title,
 	const QString &units,
 	bool selected,
-	bool xAxis,
+    bool samples,
 	bool toRightSide,
 	QWidget * parent,
 	Qt::WindowFlags f
@@ -28,28 +28,34 @@ ChannelSettings::ChannelSettings
 
     unsigned row = 0;
 
-    QLabel *selectedLabel = new QLabel(tr("Selected"), this);
-    gridLaout->addWidget(selectedLabel, row, 0);
-    m_selected = new QCheckBox(this);
-    m_selected->setChecked(selected);
-    connect(m_selected, SIGNAL(clicked(bool)), this , SLOT(selectedCheckboxClicked(bool)));
-    gridLaout->addWidget(m_selected, row++, 1);
+    if (!samples)
+    {
+        QLabel *selectedLabel = new QLabel(tr("Selected"), this);
+        gridLaout->addWidget(selectedLabel, row, 0);
+        m_selected = new QCheckBox(this);
+        m_selected->setChecked(selected);
+        connect(m_selected, SIGNAL(clicked(bool)), this , SLOT(selectedCheckboxClicked(bool)));
+        gridLaout->addWidget(m_selected, row++, 1);
+    }
 
 	QLabel *nameLabel = new QLabel(tr("Title"), this);
 	gridLaout->addWidget(nameLabel, row,0);
     m_name = new QLineEdit(title, this);
 	gridLaout->addWidget(m_name, row++, 1);
 
-	QLabel *unitsLabel = new QLabel(tr("Units"), this);
-	gridLaout->addWidget(unitsLabel, row,0);
-	m_units = new QLineEdit(units, this);
-	gridLaout->addWidget(m_units, row++, 1);
+    if (!samples)
+    {
+        QLabel *unitsLabel = new QLabel(tr("Units"), this);
+        gridLaout->addWidget(unitsLabel, row,0);
+        m_units = new QLineEdit(units, this);
+        gridLaout->addWidget(m_units, row++, 1);
 
-	QLabel *toRigtSideLabel = new QLabel(tr("To right side"), this);
-	gridLaout->addWidget(toRigtSideLabel, row, 0);
-	m_toRightSide = new QCheckBox(this);
-	m_toRightSide->setChecked(toRightSide);
-	gridLaout->addWidget(m_toRightSide, row++, 1);
+        QLabel *toRigtSideLabel = new QLabel(tr("To right side"), this);
+        gridLaout->addWidget(toRigtSideLabel, row, 0);
+        m_toRightSide = new QCheckBox(this);
+        m_toRightSide->setChecked(toRightSide);
+        gridLaout->addWidget(m_toRightSide, row++, 1);
+    }
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     mainLayout->addLayout(buttonLayout);
@@ -62,8 +68,11 @@ ChannelSettings::ChannelSettings
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
 
-    //set intitial state
-    selectedCheckboxClicked(selected);
+    if (!samples)
+    {
+        //set intitial state
+        selectedCheckboxClicked(selected);
+    }
 }
 
 void ChannelSettings::selectedCheckboxClicked(bool checked)

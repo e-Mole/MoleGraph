@@ -21,7 +21,8 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
     m_axisMinValue(0),
-    m_axisMaxValue(1)
+    m_axisMaxValue(1),
+    m_samples(samples)
 {
     ResetAttachedTo();
 
@@ -32,12 +33,14 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 	setLayout(groupBoxLayout);
     groupBoxLayout->setMargin(4);
 
-	if (!samples)
-	{
-		m_enabled = new QCheckBox(this);
-        groupBoxLayout->addWidget(m_enabled);
-        connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
-	}
+    m_enabled = new QCheckBox(this);
+    groupBoxLayout->addWidget(m_enabled);
+    connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
+    if (samples)
+    {
+        m_enabled->setChecked(true);
+        m_enabled->setVisible(false);
+    }
 
 	m_selectedValue = new QLabel(this);
 	_DisplayNAValue();
@@ -77,13 +80,16 @@ void Channel::checkBoxClicked(bool checked)
 void Channel::mousePressEvent(QMouseEvent * event)
 {
     ChannelSettings *settings = new ChannelSettings(
-        title(), m_units, m_enabled->isChecked(), false, m_toRightSide, this);
+        title(), m_units, m_enabled->isChecked(), m_samples, m_toRightSide, this);
 	if (QDialog::Accepted == settings->exec())
 	{
 		setTitle(settings->GetName());
-		m_enabled->setChecked(settings->GetSelected());
-		m_units = settings->GetUnits();
-        m_toRightSide = settings->IsSetToRightSide();
+        if (!m_samples)
+        {
+            m_enabled->setChecked(settings->GetSelected());
+            m_units = settings->GetUnits();
+            m_toRightSide = settings->IsSetToRightSide();
+        }
 		stateChanged();
 	}
 }

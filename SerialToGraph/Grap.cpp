@@ -465,6 +465,12 @@ void Graph::_StoreRangesToChannels()
 
 void Graph::_UpdateAxes(Channel *channel)
 {
+    if (channel->IsSampleChannel())
+    {
+        m_customPlot->xAxis->setLabel(channel->GetName());
+        return;
+    }
+
     //store ranges per channel because all y axes will be removed
     _StoreRangesToChannels();
 

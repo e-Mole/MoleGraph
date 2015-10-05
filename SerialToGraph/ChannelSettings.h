@@ -17,7 +17,7 @@ class ChannelSettings : public QDialog
 	QCheckBox * m_xAxis;
 	QCheckBox * m_toRightSide;
 public:
-    ChannelSettings(QString const &title, const QString &units, bool selected, bool xAxe, bool toRightSide, QWidget *parent, Qt::WindowFlags f = 0);
+    ChannelSettings(QString const &title, const QString &units, bool selected, bool samples, bool toRightSide, QWidget *parent, Qt::WindowFlags f = 0);
     QString GetName();
 	bool GetSelected();
 	QString GetUnits();

@@ -22,11 +22,11 @@ public:
 
 signals:
 	void anyChannelEnabled(bool enabled);
-	void channelStateChanged(Channel *channel);
+    void channelStateChanged(Channel *channel);
 	void YChannelAdded(Channel *channel);
 	void XChannelAdded(Channel *channel);
 protected slots:
-	void channelStateChanged();
+    void channelStateChanged();
 };
 
 #endif // CHANNELSIDEBAR_H

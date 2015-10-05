@@ -31,9 +31,9 @@ class Channel : public QGroupBox
     double m_axisMinValue;
     double m_axisMaxValue;
     unsigned m_attachedTo;
-
+    bool m_samples;
 public:
-	Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
+    Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
 	~Channel();
 
 	bool IsSelected();
@@ -85,6 +85,9 @@ public:
 
     unsigned AttachedTo()
     {   return m_attachedTo; }
+
+    bool IsSampleChannel()
+    {   return m_samples; }
 
 signals:
 	void stateChanged();

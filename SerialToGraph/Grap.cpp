@@ -60,18 +60,6 @@ void Graph::_InitializePolt(QBoxLayout *graphLayout)
     m_customPlot = new MyCustomPlot(this);
 	graphLayout->addWidget(m_customPlot);
 
-	for (int i = 0; i < 16; i++)
-	{
-        m_customPlot->addGraph();
-	}
-
-	m_customPlot->xAxis->setRange(0, 1);
-    m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
-	m_customPlot->setMinimumSize(700, 500);
-
-    m_customPlot->yAxis->setVisible(false);
-    m_customPlot->xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
-
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
@@ -184,7 +172,7 @@ void Graph::_InitializeGraphs(Channel *channel)
     pen.setColor(color);
     m_customPlot->graph(index)->setSelectedPen(pen);
 
-	m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6)); 
+    m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
 	m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
 	m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
     //m_customPlot->graph(index + 8)->setAntialiased(false);
@@ -424,6 +412,7 @@ void Graph::_RemoveVerticalAxes()
     }
 
     m_yAxes.clear();
+    m_customPlot->yAxis = NULL;
 }
 
 void Graph::_SetAxisColor(QCPAxis *axis, QColor const & color)
@@ -459,6 +448,8 @@ void Graph::_InitializeAxis(QCPAxis *axis, Channel *channel)
     axis->grid()->setVisible(false);
     axis->setLabelPadding(AXES_LABEL_PADDING);
     m_yAxes[channel->GetAxisNumber()] = axis;
+    if (NULL == m_customPlot->yAxis)
+        m_customPlot->yAxis = axis;
 }
 
 void Graph::_StoreRangesToChannels()
@@ -530,7 +521,7 @@ void Graph::selectionChanged()
 {
     if (0 == m_customPlot->selectedAxes().size())
     {
-        _SetDragAndZoom(NULL, NULL);
+        _SetDragAndZoom(m_customPlot->xAxis, m_customPlot->yAxis);
         return;
     }
 

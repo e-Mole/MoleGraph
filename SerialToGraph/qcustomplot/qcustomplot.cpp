@@ -12485,7 +12485,7 @@ int QCPAxisRect::calculateAutoMargin(QCP::MarginSide side)
 
   The mDragging flag is set to true and some anchor points are set that are needed to determine the
   distance the mouse was dragged in the mouse move/release events later.
-  
+
   \see mouseMoveEvent, mouseReleaseEvent
 */
 void QCPAxisRect::mousePressEvent(QMouseEvent *event)

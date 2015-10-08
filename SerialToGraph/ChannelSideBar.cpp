@@ -87,7 +87,6 @@ namespace
             if (it != axisMap.end())
             {
                 channel->SetAxisNumber(it.value()->GetAxisNumber());
-                channel->SetAxisRange(0,1);
                 channel->SetAttachedTo(it.value()->GetIndex());
             }
             else

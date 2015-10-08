@@ -20,8 +20,6 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
     m_axisNumber(0),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
-    m_axisMinValue(0),
-    m_axisMaxValue(1),
     m_samples(samples),
     m_selectedValueIndex(0)
 {
@@ -150,10 +148,7 @@ void Channel::ClearValues()
 {
 	m_values.clear();
 	_DisplayNAValue();
-}
 
-void Channel::SetAxisRange(double min, double max)
-{
-    m_axisMinValue = min;
-    m_axisMaxValue = max;
+    m_channelMinValue = std::numeric_limits<double>::max();
+    m_channelMaxValue = -std::numeric_limits<double>::max();
 }

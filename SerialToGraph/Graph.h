@@ -35,7 +35,6 @@ class Graph : public QWidget
     void _InitializeAxis(QCPAxis *axis, Channel *channel);
 	void _InitializeGraphs(Channel *channel);
     bool _FillGraphItem(GraphItem &item);
-    void _StoreRangesToChannels();
     void _UpdateAxes(Channel *channel);
     void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);

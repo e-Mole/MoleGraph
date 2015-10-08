@@ -28,8 +28,6 @@ class Channel : public QGroupBox
     unsigned m_axisNumber;
     double m_channelMinValue;
     double m_channelMaxValue;
-    double m_axisMinValue;
-    double m_axisMaxValue;
     unsigned m_attachedTo;
     bool m_samples;
     unsigned m_selectedValueIndex;
@@ -68,12 +66,6 @@ public:
     { return m_channelMaxValue; }
 
     void SetAxisRange(double min, double max);
-
-    double GetAxisMin()
-    { return m_axisMinValue; }
-
-    double GetAxisMax()
-    { return m_axisMaxValue; }
 
     void SetAttachedTo(unsigned channelIndex)
     { m_attachedTo = channelIndex; }

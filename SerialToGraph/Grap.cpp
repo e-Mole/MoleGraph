@@ -443,24 +443,13 @@ void Graph::_InitializeAxis(QCPAxis *axis, Channel *channel)
      _SetAxisColor(axis, channel->GetColor());
 
     axis->setLabel(_GetAxisName(channel->GetUnits(), channel->GetAxisNumber()));
-    axis->setRange(channel->GetAxisMin(), channel->GetAxisMax());
+    axis->setRange(0, 1);
     axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
     axis->grid()->setVisible(false);
     axis->setLabelPadding(AXES_LABEL_PADDING);
     m_yAxes[channel->GetAxisNumber()] = axis;
     if (NULL == m_customPlot->yAxis)
         m_customPlot->yAxis = axis;
-}
-
-void Graph::_StoreRangesToChannels()
-{
-    foreach (Channel *channel, m_channels)
-    {
-        QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.find(channel->GetAxisNumber());
-
-        if (!channel->IsAttached() && it != m_yAxes.end())
-           channel->SetAxisRange(it.value()->range().lower, it.value()->range().upper);
-    }
 }
 
 void Graph::_UpdateAxes(Channel *channel)
@@ -470,9 +459,6 @@ void Graph::_UpdateAxes(Channel *channel)
         m_customPlot->xAxis->setLabel(channel->GetName());
         return;
     }
-
-    //store ranges per channel because all y axes will be removed
-    _StoreRangesToChannels();
 
     //it is necessery to update all access because we want to have always the same order
     //and some of them could be attached and are not any more

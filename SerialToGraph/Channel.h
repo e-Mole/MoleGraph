@@ -32,6 +32,7 @@ class Channel : public QGroupBox
     double m_axisMaxValue;
     unsigned m_attachedTo;
     bool m_samples;
+    unsigned m_selectedValueIndex;
 public:
     Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
 	~Channel();

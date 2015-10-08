@@ -22,7 +22,8 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
     m_channelMaxValue(-std::numeric_limits<double>::max()),
     m_axisMinValue(0),
     m_axisMaxValue(1),
-    m_samples(samples)
+    m_samples(samples),
+    m_selectedValueIndex(0)
 {
     ResetAttachedTo();
 
@@ -64,7 +65,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 
 void Channel::_DisplayNAValue()
 {
-	m_selectedValue->setText(tr("N/A"));
+    m_selectedValue->setText(tr("n/a"));
 }
 
 Channel::~Channel()
@@ -74,7 +75,14 @@ Channel::~Channel()
 
 void Channel::checkBoxClicked(bool checked)
 {
-	stateChanged();
+    if (0 != m_values.size()) //available but not diplayed data
+    {
+        if (checked)
+            SelectValue(m_selectedValueIndex);
+        else
+            m_selectedValue->setText(tr("hidden"));
+    }
+    stateChanged();
 }
 
 void Channel::mousePressEvent(QMouseEvent * event)
@@ -111,6 +119,12 @@ QString Channel::GetUnits()
 
 void Channel::SelectValue(unsigned index)
 {
+    m_selectedValueIndex = index;
+
+    if (0 != m_values.size() && !m_enabled->isChecked()) //hidden
+        return;
+
+
     double absValue = std::abs(m_values[index]);
 
     if (absValue < 0.0001 && absValue != 0)

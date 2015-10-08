@@ -1,5 +1,4 @@
 #include "SerialPort.h"
-#include <PortListDialog.h>
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QList>
@@ -79,9 +78,8 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
     return false;
 }
 
-bool SerialPort::FindAndOpenMySerialPort()
+bool SerialPort::FindAndOpenMySerialPort(QList<ExtendedSerialPortInfo> &portInfos)
 {
-	QList<ExtendedSerialPortInfo> portInfos;
     QList<QSerialPortInfo> prefferedPortInfos;
     ExtendedSerialPortInfo *lastPort = NULL;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -90,7 +88,7 @@ bool SerialPort::FindAndOpenMySerialPort()
 
         if (portInfos.last().m_preferred)
             prefferedPortInfos.push_back(info);
-        if (portInfos.last().m_preferred)
+        if (portInfos.last().m_lastUsed)
             lastPort = &portInfos.last();
     }
 
@@ -108,20 +106,11 @@ bool SerialPort::FindAndOpenMySerialPort()
     }
 
     if (prefferedPortInfos.size() > 1)
-        qDebug() << "morethen one preferred port found";
+        qDebug() << "more then one preferred port found";
     else if (!portInfos.empty())
         qDebug() << "found unpreffered serial ports only";
 
-    PortListDialog portListDialog(*this, portInfos, m_settings);
-    if (QDialog::Rejected == portListDialog.exec())
-    {
-
-        qDebug() << "hardware not found";
-        LineIssueSolver();
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 void SerialPort::ReadAll(QByteArray &array)

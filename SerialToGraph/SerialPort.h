@@ -2,11 +2,13 @@
 #define SERIALPORT_H
 
 #include <QObject>
+#include <QList>
 #include <QtCore/QDebug>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
 class QSettings;
+
 class ExtendedSerialPortInfo : public QSerialPortInfo
 {
 public:
@@ -37,7 +39,7 @@ public:
 	~SerialPort();
 
     bool OpenSerialPort(QSerialPortInfo const& info);
-    bool FindAndOpenMySerialPort();
+    bool FindAndOpenMySerialPort(QList<ExtendedSerialPortInfo> &portInfos);
 
 	void ReadAll(QByteArray &array);
     bool Write(Instructions instruction, std::string const &data);

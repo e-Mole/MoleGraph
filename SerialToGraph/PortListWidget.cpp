@@ -26,20 +26,38 @@ PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<Extended
     m_serialPort(port),
     m_settings(settings)
 {
-    QGridLayout *layout = new QGridLayout(this);
-    setLayout(layout);
-
     setMinimumSize(200,50);
-    unsigned counter = 0;
+
+    m_gridLayout = new QGridLayout(this);
+    setLayout(m_gridLayout);
+
+    _Initialize(portInfos);
+}
+
+void PortListWidget::_Initialize(QList<ExtendedSerialPortInfo> const& portInfos)
+{
+     unsigned counter = 0;
     foreach (ExtendedSerialPortInfo const &info, portInfos)
+        _AddPortInfoLine(info, m_gridLayout, counter++);
+}
+void PortListWidget::Refresh()
+{
+    QList<QWidget *> widgets = findChildren<QWidget *>();
+    foreach(QWidget * widget, widgets)
     {
-        _AddPortInfoLine(info, layout, counter++);
+        delete widget;
     }
+
+    QList<ExtendedSerialPortInfo> portInfos;
+    if (m_serialPort.FindAndOpenMySerialPort(portInfos))
+        selectedValidPort();
+    else
+        _Initialize(portInfos);
 }
 
 void PortListWidget::_AddPortInfoLine(ExtendedSerialPortInfo const &info, QGridLayout *layout, unsigned counter)
 {
-    RadioButtonWithInfo *radioButton = new RadioButtonWithInfo(info.portName(), this, info);
+    RadioButtonWithInfo * radioButton = new RadioButtonWithInfo(info.portName(), this, info);
     connect(radioButton, SIGNAL(clicked()), this, SLOT(portSelected()));
        layout->addWidget(radioButton, counter, 0);
     if (info.m_preferred)
@@ -65,4 +83,3 @@ void PortListWidget::portSelected()
     }
     this->setCursor(QCursor(Qt::ArrowCursor));
 }
-

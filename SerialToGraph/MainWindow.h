@@ -15,6 +15,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
 	~MainWindow();
+
+    bool m_close;
 protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
 	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);

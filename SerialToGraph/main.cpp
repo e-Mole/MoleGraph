@@ -5,7 +5,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w(a);
-	w.show();
+    if (w.m_close)
+        return 0;
+
+    w.show();
 
 	return a.exec();
 }

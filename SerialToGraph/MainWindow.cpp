@@ -2,6 +2,7 @@
 #include <ButtonLine.h>
 #include <ChannelSideBar.h>
 #include <Graph.h>
+#include <PortListDialog.h>
 #include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
@@ -12,7 +13,8 @@
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
 	m_settings("eMole", "ArduinoToGraph"),
-	m_serialPort(m_settings)
+    m_serialPort(m_settings),
+    m_close(false)
 {
     //QLocale locale = QLocale(QLocale::Czech);
     //QLocale::setDefault(locale);
@@ -22,7 +24,23 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     if (translator->load("./serialToGraph_cs.qm"))
         application.installTranslator(translator);
 
-	m_serialPort.FindAndOpenMySerialPort();
+    QList<ExtendedSerialPortInfo> portInfos;
+    if (!m_serialPort.FindAndOpenMySerialPort(portInfos))
+    {
+        PortListDialog *portListDialog = new PortListDialog(m_serialPort, portInfos, m_settings);
+        if (QDialog::Rejected == portListDialog->exec())
+        {
+            if (portListDialog->CloseApp())
+            {
+                m_close = true;
+                return;
+            }
+
+            qDebug() << "hardware not found";
+            m_serialPort.LineIssueSolver();
+        }
+    }
+
     Graph* plot = new Graph(this, m_serialPort);
 	this->setCentralWidget(plot);
 

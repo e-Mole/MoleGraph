@@ -174,10 +174,18 @@ void Graph::_InitializeGraphs(Channel *channel)
 
     m_customPlot->graph(index + 8)->setPen(QPen(QBrush(color), 1.6));
 	m_customPlot->graph(index + 8)->setLineStyle(QCPGraph::lsNone);
-	m_customPlot->graph(index + 8)->setScatterStyle(QCPScatterStyle::ssPlus);
+
     //m_customPlot->graph(index + 8)->setAntialiased(false);
+    _SetGraphShape(m_customPlot->graph(index + 8), (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
 }
 
+void Graph::_SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape)
+{
+    QCPScatterStyle style = graph->scatterStyle();
+    style.setShape(shape); //skip none and dot
+    style.setSize(10);
+    graph->setScatterStyle(style);
+}
 bool Graph::_FillGraphItem(GraphItem &item)
 {
     if (m_queue.size() < 5)
@@ -544,6 +552,7 @@ void Graph::selectionChanged()
 void Graph::updateChannel(Channel *channel)
 {
     _UpdateAxes(channel);
+    _SetGraphShape(m_customPlot->graph(channel->GetIndex() + 8), (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
     m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsSelected());
 
     //FIXME: quick solution. axis should not be rescaled in the case its name is changed

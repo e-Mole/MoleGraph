@@ -21,8 +21,8 @@ class Channel : public QGroupBox
 	unsigned m_index;
 	QVector<double> m_values;
 	QLabel *m_selectedValue;
-	QCheckBox *m_enabled;
-	QColor m_color;
+    QCheckBox *m_enabled;
+    QColor m_color;
 	QString m_units;
 	bool m_toRightSide;
     unsigned m_axisNumber;
@@ -31,8 +31,9 @@ class Channel : public QGroupBox
     unsigned m_attachedTo;
     bool m_samples;
     unsigned m_selectedValueIndex;
+    unsigned m_shapeIndex;
 public:
-    Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples);
+    Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples, unsigned shapeIndex);
 	~Channel();
 
 	bool IsSelected();
@@ -71,16 +72,19 @@ public:
     { m_attachedTo = channelIndex; }
 
     void ResetAttachedTo()
-    {   m_attachedTo = ~0; }
+    { m_attachedTo = ~0; }
 
     bool IsAttached()
     {   return m_attachedTo != ~0; }
 
     unsigned AttachedTo()
-    {   return m_attachedTo; }
+    { return m_attachedTo; }
 
     bool IsSampleChannel()
-    {   return m_samples; }
+    { return m_samples; }
+
+    unsigned GetShapeIndex()
+    { return m_shapeIndex; }
 
 signals:
 	void stateChanged();

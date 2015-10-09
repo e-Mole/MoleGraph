@@ -39,7 +39,7 @@ class Graph : public QWidget
     void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RescaleAxisWithMargin(unsigned axisNumber);
-
+    void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
     MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;

@@ -23,7 +23,7 @@ SOURCES += main.cpp\
     ButtonLine.cpp \
     ChannelSideBar.cpp \
     MyCustomPlot.cpp \
-    Grap.cpp
+    Graph.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \

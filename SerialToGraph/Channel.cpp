@@ -10,23 +10,24 @@
 #include <QString>
 #include <limits>
 
-Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples) :
+Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples, unsigned shapeIndex) :
 	QGroupBox(name, parent),
 	m_index(index),
 	m_selectedValue(NULL),
-	m_enabled(NULL),
-	m_color(color),
+    m_enabled(NULL),
+    m_color(color),
     m_toRightSide(false),
     m_axisNumber(0),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
     m_samples(samples),
-    m_selectedValueIndex(0)
+    m_selectedValueIndex(0),
+    m_shapeIndex(shapeIndex)
 {
     ResetAttachedTo();
 
 	setMaximumHeight(55);
-	setMinimumWidth(80);
+    setMinimumWidth(80);
 
 	QHBoxLayout *groupBoxLayout = new QHBoxLayout(this);
 	setLayout(groupBoxLayout);
@@ -86,7 +87,7 @@ void Channel::checkBoxClicked(bool checked)
 void Channel::mousePressEvent(QMouseEvent * event)
 {
     ChannelSettings *settings = new ChannelSettings(
-        title(), m_units, m_enabled->isChecked(), m_samples, m_toRightSide, this);
+        title(), m_units, m_enabled->isChecked(), m_samples, m_toRightSide, m_shapeIndex, this);
 	if (QDialog::Accepted == settings->exec())
 	{
 		setTitle(settings->GetName());
@@ -95,6 +96,7 @@ void Channel::mousePressEvent(QMouseEvent * event)
             m_enabled->setChecked(settings->GetSelected());
             m_units = settings->GetUnits();
             m_toRightSide = settings->IsSetToRightSide();
+            m_shapeIndex = settings->GetShapeIndex();
         }
 		stateChanged();
 	}
@@ -102,7 +104,7 @@ void Channel::mousePressEvent(QMouseEvent * event)
 
 bool Channel::IsSelected()
 {
-	return m_enabled->isChecked();
+    return m_enabled->isChecked();
 }
 
 QString Channel::GetName()

@@ -24,7 +24,7 @@ ChannelSideBar::~ChannelSideBar()
 void ChannelSideBar::Initialize()
 {
 	QVBoxLayout *layout = (QVBoxLayout*)this->layout();
-    m_sampleChannel = new Channel(this, 0, tr("sample"), Qt::black, true);
+    m_sampleChannel = new Channel(this, 0, tr("sample"), Qt::black, true, 0);
     connect(m_sampleChannel, SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
 
 	XChannelAdded(m_sampleChannel);
@@ -47,7 +47,7 @@ Channel *ChannelSideBar::_AddChannel(Qt::GlobalColor color)
 	static unsigned order = 0;
 	m_channels.push_back
 	(
-		new Channel(this, order, QString(tr("channel %1")).arg(order), color, false)
+        new Channel(this, order, QString(tr("channel %1")).arg(order), color, false, order)
 	);
 
 	order++;

@@ -1,12 +1,13 @@
 #include "ChannelSettings.h"
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QString>
-#include <QPushButton>
+#include <QComboBox>
 #include <QCheckBox>
 #include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QString>
+#include <QVBoxLayout>
 
 ChannelSettings::ChannelSettings
 (
@@ -15,11 +16,13 @@ ChannelSettings::ChannelSettings
 	bool selected,
     bool samples,
 	bool toRightSide,
+    unsigned shape,
 	QWidget * parent,
 	Qt::WindowFlags f
 ) :
 	QDialog(parent, f),
-    m_name(NULL)
+    m_name(NULL),
+    m_shape(NULL)
 {
     setWindowTitle(tr("Channel settings"));
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -55,6 +58,8 @@ ChannelSettings::ChannelSettings
         m_toRightSide = new QCheckBox(this);
         m_toRightSide->setChecked(toRightSide);
         gridLaout->addWidget(m_toRightSide, row++, 1);
+
+        _InitializeShapeCombo(gridLaout, row++, shape);
     }
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -75,11 +80,39 @@ ChannelSettings::ChannelSettings
     }
 }
 
+void ChannelSettings::_InitializeShapeCombo(QGridLayout *gridLaout, unsigned row, unsigned shapeIndex)
+{
+    QLabel *shapeLabel = new QLabel(tr("Shape"), this);
+    gridLaout->addWidget(shapeLabel, row,0);
+
+    m_shape = new QComboBox(this);
+
+    m_shape->addItem(tr("Cross"));
+    m_shape->addItem(tr("Plus"));
+    m_shape->addItem(tr("Circle"));
+    m_shape->addItem(tr("Disc"));
+    m_shape->addItem(tr("Square"));
+    m_shape->addItem(tr("Diamond"));
+    m_shape->addItem(tr("Star"));
+    m_shape->addItem(tr("Triangle"));
+    m_shape->addItem(tr("Inverted Triangle"));
+    m_shape->addItem(tr("Cross and Square"));
+    m_shape->addItem(tr("Plus and Square"));
+    m_shape->addItem(tr("Cross and Circle"));
+    m_shape->addItem(tr("Plus and Circle"));
+    m_shape->addItem(tr("Peace"));
+
+    m_shape->setCurrentIndex(shapeIndex);
+
+    gridLaout->addWidget(m_shape, row, 1);
+
+}
 void ChannelSettings::selectedCheckboxClicked(bool checked)
 {
     m_name->setEnabled(checked);
     m_units->setEnabled(checked);
     m_toRightSide->setEnabled(checked);
+    m_shape->setEnabled(checked);
 }
 
 QString ChannelSettings::GetName()
@@ -100,4 +133,9 @@ QString ChannelSettings::GetUnits()
 bool ChannelSettings::IsSetToRightSide()
 {
     return m_toRightSide->isChecked();
+}
+
+unsigned ChannelSettings::GetShapeIndex()
+{
+    return m_shape->currentIndex();
 }

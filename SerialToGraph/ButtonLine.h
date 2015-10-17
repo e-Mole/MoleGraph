@@ -14,6 +14,7 @@ class ButtonLine : public QWidget
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
     QLabel *m_connectivityLabel;
+    QPushButton * m_menuButton;
 
 	bool m_connected;
 	bool m_enabledBChannels;
@@ -39,6 +40,7 @@ public slots:
     void exportPngSlot();
     void exportCsvSlot();
     void connectivityStateChange(bool connected);
+    void menuButtonPressed();
 };
 
 #endif // BUTTONLINE_H

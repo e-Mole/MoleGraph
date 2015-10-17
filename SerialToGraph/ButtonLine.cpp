@@ -10,7 +10,9 @@
 #include <QWidget>
 #include <QCoreApplication>
 #include <QFileInfo>
-
+#include <QMenu>
+#include <QPoint>
+#include <QWidget>
 
 ButtonLine::ButtonLine(QWidget *parent) :
     QWidget(parent),
@@ -19,12 +21,17 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_startButton(NULL),
     m_stopButton(NULL),
 	m_connectivityLabel(NULL),
-	m_connected(false),
+    m_menuButton(NULL),
+    m_connected(false),
 	m_enabledBChannels(false)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
 	buttonLayout->setMargin(1);
     setLayout(buttonLayout);
+
+    m_menuButton = new QPushButton(tr("Menu"), this);
+    buttonLayout->addWidget(m_menuButton);
+    connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -61,19 +68,40 @@ ButtonLine::ButtonLine(QWidget *parent) :
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
     buttonLayout->addWidget(m_stopButton);
 
-    QPushButton *exportButtonPng = new QPushButton(tr("Export to PNG"), this);
-    buttonLayout->addWidget(exportButtonPng);
-    connect(exportButtonPng, SIGNAL(clicked()), this, SLOT(exportPngSlot()));
-
-    QPushButton *exportButtonCsv = new QPushButton(tr("Export to CSV"), this);
-    buttonLayout->addWidget(exportButtonCsv);
-    connect(exportButtonCsv, SIGNAL(clicked()), this, SLOT(exportCsvSlot()));
-
     m_connectivityLabel = new QLabel("", this);
     m_connectivityLabel->setMargin(5);
     buttonLayout->addWidget(m_connectivityLabel);
 
-    buttonLayout->insertStretch(5, 1);
+    buttonLayout->insertStretch(6, 1);
+}
+
+void ButtonLine::menuButtonPressed()
+{
+    QMenu fileMenu;
+    fileMenu.setTitle("File");
+    //fileMenu.addAction(tr("Open"));
+    //fileMenu.addAction(tr("Save"));
+    //fileMenu.addAction(tr("Save As"));
+    fileMenu.addSeparator();
+    connect(fileMenu.addAction(tr("Export to PNG")), SIGNAL(triggered()), this, SLOT(exportPngSlot()));
+    connect(fileMenu.addAction(tr("Export to CSV")), SIGNAL(triggered()), this, SLOT(exportCsvSlot()));
+
+    QMenu viewMenu;
+    viewMenu.setTitle(tr("View"));
+    viewMenu.addAction(tr("Graph"));
+    viewMenu.addAction(tr("Numbers"));
+    //viewMenu.addAction(tr("Graph & Numbers");
+
+    QMenu mainMenu;
+    mainMenu.addMenu(&fileMenu);
+    mainMenu.addMenu(&viewMenu);
+    //mainMenu.addAction("&Settings");
+
+    mainMenu.exec(
+        QWidget::mapToGlobal(
+            QPoint(m_menuButton->pos().x(), m_menuButton->pos().y() + m_menuButton->height())
+        )
+    );
 }
 
 void ButtonLine::startButtonPressed()

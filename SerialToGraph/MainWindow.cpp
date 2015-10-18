@@ -9,6 +9,10 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <QWidget>
+#include <CentralLayout.h>
+
+#include <ChannelWidget.h>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
@@ -16,9 +20,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_serialPort(m_settings),
     m_close(false)
 {
-    //QLocale locale = QLocale(QLocale::Czech);
-    //QLocale::setDefault(locale);
-
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);
     if (translator->load("./serialToGraph_cs.qm"))
@@ -41,8 +42,36 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         }
     }
 
+    QWidget * centralWidget = new QWidget(this);
+    this->setCentralWidget(centralWidget);
+    CentralLayout *centralLayout = new CentralLayout(centralWidget, 4);
+    centralLayout->setMargin(1);
+    centralWidget->setLayout(centralLayout);
+
+    ChannelWidget *label1 = new ChannelWidget(this, "channel1", Qt::red, true);
+    centralLayout->addWidget(label1, 0);
+
+    ChannelWidget *label2 = new ChannelWidget(this, "channel2", Qt::green, false);
+    centralLayout->addWidget(label2, 1);
+
+    ChannelWidget *label4 = new ChannelWidget(this, "channel4", Qt::blue,false);
+    centralLayout->addWidget(label4, 3);
+
+    ChannelWidget *label3 = new ChannelWidget(this, "channel3", Qt::blue,false);
+    centralLayout->addWidget(label3, 2);
+
+    ChannelWidget *label5 = new ChannelWidget(this, "channel5", Qt::blue,false);
+    label5->SetValue(0.000000009);
+    centralLayout->addWidget(label5, 4);
+
     Graph* plot = new Graph(this, m_serialPort);
-	this->setCentralWidget(plot);
+    //centralLayout->addWidget(plot, 100);
+    plot->setVisible(false);
+
+    //ChannelValue *label4 = new ChannelValue("cau", this);
+    //centralLayout->addWidget(label4, 1, 1);
+
+
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);

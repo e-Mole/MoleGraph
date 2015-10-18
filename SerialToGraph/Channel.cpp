@@ -29,7 +29,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 	setMaximumHeight(55);
     setMinimumWidth(80);
 
-	QHBoxLayout *groupBoxLayout = new QHBoxLayout(this);
+    QHBoxLayout *groupBoxLayout = new QHBoxLayout(this);
 	setLayout(groupBoxLayout);
     groupBoxLayout->setMargin(4);
 
@@ -117,6 +117,18 @@ QString Channel::GetUnits()
 	return m_units;
 }
 
+void Channel::_DisplayValue(float value)
+{
+    double absValue = std::abs(value);
+
+    if (absValue < 0.0001 && absValue != 0)
+        m_selectedValue->setText(QString::number(value, 'e', 3));
+    else if (absValue < 1)
+        m_selectedValue->setText(QString::number(value, 'g', 4));
+    else
+        m_selectedValue->setText(QString::number(value, 'g', 6));
+}
+
 void Channel::SelectValue(unsigned index)
 {
     m_selectedValueIndex = index;
@@ -124,15 +136,7 @@ void Channel::SelectValue(unsigned index)
     if (0 != m_values.size() && !m_enabled->isChecked()) //hidden
         return;
 
-
-    double absValue = std::abs(m_values[index]);
-
-    if (absValue < 0.0001 && absValue != 0)
-        m_selectedValue->setText(QString::number(m_values[index], 'e', 3));
-    else if (absValue < 1)
-        m_selectedValue->setText(QString::number(m_values[index], 'g', 4));
-    else
-        m_selectedValue->setText(QString::number(m_values[index], 'g', 6));
+    _DisplayValue(m_values[index]);
 }
 
 void Channel::AddValue( double value)

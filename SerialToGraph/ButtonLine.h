@@ -5,9 +5,12 @@
 class QLineEdit;
 class QPushButton;
 class QLabel;
+class QMenu;
 class ButtonLine : public QWidget
 {
     Q_OBJECT
+
+    void _AddChannels(QMenu &menu);
 
     QLineEdit *m_period;
     QLabel *m_periodUnits;

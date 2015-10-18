@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     ButtonLine.cpp \
     ChannelSideBar.cpp \
     MyCustomPlot.cpp \
-    Graph.cpp
+    Graph.cpp \
+    ChannelWidget.cpp \
+    CentralLayout.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -35,6 +37,8 @@ HEADERS  += MainWindow.h \
     ButtonLine.h \
     ChannelSideBar.h \
     MyCustomPlot.h \
-    Graph.h
+    Graph.h \
+    ChannelWidget.h \
+    CentralLayout.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

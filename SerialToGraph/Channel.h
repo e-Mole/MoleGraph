@@ -18,6 +18,8 @@ class Channel : public QGroupBox
 	void _DisplayNAValue();
 	void mousePressEvent(QMouseEvent * event);
 
+    void _DisplayValue(float value);
+
 	unsigned m_index;
 	QVector<double> m_values;
 	QLabel *m_selectedValue;

@@ -75,6 +75,17 @@ ButtonLine::ButtonLine(QWidget *parent) :
     buttonLayout->insertStretch(6, 1);
 }
 
+void ButtonLine::_AddChannels(QMenu &menu)
+{
+    for (int i = 0; i < 8; i++)
+    {
+
+        QAction *action = menu.addAction(QString(tr("Channel%1")).arg(i));
+        action->setCheckable(true);
+        action->setChecked(true);
+    }
+}
+
 void ButtonLine::menuButtonPressed()
 {
     QMenu fileMenu;
@@ -88,9 +99,15 @@ void ButtonLine::menuButtonPressed()
 
     QMenu viewMenu;
     viewMenu.setTitle(tr("View"));
-    viewMenu.addAction(tr("Graph"));
-    viewMenu.addAction(tr("Numbers"));
-    //viewMenu.addAction(tr("Graph & Numbers");
+    QAction *graph = viewMenu.addAction(tr("Graph"));
+    graph->setCheckable(true);
+    graph->setChecked(true);
+
+    QAction *samples = viewMenu.addAction(tr("Samples"));
+    samples->setCheckable(true);
+    samples->setChecked(true);
+
+    _AddChannels(viewMenu);
 
     QMenu mainMenu;
     mainMenu.addMenu(&fileMenu);

@@ -12,7 +12,8 @@
 #include <QWidget>
 #include <CentralLayout.h>
 
-#include <ChannelWidget.h>
+#include <DisplayWidget.h>
+#include <Channel.h>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
@@ -44,34 +45,29 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     QWidget * centralWidget = new QWidget(this);
     this->setCentralWidget(centralWidget);
-    CentralLayout *centralLayout = new CentralLayout(centralWidget, 4);
-    centralLayout->setMargin(1);
-    centralWidget->setLayout(centralLayout);
+    m_centralLayout = new CentralLayout(centralWidget, 4);
+    centralWidget->setLayout(m_centralLayout);
 
-    ChannelWidget *label1 = new ChannelWidget(this, "channel1", Qt::red, true);
-    centralLayout->addWidget(label1, 0);
+    /*DisplayWidget *label1 = new DisplayWidget(this, "channel1", Qt::red, false);
+    centralLayout->addDisplay(label1, 0);
 
-    ChannelWidget *label2 = new ChannelWidget(this, "channel2", Qt::green, false);
-    centralLayout->addWidget(label2, 1);
+    DisplayWidget *label2 = new DisplayWidget(this, "channel2", Qt::green, false);
+    centralLayout->addDisplay(label2, 1);
 
-    ChannelWidget *label4 = new ChannelWidget(this, "channel4", Qt::blue,false);
-    centralLayout->addWidget(label4, 3);
+    DisplayWidget *label4 = new DisplayWidget(this, "channel4", Qt::blue,false);
+    centralLayout->addDisplay(label4, 3);
 
-    ChannelWidget *label3 = new ChannelWidget(this, "channel3", Qt::blue,false);
-    centralLayout->addWidget(label3, 2);
+    DisplayWidget *label3 = new DisplayWidget(this, "channel3", Qt::blue,false);
+    centralLayout->addDisplay(label3, 2);
 
-    ChannelWidget *label5 = new ChannelWidget(this, "channel5", Qt::blue,false);
+    DisplayWidget *label5 = new DisplayWidget(this, "channel5", Qt::blue,false);
     label5->SetValue(0.000000009);
-    centralLayout->addWidget(label5, 4);
+    centralLayout->addDisplay(label5, 4);*/
 
     Graph* plot = new Graph(this, m_serialPort);
-    //centralLayout->addWidget(plot, 100);
-    plot->setVisible(false);
+    m_centralLayout->addGraph(plot);
 
-    //ChannelValue *label4 = new ChannelValue("cau", this);
-    //centralLayout->addWidget(label4, 1, 1);
-
-
+    //plot->setVisible(false);
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
@@ -103,12 +99,22 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), buttonLine, SLOT(connectivityStateChange(bool)));
 
     connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), plot, SLOT(addYChannel(Channel*)));
+    connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addDisplay(Channel*)));
+
     connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), plot, SLOT(addXChannel(Channel*)));
+    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addDisplay(Channel*)));
+
     connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
 	channelSideBar->Initialize();
+
 }
 
+void MainWindow::addDisplay(Channel* channel)
+{
+    m_centralLayout->addDisplay(
+        new DisplayWidget(this, channel->GetName(), channel->GetColor()), channel->GetIndex());
+}
 MainWindow::~MainWindow()
 {
 

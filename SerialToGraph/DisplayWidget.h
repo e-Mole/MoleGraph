@@ -6,9 +6,8 @@
 
 class QString;
 class QColor;
-class QCheckBox;
 
-class ChannelWidget : public QGroupBox
+class DisplayWidget : public QGroupBox
 {
     Q_OBJECT
 
@@ -55,9 +54,8 @@ class ChannelWidget : public QGroupBox
 
     void _DisplayNAValue();
 
-    QCheckBox *m_checkBox;
 public:
-    ChannelWidget(QWidget *parent, const QString &title, const QColor &color, bool checkBox);
+    DisplayWidget(QWidget *parent, const QString &title, const QColor &color);
 
     void SetValue(double value);
 

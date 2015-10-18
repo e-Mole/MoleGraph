@@ -4,17 +4,26 @@
 #include <QGridLayout>
 #include <QMap>
 
+class DisplayWidget;
+class Graph;
 class QWidget;
+
 class CentralLayout : public QGridLayout
 {
     Q_OBJECT
 
-    QMap<unsigned, QWidget*> m_widgets; //channel index as the key
+    void _ReplaceDisplays();
+
+    QMap<unsigned, DisplayWidget*> m_widgets; //channel index as the key
     unsigned m_verticalMax;
+
+    QGridLayout *m_displayLayout;
+    Graph * m_graph;
 public:
     CentralLayout(QWidget *parent, unsigned verticalMax);
 
-    void addWidget(QWidget *widget, unsigned channelIndex);
+    void addGraph(Graph *graph);
+    void addDisplay(DisplayWidget *widget, unsigned channelIndex);
 signals:
 
 public slots:

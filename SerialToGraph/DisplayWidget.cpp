@@ -1,4 +1,4 @@
-#include "ChannelWidget.h"
+#include "DisplayWidget.h"
 #include <cmath>
 #include <QFont>
 #include <QFontMetrics>
@@ -13,15 +13,11 @@ namespace{
 
 }
 
-ChannelWidget::ChannelWidget(QWidget *parent, const QString &title, const QColor &color, bool checkBox) :
+DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor &color) :
     QGroupBox(title, parent)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
     setLayout(layout);
-
-    m_checkBox = new QCheckBox(this);
-    m_checkBox->setVisible(checkBox);
-    layout->addWidget(m_checkBox);
 
     m_valueLabel = new ValueLabel("", color, this);
     layout->addWidget(m_valueLabel);
@@ -30,7 +26,7 @@ ChannelWidget::ChannelWidget(QWidget *parent, const QString &title, const QColor
     _DisplayNAValue();
 }
 
-void ChannelWidget::SetValue(double value)
+void DisplayWidget::SetValue(double value)
 {
     double absValue = std::abs(value);
 
@@ -44,7 +40,7 @@ void ChannelWidget::SetValue(double value)
     setMinimumSize(1,1);
 }
 
-void ChannelWidget::_DisplayNAValue()
+void DisplayWidget::_DisplayNAValue()
 {
     m_valueLabel->setText(tr("n/a"));
 }

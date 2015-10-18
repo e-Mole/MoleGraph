@@ -24,8 +24,8 @@ SOURCES += main.cpp\
     ChannelSideBar.cpp \
     MyCustomPlot.cpp \
     Graph.cpp \
-    ChannelWidget.cpp \
-    CentralLayout.cpp
+    CentralLayout.cpp \
+    DisplayWidget.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -38,7 +38,7 @@ HEADERS  += MainWindow.h \
     ChannelSideBar.h \
     MyCustomPlot.h \
     Graph.h \
-    ChannelWidget.h \
-    CentralLayout.h
+    CentralLayout.h \
+    DisplayWidget.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

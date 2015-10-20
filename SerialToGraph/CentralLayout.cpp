@@ -19,6 +19,7 @@ void CentralLayout::addGraph(Graph *graph)
     addWidget(graph, 0, 0);
     m_graph = graph;
     _ReplaceDisplays();
+    setColumnStretch(0, 1);
 }
 
 void CentralLayout::_ReplaceDisplays()

@@ -13,27 +13,9 @@ class DisplayWidget : public QGroupBox
 
     class ValueLabel : public QLabel
     {
-        QSize GetSize()
-        {
-            QFontMetrics metrics(this->font());
-            return metrics.size(0, "0.000e-00"); //longer text
-        }
+        QSize GetSize();
 
-        virtual void resizeEvent(QResizeEvent * event)
-        {
-            QFont font = this->font();
-
-            QFontMetrics metrics(font);
-
-            QSize size = GetSize();
-            float factor = qMin(width() / ((float)size.width()), height() / ((float)size.height()));
-
-            font.setPointSizeF(font.pointSizeF() * factor);
-            setFont(font);
-            setMinimumSize(1,1);
-        }
-
-        QSize m_defaultSize;
+        virtual void resizeEvent(QResizeEvent * event);
 
     public:
         ValueLabel(const QString &text, const QColor &color, QWidget *parent):
@@ -45,7 +27,7 @@ class DisplayWidget : public QGroupBox
             palette.setColor(foregroundRole(), color);
             setPalette(palette);
             setStyleSheet("QLabel { background-color : white;}");
-
+            setMargin(3);
             //m_defaultSize
 
 

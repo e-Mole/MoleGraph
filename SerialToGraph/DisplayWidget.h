@@ -18,28 +18,38 @@ class DisplayWidget : public QGroupBox
         virtual void resizeEvent(QResizeEvent * event);
 
     public:
-        ValueLabel(const QString &text, const QColor &color, QWidget *parent):
+        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
             QLabel(text, parent)
         {
             setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
             QPalette palette = this->palette();
-            palette.setColor(foregroundRole(), color);
+            palette.setColor(foregroundRole(), foreColor);
             setPalette(palette);
-            setStyleSheet("QLabel { background-color : white;}");
+            //if (haveBackColor)
+                setStyleSheet("QLabel { background-color : white;}");
             setMargin(3);
             //m_defaultSize
 
+            setMinimumSize(1,1);
+                setWordWrap(true);
 
         }
+
     } * m_valueLabel;
 
     void _DisplayNAValue();
+    void _SetMinimumSize();
+
+    jeste zbyva doresit problem kdy m8m minim8lni velikost okna a schovam a zobrazim graf - velikost okna se zvetsi
 
 public:
-    DisplayWidget(QWidget *parent, const QString &title, const QColor &color);
+    DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor);
 
     void SetValue(double value);
+
+    static QSize GetMinimumSize()
+    {  return QSize(100,40); }
 
 signals:
 

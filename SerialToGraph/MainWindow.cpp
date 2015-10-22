@@ -99,21 +99,33 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), buttonLine, SLOT(connectivityStateChange(bool)));
 
     connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), plot, SLOT(addYChannel(Channel*)));
-    connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addDisplay(Channel*)));
+    connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
 
     connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), plot, SLOT(addXChannel(Channel*)));
-    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addDisplay(Channel*)));
+    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addSampleDisplay(Channel*)));
 
     connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
+
+    connect(buttonLine, SIGNAL(graphTriggered(bool)), m_centralLayout, SLOT(showGraph(bool)));
 	channelSideBar->Initialize();
 
 }
 
-void MainWindow::addDisplay(Channel* channel)
+void MainWindow::addChannelDisplay(Channel* channel)
+{
+    addDisplay(channel, true);
+}
+
+void MainWindow::addSampleDisplay(Channel* channel)
+{
+    addDisplay(channel, false);
+}
+
+void MainWindow::addDisplay(Channel* channel, bool hasBackColor)
 {
     m_centralLayout->addDisplay(
-        new DisplayWidget(this, channel->GetName(), channel->GetColor()), channel->GetIndex());
+        new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor), channel->GetIndex());
 }
 MainWindow::~MainWindow()
 {

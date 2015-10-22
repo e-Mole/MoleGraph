@@ -6,11 +6,14 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QMenu;
+class QAction;
+
 class ButtonLine : public QWidget
 {
     Q_OBJECT
 
-    void _AddChannels(QMenu &menu);
+    void _AddChannels(QMenu *menu);
+    void _InitializeMenu();
 
     QLineEdit *m_period;
     QLabel *m_periodUnits;
@@ -18,9 +21,11 @@ class ButtonLine : public QWidget
     QPushButton *m_stopButton;
     QLabel *m_connectivityLabel;
     QPushButton * m_menuButton;
-
+    QMenu *m_mainMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
+
+    QAction *m_graphAction;
 
 public:
     explicit ButtonLine(QWidget *parent = 0);
@@ -33,6 +38,7 @@ signals:
     void stop();
     void exportPng(QString const &fileName);
     void exportCsv(QString const &fileName);
+    void graphTriggered(bool checked);
 
 public slots:
     void startButtonPressed();
@@ -44,6 +50,7 @@ public slots:
     void exportCsvSlot();
     void connectivityStateChange(bool connected);
     void menuButtonPressed();
+    void graphTriggeredSlot();
 };
 
 #endif // BUTTONLINE_H

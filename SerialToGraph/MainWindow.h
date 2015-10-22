@@ -12,6 +12,8 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
+    void addDisplay(Channel* channel, bool hasBackColor);
+
     QSettings m_settings;
 	SerialPort m_serialPort;
     CentralLayout *m_centralLayout;
@@ -25,7 +27,8 @@ protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
 	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
-    void addDisplay(Channel* channel);
+    void addChannelDisplay(Channel* channel);
+    void addSampleDisplay(Channel* channel);
 };
 
 #endif // MAINWINDOW_H

@@ -23,7 +23,8 @@ ButtonLine::ButtonLine(QWidget *parent) :
 	m_connectivityLabel(NULL),
     m_menuButton(NULL),
     m_connected(false),
-	m_enabledBChannels(false)
+    m_enabledBChannels(false),
+    m_graphAction(NULL)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
 	buttonLayout->setMargin(1);
@@ -73,14 +74,16 @@ ButtonLine::ButtonLine(QWidget *parent) :
     buttonLayout->addWidget(m_connectivityLabel);
 
     buttonLayout->insertStretch(6, 1);
+
+    _InitializeMenu();
 }
 
-void ButtonLine::_AddChannels(QMenu &menu)
+void ButtonLine::_AddChannels(QMenu *menu)
 {
     for (int i = 0; i < 8; i++)
     {
 
-        QAction *action = menu.addAction(QString(tr("Channel%1")).arg(i));
+        QAction *action = menu->addAction(QString(tr("Channel%1")).arg(i));
         action->setCheckable(true);
         action->setChecked(true);
     }
@@ -88,37 +91,55 @@ void ButtonLine::_AddChannels(QMenu &menu)
 
 void ButtonLine::menuButtonPressed()
 {
-    QMenu fileMenu;
-    fileMenu.setTitle("File");
-    //fileMenu.addAction(tr("Open"));
-    //fileMenu.addAction(tr("Save"));
-    //fileMenu.addAction(tr("Save As"));
-    fileMenu.addSeparator();
-    connect(fileMenu.addAction(tr("Export to PNG")), SIGNAL(triggered()), this, SLOT(exportPngSlot()));
-    connect(fileMenu.addAction(tr("Export to CSV")), SIGNAL(triggered()), this, SLOT(exportCsvSlot()));
+    m_mainMenu->exec(
+        QWidget::mapToGlobal(
+            QPoint(m_menuButton->pos().x(), m_menuButton->pos().y() + m_menuButton->height())
+        )
+    );
+}
 
-    QMenu viewMenu;
-    viewMenu.setTitle(tr("View"));
-    QAction *graph = viewMenu.addAction(tr("Graph"));
-    graph->setCheckable(true);
-    graph->setChecked(true);
+void ButtonLine::_InitializeMenu()
+{
+    QMenu *fileMenu = new QMenu(this);
+    fileMenu->setTitle("File");
+    //fileMenu->addAction(tr("Open"));
+    //fileMenu->addAction(tr("Save"));
+    //fileMenu->addAction(tr("Save As"));
+    fileMenu->addSeparator();
+    fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
+    fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
 
-    QAction *samples = viewMenu.addAction(tr("Samples"));
+    QMenu *viewMenu = new QMenu(this);
+    viewMenu->setTitle(tr("View"));
+
+    m_graphAction = viewMenu->addAction(tr("Graph"), this, SIGNAL(graphTriggered(bool)), QKeySequence(Qt::CTRL + Qt::Key_G));
+
+    //Key sequence as addAction parameter doesn't work
+    QShortcut *shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_G), this);
+    m_graphAction->connect(shortcut, SIGNAL(activated()), this, SLOT(graphTriggeredSlot()));
+
+    m_graphAction->setCheckable(true);
+    m_graphAction->setChecked(true);
+
+
+
+    QAction *samples = viewMenu->addAction(tr("Samples"));
     samples->setCheckable(true);
     samples->setChecked(true);
 
     _AddChannels(viewMenu);
 
-    QMenu mainMenu;
-    mainMenu.addMenu(&fileMenu);
-    mainMenu.addMenu(&viewMenu);
-    //mainMenu.addAction("&Settings");
+    m_mainMenu = new QMenu(this);
+    m_mainMenu->addMenu(fileMenu);
+    m_mainMenu->addMenu(viewMenu);
+    //mainMenu->addAction("Settings");
+}
 
-    mainMenu.exec(
-        QWidget::mapToGlobal(
-            QPoint(m_menuButton->pos().x(), m_menuButton->pos().y() + m_menuButton->height())
-        )
-    );
+void ButtonLine::graphTriggeredSlot()
+{
+    m_graphAction->setChecked(!m_graphAction->isChecked());
+
+    graphTriggered(m_graphAction->isChecked());
 }
 
 void ButtonLine::startButtonPressed()

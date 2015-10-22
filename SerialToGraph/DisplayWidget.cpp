@@ -11,9 +11,9 @@
 QSize DisplayWidget::ValueLabel::GetSize()
 {
     QFontMetrics metrics(this->font());
-    QSize size = metrics.size(0, "0.000e-00");//longest text
-    size.setWidth(size.width() + margin()*2);
-    size.setHeight(size.height() + margin()*2);
+    QSize size = metrics.size(0, "-0.000e-00");//longest text
+    //size.setWidth(size.width() + margin()*2);
+    //size.setHeight(size.height() + margin()*2);
     return size;
 }
 
@@ -23,14 +23,16 @@ void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
     QFontMetrics metrics(font);
 
     QSize size = GetSize();
-    float factor = qMin(width() / ((float)size.width()), height() / ((float)size.height()));
+    float factor = qMin(
+                (float)width() / ((float)size.width()*1.1),
+                (float)height() / ((float)size.height()*1.1)
+    );
 
     font.setPointSizeF(font.pointSizeF() * factor);
     setFont(font);
-    setMinimumSize(1,1);
 }
 
-DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor &color) :
+DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor) :
     QGroupBox(title, parent)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -38,12 +40,18 @@ DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor
     setLayout(layout);
 
 
-    m_valueLabel = new ValueLabel("", color, this);
+    m_valueLabel = new ValueLabel("", foreColor, haveBackColor, this);
     layout->addWidget(m_valueLabel);
-    layout->setStretch(1, 1);
 
     _DisplayNAValue();
-    setMinimumSize(100,55);
+    _SetMinimumSize();
+}
+
+
+void DisplayWidget::_SetMinimumSize()
+{
+     setMinimumSize(GetMinimumSize());
+
 }
 
 void DisplayWidget::SetValue(double value)
@@ -57,7 +65,7 @@ void DisplayWidget::SetValue(double value)
     else
         m_valueLabel->setText(QString::number(value, 'g', 6));
 
-    setMinimumSize(200,1);
+    _SetMinimumSize();
 }
 
 void DisplayWidget::_DisplayNAValue()

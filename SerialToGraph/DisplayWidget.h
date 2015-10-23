@@ -32,16 +32,14 @@ class DisplayWidget : public QGroupBox
             //m_defaultSize
 
             setMinimumSize(1,1);
-                setWordWrap(true);
 
         }
+        void SetMimimumFontSize();
 
     } * m_valueLabel;
 
     void _DisplayNAValue();
     void _SetMinimumSize();
-
-    jeste zbyva doresit problem kdy m8m minim8lni velikost okna a schovam a zobrazim graf - velikost okna se zvetsi
 
 public:
     DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor);
@@ -50,6 +48,9 @@ public:
 
     static QSize GetMinimumSize()
     {  return QSize(100,40); }
+
+    void SetMimimumFontSize()
+    { m_valueLabel->SetMimimumFontSize(); }
 
 signals:
 

@@ -6,8 +6,9 @@
 #include <SerialPort.h>
 
 class QApplication;
-class CentralLayout;
 class Channel;
+class CentralWidget;
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -16,7 +17,7 @@ class MainWindow : public QMainWindow
 
     QSettings m_settings;
 	SerialPort m_serialPort;
-    CentralLayout *m_centralLayout;
+    CentralWidget *m_centralWidget;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

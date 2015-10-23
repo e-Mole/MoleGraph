@@ -90,6 +90,7 @@ public:
 
 signals:
 	void stateChanged();
+    void selectedValueChanged(double value);
 private slots:
     void checkBoxClicked(bool checked);
 };

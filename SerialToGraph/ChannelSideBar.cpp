@@ -44,10 +44,10 @@ void ChannelSideBar::Initialize()
 
 Channel *ChannelSideBar::_AddChannel(Qt::GlobalColor color)
 {
-	static unsigned order = 0;
+    static unsigned order = 0;
 	m_channels.push_back
 	(
-        new Channel(this, order, QString(tr("channel %1")).arg(order), color, false, order)
+        new Channel(this, order, QString(tr("channel %1")).arg(order+1), color, false, order)
 	);
 
 	order++;

@@ -137,6 +137,7 @@ void Channel::SelectValue(unsigned index)
         return;
 
     _DisplayValue(m_values[index]);
+    selectedValueChanged(m_values[index]);
 }
 
 void Channel::AddValue( double value)

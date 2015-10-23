@@ -32,6 +32,13 @@ void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
     setFont(font);
 }
 
+void DisplayWidget::ValueLabel::SetMimimumFontSize()
+{
+    QFont font = this->font();
+    font.setPointSizeF(12);
+    setFont(font);
+}
+
 DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor) :
     QGroupBox(title, parent)
 {

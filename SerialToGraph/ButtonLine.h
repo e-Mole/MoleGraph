@@ -2,17 +2,18 @@
 #define BUTTONLINE_H
 
 #include <QWidget>
+#include <QVector>
 class QLineEdit;
 class QPushButton;
 class QLabel;
 class QMenu;
 class QAction;
-
+class QKeySequence;
 class ButtonLine : public QWidget
 {
     Q_OBJECT
 
-    void _AddChannels(QMenu *menu);
+    QAction * _AddAction(QMenu *menu, QString title, const QKeySequence &keySequence);
     void _InitializeMenu();
 
     QLineEdit *m_period;
@@ -26,6 +27,7 @@ class ButtonLine : public QWidget
 	bool m_enabledBChannels;
 
     QAction *m_graphAction;
+    QVector<QAction*> m_channels;
 
 public:
     explicit ButtonLine(QWidget *parent = 0);
@@ -39,6 +41,7 @@ signals:
     void exportPng(QString const &fileName);
     void exportCsv(QString const &fileName);
     void graphTriggered(bool checked);
+    void channelTriggered(unsigned index, bool checked);
 
 public slots:
     void startButtonPressed();
@@ -50,7 +53,7 @@ public slots:
     void exportCsvSlot();
     void connectivityStateChange(bool connected);
     void menuButtonPressed();
-    void graphTriggeredSlot();
+    void actionStateChanged();
 };
 
 #endif // BUTTONLINE_H

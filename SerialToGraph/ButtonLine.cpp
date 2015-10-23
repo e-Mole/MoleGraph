@@ -78,17 +78,6 @@ ButtonLine::ButtonLine(QWidget *parent) :
     _InitializeMenu();
 }
 
-void ButtonLine::_AddChannels(QMenu *menu)
-{
-    for (int i = 0; i < 8; i++)
-    {
-
-        QAction *action = menu->addAction(QString(tr("Channel%1")).arg(i));
-        action->setCheckable(true);
-        action->setChecked(true);
-    }
-}
-
 void ButtonLine::menuButtonPressed()
 {
     m_mainMenu->exec(
@@ -97,6 +86,21 @@ void ButtonLine::menuButtonPressed()
         )
     );
 }
+
+QAction * ButtonLine::_AddAction(QMenu *menu, QString title, QKeySequence const &keySequence)
+{
+    QAction * action = menu->addAction(title, this, SLOT(actionStateChanged()), keySequence);
+    action->setCheckable(true);
+    action->setChecked(true);
+
+    //Key sequence as addAction parameter doesn't work
+    QShortcut *shortcut = new QShortcut(keySequence, this);
+    m_graphAction->connect(shortcut, SIGNAL(activated()), action, SLOT(trigger()));
+    return action;
+
+}
+#define ADD_CHANNEL_ACTION(channel)\
+    m_channels.push_back(_AddAction(viewMenu, tr("Channel "#channel), QKeySequence(Qt::CTRL + Qt::Key_##channel)))
 
 void ButtonLine::_InitializeMenu()
 {
@@ -112,22 +116,16 @@ void ButtonLine::_InitializeMenu()
     QMenu *viewMenu = new QMenu(this);
     viewMenu->setTitle(tr("View"));
 
-    m_graphAction = viewMenu->addAction(tr("Graph"), this, SIGNAL(graphTriggered(bool)), QKeySequence(Qt::CTRL + Qt::Key_G));
-
-    //Key sequence as addAction parameter doesn't work
-    QShortcut *shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_G), this);
-    m_graphAction->connect(shortcut, SIGNAL(activated()), this, SLOT(graphTriggeredSlot()));
-
-    m_graphAction->setCheckable(true);
-    m_graphAction->setChecked(true);
-
-
-
-    QAction *samples = viewMenu->addAction(tr("Samples"));
-    samples->setCheckable(true);
-    samples->setChecked(true);
-
-    _AddChannels(viewMenu);
+    m_graphAction = _AddAction(viewMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G));
+    m_channels.push_back(_AddAction(viewMenu, tr("Samples"), QKeySequence(Qt::CTRL + Qt::Key_0)));
+    ADD_CHANNEL_ACTION(1);
+    ADD_CHANNEL_ACTION(2);
+    ADD_CHANNEL_ACTION(3);
+    ADD_CHANNEL_ACTION(4);
+    ADD_CHANNEL_ACTION(5);
+    ADD_CHANNEL_ACTION(6);
+    ADD_CHANNEL_ACTION(7);
+    ADD_CHANNEL_ACTION(8);
 
     m_mainMenu = new QMenu(this);
     m_mainMenu->addMenu(fileMenu);
@@ -135,11 +133,20 @@ void ButtonLine::_InitializeMenu()
     //mainMenu->addAction("Settings");
 }
 
-void ButtonLine::graphTriggeredSlot()
+void ButtonLine::actionStateChanged()
 {
-    m_graphAction->setChecked(!m_graphAction->isChecked());
+    QAction *action = (QAction*)sender();
+    if (action == m_graphAction)
+        graphTriggered(m_graphAction->isChecked());
+    else
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            if (m_channels[i] == action)
+                channelTriggered(i, m_channels[i]->isChecked());
+        }
+    }
 
-    graphTriggered(m_graphAction->isChecked());
 }
 
 void ButtonLine::startButtonPressed()

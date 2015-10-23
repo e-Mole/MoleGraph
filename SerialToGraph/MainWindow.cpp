@@ -10,7 +10,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QWidget>
-#include <CentralLayout.h>
+#include <CentralWidget.h>
 
 #include <DisplayWidget.h>
 #include <Channel.h>
@@ -43,10 +43,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         }
     }
 
-    QWidget * centralWidget = new QWidget(this);
-    this->setCentralWidget(centralWidget);
-    m_centralLayout = new CentralLayout(centralWidget, 4);
-    centralWidget->setLayout(m_centralLayout);
+    m_centralWidget = new CentralWidget(this, 4);
+    setCentralWidget(m_centralWidget);
 
     /*DisplayWidget *label1 = new DisplayWidget(this, "channel1", Qt::red, false);
     centralLayout->addDisplay(label1, 0);
@@ -65,7 +63,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     centralLayout->addDisplay(label5, 4);*/
 
     Graph* plot = new Graph(this, m_serialPort);
-    m_centralLayout->addGraph(plot);
+    m_centralWidget->addGraph(plot);
 
     //plot->setVisible(false);
 
@@ -107,7 +105,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
 
-    connect(buttonLine, SIGNAL(graphTriggered(bool)), m_centralLayout, SLOT(showGraph(bool)));
+    connect(buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)));
+    connect(buttonLine, SIGNAL(channelTriggered(uint,bool)), m_centralWidget, SLOT(changeChannelVisibility(uint,bool)));
 	channelSideBar->Initialize();
 
 }
@@ -124,8 +123,8 @@ void MainWindow::addSampleDisplay(Channel* channel)
 
 void MainWindow::addDisplay(Channel* channel, bool hasBackColor)
 {
-    m_centralLayout->addDisplay(
-        new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor), channel->GetIndex());
+    m_centralWidget->addDisplay(
+        new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor));
 }
 MainWindow::~MainWindow()
 {

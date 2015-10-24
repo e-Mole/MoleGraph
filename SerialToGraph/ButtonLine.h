@@ -13,7 +13,7 @@ class ButtonLine : public QWidget
 {
     Q_OBJECT
 
-    QAction * _AddAction(QMenu *menu, QString title, const QKeySequence &keySequence);
+    QAction * _AddAction(QMenu *menu, QString title, const QKeySequence &keySequence, bool checkable);
     void _InitializeMenu();
 
     QLineEdit *m_period;
@@ -28,6 +28,8 @@ class ButtonLine : public QWidget
 
     QAction *m_graphAction;
     QVector<QAction*> m_channels;
+    QAction *m_allAction;
+    QAction *m_noneAction;
 
 public:
     explicit ButtonLine(QWidget *parent = 0);
@@ -42,7 +44,6 @@ signals:
     void exportCsv(QString const &fileName);
     void graphTriggered(bool checked);
     void channelTriggered(unsigned index, bool checked);
-
 public slots:
     void startButtonPressed();
     void stopButtonPressed();

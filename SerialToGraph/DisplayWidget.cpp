@@ -77,6 +77,6 @@ void DisplayWidget::SetValue(double value)
 
 void DisplayWidget::_DisplayNAValue()
 {
-    m_valueLabel->setText("0.000e-00");//tr("n/a"));
+    m_valueLabel->setText(tr("n/a"));//"0.000e-00");
 }
 

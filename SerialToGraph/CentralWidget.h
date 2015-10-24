@@ -29,7 +29,6 @@ signals:
 public slots:
     void showGraph(bool show);
     void changeChannelVisibility(unsigned index, bool visible);
-
 };
 
 #endif // CHANNELLAYOUT_H

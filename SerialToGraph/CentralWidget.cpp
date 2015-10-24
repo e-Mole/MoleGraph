@@ -50,6 +50,9 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 
     foreach (DisplayWidget * widget, m_widgets)
     {
+        if (widget->isHidden())
+            continue;
+
         unsigned count =  m_displayLayout->count();
 
         //when there is graph it will be dipsplayed as sidebar
@@ -73,5 +76,5 @@ void CentralWidget::addDisplay(DisplayWidget *widget)
 void CentralWidget::changeChannelVisibility(unsigned index, bool visible)
 {
     m_widgets[index]->setVisible(visible);
+    _ReplaceDisplays(m_graph->isHidden());
 }
-

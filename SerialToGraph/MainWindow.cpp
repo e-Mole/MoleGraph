@@ -43,29 +43,11 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         }
     }
 
-    m_centralWidget = new CentralWidget(this, 4);
+    m_centralWidget = new CentralWidget(this, 3);
     setCentralWidget(m_centralWidget);
-
-    /*DisplayWidget *label1 = new DisplayWidget(this, "channel1", Qt::red, false);
-    centralLayout->addDisplay(label1, 0);
-
-    DisplayWidget *label2 = new DisplayWidget(this, "channel2", Qt::green, false);
-    centralLayout->addDisplay(label2, 1);
-
-    DisplayWidget *label4 = new DisplayWidget(this, "channel4", Qt::blue,false);
-    centralLayout->addDisplay(label4, 3);
-
-    DisplayWidget *label3 = new DisplayWidget(this, "channel3", Qt::blue,false);
-    centralLayout->addDisplay(label3, 2);
-
-    DisplayWidget *label5 = new DisplayWidget(this, "channel5", Qt::blue,false);
-    label5->SetValue(0.000000009);
-    centralLayout->addDisplay(label5, 4);*/
 
     Graph* plot = new Graph(this, m_serialPort);
     m_centralWidget->addGraph(plot);
-
-    //plot->setVisible(false);
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
@@ -107,7 +89,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     connect(buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)));
     connect(buttonLine, SIGNAL(channelTriggered(uint,bool)), m_centralWidget, SLOT(changeChannelVisibility(uint,bool)));
-	channelSideBar->Initialize();
+
+    channelSideBar->Initialize();
 
 }
 

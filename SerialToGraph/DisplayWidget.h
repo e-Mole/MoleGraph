@@ -26,7 +26,7 @@ class DisplayWidget : public QGroupBox
             QPalette palette = this->palette();
             palette.setColor(foregroundRole(), foreColor);
             setPalette(palette);
-            //if (haveBackColor)
+            if (haveBackColor)
                 setStyleSheet("QLabel { background-color : white;}");
             setMargin(3);
             //m_defaultSize

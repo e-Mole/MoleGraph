@@ -24,7 +24,7 @@ ChannelSideBar::~ChannelSideBar()
 void ChannelSideBar::Initialize()
 {
 	QVBoxLayout *layout = (QVBoxLayout*)this->layout();
-    m_sampleChannel = new Channel(this, 0, tr("sample"), Qt::black, true, 0);
+    m_sampleChannel = new Channel(this, 0, tr("samples"), Qt::black, true, 0);
     connect(m_sampleChannel, SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
 
 	XChannelAdded(m_sampleChannel);

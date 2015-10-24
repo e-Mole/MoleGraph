@@ -21,7 +21,7 @@ class DisplayWidget : public QGroupBox
         ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
             QLabel(text, parent)
         {
-            setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
 
             QPalette palette = this->palette();
             palette.setColor(foregroundRole(), foreColor);

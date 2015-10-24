@@ -1,4 +1,5 @@
 #include "ButtonLine.h"
+#include <Channel.h>
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QFileDialog>
@@ -22,6 +23,8 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_stopButton(NULL),
 	m_connectivityLabel(NULL),
     m_menuButton(NULL),
+    m_mainMenu(NULL),
+    m_viewMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
@@ -78,6 +81,7 @@ ButtonLine::ButtonLine(QWidget *parent) :
     buttonLayout->insertStretch(6, 1);
 
     _InitializeMenu();
+    _EnableStartButton(true);
 }
 
 void ButtonLine::menuButtonPressed()
@@ -89,14 +93,17 @@ void ButtonLine::menuButtonPressed()
     );
 }
 
-QAction * ButtonLine::_AddAction(QMenu *menu, QString title, QKeySequence const &keySequence, bool checkable)
+QAction * ButtonLine::_InsertAction(QMenu *menu, QString title, QKeySequence const &keySequence, bool checkable, QAction *before)
 {
-    QAction * action = menu->addAction(title, this, SLOT(actionStateChanged()), keySequence);
+    QAction * action = new QAction(title, this);
+    action->connect(action, SIGNAL(triggered()), this, SLOT(actionStateChanged()));
+    action->setShortcut(keySequence);
     if (checkable)
     {
         action->setCheckable(true);
         action->setChecked(true);
     }
+    menu->insertAction(before, action);
 
     //Key sequence as addAction parameter doesn't work
     QShortcut *shortcut = new QShortcut(keySequence, this);
@@ -104,8 +111,6 @@ QAction * ButtonLine::_AddAction(QMenu *menu, QString title, QKeySequence const 
     return action;
 
 }
-#define ADD_CHANNEL_ACTION(channel)\
-    m_channels.push_back(_AddAction(viewMenu, tr("Channel "#channel), QKeySequence(Qt::CTRL + Qt::Key_##channel), true))
 
 void ButtonLine::_InitializeMenu()
 {
@@ -118,29 +123,28 @@ void ButtonLine::_InitializeMenu()
     fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
     fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
 
-    QMenu *viewMenu = new QMenu(this);
-    viewMenu->setTitle(tr("View"));
+    m_viewMenu = new QMenu(this);
+    m_viewMenu->setTitle(tr("View"));
 
-    m_graphAction = _AddAction(viewMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G), true);
-    m_channels.push_back(_AddAction(viewMenu, tr("Samples"), QKeySequence(Qt::CTRL + Qt::Key_0), true));
-    ADD_CHANNEL_ACTION(1);
-    ADD_CHANNEL_ACTION(2);
-    ADD_CHANNEL_ACTION(3);
-    ADD_CHANNEL_ACTION(4);
-    ADD_CHANNEL_ACTION(5);
-    ADD_CHANNEL_ACTION(6);
-    ADD_CHANNEL_ACTION(7);
-    ADD_CHANNEL_ACTION(8);
 
-    viewMenu->addSeparator();
-    m_allAction = _AddAction(viewMenu, tr("Show All"), QKeySequence(Qt::CTRL + Qt::Key_A), false);
-    m_noneAction = _AddAction(viewMenu, tr("Show None"), QKeySequence(Qt::CTRL + Qt::Key_N), false);
+    m_graphAction = _InsertAction(m_viewMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G), true);
+
+    m_viewMenu->addSeparator();
+    m_allAction = _InsertAction(m_viewMenu, tr("Show All"), QKeySequence(Qt::CTRL + Qt::Key_A), false);
+    m_noneAction = _InsertAction(m_viewMenu, tr("Show None"), QKeySequence(Qt::CTRL + Qt::Key_N), false);
 
 
     m_mainMenu = new QMenu(this);
     m_mainMenu->addMenu(fileMenu);
-    m_mainMenu->addMenu(viewMenu);
+    m_mainMenu->addMenu(m_viewMenu);
     //mainMenu->addAction("Settings");
+}
+
+void ButtonLine::AddChannel(Channel *channel)
+{
+    static unsigned counter = 0;
+    m_channelActions[channel] =
+        _InsertAction(m_viewMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
 }
 
 void ButtonLine::actionStateChanged()
@@ -150,19 +154,28 @@ void ButtonLine::actionStateChanged()
         graphTriggered(m_graphAction->isChecked());
     else if (senderAction == m_allAction || senderAction == m_noneAction)
     {
-        foreach (QAction *channelAction, m_channels)
+        foreach (QAction *channelAction, m_channelActions.values())
         {
             channelAction->setChecked(senderAction == m_noneAction); //oposite - wiil be triggered
             channelAction->trigger(); //to throw a signal
         }
+        _EnableStartButton(senderAction == m_allAction);
     }
     else
     {
-        for (int i = 0; i < 9; i++)
+        bool anyEnabled = false;
+        QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
+        for  (; it != m_channelActions.end(); ++it)
         {
-            if (m_channels[i] == senderAction)
-                channelTriggered(i, m_channels[i]->isChecked());
+            if (it.value() == senderAction)
+                channelTriggered(it.key(), it.value()->isChecked());
+
+            if (it.value()->isChecked())
+                anyEnabled = true;
         }
+
+        //TODO: exclude samples
+        _EnableStartButton(anyEnabled);
     }
 
 }
@@ -194,7 +207,7 @@ void ButtonLine::periodLineEditChanged(const QString &text)
 
 }
 
-void ButtonLine::enableStartButton(bool enabled)
+void ButtonLine::_EnableStartButton(bool enabled)
 {
 	m_enabledBChannels = enabled;
 	m_startButton->setEnabled(m_enabledBChannels && m_connected);

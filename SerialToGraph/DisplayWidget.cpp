@@ -61,7 +61,7 @@ void DisplayWidget::_SetMinimumSize()
 
 }
 
-void DisplayWidget::SetValue(double value)
+void DisplayWidget::setValue(double value)
 {
     double absValue = std::abs(value);
 

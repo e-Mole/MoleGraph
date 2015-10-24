@@ -104,12 +104,6 @@ void ChannelSideBar::channelStateChanged()
     if ((Channel *)sender() != m_sampleChannel)
     {
         UpdateAxisNumbers(m_channels);
-
-        bool anySelected = false;
-        foreach (Channel *channel, m_channels)
-            anySelected |= channel->IsSelected();
-
-        anyChannelEnabled(anySelected);
     }
     channelStateChanged((Channel *)sender());
 }

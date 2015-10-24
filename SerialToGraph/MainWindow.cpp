@@ -53,11 +53,11 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
 
     this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-    ButtonLine* buttonLine = new ButtonLine(this);
-	buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
+    m_buttonLine = new ButtonLine(this);
+    m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
-    buttonDock->setWidget(buttonLine);
+    buttonDock->setWidget(m_buttonLine);
 
 	QDockWidget *channelDock = new QDockWidget(this);
     channelDock->setAllowedAreas(Qt::LeftDockWidgetArea| Qt::RightDockWidgetArea);
@@ -69,14 +69,13 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     channelDock->setWidget(channelSideBar);
 
-	connect(buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
-	connect(buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));
-	connect(channelSideBar, SIGNAL(anyChannelEnabled(bool)), buttonLine, SLOT(enableStartButton(bool)));
-	connect(buttonLine, SIGNAL(start()), plot, SLOT(start()));
-	connect(buttonLine, SIGNAL(stop()), plot, SLOT(stop()));
-	connect(buttonLine, SIGNAL(exportPng(QString)), plot, SLOT(exportPng(QString)));
-	connect(buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
-	connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), buttonLine, SLOT(connectivityStateChange(bool)));
+    connect(m_buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
+    connect(m_buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));
+    connect(m_buttonLine, SIGNAL(start()), plot, SLOT(start()));
+    connect(m_buttonLine, SIGNAL(stop()), plot, SLOT(stop()));
+    connect(m_buttonLine, SIGNAL(exportPng(QString)), plot, SLOT(exportPng(QString)));
+    connect(m_buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
+    connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
     connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), plot, SLOT(addYChannel(Channel*)));
     connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
@@ -87,8 +86,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
 
-    connect(buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)));
-    connect(buttonLine, SIGNAL(channelTriggered(uint,bool)), m_centralWidget, SLOT(changeChannelVisibility(uint,bool)));
+    connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)));
+    connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)));
 
     channelSideBar->Initialize();
 
@@ -96,19 +95,16 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
 void MainWindow::addChannelDisplay(Channel* channel)
 {
-    addDisplay(channel, true);
+    m_centralWidget->addDisplay(channel, true);
+    m_buttonLine->AddChannel(channel);
 }
 
 void MainWindow::addSampleDisplay(Channel* channel)
 {
-    addDisplay(channel, false);
+    m_centralWidget->addDisplay(channel, false);
+    m_buttonLine->AddChannel(channel);
 }
 
-void MainWindow::addDisplay(Channel* channel, bool hasBackColor)
-{
-    m_centralWidget->addDisplay(
-        new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor));
-}
 MainWindow::~MainWindow()
 {
 

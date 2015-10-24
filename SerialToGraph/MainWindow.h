@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <ButtonLine.h>
 #include <QMainWindow>
 #include <QSettings>
 #include <SerialPort.h>
@@ -13,11 +14,10 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
-    void addDisplay(Channel* channel, bool hasBackColor);
-
     QSettings m_settings;
 	SerialPort m_serialPort;
     CentralWidget *m_centralWidget;
+    ButtonLine* m_buttonLine;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

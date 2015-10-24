@@ -44,7 +44,7 @@ class DisplayWidget : public QGroupBox
 public:
     DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor);
 
-    void SetValue(double value);
+
 
     static QSize GetMinimumSize()
     {  return QSize(100,40); }
@@ -55,6 +55,7 @@ public:
 signals:
 
 public slots:
+    void setValue(double value);
 
 };
 

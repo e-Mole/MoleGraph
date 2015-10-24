@@ -2,6 +2,7 @@
 #include <DisplayWidget.h>
 #include <Graph.h>
 #include <QGridLayout>
+#include <Channel.h>
 
 CentralWidget::CentralWidget(QWidget *parent, unsigned verticalMax) :
     QWidget(parent),
@@ -67,14 +68,16 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 }
 
 
-void CentralWidget::addDisplay(DisplayWidget *widget)
+void CentralWidget::addDisplay(Channel* channel, bool hasBackColor)
 {
-    m_widgets.push_back(widget);
+    m_widgets[channel] = new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor);
+
+    connect(channel, SIGNAL(selectedValueChanged(double)),  m_widgets[channel], SLOT(setValue(double)));
     _ReplaceDisplays(false);
 }
 
-void CentralWidget::changeChannelVisibility(unsigned index, bool visible)
+void CentralWidget::changeChannelVisibility(Channel *channel, bool visible)
 {
-    m_widgets[index]->setVisible(visible);
+    m_widgets[channel]->setVisible(visible);
     _ReplaceDisplays(m_graph->isHidden());
 }

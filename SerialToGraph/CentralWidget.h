@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMap>
+#include <QVector>
 
 class DisplayWidget;
 class Graph;
@@ -14,7 +15,8 @@ class CentralWidget : public QWidget
 
     void _ReplaceDisplays(bool grid);
 
-    QMap<Channel *, DisplayWidget*> m_widgets;
+    QVector<DisplayWidget*> m_widgets;
+    QMap<Channel *, DisplayWidget*> m_channelWidgets;
     unsigned m_verticalMax;
 
     QGridLayout *m_mainLayout;

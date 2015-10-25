@@ -70,12 +70,13 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 
 void CentralWidget::addDisplay(Channel* channel)
 {
-    m_widgets[channel] = new DisplayWidget(this, channel);
+    m_widgets.push_back(new DisplayWidget(this, channel));
+    m_channelWidgets[channel] = m_widgets.last();
     _ReplaceDisplays(false);
 }
 
 void CentralWidget::changeChannelVisibility(Channel *channel, bool visible)
 {
-    m_widgets[channel]->setVisible(visible);
+    m_channelWidgets[channel]->setVisible(visible);
     _ReplaceDisplays(m_graph->isHidden());
 }

@@ -146,6 +146,8 @@ void ButtonLine::AddChannel(Channel *channel)
     m_channelActions[channel] =
         _InsertAction(m_viewMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
+
+    channel->channelSelectionChanged(true);
 }
 
 void ButtonLine::channelSettingChanged()
@@ -162,10 +164,13 @@ void ButtonLine::actionStateChanged()
         graphTriggered(m_graphAction->isChecked());
     else if (senderAction == m_allAction || senderAction == m_noneAction)
     {
-        foreach (QAction *channelAction, m_channelActions.values())
+        QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
+        for (;it !=m_channelActions.end(); ++it)
         {
-            channelAction->setChecked(senderAction == m_noneAction); //oposite - wiil be triggered
-            channelAction->trigger(); //to throw a signal
+            it.value()->setChecked(senderAction == m_noneAction); //oposite - wiil be triggered
+            it.value()->trigger(); //to throw a signal
+            it.key()->channelSelectionChanged(senderAction == m_allAction);
+
         }
         _EnableStartButton(senderAction == m_allAction);
     }
@@ -180,6 +185,8 @@ void ButtonLine::actionStateChanged()
 
             if (it.value()->isChecked())
                 anyEnabled = true;
+
+            it.key()->channelSelectionChanged(it.value()->isChecked());
         }
 
         //TODO: exclude samples

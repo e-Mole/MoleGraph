@@ -92,8 +92,8 @@ public:
 signals:
 	void stateChanged();
     void selectedValueChanged(double value);
-private slots:
-    void checkBoxClicked(bool checked);
+public slots:
+    void channelSelectionChanged(bool selected);
 };
 
 #endif // CHANNEL_H

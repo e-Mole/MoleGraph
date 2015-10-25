@@ -35,7 +35,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 
     m_enabled = new QCheckBox(this);
     groupBoxLayout->addWidget(m_enabled);
-    connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)));
+    connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(channelSelectionChanged(bool)));
     if (samples)
     {
         m_enabled->setChecked(true);
@@ -72,15 +72,16 @@ Channel::~Channel()
 
 }
 
-void Channel::checkBoxClicked(bool checked)
+void Channel::channelSelectionChanged(bool selected)
 {
     if (0 != m_values.size()) //available but not diplayed data
     {
-        if (checked)
+        if (selected)
             SelectValue(m_selectedValueIndex);
         else
             m_selectedValue->setText(tr("hidden"));
     }
+    m_enabled->setChecked(selected);
     stateChanged();
 }
 

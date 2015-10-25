@@ -68,11 +68,9 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 }
 
 
-void CentralWidget::addDisplay(Channel* channel, bool hasBackColor)
+void CentralWidget::addDisplay(Channel* channel)
 {
-    m_widgets[channel] = new DisplayWidget(this, channel->GetName(), channel->GetColor(), hasBackColor);
-
-    connect(channel, SIGNAL(selectedValueChanged(double)),  m_widgets[channel], SLOT(setValue(double)));
+    m_widgets[channel] = new DisplayWidget(this, channel);
     _ReplaceDisplays(false);
 }
 

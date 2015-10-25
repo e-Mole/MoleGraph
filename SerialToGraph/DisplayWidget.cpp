@@ -1,12 +1,41 @@
 #include "DisplayWidget.h"
+
+#include <Channel.h>
+#include <ChannelSettings.h>
 #include <cmath>
+#include <QCheckBox>
+#include <QColor>
 #include <QFont>
 #include <QFontMetrics>
-#include <QSize>
 #include <QHBoxLayout>
-#include <QColor>
+#include <QMouseEvent>
 #include <QPalette>
-#include <QCheckBox>
+#include <QSize>
+
+DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
+    QGroupBox(channel->title(), parent),
+    m_channel(channel)
+{
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->setMargin(4);
+    setLayout(layout);
+
+
+    m_valueLabel = new ValueLabel("", channel->GetColor(), !channel->IsSampleChannel(), this);
+    layout->addWidget(m_valueLabel);
+
+    _DisplayNAValue();
+    _SetMinimumSize();
+
+    connect(m_channel, SIGNAL(selectedValueChanged(double)),  this, SLOT(setValue(double)));
+    connect(m_channel, SIGNAL(stateChanged()), this, SLOT(changeChannelSettings()));
+}
+
+void DisplayWidget::changeChannelSettings()
+{
+    setTitle(m_channel->title());
+    m_valueLabel->SetColor(m_channel->GetColor());
+}
 
 QSize DisplayWidget::ValueLabel::GetSize()
 {
@@ -39,21 +68,12 @@ void DisplayWidget::ValueLabel::SetMimimumFontSize()
     setFont(font);
 }
 
-DisplayWidget::DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor) :
-    QGroupBox(title, parent)
+void DisplayWidget::ValueLabel::SetColor(const QColor &color)
 {
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setMargin(4);
-    setLayout(layout);
-
-
-    m_valueLabel = new ValueLabel("", foreColor, haveBackColor, this);
-    layout->addWidget(m_valueLabel);
-
-    _DisplayNAValue();
-    _SetMinimumSize();
+    QPalette palette = this->palette();
+    palette.setColor(foregroundRole(), color);
+    setPalette(palette);
 }
-
 
 void DisplayWidget::_SetMinimumSize()
 {
@@ -78,5 +98,10 @@ void DisplayWidget::setValue(double value)
 void DisplayWidget::_DisplayNAValue()
 {
     m_valueLabel->setText(tr("n/a"));//"0.000e-00");
+}
+
+void DisplayWidget::mousePressEvent(QMouseEvent * event)
+{
+    (new ChannelSettings(m_channel))->exec();
 }
 

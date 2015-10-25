@@ -13,6 +13,7 @@ class QString;
 
 class Channel : public QGroupBox
 {
+    friend class ChannelSettings;
 	Q_OBJECT
 
 	void _DisplayNAValue();

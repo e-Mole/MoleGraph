@@ -4,8 +4,10 @@
 #include <QGroupBox>
 #include <QLabel>
 
-class QString;
+class Channel;
 class QColor;
+class QMouseEvent;
+class QString;
 
 class DisplayWidget : public QGroupBox
 {
@@ -22,10 +24,8 @@ class DisplayWidget : public QGroupBox
             QLabel(text, parent)
         {
             setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
+            SetColor(foreColor);
 
-            QPalette palette = this->palette();
-            palette.setColor(foregroundRole(), foreColor);
-            setPalette(palette);
             if (haveBackColor)
                 setStyleSheet("QLabel { background-color : white;}");
             setMargin(3);
@@ -36,13 +36,17 @@ class DisplayWidget : public QGroupBox
         }
         void SetMimimumFontSize();
 
+        void SetColor(const QColor &color);
+
     } * m_valueLabel;
 
     void _DisplayNAValue();
     void _SetMinimumSize();
+    void mousePressEvent(QMouseEvent * event);
 
+    Channel *m_channel;
 public:
-    DisplayWidget(QWidget *parent, const QString &title, const QColor &foreColor, bool haveBackColor);
+    DisplayWidget(QWidget *parent, Channel *channel);
 
 
 
@@ -56,6 +60,7 @@ signals:
 
 public slots:
     void setValue(double value);
+    void changeChannelSettings();
 
 };
 

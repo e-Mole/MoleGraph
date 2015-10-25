@@ -8,19 +8,11 @@
 #include <QPushButton>
 #include <QString>
 #include <QVBoxLayout>
+#include <Channel.h>
 
-ChannelSettings::ChannelSettings
-(
-	const QString &title,
-	const QString &units,
-	bool selected,
-    bool samples,
-	bool toRightSide,
-    unsigned shape,
-	QWidget * parent,
-	Qt::WindowFlags f
-) :
-	QDialog(parent, f),
+ChannelSettings::ChannelSettings(Channel *channel) :
+    QDialog(channel, NULL),
+    m_channel(channel),
     m_name(NULL),
     m_shape(NULL)
 {
@@ -31,35 +23,25 @@ ChannelSettings::ChannelSettings
 
     unsigned row = 0;
 
-    if (!samples)
-    {
-        QLabel *selectedLabel = new QLabel(tr("Selected"), this);
-        gridLaout->addWidget(selectedLabel, row, 0);
-        m_selected = new QCheckBox(this);
-        m_selected->setChecked(selected);
-        connect(m_selected, SIGNAL(clicked(bool)), this , SLOT(selectedCheckboxClicked(bool)));
-        gridLaout->addWidget(m_selected, row++, 1);
-    }
-
-	QLabel *nameLabel = new QLabel(tr("Title"), this);
+    QLabel *nameLabel = new QLabel(tr("Title"), this);
 	gridLaout->addWidget(nameLabel, row,0);
-    m_name = new QLineEdit(title, this);
+    m_name = new QLineEdit(channel->GetName(), this);
 	gridLaout->addWidget(m_name, row++, 1);
 
-    if (!samples)
+    if (!channel->IsSampleChannel())
     {
         QLabel *unitsLabel = new QLabel(tr("Units"), this);
         gridLaout->addWidget(unitsLabel, row,0);
-        m_units = new QLineEdit(units, this);
+        m_units = new QLineEdit(channel->GetUnits(), this);
         gridLaout->addWidget(m_units, row++, 1);
 
         QLabel *toRigtSideLabel = new QLabel(tr("To right side"), this);
         gridLaout->addWidget(toRigtSideLabel, row, 0);
         m_toRightSide = new QCheckBox(this);
-        m_toRightSide->setChecked(toRightSide);
+        m_toRightSide->setChecked(channel->ToRightSide());
         gridLaout->addWidget(m_toRightSide, row++, 1);
 
-        _InitializeShapeCombo(gridLaout, row++, shape);
+        _InitializeShapeCombo(gridLaout, row++, channel->GetShapeIndex());
     }
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -67,19 +49,46 @@ ChannelSettings::ChannelSettings
 
     QPushButton *store = new QPushButton(tr("Store"), this);
     buttonLayout->addWidget(store);
-    connect(store, SIGNAL(clicked(bool)), this, SLOT(accept()));
+    connect(store, SIGNAL(clicked(bool)), this, SLOT(storeAndAccept()));
 
     QPushButton *cancel = new QPushButton(tr("Cancel"), this);
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
-
-    if (!samples)
-    {
-        //set intitial state
-        selectedCheckboxClicked(selected);
-    }
 }
 
+void ChannelSettings::storeAndAccept()
+{
+    bool changed = false;
+    if (m_channel->title() != m_name->text())
+    {
+        changed = true;
+        m_channel->setTitle(m_name->text());
+    }
+
+    if (!m_channel->IsSampleChannel())
+    {
+        if (m_channel->m_units != m_units->text())
+        {
+            changed = true;
+            m_channel->m_units = m_units->text();
+        }
+        if (m_channel->m_toRightSide != m_toRightSide->isChecked())
+        {
+            changed = true;
+            m_channel->m_toRightSide = m_toRightSide->isChecked();
+        }
+        if (m_channel->m_shapeIndex != m_shape->currentIndex())
+        {
+            changed = true;
+            m_channel->m_shapeIndex = m_shape->currentIndex();
+        }
+    }
+
+    if (changed)
+        m_channel->stateChanged();
+
+    accept();
+}
 void ChannelSettings::_InitializeShapeCombo(QGridLayout *gridLaout, unsigned row, unsigned shapeIndex)
 {
     QLabel *shapeLabel = new QLabel(tr("Shape"), this);
@@ -106,36 +115,4 @@ void ChannelSettings::_InitializeShapeCombo(QGridLayout *gridLaout, unsigned row
 
     gridLaout->addWidget(m_shape, row, 1);
 
-}
-void ChannelSettings::selectedCheckboxClicked(bool checked)
-{
-    m_name->setEnabled(checked);
-    m_units->setEnabled(checked);
-    m_toRightSide->setEnabled(checked);
-    m_shape->setEnabled(checked);
-}
-
-QString ChannelSettings::GetName()
-{
-    return m_name->text();
-}
-
-bool ChannelSettings::GetSelected()
-{
-	return m_selected-> isChecked();
-}
-
-QString ChannelSettings::GetUnits()
-{
-	return m_units->text();
-}
-
-bool ChannelSettings::IsSetToRightSide()
-{
-    return m_toRightSide->isChecked();
-}
-
-unsigned ChannelSettings::GetShapeIndex()
-{
-    return m_shape->currentIndex();
 }

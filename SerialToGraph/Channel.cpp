@@ -59,7 +59,7 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
 		m_selectedValue->setEnabled(false);
         m_selectedValue->setFixedWidth(80);
 		m_selectedValue->setMargin(2);
-	}
+    }
 }
 
 void Channel::_DisplayNAValue()
@@ -86,20 +86,7 @@ void Channel::checkBoxClicked(bool checked)
 
 void Channel::mousePressEvent(QMouseEvent * event)
 {
-    ChannelSettings *settings = new ChannelSettings(
-        title(), m_units, m_enabled->isChecked(), m_samples, m_toRightSide, m_shapeIndex, this);
-	if (QDialog::Accepted == settings->exec())
-	{
-		setTitle(settings->GetName());
-        if (!m_samples)
-        {
-            m_enabled->setChecked(settings->GetSelected());
-            m_units = settings->GetUnits();
-            m_toRightSide = settings->IsSetToRightSide();
-            m_shapeIndex = settings->GetShapeIndex();
-        }
-		stateChanged();
-	}
+    (new ChannelSettings(this))->exec();
 }
 
 bool Channel::IsSelected()

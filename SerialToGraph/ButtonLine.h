@@ -57,6 +57,7 @@ public slots:
     void connectivityStateChange(bool connected);
     void menuButtonPressed();
     void actionStateChanged();
+    void channelSettingChanged();
 };
 
 #endif // BUTTONLINE_H

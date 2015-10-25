@@ -24,7 +24,7 @@ public:
     CentralWidget(QWidget *parent, unsigned verticalMax);
 
     void addGraph(Graph *graph);
-    void addDisplay(Channel *channel, bool hasBackColor);
+    void addDisplay(Channel *channel);
 signals:
 
 public slots:

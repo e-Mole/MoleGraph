@@ -145,8 +145,16 @@ void ButtonLine::AddChannel(Channel *channel)
     static unsigned counter = 0;
     m_channelActions[channel] =
         _InsertAction(m_viewMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
+    connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
 }
 
+void ButtonLine::channelSettingChanged()
+{
+    Channel *channel = (Channel*)sender();
+    if (channel->title() != m_channelActions[channel]->text())
+        m_channelActions[channel]->setText(channel->title());
+
+}
 void ButtonLine::actionStateChanged()
 {
     QAction *senderAction = (QAction*)sender();
@@ -177,7 +185,6 @@ void ButtonLine::actionStateChanged()
         //TODO: exclude samples
         _EnableStartButton(anyEnabled);
     }
-
 }
 
 void ButtonLine::startButtonPressed()

@@ -81,7 +81,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
 
     connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), plot, SLOT(addXChannel(Channel*)));
-    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addSampleDisplay(Channel*)));
+    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
 
     connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
 
@@ -95,13 +95,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
 void MainWindow::addChannelDisplay(Channel* channel)
 {
-    m_centralWidget->addDisplay(channel, true);
-    m_buttonLine->AddChannel(channel);
-}
-
-void MainWindow::addSampleDisplay(Channel* channel)
-{
-    m_centralWidget->addDisplay(channel, false);
+    m_centralWidget->addDisplay(channel);
     m_buttonLine->AddChannel(channel);
 }
 

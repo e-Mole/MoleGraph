@@ -29,7 +29,6 @@ protected slots:
 	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
     void addChannelDisplay(Channel* channel);
-    void addSampleDisplay(Channel* channel);
 };
 
 #endif // MAINWINDOW_H

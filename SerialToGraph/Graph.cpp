@@ -93,17 +93,6 @@ void Graph::rescaleAllAxes()
         _RescaleAxisWithMargin(it.key());
 }
 
-void Graph::addYChannel(Channel *channel)
-{
-	_InitializeGraphs(channel);
-	m_channels.push_back(channel);
-}
-
-void Graph::addXChannel(Channel *channel)
-{
-	m_customPlot->xAxis->setLabel(channel->GetName());
-	m_sampleChannel = channel;
-}
 void Graph::_InitializeSlider(QBoxLayout *graphLayout)
 {
     m_scrollBar = new QScrollBar(Qt::Horizontal, this);
@@ -127,13 +116,13 @@ QString Graph::_GetAxisName(QString const &units, unsigned index)
     for (unsigned i = 0; i < m_channels.size(); i++)
     {
 
-        if (m_channels[i]->IsSelected() && index == m_channels[i]->GetAxisNumber())
+        if (m_channels[i]->IsVisible() && index == m_channels[i]->GetAxisNumber())
         {
             count++;
             if (!first)
             {
-                if (i+1 != m_channels.size() && m_channels[i+1]->IsSelected() && index == m_channels[i+1]->GetAxisNumber() &&
-                    i != 0 && m_channels[i-1]->IsSelected() && index == m_channels[i-1]->GetAxisNumber())
+                if (i+1 != m_channels.size() && m_channels[i+1]->IsVisible() && index == m_channels[i+1]->GetAxisNumber() &&
+                    i != 0 && m_channels[i-1]->IsVisible() && index == m_channels[i-1]->GetAxisNumber())
                 {
                     addMiddle = true;
                     continue;
@@ -283,10 +272,7 @@ void Graph::start()
 		return;
 	}
 
-	for(int i = 0; i < m_channels.size(); i++)
-        m_channels[i]->setEnabled(false);
-
-	m_customPlot->xAxis->setLabel(m_sampleChannel->title());
+    m_customPlot->xAxis->setLabel(m_sampleChannel->GetName());
 	m_counter = 0;
 	m_x.clear();
 
@@ -322,7 +308,7 @@ void Graph::start()
 
 	unsigned selectedChannels = 0;
 	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
-		selectedChannels |= ((m_channels[i]->IsSelected()) << i);
+        selectedChannels |= ((m_channels[i]->IsVisible()) << i);
 
 	qDebug() << "selected channels:" << selectedChannels;
 
@@ -341,10 +327,6 @@ void Graph::start()
 
 void Graph::stop()
 {
-
-    for(int i = 0; i < m_channels.size(); i++)
-        m_channels[i]->setEnabled(true);
-
 	m_serialPort.Stop();
 	m_drawTimer->stop();
 	draw(); //may be something is still in the buffer
@@ -366,7 +348,7 @@ void Graph::exportCsv(QString const &fileName)
 	file.write(";");
 	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
     {
-		file.write(m_channels[i]->title().toStdString().c_str());
+        file.write(m_channels[i]->GetName().toStdString().c_str());
 		if (i == (unsigned)m_channels.size() - 1)
              file.write("\n");
         else
@@ -474,7 +456,7 @@ void Graph::_UpdateAxes(Channel *channel)
 
     foreach (Channel * channel, m_channels)
     {
-        if (channel->IsSelected())
+        if (channel->IsVisible())
         {
             if (!channel->IsAttached())
             {
@@ -487,7 +469,7 @@ void Graph::_UpdateAxes(Channel *channel)
 
     foreach (Channel *channel, m_channels)
     {
-        if (channel->IsSelected())
+        if (channel->IsVisible())
         {
            QCPAxis *axis = m_yAxes[channel->GetAxisNumber()];
            m_customPlot->graph(channel->GetIndex())->setValueAxis(axis);
@@ -549,11 +531,11 @@ void Graph::selectionChanged()
 
 }
 
-void Graph::updateChannel(Channel *channel)
+void Graph::_UpdateChannel(Channel *channel)
 {
     _UpdateAxes(channel);
     _SetGraphShape(m_customPlot->graph(channel->GetIndex() + 8), (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
-    m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsSelected());
+    m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsVisible());
 
     //FIXME: quick solution. axis should not be rescaled in the case its name is changed
     rescaleAllAxes();
@@ -569,7 +551,7 @@ void Graph::_RescaleAxisWithMargin(unsigned axisNumber)
 
     foreach (Channel *channel, m_channels)
     {
-        if (channel->IsSelected() && channel->GetAxisNumber() == axisNumber)
+        if (channel->IsVisible() && channel->GetAxisNumber() == axisNumber)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
@@ -584,3 +566,88 @@ void Graph::_RescaleAxisWithMargin(unsigned axisNumber)
 
     m_yAxes[axisNumber]->setRange(lower - margin, upper + margin);
 }
+
+void Graph::InitializeChannels()
+{
+    m_sampleChannel = new Channel(this, 0, tr("samples"), Qt::black, true, 0);
+    connect(m_sampleChannel, SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
+
+    m_customPlot->xAxis->setLabel(m_sampleChannel->GetName());
+    XChannelAdded(m_sampleChannel);
+
+
+    _AddChannel(Qt::red);
+    _AddChannel(Qt::blue);
+    _AddChannel(Qt::black);
+    _AddChannel(Qt::darkGreen);
+    _AddChannel(Qt::magenta);
+    _AddChannel(Qt::cyan);
+    _AddChannel(Qt::green);
+    _AddChannel(Qt::darkRed);
+}
+
+ void Graph::_AddChannel(Qt::GlobalColor color)
+{
+    static unsigned order = 0;
+    m_channels.push_back
+    (
+        new Channel(this, order, QString(tr("channel %1")).arg(order+1), color, false, order)
+    );
+
+    order++;
+
+    connect(m_channels.last(), SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
+
+    _InitializeGraphs(m_channels.last());
+    YChannelAdded(m_channels.last());
+}
+
+
+ namespace
+ {
+     struct AxisItem
+     {
+         bool operator < (AxisItem const &second) const
+         { return (units < second.units || (units == second.units && toRight < second.toRight)); }
+         QString units;
+         bool toRight;
+     };
+
+     void UpdateAxisNumbers(QVector<Channel*> m_channels)
+     {
+         QMap<AxisItem, Channel*> axisMap;
+         int axisNumber = -1;
+         AxisItem item;
+         foreach (Channel* channel, m_channels)
+         {
+             if (!channel->IsVisible())
+                 continue;
+
+             item.toRight = channel->ToRightSide();
+             item.units = channel->GetUnits();
+
+             QMap<AxisItem, Channel*>::iterator it = axisMap.find(item);
+
+             if (it != axisMap.end())
+             {
+                 channel->SetAxisNumber(it.value()->GetAxisNumber());
+                 channel->SetAttachedTo(it.value()->GetIndex());
+             }
+             else
+             {
+                 channel->SetAxisNumber(++axisNumber);
+                 channel->ResetAttachedTo();
+                 axisMap.insert(item, channel);
+             }
+         }
+     }
+ }
+
+ void Graph::channelStateChanged()
+ {
+     if ((Channel *)sender() != m_sampleChannel)
+     {
+         UpdateAxisNumbers(m_channels);
+     }
+     _UpdateChannel((Channel *)sender());
+ }

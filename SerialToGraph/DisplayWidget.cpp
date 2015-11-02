@@ -13,7 +13,7 @@
 #include <QSize>
 
 DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
-    QGroupBox(channel->title(), parent),
+    QGroupBox(channel->GetName(), parent),
     m_channel(channel)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -33,7 +33,7 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
 
 void DisplayWidget::changeChannelSettings()
 {
-    setTitle(m_channel->title());
+    setTitle(m_channel->GetName());
     m_valueLabel->SetColor(m_channel->GetColor());
 }
 
@@ -102,6 +102,6 @@ void DisplayWidget::_DisplayNAValue()
 
 void DisplayWidget::mousePressEvent(QMouseEvent * event)
 {
-    (new ChannelSettings(m_channel))->exec();
+    (new ChannelSettings(m_channel, this))->exec();
 }
 

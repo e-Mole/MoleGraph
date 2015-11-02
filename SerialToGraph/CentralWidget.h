@@ -9,6 +9,7 @@ class DisplayWidget;
 class Graph;
 class QGridLayout;
 class Channel;
+class QHBoxLayout;
 class CentralWidget : public QWidget
 {
     Q_OBJECT
@@ -19,7 +20,7 @@ class CentralWidget : public QWidget
     QMap<Channel *, DisplayWidget*> m_channelWidgets;
     unsigned m_verticalMax;
 
-    QGridLayout *m_mainLayout;
+    QHBoxLayout *m_mainLayout;
     QGridLayout *m_displayLayout;
     Graph * m_graph;
 public:

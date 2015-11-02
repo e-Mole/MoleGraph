@@ -21,7 +21,6 @@ SOURCES += main.cpp\
     PortListDialog.cpp \
     PortListWidget.cpp \
     ButtonLine.cpp \
-    ChannelSideBar.cpp \
     MyCustomPlot.cpp \
     Graph.cpp \
     DisplayWidget.cpp \
@@ -35,7 +34,6 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     ButtonLine.h \
-    ChannelSideBar.h \
     MyCustomPlot.h \
     Graph.h \
     DisplayWidget.h \

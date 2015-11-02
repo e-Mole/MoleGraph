@@ -153,8 +153,8 @@ void ButtonLine::AddChannel(Channel *channel)
 void ButtonLine::channelSettingChanged()
 {
     Channel *channel = (Channel*)sender();
-    if (channel->title() != m_channelActions[channel]->text())
-        m_channelActions[channel]->setText(channel->title());
+    if (channel->GetName() != m_channelActions[channel]->text())
+        m_channelActions[channel]->setText(channel->GetName());
 
 }
 void ButtonLine::actionStateChanged()

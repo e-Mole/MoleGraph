@@ -40,6 +40,9 @@ class Graph : public QWidget
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RescaleAxisWithMargin(unsigned axisNumber);
     void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
+    void _AddChannel(Qt::GlobalColor color);
+    void _UpdateChannel(Channel *channel);
+
     MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;
@@ -66,14 +69,14 @@ public:
     Graph(QWidget *parent, SerialPort &serialPort);
     ~Graph();
 
+    void InitializeChannels();
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
+    void YChannelAdded(Channel *channel);
+    void XChannelAdded(Channel *channel);
 
 public slots:
-	void addYChannel(Channel *channel);
-	void addXChannel(Channel *channel);
-	void updateChannel(Channel *channel);
 protected slots:
 	void draw();
 	void start();
@@ -86,6 +89,7 @@ protected slots:
     void selectionChanged();
     void rescaleAllAxes();
     void rescaleAxis(QCPAxis *axis);
+    void channelStateChanged();
 };
 
 #endif // PLOT_H

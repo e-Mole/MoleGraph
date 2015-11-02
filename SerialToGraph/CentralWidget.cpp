@@ -2,25 +2,26 @@
 #include <DisplayWidget.h>
 #include <Graph.h>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <Channel.h>
+
 
 CentralWidget::CentralWidget(QWidget *parent, unsigned verticalMax) :
     QWidget(parent),
     m_verticalMax(verticalMax),
     m_graph(NULL)
 {
-    m_mainLayout = new QGridLayout(this);
+    m_mainLayout = new QHBoxLayout(this);
     setLayout(m_mainLayout);
 
     m_displayLayout = new QGridLayout(this);
-    m_mainLayout->addLayout(m_displayLayout, 0, 1);
-    m_mainLayout->setColumnStretch(0, 1);
+    m_mainLayout->insertLayout(1, m_displayLayout, 0);
     m_mainLayout->setMargin(1);
 }
 
 void CentralWidget::addGraph(Graph *graph)
 {
-    m_mainLayout->addWidget(graph, 0, 0);
+    m_mainLayout->insertWidget(0, graph, 1);
     m_graph = graph;
     _ReplaceDisplays(false);
 }
@@ -30,12 +31,9 @@ void CentralWidget::showGraph(bool show)
     foreach (DisplayWidget * widget, m_widgets)
         widget->SetMimimumFontSize();
 
-    m_mainLayout->setColumnStretch(0, show);
-    m_mainLayout->setColumnStretch(1, !show);
+    m_mainLayout->setStretch(0, show);
+    m_mainLayout->setStretch(1, !show);
     _ReplaceDisplays(!show);
-
-    //FIXME:delete repaint
-    repaint();
 
     m_graph->setVisible(show);
 }

@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 #include <ButtonLine.h>
-#include <ChannelSideBar.h>
 #include <Graph.h>
 #include <PortListDialog.h>
 #include <QDockWidget>
@@ -59,16 +58,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
     buttonDock->setWidget(m_buttonLine);
 
-	QDockWidget *channelDock = new QDockWidget(this);
-    channelDock->setAllowedAreas(Qt::LeftDockWidgetArea| Qt::RightDockWidgetArea);
-
-    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("channelSideBarLocation", Qt::RightDockWidgetArea).toInt(), channelDock, Qt::Vertical);
-	ChannelSideBar *channelSideBar = new ChannelSideBar(this);
-	connect(channelDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(channelSideBaeLocationChanged(Qt::DockWidgetArea)));
-    connect(channelDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
-
-    channelDock->setWidget(channelSideBar);
-
     connect(m_buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
     connect(m_buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));
     connect(m_buttonLine, SIGNAL(start()), plot, SLOT(start()));
@@ -77,19 +66,13 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
-    connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), plot, SLOT(addYChannel(Channel*)));
-    connect(channelSideBar, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
-
-    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), plot, SLOT(addXChannel(Channel*)));
-    connect(channelSideBar, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
-
-    connect(channelSideBar, SIGNAL(channelStateChanged(Channel*)), plot, SLOT(updateChannel(Channel*)));
-
+    connect(plot, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
+    connect(plot, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)));
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)));
 
-    channelSideBar->Initialize();
+    plot->InitializeChannels();
 
 }
 
@@ -114,9 +97,4 @@ void MainWindow::dockVisibilityChanged(bool visible)
 void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
 {
 	m_settings.setValue("buttonLineLocation", area);
-}
-
-void MainWindow::channelSideBaeLocationChanged(Qt::DockWidgetArea area)
-{
-	m_settings.setValue("channelSideBarLocation", area);
 }

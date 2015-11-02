@@ -3,28 +3,20 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QGroupBox>
+#include <QObject>
 #include <QColor>
 
-class QLabel;
-class QCheckBox;
-class QBoxLaout;
 class QString;
 
-class Channel : public QGroupBox
+class Channel : public QObject
 {
     friend class ChannelSettings;
 	Q_OBJECT
 
-	void _DisplayNAValue();
-	void mousePressEvent(QMouseEvent * event);
-
-    void _DisplayValue(float value);
-
+    QString m_title;
 	unsigned m_index;
 	QVector<double> m_values;
-	QLabel *m_selectedValue;
-    QCheckBox *m_enabled;
+    bool m_visible;
     QColor m_color;
 	QString m_units;
 	bool m_toRightSide;
@@ -39,7 +31,7 @@ public:
     Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples, unsigned shapeIndex);
 	~Channel();
 
-	bool IsSelected();
+    bool IsVisible();
 	QColor &GetColor() { return m_color; }
 	unsigned GetIndex() { return m_index; }
 	QString GetName();

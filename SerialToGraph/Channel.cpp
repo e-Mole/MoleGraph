@@ -11,10 +11,10 @@
 #include <limits>
 
 Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples, unsigned shapeIndex) :
-	QGroupBox(name, parent),
+    QObject(parent),
+    m_title(name),
 	m_index(index),
-	m_selectedValue(NULL),
-    m_enabled(NULL),
+    m_visible(false),
     m_color(color),
     m_toRightSide(false),
     m_axisNumber(0),
@@ -25,46 +25,6 @@ Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &
     m_shapeIndex(shapeIndex)
 {
     ResetAttachedTo();
-
-	setMaximumHeight(55);
-    setMinimumWidth(80);
-
-    QHBoxLayout *groupBoxLayout = new QHBoxLayout(this);
-	setLayout(groupBoxLayout);
-    groupBoxLayout->setMargin(4);
-
-    m_enabled = new QCheckBox(this);
-    groupBoxLayout->addWidget(m_enabled);
-    connect(m_enabled, SIGNAL(clicked(bool)), this, SLOT(channelSelectionChanged(bool)));
-    if (samples)
-    {
-        m_enabled->setChecked(true);
-        m_enabled->setVisible(false);
-    }
-
-	m_selectedValue = new QLabel(this);
-	_DisplayNAValue();
-	m_selectedValue->setAlignment(Qt::AlignTop | Qt::AlignRight);
-	QFont font = m_selectedValue->font();
-	font.setPointSize(12);
-	m_selectedValue->setFont(font);
-	groupBoxLayout->addWidget(m_selectedValue);
-
-	if (!samples)
-	{
-		QPalette palette = m_selectedValue->palette();
-		palette.setColor(m_selectedValue->foregroundRole(), color);
-		m_selectedValue->setStyleSheet("QLabel { background-color : white;}");
-		m_selectedValue->setPalette(palette);
-		m_selectedValue->setEnabled(false);
-        m_selectedValue->setFixedWidth(80);
-		m_selectedValue->setMargin(2);
-    }
-}
-
-void Channel::_DisplayNAValue()
-{
-    m_selectedValue->setText(tr("n/a"));
 }
 
 Channel::~Channel()
@@ -74,30 +34,18 @@ Channel::~Channel()
 
 void Channel::channelSelectionChanged(bool selected)
 {
-    if (0 != m_values.size()) //available but not diplayed data
-    {
-        if (selected)
-            SelectValue(m_selectedValueIndex);
-        else
-            m_selectedValue->setText(tr("hidden"));
-    }
-    m_enabled->setChecked(selected);
+    m_visible = selected;
     stateChanged();
 }
 
-void Channel::mousePressEvent(QMouseEvent * event)
+bool Channel::IsVisible()
 {
-    (new ChannelSettings(this))->exec();
-}
-
-bool Channel::IsSelected()
-{
-    return m_enabled->isChecked();
+    return m_visible;
 }
 
 QString Channel::GetName()
 {
-	return this->title();
+    return m_title;
 }
 
 QString Channel::GetUnits()
@@ -105,26 +53,13 @@ QString Channel::GetUnits()
 	return m_units;
 }
 
-void Channel::_DisplayValue(float value)
-{
-    double absValue = std::abs(value);
-
-    if (absValue < 0.0001 && absValue != 0)
-        m_selectedValue->setText(QString::number(value, 'e', 3));
-    else if (absValue < 1)
-        m_selectedValue->setText(QString::number(value, 'g', 4));
-    else
-        m_selectedValue->setText(QString::number(value, 'g', 6));
-}
-
 void Channel::SelectValue(unsigned index)
 {
     m_selectedValueIndex = index;
 
-    if (0 != m_values.size() && !m_enabled->isChecked()) //hidden
+    if (0 != m_values.size() && !m_visible) //hidden
         return;
 
-    _DisplayValue(m_values[index]);
     selectedValueChanged(m_values[index]);
 }
 
@@ -142,7 +77,6 @@ void Channel::AddValue( double value)
 void Channel::ClearValues()
 {
 	m_values.clear();
-	_DisplayNAValue();
 
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();

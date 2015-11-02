@@ -22,7 +22,7 @@ class ChannelSettings : public QDialog
 	QCheckBox * m_toRightSide;
     QComboBox * m_shape;
 public:
-    ChannelSettings(Channel *channel);
+    ChannelSettings(Channel *channel, QWidget *parent);
 signals:
 
 public slots:

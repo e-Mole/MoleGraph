@@ -26,7 +26,6 @@ public:
     bool m_close;
 protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
-	void channelSideBaeLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
     void addChannelDisplay(Channel* channel);
 };

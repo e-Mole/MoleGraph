@@ -10,8 +10,8 @@
 #include <QVBoxLayout>
 #include <Channel.h>
 
-ChannelSettings::ChannelSettings(Channel *channel) :
-    QDialog(channel, NULL),
+ChannelSettings::ChannelSettings(Channel *channel, QWidget *parent) :
+    QDialog(parent),
     m_channel(channel),
     m_name(NULL),
     m_shape(NULL)
@@ -59,10 +59,10 @@ ChannelSettings::ChannelSettings(Channel *channel) :
 void ChannelSettings::storeAndAccept()
 {
     bool changed = false;
-    if (m_channel->title() != m_name->text())
+    if (m_channel->m_title != m_name->text())
     {
         changed = true;
-        m_channel->setTitle(m_name->text());
+        m_channel->m_title = m_name->text();
     }
 
     if (!m_channel->IsSampleChannel())

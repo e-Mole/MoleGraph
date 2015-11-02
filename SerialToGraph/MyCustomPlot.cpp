@@ -30,7 +30,7 @@ MyCustomPlot::MyCustomPlot(QWidget *parent) :
 
     xAxis->setRange(0, 1);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
-    setMinimumSize(700, 200);
+    setMinimumSize(700, 500);
 
     yAxis->setVisible(false);
     xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);

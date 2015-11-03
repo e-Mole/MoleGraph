@@ -15,10 +15,7 @@ class DisplayWidget : public QGroupBox
 
     class ValueLabel : public QLabel
     {
-        QSize GetSize();
-
         virtual void resizeEvent(QResizeEvent * event);
-
     public:
         ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
             QLabel(text, parent)
@@ -29,12 +26,13 @@ class DisplayWidget : public QGroupBox
             if (haveBackColor)
                 setStyleSheet("QLabel { background-color : white;}");
             else
-                setStyleSheet("QLabel { background-color : #e9e9e9;}");
+                setStyleSheet("QLabel { background-color : #e0e0e0;}");
             setMargin(3);
         }
         void SetMimimumFontSize();
-
         void SetColor(const QColor &color);
+        QSize GetSize(QString const &text);
+        QSize GetLongestTextSize();
 
     } * m_valueLabel;
 

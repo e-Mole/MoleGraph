@@ -48,10 +48,15 @@ void DisplayWidget::changeChannelSettings()
     _ShowLastValueWithUnits();
 }
 
-QSize DisplayWidget::ValueLabel::GetSize()
+QSize DisplayWidget::ValueLabel::GetLongestTextSize()
+{
+    return GetSize("-0.000e-00\n");
+}
+
+QSize DisplayWidget::ValueLabel::GetSize(QString const &text)
 {
     QFontMetrics metrics(this->font());
-    return  metrics.size(0, "-0.000e-00\n");//longest value
+    return  metrics.size(0, text);
 }
 
 void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
@@ -59,15 +64,13 @@ void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
     QFont font = this->font();
     QFontMetrics metrics(font);
 
-    QSize size = GetSize();
-    float factor = qMin(
-                (float)width() / ((float)size.width()*1.1),
-                (float)height() / ((float)size.height()*1.1)
+    QSize size = GetLongestTextSize();
+    qreal factor = qMin(
+                (qreal)width() / ((qreal)size.width()*1.1),
+                (qreal)height() / ((qreal)size.height()*1.1)
     );
 
     font.setPointSizeF(font.pointSizeF() * factor);
-    //if (font.pointSize() < 9)
-    //    font.setPointSize(9);
     setFont(font);
 }
 
@@ -93,7 +96,11 @@ void DisplayWidget::_SetMinimumSize()
 
 void DisplayWidget::_ShowLastValueWithUnits()
 {
-    m_valueLabel->setText(m_lastValueText + "<br/>" + m_channel->GetUnits());
+    QString textWithSpace = m_lastValueText + " " + m_channel->GetUnits();
+    unsigned widthMax = m_valueLabel->GetLongestTextSize().width();
+    unsigned widthSpace = m_valueLabel->GetSize(textWithSpace).width();
+    m_valueLabel->setText(
+        (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_channel->GetUnits());
     _SetMinimumSize();
 }
 void DisplayWidget::setValue(double value)

@@ -10,6 +10,8 @@ class Graph;
 class QGridLayout;
 class Channel;
 class QHBoxLayout;
+class QScrollBar;
+class QVBoxLayout;
 class CentralWidget : public QWidget
 {
     Q_OBJECT
@@ -21,12 +23,16 @@ class CentralWidget : public QWidget
     unsigned m_verticalMax;
 
     QHBoxLayout *m_mainLayout;
+    QVBoxLayout *m_graphAndSliderLayout;
+    QVBoxLayout *m_displaysAndSliderLayout;
     QGridLayout *m_displayLayout;
     Graph * m_graph;
+    QScrollBar *m_scrollBar;
 public:
     CentralWidget(QWidget *parent, unsigned verticalMax);
 
     void addGraph(Graph *graph);
+    void addScrollBar(QScrollBar *scrollBar);
     void addDisplay(Channel *channel);
 signals:
 

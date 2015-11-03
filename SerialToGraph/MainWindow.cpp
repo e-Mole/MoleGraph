@@ -45,8 +45,14 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_centralWidget = new CentralWidget(this, 3);
     setCentralWidget(m_centralWidget);
 
-    Graph* plot = new Graph(this, m_serialPort);
+    QScrollBar *scrollBar = new QScrollBar(Qt::Horizontal, this);
+    scrollBar->setRange(0,0);
+    scrollBar->setFocusPolicy(Qt::StrongFocus);
+    m_centralWidget->addScrollBar(scrollBar);
+
+    Graph* plot = new Graph(this, m_serialPort, scrollBar);
     m_centralWidget->addGraph(plot);
+    connect(scrollBar, SIGNAL(valueChanged(int)), plot, SLOT(redrawMarks(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);

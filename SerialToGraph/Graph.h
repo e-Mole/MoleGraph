@@ -29,7 +29,6 @@ class Graph : public QWidget
 	};
 
     void _InitializePolt(QBoxLayout *graphLayout);
-    void _InitializeSlider(QBoxLayout *graphLayout);
     QString _GetAxisName(const QString &units, unsigned index);
     void _SetAxisColor(QCPAxis *axis, QColor const & color);
     void _InitializeAxis(QCPAxis *axis, Channel *channel);
@@ -55,7 +54,6 @@ class Graph : public QWidget
     unsigned m_period;
 	unsigned m_counter;
 
-
     QScrollBar *m_scrollBar;
     unsigned m_periodTypeIndex;
 	QPushButton *m_connectButton;
@@ -66,7 +64,7 @@ class Graph : public QWidget
     QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
 
 public:
-    Graph(QWidget *parent, SerialPort &serialPort);
+    Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
 
     void InitializeChannels();

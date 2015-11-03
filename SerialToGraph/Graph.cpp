@@ -25,13 +25,13 @@
 #define RESCALE_MARGIN_RATIO 50
 #define AXES_LABEL_PADDING 1
 
-Graph::Graph(QWidget *parent, SerialPort &serialPort) :
+Graph::Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar) :
 	QWidget(parent),
 	m_customPlot(NULL),
 	m_serialPort(serialPort),
 	m_period(0),
 	m_counter(0),
-	m_scrollBar(NULL),
+    m_scrollBar(scrollBar),
 	m_periodTypeIndex(0),
 	m_connectButton(NULL),
 	m_sampleChannel(NULL)
@@ -44,7 +44,6 @@ Graph::Graph(QWidget *parent, SerialPort &serialPort) :
 	documentLayout->addLayout(graphLayout);
 
 	_InitializePolt(graphLayout);
-	_InitializeSlider(graphLayout);
 
 	m_drawTimer = new QTimer(this);
 	connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
@@ -91,15 +90,6 @@ void Graph::rescaleAllAxes()
     QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
     for (;it != m_yAxes.end(); ++it)
         _RescaleAxisWithMargin(it.key());
-}
-
-void Graph::_InitializeSlider(QBoxLayout *graphLayout)
-{
-    m_scrollBar = new QScrollBar(Qt::Horizontal, this);
-    m_scrollBar->setRange(0,0);
-    m_scrollBar->setFocusPolicy(Qt::StrongFocus);
-    graphLayout->addWidget(m_scrollBar);
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(redrawMarks(int)));
 }
 
 void Graph::periodTypeChanged(int index)

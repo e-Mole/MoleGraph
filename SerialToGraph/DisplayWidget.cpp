@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QPalette>
 #include <QSize>
+#include <QString>
 
 DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
     QGroupBox(channel->GetName(), parent),
@@ -31,19 +32,26 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
     connect(m_channel, SIGNAL(stateChanged()), this, SLOT(changeChannelSettings()));
 }
 
+void DisplayWidget::_RefreshName()
+{
+    setTitle(
+        QString("(%1) ").arg(
+            m_channel->IsSampleChannel() ? 0 : m_channel->GetIndex() + 1
+        ) +
+        m_channel->GetName()
+    );
+}
 void DisplayWidget::changeChannelSettings()
 {
-    setTitle(m_channel->GetName());
+    _RefreshName();
     m_valueLabel->SetColor(m_channel->GetColor());
+    _ShowLastValueWithUnits();
 }
 
 QSize DisplayWidget::ValueLabel::GetSize()
 {
     QFontMetrics metrics(this->font());
-    QSize size = metrics.size(0, "-0.000e-00");//longest text
-    //size.setWidth(size.width() + margin()*2);
-    //size.setHeight(size.height() + margin()*2);
-    return size;
+    return  metrics.size(0, "-0.000e-00\n");//longest value
 }
 
 void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
@@ -58,15 +66,17 @@ void DisplayWidget::ValueLabel::resizeEvent(QResizeEvent * event)
     );
 
     font.setPointSizeF(font.pointSizeF() * factor);
+    //if (font.pointSize() < 9)
+    //    font.setPointSize(9);
     setFont(font);
 }
 
-void DisplayWidget::ValueLabel::SetMimimumFontSize()
+/*void DisplayWidget::ValueLabel::SetMimimumFontSize()
 {
     QFont font = this->font();
     font.setPointSizeF(12);
     setFont(font);
-}
+}*/
 
 void DisplayWidget::ValueLabel::SetColor(const QColor &color)
 {
@@ -81,23 +91,32 @@ void DisplayWidget::_SetMinimumSize()
 
 }
 
+void DisplayWidget::_ShowLastValueWithUnits()
+{
+    m_valueLabel->setText(m_lastValueText + "<br/>" + m_channel->GetUnits());
+    _SetMinimumSize();
+}
 void DisplayWidget::setValue(double value)
 {
     double absValue = std::abs(value);
 
+    QString strValue;
     if (absValue < 0.0001 && absValue != 0)
-        m_valueLabel->setText(QString::number(value, 'e', 3));
+        strValue = QString::number(value, 'e', 3);
     else if (absValue < 1)
-        m_valueLabel->setText(QString::number(value, 'g', 4));
+        strValue = QString::number(value, 'g', 4);
     else
-        m_valueLabel->setText(QString::number(value, 'g', 6));
+        strValue = QString::number(value, 'g', 6);
 
-    _SetMinimumSize();
+    m_lastValueText = strValue;
+    _ShowLastValueWithUnits();
 }
 
 void DisplayWidget::_DisplayNAValue()
 {
-    m_valueLabel->setText(tr("n/a"));//"0.000e-00");
+    //m_valueLabel->setText("0.000e-00<br/>mA");
+    m_lastValueText = tr("n/a");
+    _ShowLastValueWithUnits();
 }
 
 void DisplayWidget::mousePressEvent(QMouseEvent * event)

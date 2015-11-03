@@ -28,11 +28,9 @@ class DisplayWidget : public QGroupBox
 
             if (haveBackColor)
                 setStyleSheet("QLabel { background-color : white;}");
+            else
+                setStyleSheet("QLabel { background-color : #e9e9e9;}");
             setMargin(3);
-            //m_defaultSize
-
-            setMinimumSize(1,1);
-
         }
         void SetMimimumFontSize();
 
@@ -42,19 +40,21 @@ class DisplayWidget : public QGroupBox
 
     void _DisplayNAValue();
     void _SetMinimumSize();
+    void _RefreshName();
     void mousePressEvent(QMouseEvent * event);
-
+    void _ShowLastValueWithUnits();
     Channel *m_channel;
+    QString m_lastValueText;
 public:
     DisplayWidget(QWidget *parent, Channel *channel);
 
 
 
     static QSize GetMinimumSize()
-    {  return QSize(100,40); }
+    {  return QSize(110,70); }
 
-    void SetMimimumFontSize()
-    { m_valueLabel->SetMimimumFontSize(); }
+    //void SetMimimumFontSize()
+    //{ m_valueLabel->SetMimimumFontSize(); }
 
 signals:
 

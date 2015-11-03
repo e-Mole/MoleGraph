@@ -88,9 +88,6 @@ void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-
-    //mReplotting = false;
-
     double percent = 0;
 
     QCPRange oldRange = yAxis->range();

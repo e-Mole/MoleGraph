@@ -28,8 +28,8 @@ void CentralWidget::addGraph(Graph *graph)
 
 void CentralWidget::showGraph(bool show)
 {
-    foreach (DisplayWidget * widget, m_widgets)
-        widget->SetMimimumFontSize();
+    //foreach (DisplayWidget * widget, m_widgets)
+    //    widget->SetMimimumFontSize();
 
     m_mainLayout->setStretch(0, show);
     m_mainLayout->setStretch(1, !show);

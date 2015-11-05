@@ -147,7 +147,7 @@ void ButtonLine::AddChannel(Channel *channel)
         _InsertAction(m_viewMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
 
-    channel->channelSelectionChanged(true);
+    channel->channelSelectionChanged(true, true);
 }
 
 void ButtonLine::channelSettingChanged()
@@ -167,10 +167,12 @@ void ButtonLine::actionStateChanged()
         QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
         for (;it !=m_channelActions.end(); ++it)
         {
-            it.value()->setChecked(senderAction == m_noneAction); //oposite - wiil be triggered
-            it.value()->trigger(); //to throw a signal
-            it.key()->channelSelectionChanged(senderAction == m_allAction);
+            it.value()->setChecked(senderAction != m_noneAction);
+            channelTriggered(it.key(), it.value()->isChecked());
 
+            //Ugly but I need to redraw axes just once
+            //I don't want to redraw graph axes every time because it is too slow
+            it.key()->channelSelectionChanged(senderAction == m_allAction, it.value() ==  m_channelActions.last());
         }
         _EnableStartButton(senderAction == m_allAction);
     }
@@ -186,7 +188,7 @@ void ButtonLine::actionStateChanged()
             if (it.value()->isChecked())
                 anyEnabled = true;
 
-            it.key()->channelSelectionChanged(it.value()->isChecked());
+            it.key()->channelSelectionChanged(it.value()->isChecked(), true);
         }
 
         //TODO: exclude samples

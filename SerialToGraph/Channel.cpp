@@ -32,10 +32,11 @@ Channel::~Channel()
 
 }
 
-void Channel::channelSelectionChanged(bool selected)
+void Channel::channelSelectionChanged(bool selected, bool signal)
 {
     m_visible = selected;
-    stateChanged();
+    if (signal)
+        stateChanged();
 }
 
 bool Channel::IsVisible()

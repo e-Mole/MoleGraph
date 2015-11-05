@@ -85,7 +85,7 @@ signals:
 	void stateChanged();
     void selectedValueChanged(double value);
 public slots:
-    void channelSelectionChanged(bool selected);
+    void channelSelectionChanged(bool selected, bool signal);
 };
 
 #endif // CHANNEL_H

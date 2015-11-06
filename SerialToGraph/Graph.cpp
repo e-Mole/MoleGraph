@@ -36,6 +36,7 @@ Graph::Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar) :
 	m_connectButton(NULL),
 	m_sampleChannel(NULL)
 {
+    _ResetLastChannelIndex();
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->setMargin(1);
 	QHBoxLayout *documentLayout = new QHBoxLayout(this);
@@ -198,6 +199,10 @@ void Graph::redrawMarks(int pos)
     m_customPlot->replot(MyCustomPlot::rpImmediate);
 }
 
+void Graph::_ResetLastChannelIndex()
+{
+    m_lastChannelIndex = 0xff; //just a huge number
+}
 void Graph::draw()
 {
     unsigned lastPos = (m_x.size() > 0) ? m_x.last() : 0;
@@ -213,18 +218,15 @@ void Graph::draw()
     for (int i = 0; i< array.size(); i++)
          m_queue.enqueue(array[i]);
 
-    unsigned lastChannelIndex = 100; //just huge number
-    unsigned count = 0;
     while (_FillGraphItem(item))
 	{
-        count ++;
-        if (item.channelIndex <= lastChannelIndex)
+        if (item.channelIndex <= m_lastChannelIndex)
         {
             m_sampleChannel->AddValue(m_x.size());
 			m_x.push_back(m_x.size());
         }
 
-        lastChannelIndex = item.channelIndex;
+        m_lastChannelIndex = item.channelIndex;
 
         Channel *channel = m_channels[item.channelIndex];
         channel->AddValue(item.value);
@@ -274,8 +276,9 @@ void Graph::start()
     for (int i = 0; i< m_customPlot->graphCount(); i++)
         m_customPlot->graph(i)->data()->clear();
 
-	m_queue.clear();
-	m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
+    m_queue.clear();
+    m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
+    _ResetLastChannelIndex();
 
     if (0 == m_periodTypeIndex)
     {

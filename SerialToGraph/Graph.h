@@ -41,7 +41,7 @@ class Graph : public QWidget
     void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
     void _AddChannel(Qt::GlobalColor color);
     void _UpdateChannel(Channel *channel);
-
+    void _ResetLastChannelIndex();
     MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;
@@ -62,6 +62,8 @@ class Graph : public QWidget
 	Channel *m_sampleChannel;
 
     QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
+
+    unsigned m_lastChannelIndex;
 
 public:
     Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar);

@@ -36,7 +36,6 @@ class DisplayWidget : public QGroupBox
 
     } * m_valueLabel;
 
-    void _DisplayNAValue();
     void _SetMinimumSize();
     void _RefreshName();
     void mousePressEvent(QMouseEvent * event);
@@ -59,6 +58,7 @@ signals:
 public slots:
     void setValue(double value);
     void changeChannelSettings();
+    void displayNAValue();
 
 };
 

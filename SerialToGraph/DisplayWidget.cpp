@@ -25,11 +25,12 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
     m_valueLabel = new ValueLabel("", channel->GetColor(), !channel->IsSampleChannel(), this);
     layout->addWidget(m_valueLabel);
 
-    _DisplayNAValue();
+    displayNAValue();
     _SetMinimumSize();
 
     connect(m_channel, SIGNAL(selectedValueChanged(double)),  this, SLOT(setValue(double)));
     connect(m_channel, SIGNAL(stateChanged()), this, SLOT(changeChannelSettings()));
+    connect(m_channel, SIGNAL(valuesCleared()), this, SLOT(displayNAValue()));
 }
 
 void DisplayWidget::_RefreshName()
@@ -119,7 +120,7 @@ void DisplayWidget::setValue(double value)
     _ShowLastValueWithUnits();
 }
 
-void DisplayWidget::_DisplayNAValue()
+void DisplayWidget::displayNAValue()
 {
     //m_valueLabel->setText("0.000e-00<br/>mA");
     m_lastValueText = tr("n/a");

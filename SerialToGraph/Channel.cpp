@@ -81,4 +81,5 @@ void Channel::ClearValues()
 
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();
+    valuesCleared();
 }

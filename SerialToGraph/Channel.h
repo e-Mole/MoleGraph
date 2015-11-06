@@ -84,6 +84,7 @@ public:
 signals:
 	void stateChanged();
     void selectedValueChanged(double value);
+    void valuesCleared();
 public slots:
     void channelSelectionChanged(bool selected, bool signal);
 };

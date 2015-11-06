@@ -183,12 +183,13 @@ void ButtonLine::actionStateChanged()
         for  (; it != m_channelActions.end(); ++it)
         {
             if (it.value() == senderAction)
+            {
                 channelTriggered(it.key(), it.value()->isChecked());
+                it.key()->channelSelectionChanged(it.value()->isChecked(), true);
+            }
 
             if (it.value()->isChecked())
                 anyEnabled = true;
-
-            it.key()->channelSelectionChanged(it.value()->isChecked(), true);
         }
 
         //TODO: exclude samples

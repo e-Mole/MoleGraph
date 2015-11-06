@@ -45,7 +45,6 @@ void setup()
 void SendData()
 {
   UpdateChannels();
-   
     if (0 != (g_enabledChannels & 0x01)) 
       writeValue(0, g_channel0);
     if (0 != (g_enabledChannels & 0x02)) 
@@ -150,7 +149,7 @@ void loop()
       TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
     break;
     case INS_STOP:
-      TIMSK1 &= ~(1 << OCIE1A);  // enable timer compare interrupt
+      TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
     break;
     }
   }

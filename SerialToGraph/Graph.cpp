@@ -233,7 +233,8 @@ void Graph::draw()
         m_customPlot->graph(item.channelIndex)->data()->insert(newData.key, newData);
 
         //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
-        _RescaleAxisWithMargin(channel->GetAxisNumber());
+        if (channel->IsVisible())
+            _RescaleAxisWithMargin(channel->GetAxisNumber());
     }
 
     m_customPlot->xAxis->setRange(0, (m_x.size()-1));
@@ -297,7 +298,7 @@ void Graph::start()
     }
 
 	unsigned selectedChannels = 0;
-	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
+    for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
         selectedChannels |= ((m_channels[i]->IsVisible()) << i);
 
 	qDebug() << "selected channels:" << selectedChannels;

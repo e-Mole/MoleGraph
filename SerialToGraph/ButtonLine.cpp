@@ -24,7 +24,7 @@ ButtonLine::ButtonLine(QWidget *parent) :
 	m_connectivityLabel(NULL),
     m_menuButton(NULL),
     m_mainMenu(NULL),
-    m_viewMenu(NULL),
+    m_panelMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
@@ -123,20 +123,20 @@ void ButtonLine::_InitializeMenu()
     fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
     fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
 
-    m_viewMenu = new QMenu(this);
-    m_viewMenu->setTitle(tr("View"));
+    m_panelMenu = new QMenu(this);
+    m_panelMenu->setTitle(tr("Panels"));
 
 
-    m_graphAction = _InsertAction(m_viewMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G), true);
+    m_graphAction = _InsertAction(m_panelMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G), true);
 
-    m_viewMenu->addSeparator();
-    m_allAction = _InsertAction(m_viewMenu, tr("Show All"), QKeySequence(Qt::CTRL + Qt::Key_A), false);
-    m_noneAction = _InsertAction(m_viewMenu, tr("Show None"), QKeySequence(Qt::CTRL + Qt::Key_N), false);
+    m_panelMenu->addSeparator();
+    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::CTRL + Qt::Key_A), false);
+    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::CTRL + Qt::Key_N), false);
 
 
     m_mainMenu = new QMenu(this);
     m_mainMenu->addMenu(fileMenu);
-    m_mainMenu->addMenu(m_viewMenu);
+    m_mainMenu->addMenu(m_panelMenu);
     //mainMenu->addAction("Settings");
 }
 
@@ -144,7 +144,7 @@ void ButtonLine::AddChannel(Channel *channel)
 {
     static unsigned counter = 0;
     m_channelActions[channel] =
-        _InsertAction(m_viewMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
+        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
 
     channel->channelSelectionChanged(true, true);

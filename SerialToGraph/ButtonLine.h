@@ -25,7 +25,7 @@ class ButtonLine : public QWidget
     QLabel *m_connectivityLabel;
     QPushButton * m_menuButton;
     QMenu *m_mainMenu;
-    QMenu *m_viewMenu;
+    QMenu *m_panelMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 

@@ -11,7 +11,8 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
 }
 
 MyCustomPlot::MyCustomPlot(QWidget *parent) :
-    QCustomPlot(parent)
+    QCustomPlot(parent),
+    m_moveMode(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -54,11 +55,16 @@ void MyCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
     if (QCPAxis *ax = qobject_cast<QCPAxis*>(clickedLayerable))
         emit axisDoubleClick(ax);
     else
+    {
+        m_moveMode = false;
         emit outOfAxesDoubleClick();
+    }
 }
 
 void MyCustomPlot::wheelEvent(QWheelEvent *event)
 {
+    m_moveMode = true;
+
     QCPLayoutElement *element = layoutElementAt(event->pos());
     if (MyAxisRect *ar = qobject_cast<MyAxisRect*>(element))
     {
@@ -82,6 +88,11 @@ void MyCustomPlot::wheelEvent(QWheelEvent *event)
 
 void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)
 {
+    if (axisRect()->IsDragging())
+    {
+        m_moveMode = true;
+    }
+
     if (!axisRect()->IsDragging() || 0 != selectedAxes().size())
     {
         QCustomPlot::mouseMoveEvent(event);

@@ -232,10 +232,13 @@ void Graph::draw()
         m_customPlot->graph(item.channelIndex)->data()->insert(newData.key, newData);
     }
 
-    //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
-    _RescaleYAxesWithMargin();
+    if (!m_customPlot->IsInMoveMode())
+    {
+        //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
+        _RescaleYAxesWithMargin();
+        m_customPlot->xAxis->setRange(0, (m_x.size()-1));
+    }
 
-    m_customPlot->xAxis->setRange(0, (m_x.size()-1));
     m_scrollBar->setRange(0, m_x.last());
 
 	if ((unsigned)m_scrollBar->value() == lastPos)

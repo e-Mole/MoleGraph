@@ -81,16 +81,13 @@ void Graph::rescaleAxis(QCPAxis *axis)
     QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
     for (;it != m_yAxes.end(); ++it)
         if (it.value() == axis)
-            _RescaleAxisWithMargin(it.key());
+            _RescaleOneYAxisWithMargin(it.key(), it.value());
 }
 
 void Graph::rescaleAllAxes()
 {
     m_customPlot->xAxis->rescale();
-
-    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
-    for (;it != m_yAxes.end(); ++it)
-        _RescaleAxisWithMargin(it.key());
+    _RescaleYAxesWithMargin();
 }
 
 void Graph::periodTypeChanged(int index)
@@ -233,11 +230,10 @@ void Graph::draw()
 
 		QCPData newData(m_x.last(), item.value);
         m_customPlot->graph(item.channelIndex)->data()->insert(newData.key, newData);
-
-        //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
-        if (channel->IsVisible())
-            _RescaleAxisWithMargin(channel->GetAxisNumber());
     }
+
+    //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
+    _RescaleYAxesWithMargin();
 
     m_customPlot->xAxis->setRange(0, (m_x.size()-1));
     m_scrollBar->setRange(0, m_x.last());
@@ -538,14 +534,14 @@ void Graph::_UpdateChannel(Channel *channel)
 }
 
 
-void Graph::_RescaleAxisWithMargin(unsigned axisNumber)
+void Graph::_RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis)
 {
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
     foreach (Channel *channel, m_channels)
     {
-        if (channel->IsVisible() && channel->GetAxisNumber() == axisNumber)
+        if (channel->IsVisible() && channel->GetAxisNumber() == index)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
@@ -558,8 +554,15 @@ void Graph::_RescaleAxisWithMargin(unsigned axisNumber)
     if (0 == margin) //upper and lower are the same
         margin = std::abs(upper / RESCALE_MARGIN_RATIO);
 
-    m_yAxes[axisNumber]->setRange(lower - margin, upper + margin);
+    axis->setRange(lower - margin, upper + margin);
 }
+
+void Graph::_RescaleYAxesWithMargin()
+{
+    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
+    for (;it != m_yAxes.end(); ++it)
+        _RescaleOneYAxisWithMargin(it.key(), it.value());
+ }
 
 void Graph::InitializeChannels()
 {

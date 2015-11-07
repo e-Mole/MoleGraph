@@ -37,7 +37,8 @@ class Graph : public QWidget
     void _UpdateAxes(Channel *channel);
     void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
-    void _RescaleAxisWithMargin(unsigned axisNumber);
+    void _RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis);
+    void _RescaleYAxesWithMargin();
     void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
     void _AddChannel(Qt::GlobalColor color);
     void _UpdateChannel(Channel *channel);

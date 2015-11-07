@@ -13,14 +13,14 @@ unsigned counter =  0;
 unsigned char g_enabledChannels = 0;
 unsigned g_requiredTime = 0;
 unsigned g_currentTime = 0;
-float g_channel0 = 0;
-float g_channel1 = -100;
-float g_channel2 = 10;
-float g_channel3 = 20;
-float g_channel4 = 30;
-float g_channel5 = 40;
-float g_channel6 = 50;
-float g_channel7 = 60;
+float g_channel1 = 0;
+float g_channel2 = -100;
+float g_channel3 = 10;
+float g_channel4 = 20;
+float g_channel5 = 30;
+float g_channel6 = 40;
+float g_channel7 = 50;
+float g_channel8 = 60;
 
 void InitTimer()
 {
@@ -46,21 +46,21 @@ void SendData()
 {
   UpdateChannels();
     if (0 != (g_enabledChannels & 0x01)) 
-      writeValue(0, g_channel0);
+      writeValue(0, g_channel1);
     if (0 != (g_enabledChannels & 0x02)) 
-      writeValue(1, g_channel1);
+      writeValue(1, g_channel2);
     if (0 != (g_enabledChannels & 0x04)) 
-      writeValue(2, g_channel2);
+      writeValue(2, g_channel3);
     if (0 != (g_enabledChannels & 0x08)) 
-      writeValue(3, g_channel3); 
+      writeValue(3, g_channel4); 
     if (0 != (g_enabledChannels & 0x10)) 
-      writeValue(4, g_channel4);
+      writeValue(4, g_channel5);
     if (0 != (g_enabledChannels & 0x20)) 
-      writeValue(5, g_channel5);
+      writeValue(5, g_channel6);
     if (0 != (g_enabledChannels & 0x40))
-      writeValue(6, g_channel6);
+      writeValue(6, g_channel7);
     if (0 != (g_enabledChannels & 0x80))
-      writeValue(7, g_channel7);
+      writeValue(7, g_channel8);
 }
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
@@ -82,13 +82,13 @@ void writeValue(unsigned char channel, float value)
 
 void DemoUpdate()
 {
-  g_channel0 += 0.5;
-  if (g_channel0 > 20)
+  g_channel1 += 0.5;
+  if (g_channel1 > 20)
   {
-    g_channel0 = 0;
-    g_channel1 = (-100 == g_channel1) ? 100 : -100;
+    g_channel1 = 0;
+    g_channel2 = (-100 == g_channel2) ? 100 : -100;
   } 
-  g_channel2 = 1.0 / (float)(++counter);
+  g_channel3 = 1.0 / (float)(++counter);
 }
 void UpdateChannels()
 {

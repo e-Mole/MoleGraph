@@ -21,23 +21,29 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_periodUnits(NULL),
     m_startButton(NULL),
     m_stopButton(NULL),
-	m_connectivityLabel(NULL),
-    m_menuButton(NULL),
-    m_mainMenu(NULL),
+    m_connectivityLabel(NULL),
+    m_fileMenuButton(NULL),
+    m_panelMenuButton(NULL),
+    m_fileMenu(NULL),
     m_panelMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
     m_allAction(NULL),
-    m_noneAction(NULL)
+    m_noneAction(NULL),
+    m_afterLastChannelSeparator(NULL)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-	buttonLayout->setMargin(1);
+    buttonLayout->setMargin(1);
     setLayout(buttonLayout);
 
-    m_menuButton = new QPushButton(tr("Menu"), this);
-    buttonLayout->addWidget(m_menuButton);
-    connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonPressed()));
+    m_fileMenuButton = new QPushButton(tr("File"), this);
+    buttonLayout->addWidget(m_fileMenuButton);
+    connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
+
+    m_panelMenuButton = new QPushButton(tr("Panels"), this);
+    buttonLayout->addWidget(m_panelMenuButton);
+    connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -78,17 +84,26 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_connectivityLabel->setMargin(5);
     buttonLayout->addWidget(m_connectivityLabel);
 
-    buttonLayout->insertStretch(6, 1);
+    buttonLayout->insertStretch(7, 1);
 
     _InitializeMenu();
     _EnableStartButton(true);
 }
 
-void ButtonLine::menuButtonPressed()
+void ButtonLine::fileMenuButtonPressed()
 {
-    m_mainMenu->exec(
+    m_fileMenu->exec(
         QWidget::mapToGlobal(
-            QPoint(m_menuButton->pos().x(), m_menuButton->pos().y() + m_menuButton->height())
+            QPoint(m_fileMenuButton->pos().x(), m_fileMenuButton->pos().y() + m_fileMenuButton->height())
+        )
+    );
+}
+
+void ButtonLine::panelMenuButtonPressed()
+{
+    m_panelMenu->exec(
+        QWidget::mapToGlobal(
+            QPoint(m_panelMenuButton->pos().x(), m_panelMenuButton->pos().y() + m_panelMenuButton->height())
         )
     );
 }
@@ -114,37 +129,31 @@ QAction * ButtonLine::_InsertAction(QMenu *menu, QString title, QKeySequence con
 
 void ButtonLine::_InitializeMenu()
 {
-    QMenu *fileMenu = new QMenu(this);
-    fileMenu->setTitle("File");
+    m_fileMenu = new QMenu(this);
+    m_fileMenu->setTitle("File");
     //fileMenu->addAction(tr("Open"));
     //fileMenu->addAction(tr("Save"));
     //fileMenu->addAction(tr("Save As"));
-    fileMenu->addSeparator();
-    fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
-    fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
+    m_fileMenu->addSeparator();
+    m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
+    m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
 
     m_panelMenu = new QMenu(this);
     m_panelMenu->setTitle(tr("Panels"));
 
 
-    m_graphAction = _InsertAction(m_panelMenu, tr("Graph"), QKeySequence(Qt::CTRL + Qt::Key_G), true);
+    m_graphAction = _InsertAction(m_panelMenu, tr("Graph"), QKeySequence(Qt::ALT + Qt::Key_G), true);
 
-    m_panelMenu->addSeparator();
-    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::CTRL + Qt::Key_A), false);
-    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::CTRL + Qt::Key_N), false);
-
-
-    m_mainMenu = new QMenu(this);
-    m_mainMenu->addMenu(fileMenu);
-    m_mainMenu->addMenu(m_panelMenu);
-    //mainMenu->addAction("Settings");
+    m_afterLastChannelSeparator = m_panelMenu->addSeparator();
+    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::ALT + Qt::Key_A), false);
+    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::ALT + Qt::Key_N), false);
 }
 
 void ButtonLine::AddChannel(Channel *channel)
 {
     static unsigned counter = 0;
     m_channelActions[channel] =
-        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::CTRL + Qt::Key_0 + counter++), true, m_allAction);
+        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + counter++), true, m_afterLastChannelSeparator);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
 
     channel->channelSelectionChanged(true, true);

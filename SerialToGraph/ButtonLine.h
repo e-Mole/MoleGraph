@@ -23,8 +23,9 @@ class ButtonLine : public QWidget
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
     QLabel *m_connectivityLabel;
-    QPushButton * m_menuButton;
-    QMenu *m_mainMenu;
+    QPushButton * m_fileMenuButton;
+    QPushButton * m_panelMenuButton;
+    QMenu *m_fileMenu;
     QMenu *m_panelMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
@@ -33,6 +34,7 @@ class ButtonLine : public QWidget
     QMap<Channel *, QAction*> m_channelActions;
     QAction *m_allAction;
     QAction *m_noneAction;
+    QAction *m_afterLastChannelSeparator;
 
 public:
     explicit ButtonLine(QWidget *parent = 0);
@@ -55,7 +57,8 @@ public slots:
     void exportPngSlot();
     void exportCsvSlot();
     void connectivityStateChange(bool connected);
-    void menuButtonPressed();
+    void fileMenuButtonPressed();
+    void panelMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
 };

@@ -24,8 +24,11 @@ class Graph : public QWidget
 
 	struct GraphItem
 	{
+        bool firstinSample;
+        bool afterThrownOutSample;
         uint8_t channelIndex;
 		float value;
+
 	};
 
     void _InitializePolt(QBoxLayout *graphLayout);
@@ -42,7 +45,8 @@ class Graph : public QWidget
     void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
     void _AddChannel(Qt::GlobalColor color);
     void _UpdateChannel(Channel *channel);
-    void _ResetLastChannelIndex();
+    void _AdjustDrawPeriod(unsigned drawDelay);
+    bool _FillQueue();
     MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;
@@ -64,7 +68,8 @@ class Graph : public QWidget
 
     QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
 
-    unsigned m_lastChannelIndex;
+    unsigned m_drawPeriod;
+    bool m_anySampleThrownOut;
 
 public:
     Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar);
@@ -79,7 +84,7 @@ signals:
 
 public slots:
 protected slots:
-	void draw();
+    void draw();
 	void start();
 	void stop();
 	void exportPng(QString const &fileName);

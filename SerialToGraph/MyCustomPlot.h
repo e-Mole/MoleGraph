@@ -22,6 +22,7 @@ class MyCustomPlot : public QCustomPlot
     Q_OBJECT
 
     bool m_moveMode;
+    bool m_disabled;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -36,6 +37,8 @@ public:
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
 
     bool IsInMoveMode() { return m_moveMode; }
+    void SetDisabled(bool disable);
+    void ReplotIfNotDisabled();
 signals:
     void outOfAxesDoubleClick();
     void axisDoubleClick(QCPAxis *axis);

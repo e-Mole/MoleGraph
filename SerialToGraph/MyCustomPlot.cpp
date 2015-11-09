@@ -12,7 +12,8 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
 
 MyCustomPlot::MyCustomPlot(QWidget *parent) :
     QCustomPlot(parent),
-    m_moveMode(false)
+    m_moveMode(false),
+    m_disabled(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -84,6 +85,24 @@ void MyCustomPlot::wheelEvent(QWheelEvent *event)
         else
             ar->wheelEvent(event);
     }
+}
+
+void MyCustomPlot::SetDisabled(bool disable)
+{
+    if (m_disabled != disable)
+    {
+        setBackground(QBrush(disable ? Qt::lightGray : Qt::white));
+        replot(rpQueued);
+    }
+    m_disabled = disable;
+}
+
+void MyCustomPlot::ReplotIfNotDisabled()
+{
+    if (m_disabled)
+        return;
+
+    replot(rpQueued);
 }
 
 void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)

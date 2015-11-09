@@ -1,4 +1,5 @@
 #define VERSION "ATG_1" //arduino to graph version 1
+#define MESSAGE_SIZE 5
 enum Instructions
 {
   INS_GET_VERSION = 1,
@@ -11,6 +12,7 @@ enum Instructions
 
 unsigned counter =  0;
 unsigned char g_enabledChannels = 0;
+unsigned char g_channelCount = 0;
 unsigned g_requiredTime = 0;
 unsigned g_currentTime = 0;
 float g_channel1 = 0;
@@ -21,6 +23,7 @@ float g_channel5 = 30;
 float g_channel6 = 40;
 float g_channel7 = 50;
 float g_channel8 = 60;
+bool g_fullWriteBufferDetected = false;
 
 void InitTimer()
 {
@@ -45,22 +48,75 @@ void setup()
 void SendData()
 {
   UpdateChannels();
-    if (0 != (g_enabledChannels & 0x01)) 
-      writeValue(0, g_channel1);
-    if (0 != (g_enabledChannels & 0x02)) 
-      writeValue(1, g_channel2);
-    if (0 != (g_enabledChannels & 0x04)) 
-      writeValue(2, g_channel3);
-    if (0 != (g_enabledChannels & 0x08)) 
-      writeValue(3, g_channel4); 
-    if (0 != (g_enabledChannels & 0x10)) 
-      writeValue(4, g_channel5);
-    if (0 != (g_enabledChannels & 0x20)) 
-      writeValue(5, g_channel6);
-    if (0 != (g_enabledChannels & 0x40))
-      writeValue(6, g_channel7);
-    if (0 != (g_enabledChannels & 0x80))
-      writeValue(7, g_channel8);
+  
+  unsigned bytesToSend = g_channelCount * MESSAGE_SIZE;
+
+  //it can happen when user set to high frequency or too many channels
+  //number of data is then higher then baud rate.
+  // I try to check Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE but it happend always
+  // the buffer is probably less then 40 and => I could 
+  
+  bool bufferIsFull = (Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE); 
+
+  g_fullWriteBufferDetected |= bufferIsFull;
+  
+  //RX LED satay to light but application was not able to read all the data 
+  //when I try to send data when I try to write data in this moment.
+  //When a new messurment was started, data from previous mesurment was delivered WTF?
+  
+  if (bufferIsFull)
+    return; //have to throw data form this sample :(
+
+  bool firstNotWritten = true;
+  if (0 != (g_enabledChannels & 0x01)) 
+  {
+    writeValue(0, g_channel1, firstNotWritten, g_fullWriteBufferDetected); 
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x02)) 
+  {
+    writeValue(1, g_channel2, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x04)) 
+  {
+    writeValue(2, g_channel3, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x08)) 
+  {
+    writeValue(3, g_channel4, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x10)) 
+  {
+    writeValue(4, g_channel5, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x20)) 
+  {
+    writeValue(5, g_channel6, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x40))
+  {
+    writeValue(6, g_channel7, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+  
+  if (0 != (g_enabledChannels & 0x80))
+  {
+    writeValue(7, g_channel8, firstNotWritten, g_fullWriteBufferDetected);
+    firstNotWritten = false;
+  }
+
+   g_fullWriteBufferDetected = false;
 }
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
@@ -74,10 +130,14 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 }
 
 
-void writeValue(unsigned char channel, float value)
+void writeValue(unsigned char channel, float value, bool firstInSample, bool writingDelay)
 {
-   Serial.write(channel);
-   Serial.write((char *)&value, 4);
+  unsigned char mixture = channel;
+  mixture |= firstInSample << 7;
+  mixture |= writingDelay << 6;
+  
+  Serial.write(mixture);
+  Serial.write((char *)&value, 4);
 }
 
 void DemoUpdate()
@@ -141,11 +201,15 @@ void loop()
     case INS_ENABLED_CHANNELS:
       while (0 == Serial.available())
       {}
-      g_enabledChannels  = Serial.read(); 
+      g_enabledChannels  = Serial.read();
+      g_channelCount = 0;
+      for (int i = 0; i < 8; i++)
+        if (0 != (g_enabledChannels & (1 << i)))
+          g_channelCount++;       
     break;
     case INS_START:
-      SendData(); //first delivery must be done immediatly
       g_currentTime = 0;
+      g_fullWriteBufferDetected = false;
       TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
     break;
     case INS_STOP:

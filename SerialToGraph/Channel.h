@@ -23,7 +23,7 @@ class Channel : public QObject
     unsigned m_axisNumber;
     double m_channelMinValue;
     double m_channelMaxValue;
-    unsigned m_attachedTo;
+    signed m_attachedTo;
     bool m_samples;
     unsigned m_selectedValueIndex;
     unsigned m_shapeIndex;

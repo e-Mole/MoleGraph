@@ -77,7 +77,7 @@ void ChannelSettings::storeAndAccept()
             changed = true;
             m_channel->m_toRightSide = m_toRightSide->isChecked();
         }
-        if (m_channel->m_shapeIndex != m_shape->currentIndex())
+        if (m_channel->m_shapeIndex != (unsigned)m_shape->currentIndex())
         {
             changed = true;
             m_channel->m_shapeIndex = m_shape->currentIndex();

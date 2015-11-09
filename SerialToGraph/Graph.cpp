@@ -9,6 +9,7 @@
 #include <QByteArray>
 #include <QColor>
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFile>
@@ -24,6 +25,7 @@
 
 #define RESCALE_MARGIN_RATIO 50
 #define AXES_LABEL_PADDING 1
+#define INITIAL_DRAW_PERIOD 50
 
 Graph::Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar) :
 	QWidget(parent),
@@ -34,9 +36,10 @@ Graph::Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar) :
     m_scrollBar(scrollBar),
 	m_periodTypeIndex(0),
 	m_connectButton(NULL),
-	m_sampleChannel(NULL)
+    m_sampleChannel(NULL),
+    m_drawPeriod(INITIAL_DRAW_PERIOD),
+    m_anySampleThrownOut(false)
 {
-    _ResetLastChannelIndex();
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->setMargin(1);
 	QHBoxLayout *documentLayout = new QHBoxLayout(this);
@@ -101,7 +104,7 @@ QString Graph::_GetAxisName(QString const &units, unsigned index)
     bool first =true;
     unsigned count = 0;
     bool addMiddle = false;
-    for (unsigned i = 0; i < m_channels.size(); i++)
+    for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
     {
 
         if (m_channels[i]->IsVisible() && index == m_channels[i]->GetAxisNumber())
@@ -109,7 +112,7 @@ QString Graph::_GetAxisName(QString const &units, unsigned index)
             count++;
             if (!first)
             {
-                if (i+1 != m_channels.size() && m_channels[i+1]->IsVisible() && index == m_channels[i+1]->GetAxisNumber() &&
+                if (i+1 != (unsigned)m_channels.size() && m_channels[i+1]->IsVisible() && index == m_channels[i+1]->GetAxisNumber() &&
                     i != 0 && m_channels[i-1]->IsVisible() && index == m_channels[i-1]->GetAxisNumber())
                 {
                     addMiddle = true;
@@ -168,7 +171,10 @@ bool Graph::_FillGraphItem(GraphItem &item)
     if (m_queue.size() < 5)
 		return false;
 
-    item.channelIndex = m_queue.dequeue();
+    unsigned char mixture = m_queue.dequeue();
+    item.firstinSample = (mixture >> 7);
+    item.afterThrownOutSample = ((mixture >> 6) & 1);
+    item.channelIndex = mixture & 7; //lowest 3 bits
 	char value[4];
 	value[0] = m_queue.dequeue();
 	value[1] = m_queue.dequeue();
@@ -193,37 +199,46 @@ void Graph::redrawMarks(int pos)
     }
 
     m_sampleChannel->SelectValue(pos);
-    m_customPlot->replot(MyCustomPlot::rpImmediate);
+    m_customPlot->ReplotIfNotDisabled();
 }
 
-void Graph::_ResetLastChannelIndex()
+bool Graph::_FillQueue()
 {
-    m_lastChannelIndex = 0xff; //just a huge number
-}
-void Graph::draw()
-{
-    unsigned lastPos = (m_x.size() > 0) ? m_x.last() : 0;
-	GraphItem item;
-
     QByteArray array;
-	m_serialPort.ReadAll(array);
+    m_serialPort.ReadAll(array);
     if (array.size() == 0)
-    {
-        return; //nothing to draw
-    }
+        return false; //nothing to fill
 
     for (int i = 0; i< array.size(); i++)
          m_queue.enqueue(array[i]);
 
+    return true;
+}
+void Graph::draw()
+{
+    qint64 startTime = QDateTime::currentMSecsSinceEpoch();
+
+    unsigned lastPos = (m_x.size() > 0) ? m_x.last() : 0;
+	GraphItem item;
+    bool addedX = false;
+
+    if (!_FillQueue())
+        return; //nothing to draw
+
     while (_FillGraphItem(item))
 	{
-        if (item.channelIndex <= m_lastChannelIndex)
+        if (item.afterThrownOutSample)
+        {
+            m_anySampleThrownOut = true;
+            qDebug() << "writing delay";
+        }
+
+        if (item.firstinSample)
         {
             m_sampleChannel->AddValue(m_x.size());
 			m_x.push_back(m_x.size());
+            addedX = true;
         }
-
-        m_lastChannelIndex = item.channelIndex;
 
         Channel *channel = m_channels[item.channelIndex];
         channel->AddValue(item.value);
@@ -241,18 +256,50 @@ void Graph::draw()
 
     m_scrollBar->setRange(0, m_x.last());
 
-	if ((unsigned)m_scrollBar->value() == lastPos)
+    if ((unsigned)m_scrollBar->value() == lastPos)
     {
+    qDebug() << "m_scrollBar->value() == lastPos";
         m_scrollBar->setValue(m_x.last());
-        if (0 == m_x.last()) //slider value was not changed but I have first (initial) values and want to display them
-            redrawMarks(0);
+
+        //addedX - I need to redraw graph with marks also int the case x was not added
+        //0 == m_x.last() - slider value was not changed but I have first (initial) values and want to display them
+        if (!addedX || 0 == m_x.last())
+            redrawMarks(m_x.last());
     }
     else
     {
         //if slider value is changed graph is redrown by slider. I have to redraw plot there because of moving by the slider
         //else i have to redraw it here
-        m_customPlot->replot(MyCustomPlot::rpImmediate);
 
+        m_customPlot->ReplotIfNotDisabled();
+
+    }
+
+    _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
+
+    return;
+}
+
+void Graph::_AdjustDrawPeriod(unsigned drawDelay)
+{
+    if (m_drawPeriod >= 20 && drawDelay < m_drawPeriod /2) //20 ms - I guess the program will not use a dog
+    {
+        m_drawPeriod /= 2;
+        m_drawTimer->stop();
+        m_drawTimer->start(m_drawPeriod);
+        qDebug() << "draw period decreased to:" << m_drawPeriod;
+    }
+    else if (drawDelay > m_drawPeriod)
+    {
+        if (drawDelay > 500) //delay will be still longer, I have to stop drawing for this run
+            m_customPlot->SetDisabled(true);
+        else
+        {
+            m_drawPeriod *= 2;
+            m_drawTimer->stop();
+            m_drawTimer->start(m_drawPeriod);
+            qDebug() << "draw period increased to:" << m_drawPeriod;
+        }
     }
 }
 
@@ -264,6 +311,7 @@ void Graph::start()
 		return;
 	}
 
+    m_anySampleThrownOut = false;
     m_customPlot->xAxis->setLabel(m_sampleChannel->GetName());
 	m_counter = 0;
 	m_x.clear();
@@ -277,7 +325,6 @@ void Graph::start()
 
     m_queue.clear();
     m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
-    _ResetLastChannelIndex();
 
     if (0 == m_periodTypeIndex)
     {
@@ -305,11 +352,14 @@ void Graph::start()
 
 	qDebug() << "selected channels:" << selectedChannels;
 
-	m_serialPort.SetSelectedChannels(selectedChannels);
+    m_serialPort.SetSelectedChannels(selectedChannels);
+
+
 
     m_scrollBar->setRange(0, 0);
 
-    m_drawTimer->start(100);
+    m_drawPeriod = INITIAL_DRAW_PERIOD;
+    m_drawTimer->start(m_drawPeriod);
     if (!m_serialPort.Start())
     {
         m_drawTimer->stop();
@@ -320,10 +370,21 @@ void Graph::start()
 
 void Graph::stop()
 {
-	m_serialPort.Stop();
-	m_drawTimer->stop();
-	draw(); //may be something is still in the buffer
+    if (!m_serialPort.Stop())
+        qDebug() << "stop was not deliveried";
 
+	m_drawTimer->stop();
+
+    m_customPlot->SetDisabled(false);
+    draw(); //may be something is still in the buffer
+    //just for case last draw set a disable again
+    m_customPlot->SetDisabled(false);
+    if (m_anySampleThrownOut)
+        QMessageBox::warning(
+            this,
+            QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+            tr("Some samples was not delivered. The sample rate is probably too high for so many channels.")
+        );
 }
 
 void Graph::exportPng(QString const &fileName)
@@ -533,7 +594,7 @@ void Graph::_UpdateChannel(Channel *channel)
     //FIXME: quick solution. axis should not be rescaled in the case its name is changed
     rescaleAllAxes();
 
-    m_customPlot->replot(MyCustomPlot::rpImmediate);
+    m_customPlot->ReplotIfNotDisabled();
 }
 
 

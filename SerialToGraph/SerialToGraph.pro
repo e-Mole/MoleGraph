@@ -24,7 +24,11 @@ SOURCES += main.cpp\
     MyCustomPlot.cpp \
     Graph.cpp \
     DisplayWidget.cpp \
-    CentralWidget.cpp
+    CentralWidget.cpp \
+    AddAxisDialog.cpp \
+    RemoveAxisDialog.cpp \
+    FormDialogBase.cpp \
+    Axis.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -37,6 +41,10 @@ HEADERS  += MainWindow.h \
     MyCustomPlot.h \
     Graph.h \
     DisplayWidget.h \
-    CentralWidget.h
+    CentralWidget.h \
+    AddAxisDialog.h \
+    RemoveAxisDialog.h \
+    FormDialogBase.h \
+    Axis.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

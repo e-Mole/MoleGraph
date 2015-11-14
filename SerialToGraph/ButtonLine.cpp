@@ -1,4 +1,5 @@
 #include "ButtonLine.h"
+#include <Axis.h>
 #include <Channel.h>
 #include <QHBoxLayout>
 #include <QComboBox>
@@ -15,7 +16,7 @@
 #include <QPoint>
 #include <QWidget>
 
-ButtonLine::ButtonLine(QWidget *parent) :
+ButtonLine::ButtonLine(QWidget *parent, QVector<Axis *> &axes):
     QWidget(parent),
     m_period(NULL),
     m_periodUnits(NULL),
@@ -24,6 +25,7 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_connectivityLabel(NULL),
     m_fileMenuButton(NULL),
     m_panelMenuButton(NULL),
+    m_axisMenuButton(NULL),
     m_fileMenu(NULL),
     m_panelMenu(NULL),
     m_connected(false),
@@ -31,7 +33,8 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_graphAction(NULL),
     m_allAction(NULL),
     m_noneAction(NULL),
-    m_afterLastChannelSeparator(NULL)
+    m_afterLastChannelSeparator(NULL),
+    m_axes(axes)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->setMargin(1);
@@ -44,6 +47,10 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_panelMenuButton = new QPushButton(tr("Panels"), this);
     buttonLayout->addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
+
+    m_axisMenuButton = new QPushButton(tr("Axes"), this);
+    buttonLayout->addWidget(m_axisMenuButton);
+    connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -84,7 +91,7 @@ ButtonLine::ButtonLine(QWidget *parent) :
     m_connectivityLabel->setMargin(5);
     buttonLayout->addWidget(m_connectivityLabel);
 
-    buttonLayout->insertStretch(7, 1);
+    buttonLayout->insertStretch(8, 1);
 
     _InitializeMenu();
     _EnableStartButton(true);
@@ -104,6 +111,27 @@ void ButtonLine::panelMenuButtonPressed()
     m_panelMenu->exec(
         QWidget::mapToGlobal(
             QPoint(m_panelMenuButton->pos().x(), m_panelMenuButton->pos().y() + m_panelMenuButton->height())
+        )
+    );
+}
+
+void ButtonLine::axisMenuButtonPressed()
+{
+    foreach (QAction *action, m_axisMenu->actions())
+        m_axisMenu->removeAction(action);
+
+    foreach (Axis *axis, m_axes)
+    {
+        m_axisMenu->addAction(axis->GetName(), this, SIGNAL(addAxisPressed()));
+    }
+    m_axisMenu->addSeparator();
+
+    m_axisMenu->addAction(tr("Add..."), this, SIGNAL(addAxisPressed()));
+    m_axisMenu->addAction(tr("Remove..."), this, SIGNAL(removeAxisPressed()));
+
+    m_axisMenu->exec(
+        QWidget::mapToGlobal(
+            QPoint(m_axisMenuButton->pos().x(), m_axisMenuButton->pos().y() + m_axisMenuButton->height())
         )
     );
 }
@@ -141,12 +169,14 @@ void ButtonLine::_InitializeMenu()
     m_panelMenu = new QMenu(this);
     m_panelMenu->setTitle(tr("Panels"));
 
-
     m_graphAction = _InsertAction(m_panelMenu, tr("Graph"), QKeySequence(Qt::ALT + Qt::Key_G), true);
 
     m_afterLastChannelSeparator = m_panelMenu->addSeparator();
     m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::ALT + Qt::Key_A), false);
     m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::ALT + Qt::Key_N), false);
+
+    m_axisMenu = new QMenu(this);
+    m_axisMenu->setTitle(tr("Axes"));
 }
 
 void ButtonLine::AddChannel(Channel *channel)

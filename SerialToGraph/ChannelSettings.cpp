@@ -1,7 +1,7 @@
 #include "ChannelSettings.h"
 #include <QComboBox>
 #include <QCheckBox>
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -11,52 +11,28 @@
 #include <Channel.h>
 
 ChannelSettings::ChannelSettings(Channel *channel, QWidget *parent) :
-    QDialog(parent),
+    FormDialogBase(parent, tr("Channel settings")),
     m_channel(channel),
     m_name(NULL),
     m_shape(NULL)
 {
-    setWindowTitle(tr("Channel settings"));
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	QGridLayout *gridLaout = new QGridLayout(this);
-	mainLayout->addLayout(gridLaout);
-
-    unsigned row = 0;
-
-    QLabel *nameLabel = new QLabel(tr("Title"), this);
-	gridLaout->addWidget(nameLabel, row,0);
     m_name = new QLineEdit(channel->GetName(), this);
-	gridLaout->addWidget(m_name, row++, 1);
+    m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
     if (!channel->IsSampleChannel())
     {
-        QLabel *unitsLabel = new QLabel(tr("Units"), this);
-        gridLaout->addWidget(unitsLabel, row,0);
         m_units = new QLineEdit(channel->GetUnits(), this);
-        gridLaout->addWidget(m_units, row++, 1);
+        m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
 
-        QLabel *toRigtSideLabel = new QLabel(tr("To right side"), this);
-        gridLaout->addWidget(toRigtSideLabel, row, 0);
         m_toRightSide = new QCheckBox(this);
         m_toRightSide->setChecked(channel->ToRightSide());
-        gridLaout->addWidget(m_toRightSide, row++, 1);
+        m_formLayout->addRow(new QLabel(tr("To right side"), this), m_toRightSide);
 
-        _InitializeShapeCombo(gridLaout, row++, channel->GetShapeIndex());
+        _InitializeShapeCombo(m_formLayout, channel->GetShapeIndex());
     }
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(buttonLayout);
-
-    QPushButton *store = new QPushButton(tr("Store"), this);
-    buttonLayout->addWidget(store);
-    connect(store, SIGNAL(clicked(bool)), this, SLOT(storeAndAccept()));
-
-    QPushButton *cancel = new QPushButton(tr("Cancel"), this);
-    buttonLayout->addWidget(cancel);
-    connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
 }
 
-void ChannelSettings::storeAndAccept()
+void ChannelSettings::BeforeAccept()
 {
     bool changed = false;
     if (m_channel->m_title != m_name->text())
@@ -89,11 +65,8 @@ void ChannelSettings::storeAndAccept()
 
     accept();
 }
-void ChannelSettings::_InitializeShapeCombo(QGridLayout *gridLaout, unsigned row, unsigned shapeIndex)
+void ChannelSettings::_InitializeShapeCombo(QFormLayout *formLaout, unsigned shapeIndex)
 {
-    QLabel *shapeLabel = new QLabel(tr("Shape"), this);
-    gridLaout->addWidget(shapeLabel, row,0);
-
     m_shape = new QComboBox(this);
 
     m_shape->addItem(tr("Cross"));
@@ -113,6 +86,6 @@ void ChannelSettings::_InitializeShapeCombo(QGridLayout *gridLaout, unsigned row
 
     m_shape->setCurrentIndex(shapeIndex);
 
-    gridLaout->addWidget(m_shape, row, 1);
+    formLaout->addRow(new QLabel(tr("Shape"), this), m_shape);
 
 }

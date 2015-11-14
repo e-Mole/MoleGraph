@@ -5,7 +5,9 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <SerialPort.h>
+#include <QVector>
 
+class Axis;
 class QApplication;
 class Channel;
 class CentralWidget;
@@ -19,6 +21,8 @@ class MainWindow : public QMainWindow
     CentralWidget *m_centralWidget;
     ButtonLine* m_buttonLine;
 
+    QVector<Axis *> m_axes;
+
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
 	~MainWindow();
@@ -28,6 +32,8 @@ protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
     void addChannelDisplay(Channel* channel);
+    void addAxis();
+    void removeAxis();
 };
 
 #endif // MAINWINDOW_H

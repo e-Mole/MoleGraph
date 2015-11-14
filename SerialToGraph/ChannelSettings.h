@@ -1,19 +1,20 @@
 #ifndef CHANNELSETTINGS_H
 #define CHANNELSETTINGS_H
 
-#include <QDialog>
+#include <FormDialogBase.h>
 class Channel;
 class QCheckBox;
 class QComboBox;
-class QGridLayout;
+class QFormLayout;
 class QLineEdit;
 class QString;
 
-class ChannelSettings : public QDialog
+class ChannelSettings : public FormDialogBase
 {
     Q_OBJECT
 
-    void _InitializeShapeCombo(QGridLayout *gridLaout, unsigned row, unsigned shapeIndex);
+    void _InitializeShapeCombo(QFormLayout *formLaout, unsigned shapeIndex);
+    virtual void BeforeAccept();
 
     Channel *m_channel;
     QLineEdit * m_name;
@@ -25,8 +26,7 @@ public:
     ChannelSettings(Channel *channel, QWidget *parent);
 signals:
 
-public slots:
-    void storeAndAccept();
+private slots:
 };
 
 #endif // CHANNELSETTINGS_H

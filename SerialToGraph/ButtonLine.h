@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QMap>
+#include <QVector>
+
+class Axis;
 class QLineEdit;
 class QPushButton;
 class QLabel;
@@ -25,8 +28,10 @@ class ButtonLine : public QWidget
     QLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
+    QPushButton * m_axisMenuButton;
     QMenu *m_fileMenu;
     QMenu *m_panelMenu;
+    QMenu *m_axisMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 
@@ -35,9 +40,10 @@ class ButtonLine : public QWidget
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
+    QVector<Axis *> &m_axes;
 
 public:
-    explicit ButtonLine(QWidget *parent = 0);
+    ButtonLine(QWidget *parent, QVector<Axis *> &axes);
     void AddChannel(Channel *channel);
 
 signals:
@@ -49,6 +55,9 @@ signals:
     void exportCsv(QString const &fileName);
     void graphTriggered(bool checked);
     void channelTriggered(Channel *channel, bool checked);
+    void addAxisPressed();
+    void removeAxisPressed();
+
 public slots:
     void startButtonPressed();
     void stopButtonPressed();
@@ -59,6 +68,7 @@ public slots:
     void connectivityStateChange(bool connected);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
+    void axisMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
 };

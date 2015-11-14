@@ -1,5 +1,10 @@
 #include "MainWindow.h"
+#include <AddAxisDialog.h>
+#include <Axis.h>
 #include <ButtonLine.h>
+#include <CentralWidget.h>
+#include <DisplayWidget.h>
+#include <Channel.h>
 #include <Graph.h>
 #include <PortListDialog.h>
 #include <QDockWidget>
@@ -9,10 +14,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QWidget>
-#include <CentralWidget.h>
-
-#include <DisplayWidget.h>
-#include <Channel.h>
+#include <RemoveAxisDialog.h>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
@@ -58,7 +60,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
 
     this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-    m_buttonLine = new ButtonLine(this);
+    m_buttonLine = new ButtonLine(this, m_axes);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
@@ -70,6 +72,9 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(stop()), plot, SLOT(stop()));
     connect(m_buttonLine, SIGNAL(exportPng(QString)), plot, SLOT(exportPng(QString)));
     connect(m_buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
+    connect(m_buttonLine, SIGNAL(addAxisPressed()), this, SLOT(addAxis()));
+    connect(m_buttonLine, SIGNAL(removeAxisPressed()), this, SLOT(removeAxis()));
+
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
     connect(plot, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
@@ -80,6 +85,18 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     plot->InitializeChannels();
 
+    m_axes.push_back(new Axis("x"));
+    m_axes.push_back(new Axis("y"));
+}
+
+void MainWindow::addAxis()
+{
+    AddAxisDialog(m_axes).exec();
+}
+
+void MainWindow::removeAxis()
+{
+    RemoveAxisDialog(m_axes).exec();
 }
 
 void MainWindow::addChannelDisplay(Channel* channel)
@@ -90,7 +107,10 @@ void MainWindow::addChannelDisplay(Channel* channel)
 
 MainWindow::~MainWindow()
 {
-
+    foreach (Axis *axis, m_axes)
+    {
+        delete axis;
+    }
 }
 
 void MainWindow::dockVisibilityChanged(bool visible)

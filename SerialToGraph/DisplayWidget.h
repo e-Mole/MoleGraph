@@ -48,7 +48,7 @@ public:
 
 
     static QSize GetMinimumSize()
-    {  return QSize(110,70); }
+    {  return QSize(110, 68); }
 
     //void SetMimimumFontSize()
     //{ m_valueLabel->SetMimimumFontSize(); }

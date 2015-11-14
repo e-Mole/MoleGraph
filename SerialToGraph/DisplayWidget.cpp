@@ -122,7 +122,7 @@ void DisplayWidget::setValue(double value)
 
 void DisplayWidget::displayNAValue()
 {
-    //m_valueLabel->setText("0.000e-00<br/>mA");
+    //m_lastValueText = "-0.000e-00<br/>mA";
     m_lastValueText = tr("n/a");
     _ShowLastValueWithUnits();
 }

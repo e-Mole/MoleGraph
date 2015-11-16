@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include <AddAxisDialog.h>
+#include <AxesDialog.h>
 #include <Axis.h>
 #include <ButtonLine.h>
 #include <CentralWidget.h>
@@ -14,7 +14,6 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QWidget>
-#include <RemoveAxisDialog.h>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 	QMainWindow(parent),
@@ -72,8 +71,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(stop()), plot, SLOT(stop()));
     connect(m_buttonLine, SIGNAL(exportPng(QString)), plot, SLOT(exportPng(QString)));
     connect(m_buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
-    connect(m_buttonLine, SIGNAL(addAxisPressed()), this, SLOT(addAxis()));
-    connect(m_buttonLine, SIGNAL(removeAxisPressed()), this, SLOT(removeAxis()));
+    connect(m_buttonLine, SIGNAL(axesPressed()), this, SLOT(openAxesDialog()));
 
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
@@ -85,18 +83,13 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     plot->InitializeChannels();
 
-    m_axes.push_back(new Axis("x"));
-    m_axes.push_back(new Axis("y"));
+    m_axes.push_back(new Axis(tr("Horizontal"), false));
+    m_axes.push_back(new Axis(tr("Vertical"), false));
 }
 
-void MainWindow::addAxis()
+void MainWindow::openAxesDialog()
 {
-    AddAxisDialog(m_axes).exec();
-}
-
-void MainWindow::removeAxis()
-{
-    RemoveAxisDialog(m_axes).exec();
+    AxesDialog(m_axes).exec();
 }
 
 void MainWindow::addChannelDisplay(Channel* channel)

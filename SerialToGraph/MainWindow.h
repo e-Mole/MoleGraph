@@ -32,8 +32,7 @@ protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
     void addChannelDisplay(Channel* channel);
-    void addAxis();
-    void removeAxis();
+    void openAxesDialog();
 };
 
 #endif // MAINWINDOW_H

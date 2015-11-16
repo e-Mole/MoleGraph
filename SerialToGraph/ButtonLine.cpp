@@ -25,7 +25,7 @@ ButtonLine::ButtonLine(QWidget *parent, QVector<Axis *> &axes):
     m_connectivityLabel(NULL),
     m_fileMenuButton(NULL),
     m_panelMenuButton(NULL),
-    m_axisMenuButton(NULL),
+    m_graphMenuButton(NULL),
     m_fileMenu(NULL),
     m_panelMenu(NULL),
     m_connected(false),
@@ -48,9 +48,9 @@ ButtonLine::ButtonLine(QWidget *parent, QVector<Axis *> &axes):
     buttonLayout->addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
-    m_axisMenuButton = new QPushButton(tr("Axes"), this);
-    buttonLayout->addWidget(m_axisMenuButton);
-    connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
+    m_graphMenuButton = new QPushButton(tr("Graph"), this);
+    buttonLayout->addWidget(m_graphMenuButton);
+    connect(m_graphMenuButton, SIGNAL(clicked()), this, SLOT(graphMenuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -115,23 +115,11 @@ void ButtonLine::panelMenuButtonPressed()
     );
 }
 
-void ButtonLine::axisMenuButtonPressed()
+void ButtonLine::graphMenuButtonPressed()
 {
-    foreach (QAction *action, m_axisMenu->actions())
-        m_axisMenu->removeAction(action);
-
-    foreach (Axis *axis, m_axes)
-    {
-        m_axisMenu->addAction(axis->GetName(), this, SIGNAL(addAxisPressed()));
-    }
-    m_axisMenu->addSeparator();
-
-    m_axisMenu->addAction(tr("Add..."), this, SIGNAL(addAxisPressed()));
-    m_axisMenu->addAction(tr("Remove..."), this, SIGNAL(removeAxisPressed()));
-
     m_axisMenu->exec(
         QWidget::mapToGlobal(
-            QPoint(m_axisMenuButton->pos().x(), m_axisMenuButton->pos().y() + m_axisMenuButton->height())
+            QPoint(m_graphMenuButton->pos().x(), m_graphMenuButton->pos().y() + m_graphMenuButton->height())
         )
     );
 }
@@ -177,6 +165,7 @@ void ButtonLine::_InitializeMenu()
 
     m_axisMenu = new QMenu(this);
     m_axisMenu->setTitle(tr("Axes"));
+    m_axisMenu->addAction(tr("Axes"), this, SIGNAL(axesPressed()));
 }
 
 void ButtonLine::AddChannel(Channel *channel)

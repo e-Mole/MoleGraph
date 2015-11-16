@@ -28,7 +28,7 @@ class ButtonLine : public QWidget
     QLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
-    QPushButton * m_axisMenuButton;
+    QPushButton * m_graphMenuButton;
     QMenu *m_fileMenu;
     QMenu *m_panelMenu;
     QMenu *m_axisMenu;
@@ -55,8 +55,7 @@ signals:
     void exportCsv(QString const &fileName);
     void graphTriggered(bool checked);
     void channelTriggered(Channel *channel, bool checked);
-    void addAxisPressed();
-    void removeAxisPressed();
+    void axesPressed();
 
 public slots:
     void startButtonPressed();
@@ -68,7 +67,7 @@ public slots:
     void connectivityStateChange(bool connected);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
-    void axisMenuButtonPressed();
+    void graphMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
 };

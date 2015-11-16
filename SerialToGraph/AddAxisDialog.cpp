@@ -15,6 +15,6 @@ AddAxisDialog::AddAxisDialog(QVector<Axis *> &axes) :
 
 void AddAxisDialog::BeforeAccept()
 {
-    m_axes.push_back(new Axis(m_name->text()));
+    m_axes.push_back(new Axis(m_name->text(), true));
 }
 

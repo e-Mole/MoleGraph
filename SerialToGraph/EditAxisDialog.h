@@ -2,20 +2,19 @@
 #define ADDAXISDIALOG_H
 
 #include <FormDialogBase.h>
-#include <QVector>
 
 class QLineEdit;
 class Axis;
-class AddAxisDialog : public FormDialogBase
+class EditAxisDialog : public FormDialogBase
 {
     Q_OBJECT
 
     virtual void BeforeAccept();
 
-    QVector<Axis *> & m_axes;
+    Axis * m_axis;
     QLineEdit* m_name;
 public:
-    AddAxisDialog(QVector<Axis *> & axes);
+    EditAxisDialog(Axis * axis);
 
 signals:
 

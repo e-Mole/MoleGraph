@@ -1,12 +1,13 @@
 #include "AxesDialog.h"
-#include <AddAxisDialog.h>
 #include <Axis.h>
+#include <EditAxisDialog.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
 #include <QMap>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QWidget>
 
 AxesDialog::AxesDialog(QVector<Axis *> &axes) :
     FormDialogBase(NULL, tr("Axes")),
@@ -27,17 +28,22 @@ void AxesDialog::_ReinitAxes()
 
     foreach (Axis *axis, m_axesCopy)
     {
-        QHBoxLayout * buttonLayout = new QHBoxLayout(this);
-        QPushButton * editbutton = new QPushButton(tr("Edit"), this);
-        buttonLayout->addWidget(editbutton);
+        QWidget *rowWidget = new QWidget(this);
+        QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
+        rowWidget->setLayout(buttonLayout);
 
-        QPushButton * removeButton = new QPushButton(tr("Remove"), this);
+        QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
+        buttonLayout->addWidget(editButton);
+        m_editButtontoAxis.insert(editButton, axis);
+        connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()));
+
+        QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
         removeButton->setEnabled(axis->IsRemovable());
         buttonLayout->addWidget(removeButton);
         m_removeButtontoAxis.insert(removeButton, axis);
         connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
 
-        m_formLayout->addRow(new QLabel(axis->GetName(), this), buttonLayout);
+        m_formLayout->addRow(new QLabel(axis->GetName(), this), rowWidget);
     }
 
     QPushButton * addbutton = new QPushButton(tr("Add a New Axis"), this);
@@ -52,9 +58,14 @@ void AxesDialog::BeforeAccept()
 
 bool AxesDialog::addButtonPressed()
 {
-    AddAxisDialog(m_axesCopy).exec();
-
-    _ReinitAxes();
+    Axis *newAxis = new Axis("", true);
+    if (QDialog::Accepted == EditAxisDialog(newAxis).exec())
+    {
+        m_axesCopy.push_back(newAxis);
+        _ReinitAxes();
+    }
+    else
+        delete newAxis;
 }
 
 bool AxesDialog::removeButtonPressed()
@@ -65,9 +76,20 @@ bool AxesDialog::removeButtonPressed()
         if (it.key() == (QPushButton*)sender())
         {
             m_axesCopy.removeOne(it.value());
+            _ReinitAxes();
         }
     }
-
-    _ReinitAxes();
 }
 
+bool AxesDialog::editButtonPressed()
+{
+    QMap<QPushButton*, Axis*>::iterator it = m_editButtontoAxis.begin();
+    for (; it != m_editButtontoAxis.end(); ++it)
+    {
+        if (it.key() == (QPushButton*)sender())
+        {
+            if (QDialog::Accepted == EditAxisDialog(it.value()).exec())
+                _ReinitAxes();
+        }
+    }
+}

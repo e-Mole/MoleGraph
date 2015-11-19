@@ -17,6 +17,7 @@ class AxesDialog : public FormDialogBase
     QVector<Axis *> &m_axesOriginal;
     QVector<Axis *> m_axesCopy;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
+    QMap<QPushButton*, Axis*> m_editButtontoAxis;
 public:
     explicit AxesDialog(QVector<Axis *> & axes);
 
@@ -25,6 +26,7 @@ signals:
 private slots:
     bool addButtonPressed();
     bool removeButtonPressed();
+    bool editButtonPressed();
 };
 
 #endif // REMOVEAXISDIALOG_H

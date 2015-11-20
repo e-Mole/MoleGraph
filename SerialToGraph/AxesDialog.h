@@ -6,6 +6,7 @@
 #include <QMap>
 
 class Axis;
+class AxisCopy;
 class QPushButton;
 class AxesDialog : public FormDialogBase
 {
@@ -15,11 +16,12 @@ class AxesDialog : public FormDialogBase
     void _ReinitAxes();
 
     QVector<Axis *> &m_axesOriginal;
-    QVector<Axis *> m_axesCopy;
-    QMap<QPushButton*, Axis*> m_removeButtontoAxis;
-    QMap<QPushButton*, Axis*> m_editButtontoAxis;
+    QVector<AxisCopy *> m_axesCopy;
+    QMap<QPushButton*, AxisCopy*> m_removeButtontoAxis;
+    QMap<QPushButton*, AxisCopy*> m_editButtontoAxis;
 public:
-    explicit AxesDialog(QVector<Axis *> & axes);
+    AxesDialog(QVector<Axis *> & axes);
+    ~AxesDialog();
 
 signals:
 

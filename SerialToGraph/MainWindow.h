@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <ButtonLine.h>
+#include <Context.h>
 #include <QMainWindow>
 #include <QSettings>
 #include <SerialPort.h>
@@ -22,6 +23,8 @@ class MainWindow : public QMainWindow
     ButtonLine* m_buttonLine;
 
     QVector<Axis *> m_axes;
+    QVector<Channel *> m_channels;
+    Context m_context;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

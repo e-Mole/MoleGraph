@@ -18,6 +18,7 @@ class QPushButton;
 class QBoxLayout;
 class QCPAbstractItem;
 class QMouseEvent;
+struct Context;
 class Graph : public QWidget
 {
 	Q_OBJECT
@@ -63,7 +64,6 @@ class Graph : public QWidget
     unsigned m_periodTypeIndex;
 	QPushButton *m_connectButton;
 
-	QVector<Channel *> m_channels;
 	Channel *m_sampleChannel;
 
     QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
@@ -71,8 +71,10 @@ class Graph : public QWidget
     unsigned m_drawPeriod;
     bool m_anySampleThrownOut;
 
+    Context & m_context;
+
 public:
-    Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar);
+    Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
 
     void InitializeChannels();

@@ -1,6 +1,7 @@
 #include "AxesDialog.h"
 #include <Axis.h>
 #include <AxisEditDialog.h>
+#include <Context.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
@@ -10,11 +11,11 @@
 #include <QPushButton>
 #include <QWidget>
 
-AxesDialog::AxesDialog(QVector<Axis *> &axes) :
+AxesDialog::AxesDialog(Context & context) :
     FormDialogBase(NULL, tr("Axes")),
-    m_axesOriginal(axes)
+    m_context(context)
 {
-    foreach (Axis *axis, axes)
+    foreach (Axis *axis, context.m_axis)
         m_axesCopy.push_back(new AxisCopy(axis));
 
     _ReinitAxes();
@@ -68,7 +69,7 @@ void AxesDialog::_ReinitAxes()
 
 void AxesDialog::BeforeAccept()
 {
-    foreach (Axis * original, m_axesOriginal)
+    foreach (Axis * original, m_context.m_axis)
     {
         bool found = false;
         foreach (AxisCopy *copy, m_axesCopy)
@@ -83,18 +84,18 @@ void AxesDialog::BeforeAccept()
         if (!found)
         {
             delete original;
-            m_axesOriginal.removeOne(original);
+            m_context.m_axis.removeOne(original);
         }
     }
 
     foreach (AxisCopy *copy, m_axesCopy)
     {
         if (NULL == copy->GetOriginal())
-            m_axesOriginal.push_back(new Axis(copy));
+            m_context.m_axis.push_back(new Axis(copy));
     }
 }
 
-bool AxesDialog::addButtonPressed()
+void AxesDialog::addButtonPressed()
 {
     AxisCopy *newAxis = new AxisCopy();
 
@@ -108,7 +109,7 @@ bool AxesDialog::addButtonPressed()
         delete newAxis;
 }
 
-bool AxesDialog::removeButtonPressed()
+void AxesDialog::removeButtonPressed()
 {
     QMap<QPushButton*, AxisCopy*>::iterator it = m_removeButtontoAxis.begin();
     for (; it != m_removeButtontoAxis.end(); ++it)
@@ -121,7 +122,7 @@ bool AxesDialog::removeButtonPressed()
     }
 }
 
-bool AxesDialog::editButtonPressed()
+void AxesDialog::editButtonPressed()
 {
     QMap<QPushButton*, AxisCopy*>::iterator it = m_editButtontoAxis.begin();
     for (; it != m_editButtontoAxis.end(); ++it)

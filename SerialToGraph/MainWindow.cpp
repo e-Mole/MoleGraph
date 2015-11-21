@@ -2,6 +2,7 @@
 #include <AxesDialog.h>
 #include <Axis.h>
 #include <ButtonLine.h>
+#include <Context.h>
 #include <CentralWidget.h>
 #include <DisplayWidget.h>
 #include <Channel.h>
@@ -16,9 +17,10 @@
 #include <QWidget>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
-	QMainWindow(parent),
-	m_settings("eMole", "ArduinoToGraph"),
+    QMainWindow(parent),
+    m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
+    m_context(m_axes, m_channels),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -51,7 +53,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     scrollBar->setFocusPolicy(Qt::StrongFocus);
     m_centralWidget->addScrollBar(scrollBar);
 
-    Graph* plot = new Graph(this, m_serialPort, scrollBar);
+    Graph* plot = new Graph(this, m_context, m_serialPort, scrollBar);
     m_centralWidget->addGraph(plot);
     connect(scrollBar, SIGNAL(valueChanged(int)), plot, SLOT(redrawMarks(int)));
 
@@ -89,7 +91,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
 void MainWindow::openAxesDialog()
 {
-    AxesDialog(m_axes).exec();
+    AxesDialog(m_context).exec();
 }
 
 void MainWindow::addChannelDisplay(Channel* channel)

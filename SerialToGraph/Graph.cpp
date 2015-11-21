@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <Channel.h>
+#include <Context.h>
 #include <limits.h>
 #include <math.h>
 #include <MyCustomPlot.h>
@@ -27,30 +28,31 @@
 #define AXES_LABEL_PADDING 1
 #define INITIAL_DRAW_PERIOD 50
 
-Graph::Graph(QWidget *parent, SerialPort &serialPort, QScrollBar * scrollBar) :
-	QWidget(parent),
-	m_customPlot(NULL),
-	m_serialPort(serialPort),
-	m_period(0),
-	m_counter(0),
+Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar) :
+    QWidget(parent),
+    m_customPlot(NULL),
+    m_serialPort(serialPort),
+    m_period(0),
+    m_counter(0),
     m_scrollBar(scrollBar),
-	m_periodTypeIndex(0),
-	m_connectButton(NULL),
+    m_periodTypeIndex(0),
+    m_connectButton(NULL),
     m_sampleChannel(NULL),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
-    m_anySampleThrownOut(false)
+    m_anySampleThrownOut(false),
+    m_context(context)
 {
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	mainLayout->setMargin(1);
-	QHBoxLayout *documentLayout = new QHBoxLayout(this);
-	mainLayout->addLayout(documentLayout);
-	QVBoxLayout *graphLayout = new QVBoxLayout(this);
-	documentLayout->addLayout(graphLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setMargin(1);
+    QHBoxLayout *documentLayout = new QHBoxLayout(this);
+    mainLayout->addLayout(documentLayout);
+    QVBoxLayout *graphLayout = new QVBoxLayout(this);
+    documentLayout->addLayout(graphLayout);
 
-	_InitializePolt(graphLayout);
+    _InitializePolt(graphLayout);
 
-	m_drawTimer = new QTimer(this);
-	connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
+    m_drawTimer = new QTimer(this);
+    connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 }
 
 Graph::~Graph()
@@ -61,7 +63,7 @@ Graph::~Graph()
 void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
     m_customPlot = new MyCustomPlot(this);
-	graphLayout->addWidget(m_customPlot);
+    graphLayout->addWidget(m_customPlot);
 
     _SetAxisColor(m_customPlot->xAxis, Qt::black);
 
@@ -104,16 +106,20 @@ QString Graph::_GetAxisName(QString const &units, unsigned index)
     bool first =true;
     unsigned count = 0;
     bool addMiddle = false;
-    for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
+    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
     {
 
-        if (m_channels[i]->IsVisible() && index == m_channels[i]->GetAxisNumber())
+        if (m_context.m_channels[i]->IsVisible() && index == m_context.m_channels[i]->GetAxisNumber())
         {
             count++;
             if (!first)
             {
-                if (i+1 != (unsigned)m_channels.size() && m_channels[i+1]->IsVisible() && index == m_channels[i+1]->GetAxisNumber() &&
-                    i != 0 && m_channels[i-1]->IsVisible() && index == m_channels[i-1]->GetAxisNumber())
+                if (i+1 != (unsigned)m_context.m_channels.size() &&
+                    m_context.m_channels[i+1]->IsVisible() &&
+                    index == m_context.m_channels[i+1]->GetAxisNumber() &&
+                    i != 0 &&
+                    m_context.m_channels[i-1]->IsVisible() &&
+                    index == m_context.m_channels[i-1]->GetAxisNumber())
                 {
                     addMiddle = true;
                     continue;
@@ -129,7 +135,7 @@ QString Graph::_GetAxisName(QString const &units, unsigned index)
                 addMiddle = false;
             }
 
-            channels += m_channels[i]->GetName();
+            channels += m_context.m_channels[i]->GetName();
         }
     }
 
@@ -188,13 +194,13 @@ bool Graph::_FillGraphItem(GraphItem &item)
 
 void Graph::redrawMarks(int pos)
 {
-    for (int i = 0; i < m_channels.size(); i++)
+    for (int i = 0; i < m_context.m_channels.size(); i++)
     {
         m_customPlot->graph(i + 8)->clearData();
-        if ((int)m_channels[i]->GetValueCount() > pos)
+        if ((int)m_context.m_channels[i]->GetValueCount() > pos)
         {
-            m_customPlot->graph(i + 8)->addData(pos, m_channels[i]->GetValue(pos));
-            m_channels[i]->SelectValue(pos);
+            m_customPlot->graph(i + 8)->addData(pos, m_context.m_channels[i]->GetValue(pos));
+            m_context.m_channels[i]->SelectValue(pos);
         }
     }
 
@@ -240,7 +246,7 @@ void Graph::draw()
             addedX = true;
         }
 
-        Channel *channel = m_channels[item.channelIndex];
+        Channel *channel = m_context.m_channels[item.channelIndex];
         channel->AddValue(item.value);
 
 		QCPData newData(m_x.last(), item.value);
@@ -316,7 +322,7 @@ void Graph::start()
 	m_counter = 0;
 	m_x.clear();
 
-    foreach (Channel *channel, m_channels)
+    foreach (Channel *channel, m_context.m_channels)
     {
         channel->ClearValues();
     }
@@ -347,8 +353,8 @@ void Graph::start()
     }
 
 	unsigned selectedChannels = 0;
-    for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
-        selectedChannels |= ((m_channels[i]->IsVisible()) << i);
+    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
+        selectedChannels |= ((m_context.m_channels[i]->IsVisible()) << i);
 
 	qDebug() << "selected channels:" << selectedChannels;
 
@@ -400,10 +406,10 @@ void Graph::exportCsv(QString const &fileName)
 
 	file.write(m_customPlot->xAxis->label().toStdString().c_str());
 	file.write(";");
-	for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
+    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
     {
-        file.write(m_channels[i]->GetName().toStdString().c_str());
-		if (i == (unsigned)m_channels.size() - 1)
+        file.write(m_context.m_channels[i]->GetName().toStdString().c_str());
+        if (i == (unsigned)m_context.m_channels.size() - 1)
              file.write("\n");
         else
              file.write(";");
@@ -414,15 +420,15 @@ void Graph::exportCsv(QString const &fileName)
     {
         bool haveData = false;
 		std::string lineContent = QString("%1;").arg(sampleNr++).toStdString();
-		for (unsigned i = 0; i < (unsigned)m_channels.size(); i++)
+        for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
         {
-			if (m_channels[i]-> GetValueCount() > lineNr)
+            if (m_context.m_channels[i]-> GetValueCount() > lineNr)
             {
-				lineContent.append(QString("%1").arg(m_channels[i]->GetValue(lineNr)).toStdString());
+                lineContent.append(QString("%1").arg(m_context.m_channels[i]->GetValue(lineNr)).toStdString());
                 haveData = true;
             }
 
-			if (i == (unsigned)m_channels.size() - 1)
+            if (i == (unsigned)m_context.m_channels.size() - 1)
                 lineContent.append("\n");
             else
                 lineContent.append(";");
@@ -508,7 +514,7 @@ void Graph::_UpdateAxes(Channel *channel)
     //and some of them could be attached and are not any more
     _RemoveVerticalAxes();
 
-    foreach (Channel * channel, m_channels)
+    foreach (Channel * channel, m_context.m_channels)
     {
         if (channel->IsVisible())
         {
@@ -521,7 +527,7 @@ void Graph::_UpdateAxes(Channel *channel)
         }
     }
 
-    foreach (Channel *channel, m_channels)
+    foreach (Channel *channel, m_context.m_channels)
     {
         if (channel->IsVisible())
         {
@@ -603,7 +609,7 @@ void Graph::_RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
-    foreach (Channel *channel, m_channels)
+    foreach (Channel *channel, m_context.m_channels)
     {
         if (channel->IsVisible() && channel->GetAxisNumber() == index)
         {
@@ -650,17 +656,17 @@ void Graph::InitializeChannels()
  void Graph::_AddChannel(Qt::GlobalColor color)
 {
     static unsigned order = 0;
-    m_channels.push_back
+    m_context.m_channels.push_back
     (
         new Channel(this, order, QString(tr("channel %1")).arg(order+1), color, false, order)
     );
 
     order++;
 
-    connect(m_channels.last(), SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
+    connect(m_context.m_channels.last(), SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
 
-    _InitializeGraphs(m_channels.last());
-    YChannelAdded(m_channels.last());
+    _InitializeGraphs(m_context.m_channels.last());
+    YChannelAdded(m_context.m_channels.last());
 }
 
 
@@ -708,7 +714,7 @@ void Graph::InitializeChannels()
  {
      if ((Channel *)sender() != m_sampleChannel)
      {
-         UpdateAxisNumbers(m_channels);
+         UpdateAxisNumbers(m_context.m_channels);
      }
      _UpdateChannel((Channel *)sender());
  }

@@ -8,6 +8,7 @@
 class Axis;
 class AxisCopy;
 class QPushButton;
+struct Context;
 class AxesDialog : public FormDialogBase
 {
     Q_OBJECT
@@ -15,20 +16,20 @@ class AxesDialog : public FormDialogBase
     virtual void BeforeAccept();
     void _ReinitAxes();
 
-    QVector<Axis *> &m_axesOriginal;
     QVector<AxisCopy *> m_axesCopy;
     QMap<QPushButton*, AxisCopy*> m_removeButtontoAxis;
     QMap<QPushButton*, AxisCopy*> m_editButtontoAxis;
+    Context &m_context;
 public:
-    AxesDialog(QVector<Axis *> & axes);
+    AxesDialog(Context &context);
     ~AxesDialog();
 
 signals:
 
 private slots:
-    bool addButtonPressed();
-    bool removeButtonPressed();
-    bool editButtonPressed();
+    void addButtonPressed();
+    void removeButtonPressed();
+    void editButtonPressed();
 };
 
 #endif // REMOVEAXISDIALOG_H

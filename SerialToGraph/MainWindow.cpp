@@ -85,8 +85,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     plot->InitializeChannels();
 
-    m_axes.push_back(new Axis(tr("Horizontal"), false));
-    m_axes.push_back(new Axis(tr("Vertical"), false));
+    m_axes.push_back(new Axis(tr("Horizontal"), false, true));
+    m_axes.push_back(new Axis(tr("Vertical"), false, false));
 }
 
 void MainWindow::openAxesDialog()

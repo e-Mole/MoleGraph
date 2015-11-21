@@ -1,6 +1,7 @@
 #include "AxisEditDialog.h"
 #include <Axis.h>
 #include <QColorDialog>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -12,13 +13,14 @@
 
 AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
     FormDialogBase(NULL, tr("Edit Axis...")),
-    m_axis(axis),
+    m_axisOriginal(axis),
+    m_axisCopy(*axis),
     m_name(NULL),
-    m_colorButtonWidget(NULL),
-    m_color(axis->GetColor())
+    m_colorButtonWidget(NULL)
 {
     m_name = new QLineEdit(axis->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
+    connect(m_name, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
 
     QPushButton * colorButton = new QPushButton("", this);
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -31,6 +33,26 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
 
     m_formLayout->addRow(new QLabel(tr("Color"), this), colorButton);
 
+    if (!axis->m_isHorizontal)
+    {
+        QComboBox *side = new QComboBox(this);
+        side->addItem(tr("Left"));
+        side->addItem(tr("Right"));
+        side->setCurrentIndex((int)m_axisCopy.m_toRight);
+        connect(side, SIGNAL(currentIndexChanged(int)), this, SLOT(sideChanged(int)));
+        m_formLayout->addRow(new QLabel(tr("Side"), this), side);
+    }
+
+}
+
+void AxisEditDialog::nameChanged(QString const &text)
+{
+    m_axisCopy.m_name = text;
+}
+
+void AxisEditDialog::sideChanged(int index)
+{
+   m_axisCopy.m_toRight = (bool)index;
 }
 
 void AxisEditDialog::_SetColorButtonColor(QColor const &color)
@@ -41,19 +63,18 @@ void AxisEditDialog::_SetColorButtonColor(QColor const &color)
 
 void AxisEditDialog::BeforeAccept()
 {
-    m_axis->SetName(m_name->text());
-    m_axis->SetColor(m_color);
+    *m_axisOriginal = m_axisCopy;
 }
 
 void AxisEditDialog::colorButtonClicked()
 {
     QColorDialog colorDialog(NULL);
-    colorDialog.setCurrentColor(m_color);
+    colorDialog.setCurrentColor(m_axisCopy.m_color);
     colorDialog.setOption(QColorDialog::DontUseNativeDialog, true);
     if (QDialog::Accepted == colorDialog.exec())
     {
-        m_color = colorDialog.currentColor();
-        _SetColorButtonColor(m_color);
+        m_axisCopy.m_color = colorDialog.currentColor();
+        _SetColorButtonColor(m_axisCopy.m_color);
     }
 }
 

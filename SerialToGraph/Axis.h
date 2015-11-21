@@ -16,8 +16,10 @@ protected:
     QString m_name;
     bool m_isRemovable;
     QColor m_color;
+    bool m_toRight;
+    bool m_isHorizontal;
 public:
-    Axis(const QString &name, bool isRemovable);
+    Axis(const QString &name, bool isRemovable, bool isHorizontal);
     Axis(AxisCopy const &axis) { *this = axis; }
 
     Axis &operator =(const AxisCopy &axis);
@@ -34,7 +36,7 @@ class AxisCopy : public Axis
 
 public:
     AxisCopy():
-        Axis("", true),
+        Axis("", true, false),
         m_original(NULL)
     {}
 

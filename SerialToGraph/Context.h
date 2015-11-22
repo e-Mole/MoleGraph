@@ -10,7 +10,7 @@ struct Context
 public:
     Context(QVector<Axis*> &axis, QVector<Channel*> &channels);
 
-    QVector<Axis*> &m_axis;
+    QVector<Axis*> &m_axes;
     QVector<Channel*> &m_channels;
 };
 

@@ -1,5 +1,6 @@
 #include "Graph.h"
 
+#include <Axis.h>
 #include <cmath>
 #include <Channel.h>
 #include <Context.h>
@@ -78,15 +79,9 @@ void Graph::rescaleAxis(QCPAxis *axis)
 {
 
     if (axis == m_customPlot->xAxis)
-    {
         m_customPlot->xAxis->rescale();
-        return;
-    }
-
-    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
-    for (;it != m_yAxes.end(); ++it)
-        if (it.value() == axis)
-            _RescaleOneYAxisWithMargin(it.key(), it.value());
+    else
+        _RescaleOneYAxisWithMargin(axis);
 }
 
 void Graph::rescaleAllAxes()
@@ -98,51 +93,6 @@ void Graph::rescaleAllAxes()
 void Graph::periodTypeChanged(int index)
 {
         m_periodTypeIndex = index;
-}
-
-QString Graph::_GetAxisName(QString const &units, unsigned index)
-{
-    QString channels;
-    bool first =true;
-    unsigned count = 0;
-    bool addMiddle = false;
-    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
-    {
-
-        if (m_context.m_channels[i]->IsVisible() && index == m_context.m_channels[i]->GetAxisNumber())
-        {
-            count++;
-            if (!first)
-            {
-                if (i+1 != (unsigned)m_context.m_channels.size() &&
-                    m_context.m_channels[i+1]->IsVisible() &&
-                    index == m_context.m_channels[i+1]->GetAxisNumber() &&
-                    i != 0 &&
-                    m_context.m_channels[i-1]->IsVisible() &&
-                    index == m_context.m_channels[i-1]->GetAxisNumber())
-                {
-                    addMiddle = true;
-                    continue;
-                }
-                channels += ", ";
-            }
-            else
-                first = false;
-
-            if (addMiddle)
-            {
-                channels += ".. ,";
-                addMiddle = false;
-            }
-
-            channels += m_context.m_channels[i]->GetName();
-        }
-    }
-
-    if (0 == units.size())
-        return channels ;
-
-    return channels + " [" + units + "]" ;
 }
 
 void Graph::_InitializeGraphs(Channel *channel)
@@ -451,17 +401,15 @@ void Graph::periodChanged(unsigned period)
 
 void Graph::_RemoveVerticalAxes()
 {
-    foreach (QCPAxis* axis, m_customPlot->axisRect()->axes())
+    foreach (Axis* axis, m_context.m_axes)
     {
-        //if (axis == m_customPlot->yAxis)
-        //    continue;
-        if (QCPAxis::atLeft == axis->axisType() || QCPAxis::atRight == axis->axisType())
+        if (!axis->IsHorizontal())
         {
-            m_customPlot->axisRect()->removeAxis(axis);
+            m_customPlot->axisRect()->removeAxis(axis->GetGraphAxis());
+            axis->SetGraphAxis(NULL);
         }
     }
 
-    m_yAxes.clear();
     m_customPlot->yAxis = NULL;
 }
 
@@ -473,10 +421,6 @@ void Graph::_SetAxisColor(QCPAxis *axis, QColor const & color)
     pen.setColor(Qt::black);
     axis->setSelectedBasePen(pen);
     axis->setSelectedTickLabelColor(color);
-
-    /*QFont font = axis->selectedLabelFont();
-    font.setBold(false);
-    axis->setSelectedLabelFont(font);*/
     axis->setSelectedLabelColor(color);
 
     pen = axis->selectedTickPen();
@@ -488,25 +432,37 @@ void Graph::_SetAxisColor(QCPAxis *axis, QColor const & color)
     axis->setSelectedSubTickPen(pen);
 }
 
-void Graph::_InitializeAxis(QCPAxis *axis, Channel *channel)
+void Graph::_InitializeYAxis(Axis *axis)
 {
-     _SetAxisColor(axis, channel->GetColor());
+    if (axis->GetGraphAxis() != NULL)
+        qDebug() << "graph axis is not empty";
+    QCPAxis *graphAxis =
+        m_customPlot->axisRect()->addAxis(axis->IsOnRight() ? QCPAxis::atRight : QCPAxis::atLeft);
 
-    axis->setLabel(_GetAxisName(channel->GetUnits(), channel->GetAxisNumber()));
-    axis->setRange(0, 1);
-    axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
-    axis->grid()->setVisible(false);
-    axis->setLabelPadding(AXES_LABEL_PADDING);
-    m_yAxes[channel->GetAxisNumber()] = axis;
+    axis->SetGraphAxis(graphAxis);
+    _SetAxisColor(graphAxis, axis->GetColor());
+
+    graphAxis->setLabel(axis->GetGraphName());
+    graphAxis->setRange(0, 1);
+    graphAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
+    graphAxis->grid()->setVisible(false);
+    graphAxis->setLabelPadding(AXES_LABEL_PADDING);
+
     if (NULL == m_customPlot->yAxis)
-        m_customPlot->yAxis = axis;
+        m_customPlot->yAxis = graphAxis;
 }
 
-void Graph::_UpdateAxes(Channel *channel)
+void Graph::_UpdateXAxis(Axis *axis)
 {
-    if (channel->IsSampleChannel())
+    m_customPlot->xAxis->setLabel(axis->GetGraphName());
+    _SetAxisColor(m_customPlot->xAxis, axis->GetColor());
+    //TODO: range,...
+}
+void Graph::UpdateAxes(Channel *channel)
+{
+    if (NULL != channel && channel->GetAxis()->IsHorizontal())
     {
-        m_customPlot->xAxis->setLabel(channel->GetName());
+        m_customPlot->xAxis->setLabel(  channel->GetAxis()->GetGraphName());
         return;
     }
 
@@ -514,24 +470,19 @@ void Graph::_UpdateAxes(Channel *channel)
     //and some of them could be attached and are not any more
     _RemoveVerticalAxes();
 
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Axis * axis, m_context.m_axes)
     {
-        if (channel->IsVisible())
-        {
-            if (!channel->IsAttached())
-            {
-               _InitializeAxis(
-                    m_customPlot->axisRect()->addAxis(channel->ToRightSide() ? QCPAxis::atRight : QCPAxis::atLeft),
-                    channel);
-            }
-        }
+        if (axis->IsHorizontal())
+            _UpdateXAxis(axis);
+        else if (axis->ContainsVisibleChannel())
+            _InitializeYAxis(axis);
     }
 
     foreach (Channel *channel, m_context.m_channels)
     {
         if (channel->IsVisible())
         {
-           QCPAxis *axis = m_yAxes[channel->GetAxisNumber()];
+           QCPAxis *axis = channel->GetAxis()->GetGraphAxis();
            m_customPlot->graph(channel->GetIndex())->setValueAxis(axis);
            m_customPlot->graph(channel->GetIndex()+8)->setValueAxis(axis);
            m_customPlot->graph(channel->GetIndex())->setVisible(true);
@@ -542,15 +493,15 @@ void Graph::_UpdateAxes(Channel *channel)
         }
     }
 
-    if (0 != m_yAxes.size())
+    if (NULL != m_customPlot->yAxis) //any axis is diplayed
     {
         //just for case it has been selected
         m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
-
-        m_yAxes.first()->setSelectedParts(QCPAxis::spTickLabels);
+        m_customPlot->yAxis->setSelectedParts(QCPAxis::spTickLabels);
     }
 
     selectionChanged(); //initialize zoom and drag according current selection
+    m_customPlot->ReplotIfNotDisabled();
 }
 
 void Graph::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
@@ -567,33 +518,30 @@ void Graph::selectionChanged()
         return;
     }
 
-
     m_customPlot->selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
-    foreach (QCPAxis *axis, m_yAxes)
+    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
             plotable->setSelected(axis == m_customPlot->selectedAxes().first());
 
     if (m_customPlot->selectedAxes().first() == m_customPlot->xAxis)
     {
-
         _SetDragAndZoom(m_customPlot->xAxis, NULL);
         return;
     }
 
     _SetDragAndZoom(NULL, m_customPlot->selectedAxes().first());
 
-    foreach (QCPAxis *axis, m_yAxes)
+    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
     {
-        axis->grid()->setVisible(false);
+        if (axis != m_customPlot->xAxis)
+            axis->grid()->setVisible(false);
     }
     m_customPlot->selectedAxes().first()->grid()->setVisible(true);
-
-
 }
 
 void Graph::_UpdateChannel(Channel *channel)
 {
-    _UpdateAxes(channel);
+    UpdateAxes(channel);
     _SetGraphShape(m_customPlot->graph(channel->GetIndex() + 8), (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
     m_customPlot->graph(channel->GetIndex())->setVisible(channel->IsVisible());
 
@@ -604,14 +552,14 @@ void Graph::_UpdateChannel(Channel *channel)
 }
 
 
-void Graph::_RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis)
+void Graph::_RescaleOneYAxisWithMargin(QCPAxis *axis)
 {
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
     foreach (Channel *channel, m_context.m_channels)
     {
-        if (channel->IsVisible() && channel->GetAxisNumber() == index)
+        if (channel->IsVisible() && channel->GetAxis()->GetGraphAxis() == axis)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
@@ -619,7 +567,7 @@ void Graph::_RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis)
                 upper = channel->GetMaxValue();
         }
     }
-    //m_yAxis[axisNumber]->rescale();
+
     double margin = std::abs(upper - lower) / RESCALE_MARGIN_RATIO;
     if (0 == margin) //upper and lower are the same
         margin = std::abs(upper / RESCALE_MARGIN_RATIO);
@@ -629,36 +577,38 @@ void Graph::_RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis)
 
 void Graph::_RescaleYAxesWithMargin()
 {
-    QMap<unsigned,  QCPAxis *>::iterator it = m_yAxes.begin();
-    for (;it != m_yAxes.end(); ++it)
-        _RescaleOneYAxisWithMargin(it.key(), it.value());
+    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
+    {
+        if (m_customPlot->xAxis != axis)
+            _RescaleOneYAxisWithMargin(axis);
+    }
  }
 
-void Graph::InitializeChannels()
+void Graph::InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
-    m_sampleChannel = new Channel(this, 0, tr("samples"), Qt::black, true, 0);
+    m_sampleChannel = new Channel(this, m_context, 0, tr("samples"), Qt::black, xAxis, 0);
     connect(m_sampleChannel, SIGNAL(stateChanged()), this, SLOT(channelStateChanged()));
 
     m_customPlot->xAxis->setLabel(m_sampleChannel->GetName());
     XChannelAdded(m_sampleChannel);
 
 
-    _AddChannel(Qt::red);
-    _AddChannel(Qt::blue);
-    _AddChannel(Qt::black);
-    _AddChannel(Qt::darkGreen);
-    _AddChannel(Qt::magenta);
-    _AddChannel(Qt::cyan);
-    _AddChannel(Qt::green);
-    _AddChannel(Qt::darkRed);
+    _AddChannel(Qt::red, yAxis);
+    _AddChannel(Qt::blue, yAxis);
+    _AddChannel(Qt::black, yAxis);
+    _AddChannel(Qt::darkGreen, yAxis);
+    _AddChannel(Qt::magenta, yAxis);
+    _AddChannel(Qt::cyan, yAxis);
+    _AddChannel(Qt::green, yAxis);
+    _AddChannel(Qt::darkRed, yAxis);
 }
 
- void Graph::_AddChannel(Qt::GlobalColor color)
+ void Graph::_AddChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
     m_context.m_channels.push_back
     (
-        new Channel(this, order, QString(tr("channel %1")).arg(order+1), color, false, order)
+        new Channel(this, m_context, order, QString(tr("channel %1")).arg(order+1), color, axis, order)
     );
 
     order++;
@@ -669,52 +619,7 @@ void Graph::InitializeChannels()
     YChannelAdded(m_context.m_channels.last());
 }
 
-
- namespace
- {
-     struct AxisItem
-     {
-         bool operator < (AxisItem const &second) const
-         { return (units < second.units || (units == second.units && toRight < second.toRight)); }
-         QString units;
-         bool toRight;
-     };
-
-     void UpdateAxisNumbers(QVector<Channel*> m_channels)
-     {
-         QMap<AxisItem, Channel*> axisMap;
-         int axisNumber = -1;
-         AxisItem item;
-         foreach (Channel* channel, m_channels)
-         {
-             if (!channel->IsVisible())
-                 continue;
-
-             item.toRight = channel->ToRightSide();
-             item.units = channel->GetUnits();
-
-             QMap<AxisItem, Channel*>::iterator it = axisMap.find(item);
-
-             if (it != axisMap.end())
-             {
-                 channel->SetAxisNumber(it.value()->GetAxisNumber());
-                 channel->SetAttachedTo(it.value()->GetIndex());
-             }
-             else
-             {
-                 channel->SetAxisNumber(++axisNumber);
-                 channel->ResetAttachedTo();
-                 axisMap.insert(item, channel);
-             }
-         }
-     }
- }
-
- void Graph::channelStateChanged()
- {
-     if ((Channel *)sender() != m_sampleChannel)
-     {
-         UpdateAxisNumbers(m_context.m_channels);
-     }
-     _UpdateChannel((Channel *)sender());
- }
+void Graph::channelStateChanged()
+{
+    _UpdateChannel((Channel *)sender());
+}

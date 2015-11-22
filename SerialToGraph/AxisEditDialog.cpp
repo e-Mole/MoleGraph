@@ -18,7 +18,7 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
     m_name(NULL),
     m_colorButtonWidget(NULL)
 {
-    m_name = new QLineEdit(axis->GetName(), this);
+    m_name = new QLineEdit(axis->GetTitle(), this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
     connect(m_name, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
 
@@ -38,7 +38,7 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
         QComboBox *side = new QComboBox(this);
         side->addItem(tr("Left"));
         side->addItem(tr("Right"));
-        side->setCurrentIndex((int)m_axisCopy.m_toRight);
+        side->setCurrentIndex((int)m_axisCopy.m_isOnRight);
         connect(side, SIGNAL(currentIndexChanged(int)), this, SLOT(sideChanged(int)));
         m_formLayout->addRow(new QLabel(tr("Side"), this), side);
     }
@@ -47,12 +47,12 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
 
 void AxisEditDialog::nameChanged(QString const &text)
 {
-    m_axisCopy.m_name = text;
+    m_axisCopy.m_title = text;
 }
 
 void AxisEditDialog::sideChanged(int index)
 {
-   m_axisCopy.m_toRight = (bool)index;
+   m_axisCopy.m_isOnRight = (bool)index;
 }
 
 void AxisEditDialog::_SetColorButtonColor(QColor const &color)

@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QMap>
 
+class Axis;
 class Channel;
 class MyCustomPlot;
 class QTimer;
@@ -33,21 +34,21 @@ class Graph : public QWidget
 	};
 
     void _InitializePolt(QBoxLayout *graphLayout);
-    QString _GetAxisName(const QString &units, unsigned index);
+    //QString _GetAxisName(const QString &units, unsigned index);
     void _SetAxisColor(QCPAxis *axis, QColor const & color);
-    void _InitializeAxis(QCPAxis *axis, Channel *channel);
+    void _InitializeYAxis(Axis *axis);
 	void _InitializeGraphs(Channel *channel);
     bool _FillGraphItem(GraphItem &item);
-    void _UpdateAxes(Channel *channel);
     void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
-    void _RescaleOneYAxisWithMargin(unsigned index, QCPAxis *axis);
+    void _RescaleOneYAxisWithMargin(QCPAxis *axis);
     void _RescaleYAxesWithMargin();
     void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
-    void _AddChannel(Qt::GlobalColor color);
+    void _AddChannel(Qt::GlobalColor color, Axis *axis);
     void _UpdateChannel(Channel *channel);
     void _AdjustDrawPeriod(unsigned drawDelay);
     bool _FillQueue();
+    void _UpdateXAxis(Axis * axis);
     MyCustomPlot *m_customPlot;
 
 	QTimer *m_drawTimer;
@@ -66,8 +67,6 @@ class Graph : public QWidget
 
 	Channel *m_sampleChannel;
 
-    QMap<unsigned,  QCPAxis *> m_yAxes; //axis number as a key
-
     unsigned m_drawPeriod;
     bool m_anySampleThrownOut;
 
@@ -77,7 +76,8 @@ public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
 
-    void InitializeChannels();
+    void InitializeChannels(Axis *xAxis, Axis *yAxis);
+    void UpdateAxes(Channel *channel);
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();

@@ -1,5 +1,7 @@
 #include "Channel.h"
 #include <ChannelSettings.h>
+#include <Axis.h>
+#include <Context.h>
 #include <cmath>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -10,21 +12,19 @@
 #include <QString>
 #include <limits>
 
-Channel::Channel(QWidget *parent, int index, QString const &name, QColor const &color, bool samples, unsigned shapeIndex) :
+Channel::Channel(QWidget *parent, Context const & context, int index, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex) :
     QObject(parent),
+    m_context(context),
     m_title(name),
 	m_index(index),
     m_visible(false),
     m_color(color),
-    m_toRightSide(false),
-    m_axisNumber(0),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
-    m_samples(samples),
+    m_axis(axis),
     m_selectedValueIndex(0),
     m_shapeIndex(shapeIndex)
 {
-    ResetAttachedTo();
 }
 
 Channel::~Channel()

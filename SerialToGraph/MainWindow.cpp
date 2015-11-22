@@ -53,9 +53,9 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     scrollBar->setFocusPolicy(Qt::StrongFocus);
     m_centralWidget->addScrollBar(scrollBar);
 
-    Graph* plot = new Graph(this, m_context, m_serialPort, scrollBar);
-    m_centralWidget->addGraph(plot);
-    connect(scrollBar, SIGNAL(valueChanged(int)), plot, SLOT(redrawMarks(int)));
+    m_graph = new Graph(this, m_context, m_serialPort, scrollBar);
+    m_centralWidget->addGraph(m_graph);
+    connect(scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
@@ -67,31 +67,37 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
     buttonDock->setWidget(m_buttonLine);
 
-    connect(m_buttonLine, SIGNAL(periodTypeChanged(int)), plot, SLOT(periodTypeChanged(int)));
-    connect(m_buttonLine, SIGNAL(periodChanged(uint)), plot, SLOT(periodChanged(uint)));
-    connect(m_buttonLine, SIGNAL(start()), plot, SLOT(start()));
-    connect(m_buttonLine, SIGNAL(stop()), plot, SLOT(stop()));
-    connect(m_buttonLine, SIGNAL(exportPng(QString)), plot, SLOT(exportPng(QString)));
-    connect(m_buttonLine, SIGNAL(exportCsv(QString)), plot, SLOT(exportCsv(QString)));
+    connect(m_buttonLine, SIGNAL(periodTypeChanged(int)), m_graph, SLOT(periodTypeChanged(int)));
+    connect(m_buttonLine, SIGNAL(periodChanged(uint)), m_graph, SLOT(periodChanged(uint)));
+    connect(m_buttonLine, SIGNAL(start()), m_graph, SLOT(start()));
+    connect(m_buttonLine, SIGNAL(stop()), m_graph, SLOT(stop()));
+    connect(m_buttonLine, SIGNAL(exportPng(QString)), m_graph, SLOT(exportPng(QString)));
+    connect(m_buttonLine, SIGNAL(exportCsv(QString)), m_graph, SLOT(exportCsv(QString)));
     connect(m_buttonLine, SIGNAL(axesPressed()), this, SLOT(openAxesDialog()));
 
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
-    connect(plot, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
-    connect(plot, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
+    connect(m_graph, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
+    connect(m_graph, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
 
-    plot->InitializeChannels();
+    Axis * xAxis = new Axis(m_context, tr("Horizontal"), false, true);
+    Axis * yAxis = new Axis(m_context, tr("Vertical"), false, false);
+    m_axes.push_back(xAxis);
+    m_axes.push_back(yAxis);
 
-    m_axes.push_back(new Axis(tr("Horizontal"), false, true));
-    m_axes.push_back(new Axis(tr("Vertical"), false, false));
+    m_graph->InitializeChannels(xAxis, yAxis);
+
+
 }
 
 void MainWindow::openAxesDialog()
 {
-    AxesDialog(m_context).exec();
+    AxesDialog dialog(m_context);
+    if (QDialog::Accepted == dialog.exec())
+        m_graph->UpdateAxes(NULL);
 }
 
 void MainWindow::addChannelDisplay(Channel* channel)

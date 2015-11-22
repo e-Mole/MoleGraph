@@ -1,4 +1,5 @@
 #include "ChannelSettings.h"
+#include <Axis.h>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
@@ -19,17 +20,10 @@ ChannelSettings::ChannelSettings(Channel *channel, QWidget *parent) :
     m_name = new QLineEdit(channel->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
-    if (!channel->IsSampleChannel())
-    {
-        m_units = new QLineEdit(channel->GetUnits(), this);
-        m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+    m_units = new QLineEdit(channel->GetUnits(), this);
+    m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
 
-        m_toRightSide = new QCheckBox(this);
-        m_toRightSide->setChecked(channel->ToRightSide());
-        m_formLayout->addRow(new QLabel(tr("To right side"), this), m_toRightSide);
-
-        _InitializeShapeCombo(m_formLayout, channel->GetShapeIndex());
-    }
+    _InitializeShapeCombo(m_formLayout, channel->GetShapeIndex());
 }
 
 void ChannelSettings::BeforeAccept()
@@ -41,23 +35,17 @@ void ChannelSettings::BeforeAccept()
         m_channel->m_title = m_name->text();
     }
 
-    if (!m_channel->IsSampleChannel())
+
+    if (m_channel->m_units != m_units->text())
     {
-        if (m_channel->m_units != m_units->text())
-        {
-            changed = true;
-            m_channel->m_units = m_units->text();
-        }
-        if (m_channel->m_toRightSide != m_toRightSide->isChecked())
-        {
-            changed = true;
-            m_channel->m_toRightSide = m_toRightSide->isChecked();
-        }
-        if (m_channel->m_shapeIndex != (unsigned)m_shape->currentIndex())
-        {
-            changed = true;
-            m_channel->m_shapeIndex = m_shape->currentIndex();
-        }
+        changed = true;
+        m_channel->m_units = m_units->text();
+    }
+
+    if (m_channel->m_shapeIndex != (unsigned)m_shape->currentIndex())
+    {
+        changed = true;
+        m_channel->m_shapeIndex = m_shape->currentIndex();
     }
 
     if (changed)

@@ -12,7 +12,7 @@ class Axis;
 class QApplication;
 class Channel;
 class CentralWidget;
-
+class Graph;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow
     QVector<Axis *> m_axes;
     QVector<Channel *> m_channels;
     Context m_context;
+    Graph* m_graph;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

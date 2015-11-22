@@ -15,7 +15,7 @@ AxesDialog::AxesDialog(Context & context) :
     FormDialogBase(NULL, tr("Axes")),
     m_context(context)
 {
-    foreach (Axis *axis, context.m_axis)
+    foreach (Axis *axis, context.m_axes)
         m_axesCopy.push_back(new AxisCopy(axis));
 
     _ReinitAxes();
@@ -54,7 +54,7 @@ void AxesDialog::_ReinitAxes()
         m_removeButtontoAxis.insert(removeButton, axis);
         connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
 
-        QLabel *label = new QLabel(axis->GetName(), this);
+        QLabel *label = new QLabel(axis->GetTitle(), this);
         QPalette palette(label->palette());
         palette.setColor(QPalette::Foreground, axis->GetColor());
         label->setPalette(palette);
@@ -69,7 +69,7 @@ void AxesDialog::_ReinitAxes()
 
 void AxesDialog::BeforeAccept()
 {
-    foreach (Axis * original, m_context.m_axis)
+    foreach (Axis * original, m_context.m_axes)
     {
         bool found = false;
         foreach (AxisCopy *copy, m_axesCopy)
@@ -84,20 +84,20 @@ void AxesDialog::BeforeAccept()
         if (!found)
         {
             delete original;
-            m_context.m_axis.removeOne(original);
+            m_context.m_axes.removeOne(original);
         }
     }
 
     foreach (AxisCopy *copy, m_axesCopy)
     {
         if (NULL == copy->GetOriginal())
-            m_context.m_axis.push_back(new Axis(copy));
+            m_context.m_axes.push_back(new Axis(copy));
     }
 }
 
 void AxesDialog::addButtonPressed()
 {
-    AxisCopy *newAxis = new AxisCopy();
+    AxisCopy *newAxis = new AxisCopy(m_context);
 
     AxisEditDialog dialog(newAxis);
     if (QDialog::Accepted == dialog.exec())

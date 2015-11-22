@@ -1,5 +1,6 @@
 #include "DisplayWidget.h"
 
+#include <Axis.h>
 #include <Channel.h>
 #include <ChannelSettings.h>
 #include <cmath>
@@ -22,7 +23,7 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
     setLayout(layout);
 
 
-    m_valueLabel = new ValueLabel("", channel->GetColor(), !channel->IsSampleChannel(), this);
+    m_valueLabel = new ValueLabel("", channel->GetColor(), !channel->GetAxis()->IsHorizontal(), this);
     layout->addWidget(m_valueLabel);
 
     displayNAValue();
@@ -35,9 +36,10 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
 
 void DisplayWidget::_RefreshName()
 {
+    //FIXME:
     setTitle(
         QString("(%1) ").arg(
-            m_channel->IsSampleChannel() ? 0 : m_channel->GetIndex() + 1
+            m_channel->GetAxis()->IsHorizontal() ? 0 : m_channel->GetIndex() + 1
         ) +
         m_channel->GetName()
     );

@@ -14,7 +14,8 @@ Axis::Axis(Context &context, QString title, bool isRemovable, bool isHorizontal)
     m_color(Qt::black),
     m_isOnRight(false),
     m_isHorizontal(isHorizontal),
-    m_graphAxis(NULL)
+    m_graphAxis(NULL),
+    m_displayName(false)
 {
 
 }
@@ -33,11 +34,15 @@ const Axis &Axis::operator =(const Axis &axis)
     m_isOnRight = axis.m_isOnRight;
     m_isHorizontal = axis.m_isHorizontal;
     m_graphAxis = axis.m_graphAxis;
+    m_displayName = axis.m_displayName;
     return *this;
 }
 
 QString Axis::GetGraphName()
 {
+    if (m_displayName)
+        return m_title;
+
      QString channels;
     bool first =true;
     unsigned count = 0;

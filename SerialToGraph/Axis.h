@@ -23,6 +23,7 @@ protected:
     bool m_isOnRight;
     bool m_isHorizontal;
     QCPAxis * m_graphAxis;
+    bool m_displayName;
 public:
     Axis(Context &context, QString title = "", bool isRemovable = true, bool isHorizontal = false);
     Axis(AxisCopy const &axisCopy);

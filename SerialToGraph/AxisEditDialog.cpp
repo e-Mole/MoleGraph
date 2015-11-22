@@ -18,6 +18,8 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
     m_name(NULL),
     m_colorButtonWidget(NULL)
 {
+    m_formLayout->addRow(new QLabel(tr("Type"), this), new QLabel(axis->IsHorizontal() ? tr("Horizontal") : tr("Vertical"), this));
+
     m_name = new QLineEdit(axis->GetTitle(), this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
     connect(m_name, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
@@ -43,6 +45,13 @@ AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
         m_formLayout->addRow(new QLabel(tr("Side"), this), side);
     }
 
+    QComboBox *display = new QComboBox(this);
+    display->addItem(tr("Channels and Units"));
+    display->addItem(tr("Name"));
+    display->setCurrentIndex((int)m_axisCopy.m_displayName);
+    connect(display, SIGNAL(currentIndexChanged(int)), this, SLOT(displayChanged(int)));
+    m_formLayout->addRow(new QLabel(tr("Display in Graph"), this), display);
+
 }
 
 void AxisEditDialog::nameChanged(QString const &text)
@@ -53,6 +62,11 @@ void AxisEditDialog::nameChanged(QString const &text)
 void AxisEditDialog::sideChanged(int index)
 {
    m_axisCopy.m_isOnRight = (bool)index;
+}
+
+void AxisEditDialog::displayChanged(int index)
+{
+    m_axisCopy.m_displayName = (bool)index;
 }
 
 void AxisEditDialog::_SetColorButtonColor(QColor const &color)

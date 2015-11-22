@@ -31,6 +31,7 @@ private slots:
     void colorButtonClicked();
     void sideChanged(int index);
     void nameChanged(QString const &text);
+    void displayChanged(int index);
 };
 
 #endif // ADDAXISDIALOG_H

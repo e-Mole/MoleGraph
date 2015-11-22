@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QColor>
-//#include <Context.h>
+
 class AxisCopy;
 class QCPAxis;
 struct Context;

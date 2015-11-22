@@ -5,6 +5,7 @@
 #include <QLabel>
 
 class Channel;
+class Context;
 class QColor;
 class QMouseEvent;
 class QString;
@@ -40,12 +41,11 @@ class DisplayWidget : public QGroupBox
     void _RefreshName();
     void mousePressEvent(QMouseEvent * event);
     void _ShowLastValueWithUnits();
+    Context &m_context;
     Channel *m_channel;
     QString m_lastValueText;
 public:
-    DisplayWidget(QWidget *parent, Channel *channel);
-
-
+    DisplayWidget(QWidget *parent, Channel *channel, Context &context);
 
     static QSize GetMinimumSize()
     {  return QSize(110, 68); }

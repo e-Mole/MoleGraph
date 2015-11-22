@@ -8,25 +8,29 @@ class QComboBox;
 class QFormLayout;
 class QLineEdit;
 class QString;
-
+struct Context;
 class ChannelSettings : public FormDialogBase
 {
     Q_OBJECT
 
-    void _InitializeShapeCombo(QFormLayout *formLaout, unsigned shapeIndex);
+    void _InitializeShapeCombo();
+    void _InitializeAxisCombo();
     virtual void BeforeAccept();
 
+    Context & m_context;
     Channel *m_channel;
     QLineEdit * m_name;
 	QLineEdit * m_units;
 	QCheckBox * m_xAxis;
 	QCheckBox * m_toRightSide;
-    QComboBox * m_shape;
+    QComboBox * m_shapeComboBox;
+    QComboBox * m_axisComboBox;
 public:
-    ChannelSettings(Channel *channel, QWidget *parent);
+    ChannelSettings(Channel *channel, QWidget *parent, Context &context);
 signals:
 
 private slots:
+    void axisChanged(int index);
 };
 
 #endif // CHANNELSETTINGS_H

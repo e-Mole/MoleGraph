@@ -45,7 +45,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         }
     }
 
-    m_centralWidget = new CentralWidget(this, 3);
+    m_centralWidget = new CentralWidget(this, 3, m_context);
     setCentralWidget(m_centralWidget);
 
     QScrollBar *scrollBar = new QScrollBar(Qt::Horizontal, this);

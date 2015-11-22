@@ -2,6 +2,7 @@
 
 #include <Axis.h>
 #include <Channel.h>
+#include <Context.h>
 #include <ChannelSettings.h>
 #include <cmath>
 #include <QCheckBox>
@@ -14,8 +15,9 @@
 #include <QSize>
 #include <QString>
 
-DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel) :
+DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel, Context &context) :
     QGroupBox(channel->GetName(), parent),
+    m_context(context),
     m_channel(channel)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -131,6 +133,6 @@ void DisplayWidget::displayNAValue()
 
 void DisplayWidget::mousePressEvent(QMouseEvent * event)
 {
-    (new ChannelSettings(m_channel, this))->exec();
+    (new ChannelSettings(m_channel, this, m_context))->exec();
 }
 

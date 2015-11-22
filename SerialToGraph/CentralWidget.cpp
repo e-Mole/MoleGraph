@@ -1,4 +1,5 @@
 #include "CentralWidget.h"
+#include <Context.h>
 #include <DisplayWidget.h>
 #include <Graph.h>
 #include <QGridLayout>
@@ -8,8 +9,9 @@
 #include <Channel.h>
 
 
-CentralWidget::CentralWidget(QWidget *parent, unsigned verticalMax) :
+CentralWidget::CentralWidget(QWidget *parent, unsigned verticalMax, Context &context) :
     QWidget(parent),
+    m_context(context),
     m_verticalMax(verticalMax),
     m_graph(NULL),
     m_scrollBar(NULL)
@@ -89,7 +91,7 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 
 void CentralWidget::addDisplay(Channel* channel)
 {
-    m_widgets.push_back(new DisplayWidget(this, channel));
+    m_widgets.push_back(new DisplayWidget(this, channel, m_context));
     m_channelWidgets[channel] = m_widgets.last();
     _ReplaceDisplays(false);
 }

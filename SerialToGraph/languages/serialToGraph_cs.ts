@@ -145,7 +145,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="101"/>
         <source>Circle</source>
-        <translation>Krouh</translation>
+        <translation>Kruh</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="102"/>

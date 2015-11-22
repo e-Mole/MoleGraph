@@ -48,14 +48,14 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_centralWidget = new CentralWidget(this, 3, m_context);
     setCentralWidget(m_centralWidget);
 
-    QScrollBar *scrollBar = new QScrollBar(Qt::Horizontal, this);
-    scrollBar->setRange(0,0);
-    scrollBar->setFocusPolicy(Qt::StrongFocus);
-    m_centralWidget->addScrollBar(scrollBar);
+    m_scrollBar = new QScrollBar(Qt::Horizontal, this);
+    m_scrollBar->setRange(0,0);
+    m_scrollBar->setFocusPolicy(Qt::StrongFocus);
+    m_centralWidget->addScrollBar(m_scrollBar);
 
-    m_graph = new Graph(this, m_context, m_serialPort, scrollBar);
+    m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
     m_centralWidget->addGraph(m_graph);
-    connect(scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
@@ -102,7 +102,9 @@ void MainWindow::openAxesDialog()
 
 void MainWindow::addChannelDisplay(Channel* channel)
 {
-    m_centralWidget->addDisplay(channel);
+    DisplayWidget *displayWidget = m_centralWidget->addDisplay(channel);
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), displayWidget, SLOT(displayValueOnIndex(int)));
+
     m_buttonLine->AddChannel(channel);
 }
 

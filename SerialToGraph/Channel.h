@@ -24,7 +24,6 @@ class Channel : public QObject
     double m_channelMinValue;
     double m_channelMaxValue;
     Axis *m_axis;
-    unsigned m_selectedValueIndex;
     unsigned m_shapeIndex;
 
 public:
@@ -43,7 +42,6 @@ public:
 	double GetValue(unsigned index)
 	{ return m_values[index]; }
 
-	void SelectValue(unsigned index);
 	void AddValue( double value);
 	void ClearValues();
 
@@ -62,8 +60,7 @@ public:
     { return m_shapeIndex; }
 
 signals:
-	void stateChanged();
-    void selectedValueChanged(double value);
+    void stateChanged();
     void valuesCleared();
 public slots:
     void channelSelectionChanged(bool selected, bool signal);

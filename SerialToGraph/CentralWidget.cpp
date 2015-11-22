@@ -89,11 +89,13 @@ void CentralWidget::_ReplaceDisplays(bool grid)
 }
 
 
-void CentralWidget::addDisplay(Channel* channel)
+DisplayWidget *CentralWidget::addDisplay(Channel* channel)
 {
-    m_widgets.push_back(new DisplayWidget(this, channel, m_context));
+    DisplayWidget *displayWidget = new DisplayWidget(this, channel, m_context);
+    m_widgets.push_back(displayWidget);
     m_channelWidgets[channel] = m_widgets.last();
     _ReplaceDisplays(false);
+    return displayWidget;
 }
 
 void CentralWidget::changeChannelVisibility(Channel *channel, bool visible)

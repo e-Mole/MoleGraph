@@ -5,6 +5,5 @@
 Context::Context(QVector<Axis*> &axis, QVector<Channel*> &channels):
     m_axes(axis),
     m_channels(channels)
-
 {
 }

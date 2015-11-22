@@ -22,7 +22,6 @@ Channel::Channel(QWidget *parent, Context const & context, int index, QString co
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
     m_axis(axis),
-    m_selectedValueIndex(0),
     m_shapeIndex(shapeIndex)
 {
 }
@@ -52,16 +51,6 @@ QString Channel::GetName()
 QString Channel::GetUnits()
 {
 	return m_units;
-}
-
-void Channel::SelectValue(unsigned index)
-{
-    m_selectedValueIndex = index;
-
-    if (0 != m_values.size() && !m_visible) //hidden
-        return;
-
-    selectedValueChanged(m_values[index]);
 }
 
 void Channel::AddValue( double value)

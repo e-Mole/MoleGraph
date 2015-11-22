@@ -148,13 +148,9 @@ void Graph::redrawMarks(int pos)
     {
         m_customPlot->graph(i + 8)->clearData();
         if ((int)m_context.m_channels[i]->GetValueCount() > pos)
-        {
             m_customPlot->graph(i + 8)->addData(pos, m_context.m_channels[i]->GetValue(pos));
-            m_context.m_channels[i]->SelectValue(pos);
-        }
     }
 
-    m_sampleChannel->SelectValue(pos);
     m_customPlot->ReplotIfNotDisabled();
 }
 

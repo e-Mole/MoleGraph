@@ -31,7 +31,6 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel, Context &context
     displayNAValue();
     _SetMinimumSize();
 
-    connect(m_channel, SIGNAL(selectedValueChanged(double)),  this, SLOT(setValue(double)));
     connect(m_channel, SIGNAL(stateChanged()), this, SLOT(changeChannelSettings()));
     connect(m_channel, SIGNAL(valuesCleared()), this, SLOT(displayNAValue()));
 }
@@ -108,8 +107,9 @@ void DisplayWidget::_ShowLastValueWithUnits()
         (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_channel->GetUnits());
     _SetMinimumSize();
 }
-void DisplayWidget::setValue(double value)
+void DisplayWidget::displayValueOnIndex(int index)
 {
+    double value = m_channel->GetValue(index);
     double absValue = std::abs(value);
 
     QString strValue;

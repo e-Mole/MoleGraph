@@ -35,7 +35,7 @@ public:
 
     void addGraph(Graph *graph);
     void addScrollBar(QScrollBar *scrollBar);
-    void addDisplay(Channel *channel);
+    DisplayWidget *addDisplay(Channel *channel);
 signals:
 
 public slots:

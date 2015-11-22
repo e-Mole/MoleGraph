@@ -9,10 +9,11 @@
 #include <QVector>
 
 class Axis;
-class QApplication;
-class Channel;
 class CentralWidget;
+class Channel;
 class Graph;
+class QApplication;
+class QScrollBar;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -26,6 +27,7 @@ class MainWindow : public QMainWindow
     QVector<Channel *> m_channels;
     Context m_context;
     Graph* m_graph;
+    QScrollBar *m_scrollBar;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

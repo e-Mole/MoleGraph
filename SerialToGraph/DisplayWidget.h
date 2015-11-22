@@ -56,7 +56,7 @@ public:
 signals:
 
 public slots:
-    void setValue(double value);
+    void displayValueOnIndex(int index);
     void changeChannelSettings();
     void displayNAValue();
 

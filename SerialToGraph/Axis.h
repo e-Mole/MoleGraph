@@ -25,7 +25,7 @@ protected:
     QCPAxis * m_graphAxis;
     bool m_displayName;
 public:
-    Axis(Context &context, QString title = "", bool isRemovable = true, bool isHorizontal = false);
+    Axis(Context &context, QString title = "", QColor const & color= Qt::black, bool isRemovable = true, bool isHorizontal = false);
     Axis(AxisCopy const &axisCopy);
 
     const Axis &operator =(const Axis &axis);

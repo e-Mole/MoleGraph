@@ -108,7 +108,7 @@ void ChannelSettings::axisChanged(int index)
 {
     if (0 == index) //New Axis...
     {
-        AxisCopy *newAxis = new AxisCopy(m_context);
+        Axis*newAxis = new Axis(m_context, m_channel->GetName(), m_channel->GetColor());
 
         AxisEditDialog dialog(newAxis);
         if (QDialog::Accepted == dialog.exec())

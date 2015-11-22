@@ -83,8 +83,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
 
-    Axis * xAxis = new Axis(m_context, tr("Horizontal"), false, true);
-    Axis * yAxis = new Axis(m_context, tr("Vertical"), false, false);
+    Axis * xAxis = new Axis(m_context, tr("Horizontal"), Qt::black, false, true);
+    Axis * yAxis = new Axis(m_context, tr("Vertical"), Qt::black, false, false);
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
 

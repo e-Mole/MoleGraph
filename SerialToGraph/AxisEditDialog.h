@@ -17,13 +17,13 @@ class AxisEditDialog : public FormDialogBase
     void _SetColorButtonColor(QColor const &color);
 
 
-    AxisCopy * m_axisOriginal;
-    AxisCopy m_axisCopy;
+    Axis * m_axisOriginal;
+    Axis m_axisCopy;
     QLineEdit* m_name;
     QWidget *m_colorButtonWidget;
 
 public:
-    AxisEditDialog(AxisCopy *axis);
+    AxisEditDialog(Axis *axis);
 
 signals:
 

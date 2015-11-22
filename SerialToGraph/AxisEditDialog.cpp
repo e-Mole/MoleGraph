@@ -11,7 +11,7 @@
 #include <QVector>
 #include <QWidget>
 
-AxisEditDialog::AxisEditDialog(AxisCopy * axis) :
+AxisEditDialog::AxisEditDialog(Axis *axis) :
     FormDialogBase(NULL, tr("Edit Axis...")),
     m_axisOriginal(axis),
     m_axisCopy(*axis),

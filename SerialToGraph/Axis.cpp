@@ -7,11 +7,11 @@ AxisCopy::AxisCopy(Context &context):
     m_original(NULL)
 {}
 
-Axis::Axis(Context &context, QString title, bool isRemovable, bool isHorizontal) :
+Axis::Axis(Context &context, QString title, QColor const & color, bool isRemovable, bool isHorizontal) :
     m_context(context),
     m_title(title),
     m_isRemovable(isRemovable),
-    m_color(Qt::black),
+    m_color(color),
     m_isOnRight(false),
     m_isHorizontal(isHorizontal),
     m_graphAxis(NULL),

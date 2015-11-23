@@ -81,8 +81,6 @@ public:
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
-    void YChannelAdded(Channel *channel);
-    void XChannelAdded(Channel *channel);
 
 public slots:
 protected slots:
@@ -97,7 +95,6 @@ protected slots:
     void selectionChanged();
     void rescaleAllAxes();
     void rescaleAxis(QCPAxis *axis);
-    void channelStateChanged();
 };
 
 #endif // PLOT_H

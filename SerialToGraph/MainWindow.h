@@ -18,6 +18,9 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
+    void _InitializeChannels(Axis *xAxis, Axis *yAxis);
+    void _AddChannel(Qt::GlobalColor color, Axis *axis);
+
     QSettings m_settings;
 	SerialPort m_serialPort;
     CentralWidget *m_centralWidget;

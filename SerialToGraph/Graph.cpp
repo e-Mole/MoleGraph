@@ -580,6 +580,7 @@ void Graph::_RescaleYAxesWithMargin()
     }
  }
 
+/*
 void Graph::InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
     m_sampleChannel = new Channel(this, m_context, 0, tr("samples"), Qt::black, xAxis, 0);
@@ -599,7 +600,7 @@ void Graph::InitializeChannels(Axis *xAxis, Axis *yAxis)
     _AddChannel(Qt::darkRed, yAxis);
 }
 
- void Graph::_AddChannel(Qt::GlobalColor color, Axis *axis)
+void Graph::_AddChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
     m_context.m_channels.push_back
@@ -618,4 +619,4 @@ void Graph::InitializeChannels(Axis *xAxis, Axis *yAxis)
 void Graph::channelStateChanged()
 {
     _UpdateChannel((Channel *)sender());
-}
+}*/

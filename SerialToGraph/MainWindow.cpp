@@ -77,9 +77,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
-    connect(m_graph, SIGNAL(YChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
-    connect(m_graph, SIGNAL(XChannelAdded(Channel*)), this, SLOT(addChannelDisplay(Channel*)));
-
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
 
@@ -88,9 +85,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
 
-    m_graph->InitializeChannels(xAxis, yAxis);
-
-
+    _InitializeChannels(xAxis, yAxis);
 }
 
 void MainWindow::openAxesDialog()
@@ -126,4 +121,31 @@ void MainWindow::dockVisibilityChanged(bool visible)
 void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
 {
 	m_settings.setValue("buttonLineLocation", area);
+}
+
+void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
+{
+    m_channels.push_back(
+        new Channel(this, m_context, 0, tr("samples"), Qt::black, xAxis, 0));
+    addChannelDisplay(m_channels.last());
+
+    _AddChannel(Qt::red, yAxis);
+    _AddChannel(Qt::blue, yAxis);
+    _AddChannel(Qt::black, yAxis);
+    _AddChannel(Qt::darkGreen, yAxis);
+    _AddChannel(Qt::magenta, yAxis);
+    _AddChannel(Qt::cyan, yAxis);
+    _AddChannel(Qt::green, yAxis);
+    _AddChannel(Qt::darkRed, yAxis);
+}
+
+void MainWindow::_AddChannel(Qt::GlobalColor color, Axis *axis)
+{
+    static unsigned order = 1;
+    m_channels.push_back
+    (
+        new Channel(this, m_context, order, QString(tr("channel %1")).arg(order), color, axis, order)
+    );
+    addChannelDisplay(m_channels.last());
+    order++;
 }

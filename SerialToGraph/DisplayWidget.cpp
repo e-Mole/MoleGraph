@@ -136,6 +136,10 @@ void DisplayWidget::displayNAValue()
 
 void DisplayWidget::mousePressEvent(QMouseEvent * event)
 {
-    (new ChannelSettings(m_channel, this, m_context))->exec();
+    ChannelSettings *settings = new ChannelSettings(m_channel, this, m_context);
+    if (QDialog::Accepted == settings->exec())
+    {
+        m_channel->stateChanged();
+    }
 }
 

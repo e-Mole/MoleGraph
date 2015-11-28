@@ -80,7 +80,7 @@ public:
     ~Graph();
 
     void InitializeGraphs(Channel *channel);
-    void UpdateAxes(Channel *channel);
+    void UpdateAxes();
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
@@ -98,6 +98,8 @@ protected slots:
     void selectionChanged();
     void rescaleAllAxes();
     void rescaleAxis(QCPAxis *axis);
+public slots:
+    void channelStateChanged();
 };
 
 #endif // PLOT_H

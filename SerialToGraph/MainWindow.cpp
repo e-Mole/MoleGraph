@@ -92,7 +92,7 @@ void MainWindow::openAxesDialog()
 {
     AxesDialog dialog(m_context);
     if (QDialog::Accepted == dialog.exec())
-        m_graph->UpdateAxes(NULL);
+        m_graph->UpdateAxes();
 }
 
 void MainWindow::addChannelDisplay(Channel* channel)
@@ -125,31 +125,28 @@ void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
 
 void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
-    m_channels.push_back(
-        new Channel(this, m_context, -1, tr("samples"), Qt::black, xAxis, 0));
-    addChannelDisplay(m_channels.last());
-    m_graph->InitializeGraphs(m_channels.last());
-    m_graph->UpdateAxes(m_channels.last());
-
-    _AddChannel(Qt::red, yAxis);
-    _AddChannel(Qt::blue, yAxis);
-    _AddChannel(Qt::black, yAxis);
-    _AddChannel(Qt::darkGreen, yAxis);
-    _AddChannel(Qt::magenta, yAxis);
-    _AddChannel(Qt::cyan, yAxis);
-    _AddChannel(Qt::green, yAxis);
-    _AddChannel(Qt::darkRed, yAxis);
+    _AddChannel(new Channel(this, m_context, -1, tr("Samples"), Qt::black, xAxis, 0));
+    _AddYChannel(Qt::red, yAxis);
+    _AddYChannel(Qt::blue, yAxis);
+    _AddYChannel(Qt::black, yAxis);
+    _AddYChannel(Qt::darkGreen, yAxis);
+    _AddYChannel(Qt::magenta, yAxis);
+    _AddYChannel(Qt::cyan, yAxis);
+    _AddYChannel(Qt::green, yAxis);
+    _AddYChannel(Qt::darkRed, yAxis);
+    m_graph->UpdateAxes();
 }
 
-void MainWindow::_AddChannel(Qt::GlobalColor color, Axis *axis)
+void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
-    m_channels.push_back
-    (
-        new Channel(this, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order)
-    );
-    addChannelDisplay(m_channels.last());
-    m_graph->InitializeGraphs(m_channels.last());
-    m_graph->UpdateAxes(m_channels.last());
+    _AddChannel(new Channel(this, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order));
     order++;
+}
+void MainWindow::_AddChannel(Channel *channel)
+{
+    m_channels.push_back(channel);
+    addChannelDisplay(channel);
+    m_graph->InitializeGraphs(channel);
+    connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));
 }

@@ -457,14 +457,8 @@ void Graph::_UpdateXAxis(Axis *axis)
     _SetAxisColor(m_customPlot->xAxis, axis->GetColor());
     //TODO: range,...
 }
-void Graph::UpdateAxes(Channel *channel)
+void Graph::UpdateAxes()
 {
-    if (NULL != channel && channel->GetAxis()->IsHorizontal())
-    {
-        m_customPlot->xAxis->setLabel(  channel->GetAxis()->GetGraphName());
-        return;
-    }
-
     //it is necessery to update all access because we want to have always the same order
     //and some of them could be attached and are not any more
     _RemoveVerticalAxes();
@@ -540,7 +534,7 @@ void Graph::selectionChanged()
 
 void Graph::_UpdateChannel(Channel *channel)
 {
-    UpdateAxes(channel);
+    UpdateAxes();
     _SetGraphShape(m_selectedPoints[channel], (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
     m_graphs[channel]->setVisible(channel->IsVisible());
 
@@ -618,8 +612,8 @@ void Graph::_AddChannel(Qt::GlobalColor color, Axis *axis)
     _InitializeGraphs(m_context.m_channels.last());
     YChannelAdded(m_context.m_channels.last());
 }
-
+*/
 void Graph::channelStateChanged()
 {
     _UpdateChannel((Channel *)sender());
-}*/
+}

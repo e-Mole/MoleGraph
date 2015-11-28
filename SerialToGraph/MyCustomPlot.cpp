@@ -25,11 +25,6 @@ MyCustomPlot::MyCustomPlot(QWidget *parent) :
     xAxis2 = newRect->axis(QCPAxis::atTop);
     yAxis2 = newRect->axis(QCPAxis::atRight);
 
-    for (int i = 0; i < 16; i++)
-    {
-        addGraph();
-    }
-
     xAxis->setRange(0, 1);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
     setMinimumSize(700, 500);

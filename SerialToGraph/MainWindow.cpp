@@ -126,8 +126,10 @@ void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
 void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
     m_channels.push_back(
-        new Channel(this, m_context, 0, tr("samples"), Qt::black, xAxis, 0));
+        new Channel(this, m_context, -1, tr("samples"), Qt::black, xAxis, 0));
     addChannelDisplay(m_channels.last());
+    m_graph->InitializeGraphs(m_channels.last());
+    m_graph->UpdateAxes(m_channels.last());
 
     _AddChannel(Qt::red, yAxis);
     _AddChannel(Qt::blue, yAxis);
@@ -141,11 +143,13 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 
 void MainWindow::_AddChannel(Qt::GlobalColor color, Axis *axis)
 {
-    static unsigned order = 1;
+    static unsigned order = 0;
     m_channels.push_back
     (
-        new Channel(this, m_context, order, QString(tr("channel %1")).arg(order), color, axis, order)
+        new Channel(this, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order)
     );
     addChannelDisplay(m_channels.last());
+    m_graph->InitializeGraphs(m_channels.last());
+    m_graph->UpdateAxes(m_channels.last());
     order++;
 }

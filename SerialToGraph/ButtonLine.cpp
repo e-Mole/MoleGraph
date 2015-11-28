@@ -170,9 +170,8 @@ void ButtonLine::_InitializeMenu()
 
 void ButtonLine::AddChannel(Channel *channel)
 {
-    static unsigned counter = 0;
     m_channelActions[channel] =
-        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + counter++), true, m_afterLastChannelSeparator);
+        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), true, m_afterLastChannelSeparator);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
 
     channel->channelSelectionChanged(true, true);

@@ -12,11 +12,11 @@
 #include <QString>
 #include <limits>
 
-Channel::Channel(QWidget *parent, Context const & context, int index, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex) :
+Channel::Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex) :
     QObject(parent),
     m_context(context),
     m_title(name),
-	m_index(index),
+    m_hwIndex(hwIndex),
     m_visible(false),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),

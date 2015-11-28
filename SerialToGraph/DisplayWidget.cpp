@@ -40,7 +40,7 @@ void DisplayWidget::_RefreshName()
     //FIXME:
     setTitle(
         QString("(%1) ").arg(
-            m_channel->GetAxis()->IsHorizontal() ? 0 : m_channel->GetIndex() + 1
+            m_channel->GetAxis()->IsHorizontal() ? 0 : m_channel->GetHwIndex() + 1
         ) +
         m_channel->GetName()
     );
@@ -109,6 +109,9 @@ void DisplayWidget::_ShowLastValueWithUnits()
 }
 void DisplayWidget::displayValueOnIndex(int index)
 {
+    if (0 == index && 0 == m_channel->GetValueCount())
+        return; //probably setRange in start method
+
     double value = m_channel->GetValue(index);
     double absValue = std::abs(value);
 

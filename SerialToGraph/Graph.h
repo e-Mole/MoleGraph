@@ -22,23 +22,21 @@ class QMouseEvent;
 struct Context;
 class Graph : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	struct GraphItem
-	{
+    struct GraphItem
+    {
         bool firstinSample;
         bool afterThrownOutSample;
         uint8_t channelIndex;
-		float value;
-
-	};
+        float value;
+    };
 
     void _InitializePolt(QBoxLayout *graphLayout);
     //QString _GetAxisName(const QString &units, unsigned index);
     void _SetAxisColor(QCPAxis *axis, QColor const & color);
     void _InitializeYAxis(Axis *axis);
-	void _InitializeGraphs(Channel *channel);
-    bool _FillGraphItem(GraphItem &item);
+    void _FillGraphItem(GraphItem &item);
     void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RescaleOneYAxisWithMargin(QCPAxis *axis);
@@ -49,34 +47,39 @@ class Graph : public QWidget
     void _AdjustDrawPeriod(unsigned drawDelay);
     bool _FillQueue();
     void _UpdateXAxis(Axis * axis);
+    bool _IsCompleteSetInQueue();
+
+    Context & m_context;
     MyCustomPlot *m_customPlot;
 
-	QTimer *m_drawTimer;
+    QTimer *m_drawTimer;
 
-	SerialPort &m_serialPort;
-	QQueue<unsigned char> m_queue;
+    SerialPort &m_serialPort;
+    QQueue<unsigned char> m_queue;
 
-	QVector<double> m_x;
+    //QVector<double> m_x;
 
     unsigned m_period;
-	unsigned m_counter;
+    unsigned m_counter;
 
     QScrollBar *m_scrollBar;
     unsigned m_periodTypeIndex;
-	QPushButton *m_connectButton;
+    QPushButton *m_connectButton;
 
-	Channel *m_sampleChannel;
+    Channel *m_sampleChannel;
 
     unsigned m_drawPeriod;
-    bool m_anySampleThrownOut;
+    bool m_anySampleMissed;
 
-    Context & m_context;
+    QMap<Channel*, QCPGraph*> m_graphs;
+    QMap<Channel*, QCPGraph*> m_selectedPoints;
+    QMap<unsigned, Channel *> m_hwChannels;
 
 public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
 
-    void InitializeChannels(Axis *xAxis, Axis *yAxis);
+    void InitializeGraphs(Channel *channel);
     void UpdateAxes(Channel *channel);
 signals:
 	void startRequestTimer(int msec);

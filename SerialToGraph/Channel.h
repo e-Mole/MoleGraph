@@ -16,7 +16,7 @@ class Channel : public QObject
 
     Context const & m_context;
     QString m_title;
-	unsigned m_index;
+    int m_hwIndex;
 	QVector<double> m_values;
     bool m_visible;
     QColor m_color;
@@ -27,12 +27,12 @@ class Channel : public QObject
     unsigned m_shapeIndex;
 
 public:
-    Channel(QWidget *parent, Context const & context, int index, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex);
+    Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex);
 	~Channel();
 
     bool IsVisible();
 	QColor &GetColor() { return m_color; }
-	unsigned GetIndex() { return m_index; }
+    int GetHwIndex() { return m_hwIndex; }
 	QString GetName();
 	QString GetUnits();
 
@@ -41,6 +41,9 @@ public:
 
 	double GetValue(unsigned index)
 	{ return m_values[index]; }
+
+    double GetLastValue()
+    { return m_values.last(); }
 
 	void AddValue( double value);
 	void ClearValues();

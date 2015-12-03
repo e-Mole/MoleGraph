@@ -48,6 +48,7 @@ class Graph : public QWidget
     bool _FillQueue();
     void _UpdateXAxis(Axis * axis);
     bool _IsCompleteSetInQueue();
+    bool _AssignXChannel();
 
     Context & m_context;
     MyCustomPlot *m_customPlot;
@@ -57,7 +58,7 @@ class Graph : public QWidget
     SerialPort &m_serialPort;
     QQueue<unsigned char> m_queue;
 
-    //QVector<double> m_x;
+    Channel *m_x;
 
     unsigned m_period;
     unsigned m_counter;
@@ -72,7 +73,7 @@ class Graph : public QWidget
     bool m_anySampleMissed;
 
     QMap<Channel*, QCPGraph*> m_graphs;
-    QMap<Channel*, QCPGraph*> m_selectedPoints;
+    QMap<QCPGraph*, QCPGraph*> m_selectedPoints;
     QMap<unsigned, Channel *> m_hwChannels;
 
 public:
@@ -92,7 +93,7 @@ protected slots:
 	void stop();
 	void exportPng(QString const &fileName);
 	void exportCsv(QString const &fileName);
-    void redrawMarks(int pos);
+    void redrawMarks(int scrollbarPos);
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();

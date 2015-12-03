@@ -12,6 +12,7 @@ public:
 
     QVector<Axis*> &m_axes;
     QVector<Channel*> &m_channels;
+    QString m_applicationName;
 };
 
 #endif // CONTEXT_H

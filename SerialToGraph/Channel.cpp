@@ -55,7 +55,7 @@ QString Channel::GetUnits()
 
 void Channel::AddValue( double value)
 {
-	m_values.push_back(value);
+    m_values.push_back(value);
 
     if (value < m_channelMinValue)
         m_channelMinValue = value;

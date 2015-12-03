@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QString>
 #include <QVBoxLayout>
@@ -57,6 +58,8 @@ void ChannelSettings::BeforeAccept()
     if (m_channel->m_axis != axis)
     {
         changed = true;
+        if (axis->IsHorizontal())
+            _MoveLastHorizontalToVertical();
         m_channel->m_axis = axis;
     }
 
@@ -65,6 +68,30 @@ void ChannelSettings::BeforeAccept()
 
     accept();
 }
+
+void ChannelSettings::_MoveLastHorizontalToVertical()
+{
+    foreach (Channel *channel, m_context.m_channels)
+    {
+        if (channel->m_axis->IsHorizontal())
+        {
+            foreach (Axis *axis, m_context.m_axes)
+            {
+                if (!axis->IsHorizontal())
+                {
+                    channel->m_axis = axis;
+                    QMessageBox::warning(
+                        this,
+                        m_context.m_applicationName,
+                        QString(tr("Only one horizontal channel is supported. Channel '%1' has been moved to an axis '%2'")).arg(channel->GetName()).arg(axis->GetTitle())
+                    );
+                    return;
+                }
+            }
+        }
+    }
+}
+
 void ChannelSettings::_InitializeShapeCombo()
 {
     m_shapeComboBox = new QComboBox(this);

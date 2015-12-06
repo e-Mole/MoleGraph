@@ -37,12 +37,8 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel, Context &context
 
 void DisplayWidget::_RefreshName()
 {
-    //FIXME:
     setTitle(
-        QString("(%1) ").arg(
-            m_channel->GetAxis()->IsHorizontal() ? 0 : m_channel->GetHwIndex() + 1
-        ) +
-        m_channel->GetName()
+        QString("(%1) ").arg(m_channel->GetHwIndex() + 1) + m_channel->GetName()
     );
 }
 void DisplayWidget::changeChannelSettings()

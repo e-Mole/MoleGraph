@@ -205,6 +205,8 @@ void Graph::draw()
             if (item.firstinSample)
                 m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
 
+            if (m_hwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_hwChannels[item.channelIndex]->GetMaxValue())
+                qDebug() << "vale is less then max";
             m_hwChannels[item.channelIndex]->AddValue(item.value);
         }
 

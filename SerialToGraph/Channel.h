@@ -61,9 +61,15 @@ public:
 
     unsigned GetShapeIndex()
     { return m_shapeIndex; }
+    
+    bool IsHwChannel()
+    { return m_hwIndex != -1; }
+
+    bool IsOnHorizontalAxis();
 
 signals:
     void stateChanged();
+    void stateChangedMulti();
     void valuesCleared();
 public slots:
     void channelSelectionChanged(bool selected, bool signal);

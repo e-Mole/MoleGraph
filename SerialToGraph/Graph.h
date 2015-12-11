@@ -26,7 +26,7 @@ class Graph : public QWidget
 
     struct GraphItem
     {
-        bool firstinSample;
+        bool firstInSample;
         bool afterThrownOutSample;
         uint8_t channelIndex;
         float value;
@@ -48,7 +48,8 @@ class Graph : public QWidget
     bool _FillQueue();
     void _UpdateXAxis(Axis * axis);
     bool _IsCompleteSetInQueue();
-    bool _AssignXChannel();
+    void _AssignXChannel();
+    void _ReinitializeGraphForChannel(Channel *channel);
 
     Context & m_context;
     MyCustomPlot *m_customPlot;
@@ -74,19 +75,17 @@ class Graph : public QWidget
 
     QMap<Channel*, QCPGraph*> m_graphs;
     QMap<QCPGraph*, QCPGraph*> m_selectedPoints;
-    QMap<unsigned, Channel *> m_hwChannels;
+    QMap<unsigned, Channel *> m_trackedHwChannels;
 
 public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
 
-    void InitializeGraphs(Channel *channel);
     void UpdateAxes();
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
 
-public slots:
 protected slots:
     void draw();
 	void start();
@@ -99,8 +98,10 @@ protected slots:
     void selectionChanged();
     void rescaleAllAxes();
     void rescaleAxis(QCPAxis *axis);
+    void sliderMoved(int value);
 public slots:
     void channelStateChanged();
+    void reinitialize();
 };
 
 #endif // PLOT_H

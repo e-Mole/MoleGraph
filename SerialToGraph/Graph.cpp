@@ -90,6 +90,7 @@ void Graph::rescaleAllAxes()
 {
     m_customPlot->xAxis->rescale(true);
     _RescaleYAxesWithMargin();
+    m_customPlot->ReplotIfNotDisabled();
 }
 
 void Graph::periodTypeChanged(int index)
@@ -97,13 +98,20 @@ void Graph::periodTypeChanged(int index)
         m_periodTypeIndex = index;
 }
 
-void Graph::InitializeGraphs(Channel *channel)
+void Graph::_ReinitializeGraphForChannel(Channel *channel)
 {
-    if (-1 == channel->GetHwIndex())
+    QMap<Channel*, QCPGraph*>::iterator it = m_graphs.find(channel);
+    if (it != m_graphs.end())
     {
-        m_customPlot->xAxis->setLabel(channel->GetName());
-        m_sampleChannel = channel;
+        m_customPlot->removeGraph(it.value());
+        m_customPlot->removeGraph(m_selectedPoints.find(it.value()).value()); // I know there is one because there is the graph too
+        m_selectedPoints.remove(it.value());
+        m_graphs.remove(channel);
+
     }
+
+    if (!channel->IsVisible() || channel->IsOnHorizontalAxis())
+        return;
 
     QCPGraph *graph = m_customPlot->addGraph();
     QCPGraph *point = m_customPlot->addGraph();
@@ -114,16 +122,48 @@ void Graph::InitializeGraphs(Channel *channel)
     QPen pen = graph->pen();
     pen.setColor(channel->GetColor());
     graph->setPen(pen);
-
+    graph->setVisible(channel->IsVisible()); //for samples only. other channals are filtered out
     pen = graph->selectedPen();
     pen.setColor(channel->GetColor());
     graph->setSelectedPen(pen);
 
     point->setPen(QPen(QBrush(channel->GetColor()), 1.6));
     point->setLineStyle(QCPGraph::lsNone);
+    point->setVisible(channel->IsVisible());
 
     _SetGraphShape(point, (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
+
+    for (int i = 0; i < channel->GetValueCount(); i++)
+    {
+        graph->data()->insert(m_x->GetValue(i), QCPData(m_x->GetValue(i), channel->GetValue(i)));
+    }
 }
+
+void Graph::_UpdateChannel(Channel *channel)
+{
+    _AssignXChannel();
+    _ReinitializeGraphForChannel(channel);
+    UpdateAxes();
+
+    //FIXME: quick solution. axis should not be rescaled in the case its name is changed
+    rescaleAllAxes();
+}
+
+void Graph::reinitialize()
+{
+    _AssignXChannel();
+    foreach (Channel *channel, m_context.m_channels)
+    {
+        if (!channel->IsHwChannel())
+            m_sampleChannel = channel;
+
+        _ReinitializeGraphForChannel(channel);
+    }
+
+    UpdateAxes();
+    rescaleAllAxes();
+}
+
 
 void Graph::_SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape)
 {
@@ -135,7 +175,7 @@ void Graph::_SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape)
 void Graph::_FillGraphItem(GraphItem &item)
 {
     unsigned char mixture = m_queue.dequeue();
-    item.firstinSample = (mixture >> 7);
+    item.firstInSample = (mixture >> 7);
     item.afterThrownOutSample = ((mixture >> 6) & 1);
     item.channelIndex = mixture & 7; //lowest 3 bits
 	char value[4];
@@ -178,21 +218,21 @@ bool Graph::_FillQueue()
 
 bool Graph::_IsCompleteSetInQueue()
 {
-    return m_queue.size() >= m_hwChannels.size() * CHANNEL_DATA_SIZE;
+    return m_queue.size() >= m_trackedHwChannels.size() * CHANNEL_DATA_SIZE;
 }
 
 void Graph::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    GraphItem item;
-
     if (!_FillQueue() || !_IsCompleteSetInQueue())
         return; //nothing to draw
 
+    
     while (_IsCompleteSetInQueue())
     {
-        for (int i = 0; i < m_hwChannels.size(); i++) //i is not used. just for right count of reading from the queue
+        GraphItem item;
+        for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
         {
             _FillGraphItem(item);
 
@@ -202,12 +242,12 @@ void Graph::draw()
                 qDebug() << "writing delay";
             }
 
-            if (item.firstinSample)
+            if (item.firstInSample)
                 m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
 
-            if (m_hwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_hwChannels[item.channelIndex]->GetMaxValue())
+            if (m_trackedHwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_trackedHwChannels[item.channelIndex]->GetMaxValue())
                 qDebug() << "vale is less then max";
-            m_hwChannels[item.channelIndex]->AddValue(item.value);
+            m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
         }
 
         foreach (Channel *channel, m_context.m_channels)
@@ -224,18 +264,19 @@ void Graph::draw()
     {
         //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
         _RescaleYAxesWithMargin();
-        m_customPlot->xAxis->setRange(m_x->GetMinValue(), m_x->GetMaxValue());
+        m_customPlot->xAxis->setRange(
+            m_x->GetMinValue(),
+            (m_x->GetMinValue() == m_x->GetMaxValue()) ? m_x->GetMaxValue() + 1 : m_x->GetMaxValue());
     }
 
-    unsigned lastMax = m_scrollBar->maximum();
     unsigned scrollBarMax = m_customPlot->graph(0)->data()->keys().count()-1; //all graphs have te same count of samples. choose one
     m_scrollBar->setRange(0, scrollBarMax);
-    if ((unsigned)m_scrollBar->value() == lastMax)
+    if (!m_customPlot->IsInMoveMode())
     {
         m_scrollBar->setValue(scrollBarMax);
 
-        //scrollBarMax == lastMax - I need to redraw graph with marks also int the case x was not added
-        if (scrollBarMax == lastMax )
+        //I need to redraw graph with marks also int the case scroolBar value is not changed
+        if (0 == scrollBarMax)
             redrawMarks(scrollBarMax);
     }
     else
@@ -273,40 +314,24 @@ void Graph::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
-bool Graph::_AssignXChannel()
+void Graph::_AssignXChannel()
 {
     m_x = NULL;
     foreach (Channel *channel, m_context.m_channels)
     {
-        if (channel->GetAxis()->IsHorizontal() && channel->IsVisible())
+        if (channel->GetAxis()->IsHorizontal())
         {
-            if (NULL !=m_x)
-            {
-                m_x = NULL;
-                return false; //I don't expect it may happend
-            }
             m_x = channel;
+            return;
         }
 
     }
-    if (NULL == m_x)
-    {
-        QMessageBox::warning(
-            this,
-            QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-            tr("No horizontal channel selected")
-        );
-        return false;
-    }
-    return true;
+
+    return;
 }
 
 void Graph::start()
 {
-    //before any clear
-    if (!_AssignXChannel())
-        return;
-
     if (!m_serialPort.IsDeviceConnected())
     {
         m_serialPort.LineIssueSolver();
@@ -319,8 +344,8 @@ void Graph::start()
     foreach (Channel *channel, m_context.m_channels)
     {
         channel->ClearValues();
-        if (channel->GetHwIndex() != -1)
-            m_hwChannels.insert(channel->GetHwIndex(), channel);
+        if (channel->IsHwChannel() && channel->IsVisible())
+            m_trackedHwChannels.insert(channel->GetHwIndex(), channel);
     }
 
     for (int i = 0; i< m_customPlot->graphCount(); i++)
@@ -350,7 +375,7 @@ void Graph::start()
     }
 
     unsigned selectedChannels = 0;
-    foreach (Channel *channel, m_hwChannels.values())
+    foreach (Channel *channel, m_trackedHwChannels.values())
         selectedChannels |= 1 << channel->GetHwIndex();
 
     qDebug() << "selected channels:" << selectedChannels;
@@ -501,6 +526,8 @@ void Graph::_UpdateXAxis(Axis *axis)
     _SetAxisColor(m_customPlot->xAxis, axis->GetColor());
     //TODO: range,...
 }
+
+
 void Graph::UpdateAxes()
 {
     //it is necessery to update all access because we want to have always the same order
@@ -517,16 +544,11 @@ void Graph::UpdateAxes()
 
     foreach (Channel *channel, m_context.m_channels)
     {
-        if (channel->IsVisible())
+        if (channel->IsVisible() && !channel->IsOnHorizontalAxis())
         {
            QCPAxis *axis = channel->GetAxis()->GetGraphAxis();
            m_graphs[channel]->setValueAxis(axis);
            m_selectedPoints[m_graphs[channel]]->setValueAxis(axis);
-           m_graphs[channel]->setVisible(true);
-        }
-        else
-        {
-            m_graphs[channel]->setVisible(false);
         }
     }
 
@@ -576,19 +598,6 @@ void Graph::selectionChanged()
     m_customPlot->selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Graph::_UpdateChannel(Channel *channel)
-{
-    UpdateAxes();
-    _SetGraphShape(m_selectedPoints[m_graphs[channel]], (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
-    m_graphs[channel]->setVisible(channel->IsVisible());
-
-    //FIXME: quick solution. axis should not be rescaled in the case its name is changed
-    rescaleAllAxes();
-
-    m_customPlot->ReplotIfNotDisabled();
-}
-
-
 void Graph::_RescaleOneYAxisWithMargin(QCPAxis *axis)
 {
     double lower = std::numeric_limits<double>::max();
@@ -624,4 +633,10 @@ void Graph::_RescaleYAxesWithMargin()
 void Graph::channelStateChanged()
 {
     _UpdateChannel((Channel *)sender());
+}
+
+void Graph::sliderMoved(int value)
+{
+    m_customPlot->SetMoveMode(true);
+    qDebug() << "moved by scrollbar";
 }

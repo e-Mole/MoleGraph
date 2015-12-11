@@ -56,6 +56,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
     m_centralWidget->addGraph(m_graph);
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
+    connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
@@ -134,7 +135,8 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
     _AddYChannel(Qt::cyan, yAxis);
     _AddYChannel(Qt::green, yAxis);
     _AddYChannel(Qt::darkRed, yAxis);
-    m_graph->UpdateAxes();
+
+    m_graph->reinitialize();
 }
 
 void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
@@ -147,6 +149,6 @@ void MainWindow::_AddChannel(Channel *channel)
 {
     m_channels.push_back(channel);
     addChannelDisplay(channel);
-    m_graph->InitializeGraphs(channel);
     connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));
+    connect(channel, SIGNAL(stateChangedMulti()), m_graph, SLOT(reinitialize()));
 }

@@ -15,7 +15,7 @@ class ChannelSettings : public FormDialogBase
 
     void _InitializeShapeCombo();
     void _InitializeAxisCombo();
-    void _MoveLastHorizontalToVertical();
+    Channel *_MoveLastHorizontalToVertical();
     virtual void BeforeAccept();
 
     Context & m_context;

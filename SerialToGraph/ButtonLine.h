@@ -56,6 +56,7 @@ signals:
     void graphTriggered(bool checked);
     void channelTriggered(Channel *channel, bool checked);
     void axesPressed();
+    void allChannelsDisplayedOrHidden();
 
 public slots:
     void startButtonPressed();

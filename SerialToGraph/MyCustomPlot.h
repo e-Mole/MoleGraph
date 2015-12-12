@@ -37,7 +37,7 @@ public:
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
 
     bool IsInMoveMode() { return m_moveMode; }
-    bool SetMoveMode(bool active) { return m_moveMode; }
+    void SetMoveMode(bool active) { m_moveMode = active; }
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
 signals:

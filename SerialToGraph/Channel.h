@@ -69,10 +69,10 @@ public:
 
 signals:
     void stateChanged();
-    void stateChangedMulti();
+    void stateChangedToHorizontal();
     void valuesCleared();
 public slots:
-    void channelSelectionChanged(bool selected, bool signal);
+    void changeChannelSelection(bool selected, bool signal);
 };
 
 #endif // CHANNEL_H

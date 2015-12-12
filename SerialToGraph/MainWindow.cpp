@@ -54,6 +54,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_centralWidget->addScrollBar(m_scrollBar);
 
     m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
+    m_context.SetGraph(m_graph);
     m_centralWidget->addGraph(m_graph);
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
     connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
@@ -80,13 +81,14 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
-
+    connect(m_buttonLine, SIGNAL(allChannelsDisplayedOrHidden()), m_graph, SLOT(reinitialize()));
     Axis * xAxis = new Axis(m_context, tr("Horizontal"), Qt::black, false, true);
     Axis * yAxis = new Axis(m_context, tr("Vertical"), Qt::black, false, false);
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
 
     _InitializeChannels(xAxis, yAxis);
+    m_graph->UpdateAxes();
 }
 
 void MainWindow::openAxesDialog()

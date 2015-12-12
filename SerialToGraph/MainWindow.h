@@ -29,9 +29,9 @@ class MainWindow : public QMainWindow
 
     QVector<Axis *> m_axes;
     QVector<Channel *> m_channels;
-    Context m_context;
-    Graph* m_graph;
     QScrollBar *m_scrollBar;
+    Graph* m_graph;
+    Context m_context;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);

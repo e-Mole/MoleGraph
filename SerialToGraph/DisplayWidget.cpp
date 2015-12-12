@@ -32,13 +32,16 @@ DisplayWidget::DisplayWidget(QWidget *parent, Channel *channel, Context &context
     _SetMinimumSize();
 
     connect(m_channel, SIGNAL(stateChanged()), this, SLOT(changeChannelSettings()));
+    connect(m_channel, SIGNAL(stateChangedMulti()), this, SLOT(changeChannelSettings()));
     connect(m_channel, SIGNAL(valuesCleared()), this, SLOT(displayNAValue()));
 }
 
 void DisplayWidget::_RefreshName()
 {
     setTitle(
-        QString("(%1) ").arg(m_channel->GetHwIndex() + 1) + m_channel->GetName()
+        QString("(%1) ").arg(m_channel->GetHwIndex() + 1) +
+        (m_channel->IsOnHorizontalAxis() ? "- " : "| ") +
+        m_channel->GetName()
     );
 }
 void DisplayWidget::changeChannelSettings()
@@ -133,9 +136,6 @@ void DisplayWidget::displayNAValue()
 void DisplayWidget::mousePressEvent(QMouseEvent * event)
 {
     ChannelSettings *settings = new ChannelSettings(m_channel, this, m_context);
-    if (QDialog::Accepted == settings->exec())
-    {
-        m_channel->stateChanged();
-    }
+    settings->exec();
 }
 

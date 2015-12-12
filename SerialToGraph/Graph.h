@@ -48,7 +48,7 @@ class Graph : public QWidget
     bool _FillQueue();
     void _UpdateXAxis(Axis * axis);
     bool _IsCompleteSetInQueue();
-    void _AssignXChannel();
+    bool _AssignXChannel();
     void _ReinitializeGraphForChannel(Channel *channel);
 
     Context & m_context;
@@ -76,7 +76,9 @@ class Graph : public QWidget
     QMap<Channel*, QCPGraph*> m_graphs;
     QMap<QCPGraph*, QCPGraph*> m_selectedPoints;
     QMap<unsigned, Channel *> m_trackedHwChannels;
-
+    bool m_drawingInProccess;
+    bool m_drawingRequired;
+    bool m_drawingPaused;
 public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
     ~Graph();
@@ -102,6 +104,9 @@ protected slots:
 public slots:
     void channelStateChanged();
     void reinitialize();
+    void finishDrawing();
+    void pauseDrawing();
+    void continueDrawing();
 };
 
 #endif // PLOT_H

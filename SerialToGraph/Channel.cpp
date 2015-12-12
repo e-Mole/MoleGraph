@@ -31,7 +31,7 @@ Channel::~Channel()
 
 }
 
-void Channel::channelSelectionChanged(bool selected, bool signal)
+void Channel::changeChannelSelection(bool selected, bool signal)
 {
     m_visible = selected;
     if (signal)
@@ -72,3 +72,6 @@ void Channel::ClearValues()
     m_channelMaxValue = -std::numeric_limits<double>::max();
     valuesCleared();
 }
+
+bool Channel::IsOnHorizontalAxis()
+{ return m_axis->IsHorizontal(); }

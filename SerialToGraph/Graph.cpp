@@ -43,7 +43,10 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
     m_connectButton(NULL),
     m_sampleChannel(NULL),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
-    m_anySampleMissed(false)
+    m_anySampleMissed(false),
+    m_drawingInProccess(false),
+    m_drawingRequired(false),
+    m_drawingPaused(false)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setMargin(1);
@@ -55,6 +58,7 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
     _InitializePolt(graphLayout);
 
     m_drawTimer = new QTimer(this);
+    m_drawTimer->setSingleShot(true); //will be started from timeout slot
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 }
 
@@ -100,6 +104,7 @@ void Graph::periodTypeChanged(int index)
 
 void Graph::_ReinitializeGraphForChannel(Channel *channel)
 {
+
     QMap<Channel*, QCPGraph*>::iterator it = m_graphs.find(channel);
     if (it != m_graphs.end())
     {
@@ -109,6 +114,9 @@ void Graph::_ReinitializeGraphForChannel(Channel *channel)
         m_graphs.remove(channel);
 
     }
+    //because I can't add graph without y-axis
+    if (m_customPlot->yAxis == NULL)
+        m_customPlot->yAxis = channel->GetAxis()->GetGraphAxis();
 
     if (!channel->IsVisible() || channel->IsOnHorizontalAxis())
         return;
@@ -133,7 +141,7 @@ void Graph::_ReinitializeGraphForChannel(Channel *channel)
 
     _SetGraphShape(point, (QCPScatterStyle::ScatterShape)(channel->GetShapeIndex() + 2));
 
-    for (int i = 0; i < channel->GetValueCount(); i++)
+    for (unsigned i = 0; i < channel->GetValueCount(); i++)
     {
         graph->data()->insert(m_x->GetValue(i), QCPData(m_x->GetValue(i), channel->GetValue(i)));
     }
@@ -141,16 +149,24 @@ void Graph::_ReinitializeGraphForChannel(Channel *channel)
 
 void Graph::_UpdateChannel(Channel *channel)
 {
-    _AssignXChannel();
+    pauseDrawing();
+
+    if (!_AssignXChannel())
+        return; //I'm probably in the middle of change of horizontal channel
+
     _ReinitializeGraphForChannel(channel);
-    UpdateAxes();
+
 
     //FIXME: quick solution. axis should not be rescaled in the case its name is changed
     rescaleAllAxes();
+
+    continueDrawing();
 }
 
 void Graph::reinitialize()
 {
+    pauseDrawing();
+
     _AssignXChannel();
     foreach (Channel *channel, m_context.m_channels)
     {
@@ -160,8 +176,9 @@ void Graph::reinitialize()
         _ReinitializeGraphForChannel(channel);
     }
 
-    UpdateAxes();
     rescaleAllAxes();
+
+    continueDrawing();
 }
 
 
@@ -191,6 +208,9 @@ void Graph::redrawMarks(int scrollbarPos)
 {
     if (0 == scrollbarPos && 0 == m_sampleChannel->GetValueCount())
         return; //probably setRange in start method
+
+    if (m_customPlot->graphCount() == 0)
+        return;//nothing to draw
 
     double xValue = m_customPlot->graph(0)->data()->keys().at(scrollbarPos);
     QMap<QCPGraph*, QCPGraph*>::iterator it = m_selectedPoints.begin();
@@ -223,72 +243,96 @@ bool Graph::_IsCompleteSetInQueue()
 
 void Graph::draw()
 {
+    while (m_drawingPaused)
+    {}
+
+    m_drawingInProccess = true;
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (!_FillQueue() || !_IsCompleteSetInQueue())
-        return; //nothing to draw
-
-    
-    while (_IsCompleteSetInQueue())
+    if (_FillQueue() && _IsCompleteSetInQueue())
     {
-        GraphItem item;
-        for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
+    
+        while (_IsCompleteSetInQueue())
         {
-            _FillGraphItem(item);
-
-            if (item.afterThrownOutSample)
+            GraphItem item;
+            for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
             {
-                m_anySampleMissed = true;
-                qDebug() << "writing delay";
+                _FillGraphItem(item);
+
+                if (item.afterThrownOutSample)
+                {
+                    m_anySampleMissed = true;
+                    qDebug() << "writing delay";
+                }
+
+                if (item.firstInSample)
+                    m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
+
+                if (m_trackedHwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_trackedHwChannels[item.channelIndex]->GetMaxValue())
+                    qDebug() << "vale is less then max";
+                m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
             }
 
-            if (item.firstInSample)
-                m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
-
-            if (m_trackedHwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_trackedHwChannels[item.channelIndex]->GetMaxValue())
-                qDebug() << "vale is less then max";
-            m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
+            foreach (Channel *channel, m_context.m_channels)
+            {
+                if  (m_graphs.contains(channel))
+                {
+                    m_graphs[channel]->data()->insert(
+                        m_x->GetLastValue(), QCPData(m_x->GetLastValue(), channel->GetLastValue()));
+                }
+            }
         }
 
-        foreach (Channel *channel, m_context.m_channels)
+        if (!m_customPlot->IsInMoveMode())
         {
-            if (m_x == channel)
-                continue;
-
-            m_graphs[channel]->data()->insert(
-                m_x->GetLastValue(), QCPData(m_x->GetLastValue(), channel->GetLastValue()));
+            //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
+            _RescaleYAxesWithMargin();
+            m_customPlot->xAxis->setRange(
+                m_x->GetMinValue(),
+                (m_x->GetMinValue() == m_x->GetMaxValue()) ? m_x->GetMaxValue() + 1 : m_x->GetMaxValue());
         }
-    }
 
-    if (!m_customPlot->IsInMoveMode())
-    {
-        //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
-        _RescaleYAxesWithMargin();
-        m_customPlot->xAxis->setRange(
-            m_x->GetMinValue(),
-            (m_x->GetMinValue() == m_x->GetMaxValue()) ? m_x->GetMaxValue() + 1 : m_x->GetMaxValue());
-    }
+        unsigned scrollBarMax = (m_customPlot->graphCount() == 0) ?
+                0 : m_customPlot->graph(0)->data()->keys().count()-1; //all graphs have te same count of samples. choose one
+        m_scrollBar->setRange(0, scrollBarMax);
+        if (!m_customPlot->IsInMoveMode())
+        {
+            m_scrollBar->setValue(scrollBarMax);
 
-    unsigned scrollBarMax = m_customPlot->graph(0)->data()->keys().count()-1; //all graphs have te same count of samples. choose one
-    m_scrollBar->setRange(0, scrollBarMax);
-    if (!m_customPlot->IsInMoveMode())
-    {
-        m_scrollBar->setValue(scrollBarMax);
-
-        //I need to redraw graph with marks also int the case scroolBar value is not changed
-        if (0 == scrollBarMax)
-            redrawMarks(scrollBarMax);
-    }
-    else
-    {
-        //if scrollbar value is changed graph is redrown by slider. I have to redraw plot there because of moving by the slider
-        //else i have to redraw it here
-        m_customPlot->ReplotIfNotDisabled();
+            //I need to redraw graph with marks also int the case scroolBar value is not changed
+            if (0 == scrollBarMax)
+                redrawMarks(scrollBarMax);
+        }
+        else
+        {
+            //if scrollbar value is changed graph is redrown by slider. I have to redraw plot there because of moving by the slider
+            //else i have to redraw it here
+            m_customPlot->ReplotIfNotDisabled();
+        }
     }
 
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
+    m_drawingInProccess = false;
+}
 
-    return;
+void Graph::finishDrawing()
+{
+    m_drawingRequired = false;
+    m_drawTimer->stop();
+    while (m_drawingInProccess)
+    {}
+}
+
+void Graph::pauseDrawing()
+{
+    m_drawingPaused = true;
+    while (m_drawingInProccess)
+    {}
+}
+
+void Graph::continueDrawing()
+{
+    m_drawingPaused = false;
 }
 
 void Graph::_AdjustDrawPeriod(unsigned drawDelay)
@@ -296,8 +340,6 @@ void Graph::_AdjustDrawPeriod(unsigned drawDelay)
     if (m_drawPeriod >= 20 && drawDelay < m_drawPeriod /2) //20 ms - I guess the program will not use a dog
     {
         m_drawPeriod /= 2;
-        m_drawTimer->stop();
-        m_drawTimer->start(m_drawPeriod);
         qDebug() << "draw period decreased to:" << m_drawPeriod;
     }
     else if (drawDelay > m_drawPeriod)
@@ -307,14 +349,14 @@ void Graph::_AdjustDrawPeriod(unsigned drawDelay)
         else
         {
             m_drawPeriod *= 2;
-            m_drawTimer->stop();
-            m_drawTimer->start(m_drawPeriod);
             qDebug() << "draw period increased to:" << m_drawPeriod;
         }
     }
+    if (m_drawingRequired)
+        m_drawTimer->start(m_drawPeriod);
 }
 
-void Graph::_AssignXChannel()
+bool Graph::_AssignXChannel()
 {
     m_x = NULL;
     foreach (Channel *channel, m_context.m_channels)
@@ -322,12 +364,12 @@ void Graph::_AssignXChannel()
         if (channel->GetAxis()->IsHorizontal())
         {
             m_x = channel;
-            return;
+            return true;
         }
 
     }
 
-    return;
+    return false;
 }
 
 void Graph::start()
@@ -383,10 +425,10 @@ void Graph::start()
     m_scrollBar->setRange(0, 0);
 
     m_drawPeriod = INITIAL_DRAW_PERIOD;
+    m_drawingRequired = true;
     m_drawTimer->start(m_drawPeriod);
     if (!m_serialPort.Start())
     {
-        m_drawTimer->stop();
         m_serialPort.LineIssueSolver();
         return;
     }
@@ -397,7 +439,7 @@ void Graph::stop()
     if (!m_serialPort.Stop())
         qDebug() << "stop was not deliveried";
 
-	m_drawTimer->stop();
+    finishDrawing();
 
     m_customPlot->SetDisabled(false);
     draw(); //may be something is still in the buffer
@@ -518,6 +560,9 @@ void Graph::_InitializeYAxis(Axis *axis)
 
     if (NULL == m_customPlot->yAxis)
         m_customPlot->yAxis = graphAxis;
+
+    if (!axis->ContainsVisibleChannel())
+        axis->GetGraphAxis()->setVisible(false);
 }
 
 void Graph::_UpdateXAxis(Axis *axis)
@@ -538,7 +583,7 @@ void Graph::UpdateAxes()
     {
         if (axis->IsHorizontal())
             _UpdateXAxis(axis);
-        else if (axis->ContainsVisibleChannel())
+        else
             _InitializeYAxis(axis);
     }
 
@@ -552,12 +597,9 @@ void Graph::UpdateAxes()
         }
     }
 
-    if (NULL != m_customPlot->yAxis) //any axis is diplayed
-    {
-        //just for case it has been selected
-        m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
-        m_customPlot->yAxis->setSelectedParts(QCPAxis::spTickLabels);
-    }
+    //just for case it has been selected
+    m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
+    m_customPlot->yAxis->setSelectedParts(QCPAxis::spTickLabels);
 
     selectionChanged(); //initialize zoom and drag according current selection
     m_customPlot->ReplotIfNotDisabled();
@@ -600,6 +642,7 @@ void Graph::selectionChanged()
 
 void Graph::_RescaleOneYAxisWithMargin(QCPAxis *axis)
 {
+
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 

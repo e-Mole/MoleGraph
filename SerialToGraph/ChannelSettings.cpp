@@ -54,22 +54,34 @@ void ChannelSettings::BeforeAccept()
         m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
     }
 
+    Channel * lastHorizontal = NULL;
+    bool changedhorizontal = false;
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
     if (m_channel->m_axis != axis)
     {
         changed = true;
         if (axis->IsHorizontal())
-            _MoveLastHorizontalToVertical();
+        {
+            lastHorizontal = _MoveLastHorizontalToVertical();
+            changedhorizontal = true;
+        }
         m_channel->m_axis = axis;
     }
 
     if (changed)
-        m_channel->stateChanged();
-
+    {
+        if (changedhorizontal)
+        {
+            m_channel->stateChangedToHorizontal(); //to be redrown all graph axis
+            lastHorizontal->stateChanged(); //to be redrown display
+        }
+        else
+            m_channel->stateChanged();
+    }
     accept();
 }
 
-void ChannelSettings::_MoveLastHorizontalToVertical()
+Channel * ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (Channel *channel, m_context.m_channels)
     {
@@ -83,13 +95,17 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                     QMessageBox::warning(
                         this,
                         m_context.m_applicationName,
-                        QString(tr("Only one horizontal channel is supported. Channel '%1' has been moved to an axis '%2'")).arg(channel->GetName()).arg(axis->GetTitle())
+                        QString(tr("Only one horizontal channel is supported. Axis '%1' has been assigned to the channel '%2'")).
+                            arg(axis->GetTitle()).
+                            arg(channel->GetName())
                     );
-                    return;
+
+                    return channel;
                 }
             }
         }
     }
+    return NULL; //it should not be passed
 }
 
 void ChannelSettings::_InitializeShapeCombo()
@@ -127,6 +143,8 @@ void ChannelSettings::_InitializeAxisCombo()
     }
 
     m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(m_channel->m_axis)));
+    if (m_channel->IsOnHorizontalAxis())
+        m_axisComboBox->setEnabled(false);
     m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
     connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
 }

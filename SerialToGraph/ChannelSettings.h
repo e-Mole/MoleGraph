@@ -15,10 +15,10 @@ class ChannelSettings : public FormDialogBase
 
     void _InitializeShapeCombo();
     void _InitializeAxisCombo();
-    Channel *_MoveLastHorizontalToVertical();
+    void _MoveLastHorizontalToVertical();
     virtual void BeforeAccept();
 
-    Context & m_context;
+    Context const & m_context;
     Channel *m_channel;
     QLineEdit * m_name;
 	QLineEdit * m_units;
@@ -27,7 +27,7 @@ class ChannelSettings : public FormDialogBase
     QComboBox * m_shapeComboBox;
     QComboBox * m_axisComboBox;
 public:
-    ChannelSettings(Channel *channel, QWidget *parent, Context &context);
+    ChannelSettings(Channel *channel, Context const &context);
 signals:
 
 private slots:

@@ -16,7 +16,7 @@ class Axis
     void SetColor(QColor const &color) { m_color = color; }
 
 protected:
-    Context &m_context;
+    Context const &m_context;
     QString m_title;
     bool m_isRemovable;
     QColor m_color;
@@ -25,7 +25,7 @@ protected:
     QCPAxis * m_graphAxis;
     bool m_displayName;
 public:
-    Axis(Context &context, QString title = "", QColor const & color= Qt::black, bool isRemovable = true, bool isHorizontal = false);
+    Axis(Context const &context, QString title = "", QColor const & color= Qt::black, bool isRemovable = true, bool isHorizontal = false);
     Axis(AxisCopy const &axisCopy);
 
     const Axis &operator =(const Axis &axis);

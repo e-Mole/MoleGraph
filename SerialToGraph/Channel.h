@@ -3,19 +3,49 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QObject>
+#include <QGroupBox>
 #include <QColor>
+#include <QLabel>
 
 class Axis;
 class QString;
 struct Context;
-class Channel : public QObject
+class Channel : public QGroupBox
 {
     friend class ChannelSettings;
     Q_OBJECT
 
+    class ValueLabel : public QLabel
+    {
+        virtual void resizeEvent(QResizeEvent * event);
+    public:
+        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
+            QLabel(text, parent)
+        {
+            setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
+            SetColor(foreColor);
+
+            if (haveBackColor)
+                setStyleSheet("QLabel { background-color : white;}");
+            else
+                setStyleSheet("QLabel { background-color : #e0e0e0;}");
+            setMargin(3);
+        }
+        void SetMimimumFontSize();
+        void SetColor(const QColor &color);
+        QSize GetSize(QString const &text);
+        QSize GetLongestTextSize();
+
+    } * m_valueLabel;
+
+    void _SetMinimumSize();
+    void _DisplayNAValue();
+    void _ShowLastValueWithUnits();
+    void _UpdateTitle();
+    void mousePressEvent(QMouseEvent * event);
+
     Context const & m_context;
-    QString m_title;
+    QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
     bool m_visible;
@@ -25,6 +55,7 @@ class Channel : public QObject
     double m_channelMaxValue;
     Axis *m_axis;
     unsigned m_shapeIndex;
+    QString m_lastValueText;
 
 public:
     Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex);
@@ -67,12 +98,15 @@ public:
 
     bool IsOnHorizontalAxis();
 
+    static QSize GetMinimumSize()
+    {  return QSize(110, 68); }
+
 signals:
     void stateChanged();
     void stateChangedToHorizontal();
-    void valuesCleared();
 public slots:
     void changeChannelSelection(bool selected, bool signal);
+    void displayValueOnIndex(int index);
 };
 
 #endif // CHANNEL_H

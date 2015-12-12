@@ -23,7 +23,6 @@ SOURCES += main.cpp\
     ButtonLine.cpp \
     MyCustomPlot.cpp \
     Graph.cpp \
-    DisplayWidget.cpp \
     CentralWidget.cpp \
     FormDialogBase.cpp \
     Axis.cpp \
@@ -41,7 +40,6 @@ HEADERS  += MainWindow.h \
     ButtonLine.h \
     MyCustomPlot.h \
     Graph.h \
-    DisplayWidget.h \
     CentralWidget.h \
     FormDialogBase.h \
     Axis.h \

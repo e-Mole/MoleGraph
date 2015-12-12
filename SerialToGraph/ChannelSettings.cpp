@@ -14,8 +14,8 @@
 #include <QString>
 #include <QVBoxLayout>
 
-ChannelSettings::ChannelSettings(Channel *channel, QWidget *parent, Context &context) :
-    FormDialogBase(parent, tr("Channel settings")),
+ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
+    FormDialogBase(channel, tr("Channel settings")),
     m_context(context),
     m_channel(channel),
     m_name(NULL),
@@ -35,10 +35,11 @@ ChannelSettings::ChannelSettings(Channel *channel, QWidget *parent, Context &con
 void ChannelSettings::BeforeAccept()
 {
     bool changed = false;
-    if (m_channel->m_title != m_name->text())
+    if (m_channel->m_name != m_name->text())
     {
         changed = true;
-        m_channel->m_title = m_name->text();
+        m_channel->m_name = m_name->text();
+        m_channel->_UpdateTitle();
     }
 
 
@@ -46,6 +47,7 @@ void ChannelSettings::BeforeAccept()
     {
         changed = true;
         m_channel->m_units = m_units->text();
+        m_channel->_ShowLastValueWithUnits();
     }
 
     if (m_channel->m_shapeIndex != (unsigned)m_shapeComboBox->currentIndex())
@@ -54,34 +56,34 @@ void ChannelSettings::BeforeAccept()
         m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
     }
 
-    Channel * lastHorizontal = NULL;
-    bool changedhorizontal = false;
+    bool changedHorizontal = false;
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
     if (m_channel->m_axis != axis)
     {
         changed = true;
         if (axis->IsHorizontal())
         {
-            lastHorizontal = _MoveLastHorizontalToVertical();
-            changedhorizontal = true;
+            _MoveLastHorizontalToVertical();
+            changedHorizontal = true;
         }
         m_channel->m_axis = axis;
     }
 
     if (changed)
     {
-        if (changedhorizontal)
+        if (changedHorizontal)
         {
             m_channel->stateChangedToHorizontal(); //to be redrown all graph axis
-            lastHorizontal->stateChanged(); //to be redrown display
+            m_channel->_UpdateTitle();
         }
         else
             m_channel->stateChanged();
+
     }
     accept();
 }
 
-Channel * ChannelSettings::_MoveLastHorizontalToVertical()
+void ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (Channel *channel, m_context.m_channels)
     {
@@ -100,12 +102,12 @@ Channel * ChannelSettings::_MoveLastHorizontalToVertical()
                             arg(channel->GetName())
                     );
 
-                    return channel;
+                    channel->_UpdateTitle();
+                    return;
                 }
             }
         }
     }
-    return NULL; //it should not be passed
 }
 
 void ChannelSettings::_InitializeShapeCombo()

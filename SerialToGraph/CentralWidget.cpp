@@ -1,6 +1,5 @@
 #include "CentralWidget.h"
 #include <Context.h>
-#include <DisplayWidget.h>
 #include <Graph.h>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -38,7 +37,7 @@ void CentralWidget::addGraph(Graph *graph)
 {
     m_graphAndSliderLayout->insertWidget(0, graph, 1);
     m_graph = graph;
-    _ReplaceDisplays(false);
+    ReplaceDisplays(false);
 }
 
 void CentralWidget::addScrollBar(QScrollBar *scrollBar)
@@ -56,23 +55,23 @@ void CentralWidget::showGraph(bool show)
 
     m_mainLayout->setStretch(0, show);
     m_mainLayout->setStretch(1, !show);
-    _ReplaceDisplays(!show);
+    ReplaceDisplays(!show);
 
     m_graph->setVisible(show);
 }
 
-void CentralWidget::_ReplaceDisplays(bool grid)
+void CentralWidget::ReplaceDisplays(bool grid)
 {
     //reset stretch
     for (int i = 0; i < m_displayLayout->columnCount(); i++)
         m_displayLayout->setColumnStretch(i,0);
 
-    foreach (DisplayWidget * widget, m_widgets)
-        m_displayLayout->removeWidget(widget);
+    foreach (Channel * channel, m_context.m_channels)
+        m_displayLayout->removeWidget(channel);
 
-    foreach (DisplayWidget * widget, m_widgets)
+    foreach (Channel * channel, m_context.m_channels)
     {
-        if (widget->isHidden())
+        if (channel->isHidden())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -81,25 +80,15 @@ void CentralWidget::_ReplaceDisplays(bool grid)
         unsigned row = (grid) ? count % m_verticalMax : count;
         unsigned column = (grid) ? count / m_verticalMax : 0;
 
-        m_displayLayout->addWidget(widget, row, column);
+        m_displayLayout->addWidget(channel, row, column);
         m_displayLayout->setColumnStretch(column, 1);
     }
 
     m_displayLayout->setRowStretch(9, grid ? 0 : 1);
 }
 
-
-DisplayWidget *CentralWidget::addDisplay(Channel* channel)
-{
-    DisplayWidget *displayWidget = new DisplayWidget(this, channel, m_context);
-    m_widgets.push_back(displayWidget);
-    m_channelWidgets[channel] = m_widgets.last();
-    _ReplaceDisplays(false);
-    return displayWidget;
-}
-
 void CentralWidget::changeChannelVisibility(Channel *channel, bool visible)
 {
-    m_channelWidgets[channel]->setVisible(visible);
-    _ReplaceDisplays(m_graph->isHidden());
+    channel->setVisible(visible);
+    ReplaceDisplays(m_graph->isHidden());
 }

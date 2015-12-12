@@ -4,7 +4,6 @@
 #include <ButtonLine.h>
 #include <Context.h>
 #include <CentralWidget.h>
-#include <DisplayWidget.h>
 #include <Channel.h>
 #include <Graph.h>
 #include <PortListDialog.h>
@@ -98,14 +97,6 @@ void MainWindow::openAxesDialog()
         m_graph->UpdateAxes();
 }
 
-void MainWindow::addChannelDisplay(Channel* channel)
-{
-    DisplayWidget *displayWidget = m_centralWidget->addDisplay(channel);
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), displayWidget, SLOT(displayValueOnIndex(int)));
-
-    m_buttonLine->AddChannel(channel);
-}
-
 MainWindow::~MainWindow()
 {
     foreach (Axis *axis, m_axes)
@@ -139,18 +130,21 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
     _AddYChannel(Qt::darkRed, yAxis);
 
     m_graph->reinitialize();
+    m_centralWidget->ReplaceDisplays(false);
 }
 
 void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
-    _AddChannel(new Channel(this, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order));
+    _AddChannel(new Channel(m_centralWidget, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order));
     order++;
 }
 void MainWindow::_AddChannel(Channel *channel)
 {
     m_channels.push_back(channel);
-    addChannelDisplay(channel);
+    m_buttonLine->AddChannel(channel);
+
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), channel, SLOT(displayValueOnIndex(int)));
     connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));
     connect(channel, SIGNAL(stateChangedMulti()), m_graph, SLOT(reinitialize()));
 }

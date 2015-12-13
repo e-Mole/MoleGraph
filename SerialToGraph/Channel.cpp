@@ -6,6 +6,7 @@
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QColor>
+#include <qcustomplot/qcustomplot.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
@@ -45,18 +46,21 @@ void Channel::ValueLabel::SetColor(const QColor &color)
     setPalette(palette);
 }
 
-Channel::Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex) :
+Channel::Channel(
+    QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color,
+    Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint) :
     QGroupBox(name, parent),
     m_valueLabel(NULL),
     m_context(context),
     m_name(name),
     m_hwIndex(hwIndex),
-    m_visible(false),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
     m_axis(axis),
-    m_shapeIndex(shapeIndex)
+    m_shapeIndex(shapeIndex),
+    m_graph(graph),
+    m_graphPoint(graphPoint)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(4);
@@ -69,6 +73,9 @@ Channel::Channel(QWidget *parent, Context const & context, int hwIndex, QString 
     _DisplayNAValue();
     _SetMinimumSize();
     _UpdateTitle();
+
+    if (m_axis->IsHorizontal())
+        _ShowOrHideGraphAndPoin(false);
 }
 
 Channel::~Channel()
@@ -76,16 +83,12 @@ Channel::~Channel()
 
 }
 
-void Channel::changeChannelSelection(bool selected, bool signal)
+void Channel::changeChannelVisibility(bool visible, bool signal)
 {
-    m_visible = selected;
+    setVisible(visible);
+    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
     if (signal)
         stateChanged();
-}
-
-bool Channel::IsVisible()
-{
-    return m_visible;
 }
 
 QString Channel::GetName()
@@ -177,4 +180,29 @@ void Channel::displayValueOnIndex(int index)
 
     m_lastValueText = strValue;
     _ShowLastValueWithUnits();
+
+    m_graphPoint->clearData();
+    m_graphPoint->addData(index, m_values[index]);
+}
+
+
+QCPGraph *Channel::GetGraph()
+{
+    return m_graph;
+}
+
+QCPGraph *Channel::GetGraphPoint()
+{
+    return m_graphPoint;
+}
+void Channel::UpdateGraph(double xValue)
+{
+    m_graph->data()->insert(xValue, QCPData(xValue, m_values.last()));
+
+}
+
+void Channel::_ShowOrHideGraphAndPoin(bool shown)
+{
+    m_graph->setVisible(shown);
+    m_graphPoint->setVisible(shown);
 }

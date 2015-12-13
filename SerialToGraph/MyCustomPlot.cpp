@@ -1,4 +1,5 @@
 #include "MyCustomPlot.h"
+#include <QColor>
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -131,7 +132,36 @@ void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)
     }
     //mReplotting = true;
     //replot();
+}
 
+QCPGraph *MyCustomPlot::AddGraph(QColor const &color)
+{
+    QCPGraph *graph = addGraph();
+
+    QPen pen = graph->pen();
+    pen.setColor(color);
+    graph->setPen(pen);
+    pen = graph->selectedPen();
+    pen.setColor(color);
+    graph->setSelectedPen(pen);
+
+    return graph;
+
+}
+
+QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
+{
+    QCPGraph *point = addGraph();
+
+    point->setPen(QPen(QBrush(color), 1.6));
+    point->setLineStyle(QCPGraph::lsNone);
+
+    QCPScatterStyle style = point->scatterStyle();
+    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
+    style.setSize(10);
+    point->setScatterStyle(style);
+
+    return point;
 }
 
 

@@ -173,8 +173,7 @@ void ButtonLine::AddChannel(Channel *channel)
     m_channelActions[channel] =
         _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), true, m_afterLastChannelSeparator);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
-    connect(channel, SIGNAL(stateChangedMulti()), this, SLOT(channelSettingChanged()));
-    channel->changeChannelSelection(true, true);
+    channel->changeChannelVisibility(true, true);
 }
 
 void ButtonLine::channelSettingChanged()
@@ -197,7 +196,7 @@ void ButtonLine::actionStateChanged()
             it.value()->setChecked(senderAction != m_noneAction);
             channelTriggered(it.key(), it.value()->isChecked());
 
-            it.key()->changeChannelSelection(senderAction == m_allAction, false);
+            it.key()->changeChannelVisibility(senderAction == m_allAction, false);
         }
         allChannelsDisplayedOrHidden();
         _EnableStartButton(senderAction == m_allAction);
@@ -211,7 +210,7 @@ void ButtonLine::actionStateChanged()
             if (it.value() == senderAction)
             {
                 channelTriggered(it.key(), it.value()->isChecked());
-                it.key()->changeChannelSelection(it.value()->isChecked(), true);
+                it.key()->changeChannelVisibility(it.value()->isChecked(), true);
             }
 
             if (it.value()->isChecked())

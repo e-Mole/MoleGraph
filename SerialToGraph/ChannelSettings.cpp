@@ -65,6 +65,7 @@ void ChannelSettings::BeforeAccept()
         {
             _MoveLastHorizontalToVertical();
             changedHorizontal = true;
+            m_channel->_ShowOrHideGraphAndPoin(true);
         }
         m_channel->m_axis = axis;
     }
@@ -73,8 +74,8 @@ void ChannelSettings::BeforeAccept()
     {
         if (changedHorizontal)
         {
-            m_channel->stateChangedToHorizontal(); //to be redrown all graph axis
             m_channel->_UpdateTitle();
+            m_channel->wasSetToHorizontal();
         }
         else
             m_channel->stateChanged();
@@ -103,6 +104,9 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                     );
 
                     channel->_UpdateTitle();
+                    if (!channel->isHidden())
+                        channel->_ShowOrHideGraphAndPoin(true);
+
                     return;
                 }
             }

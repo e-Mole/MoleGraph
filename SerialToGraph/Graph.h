@@ -41,15 +41,11 @@ class Graph : public QWidget
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RescaleOneYAxisWithMargin(QCPAxis *axis);
     void _RescaleYAxesWithMargin();
-    void _SetGraphShape(QCPGraph *graph, QCPScatterStyle::ScatterShape shape);
     void _AddChannel(Qt::GlobalColor color, Axis *axis);
-    void _UpdateChannel(Channel *channel);
     void _AdjustDrawPeriod(unsigned drawDelay);
     bool _FillQueue();
     void _UpdateXAxis(Axis * axis);
     bool _IsCompleteSetInQueue();
-    bool _AssignXChannel();
-    void _ReinitializeGraphForChannel(Channel *channel);
 
     Context & m_context;
     MyCustomPlot *m_customPlot;
@@ -73,8 +69,6 @@ class Graph : public QWidget
     unsigned m_drawPeriod;
     bool m_anySampleMissed;
 
-    QMap<Channel*, QCPGraph*> m_graphs;
-    QMap<QCPGraph*, QCPGraph*> m_selectedPoints;
     QMap<unsigned, Channel *> m_trackedHwChannels;
     bool m_drawingInProccess;
     bool m_drawingRequired;
@@ -84,6 +78,10 @@ public:
     ~Graph();
 
     void UpdateAxes();
+    QCPGraph *AddGraph(const QColor &color);
+    QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
+    void SetSampleChannel(Channel *channel);
+    void SetHorizontalChannel(Channel *channel);
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
@@ -94,7 +92,6 @@ protected slots:
 	void stop();
 	void exportPng(QString const &fileName);
 	void exportCsv(QString const &fileName);
-    void redrawMarks(int scrollbarPos);
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();
@@ -103,7 +100,7 @@ protected slots:
     void sliderMoved(int value);
 public slots:
     void channelStateChanged();
-    void reinitialize();
+    void horizontalChannelChanged();
     void finishDrawing();
     void pauseDrawing();
     void continueDrawing();

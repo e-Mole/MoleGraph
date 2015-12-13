@@ -4,6 +4,7 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QWidget>
 
+class QColor;
 class MyAxisRect : public QCPAxisRect
 {
     Q_OBJECT
@@ -40,6 +41,8 @@ public:
     void SetMoveMode(bool active) { m_moveMode = active; }
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
+    QCPGraph *AddGraph(const QColor &color);
+    QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
 signals:
     void outOfAxesDoubleClick();
     void axisDoubleClick(QCPAxis *axis);

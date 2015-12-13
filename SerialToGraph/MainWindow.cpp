@@ -55,7 +55,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
     m_context.SetGraph(m_graph);
     m_centralWidget->addGraph(m_graph);
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph, SLOT(redrawMarks(int)));
     connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);
@@ -80,7 +79,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
-    connect(m_buttonLine, SIGNAL(allChannelsDisplayedOrHidden()), m_graph, SLOT(reinitialize()));
     Axis * xAxis = new Axis(m_context, tr("Horizontal"), Qt::black, false, true);
     Axis * yAxis = new Axis(m_context, tr("Vertical"), Qt::black, false, false);
     m_axes.push_back(xAxis);
@@ -119,7 +117,22 @@ void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
 
 void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
-    _AddChannel(new Channel(this, m_context, -1, tr("Samples"), Qt::black, xAxis, 0));
+    Channel *sampleChannel =
+        new Channel(
+            this,
+            m_context,
+            -1,
+            tr("Samples"),
+            Qt::black,
+            xAxis,
+            0,
+            m_graph->AddGraph(Qt::black),
+            m_graph->AddPoint(Qt::black, 0)
+        );
+    _AddChannel(sampleChannel);
+    m_graph->SetSampleChannel(sampleChannel);
+    m_graph->SetHorizontalChannel(sampleChannel);
+
     _AddYChannel(Qt::red, yAxis);
     _AddYChannel(Qt::blue, yAxis);
     _AddYChannel(Qt::black, yAxis);
@@ -129,14 +142,25 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
     _AddYChannel(Qt::green, yAxis);
     _AddYChannel(Qt::darkRed, yAxis);
 
-    m_graph->reinitialize();
     m_centralWidget->ReplaceDisplays(false);
 }
 
 void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
-    _AddChannel(new Channel(m_centralWidget, m_context, order, QString(tr("Channel %1")).arg(order+1), color, axis, order));
+    _AddChannel(
+        new Channel(
+            m_centralWidget,
+            m_context,
+            order,
+            QString(tr("Channel %1")).arg(order+1),
+            color,
+            axis,
+            order,
+            m_graph->AddGraph(color),
+            m_graph->AddPoint(color, order)
+        )
+    );
     order++;
 }
 void MainWindow::_AddChannel(Channel *channel)
@@ -144,7 +168,6 @@ void MainWindow::_AddChannel(Channel *channel)
     m_channels.push_back(channel);
     m_buttonLine->AddChannel(channel);
 
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), channel, SLOT(displayValueOnIndex(int)));
     connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));
-    connect(channel, SIGNAL(stateChangedMulti()), m_graph, SLOT(reinitialize()));
+    connect(channel, SIGNAL(wasSetToHorizontal()), m_graph, SLOT(horizontalChannelChanged()));
 }

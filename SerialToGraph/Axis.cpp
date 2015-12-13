@@ -50,16 +50,16 @@ QString Axis::GetGraphName()
     QString units;
     for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
     {
-        if (m_context.m_channels[i]->IsVisible() && m_context.m_channels[i]->GetAxis() == this)
+        if (!m_context.m_channels[i]->isHidden() && m_context.m_channels[i]->GetAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != (unsigned)m_context.m_channels.size() &&
-                    m_context.m_channels[i+1]->IsVisible() &&
+                    !m_context.m_channels[i+1]->isHidden() &&
                     this == m_context.m_channels[i+1]->GetAxis() &&
                     i != 0 &&
-                    m_context.m_channels[i-1]->IsVisible() &&
+                    !m_context.m_channels[i-1]->isHidden() &&
                     this == m_context.m_channels[i-1]->GetAxis())
                 {
                     addMiddle = true;
@@ -94,7 +94,7 @@ QString Axis::GetGraphName()
 bool Axis::ContainsVisibleChannel()
 {
     foreach (Channel *channel, m_context.m_channels)
-        if (channel->IsVisible() && channel->GetAxis() == this)
+        if (!channel->isHidden() && channel->GetAxis() == this)
             return true;
 
     return false;

@@ -9,6 +9,7 @@
 
 class Axis;
 class QString;
+class QCPGraph;
 struct Context;
 class Channel : public QGroupBox
 {
@@ -43,12 +44,17 @@ class Channel : public QGroupBox
     void _ShowLastValueWithUnits();
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
+    void _ShowOrHideGraphAndPoin(bool shown);
+
+    //I dont want to use is visible because it returns false when widget is not diplayed yet
+    //use !isHidden() instead
+    bool isVisible()
+    { return QGroupBox::isVisible(); }
 
     Context const & m_context;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
-    bool m_visible;
     QColor m_color;
     QString m_units;
     double m_channelMinValue;
@@ -56,12 +62,12 @@ class Channel : public QGroupBox
     Axis *m_axis;
     unsigned m_shapeIndex;
     QString m_lastValueText;
-
+    QCPGraph *m_graph;
+    QCPGraph *m_graphPoint;
 public:
-    Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex);
+    Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint);
     ~Channel();
 
-    bool IsVisible();
     QColor &GetColor() { return m_color; }
     int GetHwIndex() { return m_hwIndex; }
     QString GetName();
@@ -101,11 +107,15 @@ public:
     static QSize GetMinimumSize()
     {  return QSize(110, 68); }
 
+    QCPGraph *GetGraph();
+    QCPGraph *GetGraphPoint();
+    void UpdateGraph(double xValue);
+
 signals:
     void stateChanged();
-    void stateChangedToHorizontal();
+    void wasSetToHorizontal();
 public slots:
-    void changeChannelSelection(bool selected, bool signal);
+    void changeChannelVisibility(bool visible, bool signal);
     void displayValueOnIndex(int index);
 };
 

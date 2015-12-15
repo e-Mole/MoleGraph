@@ -19,7 +19,7 @@
 AxesDialog::AxesDialog(const Context &context) :
     QDialog(NULL, Qt::CustomizeWindowHint/*, Qt::Popup*/),
     m_context(context),
-    m_plot(*context.m_graph->GetPlot()),
+    m_plot(*context.m_plot),
     m_formLayout(new QFormLayout(this))
 {
     setWindowTitle(tr("Axes"));

@@ -40,6 +40,9 @@ MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
     yAxis->setVisible(false);
     xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
     //setNoAntialiasingOnDrag(true);
+
+    connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+    selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
 void MyCustomPlot::mousePressEvent(QMouseEvent *event)
@@ -231,6 +234,39 @@ void MyCustomPlot::RescaleAllAxes()
         RescaleAxis(axis);
 }
 
+void MyCustomPlot::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
+{
+    axisRect()->setRangeZoomAxes(xAxis, yAxis);
+    axisRect()->setRangeDragAxes(xAxis, yAxis);
+}
 
+void MyCustomPlot::selectionChanged()
+{
+    if (0 == selectedAxes().size())
+    {
+        _SetDragAndZoom(xAxis, yAxis);
+        return;
+    }
+
+    selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
+    foreach (QCPAxis *axis, axisRect()->axes())
+        foreach (QCPAbstractPlottable*plotable, axis->plottables())
+            plotable->setSelected(axis == selectedAxes().first());
+
+    if (selectedAxes().first() == xAxis)
+    {
+        _SetDragAndZoom(xAxis, NULL);
+        return;
+    }
+
+    _SetDragAndZoom(NULL, selectedAxes().first());
+
+    foreach (QCPAxis *axis, axisRect()->axes())
+    {
+        if (axis != xAxis)
+            axis->grid()->setVisible(false);
+    }
+    selectedAxes().first()->grid()->setVisible(true);
+}
 
 

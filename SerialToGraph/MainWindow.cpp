@@ -175,6 +175,5 @@ void MainWindow::_AddChannel(Channel *channel)
 {
     m_buttonLine->AddChannel(channel);
 
-    connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));
     connect(channel, SIGNAL(wasSetToHorizontal()), m_graph, SLOT(horizontalChannelChanged()));
 }

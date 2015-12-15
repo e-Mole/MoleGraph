@@ -27,6 +27,8 @@ class MyCustomPlot : public QCustomPlot
     bool m_disabled;
     Context const &m_context;
 
+    void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
+
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
@@ -52,6 +54,8 @@ public:
     void RescaleAllAxes();
 
 public slots:
+private slots:
+    void selectionChanged();
 
 };
 

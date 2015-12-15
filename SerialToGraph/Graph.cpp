@@ -60,19 +60,10 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 }
 
-Graph::~Graph()
-{
-
-}
-
 void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
     m_customPlot = new MyCustomPlot(this, m_context);
     graphLayout->addWidget(m_customPlot);
-
-    connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
-
-    selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
 void Graph::periodTypeChanged(int index)
@@ -365,67 +356,6 @@ void Graph::exportCsv(QString const &fileName)
 void Graph::periodChanged(unsigned period)
 {
     m_period = period;
-}
-
-void Graph::UpdateAxes()
-{
-/*    foreach (Channel *channel, m_context.m_channels)
-    {
-        if (!channel->isHidden() && !channel->IsOnHorizontalAxis())
-        {
-           QCPAxis *axis = channel->GetAxis()->GetGraphAxis();
-           channel->GetGraph()->setValueAxis(axis);
-           channel->GetGraphPoint()->setValueAxis(axis);
-        }
-    }
-
-    //just for case it has been selected
-    m_customPlot->xAxis->setSelectedParts(QCPAxis::spNone);
-    m_customPlot->yAxis->setSelectedParts(QCPAxis::spTickLabels);
-
-    selectionChanged(); //initialize zoom and drag according current selection
-    m_customPlot->ReplotIfNotDisabled();*/
-}
-
-void Graph::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
-{
-    m_customPlot->axisRect()->setRangeZoomAxes(xAxis, yAxis);
-    m_customPlot->axisRect()->setRangeDragAxes(xAxis, yAxis);
-}
-
-void Graph::selectionChanged()
-{
-    if (0 == m_customPlot->selectedAxes().size())
-    {
-        _SetDragAndZoom(m_customPlot->xAxis, m_customPlot->yAxis);
-        return;
-    }
-
-    m_customPlot->selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
-    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
-        foreach (QCPAbstractPlottable*plotable, axis->plottables())
-            plotable->setSelected(axis == m_customPlot->selectedAxes().first());
-
-    if (m_customPlot->selectedAxes().first() == m_customPlot->xAxis)
-    {
-        _SetDragAndZoom(m_customPlot->xAxis, NULL);
-        return;
-    }
-
-    _SetDragAndZoom(NULL, m_customPlot->selectedAxes().first());
-
-    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
-    {
-        if (axis != m_customPlot->xAxis)
-            axis->grid()->setVisible(false);
-    }
-    m_customPlot->selectedAxes().first()->grid()->setVisible(true);
-}
-
-void Graph::channelStateChanged()
-{
-    m_customPlot->RescaleAllAxes();
-    m_customPlot->ReplotIfNotDisabled();
 }
 
 void Graph::sliderMoved(int value)

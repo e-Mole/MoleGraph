@@ -36,7 +36,6 @@ class Graph : public QWidget
     //QString _GetAxisName(const QString &units, unsigned index);
     void _SetAxisColor(QCPAxis *axis, QColor const & color);
     void _FillGraphItem(GraphItem &item);
-    void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _AddChannel(Qt::GlobalColor color, Axis *axis);
     void _AdjustDrawPeriod(unsigned drawDelay);
     bool _FillQueue();
@@ -70,9 +69,7 @@ class Graph : public QWidget
     bool m_drawingPaused;
 public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
-    ~Graph();
 
-    void UpdateAxes();
     QCPGraph *AddGraph(const QColor &color);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void SetSampleChannel(Channel *channel);
@@ -90,10 +87,8 @@ protected slots:
 	void exportCsv(QString const &fileName);
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
-    void selectionChanged();
     void sliderMoved(int value);
 public slots:
-    void channelStateChanged();
     void horizontalChannelChanged();
     void finishDrawing();
     void pauseDrawing();

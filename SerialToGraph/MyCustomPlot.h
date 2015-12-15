@@ -44,6 +44,7 @@ public:
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
     QCPGraph *AddGraph(const QColor &color);
+    void SetShape(QCPGraph *graphPoint, unsigned shapeIndex);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void RemoveAxis(QCPAxis *axis);
     QCPAxis *AddYAxis(bool onRight);

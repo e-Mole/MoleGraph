@@ -14,8 +14,7 @@ class Axis
 
     void _SetName(QString const &name) { m_title = name; }
     void _SetColor(QColor const & color);
-    void _SetGraphName();
-    void _SetGraphAxis(QCPAxis *axis);
+    void _AssignGraphAxis(QCPAxis *axis);
 
 protected:
     Context const &m_context;
@@ -52,6 +51,7 @@ public:
     QCPAxis *GetGraphAxis(){ return m_graphAxis; }
 
     void UpdateVisiblility();
+    void UpdateGraphAxisName();
 };
 
 #endif // AXIS_H

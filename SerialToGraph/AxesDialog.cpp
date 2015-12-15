@@ -25,10 +25,10 @@ AxesDialog::AxesDialog(const Context &context) :
     setWindowTitle(tr("Axes"));
     setLayout(m_formLayout);
 
-    _ReinitAxes();
+    _ReinitAxisGrid();
 }
 
-void AxesDialog::_ReinitAxes()
+void AxesDialog::_ReinitAxisGrid()
 {
     while ( m_formLayout->count() != 0)
     {
@@ -73,7 +73,7 @@ void AxesDialog::addButtonPressed()
 
     AxisEditDialog dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
-        _ReinitAxes();
+        _ReinitAxisGrid();
     else
         delete newAxis;
     close();
@@ -101,12 +101,13 @@ void AxesDialog::removeButtonPressed()
             {
                 if (it.value() == channel->GetAxis())
                 {
-                    if (QMessageBox::Cancel ==
+                    if (1 == //standardButton1 pressed (Cancel)
                         QMessageBox::question(
                             this,
                             m_context.m_applicationName,
-                            QString(tr("All channels assigned to the axis '%1 will be moved to an axis '%2'.")).
-                                arg(it.value()->GetTitle()).arg(firstVertical->GetTitle())
+                            QString(tr("All channels assigned to the axis '%1' will be moved to an axis '%2'.")).
+                                arg(it.value()->GetTitle()).arg(firstVertical->GetTitle()),
+                            tr("Remove anyway"), tr("Cancel")
                         )
                     )
                     {
@@ -124,7 +125,10 @@ void AxesDialog::removeButtonPressed()
             }
             m_context.m_axes.removeOne(it.value());
             m_plot.RemoveAxis(it.value()->GetGraphAxis());
-            _ReinitAxes();
+            firstVertical->UpdateGraphAxisName();
+            firstVertical->UpdateVisiblility();
+
+            _ReinitAxisGrid();
         }
     }
     close();
@@ -139,7 +143,7 @@ void AxesDialog::editButtonPressed()
         {
             AxisEditDialog dialog(it.value(), m_context);
             if (QDialog::Accepted == dialog.exec())
-                _ReinitAxes();
+                _ReinitAxisGrid();
         }
     }
     close();

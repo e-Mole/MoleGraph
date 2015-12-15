@@ -9,6 +9,7 @@
 
 class Axis;
 class QString;
+class QCPAxis;
 class QCPGraph;
 struct Context;
 class Channel : public QGroupBox
@@ -113,7 +114,10 @@ public:
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();
     void UpdateGraph(double xValue);
+    void AssignToGraphAxis(QCPAxis *graphAxis);
     void AssignToAxis(Axis *axis);
+
+    void setVisible(bool visible);
 
 signals:
     void stateChanged();

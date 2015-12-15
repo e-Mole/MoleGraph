@@ -173,7 +173,6 @@ void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 }
 void MainWindow::_AddChannel(Channel *channel)
 {
-    m_channels.push_back(channel);
     m_buttonLine->AddChannel(channel);
 
     connect(channel, SIGNAL(stateChanged()), m_graph, SLOT(channelStateChanged()));

@@ -3,6 +3,7 @@
 #include <AxisEditDialog.h>
 #include <Channel.h>
 #include <Context.h>
+#include <MyCustomPlot.h>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
@@ -54,6 +55,7 @@ void ChannelSettings::BeforeAccept()
     {
         changed = true;
         m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
+        m_context.m_plot->SetShape(m_channel->m_graphPoint, m_channel->m_shapeIndex);
     }
 
     bool changedHorizontal = false;
@@ -71,7 +73,6 @@ void ChannelSettings::BeforeAccept()
         Axis *lastAxis = m_channel->m_axis;
         m_channel->AssignToAxis(axis);
         lastAxis->UpdateVisiblility();
-        axis->UpdateVisiblility();
     }
 
     if (changed)

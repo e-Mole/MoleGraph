@@ -57,15 +57,17 @@ Channel::Channel(
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
-    m_axis(axis),
+    m_axis(NULL), //will be assigned inside constructor
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint)
 {
+    m_context.m_channels.push_back(this);
+    AssignToAxis(axis);
+
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(4);
     setLayout(layout);
-
 
     m_valueLabel = new ValueLabel("", color, IsHwChannel(), this);
     layout->addWidget(m_valueLabel);
@@ -76,6 +78,7 @@ Channel::Channel(
 
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
+
 }
 
 Channel::~Channel()
@@ -138,6 +141,7 @@ void Channel::_ShowLastValueWithUnits()
     m_valueLabel->setText(
         (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_units);
     _SetMinimumSize();
+    m_axis->UpdateGraphAxisName();
 }
 
 void Channel::_DisplayNAValue()
@@ -154,6 +158,7 @@ void Channel::_UpdateTitle()
         (IsOnHorizontalAxis() ? "- " : "| ") +
         m_name
     );
+    m_axis->UpdateGraphAxisName();
 }
 
 void Channel::mousePressEvent(QMouseEvent * event)
@@ -205,4 +210,28 @@ void Channel::_ShowOrHideGraphAndPoin(bool shown)
 {
     m_graph->setVisible(shown);
     m_graphPoint->setVisible(shown);
+}
+
+void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
+{
+    if (m_axis->IsHorizontal())
+        return;
+
+    m_graph->setValueAxis(graphAxis);
+    m_graphPoint->setValueAxis(graphAxis);
+}
+
+void Channel::AssignToAxis(Axis *axis)
+{
+    m_axis = axis;
+    AssignToGraphAxis(axis->GetGraphAxis());
+    m_axis->UpdateGraphAxisName();
+    m_axis->UpdateVisiblility();
+}
+
+void Channel::setVisible(bool visible)
+{
+    QGroupBox::setVisible(visible);
+    m_axis->UpdateGraphAxisName();
+    m_axis->UpdateVisiblility();
 }

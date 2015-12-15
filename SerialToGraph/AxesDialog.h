@@ -13,7 +13,7 @@ class AxesDialog : public QDialog
 {
     Q_OBJECT
 
-    void _ReinitAxes();
+    void _ReinitAxisGrid();
 
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;

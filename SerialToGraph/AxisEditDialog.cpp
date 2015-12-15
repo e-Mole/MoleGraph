@@ -80,6 +80,12 @@ void AxisEditDialog::_SetColorButtonColor(QColor const &color)
 
 void AxisEditDialog::BeforeAccept()
 {
+
+    bool sideChanged = m_axisOriginal->IsOnRight() != m_axisCopy.IsOnRight();
+    bool displayNameChanged =
+            m_axisOriginal->m_displayName != m_axisCopy.m_displayName ||
+            (m_axisCopy.m_displayName && m_axisOriginal->m_title != m_axisCopy.m_title);
+
     *m_axisOriginal = m_axisCopy;
 
     //also set color to plot axis
@@ -88,8 +94,17 @@ void AxisEditDialog::BeforeAccept()
     if (!m_context.m_axes.contains(m_axisOriginal))
     {
         m_context.m_axes.push_back(m_axisOriginal);
-        m_axisOriginal->_SetGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
+        m_axisOriginal->_AssignGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
     }
+    else
+    {
+        if (sideChanged)
+            m_axisOriginal->_AssignGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
+        if (displayNameChanged)
+            m_axisOriginal->UpdateGraphAxisName();
+    }
+
+
 }
 
 void AxisEditDialog::colorButtonClicked()

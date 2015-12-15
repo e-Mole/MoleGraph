@@ -156,17 +156,21 @@ QCPGraph *MyCustomPlot::AddGraph(QColor const &color)
 
 }
 
+void MyCustomPlot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
+{
+    QCPScatterStyle style = graphPoint->scatterStyle();
+    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
+    style.setSize(10);
+    graphPoint->setScatterStyle(style);
+}
+
 QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
 {
     QCPGraph *point = addGraph();
 
     point->setPen(QPen(QBrush(color), 1.6));
     point->setLineStyle(QCPGraph::lsNone);
-
-    QCPScatterStyle style = point->scatterStyle();
-    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
-    style.setSize(10);
-    point->setScatterStyle(style);
+    SetShape(point, shapeIndex);
 
     return point;
 }
@@ -175,6 +179,7 @@ QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
 void MyCustomPlot::RemoveAxis(QCPAxis *axis)
 {
     axisRect()->removeAxis(axis);
+    ReplotIfNotDisabled();
 }
 
 QCPAxis *MyCustomPlot::AddYAxis(bool onRight)

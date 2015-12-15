@@ -1,6 +1,7 @@
 #include "Axis.h"
 #include <Context.h>
 #include <Channel.h>
+#include <MyCustomPlot.h>
 #include <qcustomplot/qcustomplot.h>
 
 Axis::Axis(
@@ -20,16 +21,27 @@ Axis::Axis(
     m_graphAxis(NULL),
     m_displayName(false)
 {
-    _SetGraphAxis(graphAxis);
+    _AssignGraphAxis(graphAxis);
 }
 
-void Axis::_SetGraphAxis(QCPAxis *axis)
+void Axis::_AssignGraphAxis(QCPAxis *axis)
 {
+    if (NULL != m_graphAxis)
+    {
+        foreach (Channel *channel, m_context.m_channels)
+        {
+            if (channel->GetAxis()->GetGraphAxis() == m_graphAxis)
+                channel->AssignToGraphAxis(axis);
+        }
+
+        m_context.m_plot->RemoveAxis(m_graphAxis);
+    }
+
     m_graphAxis = axis;
     if (NULL != axis)
     {
         _SetColor(m_color);
-        _SetGraphName();
+        UpdateGraphAxisName();
         UpdateVisiblility();
     }
 }
@@ -46,11 +58,12 @@ const Axis &Axis::operator =(const Axis &axis)
     return *this;
 }
 
-void Axis::_SetGraphName()
+void Axis::UpdateGraphAxisName()
 {
     if (m_displayName)
     {
         m_graphAxis->setLabel(m_title);
+        m_context.m_plot->ReplotIfNotDisabled();
         return;
     }
 
@@ -97,6 +110,7 @@ void Axis::_SetGraphName()
     }
 
     m_graphAxis->setLabel(channels + ((0 == units.size() || "/n" == units) ? "" : " [" + units + "]"));
+    m_context.m_plot->ReplotIfNotDisabled();
 }
 
 void Axis::UpdateVisiblility()
@@ -106,9 +120,12 @@ void Axis::UpdateVisiblility()
         if (!channel->isHidden() && channel->GetAxis() == this)
         {
             m_graphAxis->setVisible(true);
+            m_context.m_plot->ReplotIfNotDisabled();
+            return;
         }
     }
-    m_graphAxis->setVisible(true);
+    m_graphAxis->setVisible(IsHorizontal());
+    m_context.m_plot->ReplotIfNotDisabled();
 
 }
 

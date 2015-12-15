@@ -1,5 +1,7 @@
 #include "AxisEditDialog.h"
 #include <Axis.h>
+#include <Context.h>
+#include <MyCustomPlot.h>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFormLayout>
@@ -11,12 +13,13 @@
 #include <QVector>
 #include <QWidget>
 
-AxisEditDialog::AxisEditDialog(Axis *axis) :
+AxisEditDialog::AxisEditDialog(Axis *axis, Context const & context) :
     FormDialogBase(NULL, tr("Edit Axis...")),
     m_axisOriginal(axis),
     m_axisCopy(*axis),
     m_name(NULL),
-    m_colorButtonWidget(NULL)
+    m_colorButtonWidget(NULL),
+    m_context(context)
 {
     m_formLayout->addRow(new QLabel(tr("Type"), this), new QLabel(axis->IsHorizontal() ? tr("Horizontal") : tr("Vertical"), this));
 
@@ -78,6 +81,15 @@ void AxisEditDialog::_SetColorButtonColor(QColor const &color)
 void AxisEditDialog::BeforeAccept()
 {
     *m_axisOriginal = m_axisCopy;
+
+    //also set color to plot axis
+    m_axisOriginal->_SetColor(m_axisCopy.m_color);
+    
+    if (!m_context.m_axes.contains(m_axisOriginal))
+    {
+        m_context.m_axes.push_back(m_axisOriginal);
+        m_axisOriginal->_SetGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
+    }
 }
 
 void AxisEditDialog::colorButtonClicked()

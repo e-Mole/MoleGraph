@@ -1,28 +1,27 @@
 #ifndef REMOVEAXISDIALOG_H
 #define REMOVEAXISDIALOG_H
 
-#include <FormDialogBase.h>
-#include <QVector>
+#include <QDialog>
 #include <QMap>
 
 class Axis;
-class AxisCopy;
+class MyCustomPlot;
+class QFormLayout;
 class QPushButton;
 struct Context;
-class AxesDialog : public FormDialogBase
+class AxesDialog : public QDialog
 {
     Q_OBJECT
 
-    virtual void BeforeAccept();
     void _ReinitAxes();
 
-    QVector<AxisCopy *> m_axesCopy;
-    QMap<QPushButton*, AxisCopy*> m_removeButtontoAxis;
-    QMap<QPushButton*, AxisCopy*> m_editButtontoAxis;
-    Context &m_context;
+    QMap<QPushButton*, Axis*> m_removeButtontoAxis;
+    QMap<QPushButton*, Axis*> m_editButtontoAxis;
+    Context const &m_context;
+    MyCustomPlot &m_plot;
+    QFormLayout *m_formLayout;
 public:
-    AxesDialog(Context &context);
-    ~AxesDialog();
+    AxesDialog(Context const &context);
 
 signals:
 

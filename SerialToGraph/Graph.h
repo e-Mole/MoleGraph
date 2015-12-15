@@ -35,16 +35,11 @@ class Graph : public QWidget
     void _InitializePolt(QBoxLayout *graphLayout);
     //QString _GetAxisName(const QString &units, unsigned index);
     void _SetAxisColor(QCPAxis *axis, QColor const & color);
-    void _InitializeYAxis(Axis *axis);
     void _FillGraphItem(GraphItem &item);
-    void _RemoveVerticalAxes();
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
-    void _RescaleOneYAxisWithMargin(QCPAxis *axis);
-    void _RescaleYAxesWithMargin();
     void _AddChannel(Qt::GlobalColor color, Axis *axis);
     void _AdjustDrawPeriod(unsigned drawDelay);
     bool _FillQueue();
-    void _UpdateXAxis(Axis * axis);
     bool _IsCompleteSetInQueue();
 
     Context & m_context;
@@ -82,6 +77,7 @@ public:
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void SetSampleChannel(Channel *channel);
     void SetHorizontalChannel(Channel *channel);
+    MyCustomPlot *GetPlot();
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
@@ -95,8 +91,6 @@ protected slots:
 	void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void selectionChanged();
-    void rescaleAllAxes();
-    void rescaleAxis(QCPAxis *axis);
     void sliderMoved(int value);
 public slots:
     void channelStateChanged();

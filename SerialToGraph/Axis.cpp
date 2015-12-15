@@ -1,13 +1,16 @@
 #include "Axis.h"
 #include <Context.h>
 #include <Channel.h>
+#include <qcustomplot/qcustomplot.h>
 
-AxisCopy::AxisCopy(Context &context):
-    Axis(context),
-    m_original(NULL)
-{}
-
-Axis::Axis(Context const &context, QString title, QColor const & color, bool isRemovable, bool isHorizontal) :
+Axis::Axis(
+    Context const &context,
+    QString title,
+    QColor const & color,
+    bool isRemovable,
+    bool isHorizontal,
+    QCPAxis *graphAxis
+) :
     m_context(context),
     m_title(title),
     m_isRemovable(isRemovable),
@@ -17,13 +20,18 @@ Axis::Axis(Context const &context, QString title, QColor const & color, bool isR
     m_graphAxis(NULL),
     m_displayName(false)
 {
-
+    _SetGraphAxis(graphAxis);
 }
 
-Axis::Axis(AxisCopy const &axisCopy):
-    m_context(axisCopy.m_context)
+void Axis::_SetGraphAxis(QCPAxis *axis)
 {
-    *this = axisCopy;
+    m_graphAxis = axis;
+    if (NULL != axis)
+    {
+        _SetColor(m_color);
+        _SetGraphName();
+        UpdateVisiblility();
+    }
 }
 
 const Axis &Axis::operator =(const Axis &axis)
@@ -38,10 +46,13 @@ const Axis &Axis::operator =(const Axis &axis)
     return *this;
 }
 
-QString Axis::GetGraphName()
+void Axis::_SetGraphName()
 {
     if (m_displayName)
-        return m_title;
+    {
+        m_graphAxis->setLabel(m_title);
+        return;
+    }
 
      QString channels;
     bool first =true;
@@ -85,21 +96,43 @@ QString Axis::GetGraphName()
         }
     }
 
-    if (0 == units.size() || "/n" == units)
-        return channels ;
-
-    return channels + " [" + units + "]" ;
+    m_graphAxis->setLabel(channels + ((0 == units.size() || "/n" == units) ? "" : " [" + units + "]"));
 }
 
-bool Axis::ContainsVisibleChannel()
+void Axis::UpdateVisiblility()
 {
     foreach (Channel *channel, m_context.m_channels)
+    {
         if (!channel->isHidden() && channel->GetAxis() == this)
-            return true;
-
-    return false;
+        {
+            m_graphAxis->setVisible(true);
+        }
+    }
+    m_graphAxis->setVisible(true);
 
 }
 
+void Axis::_SetColor(QColor const & color)
+{
+    m_color = color;
+    if (NULL == m_graphAxis)
+        return;
+
+    m_graphAxis->setTickLabelColor(color);
+    m_graphAxis->setLabelColor(color);
+    QPen pen = m_graphAxis->selectedBasePen();
+    pen.setColor(Qt::black);
+    m_graphAxis->setSelectedBasePen(pen);
+    m_graphAxis->setSelectedTickLabelColor(color);
+    m_graphAxis->setSelectedLabelColor(color);
+
+    pen = m_graphAxis->selectedTickPen();
+    pen.setColor(Qt::black);
+    m_graphAxis->setSelectedTickPen(pen);
+
+    pen = m_graphAxis->selectedSubTickPen();
+    pen.setColor(Qt::black);
+    m_graphAxis->setSelectedSubTickPen(pen);
+}
 
 

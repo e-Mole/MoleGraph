@@ -2,29 +2,30 @@
 #include <Axis.h>
 #include <AxisEditDialog.h>
 #include <Context.h>
+#include <Channel.h>
+#include <Graph.h>
+#include <MyCustomPlot.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
 #include <QPalette>
 #include <QMap>
+#include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QString>
 #include <QWidget>
 
-AxesDialog::AxesDialog(Context & context) :
-    FormDialogBase(NULL, tr("Axes")),
-    m_context(context)
+AxesDialog::AxesDialog(const Context &context) :
+    QDialog(NULL, Qt::CustomizeWindowHint/*, Qt::Popup*/),
+    m_context(context),
+    m_plot(*context.m_graph->GetPlot()),
+    m_formLayout(new QFormLayout(this))
 {
-    foreach (Axis *axis, context.m_axes)
-        m_axesCopy.push_back(new AxisCopy(axis));
+    setWindowTitle(tr("Axes"));
+    setLayout(m_formLayout);
 
     _ReinitAxes();
-}
-
-AxesDialog::~AxesDialog()
-{
-    foreach (AxisCopy *axis, m_axesCopy)
-        delete axis;
 }
 
 void AxesDialog::_ReinitAxes()
@@ -36,7 +37,7 @@ void AxesDialog::_ReinitAxes()
         delete forDeletion;
     }
 
-    foreach (AxisCopy *axis, m_axesCopy)
+    foreach (Axis *axis, m_context.m_axes)
     {
         QWidget *rowWidget = new QWidget(this);
         QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
@@ -59,7 +60,6 @@ void AxesDialog::_ReinitAxes()
         palette.setColor(QPalette::Foreground, axis->GetColor());
         label->setPalette(palette);
         m_formLayout->addRow(label, rowWidget);
-
     }
 
     QPushButton * addbutton = new QPushButton(tr("Add a New Axis"), this);
@@ -67,73 +67,80 @@ void AxesDialog::_ReinitAxes()
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 }
 
-void AxesDialog::BeforeAccept()
-{
-    foreach (Axis * original, m_context.m_axes)
-    {
-        bool found = false;
-        foreach (AxisCopy *copy, m_axesCopy)
-        {
-            if (copy->GetOriginal() == original)
-            {
-                *original = *copy;
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            delete original;
-            m_context.m_axes.removeOne(original);
-        }
-    }
-
-    foreach (AxisCopy *copy, m_axesCopy)
-    {
-        if (NULL == copy->GetOriginal())
-            m_context.m_axes.push_back(new Axis(copy));
-    }
-}
-
 void AxesDialog::addButtonPressed()
 {
-    AxisCopy *newAxis = new AxisCopy(m_context);
+    Axis *newAxis = new Axis(m_context);
 
-    AxisEditDialog dialog(newAxis);
+    AxisEditDialog dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
-    {
-        m_axesCopy.push_back(newAxis);
         _ReinitAxes();
-    }
     else
         delete newAxis;
+    close();
 }
 
 void AxesDialog::removeButtonPressed()
 {
-    QMap<QPushButton*, AxisCopy*>::iterator it = m_removeButtontoAxis.begin();
+    QMap<QPushButton*, Axis*>::iterator it = m_removeButtontoAxis.begin();
     for (; it != m_removeButtontoAxis.end(); ++it)
     {
         if (it.key() == (QPushButton*)sender())
         {
-            m_axesCopy.removeOne(it.value());
+            Axis *firstVertical = NULL;
+            foreach (Axis * axis, m_context.m_axes)
+            {
+                //first vertical is not possible to delete as same as horizontal
+                if (!axis->IsHorizontal())
+                {
+                    firstVertical = axis;
+                    break;
+                }
+            }
+
+            foreach (Channel * channel, m_context.m_channels)
+            {
+                if (it.value() == channel->GetAxis())
+                {
+                    if (QMessageBox::Cancel ==
+                        QMessageBox::question(
+                            this,
+                            m_context.m_applicationName,
+                            QString(tr("All channels assigned to the axis '%1 will be moved to an axis '%2'.")).
+                                arg(it.value()->GetTitle()).arg(firstVertical->GetTitle())
+                        )
+                    )
+                    {
+                        close();
+                        return;
+                    }
+
+                }
+            }
+
+            foreach (Channel * channel, m_context.m_channels)
+            {
+                if (it.value() == channel->GetAxis())
+                    channel->SetAxis(firstVertical);
+            }
+            m_context.m_axes.removeOne(it.value());
+            m_plot.RemoveAxis(it.value()->GetGraphAxis());
             _ReinitAxes();
         }
     }
+    close();
 }
 
 void AxesDialog::editButtonPressed()
 {
-    QMap<QPushButton*, AxisCopy*>::iterator it = m_editButtontoAxis.begin();
+    QMap<QPushButton*, Axis*>::iterator it = m_editButtontoAxis.begin();
     for (; it != m_editButtontoAxis.end(); ++it)
     {
         if (it.key() == (QPushButton*)sender())
         {
-            AxisEditDialog dialog(it.value());
+            AxisEditDialog dialog(it.value(), m_context);
             if (QDialog::Accepted == dialog.exec())
-            {
                 _ReinitAxes();
-            }
         }
     }
+    close();
 }

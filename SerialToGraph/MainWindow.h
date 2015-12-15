@@ -41,7 +41,6 @@ public:
 protected slots:
     void buttonLineLocationChanged(Qt::DockWidgetArea area);
     void dockVisibilityChanged(bool visible);
-    void openAxesDialog();
 };
 
 #endif // MAINWINDOW_H

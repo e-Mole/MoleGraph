@@ -88,13 +88,16 @@ public:
     Axis * GetAxis()
     { return m_axis; }
 
+    void SetAxis(Axis * axis)
+    { m_axis = axis; }
+
     double GetMinValue()
     { return m_channelMinValue; }
 
     double GetMaxValue()
     { return m_channelMaxValue; }
 
-    void SetAxisRange(double min, double max);
+    void SetAxisValueRange(double min, double max);
 
     unsigned GetShapeIndex()
     { return m_shapeIndex; }
@@ -110,6 +113,7 @@ public:
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();
     void UpdateGraph(double xValue);
+    void AssignToAxis(Axis *axis);
 
 signals:
     void stateChanged();

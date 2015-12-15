@@ -67,7 +67,11 @@ void ChannelSettings::BeforeAccept()
             changedHorizontal = true;
             m_channel->_ShowOrHideGraphAndPoin(true);
         }
-        m_channel->m_axis = axis;
+
+        Axis *lastAxis = m_channel->m_axis;
+        m_channel->AssignToAxis(axis);
+        lastAxis->UpdateVisiblility();
+        axis->UpdateVisiblility();
     }
 
     if (changed)
@@ -161,10 +165,9 @@ void ChannelSettings::axisChanged(int index)
     {
         Axis*newAxis = new Axis(m_context, m_channel->GetName(), m_channel->GetColor());
 
-        AxisEditDialog dialog(newAxis);
+        AxisEditDialog dialog(newAxis, m_context);
         if (QDialog::Accepted == dialog.exec())
         {
-            m_context.m_axes.push_back(newAxis);
              m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
              m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
         }

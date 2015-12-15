@@ -25,8 +25,6 @@
 #include <SerialPort.h>
 
 
-#define RESCALE_MARGIN_RATIO 50
-#define AXES_LABEL_PADDING 1
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 5
 
@@ -69,32 +67,12 @@ Graph::~Graph()
 
 void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
-    m_customPlot = new MyCustomPlot(this);
+    m_customPlot = new MyCustomPlot(this, m_context);
     graphLayout->addWidget(m_customPlot);
 
-    _SetAxisColor(m_customPlot->xAxis, Qt::black);
-
     connect(m_customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
-    connect(m_customPlot, SIGNAL(outOfAxesDoubleClick()), this, SLOT(rescaleAllAxes()));
-    connect(m_customPlot, SIGNAL(axisDoubleClick(QCPAxis*)),this, SLOT(rescaleAxis(QCPAxis*)));
 
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
-}
-
-void Graph::rescaleAxis(QCPAxis *axis)
-{
-
-    if (axis == m_customPlot->xAxis)
-        m_customPlot->xAxis->rescale(true);
-    else
-        _RescaleOneYAxisWithMargin(axis);
-}
-
-void Graph::rescaleAllAxes()
-{
-    m_customPlot->xAxis->rescale(true);
-    _RescaleYAxesWithMargin();
-    m_customPlot->ReplotIfNotDisabled();
 }
 
 void Graph::periodTypeChanged(int index)
@@ -110,7 +88,7 @@ void Graph::horizontalChannelChanged()
 
     //TODO: replace graps according the new horizontal channel
 
-    rescaleAllAxes();
+    m_customPlot->RescaleAllAxes();
 
     //continueDrawing();
 }
@@ -190,8 +168,6 @@ void Graph::draw()
             foreach (Channel *channel, m_context.m_channels)
                 channel->displayValueOnIndex(m_x->GetLastValue());
 
-            //I dont want to use QCPAxis::rescale because I want to have a margin around the graphics
-            _RescaleYAxesWithMargin();
             m_customPlot->xAxis->setRange(
                 m_x->GetMinValue(),
                 (m_x->GetMinValue() == m_x->GetMaxValue()) ? m_x->GetMaxValue() + 1 : m_x->GetMaxValue());
@@ -205,7 +181,8 @@ void Graph::draw()
             m_scrollBar->setValue(scrollBarMax);
         }
 
-        rescaleAllAxes();
+        m_customPlot->RescaleAllAxes();
+        m_customPlot->ReplotIfNotDisabled();
     }
 
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
@@ -390,85 +367,9 @@ void Graph::periodChanged(unsigned period)
     m_period = period;
 }
 
-void Graph::_RemoveVerticalAxes()
-{
-    foreach (Axis* axis, m_context.m_axes)
-    {
-        if (!axis->IsHorizontal())
-        {
-            m_customPlot->axisRect()->removeAxis(axis->GetGraphAxis());
-            axis->SetGraphAxis(NULL);
-        }
-    }
-
-    m_customPlot->yAxis = NULL;
-}
-
-void Graph::_SetAxisColor(QCPAxis *axis, QColor const & color)
-{
-    axis->setTickLabelColor(color);
-    axis->setLabelColor(color);
-    QPen pen = axis->selectedBasePen();
-    pen.setColor(Qt::black);
-    axis->setSelectedBasePen(pen);
-    axis->setSelectedTickLabelColor(color);
-    axis->setSelectedLabelColor(color);
-
-    pen = axis->selectedTickPen();
-    pen.setColor(Qt::black);
-    axis->setSelectedTickPen(pen);
-
-    pen = axis->selectedSubTickPen();
-    pen.setColor(Qt::black);
-    axis->setSelectedSubTickPen(pen);
-}
-
-void Graph::_InitializeYAxis(Axis *axis)
-{
-    if (axis->GetGraphAxis() != NULL)
-        qDebug() << "graph axis is not empty";
-    QCPAxis *graphAxis =
-        m_customPlot->axisRect()->addAxis(axis->IsOnRight() ? QCPAxis::atRight : QCPAxis::atLeft);
-
-    axis->SetGraphAxis(graphAxis);
-    _SetAxisColor(graphAxis, axis->GetColor());
-
-    graphAxis->setLabel(axis->GetGraphName());
-    graphAxis->setRange(0, 1);
-    graphAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
-    graphAxis->grid()->setVisible(false);
-    graphAxis->setLabelPadding(AXES_LABEL_PADDING);
-
-    if (NULL == m_customPlot->yAxis)
-        m_customPlot->yAxis = graphAxis;
-
-    if (!axis->ContainsVisibleChannel())
-        axis->GetGraphAxis()->setVisible(false);
-}
-
-void Graph::_UpdateXAxis(Axis *axis)
-{
-    m_customPlot->xAxis->setLabel(axis->GetGraphName());
-    _SetAxisColor(m_customPlot->xAxis, axis->GetColor());
-    //TODO: range,...
-}
-
-
 void Graph::UpdateAxes()
 {
-    //it is necessery to update all access because we want to have always the same order
-    //and some of them could be attached and are not any more
-    _RemoveVerticalAxes();
-
-    foreach (Axis * axis, m_context.m_axes)
-    {
-        if (axis->IsHorizontal())
-            _UpdateXAxis(axis);
-        else
-            _InitializeYAxis(axis);
-    }
-
-    foreach (Channel *channel, m_context.m_channels)
+/*    foreach (Channel *channel, m_context.m_channels)
     {
         if (!channel->isHidden() && !channel->IsOnHorizontalAxis())
         {
@@ -483,7 +384,7 @@ void Graph::UpdateAxes()
     m_customPlot->yAxis->setSelectedParts(QCPAxis::spTickLabels);
 
     selectionChanged(); //initialize zoom and drag according current selection
-    m_customPlot->ReplotIfNotDisabled();
+    m_customPlot->ReplotIfNotDisabled();*/
 }
 
 void Graph::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
@@ -521,42 +422,10 @@ void Graph::selectionChanged()
     m_customPlot->selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Graph::_RescaleOneYAxisWithMargin(QCPAxis *axis)
-{
-
-    double lower = std::numeric_limits<double>::max();
-    double upper = -std::numeric_limits<double>::max();
-
-    foreach (Channel *channel, m_context.m_channels)
-    {
-        if (!channel->isHidden() && channel->GetAxis()->GetGraphAxis() == axis)
-        {
-            if (channel->GetMinValue() < lower)
-                lower = channel->GetMinValue();
-            if (channel->GetMaxValue() > upper)
-                upper = channel->GetMaxValue();
-        }
-    }
-
-    double margin = std::abs(upper - lower) / RESCALE_MARGIN_RATIO;
-    if (0 == margin) //upper and lower are the same
-        margin = std::abs(upper / RESCALE_MARGIN_RATIO);
-
-    axis->setRange(lower - margin, upper + margin);
-}
-
-void Graph::_RescaleYAxesWithMargin()
-{
-    foreach (QCPAxis *axis, m_customPlot->axisRect()->axes())
-    {
-        if (m_customPlot->xAxis != axis)
-            _RescaleOneYAxisWithMargin(axis);
-    }
- }
-
 void Graph::channelStateChanged()
 {
-    rescaleAllAxes();
+    m_customPlot->RescaleAllAxes();
+    m_customPlot->ReplotIfNotDisabled();
 }
 
 void Graph::sliderMoved(int value)
@@ -570,12 +439,12 @@ void Graph::sliderMoved(int value)
 
 QCPGraph *Graph::AddGraph(QColor const &color)
 {
-    m_customPlot->AddGraph(color);
+    return m_customPlot->AddGraph(color);
 }
 
 QCPGraph *Graph::AddPoint(QColor const &color, unsigned shapeIndex)
 {
-    m_customPlot->AddPoint(color, shapeIndex);
+    return m_customPlot->AddPoint(color, shapeIndex);
 }
 
 void Graph::SetSampleChannel(Channel *channel)
@@ -586,4 +455,9 @@ void Graph::SetSampleChannel(Channel *channel)
 void Graph::SetHorizontalChannel(Channel *channel)
 {
     m_x = channel;
+}
+
+MyCustomPlot *Graph::GetPlot()
+{
+    return m_customPlot;
 }

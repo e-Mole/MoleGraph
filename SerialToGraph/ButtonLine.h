@@ -13,6 +13,7 @@ class QMenu;
 class QAction;
 class QKeySequence;
 class Channel;
+struct Context;
 class ButtonLine : public QWidget
 {
     Q_OBJECT
@@ -28,10 +29,9 @@ class ButtonLine : public QWidget
     QLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
-    QPushButton * m_graphMenuButton;
+    QPushButton * m_axesMenuButton;
     QMenu *m_fileMenu;
     QMenu *m_panelMenu;
-    QMenu *m_axisMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 
@@ -40,10 +40,10 @@ class ButtonLine : public QWidget
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
-    QVector<Axis *> &m_axes;
+    Context const &m_context;
 
 public:
-    ButtonLine(QWidget *parent, QVector<Axis *> &axes);
+    ButtonLine(QWidget *parent, const Context &context);
     void AddChannel(Channel *channel);
 
 signals:
@@ -68,7 +68,7 @@ public slots:
     void connectivityStateChange(bool connected);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
-    void graphMenuButtonPressed();
+    void axisMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
 };

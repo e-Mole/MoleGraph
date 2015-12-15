@@ -6,6 +6,7 @@
 #include <CentralWidget.h>
 #include <Channel.h>
 #include <Graph.h>
+#include <MyCustomPlot.h>
 #include <PortListDialog.h>
 #include <QDockWidget>
 #include <QtCore/QDebug>
@@ -53,7 +54,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_centralWidget->addScrollBar(m_scrollBar);
 
     m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
-    m_context.SetGraph(m_graph);
+    m_context.SetGraph(m_graph, m_graph->GetPlot());
     m_centralWidget->addGraph(m_graph);
     connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
 
@@ -61,7 +62,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
 
     this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-    m_buttonLine = new ButtonLine(this, m_axes);
+    m_buttonLine = new ButtonLine(this, m_context);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
@@ -73,26 +74,33 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(stop()), m_graph, SLOT(stop()));
     connect(m_buttonLine, SIGNAL(exportPng(QString)), m_graph, SLOT(exportPng(QString)));
     connect(m_buttonLine, SIGNAL(exportCsv(QString)), m_graph, SLOT(exportCsv(QString)));
-    connect(m_buttonLine, SIGNAL(axesPressed()), this, SLOT(openAxesDialog()));
 
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
-    Axis * xAxis = new Axis(m_context, tr("Horizontal"), Qt::black, false, true);
-    Axis * yAxis = new Axis(m_context, tr("Vertical"), Qt::black, false, false);
+    Axis * xAxis =
+        new Axis(
+            m_context,
+            tr("Horizontal"),
+            Qt::black,
+            false,
+            true,
+            m_graph->GetPlot()->xAxis
+        );
+    Axis * yAxis =
+        new Axis(
+            m_context,
+            tr("Vertical"),
+            Qt::black,
+            false,
+            false,
+            m_graph->GetPlot()->yAxis
+        );
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
 
     _InitializeChannels(xAxis, yAxis);
-    m_graph->UpdateAxes();
-}
-
-void MainWindow::openAxesDialog()
-{
-    AxesDialog dialog(m_context);
-    if (QDialog::Accepted == dialog.exec())
-        m_graph->UpdateAxes();
 }
 
 MainWindow::~MainWindow()

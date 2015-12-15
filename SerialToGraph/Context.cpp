@@ -2,7 +2,9 @@
 #include <Axis.h>
 #include <Channel.h>
 #include <Graph.h>
+#include <MyCustomPlot.h>
 #include <QCoreApplication>
+#include <qcustomplot/qcustomplot.h>
 #include <QFileInfo>
 
 Context::Context(QVector<Axis*> &axis, QVector<Channel*> &channels):
@@ -13,7 +15,8 @@ Context::Context(QVector<Axis*> &axis, QVector<Channel*> &channels):
 {
 }
 
-void Context::SetGraph(Graph *graph)
+void Context::SetGraph(Graph *graph, MyCustomPlot *plot)
 {
     m_graph = graph;
+    m_plot = plot;
 }

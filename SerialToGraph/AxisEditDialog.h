@@ -6,6 +6,7 @@
 #include <QColor>
 
 class AxisCopy;
+class Context;
 class QLineEdit;
 class QString;
 class QWidget;
@@ -21,9 +22,10 @@ class AxisEditDialog : public FormDialogBase
     Axis m_axisCopy;
     QLineEdit* m_name;
     QWidget *m_colorButtonWidget;
+    Context const & m_context;
 
 public:
-    AxisEditDialog(Axis *axis);
+    AxisEditDialog(Axis *axis, const Context &context);
 
 signals:
 

@@ -1,5 +1,11 @@
 #include "MyCustomPlot.h"
+#include <Axis.h>
+#include <Channel.h>
+#include <Context.h>
 #include <QColor>
+
+#define AXES_LABEL_PADDING 1
+#define RESCALE_MARGIN_RATIO 50
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -11,10 +17,11 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
     QCPAxisRect::mouseMoveEvent(event);
 }
 
-MyCustomPlot::MyCustomPlot(QWidget *parent) :
+MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
     QCustomPlot(parent),
     m_moveMode(false),
-    m_disabled(false)
+    m_disabled(false),
+    m_context(context)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -50,11 +57,11 @@ void MyCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
     QCPLayerable *clickedLayerable = layerableAt(event->pos(), false, &details);
 
     if (QCPAxis *ax = qobject_cast<QCPAxis*>(clickedLayerable))
-        emit axisDoubleClick(ax);
+        RescaleAxis(ax);
     else
     {
         m_moveMode = false;
-        emit outOfAxesDoubleClick();
+        RescaleAllAxes();
     }
 }
 
@@ -163,6 +170,62 @@ QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
 
     return point;
 }
+
+
+void MyCustomPlot::RemoveAxis(QCPAxis *axis)
+{
+    axisRect()->removeAxis(axis);
+}
+
+QCPAxis *MyCustomPlot::AddYAxis(bool onRight)
+{
+    QCPAxis *axis = axisRect()->addAxis(onRight ? QCPAxis::atRight : QCPAxis::atLeft);
+
+    axis->setRange(0, 1);
+    axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
+    axis->grid()->setVisible(false);
+    axis->setLabelPadding(AXES_LABEL_PADDING);
+
+    return axis;
+}
+
+
+void MyCustomPlot::RescaleAxis(QCPAxis *axis)
+{
+
+    if (axis == xAxis)
+    {
+        axis->rescale(true);
+        return;
+    }
+
+    double lower = std::numeric_limits<double>::max();
+    double upper = -std::numeric_limits<double>::max();
+
+    foreach (Channel *channel, m_context.m_channels)
+    {
+        if (!channel->isHidden() && channel->GetAxis()->GetGraphAxis() == axis)
+        {
+            if (channel->GetMinValue() < lower)
+                lower = channel->GetMinValue();
+            if (channel->GetMaxValue() > upper)
+                upper = channel->GetMaxValue();
+        }
+    }
+
+    double margin = std::abs(upper - lower) / RESCALE_MARGIN_RATIO;
+    if (0 == margin) //upper and lower are the same
+        margin = std::abs(upper / RESCALE_MARGIN_RATIO);
+
+    axis->setRange(lower - margin, upper + margin);
+}
+
+void MyCustomPlot::RescaleAllAxes()
+{
+    foreach (QCPAxis *axis, axisRect()->axes())
+        RescaleAxis(axis);
+}
+
 
 
 

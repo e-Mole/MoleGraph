@@ -7,6 +7,7 @@
 class Axis;
 class Channel;
 class Graph;
+class MyCustomPlot;
 struct Context
 {
 public:
@@ -16,8 +17,9 @@ public:
     QVector<Channel*> &m_channels;
     QString m_applicationName;
     Graph *m_graph;
+    MyCustomPlot *m_plot;
 
-    void SetGraph(Graph *graph);
+    void SetGraph(Graph *graph, MyCustomPlot *plot);
 };
 
 #endif // CONTEXT_H

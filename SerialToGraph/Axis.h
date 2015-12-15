@@ -4,16 +4,18 @@
 #include <QString>
 #include <QColor>
 
-class AxisCopy;
 class QCPAxis;
 struct Context;
 class Axis
 {
-    friend class AxisEditDialog;
     friend class AxisCopy;
+    friend class AxesDialog;
+    friend class AxisEditDialog;
 
-    void SetName(QString const &name) { m_title = name; }
-    void SetColor(QColor const &color) { m_color = color; }
+    void _SetName(QString const &name) { m_title = name; }
+    void _SetColor(QColor const & color);
+    void _SetGraphName();
+    void _SetGraphAxis(QCPAxis *axis);
 
 protected:
     Context const &m_context;
@@ -25,8 +27,14 @@ protected:
     QCPAxis * m_graphAxis;
     bool m_displayName;
 public:
-    Axis(Context const &context, QString title = "", QColor const & color= Qt::black, bool isRemovable = true, bool isHorizontal = false);
-    Axis(AxisCopy const &axisCopy);
+    Axis(
+        Context const &context,
+        QString title = "",
+        QColor const & color= Qt::black,
+        bool isRemovable = true,
+        bool isHorizontal = false,
+        QCPAxis *graphAxis = NULL
+    );
 
     const Axis &operator =(const Axis &axis);
 
@@ -35,32 +43,15 @@ public:
 
     bool IsRemovable() { return m_isRemovable; }
 
-    QString GetGraphName();
-
     bool IsHorizontal()
     { return m_isHorizontal; }
-
-    bool ContainsVisibleChannel();
 
     bool IsOnRight()
     { return m_isOnRight; }
 
     QCPAxis *GetGraphAxis(){ return m_graphAxis; }
-    void SetGraphAxis(QCPAxis *graphAxis) { m_graphAxis = graphAxis; }
-};
 
-class AxisCopy : public Axis
-{
-    Axis *m_original;
-
-public:
-    AxisCopy(Context &context);
-    AxisCopy(Axis *original):
-        Axis(*original),
-        m_original(original)
-    {}
-
-    Axis *GetOriginal() { return m_original; }
+    void UpdateVisiblility();
 };
 
 #endif // AXIS_H

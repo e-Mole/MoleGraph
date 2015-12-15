@@ -5,6 +5,7 @@
 #include <QWidget>
 
 class QColor;
+class Context;
 class MyAxisRect : public QCPAxisRect
 {
     Q_OBJECT
@@ -24,6 +25,7 @@ class MyCustomPlot : public QCustomPlot
 
     bool m_moveMode;
     bool m_disabled;
+    Context const &m_context;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -32,7 +34,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 
 public:
-    MyCustomPlot(QWidget *parent);
+    MyCustomPlot(QWidget *parent, const Context &context);
 
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
@@ -43,9 +45,10 @@ public:
     void ReplotIfNotDisabled();
     QCPGraph *AddGraph(const QColor &color);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
-signals:
-    void outOfAxesDoubleClick();
-    void axisDoubleClick(QCPAxis *axis);
+    void RemoveAxis(QCPAxis *axis);
+    QCPAxis *AddYAxis(bool onRight);
+    void RescaleAxis(QCPAxis *axis);
+    void RescaleAllAxes();
 
 public slots:
 

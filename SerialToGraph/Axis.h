@@ -1,13 +1,16 @@
 #ifndef AXIS_H
 #define AXIS_H
 
-#include <QString>
 #include <QColor>
+#include <QString>
+
 
 class QCPAxis;
+class QString;
 struct Context;
 class Axis
 {
+
     friend class AxisCopy;
     friend class AxesDialog;
     friend class AxisEditDialog;

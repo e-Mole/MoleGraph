@@ -52,6 +52,7 @@ public:
     QCPAxis *AddYAxis(bool onRight);
     void RescaleAxis(QCPAxis *axis);
     void RescaleAllAxes();
+    QString GetDefaultAxisName();
 
 public slots:
 private slots:

@@ -269,4 +269,7 @@ void MyCustomPlot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-
+QString MyCustomPlot::GetDefaultAxisName()
+{
+    return QString(tr("Axis %1")).arg(m_context.m_axes.count() + 1);
+}

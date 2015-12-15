@@ -3,9 +3,9 @@
 #include <Channel.h>
 #include <MyCustomPlot.h>
 #include <qcustomplot/qcustomplot.h>
+#include <QString>
 
-Axis::Axis(
-    Context const &context,
+Axis::Axis(Context const &context,
     QString title,
     QColor const & color,
     bool isRemovable,
@@ -21,6 +21,9 @@ Axis::Axis(
     m_graphAxis(NULL),
     m_displayName(false)
 {
+    if (title == "")
+        m_title = m_context.m_plot->GetDefaultAxisName();
+
     _AssignGraphAxis(graphAxis);
 }
 
@@ -151,5 +154,3 @@ void Axis::_SetColor(QColor const & color)
     pen.setColor(Qt::black);
     m_graphAxis->setSelectedSubTickPen(pen);
 }
-
-

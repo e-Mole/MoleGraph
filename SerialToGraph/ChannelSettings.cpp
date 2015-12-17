@@ -49,6 +49,7 @@ void ChannelSettings::BeforeAccept()
         changed = true;
         m_channel->m_units = m_units->text();
         m_channel->_ShowLastValueWithUnits();
+        m_channel->m_axis->UpdateGraphAxisName();
     }
 
     if (m_channel->m_shapeIndex != (unsigned)m_shapeComboBox->currentIndex())
@@ -67,7 +68,8 @@ void ChannelSettings::BeforeAccept()
         {
             _MoveLastHorizontalToVertical();
             changedHorizontal = true;
-            m_channel->_ShowOrHideGraphAndPoin(true);
+            m_channel->_ShowOrHideGraphAndPoin(false);
+            m_context.m_plot->SetHorizontalChannel(m_channel);
         }
 
         Axis *lastAxis = m_channel->m_axis;
@@ -109,8 +111,7 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                     );
 
                     channel->_UpdateTitle();
-                    if (!channel->isHidden())
-                        channel->_ShowOrHideGraphAndPoin(true);
+                    channel->_ShowOrHideGraphAndPoin(!channel->isHidden());
 
                     return;
                 }

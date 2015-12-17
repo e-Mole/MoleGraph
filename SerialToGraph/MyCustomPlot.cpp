@@ -21,7 +21,8 @@ MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
     QCustomPlot(parent),
     m_moveMode(false),
     m_disabled(false),
-    m_context(context)
+    m_context(context),
+    m_horizontalChannel(NULL)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -272,4 +273,15 @@ void MyCustomPlot::selectionChanged()
 QString MyCustomPlot::GetDefaultAxisName()
 {
     return QString(tr("Axis %1")).arg(m_context.m_axes.count() + 1);
+}
+
+
+void MyCustomPlot::SetHorizontalChannel(Channel *channel)
+{
+    m_horizontalChannel = channel;
+}
+
+Channel * MyCustomPlot::GetHorizontalChannel()
+{
+    return m_horizontalChannel;
 }

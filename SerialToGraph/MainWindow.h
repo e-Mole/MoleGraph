@@ -20,7 +20,6 @@ class MainWindow : public QMainWindow
 
     void _InitializeChannels(Axis *xAxis, Axis *yAxis);
     void _AddYChannel(Qt::GlobalColor color, Axis *axis);
-    void _AddChannel(Channel *channel);
 
     QSettings m_settings;
 	SerialPort m_serialPort;

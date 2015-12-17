@@ -26,7 +26,6 @@ class Graph : public QWidget
 
     struct GraphItem
     {
-        bool firstInSample;
         bool afterThrownOutSample;
         uint8_t channelIndex;
         float value;
@@ -48,8 +47,6 @@ class Graph : public QWidget
 
     SerialPort &m_serialPort;
     QQueue<unsigned char> m_queue;
-
-    Channel *m_x;
 
     unsigned m_period;
     unsigned m_counter;
@@ -89,7 +86,6 @@ protected slots:
 	void periodChanged(unsigned period);
     void sliderMoved(int value);
 public slots:
-    void horizontalChannelChanged();
     void finishDrawing();
     void pauseDrawing();
     void continueDrawing();

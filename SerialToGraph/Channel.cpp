@@ -3,6 +3,7 @@
 #include <Axis.h>
 #include <Context.h>
 #include <cmath>
+#include <MyCustomPlot.h>
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QColor>
@@ -141,7 +142,6 @@ void Channel::_ShowLastValueWithUnits()
     m_valueLabel->setText(
         (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_units);
     _SetMinimumSize();
-    m_axis->UpdateGraphAxisName();
 }
 
 void Channel::_DisplayNAValue()
@@ -169,8 +169,11 @@ void Channel::mousePressEvent(QMouseEvent * event)
 
 void Channel::displayValueOnIndex(int index)
 {
-    if (0 == index && 0 == m_values.size())
+    if (index >= m_values.size())
+    {
+        _DisplayNAValue();
         return; //probably setRange in start method
+    }
 
     double value = m_values[index];
     double absValue = std::abs(value);
@@ -186,8 +189,11 @@ void Channel::displayValueOnIndex(int index)
     m_lastValueText = strValue;
     _ShowLastValueWithUnits();
 
-    m_graphPoint->clearData();
-    m_graphPoint->addData(index, m_values[index]);
+    if (!m_axis->IsHorizontal())
+    {
+        m_graphPoint->clearData();
+        m_graphPoint->addData(m_context.m_plot->GetHorizontalChannel()->GetValue(index), m_values[index]);
+    }
 }
 
 

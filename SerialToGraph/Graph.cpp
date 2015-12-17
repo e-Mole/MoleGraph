@@ -33,7 +33,6 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
     m_context(context),
     m_customPlot(NULL),
     m_serialPort(serialPort),
-    m_x(NULL),
     m_period(0),
     m_counter(0),
     m_scrollBar(scrollBar),
@@ -64,6 +63,7 @@ void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
     m_customPlot = new MyCustomPlot(this, m_context);
     graphLayout->addWidget(m_customPlot);
+
 }
 
 void Graph::periodTypeChanged(int index)
@@ -71,24 +71,10 @@ void Graph::periodTypeChanged(int index)
         m_periodTypeIndex = index;
 }
 
-void Graph::horizontalChannelChanged()
-{
-    //pauseDrawing();
-
-    m_x = (Channel*)sender();
-
-    //TODO: replace graps according the new horizontal channel
-
-    m_customPlot->RescaleAllAxes();
-
-    //continueDrawing();
-}
-
-
 void Graph::_FillGraphItem(GraphItem &item)
 {
+    //FIXME: firstInSample is not used any more. remove it
     unsigned char mixture = m_queue.dequeue();
-    item.firstInSample = (mixture >> 7);
     item.afterThrownOutSample = ((mixture >> 6) & 1);
     item.channelIndex = mixture & 7; //lowest 3 bits
 	char value[4];
@@ -131,6 +117,8 @@ void Graph::draw()
     
         while (_IsCompleteSetInQueue())
         {
+            m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
+
             GraphItem item;
             for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
             {
@@ -142,30 +130,27 @@ void Graph::draw()
                     qDebug() << "writing delay";
                 }
 
-                if (item.firstInSample)
-                    m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
-
                 if (m_trackedHwChannels[item.channelIndex]->GetAxis()->IsHorizontal() && item.value <= m_trackedHwChannels[item.channelIndex]->GetMaxValue())
                     qDebug() << "vale is less then max";
                 m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
             }
 
-            foreach (Channel *channel, m_context.m_channels)
-                channel->UpdateGraph(m_x->GetLastValue());
+            m_sampleChannel->UpdateGraph(m_customPlot->GetHorizontalChannel()->GetLastValue());
+            foreach (Channel *channel, m_trackedHwChannels)
+                channel->UpdateGraph(m_customPlot->GetHorizontalChannel()->GetLastValue());
         }
 
+        unsigned index = m_customPlot->GetHorizontalChannel()->GetValueCount() - 1;
         if (!m_customPlot->IsInMoveMode())
         {
-            foreach (Channel *channel, m_context.m_channels)
-                channel->displayValueOnIndex(m_x->GetLastValue());
 
-            m_customPlot->xAxis->setRange(
-                m_x->GetMinValue(),
-                (m_x->GetMinValue() == m_x->GetMaxValue()) ? m_x->GetMaxValue() + 1 : m_x->GetMaxValue());
+            foreach (Channel *channel, m_context.m_channels)
+                channel->displayValueOnIndex(index);
+
+            m_customPlot->RescaleAxis(m_customPlot->xAxis);
         }
 
-        unsigned scrollBarMax = (m_customPlot->graphCount() == 0) ?
-                0 : m_customPlot->graph(0)->data()->keys().count()-1; //all graphs have te same count of samples. choose one
+        unsigned scrollBarMax = index;
         m_scrollBar->setRange(0, scrollBarMax);
         if (!m_customPlot->IsInMoveMode())
         {
@@ -384,7 +369,7 @@ void Graph::SetSampleChannel(Channel *channel)
 
 void Graph::SetHorizontalChannel(Channel *channel)
 {
-    m_x = channel;
+    m_customPlot->SetHorizontalChannel(channel);
 }
 
 MyCustomPlot *Graph::GetPlot()

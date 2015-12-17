@@ -6,6 +6,7 @@
 
 class QColor;
 class Context;
+class Channel;
 class MyAxisRect : public QCPAxisRect
 {
     Q_OBJECT
@@ -26,6 +27,7 @@ class MyCustomPlot : public QCustomPlot
     bool m_moveMode;
     bool m_disabled;
     Context const &m_context;
+    Channel *m_horizontalChannel;
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
 
@@ -53,6 +55,8 @@ public:
     void RescaleAxis(QCPAxis *axis);
     void RescaleAllAxes();
     QString GetDefaultAxisName();
+    void SetHorizontalChannel(Channel *channel);
+    Channel *GetHorizontalChannel();
 
 public slots:
 private slots:

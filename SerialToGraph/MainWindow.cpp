@@ -137,7 +137,7 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
             m_graph->AddGraph(Qt::black),
             m_graph->AddPoint(Qt::black, 0)
         );
-    _AddChannel(sampleChannel);
+    m_buttonLine->AddChannel(sampleChannel);
     m_graph->SetSampleChannel(sampleChannel);
     m_graph->SetHorizontalChannel(sampleChannel);
 
@@ -156,7 +156,7 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
-    _AddChannel(
+    m_buttonLine->AddChannel(
         new Channel(
             m_centralWidget,
             m_context,
@@ -170,10 +170,4 @@ void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
         )
     );
     order++;
-}
-void MainWindow::_AddChannel(Channel *channel)
-{
-    m_buttonLine->AddChannel(channel);
-
-    connect(channel, SIGNAL(wasSetToHorizontal()), m_graph, SLOT(horizontalChannelChanged()));
 }

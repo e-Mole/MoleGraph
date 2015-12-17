@@ -26,6 +26,8 @@ class ChannelSettings : public FormDialogBase
 	QCheckBox * m_toRightSide;
     QComboBox * m_shapeComboBox;
     QComboBox * m_axisComboBox;
+
+    Channel * m_lastHorrizontalChannel;
 public:
     ChannelSettings(Channel *channel, Context const &context);
 signals:

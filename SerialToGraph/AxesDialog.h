@@ -20,9 +20,10 @@ class AxesDialog : public QDialog
     Context const &m_context;
     MyCustomPlot &m_plot;
     QFormLayout *m_formLayout;
+    bool m_waitToFinsh;
 public:
     AxesDialog(Context const &context);
-
+    bool WaitToFinish() { return m_waitToFinsh; }
 signals:
 
 private slots:

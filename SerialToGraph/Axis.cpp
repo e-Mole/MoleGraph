@@ -77,7 +77,8 @@ void Axis::UpdateGraphAxisName()
     QString units;
     for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
     {
-        if (!m_context.m_channels[i]->isHidden() && m_context.m_channels[i]->GetAxis() == this)
+        if ((!m_context.m_channels[i]->isHidden() || m_context.m_channels[i]->IsOnHorizontalAxis()) &&
+            m_context.m_channels[i]->GetAxis() == this)
         {
             count++;
             if (!first)

@@ -17,10 +17,11 @@
 #include <QWidget>
 
 AxesDialog::AxesDialog(const Context &context) :
-    QDialog(NULL, Qt::CustomizeWindowHint/*, Qt::Popup*/),
+    QDialog(NULL, Qt::Popup),
     m_context(context),
     m_plot(*context.m_plot),
-    m_formLayout(new QFormLayout(this))
+    m_formLayout(new QFormLayout(this)),
+    m_waitToFinsh(false)
 {
     setWindowTitle(tr("Axes"));
     setLayout(m_formLayout);
@@ -69,6 +70,7 @@ void AxesDialog::_ReinitAxisGrid()
 
 void AxesDialog::addButtonPressed()
 {
+    m_waitToFinsh = true;
     Axis *newAxis = new Axis(m_context);
 
     AxisEditDialog dialog(newAxis, m_context);
@@ -76,66 +78,67 @@ void AxesDialog::addButtonPressed()
         _ReinitAxisGrid();
     else
         delete newAxis;
+
+    m_waitToFinsh = false;
     close();
 }
 
 void AxesDialog::removeButtonPressed()
 {
-    QMap<QPushButton*, Axis*>::iterator it = m_removeButtontoAxis.begin();
-    for (; it != m_removeButtontoAxis.end(); ++it)
+    m_waitToFinsh = true;
+    Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
+    Axis *firstVertical = NULL;
+    foreach (Axis * axis, m_context.m_axes)
     {
-        if (it.key() == (QPushButton*)sender())
+        //first vertical is not possible to delete as same as horizontal
+        if (!axis->IsHorizontal())
         {
-            Axis *firstVertical = NULL;
-            foreach (Axis * axis, m_context.m_axes)
-            {
-                //first vertical is not possible to delete as same as horizontal
-                if (!axis->IsHorizontal())
-                {
-                    firstVertical = axis;
-                    break;
-                }
-            }
-
-            foreach (Channel * channel, m_context.m_channels)
-            {
-                if (it.value() == channel->GetAxis())
-                {
-                    if (1 == //standardButton1 pressed (Cancel)
-                        QMessageBox::question(
-                            this,
-                            m_context.m_applicationName,
-                            QString(tr("All channels assigned to the axis '%1' will be moved to an axis '%2'.")).
-                                arg(it.value()->GetTitle()).arg(firstVertical->GetTitle()),
-                            tr("Remove anyway"), tr("Cancel")
-                        )
-                    )
-                    {
-                        close();
-                        return;
-                    }
-
-                }
-            }
-
-            foreach (Channel * channel, m_context.m_channels)
-            {
-                if (it.value() == channel->GetAxis())
-                    channel->SetAxis(firstVertical);
-            }
-            m_context.m_axes.removeOne(it.value());
-            m_plot.RemoveAxis(it.value()->GetGraphAxis());
-            firstVertical->UpdateGraphAxisName();
-            firstVertical->UpdateVisiblility();
-
-            _ReinitAxisGrid();
+            firstVertical = axis;
+            break;
         }
     }
+
+    foreach (Channel * channel, m_context.m_channels)
+    {
+        if (axis == channel->GetAxis())
+        {
+            if (1 == //standardButton1 pressed (Cancel)
+                QMessageBox::question(
+                    this,
+                    m_context.m_applicationName,
+                    QString(tr("All channels assigned to the axis '%1' will be moved to an axis '%2'.")).
+                        arg(axis->GetTitle()).arg(firstVertical->GetTitle()),
+                    tr("Remove anyway"), tr("Cancel")
+                )
+            )
+            {
+                m_waitToFinsh = false;
+                close();
+                return;
+            }
+
+        }
+    }
+
+    foreach (Channel * channel, m_context.m_channels)
+    {
+        if (axis == channel->GetAxis())
+            channel->SetAxis(firstVertical);
+    }
+    m_context.m_axes.removeOne(axis);
+    m_plot.RemoveAxis(axis->GetGraphAxis());
+    firstVertical->UpdateGraphAxisName();
+    firstVertical->UpdateVisiblility();
+
+    _ReinitAxisGrid();
+
+    m_waitToFinsh = false;
     close();
 }
 
 void AxesDialog::editButtonPressed()
 {
+    m_waitToFinsh = true;
     QMap<QPushButton*, Axis*>::iterator it = m_editButtontoAxis.begin();
     for (; it != m_editButtontoAxis.end(); ++it)
     {
@@ -146,5 +149,6 @@ void AxesDialog::editButtonPressed()
                 _ReinitAxisGrid();
         }
     }
+    m_waitToFinsh = false;
     close();
 }

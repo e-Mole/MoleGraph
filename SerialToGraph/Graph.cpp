@@ -217,6 +217,7 @@ void Graph::start()
     m_anySampleMissed = false;
     m_counter = 0;
 
+    m_trackedHwChannels.clear();
     foreach (Channel *channel, m_context.m_channels)
     {
         channel->ClearValues();

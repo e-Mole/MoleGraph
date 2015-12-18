@@ -134,6 +134,8 @@ void ButtonLine::axisMenuButtonPressed()
     );
 
     dialog.exec();
+    while (dialog.WaitToFinish())
+    {}
 }
 
 QAction * ButtonLine::_InsertAction(QMenu *menu, QString title, QKeySequence const &keySequence, bool checkable, QAction *before)

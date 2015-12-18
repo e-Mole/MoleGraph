@@ -216,6 +216,7 @@ void Channel::_ShowOrHideGraphAndPoin(bool shown)
 {
     m_graph->setVisible(shown);
     m_graphPoint->setVisible(shown);
+    m_context.m_plot->RescaleAllAxes();
 }
 
 void Channel::AssignToGraphAxis(QCPAxis *graphAxis)

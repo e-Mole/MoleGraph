@@ -8,6 +8,7 @@
 class AxisCopy;
 class Context;
 class QLineEdit;
+class QMouseQMouseEvent;
 class QString;
 class QWidget;
 class AxisEditDialog : public FormDialogBase
@@ -16,7 +17,6 @@ class AxisEditDialog : public FormDialogBase
 
     virtual void BeforeAccept();
     void _SetColorButtonColor(QColor const &color);
-
 
     Axis * m_axisOriginal;
     Axis m_axisCopy;

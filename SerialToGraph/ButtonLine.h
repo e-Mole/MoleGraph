@@ -51,8 +51,6 @@ signals:
     void periodChanged(unsigned period);
     void start();
     void stop();
-    void exportPng(QString const &fileName);
-    void exportCsv(QString const &fileName);
     void graphTriggered(bool checked);
     void channelTriggered(Channel *channel, bool checked);
     void axesPressed();
@@ -63,8 +61,8 @@ public slots:
     void stopButtonPressed();
     void periodLineEditChanged(QString const &text);
     void changePeriodUnits(int periodType);
-    void exportPngSlot();
-    void exportCsvSlot();
+    void exportPng();
+    void exportCsv();
     void connectivityStateChange(bool connected);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();

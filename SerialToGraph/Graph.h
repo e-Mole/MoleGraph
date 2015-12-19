@@ -81,9 +81,7 @@ protected slots:
     void draw();
 	void start();
 	void stop();
-	void exportPng(QString const &fileName);
-	void exportCsv(QString const &fileName);
-	void periodTypeChanged(int index);
+    void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
     void sliderMoved(int value);
 public slots:

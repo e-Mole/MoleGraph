@@ -269,57 +269,6 @@ void Graph::stop()
         );
 }
 
-void Graph::exportPng(QString const &fileName)
-{
-    m_plot->savePng(fileName);
-}
-
-void Graph::exportCsv(QString const &fileName)
-{
-    QFile file(fileName);
-    file.open(QIODevice::WriteOnly);
-    unsigned lineNr = 0;
-
-    file.write(m_plot->xAxis->label().toStdString().c_str());
-	file.write(";");
-    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
-    {
-        file.write(m_context.m_channels[i]->GetName().toStdString().c_str());
-        if (i == (unsigned)m_context.m_channels.size() - 1)
-             file.write("\n");
-        else
-             file.write(";");
-    }
-
-	unsigned sampleNr = 0;
-    while (true)
-    {
-        bool haveData = false;
-		std::string lineContent = QString("%1;").arg(sampleNr++).toStdString();
-        for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
-        {
-            if (m_context.m_channels[i]-> GetValueCount() > lineNr)
-            {
-                lineContent.append(QString("%1").arg(m_context.m_channels[i]->GetValue(lineNr)).toStdString());
-                haveData = true;
-            }
-
-            if (i == (unsigned)m_context.m_channels.size() - 1)
-                lineContent.append("\n");
-            else
-                lineContent.append(";");
-        }
-
-        lineNr++;
-
-        if (haveData)
-            file.write(lineContent.c_str(), lineContent.size());
-        else
-            break;
-    }
-    file.close();
-}
-
 void Graph::periodChanged(unsigned period)
 {
     m_period = period;

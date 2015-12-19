@@ -73,8 +73,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(m_buttonLine, SIGNAL(periodChanged(uint)), m_graph, SLOT(periodChanged(uint)));
     connect(m_buttonLine, SIGNAL(start()), m_graph, SLOT(start()));
     connect(m_buttonLine, SIGNAL(stop()), m_graph, SLOT(stop()));
-    connect(m_buttonLine, SIGNAL(exportPng(QString)), m_graph, SLOT(exportPng(QString)));
-    connect(m_buttonLine, SIGNAL(exportCsv(QString)), m_graph, SLOT(exportCsv(QString)));
 
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 

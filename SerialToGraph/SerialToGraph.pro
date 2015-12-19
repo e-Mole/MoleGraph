@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     AxesDialog.cpp \
     AxisEditDialog.cpp \
     Context.cpp \
-    Plot.cpp
+    Plot.cpp \
+    Export.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -45,6 +46,7 @@ HEADERS  += MainWindow.h \
     AxesDialog.h \
     AxisEditDialog.h \
     Context.h \
-    Plot.h
+    Plot.h \
+    Export.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

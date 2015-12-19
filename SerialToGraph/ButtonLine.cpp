@@ -3,6 +3,7 @@
 #include <AxesDialog.h>
 #include <Context.h>
 #include <Channel.h>
+#include <Export.h>
 #include <Graph.h>
 #include <QHBoxLayout>
 #include <QComboBox>
@@ -165,8 +166,8 @@ void ButtonLine::_InitializeMenu()
     //fileMenu->addAction(tr("Save"));
     //fileMenu->addAction(tr("Save As"));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPngSlot()));
-    m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsvSlot()));
+    m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
+    m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsv()));
 
     m_panelMenu = new QMenu(this);
     m_panelMenu->setTitle(tr("Panels"));
@@ -270,7 +271,7 @@ void ButtonLine::changePeriodUnits(int periodType)
      m_periodUnits->setText((0 == periodType) ?  tr("Hz") : tr("s"));
 }
 
-void ButtonLine::exportPngSlot()
+void ButtonLine::exportPng()
 {
     QString fileName = QFileDialog::getSaveFileName(
         this,
@@ -280,10 +281,10 @@ void ButtonLine::exportPngSlot()
             fileName += ".png";
 
     if (0 != fileName.size())
-        exportPng(fileName);
+        Export(m_context).ToPng(fileName);
 }
 
-void ButtonLine::exportCsvSlot()
+void ButtonLine::exportCsv()
 {
     QString fileName = QFileDialog::getSaveFileName(
         this,
@@ -293,7 +294,7 @@ void ButtonLine::exportCsvSlot()
             fileName += ".csv";
 
     if (0 != fileName.size())
-        exportCsv(fileName);
+       Export(m_context).ToCsv(fileName);
 }
 
 void ButtonLine::connectivityStateChange(bool connected)

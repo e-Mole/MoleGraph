@@ -8,14 +8,17 @@ class Axis;
 class Channel;
 class Graph;
 class MyCustomPlot;
+class QSettings;
+
 struct Context
 {
 public:
-    Context(QVector<Axis*> &axis, QVector<Channel*> &channels);
+    Context(QVector<Axis*> &axis, QVector<Channel*> &channels, QSettings &settings);
 
     QVector<Axis*> &m_axes;
     QVector<Channel*> &m_channels;
     QString m_applicationName;
+    QSettings &m_settings;
     Graph *m_graph;
     MyCustomPlot *m_plot;
 

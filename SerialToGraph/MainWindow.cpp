@@ -20,7 +20,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels),
+    m_context(m_axes, m_channels, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);

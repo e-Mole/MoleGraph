@@ -41,7 +41,7 @@ class Graph : public QWidget
     bool _IsCompleteSetInQueue();
 
     Context & m_context;
-    MyCustomPlot *m_customPlot;
+    MyCustomPlot *m_plot;
 
     QTimer *m_drawTimer;
 
@@ -61,9 +61,9 @@ class Graph : public QWidget
     bool m_anySampleMissed;
 
     QMap<unsigned, Channel *> m_trackedHwChannels;
-    bool m_drawingInProccess;
+
     bool m_drawingRequired;
-    bool m_drawingPaused;
+
 public:
     Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar);
 
@@ -72,6 +72,7 @@ public:
     void SetSampleChannel(Channel *channel);
     void SetHorizontalChannel(Channel *channel);
     MyCustomPlot *GetPlot();
+    void FinishDrawing();
 signals:
 	void startRequestTimer(int msec);
 	void stopRequestTimer();
@@ -86,9 +87,7 @@ protected slots:
 	void periodChanged(unsigned period);
     void sliderMoved(int value);
 public slots:
-    void finishDrawing();
-    void pauseDrawing();
-    void continueDrawing();
+
 };
 
 #endif // PLOT_H

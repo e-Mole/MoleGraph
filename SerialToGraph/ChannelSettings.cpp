@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSettings>
 #include <QString>
 #include <QVBoxLayout>
 
@@ -102,13 +103,23 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                 if (!axis->IsHorizontal())
                 {
                     channel->m_axis = axis;
-                    QMessageBox::warning(
-                        this,
-                        m_context.m_applicationName,
-                        QString(tr("Only one horizontal channel is supported. Axis '%1' has been assigned to the channel '%2'")).
-                            arg(axis->GetTitle()).
-                            arg(channel->GetName())
-                    );
+                    if (!m_context.m_settings.value("horizontalSwitchMessageHidden", false).toBool() &&
+                        1 == QMessageBox::warning(
+                            this,
+                            m_context.m_applicationName,
+                            QString(tr("Only one horizontal channel is supported. Axis '%1' has been assigned to a channel '%2'")).
+                                arg(axis->GetTitle()).
+                                arg(channel->GetName()),
+                            tr("OK"),
+                            tr("Don't show it again"),
+                            "",
+                            0,
+                            0
+                        )
+                    )
+                    {
+                        m_context.m_settings.setValue("horizontalSwitchMessageHidden", true);
+                    }
 
                     channel->_UpdateTitle();
                     channel->_ShowOrHideGraphAndPoin(!channel->isHidden());

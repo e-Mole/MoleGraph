@@ -17,9 +17,9 @@ public:
 
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
-    bool IsDragging()
-    { return mDragging; }
+    bool IsDragging(){ return mDragging; }
 };
+
 class MyCustomPlot : public QCustomPlot
 {
     Q_OBJECT
@@ -28,8 +28,11 @@ class MyCustomPlot : public QCustomPlot
     bool m_disabled;
     Context const &m_context;
     Channel *m_horizontalChannel;
+    bool m_drawingInProccess;
+    bool m_drawingPaused;
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
+    void _RefillGraphs();
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -57,6 +60,10 @@ public:
     QString GetDefaultAxisName();
     void SetHorizontalChannel(Channel *channel);
     Channel *GetHorizontalChannel();
+    void PauseDrawing();
+    void ContinueDrawing();
+    void SetDrawingInProcess(bool set);
+    void WaitForDrawingIsFinished();
 
 public slots:
 private slots:

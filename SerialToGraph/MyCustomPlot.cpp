@@ -22,7 +22,9 @@ MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
     m_moveMode(false),
     m_disabled(false),
     m_context(context),
-    m_horizontalChannel(NULL)
+    m_horizontalChannel(NULL),
+    m_drawingInProccess(false),
+    m_drawingPaused(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -276,12 +278,62 @@ QString MyCustomPlot::GetDefaultAxisName()
 }
 
 
+void MyCustomPlot::_RefillGraphs()
+{
+    foreach (Channel *channel, m_context.m_channels)
+    {
+        channel->GetGraph()->clearData();
+        for (int i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
+        {
+            channel->GetGraph()->data()->insert(
+                m_horizontalChannel->GetValue(i),
+                QCPData(m_horizontalChannel->GetValue(i), channel->GetValue(i))
+            );
+        }
+    }
+    RescaleAllAxes();
+    ReplotIfNotDisabled();
+}
+
 void MyCustomPlot::SetHorizontalChannel(Channel *channel)
 {
+   PauseDrawing();
+
     m_horizontalChannel = channel;
+    _RefillGraphs();
+
+    ContinueDrawing();
 }
 
 Channel * MyCustomPlot::GetHorizontalChannel()
 {
     return m_horizontalChannel;
+}
+
+void MyCustomPlot::WaitForDrawingIsFinished()
+{
+    while (m_drawingInProccess)
+    {}
+}
+void MyCustomPlot::PauseDrawing()
+{
+    m_drawingPaused = true;
+    WaitForDrawingIsFinished();
+}
+
+
+void MyCustomPlot::ContinueDrawing()
+{
+    m_drawingPaused = false;
+}
+
+void MyCustomPlot::SetDrawingInProcess(bool set)
+{
+    if (set)
+    {
+        while (m_drawingPaused)
+        {}
+    }
+
+    m_drawingInProccess = set;
 }

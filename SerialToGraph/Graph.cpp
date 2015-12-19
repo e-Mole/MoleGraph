@@ -31,7 +31,7 @@
 Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollBar * scrollBar) :
     QWidget(parent),
     m_context(context),
-    m_customPlot(NULL),
+    m_plot(NULL),
     m_serialPort(serialPort),
     m_period(0),
     m_counter(0),
@@ -41,9 +41,7 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
     m_sampleChannel(NULL),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_anySampleMissed(false),
-    m_drawingInProccess(false),
-    m_drawingRequired(false),
-    m_drawingPaused(false)
+    m_drawingRequired(false)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setMargin(1);
@@ -61,8 +59,8 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
 
 void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
-    m_customPlot = new MyCustomPlot(this, m_context);
-    graphLayout->addWidget(m_customPlot);
+    m_plot = new MyCustomPlot(this, m_context);
+    graphLayout->addWidget(m_plot);
 
 }
 
@@ -106,10 +104,8 @@ bool Graph::_IsCompleteSetInQueue()
 
 void Graph::draw()
 {
-    while (m_drawingPaused)
-    {}
+    m_plot->SetDrawingInProcess(true);
 
-    m_drawingInProccess = true;
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
     if (_FillQueue() && _IsCompleteSetInQueue())
@@ -135,54 +131,44 @@ void Graph::draw()
                 m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
             }
 
-            m_sampleChannel->UpdateGraph(m_customPlot->GetHorizontalChannel()->GetLastValue());
+            m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
             foreach (Channel *channel, m_trackedHwChannels)
-                channel->UpdateGraph(m_customPlot->GetHorizontalChannel()->GetLastValue());
+                channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
         }
 
-        unsigned index = m_customPlot->GetHorizontalChannel()->GetValueCount() - 1;
-        if (!m_customPlot->IsInMoveMode())
+        unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
+        if (!m_plot->IsInMoveMode())
         {
 
             foreach (Channel *channel, m_context.m_channels)
                 channel->displayValueOnIndex(index);
 
-            m_customPlot->RescaleAxis(m_customPlot->xAxis);
+            m_plot->RescaleAxis(m_plot->xAxis);
         }
 
         unsigned scrollBarMax = index;
         m_scrollBar->setRange(0, scrollBarMax);
-        if (!m_customPlot->IsInMoveMode())
+        if (!m_plot->IsInMoveMode())
         {
             m_scrollBar->setValue(scrollBarMax);
         }
 
-        m_customPlot->RescaleAllAxes();
-        m_customPlot->ReplotIfNotDisabled();
+        m_plot->RescaleAllAxes();
+        m_plot->ReplotIfNotDisabled();
     }
 
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
-    m_drawingInProccess = false;
+    if (m_drawingRequired)
+        m_drawTimer->start(m_drawPeriod);
+
+    m_plot->SetDrawingInProcess(false);
 }
 
-void Graph::finishDrawing()
+void Graph::FinishDrawing()
 {
     m_drawingRequired = false;
     m_drawTimer->stop();
-    while (m_drawingInProccess)
-    {}
-}
-
-void Graph::pauseDrawing()
-{
-    m_drawingPaused = true;
-    while (m_drawingInProccess)
-    {}
-}
-
-void Graph::continueDrawing()
-{
-    m_drawingPaused = false;
+    m_plot->WaitForDrawingIsFinished();
 }
 
 void Graph::_AdjustDrawPeriod(unsigned drawDelay)
@@ -195,15 +181,13 @@ void Graph::_AdjustDrawPeriod(unsigned drawDelay)
     else if (drawDelay > m_drawPeriod)
     {
         if (drawDelay > 500) //delay will be still longer, I have to stop drawing for this run
-            m_customPlot->SetDisabled(true);
+            m_plot->SetDisabled(true);
         else
         {
             m_drawPeriod *= 2;
             qDebug() << "draw period increased to:" << m_drawPeriod;
         }
     }
-    if (m_drawingRequired)
-        m_drawTimer->start(m_drawPeriod);
 }
 
 void Graph::start()
@@ -225,8 +209,8 @@ void Graph::start()
             m_trackedHwChannels.insert(channel->GetHwIndex(), channel);
     }
 
-    for (int i = 0; i< m_customPlot->graphCount(); i++)
-        m_customPlot->graph(i)->data()->clear();
+    for (int i = 0; i< m_plot->graphCount(); i++)
+        m_plot->graph(i)->data()->clear();
 
     m_queue.clear();
     m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
@@ -261,6 +245,7 @@ void Graph::start()
 
     m_drawPeriod = INITIAL_DRAW_PERIOD;
     m_drawingRequired = true;
+    m_plot->ContinueDrawing();
     m_drawTimer->start(m_drawPeriod);
     if (!m_serialPort.Start())
     {
@@ -274,12 +259,12 @@ void Graph::stop()
     if (!m_serialPort.Stop())
         qDebug() << "stop was not deliveried";
 
-    finishDrawing();
+    FinishDrawing();
 
-    m_customPlot->SetDisabled(false);
+    m_plot->SetDisabled(false);
     draw(); //may be something is still in the buffer
     //just for case last draw set a disable again
-    m_customPlot->SetDisabled(false);
+    m_plot->SetDisabled(false);
     if (m_anySampleMissed)
         QMessageBox::warning(
             this,
@@ -290,7 +275,7 @@ void Graph::stop()
 
 void Graph::exportPng(QString const &fileName)
 {
-    m_customPlot->savePng(fileName);
+    m_plot->savePng(fileName);
 }
 
 void Graph::exportCsv(QString const &fileName)
@@ -299,7 +284,7 @@ void Graph::exportCsv(QString const &fileName)
     file.open(QIODevice::WriteOnly);
     unsigned lineNr = 0;
 
-	file.write(m_customPlot->xAxis->label().toStdString().c_str());
+    file.write(m_plot->xAxis->label().toStdString().c_str());
 	file.write(";");
     for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
     {
@@ -349,18 +334,18 @@ void Graph::sliderMoved(int value)
     foreach (Channel * channel, m_context.m_channels)
         channel->displayValueOnIndex(value);
 
-    m_customPlot->SetMoveMode(true);
-    m_customPlot->ReplotIfNotDisabled();
+    m_plot->SetMoveMode(true);
+    m_plot->ReplotIfNotDisabled();
 }
 
 QCPGraph *Graph::AddGraph(QColor const &color)
 {
-    return m_customPlot->AddGraph(color);
+    return m_plot->AddGraph(color);
 }
 
 QCPGraph *Graph::AddPoint(QColor const &color, unsigned shapeIndex)
 {
-    return m_customPlot->AddPoint(color, shapeIndex);
+    return m_plot->AddPoint(color, shapeIndex);
 }
 
 void Graph::SetSampleChannel(Channel *channel)
@@ -370,10 +355,10 @@ void Graph::SetSampleChannel(Channel *channel)
 
 void Graph::SetHorizontalChannel(Channel *channel)
 {
-    m_customPlot->SetHorizontalChannel(channel);
+    m_plot->SetHorizontalChannel(channel);
 }
 
 MyCustomPlot *Graph::GetPlot()
 {
-    return m_customPlot;
+    return m_plot;
 }

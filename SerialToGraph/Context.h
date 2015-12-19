@@ -7,7 +7,7 @@
 class Axis;
 class Channel;
 class Graph;
-class MyCustomPlot;
+class Plot;
 class QSettings;
 
 struct Context
@@ -20,9 +20,9 @@ public:
     QString m_applicationName;
     QSettings &m_settings;
     Graph *m_graph;
-    MyCustomPlot *m_plot;
+    Plot *m_plot;
 
-    void SetGraph(Graph *graph, MyCustomPlot *plot);
+    void SetGraph(Graph *graph, Plot *plot);
 };
 
 #endif // CONTEXT_H

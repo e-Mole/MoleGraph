@@ -6,7 +6,7 @@
 #include <CentralWidget.h>
 #include <Channel.h>
 #include <Graph.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <PortListDialog.h>
 #include <QDockWidget>
 #include <QtCore/QDebug>

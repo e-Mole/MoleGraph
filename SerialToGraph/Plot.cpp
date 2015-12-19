@@ -1,4 +1,4 @@
-#include "MyCustomPlot.h"
+#include "Plot.h"
 #include <Axis.h>
 #include <Channel.h>
 #include <Context.h>
@@ -17,7 +17,7 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
     QCPAxisRect::mouseMoveEvent(event);
 }
 
-MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
+Plot::Plot(QWidget *parent, Context const & context) :
     QCustomPlot(parent),
     m_moveMode(false),
     m_disabled(false),
@@ -48,7 +48,7 @@ MyCustomPlot::MyCustomPlot(QWidget *parent, Context const & context) :
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
 }
 
-void MyCustomPlot::mousePressEvent(QMouseEvent *event)
+void Plot::mousePressEvent(QMouseEvent *event)
 {
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
@@ -57,7 +57,7 @@ void MyCustomPlot::mousePressEvent(QMouseEvent *event)
 
     QCustomPlot::mousePressEvent(event);
 }
-void MyCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
+void Plot::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QVariant details;
     QCPLayerable *clickedLayerable = layerableAt(event->pos(), false, &details);
@@ -71,7 +71,7 @@ void MyCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
-void MyCustomPlot::wheelEvent(QWheelEvent *event)
+void Plot::wheelEvent(QWheelEvent *event)
 {
     m_moveMode = true;
 
@@ -96,7 +96,7 @@ void MyCustomPlot::wheelEvent(QWheelEvent *event)
     }
 }
 
-void MyCustomPlot::SetDisabled(bool disable)
+void Plot::SetDisabled(bool disable)
 {
     if (m_disabled != disable)
     {
@@ -106,7 +106,7 @@ void MyCustomPlot::SetDisabled(bool disable)
     m_disabled = disable;
 }
 
-void MyCustomPlot::ReplotIfNotDisabled()
+void Plot::ReplotIfNotDisabled()
 {
     if (m_disabled)
         return;
@@ -114,7 +114,7 @@ void MyCustomPlot::ReplotIfNotDisabled()
     replot(rpQueued);
 }
 
-void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)
+void Plot::mouseMoveEvent(QMouseEvent *event)
 {
     if (axisRect()->IsDragging())
     {
@@ -147,7 +147,7 @@ void MyCustomPlot::mouseMoveEvent(QMouseEvent *event)
     //replot();
 }
 
-QCPGraph *MyCustomPlot::AddGraph(QColor const &color)
+QCPGraph *Plot::AddGraph(QColor const &color)
 {
     QCPGraph *graph = addGraph();
 
@@ -162,7 +162,7 @@ QCPGraph *MyCustomPlot::AddGraph(QColor const &color)
 
 }
 
-void MyCustomPlot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
+void Plot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
 {
     QCPScatterStyle style = graphPoint->scatterStyle();
     style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
@@ -170,7 +170,7 @@ void MyCustomPlot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
     graphPoint->setScatterStyle(style);
 }
 
-QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
+QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
 {
     QCPGraph *point = addGraph();
 
@@ -182,13 +182,13 @@ QCPGraph *MyCustomPlot::AddPoint(QColor const &color, unsigned shapeIndex)
 }
 
 
-void MyCustomPlot::RemoveAxis(QCPAxis *axis)
+void Plot::RemoveAxis(QCPAxis *axis)
 {
     axisRect()->removeAxis(axis);
     ReplotIfNotDisabled();
 }
 
-QCPAxis *MyCustomPlot::AddYAxis(bool onRight)
+QCPAxis *Plot::AddYAxis(bool onRight)
 {
     QCPAxis *axis = axisRect()->addAxis(onRight ? QCPAxis::atRight : QCPAxis::atLeft);
 
@@ -201,7 +201,7 @@ QCPAxis *MyCustomPlot::AddYAxis(bool onRight)
 }
 
 
-void MyCustomPlot::RescaleAxis(QCPAxis *axis)
+void Plot::RescaleAxis(QCPAxis *axis)
 {
 
     if (axis == xAxis)
@@ -231,19 +231,19 @@ void MyCustomPlot::RescaleAxis(QCPAxis *axis)
     axis->setRange(lower - margin, upper + margin);
 }
 
-void MyCustomPlot::RescaleAllAxes()
+void Plot::RescaleAllAxes()
 {
     foreach (QCPAxis *axis, axisRect()->axes())
         RescaleAxis(axis);
 }
 
-void MyCustomPlot::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
+void Plot::_SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis)
 {
     axisRect()->setRangeZoomAxes(xAxis, yAxis);
     axisRect()->setRangeDragAxes(xAxis, yAxis);
 }
 
-void MyCustomPlot::selectionChanged()
+void Plot::selectionChanged()
 {
     if (0 == selectedAxes().size())
     {
@@ -272,18 +272,18 @@ void MyCustomPlot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-QString MyCustomPlot::GetDefaultAxisName()
+QString Plot::GetDefaultAxisName()
 {
     return QString(tr("Axis %1")).arg(m_context.m_axes.count() + 1);
 }
 
 
-void MyCustomPlot::_RefillGraphs()
+void Plot::_RefillGraphs()
 {
     foreach (Channel *channel, m_context.m_channels)
     {
         channel->GetGraph()->clearData();
-        for (int i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
+        for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
             channel->GetGraph()->data()->insert(
                 m_horizontalChannel->GetValue(i),
@@ -295,7 +295,7 @@ void MyCustomPlot::_RefillGraphs()
     ReplotIfNotDisabled();
 }
 
-void MyCustomPlot::SetHorizontalChannel(Channel *channel)
+void Plot::SetHorizontalChannel(Channel *channel)
 {
    PauseDrawing();
 
@@ -305,29 +305,29 @@ void MyCustomPlot::SetHorizontalChannel(Channel *channel)
     ContinueDrawing();
 }
 
-Channel * MyCustomPlot::GetHorizontalChannel()
+Channel * Plot::GetHorizontalChannel()
 {
     return m_horizontalChannel;
 }
 
-void MyCustomPlot::WaitForDrawingIsFinished()
+void Plot::WaitForDrawingIsFinished()
 {
     while (m_drawingInProccess)
     {}
 }
-void MyCustomPlot::PauseDrawing()
+void Plot::PauseDrawing()
 {
     m_drawingPaused = true;
     WaitForDrawingIsFinished();
 }
 
 
-void MyCustomPlot::ContinueDrawing()
+void Plot::ContinueDrawing()
 {
     m_drawingPaused = false;
 }
 
-void MyCustomPlot::SetDrawingInProcess(bool set)
+void Plot::SetDrawingInProcess(bool set)
 {
     if (set)
     {

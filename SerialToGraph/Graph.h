@@ -1,5 +1,5 @@
-#ifndef PLOT_H
-#define PLOT_H
+#ifndef GRAPH_H
+#define GRAPH_H
 #include <qcustomplot/qcustomplot.h>
 #include <QWidget>
 #include <QQueue>
@@ -9,7 +9,7 @@
 
 class Axis;
 class Channel;
-class MyCustomPlot;
+class Plot;
 class QTimer;
 class SerialPort;
 class QString;
@@ -41,7 +41,7 @@ class Graph : public QWidget
     bool _IsCompleteSetInQueue();
 
     Context & m_context;
-    MyCustomPlot *m_plot;
+    Plot *m_plot;
 
     QTimer *m_drawTimer;
 
@@ -71,7 +71,7 @@ public:
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void SetSampleChannel(Channel *channel);
     void SetHorizontalChannel(Channel *channel);
-    MyCustomPlot *GetPlot();
+    Plot *GetPlot();
     void FinishDrawing();
 signals:
 	void startRequestTimer(int msec);
@@ -90,4 +90,4 @@ public slots:
 
 };
 
-#endif // PLOT_H
+#endif // GRAPH_H

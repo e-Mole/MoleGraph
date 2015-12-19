@@ -21,14 +21,14 @@ SOURCES += main.cpp\
     PortListDialog.cpp \
     PortListWidget.cpp \
     ButtonLine.cpp \
-    MyCustomPlot.cpp \
     Graph.cpp \
     CentralWidget.cpp \
     FormDialogBase.cpp \
     Axis.cpp \
     AxesDialog.cpp \
     AxisEditDialog.cpp \
-    Context.cpp
+    Context.cpp \
+    Plot.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -38,13 +38,13 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     ButtonLine.h \
-    MyCustomPlot.h \
     Graph.h \
     CentralWidget.h \
     FormDialogBase.h \
     Axis.h \
     AxesDialog.h \
     AxisEditDialog.h \
-    Context.h
+    Context.h \
+    Plot.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

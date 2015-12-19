@@ -4,7 +4,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Graph.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>

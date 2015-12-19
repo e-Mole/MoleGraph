@@ -1,5 +1,5 @@
-#ifndef MYCUSTOMPLOT_H
-#define MYCUSTOMPLOT_H
+#ifndef PLOT_H
+#define PLOT_H
 
 #include <qcustomplot/qcustomplot.h>
 #include <QWidget>
@@ -20,7 +20,7 @@ public:
     bool IsDragging(){ return mDragging; }
 };
 
-class MyCustomPlot : public QCustomPlot
+class Plot : public QCustomPlot
 {
     Q_OBJECT
 
@@ -41,7 +41,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 
 public:
-    MyCustomPlot(QWidget *parent, const Context &context);
+    Plot(QWidget *parent, const Context &context);
 
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
@@ -71,4 +71,4 @@ private slots:
 
 };
 
-#endif // MYCUSTOMPLOT_H
+#endif // PLOT_H

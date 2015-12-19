@@ -6,7 +6,7 @@
 #include <Context.h>
 #include <limits.h>
 #include <math.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <QBoxLayout>
 #include <QByteArray>
 #include <QColor>
@@ -59,7 +59,7 @@ Graph::Graph(QWidget *parent, Context &context, SerialPort &serialPort, QScrollB
 
 void Graph::_InitializePolt(QBoxLayout *graphLayout)
 {
-    m_plot = new MyCustomPlot(this, m_context);
+    m_plot = new Plot(this, m_context);
     graphLayout->addWidget(m_plot);
 
 }
@@ -358,7 +358,7 @@ void Graph::SetHorizontalChannel(Channel *channel)
     m_plot->SetHorizontalChannel(channel);
 }
 
-MyCustomPlot *Graph::GetPlot()
+Plot *Graph::GetPlot()
 {
     return m_plot;
 }

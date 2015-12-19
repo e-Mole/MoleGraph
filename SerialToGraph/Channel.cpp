@@ -3,7 +3,7 @@
 #include <Axis.h>
 #include <Context.h>
 #include <cmath>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QColor>

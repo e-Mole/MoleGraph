@@ -3,7 +3,7 @@
 #include <AxisEditDialog.h>
 #include <Channel.h>
 #include <Context.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>

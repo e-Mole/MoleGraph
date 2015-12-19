@@ -5,7 +5,7 @@
 #include <QMap>
 
 class Axis;
-class MyCustomPlot;
+class Plot;
 class QFormLayout;
 class QPushButton;
 struct Context;
@@ -18,7 +18,7 @@ class AxesDialog : public QDialog
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
     Context const &m_context;
-    MyCustomPlot &m_plot;
+    Plot &m_plot;
     QFormLayout *m_formLayout;
     bool m_waitToFinsh;
 public:

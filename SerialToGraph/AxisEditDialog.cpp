@@ -1,7 +1,7 @@
 #include "AxisEditDialog.h"
 #include <Axis.h>
 #include <Context.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFormLayout>

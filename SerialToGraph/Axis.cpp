@@ -1,7 +1,7 @@
 #include "Axis.h"
 #include <Context.h>
 #include <Channel.h>
-#include <MyCustomPlot.h>
+#include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 

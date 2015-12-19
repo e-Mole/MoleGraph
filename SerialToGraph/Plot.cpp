@@ -24,7 +24,8 @@ Plot::Plot(QWidget *parent, Context const & context) :
     m_context(context),
     m_horizontalChannel(NULL),
     m_drawingInProccess(false),
-    m_drawingPaused(false)
+    m_drawingPaused(false),
+    m_graphPointsPosition(0)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -290,6 +291,9 @@ void Plot::_RefillGraphs()
                 QCPData(m_horizontalChannel->GetValue(i), channel->GetValue(i))
             );
         }
+
+        channel->GetGraphPoint()->clearData();
+        channel->displayValueOnIndex(m_graphPointsPosition);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
@@ -336,4 +340,9 @@ void Plot::SetDrawingInProcess(bool set)
     }
 
     m_drawingInProccess = set;
+}
+
+void Plot::setGraphPointPosition(int position)
+{
+    m_graphPointsPosition = position;
 }

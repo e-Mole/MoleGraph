@@ -1,4 +1,4 @@
-#include "AxisEditDialog.h"
+#include "AxisSettings.h"
 #include <Axis.h>
 #include <Context.h>
 #include <Plot.h>
@@ -12,7 +12,7 @@
 #include <QVector>
 #include <QWidget>
 
-AxisEditDialog::AxisEditDialog(Axis *axis, Context const & context) :
+AxisSettings::AxisSettings(Axis *axis, Context const & context) :
     FormDialogColor(NULL, tr("Edit Axis...")),
     m_axisOriginal(axis),
     m_axisCopy(*axis),
@@ -45,22 +45,22 @@ AxisEditDialog::AxisEditDialog(Axis *axis, Context const & context) :
 
 }
 
-void AxisEditDialog::nameChanged(QString const &text)
+void AxisSettings::nameChanged(QString const &text)
 {
     m_axisCopy.m_title = text;
 }
 
-void AxisEditDialog::sideChanged(int index)
+void AxisSettings::sideChanged(int index)
 {
    m_axisCopy.m_isOnRight = (bool)index;
 }
 
-void AxisEditDialog::displayChanged(int index)
+void AxisSettings::displayChanged(int index)
 {
     m_axisCopy.m_displayName = (bool)index;
 }
 
-void AxisEditDialog::BeforeAccept()
+void AxisSettings::BeforeAccept()
 {
 
     bool sideChanged = m_axisOriginal->IsOnRight() != m_axisCopy.IsOnRight();
@@ -89,7 +89,7 @@ void AxisEditDialog::BeforeAccept()
     m_context.m_plot->ReplotIfNotDisabled();
 }
 
-void AxisEditDialog::ColorChanged(QColor &color)
+void AxisSettings::ColorChanged(QColor &color)
 {
     m_axisCopy.m_color = color;
 }

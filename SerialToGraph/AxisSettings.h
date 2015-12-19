@@ -1,5 +1,5 @@
-#ifndef ADDAXISDIALOG_H
-#define ADDAXISDIALOG_H
+#ifndef AXIS_SETTINGS_H
+#define AXIS_SETTINGS_H
 
 #include <Axis.h>
 #include <FormDialogColor.h>
@@ -11,7 +11,7 @@ class QLineEdit;
 class QMouseQMouseEvent;
 class QString;
 class QWidget;
-class AxisEditDialog : public FormDialogColor
+class AxisSettings : public FormDialogColor
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ class AxisEditDialog : public FormDialogColor
     Context const & m_context;
 
 public:
-    AxisEditDialog(Axis *axis, const Context &context);
+    AxisSettings(Axis *axis, const Context &context);
 
 signals:
 
@@ -33,4 +33,4 @@ private slots:
     void displayChanged(int index);
 };
 
-#endif // ADDAXISDIALOG_H
+#endif // AXIS_SETTINGS_H

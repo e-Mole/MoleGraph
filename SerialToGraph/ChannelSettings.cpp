@@ -1,6 +1,6 @@
 #include "ChannelSettings.h"
 #include <Axis.h>
-#include <AxisEditDialog.h>
+#include <AxisSettings.h>
 #include <Channel.h>
 #include <Context.h>
 #include <Plot.h>
@@ -188,7 +188,7 @@ void ChannelSettings::axisChanged(int index)
     {
         Axis*newAxis = new Axis(m_context, "", m_channel->GetColor());
 
-        AxisEditDialog dialog(newAxis, m_context);
+        AxisSettings dialog(newAxis, m_context);
         if (QDialog::Accepted == dialog.exec())
         {
              m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);

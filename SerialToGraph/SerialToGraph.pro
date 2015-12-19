@@ -26,11 +26,11 @@ SOURCES += main.cpp\
     FormDialogBase.cpp \
     Axis.cpp \
     AxesDialog.cpp \
-    AxisEditDialog.cpp \
     Context.cpp \
     Plot.cpp \
     Export.cpp \
-    FormDialogColor.cpp
+    FormDialogColor.cpp \
+    AxisSettings.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -45,10 +45,10 @@ HEADERS  += MainWindow.h \
     FormDialogBase.h \
     Axis.h \
     AxesDialog.h \
-    AxisEditDialog.h \
     Context.h \
     Plot.h \
     Export.h \
-    FormDialogColor.h
+    FormDialogColor.h \
+    AxisSettings.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

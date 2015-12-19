@@ -13,7 +13,7 @@ class Axis
 
     friend class AxisCopy;
     friend class AxesDialog;
-    friend class AxisEditDialog;
+    friend class AxisSettings;
 
     void _SetName(QString const &name) { m_title = name; }
     void _SetColor(QColor const & color);

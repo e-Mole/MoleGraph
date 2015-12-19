@@ -1,6 +1,6 @@
 #include "AxesDialog.h"
 #include <Axis.h>
-#include <AxisEditDialog.h>
+#include <AxisSettings.h>
 #include <Context.h>
 #include <Channel.h>
 #include <Graph.h>
@@ -73,7 +73,7 @@ void AxesDialog::addButtonPressed()
     m_waitToFinsh = true;
     Axis *newAxis = new Axis(m_context);
 
-    AxisEditDialog dialog(newAxis, m_context);
+    AxisSettings dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
         _ReinitAxisGrid();
     else
@@ -144,7 +144,7 @@ void AxesDialog::editButtonPressed()
     {
         if (it.key() == (QPushButton*)sender())
         {
-            AxisEditDialog dialog(it.value(), m_context);
+            AxisSettings dialog(it.value(), m_context);
             if (QDialog::Accepted == dialog.exec())
                 _ReinitAxisGrid();
         }

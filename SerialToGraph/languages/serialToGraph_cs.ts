@@ -2,80 +2,187 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="cs_CZ">
 <context>
+    <name>AxesDialog</name>
+    <message>
+        <location filename="../AxesDialog.cpp" line="26"/>
+        <source>Axes</source>
+        <translation>Osy</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="48"/>
+        <source>Edit</source>
+        <translation>Editovat</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="53"/>
+        <source>Remove</source>
+        <translation>Odstranit</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="66"/>
+        <source>Add a New Axis</source>
+        <translation>Přidat novou osu</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="109"/>
+        <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
+        <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="111"/>
+        <source>Remove anyway</source>
+        <translation>I tak odstranit</translation>
+    </message>
+    <message>
+        <location filename="../AxesDialog.cpp" line="111"/>
+        <source>Cancel</source>
+        <translation>Zruš</translation>
+    </message>
+</context>
+<context>
+    <name>AxisEditDialog</name>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="17"/>
+        <source>Edit Axis...</source>
+        <translation>Editovat Osy...</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="24"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="24"/>
+        <source>Horizontal</source>
+        <translation>Horizontální</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="24"/>
+        <source>Vertical</source>
+        <translation>Vertikální</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="27"/>
+        <location filename="../AxisEditDialog.cpp" line="53"/>
+        <source>Name</source>
+        <translation>Název</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="39"/>
+        <source>Color</source>
+        <translation>Barva</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="44"/>
+        <source>Left</source>
+        <translation>Levá</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="45"/>
+        <source>Right</source>
+        <translation>Pravá</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="48"/>
+        <source>Side</source>
+        <translation>Strana</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="52"/>
+        <source>Channels and Units</source>
+        <translation>Kanály a jednotky</translation>
+    </message>
+    <message>
+        <location filename="../AxisEditDialog.cpp" line="56"/>
+        <source>Display in Graph</source>
+        <translation>Zobrazit v grafu</translation>
+    </message>
+</context>
+<context>
     <name>ButtonLine</name>
     <message>
-        <location filename="../ButtonLine.cpp" line="38"/>
         <source>Menu</source>
         <translation>Nabídka</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="43"/>
+        <location filename="../ButtonLine.cpp" line="60"/>
         <source>Frequency</source>
         <translation>Frekvence</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="44"/>
+        <location filename="../ButtonLine.cpp" line="61"/>
         <source>Time</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="59"/>
-        <location filename="../ButtonLine.cpp" line="235"/>
+        <location filename="../ButtonLine.cpp" line="76"/>
+        <location filename="../ButtonLine.cpp" line="271"/>
         <source>Hz</source>
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="63"/>
+        <location filename="../ButtonLine.cpp" line="80"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="71"/>
+        <location filename="../ButtonLine.cpp" line="88"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="123"/>
+        <location filename="../ButtonLine.cpp" line="169"/>
         <source>Export to PNG</source>
         <translation>Exportovat do PNG</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="124"/>
+        <location filename="../ButtonLine.cpp" line="170"/>
         <source>Export to CSV</source>
         <translation>Exportovat do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="127"/>
+        <location filename="../ButtonLine.cpp" line="51"/>
+        <location filename="../ButtonLine.cpp" line="173"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="130"/>
+        <location filename="../ButtonLine.cpp" line="47"/>
+        <source>File</source>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <location filename="../ButtonLine.cpp" line="55"/>
+        <source>Axes</source>
+        <translation>Osy</translation>
+    </message>
+    <message>
+        <location filename="../ButtonLine.cpp" line="175"/>
         <source>Graph</source>
         <translation>Graf</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="133"/>
+        <location filename="../ButtonLine.cpp" line="178"/>
         <source>Show All</source>
         <translation>Zobrazit vše</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="134"/>
+        <location filename="../ButtonLine.cpp" line="179"/>
         <source>Show None</source>
         <translation>Skrýt vše</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="235"/>
+        <location filename="../ButtonLine.cpp" line="271"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="270"/>
+        <location filename="../ButtonLine.cpp" line="306"/>
         <source>Connected</source>
         <translation>Připojeno</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="275"/>
+        <location filename="../ButtonLine.cpp" line="311"/>
         <source>Disconnected</source>
         <translation>Odpojeno</translation>
     </message>
@@ -83,6 +190,7 @@
 <context>
     <name>Channel</name>
     <message>
+        <location filename="../Channel.cpp" line="150"/>
         <source>n/a</source>
         <translation>n/a</translation>
     </message>
@@ -94,12 +202,12 @@
 <context>
     <name>ChannelSettings</name>
     <message>
-        <location filename="../ChannelSettings.cpp" line="19"/>
+        <location filename="../ChannelSettings.cpp" line="20"/>
         <source>Channel settings</source>
         <translation>Nastavení kanálu</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="26"/>
+        <location filename="../ChannelSettings.cpp" line="28"/>
         <source>Title</source>
         <translation>Název</translation>
     </message>
@@ -108,99 +216,129 @@
         <translation>Vybraný</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="33"/>
+        <location filename="../ChannelSettings.cpp" line="31"/>
         <source>Units</source>
         <translation>Jednotky</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="38"/>
         <source>To right side</source>
         <translation>Na pravou stranu</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="50"/>
         <source>Store</source>
         <translation>Ulož</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="54"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="94"/>
+        <location filename="../ChannelSettings.cpp" line="155"/>
         <source>Shape</source>
         <translation>Tvar</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="99"/>
+        <location filename="../ChannelSettings.cpp" line="138"/>
         <source>Cross</source>
         <translation>Kříž</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="100"/>
+        <source>Only one horizontal channel is supported. Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
+        <translation type="obsolete"> </translation>
+    </message>
+    <message>
+        <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
+        <translation type="obsolete">Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="110"/>
+        <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;.</source>
+        <translation>Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="113"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="114"/>
+        <source>Don&apos;t show it again</source>
+        <translation>Příště nezobrazuj</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="139"/>
         <source>Plus</source>
         <translation>Plus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="101"/>
+        <location filename="../ChannelSettings.cpp" line="140"/>
         <source>Circle</source>
         <translation>Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="102"/>
+        <location filename="../ChannelSettings.cpp" line="141"/>
         <source>Disc</source>
         <translation>Kružnice</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="103"/>
+        <location filename="../ChannelSettings.cpp" line="142"/>
         <source>Square</source>
         <translation>Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="104"/>
+        <location filename="../ChannelSettings.cpp" line="143"/>
         <source>Diamond</source>
         <translation>Diamant</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="105"/>
+        <location filename="../ChannelSettings.cpp" line="144"/>
         <source>Star</source>
         <translation>Hvězda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="106"/>
+        <location filename="../ChannelSettings.cpp" line="145"/>
         <source>Triangle</source>
         <translation>Trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="107"/>
+        <location filename="../ChannelSettings.cpp" line="146"/>
         <source>Inverted Triangle</source>
         <translation>Obrácený trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="108"/>
+        <location filename="../ChannelSettings.cpp" line="147"/>
         <source>Cross and Square</source>
         <translation>Kříž a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="109"/>
+        <location filename="../ChannelSettings.cpp" line="148"/>
         <source>Plus and Square</source>
         <translation>Plus a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="110"/>
+        <location filename="../ChannelSettings.cpp" line="149"/>
         <source>Cross and Circle</source>
         <translation>Kříž a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="111"/>
+        <location filename="../ChannelSettings.cpp" line="150"/>
         <source>Plus and Circle</source>
         <translation>Plus a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="112"/>
+        <location filename="../ChannelSettings.cpp" line="151"/>
         <source>Peace</source>
         <translation>Mír</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="162"/>
+        <source>New Axis...</source>
+        <translation>Nová osa...</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="171"/>
+        <source>Axis</source>
+        <translation>Osa</translation>
     </message>
 </context>
 <context>
@@ -217,22 +355,68 @@
 <context>
     <name>DisplayWidget</name>
     <message>
-        <location filename="../DisplayWidget.cpp" line="126"/>
         <source>n/a</source>
         <translation>n/a</translation>
     </message>
 </context>
 <context>
+    <name>FormDialogBase</name>
+    <message>
+        <location filename="../FormDialogBase.cpp" line="18"/>
+        <source>Store</source>
+        <translation>Ulož</translation>
+    </message>
+    <message>
+        <location filename="../FormDialogBase.cpp" line="22"/>
+        <source>Cancel</source>
+        <translation>Zruš</translation>
+    </message>
+</context>
+<context>
     <name>Graph</name>
     <message>
-        <location filename="../Graph.cpp" line="572"/>
         <source>samples</source>
         <translation>vzorky</translation>
     </message>
     <message>
-        <location filename="../Graph.cpp" line="594"/>
         <source>channel %1</source>
         <translation>kanál %1</translation>
+    </message>
+    <message>
+        <location filename="../Graph.cpp" line="268"/>
+        <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
+        <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../MainWindow.cpp" line="84"/>
+        <source>Horizontal</source>
+        <translation>Horizontální</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="93"/>
+        <source>Vertical</source>
+        <translation>Vertikální</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="132"/>
+        <source>Samples</source>
+        <translation>Vzorky</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="163"/>
+        <source>Channel %1</source>
+        <translation>Kanál %1</translation>
+    </message>
+</context>
+<context>
+    <name>Plot</name>
+    <message>
+        <location filename="../Plot.cpp" line="276"/>
+        <source>Axis %1</source>
+        <translation>Osa %1</translation>
     </message>
 </context>
 <context>

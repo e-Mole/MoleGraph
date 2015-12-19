@@ -1,7 +1,9 @@
 #ifndef CHANNELSETTINGS_H
 #define CHANNELSETTINGS_H
 
-#include <FormDialogBase.h>
+#include <FormDialogColor.h>
+#include <QColor>
+
 class Channel;
 class QCheckBox;
 class QComboBox;
@@ -9,7 +11,7 @@ class QFormLayout;
 class QLineEdit;
 class QString;
 struct Context;
-class ChannelSettings : public FormDialogBase
+class ChannelSettings : public FormDialogColor
 {
     Q_OBJECT
 
@@ -17,6 +19,7 @@ class ChannelSettings : public FormDialogBase
     void _InitializeAxisCombo();
     void _MoveLastHorizontalToVertical();
     virtual void BeforeAccept();
+    void ColorChanged(QColor &color);
 
     Context const & m_context;
     Channel *m_channel;
@@ -26,6 +29,8 @@ class ChannelSettings : public FormDialogBase
 	QCheckBox * m_toRightSide;
     QComboBox * m_shapeComboBox;
     QComboBox * m_axisComboBox;
+    QColor m_color;
+
 
     Channel * m_lastHorrizontalChannel;
 public:

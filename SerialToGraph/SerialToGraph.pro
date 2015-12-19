@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     AxisEditDialog.cpp \
     Context.cpp \
     Plot.cpp \
-    Export.cpp
+    Export.cpp \
+    FormDialogColor.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -47,6 +48,7 @@ HEADERS  += MainWindow.h \
     AxisEditDialog.h \
     Context.h \
     Plot.h \
-    Export.h
+    Export.h \
+    FormDialogColor.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

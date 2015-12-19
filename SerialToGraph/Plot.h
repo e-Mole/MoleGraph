@@ -48,8 +48,10 @@ public:
     void SetMoveMode(bool active) { m_moveMode = active; }
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
+    void SetGraphColor(QCPGraph *graph, const QColor &color);
     QCPGraph *AddGraph(const QColor &color);
     void SetShape(QCPGraph *graphPoint, unsigned shapeIndex);
+    void SetGraphPointColor(QCPGraph *graphPoint, QColor const &color);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void RemoveAxis(QCPAxis *axis);
     QCPAxis *AddYAxis(bool onRight);

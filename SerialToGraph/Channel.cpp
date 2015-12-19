@@ -242,3 +242,11 @@ void Channel::setVisible(bool visible)
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
 }
+
+void Channel::SetColor(QColor &color)
+{
+    m_color = color;
+    m_valueLabel->SetColor(color);
+    m_context.m_plot->SetGraphColor(m_graph, color);
+    m_context.m_plot->SetGraphPointColor(m_graphPoint, color);
+}

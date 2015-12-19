@@ -146,17 +146,20 @@ void Plot::mouseMoveEvent(QMouseEvent *event)
     //replot();
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color)
+void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
 {
-    QCPGraph *graph = addGraph();
-
     QPen pen = graph->pen();
     pen.setColor(color);
     graph->setPen(pen);
     pen = graph->selectedPen();
     pen.setColor(color);
     graph->setSelectedPen(pen);
+}
 
+QCPGraph *Plot::AddGraph(QColor const &color)
+{
+    QCPGraph *graph = addGraph();
+    SetGraphColor(graph, color);
     return graph;
 
 }
@@ -169,15 +172,18 @@ void Plot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
     graphPoint->setScatterStyle(style);
 }
 
+void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
+{
+    graphPoint->setPen(QPen(QBrush(color), 1.6));
+}
+
 QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
 {
-    QCPGraph *point = addGraph();
-
-    point->setPen(QPen(QBrush(color), 1.6));
-    point->setLineStyle(QCPGraph::lsNone);
-    SetShape(point, shapeIndex);
-
-    return point;
+    QCPGraph *graphPoint = addGraph();
+    SetGraphPointColor(graphPoint, color);
+    graphPoint->setLineStyle(QCPGraph::lsNone);
+    SetShape(graphPoint, shapeIndex);
+    return graphPoint;
 }
 
 

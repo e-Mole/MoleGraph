@@ -11,24 +11,26 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QPushButton>
 #include <QSettings>
 #include <QString>
 #include <QVBoxLayout>
 
 ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
-    FormDialogBase(channel, tr("Channel settings")),
+    FormDialogColor(channel, tr("Channel settings")),
     m_context(context),
     m_channel(channel),
     m_name(NULL),
     m_shapeComboBox(NULL),
-    m_axisComboBox(NULL)
+    m_axisComboBox(NULL),
+    m_color(channel->m_color)
 {
     m_name = new QLineEdit(channel->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
     m_units = new QLineEdit(channel->GetUnits(), this);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+
+    AddColorButtonRow(m_channel->m_color);
 
     _InitializeShapeCombo();
     _InitializeAxisCombo();
@@ -51,6 +53,12 @@ void ChannelSettings::BeforeAccept()
         m_channel->m_units = m_units->text();
         m_channel->_ShowLastValueWithUnits();
         m_channel->m_axis->UpdateGraphAxisName();
+    }
+
+    if (m_channel->m_color != m_color)
+    {
+        changed = true;
+        m_channel->SetColor(m_color);
     }
 
     if (m_channel->m_shapeIndex != (unsigned)m_shapeComboBox->currentIndex())
@@ -88,6 +96,8 @@ void ChannelSettings::BeforeAccept()
         else
             m_channel->stateChanged();
 
+        m_context.m_plot->ReplotIfNotDisabled();
+
     }
     accept();
 }
@@ -107,7 +117,7 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                         1 == QMessageBox::warning(
                             this,
                             m_context.m_applicationName,
-                            QString(tr("Only one horizontal channel is supported. Axis '%1' has been assigned to a channel '%2'")).
+                            QString(tr("Axis '%1' has been assigned to a channel '%2'.")).
                                 arg(axis->GetTitle()).
                                 arg(channel->GetName()),
                             tr("OK"),
@@ -187,4 +197,9 @@ void ChannelSettings::axisChanged(int index)
         else
             delete newAxis;
     }
+}
+
+void ChannelSettings::ColorChanged(QColor &color)
+{
+    m_color = color;
 }

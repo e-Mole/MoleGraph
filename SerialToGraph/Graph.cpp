@@ -265,7 +265,7 @@ void Graph::stop()
         QMessageBox::warning(
             this,
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-            tr("Some samples was not delivered. The sample rate is probably too high for so many channels.")
+            tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );
 }
 

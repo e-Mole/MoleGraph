@@ -118,6 +118,7 @@ public:
     void AssignToAxis(Axis *axis);
 
     void setVisible(bool visible);
+    void SetColor(QColor &color);
 
 signals:
     void stateChanged();

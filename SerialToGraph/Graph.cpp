@@ -153,7 +153,9 @@ void Graph::draw()
             m_scrollBar->setValue(scrollBarMax);
         }
 
-        m_plot->RescaleAllAxes();
+        if (!m_plot->IsInMoveMode())
+            m_plot->RescaleAllAxes();
+
         m_plot->ReplotIfNotDisabled();
     }
 

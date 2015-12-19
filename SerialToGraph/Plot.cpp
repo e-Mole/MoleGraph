@@ -23,8 +23,6 @@ Plot::Plot(QWidget *parent, Context const & context) :
     m_disabled(false),
     m_context(context),
     m_horizontalChannel(NULL),
-    m_drawingInProccess(false),
-    m_drawingPaused(false),
     m_graphPointsPosition(0)
 {
      //remove originally created axis rect
@@ -301,45 +299,13 @@ void Plot::_RefillGraphs()
 
 void Plot::SetHorizontalChannel(Channel *channel)
 {
-   PauseDrawing();
-
     m_horizontalChannel = channel;
     _RefillGraphs();
-
-    ContinueDrawing();
 }
 
 Channel * Plot::GetHorizontalChannel()
 {
     return m_horizontalChannel;
-}
-
-void Plot::WaitForDrawingIsFinished()
-{
-    while (m_drawingInProccess)
-    {}
-}
-void Plot::PauseDrawing()
-{
-    m_drawingPaused = true;
-    WaitForDrawingIsFinished();
-}
-
-
-void Plot::ContinueDrawing()
-{
-    m_drawingPaused = false;
-}
-
-void Plot::SetDrawingInProcess(bool set)
-{
-    if (set)
-    {
-        while (m_drawingPaused)
-        {}
-    }
-
-    m_drawingInProccess = set;
 }
 
 void Plot::setGraphPointPosition(int position)

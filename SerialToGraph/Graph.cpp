@@ -104,8 +104,6 @@ bool Graph::_IsCompleteSetInQueue()
 
 void Graph::draw()
 {
-    m_plot->SetDrawingInProcess(true);
-
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
     if (_FillQueue() && _IsCompleteSetInQueue())
@@ -162,15 +160,12 @@ void Graph::draw()
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
     if (m_drawingRequired)
         m_drawTimer->start(m_drawPeriod);
-
-    m_plot->SetDrawingInProcess(false);
 }
 
 void Graph::FinishDrawing()
 {
     m_drawingRequired = false;
     m_drawTimer->stop();
-    m_plot->WaitForDrawingIsFinished();
 }
 
 void Graph::_AdjustDrawPeriod(unsigned drawDelay)
@@ -247,7 +242,6 @@ void Graph::start()
 
     m_drawPeriod = INITIAL_DRAW_PERIOD;
     m_drawingRequired = true;
-    m_plot->ContinueDrawing();
     m_drawTimer->start(m_drawPeriod);
     if (!m_serialPort.Start())
     {

@@ -28,8 +28,6 @@ class Plot : public QCustomPlot
     bool m_disabled;
     Context const &m_context;
     Channel *m_horizontalChannel;
-    bool m_drawingInProccess;
-    bool m_drawingPaused;
     int m_graphPointsPosition;
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     void _RefillGraphs();

@@ -226,6 +226,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
+    m_context.m_plot->RescaleAxis(graphAxis);
 }
 
 void Channel::AssignToAxis(Axis *axis)

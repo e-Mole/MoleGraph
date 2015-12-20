@@ -46,6 +46,8 @@ void Axis::_AssignGraphAxis(QCPAxis *axis)
         _SetColor(m_color);
         UpdateGraphAxisName();
         UpdateVisiblility();
+        m_context.m_plot->RescaleAxis(axis);
+
     }
 }
 

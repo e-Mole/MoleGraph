@@ -189,6 +189,10 @@ QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
 
 void Plot::RemoveAxis(QCPAxis *axis)
 {
+    //workaround to be other same side axis reorganized
+    axis->setVisible(false);
+    ReplotIfNotDisabled();
+
     axisRect()->removeAxis(axis);
     ReplotIfNotDisabled();
 }

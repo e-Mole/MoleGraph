@@ -42,58 +42,100 @@
 <context>
     <name>AxisEditDialog</name>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="17"/>
         <source>Edit Axis...</source>
         <translation>Editovat Osy...</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="24"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="24"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="24"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="27"/>
-        <location filename="../AxisEditDialog.cpp" line="53"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="39"/>
         <source>Color</source>
         <translation>Barva</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="44"/>
         <source>Left</source>
         <translation>Levá</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="45"/>
         <source>Right</source>
         <translation>Pravá</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="48"/>
         <source>Side</source>
         <translation>Strana</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="52"/>
         <source>Channels and Units</source>
         <translation>Kanály a jednotky</translation>
     </message>
     <message>
-        <location filename="../AxisEditDialog.cpp" line="56"/>
+        <source>Display in Graph</source>
+        <translation>Zobrazit v grafu</translation>
+    </message>
+</context>
+<context>
+    <name>AxisSettings</name>
+    <message>
+        <location filename="../AxisSettings.cpp" line="16"/>
+        <source>Edit Axis...</source>
+        <translation>Editovat Osy...</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="22"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="22"/>
+        <source>Horizontal</source>
+        <translation>Horizontální</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="22"/>
+        <source>Vertical</source>
+        <translation>Vertikální</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="25"/>
+        <location filename="../AxisSettings.cpp" line="41"/>
+        <source>Name</source>
+        <translation>Název</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="32"/>
+        <source>Left</source>
+        <translation>Levá</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="33"/>
+        <source>Right</source>
+        <translation>Pravá</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="36"/>
+        <source>Side</source>
+        <translation>Strana</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="40"/>
+        <source>Channels and Units</source>
+        <translation>Kanály a jednotky</translation>
+    </message>
+    <message>
+        <location filename="../AxisSettings.cpp" line="44"/>
         <source>Display in Graph</source>
         <translation>Zobrazit v grafu</translation>
     </message>
@@ -202,7 +244,7 @@
 <context>
     <name>ChannelSettings</name>
     <message>
-        <location filename="../ChannelSettings.cpp" line="20"/>
+        <location filename="../ChannelSettings.cpp" line="19"/>
         <source>Channel settings</source>
         <translation>Nastavení kanálu</translation>
     </message>
@@ -233,12 +275,12 @@
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="155"/>
+        <location filename="../ChannelSettings.cpp" line="165"/>
         <source>Shape</source>
         <translation>Tvar</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="138"/>
+        <location filename="../ChannelSettings.cpp" line="148"/>
         <source>Cross</source>
         <translation>Kříž</translation>
     </message>
@@ -251,92 +293,92 @@
         <translation type="obsolete">Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="110"/>
+        <location filename="../ChannelSettings.cpp" line="120"/>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;.</source>
         <translation>Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="113"/>
+        <location filename="../ChannelSettings.cpp" line="123"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="114"/>
+        <location filename="../ChannelSettings.cpp" line="124"/>
         <source>Don&apos;t show it again</source>
         <translation>Příště nezobrazuj</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="139"/>
+        <location filename="../ChannelSettings.cpp" line="149"/>
         <source>Plus</source>
         <translation>Plus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="140"/>
+        <location filename="../ChannelSettings.cpp" line="150"/>
         <source>Circle</source>
         <translation>Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="141"/>
+        <location filename="../ChannelSettings.cpp" line="151"/>
         <source>Disc</source>
         <translation>Kružnice</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="142"/>
+        <location filename="../ChannelSettings.cpp" line="152"/>
         <source>Square</source>
         <translation>Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="143"/>
+        <location filename="../ChannelSettings.cpp" line="153"/>
         <source>Diamond</source>
         <translation>Diamant</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="144"/>
+        <location filename="../ChannelSettings.cpp" line="154"/>
         <source>Star</source>
         <translation>Hvězda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="145"/>
+        <location filename="../ChannelSettings.cpp" line="155"/>
         <source>Triangle</source>
         <translation>Trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="146"/>
+        <location filename="../ChannelSettings.cpp" line="156"/>
         <source>Inverted Triangle</source>
         <translation>Obrácený trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="147"/>
+        <location filename="../ChannelSettings.cpp" line="157"/>
         <source>Cross and Square</source>
         <translation>Kříž a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="148"/>
+        <location filename="../ChannelSettings.cpp" line="158"/>
         <source>Plus and Square</source>
         <translation>Plus a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="149"/>
+        <location filename="../ChannelSettings.cpp" line="159"/>
         <source>Cross and Circle</source>
         <translation>Kříž a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="150"/>
+        <location filename="../ChannelSettings.cpp" line="160"/>
         <source>Plus and Circle</source>
         <translation>Plus a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="151"/>
+        <location filename="../ChannelSettings.cpp" line="161"/>
         <source>Peace</source>
         <translation>Mír</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="162"/>
+        <location filename="../ChannelSettings.cpp" line="172"/>
         <source>New Axis...</source>
         <translation>Nová osa...</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="171"/>
+        <location filename="../ChannelSettings.cpp" line="181"/>
         <source>Axis</source>
         <translation>Osa</translation>
     </message>
@@ -370,6 +412,14 @@
         <location filename="../FormDialogBase.cpp" line="22"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
+    </message>
+</context>
+<context>
+    <name>FormDialogColor</name>
+    <message>
+        <location filename="../FormDialogColor.cpp" line="29"/>
+        <source>Color</source>
+        <translation>Barva</translation>
     </message>
 </context>
 <context>
@@ -414,7 +464,7 @@
 <context>
     <name>Plot</name>
     <message>
-        <location filename="../Plot.cpp" line="276"/>
+        <location filename="../Plot.cpp" line="282"/>
         <source>Axis %1</source>
         <translation>Osa %1</translation>
     </message>

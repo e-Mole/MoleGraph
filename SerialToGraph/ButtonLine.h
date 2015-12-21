@@ -56,6 +56,10 @@ signals:
     void axesPressed();
     void allChannelsDisplayedOrHidden();
 
+private slots:
+    void openFile();
+    void saveFile();
+    void saveAsFile();
 public slots:
     void startButtonPressed();
     void stopButtonPressed();

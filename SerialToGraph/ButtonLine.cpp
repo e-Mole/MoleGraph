@@ -162,9 +162,9 @@ void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
-    //fileMenu->addAction(tr("Open"));
-    //fileMenu->addAction(tr("Save"));
-    //fileMenu->addAction(tr("Save As"));
+    m_fileMenu->addAction(tr("Open"), this, SLOT(openFile()));
+    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
+    m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
     m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsv()));
@@ -313,5 +313,18 @@ void ButtonLine::connectivityStateChange(bool connected)
     m_connectivityLabel->repaint();
 
 	m_startButton->setEnabled(m_enabledBChannels && m_connected);
+}
+
+void ButtonLine::openFile()
+{
+
+}
+void ButtonLine::saveFile()
+{
+
+}
+void ButtonLine::saveAsFile()
+{
+
 }
 

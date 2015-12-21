@@ -273,10 +273,11 @@ void Graph::periodChanged(unsigned period)
     m_period = period;
 }
 
-void Graph::sliderMoved(int value)
+void Graph::sliderMoved(int action)
 {
+    qDebug() << "slider moved";
     foreach (Channel * channel, m_context.m_channels)
-        channel->displayValueOnIndex(value);
+        channel->displayValueOnIndex(m_scrollBar->sliderPosition());
 
     m_plot->SetMoveMode(true);
     m_plot->ReplotIfNotDisabled();

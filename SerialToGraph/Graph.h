@@ -83,7 +83,7 @@ protected slots:
 	void stop();
     void periodTypeChanged(int index);
 	void periodChanged(unsigned period);
-    void sliderMoved(int value);
+    void sliderMoved(int action);
 public slots:
 
 };

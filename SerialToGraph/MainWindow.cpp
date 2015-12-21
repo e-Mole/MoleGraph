@@ -56,7 +56,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_graph = new Graph(this, m_context, m_serialPort, m_scrollBar);
     m_context.SetGraph(m_graph, m_graph->GetPlot());
     m_centralWidget->addGraph(m_graph);
-    connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
+    connect(m_scrollBar, SIGNAL(actionTriggered(int)), m_graph, SLOT(sliderMoved(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph->GetPlot(), SLOT(setGraphPointPosition(int)));
 
     QDockWidget *buttonDock = new QDockWidget(this);

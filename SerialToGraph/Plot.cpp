@@ -1,6 +1,7 @@
 #include "Plot.h"
 #include <Axis.h>
 #include <Channel.h>
+#include <qmath.h>
 #include <Context.h>
 #include <QColor>
 
@@ -233,9 +234,9 @@ void Plot::RescaleAxis(QCPAxis *axis)
         }
     }
 
-    double margin = std::abs(upper - lower) / RESCALE_MARGIN_RATIO;
+    double margin = qFabs(upper - lower) / RESCALE_MARGIN_RATIO;
     if (0 == margin) //upper and lower are the same
-        margin = std::abs(upper / RESCALE_MARGIN_RATIO);
+        margin = qFabs(upper / RESCALE_MARGIN_RATIO);
 
     axis->setRange(lower - margin, upper + margin);
 }

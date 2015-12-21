@@ -5,7 +5,6 @@
 #include <Channel.h>
 #include <Context.h>
 #include <limits.h>
-#include <math.h>
 #include <Plot.h>
 #include <QBoxLayout>
 #include <QByteArray>

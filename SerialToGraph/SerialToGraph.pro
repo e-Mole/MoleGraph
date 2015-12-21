@@ -25,12 +25,15 @@ SOURCES += main.cpp\
     CentralWidget.cpp \
     FormDialogBase.cpp \
     Axis.cpp \
-    AxesDialog.cpp \
     Context.cpp \
     Plot.cpp \
     Export.cpp \
     FormDialogColor.cpp \
-    AxisSettings.cpp
+    AxisSettings.cpp \
+    Measurement.cpp \
+    MeasurementMenu.cpp \
+    AxisMenu.cpp \
+    MenuDialogBase.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -44,11 +47,14 @@ HEADERS  += MainWindow.h \
     CentralWidget.h \
     FormDialogBase.h \
     Axis.h \
-    AxesDialog.h \
     Context.h \
     Plot.h \
     Export.h \
     FormDialogColor.h \
-    AxisSettings.h
+    AxisSettings.h \
+    Measurement.h \
+    MeasurementMenu.h \
+    AxisMenu.h \
+    MenuDialogBase.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

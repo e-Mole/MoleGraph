@@ -1,7 +1,7 @@
-#ifndef REMOVEAXISDIALOG_H
-#define REMOVEAXISDIALOG_H
+#ifndef AXISMENU_H
+#define AXISMENU_H
 
-#include <QDialog>
+#include <MenuDialogBase.h>
 #include <QMap>
 
 class Axis;
@@ -9,7 +9,7 @@ class Plot;
 class QFormLayout;
 class QPushButton;
 struct Context;
-class AxesDialog : public QDialog
+class AxisMenu : public MenuDialogBase
 {
     Q_OBJECT
 
@@ -17,13 +17,10 @@ class AxesDialog : public QDialog
 
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
-    Context const &m_context;
     Plot &m_plot;
-    QFormLayout *m_formLayout;
-    bool m_waitToFinsh;
 public:
-    AxesDialog(Context const &context);
-    bool WaitToFinish() { return m_waitToFinsh; }
+    AxisMenu(Context const &context);
+
 signals:
 
 private slots:
@@ -32,4 +29,4 @@ private slots:
     void editButtonPressed();
 };
 
-#endif // REMOVEAXISDIALOG_H
+#endif // AXISMENU_H

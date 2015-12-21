@@ -6,14 +6,18 @@
 #include <QVector>
 
 class Axis;
-class QLineEdit;
-class QPushButton;
-class QLabel;
-class QMenu;
-class QAction;
-class QKeySequence;
 class Channel;
+class MenuDialogBase;
+class QAction;
+class QDialog;
+class QKeySequence;
+class QLabel;
+class QLineEdit;
+class QMenu;
+class QPoint;
+class QPushButton;
 struct Context;
+
 class ButtonLine : public QWidget
 {
     Q_OBJECT
@@ -21,6 +25,8 @@ class ButtonLine : public QWidget
     void _EnableStartButton(bool enabled);
     QAction * _InsertAction(QMenu *menu, QString title, const QKeySequence &keySequence, bool checkable, QAction *before = NULL);
     void _InitializeMenu();
+    QPoint _GetGlobalMenuPosition(QPushButton *button);
+    void _OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog);
 
     QLineEdit *m_period;
     QLabel *m_periodUnits;
@@ -29,7 +35,8 @@ class ButtonLine : public QWidget
     QLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
-    QPushButton * m_axesMenuButton;
+    QPushButton * m_axisMenuButton;
+    QPushButton * m_measurementButton;
     QMenu *m_fileMenu;
     QMenu *m_panelMenu;
 	bool m_connected;
@@ -71,6 +78,7 @@ public slots:
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();
+    void measurementMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
 };

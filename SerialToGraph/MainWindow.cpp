@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include <AxesDialog.h>
+#include <AxisMenu.h>
 #include <Axis.h>
 #include <ButtonLine.h>
 #include <Context.h>
@@ -8,6 +8,7 @@
 #include <Graph.h>
 #include <Plot.h>
 #include <PortListDialog.h>
+#include <MeasurementMenu.h>
 #include <QDockWidget>
 #include <QtCore/QDebug>
 #include <QTimer>
@@ -20,7 +21,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels, m_settings),
+    m_context(m_axes, m_channels, measurements, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -78,6 +79,34 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m_centralWidget, SLOT(showGraph(bool)), Qt::QueuedConnection);
     connect(m_buttonLine, SIGNAL(channelTriggered(Channel *,bool)), m_centralWidget, SLOT(changeChannelVisibility(Channel *,bool)), Qt::QueuedConnection);
+
+    _InitializeMeasurement();
+    Axis * xAxis = NULL;
+    Axis * yAxis = NULL;
+    _InitializeAxes(xAxis, yAxis);
+    _InitializeChannels(xAxis, yAxis);
+}
+
+MainWindow::~MainWindow()
+{
+    foreach (Axis *axis, m_axes)
+    {
+        delete axis;
+    }
+
+    foreach (Measurement *measurement, m_measurements)
+    {
+        delete measurement;
+    }
+}
+
+void MainWindow::_InitializeMeasurement()
+{
+    m_measurements.push_back(new Measurement("test"));
+}
+
+void MainWindow::_InitializeAxes(Axis * xAxis, Axis * yAxis)
+{
     Axis * xAxis =
         new Axis(
             m_context,
@@ -98,16 +127,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         );
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
-
-    _InitializeChannels(xAxis, yAxis);
-}
-
-MainWindow::~MainWindow()
-{
-    foreach (Axis *axis, m_axes)
-    {
-        delete axis;
-    }
 }
 
 void MainWindow::dockVisibilityChanged(bool visible)

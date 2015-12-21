@@ -1,4 +1,4 @@
-#include "AxesDialog.h"
+#include "AxisMenu.h"
 #include <Axis.h>
 #include <AxisSettings.h>
 #include <Context.h>
@@ -16,20 +16,14 @@
 #include <QString>
 #include <QWidget>
 
-AxesDialog::AxesDialog(const Context &context) :
-    QDialog(NULL, Qt::Popup),
-    m_context(context),
-    m_plot(*context.m_plot),
-    m_formLayout(new QFormLayout(this)),
-    m_waitToFinsh(false)
+AxisMenu::AxisMenu(const Context &context) :
+    MenuDialogBase(context),
+    m_plot(*context.m_plot)
 {
-    setWindowTitle(tr("Axes"));
-    setLayout(m_formLayout);
-
     _ReinitAxisGrid();
 }
 
-void AxesDialog::_ReinitAxisGrid()
+void AxisMenu::_ReinitAxisGrid()
 {
     while ( m_formLayout->count() != 0)
     {
@@ -40,27 +34,7 @@ void AxesDialog::_ReinitAxisGrid()
 
     foreach (Axis *axis, m_context.m_axes)
     {
-        QWidget *rowWidget = new QWidget(this);
-        QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
-        buttonLayout->setMargin(0);
-        rowWidget->setLayout(buttonLayout);
-
-        QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
-        buttonLayout->addWidget(editButton);
-        m_editButtontoAxis.insert(editButton, axis);
-        connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()));
-
-        QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
-        removeButton->setEnabled(axis->IsRemovable());
-        buttonLayout->addWidget(removeButton);
-        m_removeButtontoAxis.insert(removeButton, axis);
-        connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
-
-        QLabel *label = new QLabel(axis->GetTitle(), this);
-        QPalette palette(label->palette());
-        palette.setColor(QPalette::Foreground, axis->GetColor());
-        label->setPalette(palette);
-        m_formLayout->addRow(label, rowWidget);
+        _AddRowWithEditAndRemove();
     }
 
     QPushButton * addbutton = new QPushButton(tr("Add a New Axis"), this);
@@ -68,7 +42,7 @@ void AxesDialog::_ReinitAxisGrid()
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 }
 
-void AxesDialog::addButtonPressed()
+void AxisMenu::addButtonPressed()
 {
     m_waitToFinsh = true;
     Axis *newAxis = new Axis(m_context);
@@ -83,7 +57,7 @@ void AxesDialog::addButtonPressed()
     close();
 }
 
-void AxesDialog::removeButtonPressed()
+void AxisMenu::removeButtonPressed()
 {
     m_waitToFinsh = true;
     Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
@@ -136,7 +110,7 @@ void AxesDialog::removeButtonPressed()
     close();
 }
 
-void AxesDialog::editButtonPressed()
+void AxisMenu::editButtonPressed()
 {
     m_waitToFinsh = true;
     QMap<QPushButton*, Axis*>::iterator it = m_editButtontoAxis.begin();

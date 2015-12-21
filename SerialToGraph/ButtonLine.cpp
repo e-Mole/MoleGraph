@@ -1,10 +1,12 @@
 #include "ButtonLine.h"
 #include <Axis.h>
-#include <AxesDialog.h>
+#include <AxisMenu.h>
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
 #include <Graph.h>
+#include <MeasurementMenu.h>
+#include <MenuDialogBase.h>
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QFileDialog>
@@ -29,7 +31,8 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_connectivityLabel(NULL),
     m_fileMenuButton(NULL),
     m_panelMenuButton(NULL),
-    m_axesMenuButton(NULL),
+    m_axisMenuButton(NULL),
+    m_measurementButton(NULL),
     m_fileMenu(NULL),
     m_panelMenu(NULL),
     m_connected(false),
@@ -52,9 +55,13 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     buttonLayout->addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
-    m_axesMenuButton = new QPushButton(tr("Axes"), this);
-    buttonLayout->addWidget(m_axesMenuButton);
-    connect(m_axesMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
+    m_axisMenuButton = new QPushButton(tr("Axes"), this);
+    buttonLayout->addWidget(m_axisMenuButton);
+    connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
+
+    m_measurementButton = new QPushButton(tr("Measurement"), this);
+    buttonLayout->addWidget(m_measurementButton);
+    connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -101,42 +108,42 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     _EnableStartButton(true);
 }
 
+QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
+{
+    return
+        QWidget::mapToGlobal(
+            QPoint(button->pos().x(), button->pos().y() + button->height())
+        );
+}
+
+void ButtonLine::_OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog)
+{
+    dialog.move(_GetGlobalMenuPosition(button));
+    dialog.exec();
+    while (dialog.WaitToFinish())
+    {}
+}
+
 void ButtonLine::fileMenuButtonPressed()
 {
-    m_fileMenu->exec(
-        QWidget::mapToGlobal(
-            QPoint(m_fileMenuButton->pos().x(), m_fileMenuButton->pos().y() + m_fileMenuButton->height())
-        )
-    );
+    m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_panelMenu->exec(
-        QWidget::mapToGlobal(
-            QPoint(
-                m_panelMenuButton->pos().x(),
-                m_panelMenuButton->pos().y() + m_panelMenuButton->height()
-            )
-        )
-    );
+    m_panelMenu->exec(_GetGlobalMenuPosition(m_panelMenuButton));
 }
 
 void ButtonLine::axisMenuButtonPressed()
 {
-    AxesDialog dialog(m_context);
-    dialog.move(
-        QWidget::mapToGlobal(
-            QPoint(
-                m_axesMenuButton->pos().x(),
-                m_axesMenuButton->pos().y() + m_axesMenuButton->height()
-            )
-        )
-    );
+    AxisMenu axisMenu(m_context);
+    _OpenMenuDialog(m_axisMenuButton, axisMenu);
+}
 
-    dialog.exec();
-    while (dialog.WaitToFinish())
-    {}
+void ButtonLine::measurementMenuButtonPressed()
+{
+    MeasurementMenu measurementMenu(m_context);
+    _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
 QAction * ButtonLine::_InsertAction(QMenu *menu, QString title, QKeySequence const &keySequence, bool checkable, QAction *before)

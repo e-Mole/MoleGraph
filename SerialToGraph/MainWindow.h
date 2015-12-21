@@ -12,12 +12,15 @@ class Axis;
 class CentralWidget;
 class Channel;
 class Graph;
+class Measurement;
 class QApplication;
 class QScrollBar;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
+    void _InitializeMeasurement();
+    void _InitializeAxes(Axis *xAxis, Axis *yAxis);
     void _InitializeChannels(Axis *xAxis, Axis *yAxis);
     void _AddYChannel(Qt::GlobalColor color, Axis *axis);
 
@@ -28,6 +31,7 @@ class MainWindow : public QMainWindow
 
     QVector<Axis *> m_axes;
     QVector<Channel *> m_channels;
+    QVector<Measurement*> m_measurements;
     QScrollBar *m_scrollBar;
     Graph* m_graph;
     Context m_context;

@@ -67,22 +67,21 @@ void AxisMenu::_ReinitAxisGrid()
 
 void AxisMenu::addButtonPressed()
 {
-    m_waitToFinsh = true;
     Axis *newAxis = new Axis(m_context);
 
     AxisSettings dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
-        _ReinitAxisGrid();
+    {
+        //_ReinitAxisGrid();
+    }
     else
         delete newAxis;
 
-    m_waitToFinsh = false;
     close();
 }
 
 void AxisMenu::removeButtonPressed()
 {
-    m_waitToFinsh = true;
     Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
     Axis *firstVertical = NULL;
     foreach (Axis * axis, m_context.m_axes)
@@ -109,7 +108,6 @@ void AxisMenu::removeButtonPressed()
                 )
             )
             {
-                m_waitToFinsh = false;
                 close();
                 return;
             }
@@ -127,21 +125,19 @@ void AxisMenu::removeButtonPressed()
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();
 
-    _ReinitAxisGrid();
+    //_ReinitAxisGrid();
 
-    m_waitToFinsh = false;
     close();
 }
 
 void AxisMenu::editButtonPressed()
 {
-    m_waitToFinsh = true;
-
     Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
     AxisSettings dialog(axis, m_context);
     if (QDialog::Accepted == dialog.exec())
-        _ReinitAxisGrid();
+    {
+        //_ReinitAxisGrid();
+    }
 
-    m_waitToFinsh = false;
     close();
 }

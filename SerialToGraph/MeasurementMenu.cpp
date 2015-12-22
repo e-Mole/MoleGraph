@@ -27,13 +27,13 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtonToItem.insert(editButton, measurement);
-    connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()));
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()), Qt::DirectConnection);
 
     QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
     removeButton->setEnabled(true);
     buttonLayout->addWidget(removeButton);
     m_removeButtonToIten.insert(removeButton, measurement);
-    connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()), Qt::DirectConnection);
 
     QLabel *label = new QLabel(measurement->GetName(), this);
     QPalette palette(label->palette());
@@ -56,51 +56,50 @@ void MeasurementMenu::_ReinitGrid()
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
     m_formLayout->addRow(new QLabel("", this), addbutton);
-    connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
+    connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()), Qt::DirectConnection);
 }
 
+QString MeasurementMenu::GetNextMeasurementName(Context const &context)
+{
+    return QString(tr("Measurement %1").arg(context.m_measurements.size() + 1));
+}
 void MeasurementMenu::addButtonPressed()
 {
-    m_waitToFinsh = true;
     Measurement *newItem =
-        new Measurement(QString(tr("Measurement %1").arg(m_context.m_measurements.size() + 1)));
+        new Measurement(GetNextMeasurementName(m_context));
 
     MeasurementSettings dialog(newItem, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_measurements.push_back(newItem);
-        _ReinitGrid();
+        //_ReinitGrid();
     }
     else
         delete newItem;
 
-    m_waitToFinsh = false;
     close();
 }
 
 void MeasurementMenu::removeButtonPressed()
 {
-    m_waitToFinsh = true;
     Measurement *measurement = m_removeButtonToIten.find((QPushButton*)sender()).value();
     m_context.m_measurements.removeOne(measurement);
     delete measurement;
 
-    _ReinitGrid();
+    //_ReinitGrid();
 
-    m_waitToFinsh = false;
     close();
 }
 
 void MeasurementMenu::editButtonPressed()
 {
-    m_waitToFinsh = true;
-
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
     MeasurementSettings dialog(measurement, m_context);
     if (QDialog::Accepted == dialog.exec())
-        _ReinitGrid();
+    {
+    //    _ReinitGrid();
+    }
 
-    m_waitToFinsh = false;
     close();
 }
 

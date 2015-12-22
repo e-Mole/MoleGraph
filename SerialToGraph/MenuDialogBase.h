@@ -12,12 +12,10 @@ class MenuDialogBase : public QDialog
 protected:
 
     Context const &m_context;
-    bool m_waitToFinsh;
      QFormLayout *m_formLayout;
 public:
     MenuDialogBase(const Context &context);
 
-    bool WaitToFinish() { return m_waitToFinsh; }
 
 signals:
 

@@ -120,8 +120,6 @@ void ButtonLine::_OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog)
 {
     dialog.move(_GetGlobalMenuPosition(button));
     dialog.exec();
-    while (dialog.WaitToFinish())
-    {}
 }
 
 void ButtonLine::fileMenuButtonPressed()

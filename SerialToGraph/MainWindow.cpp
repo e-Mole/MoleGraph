@@ -122,7 +122,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::_InitializeMeasurement()
 {
-    m_measurements.push_back(new Measurement("test"));
+    m_measurements.push_back(new Measurement(MeasurementMenu::GetNextMeasurementName(m_context)));
 }
 
 void MainWindow::dockVisibilityChanged(bool visible)

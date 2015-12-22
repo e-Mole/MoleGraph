@@ -17,7 +17,7 @@ class MeasurementMenu : public MenuDialogBase
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
 public:
     explicit MeasurementMenu(const Context &context);
-    QString GetNextMeasurementName();
+    static QString GetNextMeasurementName(Context const &context);
 signals:
 
 private slots:

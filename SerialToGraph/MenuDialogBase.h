@@ -10,7 +10,6 @@ class MenuDialogBase : public QDialog
     Q_OBJECT
 
 protected:
-    void AddRowWithEditAndRemove();
 
     Context const &m_context;
     bool m_waitToFinsh;

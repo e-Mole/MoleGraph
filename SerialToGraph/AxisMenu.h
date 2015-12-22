@@ -14,6 +14,7 @@ class AxisMenu : public MenuDialogBase
     Q_OBJECT
 
     void _ReinitAxisGrid();
+    void _AddRowWithEditAndRemove(Axis *axis);
 
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;

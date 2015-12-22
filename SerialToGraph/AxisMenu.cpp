@@ -23,6 +23,31 @@ AxisMenu::AxisMenu(const Context &context) :
     _ReinitAxisGrid();
 }
 
+void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
+{
+    QWidget *rowWidget = new QWidget(this);
+    QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
+    buttonLayout->setMargin(0);
+    rowWidget->setLayout(buttonLayout);
+
+    QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
+    buttonLayout->addWidget(editButton);
+    m_editButtontoAxis.insert(editButton, axis);
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()));
+
+    QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
+    removeButton->setEnabled(axis->IsRemovable());
+    buttonLayout->addWidget(removeButton);
+    m_removeButtontoAxis.insert(removeButton, axis);
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
+
+    QLabel *label = new QLabel(axis->GetTitle(), this);
+    QPalette palette(label->palette());
+    palette.setColor(QPalette::Foreground, axis->GetColor());
+    label->setPalette(palette);
+    m_formLayout->addRow(label, rowWidget);
+}
+
 void AxisMenu::_ReinitAxisGrid()
 {
     while ( m_formLayout->count() != 0)
@@ -33,9 +58,7 @@ void AxisMenu::_ReinitAxisGrid()
     }
 
     foreach (Axis *axis, m_context.m_axes)
-    {
-        _AddRowWithEditAndRemove();
-    }
+        _AddRowWithEditAndRemove(axis);
 
     QPushButton * addbutton = new QPushButton(tr("Add a New Axis"), this);
     m_formLayout->addRow(new QLabel("", this), addbutton);
@@ -113,16 +136,12 @@ void AxisMenu::removeButtonPressed()
 void AxisMenu::editButtonPressed()
 {
     m_waitToFinsh = true;
-    QMap<QPushButton*, Axis*>::iterator it = m_editButtontoAxis.begin();
-    for (; it != m_editButtontoAxis.end(); ++it)
-    {
-        if (it.key() == (QPushButton*)sender())
-        {
-            AxisSettings dialog(it.value(), m_context);
-            if (QDialog::Accepted == dialog.exec())
-                _ReinitAxisGrid();
-        }
-    }
+
+    Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
+    AxisSettings dialog(axis, m_context);
+    if (QDialog::Accepted == dialog.exec())
+        _ReinitAxisGrid();
+
     m_waitToFinsh = false;
     close();
 }

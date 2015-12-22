@@ -51,6 +51,10 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     buttonLayout->addWidget(m_fileMenuButton);
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
+    m_measurementButton = new QPushButton(tr("Measurement"), this);
+    buttonLayout->addWidget(m_measurementButton);
+    connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
+
     m_panelMenuButton = new QPushButton(tr("Panels"), this);
     buttonLayout->addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
@@ -58,10 +62,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_axisMenuButton = new QPushButton(tr("Axes"), this);
     buttonLayout->addWidget(m_axisMenuButton);
     connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
-
-    m_measurementButton = new QPushButton(tr("Measurement"), this);
-    buttonLayout->addWidget(m_measurementButton);
-    connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
 
     QComboBox *periodType = new QComboBox(this);
     periodType->addItem(tr("Frequency"));
@@ -169,6 +169,7 @@ void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
+    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
     m_fileMenu->addAction(tr("Open"), this, SLOT(openFile()));
     m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
     m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
@@ -322,6 +323,10 @@ void ButtonLine::connectivityStateChange(bool connected)
 	m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }
 
+void ButtonLine::newFile()
+{
+
+}
 void ButtonLine::openFile()
 {
 

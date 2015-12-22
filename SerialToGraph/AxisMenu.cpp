@@ -60,7 +60,7 @@ void AxisMenu::_ReinitAxisGrid()
     foreach (Axis *axis, m_context.m_axes)
         _AddRowWithEditAndRemove(axis);
 
-    QPushButton * addbutton = new QPushButton(tr("Add a New Axis"), this);
+    QPushButton * addbutton = new QPushButton(tr("Add"), this);
     m_formLayout->addRow(new QLabel("", this), addbutton);
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 }

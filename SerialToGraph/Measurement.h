@@ -5,6 +5,7 @@
 
 class Measurement
 {
+    friend class MeasurementSettings;
     QString m_name;
 public:
     Measurement(QString const &name);

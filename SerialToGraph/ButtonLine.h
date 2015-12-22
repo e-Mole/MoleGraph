@@ -64,6 +64,7 @@ signals:
     void allChannelsDisplayedOrHidden();
 
 private slots:
+    void newFile();
     void openFile();
     void saveFile();
     void saveAsFile();

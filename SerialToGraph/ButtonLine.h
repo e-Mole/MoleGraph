@@ -7,7 +7,7 @@
 
 class Axis;
 class Channel;
-class MenuDialogBase;
+class Measurement;
 class QAction;
 class QDialog;
 class QKeySequence;
@@ -26,7 +26,7 @@ class ButtonLine : public QWidget
     QAction * _InsertAction(QMenu *menu, QString title, const QKeySequence &keySequence, bool checkable, QAction *before = NULL);
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
-    void _OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog);
+    void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
 
     QLineEdit *m_period;
     QLabel *m_periodUnits;
@@ -48,9 +48,10 @@ class ButtonLine : public QWidget
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
     Context const &m_context;
+    QVector<Measurement *> &m_measurements;
 
 public:
-    ButtonLine(QWidget *parent, const Context &context);
+    ButtonLine(QWidget *parent, const Context &context, QVector<Measurement *> &measurements);
     void AddChannel(Channel *channel);
 
 signals:

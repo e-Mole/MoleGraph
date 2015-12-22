@@ -33,7 +33,6 @@ SOURCES += main.cpp\
     Measurement.cpp \
     MeasurementMenu.cpp \
     AxisMenu.cpp \
-    MenuDialogBase.cpp \
     MeasurementSettings.cpp
 
 HEADERS  += MainWindow.h \
@@ -56,7 +55,6 @@ HEADERS  += MainWindow.h \
     Measurement.h \
     MeasurementMenu.h \
     AxisMenu.h \
-    MenuDialogBase.h \
     MeasurementSettings.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

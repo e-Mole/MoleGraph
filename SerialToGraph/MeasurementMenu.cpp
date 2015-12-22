@@ -11,9 +11,12 @@
 #include <QPushButton>
 #include <QString>
 
-MeasurementMenu::MeasurementMenu(const Context &context) :
-    MenuDialogBase(context)
+MeasurementMenu::MeasurementMenu(QVector<Measurement*> &measurements) :
+    QDialog(NULL, Qt::Popup),
+    m_formLayout(new QFormLayout(this)),
+    m_measurements(measurements)
 {
+    setLayout(m_formLayout);
     _ReinitGrid();
 }
 
@@ -51,7 +54,7 @@ void MeasurementMenu::_ReinitGrid()
         delete forDeletion;
     }
 
-    foreach (Measurement *measurement, m_context.m_measurements)
+    foreach (Measurement *measurement, m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
@@ -59,19 +62,20 @@ void MeasurementMenu::_ReinitGrid()
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()), Qt::DirectConnection);
 }
 
-QString MeasurementMenu::GetNextMeasurementName(Context const &context)
+QString MeasurementMenu::GetNextMeasurementName(QVector<Measurement *> &measurements)
 {
-    return QString(tr("Measurement %1").arg(context.m_measurements.size() + 1));
+    return QString(tr("Measurement %1").arg(measurements.size() + 1));
 }
+
 void MeasurementMenu::addButtonPressed()
 {
     Measurement *newItem =
-        new Measurement(GetNextMeasurementName(m_context));
+        new Measurement(GetNextMeasurementName(m_measurements));
 
-    MeasurementSettings dialog(newItem, m_context);
+    MeasurementSettings dialog(newItem);
     if (QDialog::Accepted == dialog.exec())
     {
-        m_context.m_measurements.push_back(newItem);
+        m_measurements.push_back(newItem);
         //_ReinitGrid();
     }
     else
@@ -83,7 +87,7 @@ void MeasurementMenu::addButtonPressed()
 void MeasurementMenu::removeButtonPressed()
 {
     Measurement *measurement = m_removeButtonToIten.find((QPushButton*)sender()).value();
-    m_context.m_measurements.removeOne(measurement);
+    m_measurements.removeOne(measurement);
     delete measurement;
 
     //_ReinitGrid();
@@ -94,7 +98,7 @@ void MeasurementMenu::removeButtonPressed()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(measurement, m_context);
+    MeasurementSettings dialog(measurement);
     if (QDialog::Accepted == dialog.exec())
     {
     //    _ReinitGrid();

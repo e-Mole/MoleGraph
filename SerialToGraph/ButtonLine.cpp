@@ -5,10 +5,11 @@
 #include <Channel.h>
 #include <Export.h>
 #include <Graph.h>
+#include <Measurement.h>
 #include <MeasurementMenu.h>
-#include <MenuDialogBase.h>
 #include <QHBoxLayout>
 #include <QComboBox>
+#include <QDialog>
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QLabel>
@@ -22,7 +23,7 @@
 #include <QPoint>
 #include <QWidget>
 
-ButtonLine::ButtonLine(QWidget *parent, Context const& context):
+ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurement *> &measurements):
     QWidget(parent),
     m_period(NULL),
     m_periodUnits(NULL),
@@ -41,7 +42,8 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_allAction(NULL),
     m_noneAction(NULL),
     m_afterLastChannelSeparator(NULL),
-    m_context(context)
+    m_context(context),
+    m_measurements(measurements)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->setMargin(1);
@@ -116,7 +118,7 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
         );
 }
 
-void ButtonLine::_OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog)
+void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 {
     dialog.move(_GetGlobalMenuPosition(button));
     dialog.exec();
@@ -140,7 +142,7 @@ void ButtonLine::axisMenuButtonPressed()
 
 void ButtonLine::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(m_context);
+    MeasurementMenu measurementMenu(m_measurements);
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 

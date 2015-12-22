@@ -1,23 +1,26 @@
 #ifndef MEASUREMENTMENU_H
 #define MEASUREMENTMENU_H
 
-#include <MenuDialogBase.h>
+#include <QDialog>
 #include <QMap>
 
 class Measurement;
+class QFormLayout;
 class QPushButton;
-class MeasurementMenu : public MenuDialogBase
+class MeasurementMenu : public QDialog
 {
     Q_OBJECT
 
     void _AddRowWithEditAndRemove(Measurement *measurement);
     void _ReinitGrid();
 
+    QFormLayout *m_formLayout;
+    QVector<Measurement*> &m_measurements;
     QMap<QPushButton*, Measurement*> m_removeButtonToIten;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
 public:
-    explicit MeasurementMenu(const Context &context);
-    static QString GetNextMeasurementName(Context const &context);
+    MeasurementMenu(QVector<Measurement *> &measurements);
+    static QString GetNextMeasurementName(QVector<Measurement *> &measurements);
 signals:
 
 private slots:

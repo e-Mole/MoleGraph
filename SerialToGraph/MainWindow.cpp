@@ -22,7 +22,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels, m_measurements, m_settings),
+    m_context(m_axes, m_channels, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -65,7 +65,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
 
     this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-    m_buttonLine = new ButtonLine(this, m_context);
+    m_buttonLine = new ButtonLine(this, m_context, m_measurements);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
 	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
@@ -122,7 +122,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::_InitializeMeasurement()
 {
-    m_measurements.push_back(new Measurement(MeasurementMenu::GetNextMeasurementName(m_context)));
+    m_measurements.push_back(new Measurement(MeasurementMenu::GetNextMeasurementName(m_measurements)));
 }
 
 void MainWindow::dockVisibilityChanged(bool visible)

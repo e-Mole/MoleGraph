@@ -1,13 +1,11 @@
 #include "MeasurementSettings.h"
-#include <Context.h>
 #include <Measurement.h>
 #include <QLabel>
 #include <QLineEdit>
 #include <QFormLayout>
 
-MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const & context):
+MeasurementSettings::MeasurementSettings(Measurement *measurement):
     FormDialogBase(NULL, tr("Edit measurement...")),
-    m_context(context),
     m_measurement(measurement),
     m_name(NULL)
 {

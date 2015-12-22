@@ -3,16 +3,14 @@
 #include <Channel.h>
 #include <Graph.h>
 #include <Plot.h>
-#include <Measurement.h>
 #include <QCoreApplication>
 #include <qcustomplot/qcustomplot.h>
 #include <QFileInfo>
 #include <QSettings>
 
-Context::Context(QVector<Axis*> &axis, QVector<Channel*> &channels, QVector<Measurement*> &measurements, QSettings &settings):
+Context::Context(QVector<Axis*> &axis, QVector<Channel*> &channels, QSettings &settings):
     m_axes(axis),
     m_channels(channels),
-    m_measurements(measurements),
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
     m_graph(NULL),

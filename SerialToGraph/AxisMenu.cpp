@@ -17,9 +17,12 @@
 #include <QWidget>
 
 AxisMenu::AxisMenu(const Context &context) :
-    MenuDialogBase(context),
-    m_plot(*context.m_plot)
+    QDialog(NULL, Qt::Popup),
+    m_context(context),
+    m_plot(*context.m_plot),
+    m_formLayout(new QFormLayout(this))
 {
+  setLayout(m_formLayout);
     _ReinitAxisGrid();
 }
 

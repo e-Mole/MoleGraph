@@ -15,7 +15,7 @@ class AxisSettings : public FormDialogColor
 {
     Q_OBJECT
 
-    virtual void BeforeAccept();
+    virtual bool BeforeAccept();
     virtual void ColorChanged(QColor &color);
     Axis * m_axisOriginal;
     Axis m_axisCopy;

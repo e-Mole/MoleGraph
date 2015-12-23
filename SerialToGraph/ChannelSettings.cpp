@@ -36,7 +36,7 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     _InitializeAxisCombo();
 }
 
-void ChannelSettings::BeforeAccept()
+bool ChannelSettings::BeforeAccept()
 {
     bool changed = false;
     if (m_channel->m_name != m_name->text())
@@ -99,7 +99,8 @@ void ChannelSettings::BeforeAccept()
         m_context.m_plot->ReplotIfNotDisabled();
 
     }
-    accept();
+
+    return true;
 }
 
 void ChannelSettings::_MoveLastHorizontalToVertical()

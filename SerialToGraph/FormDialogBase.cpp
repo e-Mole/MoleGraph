@@ -22,10 +22,11 @@ FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
     QPushButton *cancel = new QPushButton(tr("Cancel"), this);
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
 }
 
 void FormDialogBase::storeAndAccept()
 {
-    BeforeAccept();
-    accept();
+    if (BeforeAccept())
+        accept();
 }

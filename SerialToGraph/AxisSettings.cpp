@@ -60,7 +60,7 @@ void AxisSettings::displayChanged(int index)
     m_axisCopy.m_displayName = (bool)index;
 }
 
-void AxisSettings::BeforeAccept()
+bool AxisSettings::BeforeAccept()
 {
 
     bool sideChanged = m_axisOriginal->IsOnRight() != m_axisCopy.IsOnRight();
@@ -87,6 +87,7 @@ void AxisSettings::BeforeAccept()
     }
 
     m_context.m_plot->ReplotIfNotDisabled();
+    return true;
 }
 
 void AxisSettings::ColorChanged(QColor &color)

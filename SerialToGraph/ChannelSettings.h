@@ -18,7 +18,7 @@ class ChannelSettings : public FormDialogColor
     void _InitializeShapeCombo();
     void _InitializeAxisCombo();
     void _MoveLastHorizontalToVertical();
-    virtual void BeforeAccept();
+    virtual bool BeforeAccept();
     void ColorChanged(QColor &color);
 
     Context const & m_context;

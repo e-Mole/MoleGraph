@@ -8,25 +8,21 @@
 #include <Measurement.h>
 #include <MeasurementMenu.h>
 #include <QHBoxLayout>
-#include <QComboBox>
+#include <QCoreApplication>
 #include <QDialog>
 #include <QFileDialog>
-#include <QLineEdit>
-#include <QLabel>
-#include <QListWidget>
-#include <QPushButton>
-#include <QShortcut>
-#include <QWidget>
-#include <QCoreApplication>
 #include <QFileInfo>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
 #include <QMenu>
 #include <QPoint>
+#include <QPushButton>
+#include <QShortcut>
 #include <QWidget>
 
 ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurement *> &measurements):
     QWidget(parent),
-    m_period(NULL),
-    m_periodUnits(NULL),
     m_startButton(NULL),
     m_stopButton(NULL),
     m_connectivityLabel(NULL),
@@ -65,27 +61,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     buttonLayout->addWidget(m_axisMenuButton);
     connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
 
-    QComboBox *periodType = new QComboBox(this);
-    periodType->addItem(tr("Frequency"));
-    periodType->addItem(tr("Time"));
-    connect(periodType, SIGNAL(currentIndexChanged(int)), this, SIGNAL(periodTypeChanged(int)), Qt::QueuedConnection);
-    connect(periodType, SIGNAL(currentIndexChanged(int)), this, SLOT(changePeriodUnits(int)));
-    buttonLayout->addWidget(periodType);
-
-    m_period = new  QLineEdit(this);
-    m_period->setValidator( new QDoubleValidator(1, 1500, 3, this));
-    m_period->setMaxLength(6);
-    m_period->setText("1");
-    m_period->setFixedWidth(50);
-    m_period->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    connect(m_period, SIGNAL(textChanged(QString)), this, SLOT(periodLineEditChanged(QString)));
-    buttonLayout->addWidget(m_period);
-
-
-    m_periodUnits = new QLabel(tr("Hz"),this);
-    m_periodUnits->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    buttonLayout->addWidget(m_periodUnits);
-
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
     buttonLayout->addWidget(m_startButton);
@@ -104,7 +79,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     m_connectivityLabel->setMargin(5);
     buttonLayout->addWidget(m_connectivityLabel);
 
-    buttonLayout->insertStretch(8, 1);
+    buttonLayout->insertStretch(6, 1);
 
     _InitializeMenu();
     _EnableStartButton(true);
@@ -142,7 +117,7 @@ void ButtonLine::axisMenuButtonPressed()
 
 void ButtonLine::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(m_measurements);
+    MeasurementMenu measurementMenu(m_context);
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
@@ -245,7 +220,6 @@ void ButtonLine::startButtonPressed()
 {
     m_startButton->setDisabled(true);
     m_stopButton->setEnabled(true);
-    m_period->setDisabled(true);
     start();
 
 }
@@ -253,30 +227,14 @@ void ButtonLine::startButtonPressed()
 void ButtonLine::stopButtonPressed()
 {
     m_stopButton->setDisabled(true);
-	m_startButton->setEnabled(m_enabledBChannels && m_connected);
-    m_period->setEnabled(true);
+    m_startButton->setEnabled(m_enabledBChannels && m_connected);
     stop();
-}
-
-void ButtonLine::periodLineEditChanged(const QString &text)
-{
-    unsigned period = (unsigned)(m_period->text().toInt());
-    if (0 == period) //there must be some period set
-        m_period->setText("1"); //note: this slot will be called again
-    else
-        periodChanged(period);
-
 }
 
 void ButtonLine::_EnableStartButton(bool enabled)
 {
-	m_enabledBChannels = enabled;
-	m_startButton->setEnabled(m_enabledBChannels && m_connected);
-}
-
-void ButtonLine::changePeriodUnits(int periodType)
-{
-     m_periodUnits->setText((0 == periodType) ?  tr("Hz") : tr("s"));
+    m_enabledBChannels = enabled;
+    m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }
 
 void ButtonLine::exportPng()
@@ -307,7 +265,7 @@ void ButtonLine::exportCsv()
 
 void ButtonLine::connectivityStateChange(bool connected)
 {
-	m_connected = connected;
+    m_connected = connected;
     if (connected)
     {
         m_connectivityLabel->setStyleSheet("QLabel { background-color : green; color : white; }");
@@ -320,7 +278,7 @@ void ButtonLine::connectivityStateChange(bool connected)
     }
     m_connectivityLabel->repaint();
 
-	m_startButton->setEnabled(m_enabledBChannels && m_connected);
+    m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }
 
 void ButtonLine::newFile()

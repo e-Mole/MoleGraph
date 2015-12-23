@@ -81,8 +81,6 @@ protected slots:
     void draw();
 	void start();
 	void stop();
-    void periodTypeChanged(int index);
-	void periodChanged(unsigned period);
     void sliderMoved(int value);
 public slots:
 

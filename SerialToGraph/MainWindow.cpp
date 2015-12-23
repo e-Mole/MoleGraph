@@ -22,7 +22,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels, m_settings),
+    m_context(m_axes, m_channels, m_measurements, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -71,8 +71,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
     buttonDock->setWidget(m_buttonLine);
 
-    connect(m_buttonLine, SIGNAL(periodTypeChanged(int)), m_graph, SLOT(periodTypeChanged(int)));
-    connect(m_buttonLine, SIGNAL(periodChanged(uint)), m_graph, SLOT(periodChanged(uint)));
     connect(m_buttonLine, SIGNAL(start()), m_graph, SLOT(start()));
     connect(m_buttonLine, SIGNAL(stop()), m_graph, SLOT(stop()));
 
@@ -122,7 +120,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::_InitializeMeasurement()
 {
-    m_measurements.push_back(new Measurement(MeasurementMenu::GetNextMeasurementName(m_measurements)));
+    m_measurements.push_back(new Measurement(m_context));
+    m_context.SetCurrentMeasurement(m_measurements.last());
 }
 
 void MainWindow::dockVisibilityChanged(bool visible)

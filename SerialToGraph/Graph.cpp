@@ -6,6 +6,7 @@
 #include <Context.h>
 #include <limits.h>
 #include <math.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QBoxLayout>
 #include <QByteArray>
@@ -62,11 +63,6 @@ void Graph::_InitializePolt(QBoxLayout *graphLayout)
     m_plot = new Plot(this, m_context);
     graphLayout->addWidget(m_plot);
 
-}
-
-void Graph::periodTypeChanged(int index)
-{
-        m_periodTypeIndex = index;
 }
 
 void Graph::_FillGraphItem(GraphItem &item)
@@ -212,24 +208,21 @@ void Graph::start()
     m_queue.clear();
     m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
 
-    if (0 == m_periodTypeIndex)
+    if (m_context.m_currentMeasurement->GetSampleUnits() == Measurement::suHz)
     {
-        if (!m_serialPort.SetFrequency(m_period))
+        if (!m_serialPort.SetFrequency(m_context.m_currentMeasurement->GetPeriod()))
         {
             m_serialPort.LineIssueSolver();
             return;
         }
-
-        qDebug() << "frequency set to:" << m_period << " Hz";
     }
     else
     {
-        if (!m_serialPort.SetTime(m_period))
+        if (!m_serialPort.SetTime(m_context.m_currentMeasurement->GetPeriod()))
         {
             m_serialPort.LineIssueSolver();
             return;
         }
-        qDebug() << "time set to:" << m_period << " s";
     }
 
     unsigned selectedChannels = 0;
@@ -267,11 +260,6 @@ void Graph::stop()
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );
-}
-
-void Graph::periodChanged(unsigned period)
-{
-    m_period = period;
 }
 
 void Graph::sliderMoved(int value)

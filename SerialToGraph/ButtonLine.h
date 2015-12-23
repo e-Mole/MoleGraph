@@ -28,8 +28,6 @@ class ButtonLine : public QWidget
     QPoint _GetGlobalMenuPosition(QPushButton *button);
     void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
 
-    QLineEdit *m_period;
-    QLabel *m_periodUnits;
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
     QLabel *m_connectivityLabel;
@@ -55,7 +53,6 @@ public:
     void AddChannel(Channel *channel);
 
 signals:
-    void periodTypeChanged(int type);
     void periodChanged(unsigned period);
     void start();
     void stop();
@@ -72,8 +69,6 @@ private slots:
 public slots:
     void startButtonPressed();
     void stopButtonPressed();
-    void periodLineEditChanged(QString const &text);
-    void changePeriodUnits(int periodType);
     void exportPng();
     void exportCsv();
     void connectivityStateChange(bool connected);

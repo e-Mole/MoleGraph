@@ -9,7 +9,7 @@ class FormDialogBase : public QDialog
 {
     Q_OBJECT
 protected:
-    virtual void BeforeAccept() = 0;
+    virtual bool BeforeAccept() = 0;
     QFormLayout *m_formLayout;
 public:
     FormDialogBase(QWidget *parent, const QString &title);

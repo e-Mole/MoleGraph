@@ -11,10 +11,10 @@
 #include <QPushButton>
 #include <QString>
 
-MeasurementMenu::MeasurementMenu(QVector<Measurement*> &measurements) :
+MeasurementMenu::MeasurementMenu(Context const &context) :
     QDialog(NULL, Qt::Popup),
     m_formLayout(new QFormLayout(this)),
-    m_measurements(measurements)
+    m_context(context)
 {
     setLayout(m_formLayout);
     _ReinitGrid();
@@ -54,7 +54,7 @@ void MeasurementMenu::_ReinitGrid()
         delete forDeletion;
     }
 
-    foreach (Measurement *measurement, m_measurements)
+    foreach (Measurement *measurement, m_context.m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
@@ -62,20 +62,14 @@ void MeasurementMenu::_ReinitGrid()
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()), Qt::DirectConnection);
 }
 
-QString MeasurementMenu::GetNextMeasurementName(QVector<Measurement *> &measurements)
-{
-    return QString(tr("Measurement %1").arg(measurements.size() + 1));
-}
-
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *newItem =
-        new Measurement(GetNextMeasurementName(m_measurements));
+    Measurement *newItem = new Measurement(m_context);
 
-    MeasurementSettings dialog(newItem);
+    MeasurementSettings dialog(newItem, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-        m_measurements.push_back(newItem);
+        m_context.m_measurements.push_back(newItem);
         //_ReinitGrid();
     }
     else
@@ -87,7 +81,7 @@ void MeasurementMenu::addButtonPressed()
 void MeasurementMenu::removeButtonPressed()
 {
     Measurement *measurement = m_removeButtonToIten.find((QPushButton*)sender()).value();
-    m_measurements.removeOne(measurement);
+    m_context.m_measurements.removeOne(measurement);
     delete measurement;
 
     //_ReinitGrid();
@@ -98,7 +92,7 @@ void MeasurementMenu::removeButtonPressed()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(measurement);
+    MeasurementSettings dialog(measurement, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
     //    _ReinitGrid();

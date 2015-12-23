@@ -7,13 +7,17 @@
 class Axis;
 class Channel;
 class Graph;
+class Measurement;
 class Plot;
 class QSettings;
 
 struct Context
 {
 public:
-    Context(QVector<Axis*> &axis, QVector<Channel*> &channels, QSettings &settings);
+    Context(QVector<Axis*> &axis,
+        QVector<Channel*> &channels,
+        QVector<Measurement *> &measurements,
+        QSettings &settings);
 
     QVector<Axis*> &m_axes;
     QVector<Channel*> &m_channels;
@@ -21,8 +25,11 @@ public:
     QSettings &m_settings;
     Graph *m_graph;
     Plot *m_plot;
+    QVector<Measurement *> &m_measurements;
+    Measurement *m_currentMeasurement;
 
     void SetGraph(Graph *graph, Plot *plot);
+    void SetCurrentMeasurement(Measurement *currentMeasurement);
 };
 
 #endif // CONTEXT_H

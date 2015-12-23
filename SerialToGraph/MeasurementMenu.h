@@ -7,6 +7,8 @@
 class Measurement;
 class QFormLayout;
 class QPushButton;
+struct Context;
+
 class MeasurementMenu : public QDialog
 {
     Q_OBJECT
@@ -15,12 +17,11 @@ class MeasurementMenu : public QDialog
     void _ReinitGrid();
 
     QFormLayout *m_formLayout;
-    QVector<Measurement*> &m_measurements;
+    Context const &m_context;
     QMap<QPushButton*, Measurement*> m_removeButtonToIten;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
 public:
-    MeasurementMenu(QVector<Measurement *> &measurements);
-    static QString GetNextMeasurementName(QVector<Measurement *> &measurements);
+    MeasurementMenu(const Context &context);
 signals:
 
 private slots:

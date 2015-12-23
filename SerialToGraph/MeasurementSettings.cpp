@@ -19,13 +19,16 @@ MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
     m_period = new QLineEdit(QString("%1").arg(measurement->m_period), this);
+    m_period->setEnabled(measurement->m_state == Measurement::Ready);
     m_formLayout->addRow(new QLabel(tr("Period"), this), m_period);
 
     m_sampleUnits = new QComboBox(this);
     m_sampleUnits->addItem(tr("Hz"));
     m_sampleUnits->addItem(tr("Sec", "seconds"));
     m_sampleUnits->setCurrentIndex((unsigned)measurement->m_sampleUnits);
+    m_sampleUnits->setEnabled(measurement->m_state == Measurement::Ready);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_sampleUnits);
+
 }
 
 bool MeasurementSettings::BeforeAccept()

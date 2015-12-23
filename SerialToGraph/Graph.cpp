@@ -208,7 +208,7 @@ void Graph::start()
     m_queue.clear();
     m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
 
-    if (m_context.m_currentMeasurement->GetSampleUnits() == Measurement::suHz)
+    if (m_context.m_currentMeasurement->GetSampleUnits() == Measurement::Hz)
     {
         if (!m_serialPort.SetFrequency(m_context.m_currentMeasurement->GetPeriod()))
         {
@@ -233,6 +233,8 @@ void Graph::start()
     m_serialPort.SetSelectedChannels(selectedChannels);
     m_scrollBar->setRange(0, 0);
 
+    m_context.m_currentMeasurement->SetState(Measurement::Running);
+
     m_drawPeriod = INITIAL_DRAW_PERIOD;
     m_drawingRequired = true;
     m_drawTimer->start(m_drawPeriod);
@@ -248,6 +250,7 @@ void Graph::stop()
     if (!m_serialPort.Stop())
         qDebug() << "stop was not deliveried";
 
+    m_context.m_currentMeasurement->SetState(Measurement::Finished);
     FinishDrawing();
 
     m_plot->SetDisabled(false);
@@ -260,6 +263,17 @@ void Graph::stop()
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );
+
+    m_context.m_measurements.push_back(
+        (m_context.m_currentMeasurement != NULL) ?
+            new Measurement(
+                        m_context,
+                        m_context.m_currentMeasurement->GetSampleUnits(),
+                        m_context.m_currentMeasurement->GetPeriod()
+            ):
+            new Measurement(m_context)
+    );
+    m_context.m_currentMeasurement = m_context.m_measurements.last();
 }
 
 void Graph::sliderMoved(int value)

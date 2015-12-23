@@ -10,18 +10,27 @@ class Measurement : public QObject
     Q_OBJECT
 public:
     enum SampleUnits{
-        suHz, suSec
+        Hz, Sec
+    };
+    enum State{
+        Ready,
+        Running,
+        Finished
     };
 private:
     friend class MeasurementSettings;
     QString m_name;
     SampleUnits m_sampleUnits;
     unsigned m_period;
+    State m_state;
 public:
-    Measurement(const Context &context, QString const &name = "");
+    Measurement(const Context &context, SampleUnits units = Hz, unsigned period = 1, QString const &name = "");
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
+
+    void SetState(State state)
+    {   m_state = state;}
 };
 
 #endif // MEASUREMENT_H

@@ -53,7 +53,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     buttonLayout->addWidget(m_fileMenuButton);
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
-    m_measurementButton = new QPushButton(tr("Measurement"), this);
+    m_measurementButton = new QPushButton(tr("Measurements"), this);
     buttonLayout->addWidget(m_measurementButton);
     connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
 

@@ -8,11 +8,12 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QFileInfo>
 #include <QSettings>
-
+#include <SerialPort.h>
 Context::Context(
         QVector<Axis*> &axis,
         QVector<Channel*> &channels,
         QVector<Measurement *> &measurements,
+        SerialPort &serialPort,
         QSettings &settings):
     m_axes(axis),
     m_channels(channels),
@@ -21,7 +22,8 @@ Context::Context(
     m_graph(NULL),
     m_plot(NULL),
     m_measurements(measurements),
-    m_currentMeasurement(NULL)
+    m_currentMeasurement(NULL),
+    m_serialPort(serialPort)
 {
 }
 

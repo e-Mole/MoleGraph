@@ -159,30 +159,60 @@ bool SerialPort::SetFrequency(unsigned frequency)
 {
 	std::string tmp;
     tmp.append((char const *)&frequency, 2);
-    return Write(INS_SET_FREQUENCY, tmp);
+    if (!Write(INS_SET_FREQUENCY, tmp))
+    {
+        LineIssueSolver();
+        return false;
+    }
+    return true;
 }
 
 bool SerialPort::SetTime(unsigned time)
 {
     std::string tmp;
     tmp.append((char const *)&time, 2);
-    return Write(INS_SET_TIME, tmp);
+    if (!Write(INS_SET_TIME, tmp))
+    {
+        LineIssueSolver();
+        return false;
+    }
+    return true;
 }
 
 bool SerialPort::Start()
 {
-    return Write(INS_START, "");
+    if (!Write(INS_START, ""))
+    {
+        LineIssueSolver();
+        return false;
+    }
+    return true;
 }
 
 bool SerialPort::Stop()
 {
-    return Write(INS_STOP, "");
+    if (!Write(INS_STOP, ""))
+    {
+        LineIssueSolver();
+        return false;
+    }
+    return true;
 }
 
 void SerialPort::SetSelectedChannels(unsigned char channels)
 {
-	std::string tmp;
-	tmp.append((char const *)&channels, 1);
+    std::string tmp;
+    tmp.append((char const *)&channels, 1);
     Write(INS_ENABLED_CHANNELS, tmp);
-	//Write(INS_ENABLED_CHANNELS, tmp);
+    //Write(INS_ENABLED_CHANNELS, tmp);
+}
+
+bool SerialPort::IsDeviceConnected()
+{
+    if (!m_serialPort.isOpen())
+    {
+        LineIssueSolver();
+        return false;
+    }
+    return true;
 }

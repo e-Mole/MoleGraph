@@ -10,11 +10,12 @@
 #include <PortListDialog.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
-#include <QDockWidget>
+#include <QVBoxLayout>
 #include <QtCore/QDebug>
 #include <QTimer>
 #include <QApplication>
 #include <QLocale>
+#include <QTabWidget>
 #include <QTranslator>
 #include <QWidget>
 
@@ -22,7 +23,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels, m_measurements, m_settings),
+    m_context(m_axes, m_channels, m_measurements, m_serialPort, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -47,10 +48,24 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         }
     }
 
-    m_centralWidget = new CentralWidget(this, 3, m_context);
-    setCentralWidget(m_centralWidget);
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *centralLayout = new QVBoxLayout(this);
+    centralLayout->setMargin(2);
+    centralWidget->setLayout(centralLayout);
+    setCentralWidget(centralWidget);
 
-    m_scrollBar = new QScrollBar(Qt::Horizontal, this);
+    m_buttonLine = new ButtonLine(this, m_context, m_measurements);
+    m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
+    centralLayout->addWidget(m_buttonLine);
+
+    QTabWidget *tabWidget = new QTabWidget(centralWidget);
+    centralLayout->addWidget(tabWidget);
+
+    m_centralWidget = new CentralWidget(this, 3, m_context);
+    tabWidget->addTab(m_centralWidget, "test");
+     //centralLayout->addWidget(m_centralWidget);
+
+    m_scrollBar = new QScrollBar(Qt::Horizontal, m_centralWidget);
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
     m_centralWidget->addScrollBar(m_scrollBar);
@@ -59,17 +74,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_context.SetGraph(m_graph, m_graph->GetPlot());
     m_centralWidget->addGraph(m_graph);
     connect(m_scrollBar, SIGNAL(sliderMoved(int)), m_graph, SLOT(sliderMoved(int)));
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_graph->GetPlot(), SLOT(setGraphPointPosition(int)));
-
-    QDockWidget *buttonDock = new QDockWidget(this);
-    buttonDock->setAllowedAreas(Qt::TopDockWidgetArea| Qt::BottomDockWidgetArea);
-
-    this->addDockWidget((Qt::DockWidgetArea)m_settings.value("buttonLineLocation", Qt::TopDockWidgetArea).toInt(), buttonDock);
-    m_buttonLine = new ButtonLine(this, m_context, m_measurements);
-    m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
-	connect(buttonDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(buttonLineLocationChanged(Qt::DockWidgetArea)));
-    connect(buttonDock, SIGNAL(visibilityChanged(bool)), this, SLOT(dockVisibilityChanged(bool)));
-    buttonDock->setWidget(m_buttonLine);
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_context.m_plot, SLOT(setGraphPointPosition(int)));
 
     connect(m_buttonLine, SIGNAL(start()), m_graph, SLOT(start()));
     connect(m_buttonLine, SIGNAL(stop()), m_graph, SLOT(stop()));
@@ -88,7 +93,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
             Qt::black,
             false,
             true,
-            m_graph->GetPlot()->xAxis
+            m_context.m_plot->xAxis
         );
     Axis * yAxis =
         new Axis(
@@ -97,7 +102,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
             Qt::black,
             false,
             false,
-            m_graph->GetPlot()->yAxis
+            m_context.m_plot->yAxis
         );
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
@@ -124,18 +129,6 @@ void MainWindow::_InitializeMeasurement()
     m_context.SetCurrentMeasurement(m_measurements.last());
 }
 
-void MainWindow::dockVisibilityChanged(bool visible)
-{
-    //we don't want to hide dock because there is no way how to visible it again
-    if (!visible)
-       ((QDockWidget *)sender())->setVisible(true);
-}
-
-void MainWindow::buttonLineLocationChanged(Qt::DockWidgetArea area)
-{
-	m_settings.setValue("buttonLineLocation", area);
-}
-
 void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
 {
     Channel *sampleChannel =
@@ -147,12 +140,11 @@ void MainWindow::_InitializeChannels(Axis *xAxis, Axis *yAxis)
             Qt::black,
             xAxis,
             0,
-            m_graph->AddGraph(Qt::black),
-            m_graph->AddPoint(Qt::black, 0)
+            m_context.m_plot->AddGraph(Qt::black),
+            m_context.m_plot->AddPoint(Qt::black, 0)
         );
     m_buttonLine->AddChannel(sampleChannel);
-    m_graph->SetSampleChannel(sampleChannel);
-    m_graph->SetHorizontalChannel(sampleChannel);
+    m_context.m_plot->SetHorizontalChannel(sampleChannel);
 
     _AddYChannel(Qt::red, yAxis);
     _AddYChannel(Qt::blue, yAxis);
@@ -178,8 +170,8 @@ void MainWindow::_AddYChannel(Qt::GlobalColor color, Axis *axis)
             color,
             axis,
             order,
-            m_graph->AddGraph(color),
-            m_graph->AddPoint(color, order)
+            m_context.m_plot->AddGraph(color),
+            m_context.m_plot->AddPoint(color, order)
         )
     );
     order++;

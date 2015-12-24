@@ -20,7 +20,7 @@ public:
 
 class SerialPort : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
     QSerialPort m_serialPort;
     QSettings &m_settings;
@@ -36,30 +36,29 @@ public:
     };
 
     SerialPort(QSettings &settings, QObject *parent = 0);
-	~SerialPort();
+    ~SerialPort();
 
     bool OpenSerialPort(QSerialPortInfo const& info);
     bool FindAndOpenMySerialPort(QList<ExtendedSerialPortInfo> &portInfos);
 
-	void ReadAll(QByteArray &array);
+    void ReadAll(QByteArray &array);
     bool Write(Instructions instruction, std::string const &data);
 
-	void Clear()
-	{
-		m_serialPort.clear();
-	}
+    void Clear()
+    {
+        m_serialPort.clear();
+    }
 
     bool SetFrequency(unsigned frequency);
     bool SetTime(unsigned time);
     bool Start();
     bool Stop();
-	void SetSelectedChannels(unsigned char channels);
-	bool IsDeviceConnected()
-	{ return m_serialPort.isOpen(); }
+    void SetSelectedChannels(unsigned char channels);
+    bool IsDeviceConnected();
 
     void LineIssueSolver();
 signals:
-	void PortConnectivityChanged(bool connected);
+    void PortConnectivityChanged(bool connected);
 public slots:
 };
 

@@ -3,7 +3,6 @@
 #include <AxisSettings.h>
 #include <Context.h>
 #include <Channel.h>
-#include <Graph.h>
 #include <Plot.h>
 #include <QFormLayout>
 #include <QLabel>

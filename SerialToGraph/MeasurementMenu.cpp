@@ -64,7 +64,7 @@ void MeasurementMenu::_ReinitGrid()
 
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *newItem = new Measurement(m_context);
+/*    Measurement *newItem = new Measurement(m_context);
 
     MeasurementSettings dialog(newItem, m_context);
     if (QDialog::Accepted == dialog.exec())
@@ -75,7 +75,7 @@ void MeasurementMenu::addButtonPressed()
     else
         delete newItem;
 
-    close();
+    close();*/
 }
 
 void MeasurementMenu::removeButtonPressed()

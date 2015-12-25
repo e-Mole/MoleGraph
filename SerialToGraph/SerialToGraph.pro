@@ -21,8 +21,6 @@ SOURCES += main.cpp\
     PortListDialog.cpp \
     PortListWidget.cpp \
     ButtonLine.cpp \
-    Graph.cpp \
-    CentralWidget.cpp \
     FormDialogBase.cpp \
     Axis.cpp \
     Context.cpp \
@@ -43,8 +41,6 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     ButtonLine.h \
-    Graph.h \
-    CentralWidget.h \
     FormDialogBase.h \
     Axis.h \
     Context.h \

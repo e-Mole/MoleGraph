@@ -8,6 +8,7 @@
 #include <QLabel>
 
 class Axis;
+class Measurement;
 class QString;
 class QCPAxis;
 class QCPGraph;
@@ -53,6 +54,7 @@ class Channel : public QGroupBox
     { return QGroupBox::isVisible(); }
 
     Context const & m_context;
+    Measurement * m_measurement;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
@@ -66,7 +68,7 @@ class Channel : public QGroupBox
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
 public:
-    Channel(QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint);
+    Channel(Measurement *measurement, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint);
     ~Channel();
 
     QColor &GetColor() { return m_color; }
@@ -120,6 +122,7 @@ public:
     void setVisible(bool visible);
     void SetColor(QColor &color);
 
+    Measurement * GetRelevantMeasurement();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

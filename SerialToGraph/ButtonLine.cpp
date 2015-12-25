@@ -4,8 +4,6 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
-#include <Graph.h>
-#include <Measurement.h>
 #include <MeasurementMenu.h>
 #include <QHBoxLayout>
 #include <QCoreApplication>
@@ -64,14 +62,14 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
     buttonLayout->addWidget(m_startButton);
-    connect(m_startButton, SIGNAL(clicked()), this, SLOT(startButtonPressed()));
+    connect(m_startButton, SIGNAL(clicked()), this, SIGNAL(start()));
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
-    connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stopButtonPressed()));
+    connect(m_stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
     buttonLayout->addWidget(m_stopButton);
 
@@ -82,7 +80,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     buttonLayout->insertStretch(6, 1);
 
     _InitializeMenu();
-    _EnableStartButton(true);
+    _UpdateStartButtonState();
 }
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
@@ -168,6 +166,7 @@ void ButtonLine::AddChannel(Channel *channel)
         _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), true, m_afterLastChannelSeparator);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
     channel->changeChannelVisibility(true, true);
+    _UpdateStartButtonState();
 }
 
 void ButtonLine::channelSettingChanged()
@@ -188,53 +187,44 @@ void ButtonLine::actionStateChanged()
         for (;it !=m_channelActions.end(); ++it)
         {
             it.value()->setChecked(senderAction != m_noneAction);
-            channelTriggered(it.key(), it.value()->isChecked());
-
             it.key()->changeChannelVisibility(senderAction == m_allAction, false);
         }
         allChannelsDisplayedOrHidden();
-        _EnableStartButton(senderAction == m_allAction);
     }
     else
     {
-        bool anyEnabled = false;
         QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
         for  (; it != m_channelActions.end(); ++it)
         {
             if (it.value() == senderAction)
             {
-                channelTriggered(it.key(), it.value()->isChecked());
                 it.key()->changeChannelVisibility(it.value()->isChecked(), true);
+                it.key()->GetRelevantMeasurement()->ReplaceDisplays(!m_graphAction->isChecked());
             }
-
-            if (it.value()->isChecked())
-                anyEnabled = true;
         }
-
-        //TODO: exclude samples
-        _EnableStartButton(anyEnabled);
     }
+
+    _UpdateStartButtonState();
 }
 
-void ButtonLine::startButtonPressed()
+void ButtonLine::_UpdateStartButtonState()
 {
-    m_startButton->setDisabled(true);
-    m_stopButton->setEnabled(true);
-    start();
+    if (!m_connected ||
+        m_context.m_channels.first()->GetRelevantMeasurement()->GetState() != Measurement::Ready)
+    {
+        m_startButton->setEnabled(false);
+        return;
+    }
 
-}
-
-void ButtonLine::stopButtonPressed()
-{
-    m_stopButton->setDisabled(true);
-    m_startButton->setEnabled(m_enabledBChannels && m_connected);
-    stop();
-}
-
-void ButtonLine::_EnableStartButton(bool enabled)
-{
-    m_enabledBChannels = enabled;
-    m_startButton->setEnabled(m_enabledBChannels && m_connected);
+    foreach (Channel *channel, m_context.m_channels)
+    {
+        if (channel->IsHwChannel() && !channel->isHidden())
+        {
+            m_startButton->setEnabled(true);
+            return;
+        }
+    }
+    m_startButton->setEnabled(false);
 }
 
 void ButtonLine::exportPng()
@@ -298,3 +288,8 @@ void ButtonLine::saveAsFile()
 
 }
 
+void ButtonLine::measurementStateChanged(unsigned  state)
+{
+    _UpdateStartButtonState();
+    m_stopButton->setEnabled((Measurement::State)state == Measurement::Running);
+}

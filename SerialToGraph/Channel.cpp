@@ -3,6 +3,7 @@
 #include <Axis.h>
 #include <Context.h>
 #include <cmath>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -48,11 +49,20 @@ void Channel::ValueLabel::SetColor(const QColor &color)
 }
 
 Channel::Channel(
-    QWidget *parent, Context const & context, int hwIndex, QString const &name, QColor const &color,
-    Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint) :
-    QGroupBox(name, parent),
+    Measurement *measurement,
+    Context const & context,
+    int hwIndex,
+    QString const &name,
+    QColor const &color,
+    Axis * axis,
+    unsigned shapeIndex,
+    QCPGraph *graph,
+    QCPGraph *graphPoint
+) :
+    QGroupBox(name, measurement),
     m_valueLabel(NULL),
     m_context(context),
+    m_measurement(measurement),
     m_name(name),
     m_hwIndex(hwIndex),
     m_color(color),
@@ -63,7 +73,6 @@ Channel::Channel(
     m_graph(graph),
     m_graphPoint(graphPoint)
 {
-    m_context.m_channels.push_back(this);
     AssignToAxis(axis);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -250,4 +259,9 @@ void Channel::SetColor(QColor &color)
     m_valueLabel->SetColor(color);
     m_context.m_plot->SetGraphColor(m_graph, color);
     m_context.m_plot->SetGraphPointColor(m_graphPoint, color);
+}
+
+Measurement * Channel::GetRelevantMeasurement()
+{
+    return m_measurement;
 }

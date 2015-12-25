@@ -1,7 +1,6 @@
 #include "Context.h"
 #include <Axis.h>
 #include <Channel.h>
-#include <Graph.h>
 #include <Plot.h>
 #include <Measurement.h>
 #include <QCoreApplication>
@@ -19,7 +18,6 @@ Context::Context(
     m_channels(channels),
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
-    m_graph(NULL),
     m_plot(NULL),
     m_measurements(measurements),
     m_currentMeasurement(NULL),
@@ -27,9 +25,8 @@ Context::Context(
 {
 }
 
-void Context::SetGraph(Graph *graph, Plot *plot)
+void Context::SetPlot(Plot *plot)
 {
-    m_graph = graph;
     m_plot = plot;
 }
 

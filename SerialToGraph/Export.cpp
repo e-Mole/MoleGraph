@@ -39,7 +39,6 @@ void Export::ToCsv(QString const &fileName)
     }
 
     file.write("\n");
-    unsigned lineNr = 0;
     unsigned sampleNr = 0;
     bool haveData;
     do

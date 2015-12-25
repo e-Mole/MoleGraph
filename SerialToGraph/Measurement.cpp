@@ -1,20 +1,26 @@
 #include "Measurement.h"
+#include <Axis.h>
 #include <Channel.h>
 #include <Context.h>
 #include <Plot.h>
 #include <QByteArray>
 #include <QDateTime>
 #include <QDebug>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QString>
 #include <QTimer>
+#include <QVBoxLayout>
 #include <SerialPort.h>
 
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 5
+#define VERTIACAL_MAX 3
 
-Measurement::Measurement(Context const &context, SampleUnits units, unsigned period, const QString &name):
-    QObject(NULL),
+Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, unsigned period, const QString &name):
+    QWidget(parent),
     m_context(context),
     m_name(name),
     m_sampleUnits(units),
@@ -23,15 +29,49 @@ Measurement::Measurement(Context const &context, SampleUnits units, unsigned per
     m_anySampleMissed(false),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
-    m_sampleChannel(NULL)
+    m_sampleChannel(NULL),
+    m_plot(new Plot(this, context)),
+    m_scrollBar(new QScrollBar(Qt::Horizontal, this))
 {
+    context.SetPlot(m_plot);
+
     if (name.size() == 0)
         m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
     m_drawTimer->setSingleShot(true); //will be started from timeout slot
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
+
+    _InitializeLayouts();
+
+    m_plotAndSliderLayout->addWidget(m_plot);
+
+    m_scrollBar->setRange(0,0);
+    m_scrollBar->setFocusPolicy(Qt::StrongFocus);
+    connect(m_scrollBar, SIGNAL(sliderMoved(int)), this, SLOT(sliderMoved(int)));
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
+    m_plotAndSliderLayout->addWidget(m_scrollBar);
+
+    _InitializeAxesAndChanels();
 }
 
+void Measurement::_InitializeLayouts()
+{
+    m_mainLayout = new QHBoxLayout(this);
+    m_mainLayout->setMargin(1);
+    setLayout(m_mainLayout);
+
+    m_plotAndSliderLayout = new QVBoxLayout(this);
+    m_plotAndSliderLayout->setMargin(0);
+    m_mainLayout->insertLayout(0, m_plotAndSliderLayout, 1);
+
+    m_displaysAndSliderLayout = new QVBoxLayout(this);
+    m_displaysAndSliderLayout->setMargin(0);
+    m_mainLayout->insertLayout(1, m_displaysAndSliderLayout, 0);
+
+    m_displayLayout = new QGridLayout(this);
+
+    m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
+}
 void Measurement::_FillGraphItem(GraphItem &item)
 {
     //FIXME: firstInSample is not used any more. remove it
@@ -122,14 +162,12 @@ void Measurement::draw()
             m_context.m_plot->RescaleAxis(m_context.m_plot->xAxis);
         }
 
-        //TODO
-        /*unsigned scrollBarMax = index;
+        unsigned scrollBarMax = index;
         m_scrollBar->setRange(0, scrollBarMax);
         if (!m_plot->IsInMoveMode())
         {
             m_scrollBar->setValue(scrollBarMax);
         }
-        */
 
         if (!m_context.m_plot->IsInMoveMode())
             m_context.m_plot->RescaleAllAxes();
@@ -168,8 +206,6 @@ void Measurement::start()
             m_trackedHwChannels.insert(channel->GetHwIndex(), channel);
             selectedChannels |= 1 << channel->GetHwIndex();
         }
-        if (!channel->IsHwChannel())
-            m_sampleChannel = channel;
     }
     m_context.m_serialPort.SetSelectedChannels(selectedChannels);
 
@@ -180,7 +216,7 @@ void Measurement::start()
         return;
     }
 
-    m_state = Measurement::Running;
+    stateChanged((unsigned)(m_state = Measurement::Running));
 }
 void Measurement::_DrawRestData()
 {
@@ -216,7 +252,7 @@ void Measurement::stop()
     );
     m_context.m_currentMeasurement = m_context.m_measurements.last();*/
 
-    m_state = Measurement::Finished;
+    stateChanged((unsigned)(m_state = Measurement::Finished));
 }
 
 void Measurement::sliderMoved(int value)
@@ -226,4 +262,130 @@ void Measurement::sliderMoved(int value)
 
     m_context.m_plot->SetMoveMode(true);
     m_context.m_plot->ReplotIfNotDisabled();
+}
+
+/*QVector<Axis *> const & Measurement::GetAxes()
+{
+    return m_axes;
+}
+
+QVector<Channel *> const & Measurement::GetChannels()
+{
+    return m_channels;
+}*/
+
+void Measurement::ReplaceDisplays(bool grid)
+{
+    //reset stretch
+    for (int i = 0; i < m_displayLayout->columnCount(); i++)
+        m_displayLayout->setColumnStretch(i,0);
+
+    foreach (Channel * channel, m_context.m_channels)
+        m_displayLayout->removeWidget(channel);
+
+    foreach (Channel * channel, m_context.m_channels)
+    {
+        if (channel->isHidden())
+            continue;
+
+        unsigned count =  m_displayLayout->count();
+
+        //when there is graph it will be dipsplayed as sidebar
+        unsigned row = (grid) ? count % VERTIACAL_MAX : count;
+        unsigned column = (grid) ? count / VERTIACAL_MAX : 0;
+
+        m_displayLayout->addWidget(channel, row, column);
+        m_displayLayout->setColumnStretch(column, 1);
+    }
+
+    m_displayLayout->setRowStretch(9, grid ? 0 : 1);
+}
+
+void Measurement::showGraph(bool show)
+{
+    if (show)
+        m_plotAndSliderLayout->insertWidget(1, m_scrollBar, 0);
+    else
+        m_displaysAndSliderLayout->insertWidget(1, m_scrollBar, 0);
+
+    m_mainLayout->setStretch(0, show);
+    m_mainLayout->setStretch(1, !show);
+    ReplaceDisplays(!show);
+
+    m_plot->setVisible(show);
+}
+
+Plot *Measurement::GetPlot()
+{
+    return m_plot;
+}
+
+
+void Measurement::_InitializeAxesAndChanels()
+{
+    Axis * xAxis =
+        new Axis(
+            m_context,
+            tr("Horizontal"),
+            Qt::black,
+            false,
+            true,
+            m_plot->xAxis
+        );
+    Axis * yAxis =
+        new Axis(
+            m_context,
+            tr("Vertical"),
+            Qt::black,
+            false,
+            false,
+            m_plot->yAxis
+        );
+    m_context.m_axes.push_back(xAxis);
+    m_context.m_axes.push_back(yAxis);
+
+    m_sampleChannel =
+        new Channel(
+            this,
+            m_context,
+            -1,
+            tr("Samples"),
+            Qt::black,
+            xAxis,
+            0,
+            m_plot->AddGraph(Qt::black),
+            m_plot->AddPoint(Qt::black, 0)
+        );
+    m_context.m_channels.push_back(m_sampleChannel);
+    m_plot->SetHorizontalChannel(m_sampleChannel);
+
+    _AddYChannel(Qt::red, yAxis);
+    _AddYChannel(Qt::blue, yAxis);
+    _AddYChannel(Qt::black, yAxis);
+    _AddYChannel(Qt::darkGreen, yAxis);
+    _AddYChannel(Qt::magenta, yAxis);
+    _AddYChannel(Qt::cyan, yAxis);
+    _AddYChannel(Qt::green, yAxis);
+    _AddYChannel(Qt::darkRed, yAxis);
+
+    ReplaceDisplays(false);
+}
+
+void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
+{
+    static unsigned order = 0;
+    m_context.m_channels.push_back(
+        new Channel(
+            this,
+            m_context,
+            order,
+            QString(tr("Channel %1")).arg(order+1),
+            color,
+            axis,
+            order,
+            m_plot->AddGraph(color),
+            m_plot->AddPoint(color, order)
+        )
+    );
+    order++;
 }

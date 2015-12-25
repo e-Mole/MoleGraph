@@ -78,6 +78,7 @@ public:
 
 signals:
     void stateChanged(unsigned state);
+    void nameChanged();
 public slots:
     void start();
     void stop();

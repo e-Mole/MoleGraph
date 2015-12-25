@@ -57,8 +57,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     centralLayout->addWidget(m_buttonLine);
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
-    m_measurmentTabs = new QTabWidget(centralWidget);
-    centralLayout->addWidget(m_measurmentTabs);
+    m_measurementTabs = new QTabWidget(centralWidget);
+    centralLayout->addWidget(m_measurementTabs);
     _InitializeMeasurement();
 }
 
@@ -80,14 +80,28 @@ void MainWindow::_InitializeMeasurement()
     Measurement *m = new Measurement(this, m_context);
     m_measurements.push_back(m);
     m_context.SetCurrentMeasurement(m);
-    m_measurmentTabs->addTab(m, m->GetName());
+    m_measurementTabs->addTab(m, m->GetName());
 
     connect(m_buttonLine, SIGNAL(start()), m, SLOT(start()));
     connect(m_buttonLine, SIGNAL(stop()), m, SLOT(stop()));
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m, SLOT(showGraph(bool)));
     connect(m, SIGNAL(stateChanged(unsigned)), m_buttonLine, SLOT(measurementStateChanged(unsigned)));
-
+    connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
     foreach (Channel *channel, m_context.m_channels)
         m_buttonLine->AddChannel(channel);
 
 }
+
+void MainWindow::measurementNameChanged()
+{
+    Measurement *measurement = (Measurement*)sender();
+    for(int i = 0; i < m_measurementTabs->count(); i++)
+    {
+        if (m_measurementTabs->widget(i) == measurement)
+        {
+            m_measurementTabs->setTabText(i, measurement->GetName());
+            break;
+        }
+    }
+}
+

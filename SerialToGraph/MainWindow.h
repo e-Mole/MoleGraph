@@ -29,14 +29,15 @@ class MainWindow : public QMainWindow
     QVector<Channel *> m_channels;
     QVector<Measurement*> m_measurements;
     Context m_context;
-    QTabWidget *m_measurmentTabs;
+    QTabWidget *m_measurementTabs;
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
 	~MainWindow();
 
     bool m_close;
-protected slots:
+private slots:
+    void measurementNameChanged();
 };
 
 #endif // MAINWINDOW_H

@@ -33,7 +33,11 @@ MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const
 
 bool MeasurementSettings::BeforeAccept()
 {
-    m_measurement->m_name = m_name->text();
+    if (m_measurement->m_name != m_name->text())
+    {
+        m_measurement->m_name = m_name->text();
+        m_measurement->nameChanged();
+    }
     m_measurement->m_sampleUnits = (Measurement::SampleUnits)m_sampleUnits->currentIndex();
     if (m_period->text().toInt() <= 0)
     {

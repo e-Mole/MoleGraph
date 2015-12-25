@@ -27,7 +27,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     buttonLayout->setMargin(0);
     rowWidget->setLayout(buttonLayout);
 
-    QPushButton * editButton = new QPushButton(tr("Edit \u25BA \u25A0"), rowWidget);
+    QPushButton * editButton = new QPushButton(tr("Edit"/* \u25BA \u25A0*/), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtonToItem.insert(editButton, measurement);
     connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()), Qt::DirectConnection);

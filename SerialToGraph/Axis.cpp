@@ -36,7 +36,7 @@ void Axis::_AssignGraphAxis(QCPAxis *axis)
 {
     if (NULL != m_graphAxis)
     {
-        foreach (Channel *channel, m_context.m_channels)
+        foreach (Channel *channel, m_measurement->GetChannels())
         {
             if (channel->GetAxis()->GetGraphAxis() == m_graphAxis)
                 channel->AssignToGraphAxis(axis);
@@ -82,20 +82,21 @@ void Axis::UpdateGraphAxisName()
     unsigned count = 0;
     bool addMiddle = false;
     QString units;
-    for (unsigned i = 0; i < (unsigned)m_context.m_channels.size(); i++)
+
+    for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
     {
-        if ((!m_context.m_channels[i]->isHidden() || m_context.m_channels[i]->IsOnHorizontalAxis()) &&
-            m_context.m_channels[i]->GetAxis() == this)
+        if ((!m_measurement->GetChannel(i)->isHidden() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
+            m_measurement->GetChannel(i)->GetAxis() == this)
         {
             count++;
             if (!first)
             {
-                if (i+1 != (unsigned)m_context.m_channels.size() &&
-                    !m_context.m_channels[i+1]->isHidden() &&
-                    this == m_context.m_channels[i+1]->GetAxis() &&
+                if (i+1 != m_measurement->GetChannelCount() &&
+                    !m_measurement->GetChannel(i+1)->isHidden() &&
+                    this == m_measurement->GetChannel(i+1)->GetAxis() &&
                     i != 0 &&
-                    !m_context.m_channels[i-1]->isHidden() &&
-                    this == m_context.m_channels[i-1]->GetAxis())
+                    !m_measurement->GetChannel(i-1)->isHidden() &&
+                    this == m_measurement->GetChannel(i-1)->GetAxis())
                 {
                     addMiddle = true;
                     continue;
@@ -111,11 +112,11 @@ void Axis::UpdateGraphAxisName()
                 addMiddle = false;
             }
 
-            channels += m_context.m_channels[i]->GetName();
+            channels += m_measurement->GetChannel(i)->GetName();
 
             if (0 == units.size())
-                units = m_context.m_channels[i]->GetUnits();
-            else if (units != m_context.m_channels[i]->GetUnits())
+                units = m_measurement->GetChannel(i)->GetUnits();
+            else if (units != m_measurement->GetChannel(i)->GetUnits())
                 units = "/n"; //escape sequence for no units
         }
     }
@@ -126,7 +127,7 @@ void Axis::UpdateGraphAxisName()
 
 void Axis::UpdateVisiblility()
 {
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_measurement->GetChannels())
     {
         if (!channel->isHidden() && channel->GetAxis() == this)
         {
@@ -161,4 +162,9 @@ void Axis::_SetColor(QColor const & color)
     pen = m_graphAxis->selectedSubTickPen();
     pen.setColor(Qt::black);
     m_graphAxis->setSelectedSubTickPen(pen);
+}
+
+Measurement * Axis::GetMeasurement()
+{
+    return m_measurement;
 }

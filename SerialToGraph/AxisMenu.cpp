@@ -95,7 +95,7 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Channel * channel, axis->GetMeasurement()->GetChannels())
     {
         if (axis == channel->GetAxis())
         {
@@ -116,7 +116,7 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Channel * channel, axis->GetMeasurement()->GetChannels())
     {
         if (axis == channel->GetAxis())
             channel->SetAxis(firstVertical);

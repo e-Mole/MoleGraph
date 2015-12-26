@@ -163,7 +163,7 @@ void Measurement::draw()
         unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
         if (!m_plot->IsInMoveMode())
         {
-            foreach (Channel *channel, m_context.m_channels)
+            foreach (Channel *channel, m_channels)
                 channel->displayValueOnIndex(index);
 
             m_plot->RescaleAxis(m_plot->xAxis);
@@ -206,7 +206,7 @@ void Measurement::start()
     }
 
     unsigned selectedChannels = 0;
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_channels)
     {
         if (channel->IsHwChannel() && !channel->isHidden())
         {
@@ -264,7 +264,7 @@ void Measurement::stop()
 
 void Measurement::sliderMoved(int value)
 {
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Channel * channel, m_channels)
         channel->displayValueOnIndex(value);
 
     m_plot->SetMoveMode(true);
@@ -287,10 +287,10 @@ void Measurement::ReplaceDisplays(bool grid)
     for (int i = 0; i < m_displayLayout->columnCount(); i++)
         m_displayLayout->setColumnStretch(i,0);
 
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Channel * channel, m_channels)
         m_displayLayout->removeWidget(channel);
 
-    foreach (Channel * channel, m_context.m_channels)
+    foreach (Channel * channel, m_channels)
     {
         if (channel->isHidden())
             continue;
@@ -365,7 +365,7 @@ void Measurement::_InitializeAxesAndChanels()
             m_plot->AddGraph(Qt::black),
             m_plot->AddPoint(Qt::black, 0)
         );
-    m_context.m_channels.push_back(m_sampleChannel);
+    m_channels.push_back(m_sampleChannel);
     m_plot->SetHorizontalChannel(m_sampleChannel);
 
     _AddYChannel(Qt::red, yAxis);
@@ -383,7 +383,7 @@ void Measurement::_InitializeAxesAndChanels()
 void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
     static unsigned order = 0;
-    m_context.m_channels.push_back(
+    m_channels.push_back(
         new Channel(
             this,
             m_context,
@@ -413,7 +413,22 @@ void Measurement::RemoveAxis(Axis * axis)
     delete axis;
 }
 
-QVector<Axis *> const &Measurement::GetAxes()
+QVector<Axis *> const & Measurement::GetAxes()
 {
     return m_axes;
+}
+
+QVector<Channel *> const & Measurement::GetChannels()
+{
+    return m_channels;
+}
+
+Channel *Measurement::GetChannel(unsigned index)
+{
+    return m_channels[index];
+}
+
+unsigned Measurement::GetChannelCount()
+{
+    return m_channels.count();
 }

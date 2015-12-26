@@ -46,14 +46,11 @@ public:
     QColor & GetColor() { return m_color; }
 
     bool IsRemovable() { return m_isRemovable; }
-
-    bool IsHorizontal()
-    { return m_isHorizontal; }
-
-    bool IsOnRight()
-    { return m_isOnRight; }
-
+    bool IsHorizontal() { return m_isHorizontal; }
+    bool IsOnRight() { return m_isOnRight; }
     QCPAxis *GetGraphAxis(){ return m_graphAxis; }
+
+    Measurement * GetMeasurement();
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();

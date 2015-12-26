@@ -22,7 +22,7 @@ void Export::ToCsv(QString const &fileName)
     file.open(QIODevice::WriteOnly);
 
     bool first = true;
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
     {
         if (channel->isHidden())
             continue;
@@ -47,7 +47,7 @@ void Export::ToCsv(QString const &fileName)
         haveData = false;
         std::string lineContent;
         bool first = true;
-        foreach (Channel *channel, m_context.m_channels)
+        foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
         {
             if (channel->isHidden())
                 continue;

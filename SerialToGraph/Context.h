@@ -13,11 +13,9 @@ class SerialPort;
 struct Context
 {
 public:
-    Context(QVector<Channel*> &channels,
-        QVector<Measurement *> &measurements, SerialPort &serialPort,
+    Context(QVector<Measurement *> &measurements, SerialPort &serialPort,
         QSettings &settings);
 
-    QVector<Channel*> &m_channels;
     QString m_applicationName;
     QSettings &m_settings;
     QVector<Measurement *> &m_measurements;

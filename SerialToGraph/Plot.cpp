@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <Channel.h>
 #include <Context.h>
+#include <Measurement.h>
 #include <QColor>
 
 #define AXES_LABEL_PADDING 1
@@ -17,8 +18,9 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
     QCPAxisRect::mouseMoveEvent(event);
 }
 
-Plot::Plot(QWidget *parent, Context const & context) :
-    QCustomPlot(parent),
+Plot::Plot(Measurement *measurement, Context const & context) :
+    QCustomPlot(measurement),
+    m_measurement(measurement),
     m_moveMode(false),
     m_disabled(false),
     m_context(context),
@@ -222,7 +224,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_measurement->GetChannels())
     {
         if (!channel->isHidden() && channel->GetAxis()->GetGraphAxis() == axis)
         {
@@ -283,7 +285,7 @@ void Plot::selectionChanged()
 
 void Plot::_RefillGraphs()
 {
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_measurement->GetChannels())
     {
         channel->GetGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values

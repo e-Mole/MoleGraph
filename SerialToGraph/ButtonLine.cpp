@@ -210,13 +210,13 @@ void ButtonLine::actionStateChanged()
 void ButtonLine::_UpdateStartButtonState()
 {
     if (!m_connected ||
-        m_context.m_channels.first()->GetMeasurement()->GetState() != Measurement::Ready)
+        m_context.m_currentMeasurement->GetState() != Measurement::Ready)
     {
         m_startButton->setEnabled(false);
         return;
     }
 
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
     {
         if (channel->IsHwChannel() && !channel->isHidden())
         {

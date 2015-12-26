@@ -59,7 +59,7 @@ private:
     QQueue<unsigned char> m_queue;
     Channel *m_sampleChannel;
     QVector<Axis*> m_axes;
-    //QVector<Channel*> m_channels;
+    QVector<Channel*> m_channels;
     QHBoxLayout *m_mainLayout;
     QVBoxLayout *m_plotAndSliderLayout;
     QVBoxLayout *m_displaysAndSliderLayout;
@@ -74,12 +74,14 @@ public:
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes();
-    //QVector<Channel *> const & GetChannels();
+    QVector<Channel *> const & GetChannels();
     void ReplaceDisplays(bool grid);
     Plot *GetPlot();
     State GetState() { return m_state; }
     Axis *CreateAxis(QColor const & color);
     void RemoveAxis(Axis * axis);
+    Channel *GetChannel(unsigned index);
+    unsigned GetChannelCount();
 
 signals:
     void stateChanged(unsigned state);

@@ -21,7 +21,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_channels, m_measurements, m_serialPort, m_settings),
+    m_context(m_measurements, m_serialPort, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -82,7 +82,7 @@ void MainWindow::_InitializeMeasurement()
     connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m, SLOT(showGraph(bool)));
     connect(m, SIGNAL(stateChanged(unsigned)), m_buttonLine, SLOT(measurementStateChanged(unsigned)));
     connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m->GetChannels())
         m_buttonLine->AddChannel(channel);
 
 }

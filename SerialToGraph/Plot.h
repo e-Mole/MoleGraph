@@ -2,11 +2,11 @@
 #define PLOT_H
 
 #include <qcustomplot/qcustomplot.h>
-#include <QWidget>
 
 class QColor;
 class Context;
 class Channel;
+class Measurement;
 class MyAxisRect : public QCPAxisRect
 {
     Q_OBJECT
@@ -24,6 +24,7 @@ class Plot : public QCustomPlot
 {
     Q_OBJECT
 
+    Measurement * m_measurement;
     bool m_moveMode;
     bool m_disabled;
     Context const &m_context;
@@ -39,7 +40,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 
 public:
-    Plot(QWidget *parent, const Context &context);
+    Plot(Measurement *measurement, const Context &context);
 
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }

@@ -105,11 +105,11 @@ bool ChannelSettings::BeforeAccept()
 
 void ChannelSettings::_MoveLastHorizontalToVertical()
 {
-    foreach (Channel *channel, m_context.m_channels)
+    foreach (Channel *channel, m_channel->GetMeasurement()->GetChannels())
     {
         if (channel->m_axis->IsHorizontal())
         {
-            foreach (Axis *axis, channel->GetMeasurement()->GetAxes())
+            foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
             {
                 if (!axis->IsHorizontal())
                 {

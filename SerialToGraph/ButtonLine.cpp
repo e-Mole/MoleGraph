@@ -4,6 +4,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
+#include <Measurement.h>
 #include <MeasurementMenu.h>
 #include <QHBoxLayout>
 #include <QCoreApplication>
@@ -19,7 +20,7 @@
 #include <QShortcut>
 #include <QWidget>
 
-ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurement *> &measurements):
+ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QWidget(parent),
     m_startButton(NULL),
     m_stopButton(NULL),
@@ -37,7 +38,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     m_noneAction(NULL),
     m_afterLastChannelSeparator(NULL),
     m_context(context),
-    m_measurements(measurements)
+    m_measurement(NULL)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->setMargin(1);
@@ -80,7 +81,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, QVector<Measurem
     buttonLayout->insertStretch(6, 1);
 
     _InitializeMenu();
-    _UpdateStartButtonState();
+    //_UpdateStartButtonState();
 }
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
@@ -109,7 +110,7 @@ void ButtonLine::panelMenuButtonPressed()
 
 void ButtonLine::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(m_context);
+    AxisMenu axisMenu(m_context, *m_measurement);
     _OpenMenuDialog(m_axisMenuButton, axisMenu);
 }
 
@@ -166,7 +167,7 @@ void ButtonLine::AddChannel(Channel *channel)
         _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), true, m_afterLastChannelSeparator);
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
     channel->changeChannelVisibility(true, true);
-    _UpdateStartButtonState();
+    _UpdateStartAndStopButtonsState();
 }
 
 void ButtonLine::channelSettingChanged()
@@ -204,19 +205,21 @@ void ButtonLine::actionStateChanged()
         }
     }
 
-    _UpdateStartButtonState();
+    _UpdateStartAndStopButtonsState();
 }
 
-void ButtonLine::_UpdateStartButtonState()
+void ButtonLine::_UpdateStartAndStopButtonsState()
 {
-    if (!m_connected ||
-        m_context.m_currentMeasurement->GetState() != Measurement::Ready)
+    m_stopButton->setEnabled(
+        (Measurement::State)m_measurement->GetState() == Measurement::Running);
+
+    if (!m_connected || m_measurement->GetState() != Measurement::Ready)
     {
         m_startButton->setEnabled(false);
         return;
     }
 
-    foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
+    foreach (Channel *channel, m_measurement->GetChannels())
     {
         if (channel->IsHwChannel() && !channel->isHidden())
         {
@@ -237,7 +240,7 @@ void ButtonLine::exportPng()
             fileName += ".png";
 
     if (0 != fileName.size())
-        Export(m_context).ToPng(fileName);
+        Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::exportCsv()
@@ -250,7 +253,7 @@ void ButtonLine::exportCsv()
             fileName += ".csv";
 
     if (0 != fileName.size())
-       Export(m_context).ToCsv(fileName);
+       Export().ToCsv(fileName, *m_measurement);
 }
 
 void ButtonLine::connectivityStateChange(bool connected)
@@ -288,8 +291,30 @@ void ButtonLine::saveAsFile()
 
 }
 
-void ButtonLine::measurementStateChanged(unsigned  state)
+void ButtonLine::measurementStateChanged()
 {
-    _UpdateStartButtonState();
-    m_stopButton->setEnabled((Measurement::State)state == Measurement::Running);
+    _UpdateStartAndStopButtonsState();
+}
+
+void ButtonLine::ChngeMeasurement(Measurement *measurement)
+{
+    m_measurement = measurement;
+
+    disconnect(this, SIGNAL(start()), 0, 0);
+    connect(this, SIGNAL(start()), measurement, SLOT(start()));
+
+    disconnect(this, SIGNAL(stop()), 0, 0);
+    connect(this, SIGNAL(stop()), measurement, SLOT(stop()));
+
+    disconnect(this, SIGNAL(graphTriggered(bool)), 0, 0);
+    connect(this, SIGNAL(graphTriggered(bool)), measurement, SLOT(showGraph(bool)));
+
+    foreach (QAction *action, m_channelActions.values())
+        m_panelMenu->removeAction(action);
+    m_channelActions.clear();
+
+    foreach (Channel *channel, measurement->GetChannels())
+        AddChannel(channel);
+
+
 }

@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <Channel.h>
 #include <Plot.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <QCoreApplication>
 #include <qcustomplot/qcustomplot.h>
@@ -11,16 +12,12 @@
 Context::Context(
         QVector<Measurement *> &measurements,
         SerialPort &serialPort,
-        QSettings &settings):
+        QSettings &settings,
+        MainWindow &mainWindow):
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
     m_measurements(measurements),
-    m_currentMeasurement(NULL),
-    m_serialPort(serialPort)
+    m_serialPort(serialPort),
+    m_mainWindow(mainWindow)
 {
-}
-
-void Context::SetCurrentMeasurement(Measurement *currentMeasurement)
-{
-    m_currentMeasurement = currentMeasurement;
 }

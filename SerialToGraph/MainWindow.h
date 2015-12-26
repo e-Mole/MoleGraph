@@ -14,21 +14,24 @@ class QApplication;
 class QTabWidget;
 class MainWindow : public QMainWindow
 {
-	Q_OBJECT
-
-    void _InitializeMeasurement();
+    Q_OBJECT
 
     QSettings m_settings;
-	SerialPort m_serialPort;
+    SerialPort m_serialPort;
     ButtonLine* m_buttonLine;
-
     QVector<Measurement*> m_measurements;
     Context m_context;
     QTabWidget *m_measurementTabs;
 
+    Measurement * _GetCurrentMeasurement();
+
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
-	~MainWindow();
+    ~MainWindow();
+
+    Measurement *CreateMeasurement();
+    void ConfirmMeasurement(Measurement *m);
+    void RemoveMeasurement(Measurement *m, bool confirmed);
 
     bool m_close;
 private slots:

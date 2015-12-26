@@ -18,12 +18,11 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
     QCPAxisRect::mouseMoveEvent(event);
 }
 
-Plot::Plot(Measurement *measurement, Context const & context) :
+Plot::Plot(Measurement *measurement) :
     QCustomPlot(measurement),
-    m_measurement(measurement),
+    m_measurement(*measurement),
     m_moveMode(false),
     m_disabled(false),
-    m_context(context),
     m_horizontalChannel(NULL),
     m_graphPointsPosition(0)
 {
@@ -224,7 +223,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (Channel *channel, m_measurement.GetChannels())
     {
         if (!channel->isHidden() && channel->GetAxis()->GetGraphAxis() == axis)
         {
@@ -285,7 +284,7 @@ void Plot::selectionChanged()
 
 void Plot::_RefillGraphs()
 {
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (Channel *channel, m_measurement.GetChannels())
     {
         channel->GetGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values

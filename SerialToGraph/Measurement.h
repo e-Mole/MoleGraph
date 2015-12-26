@@ -74,9 +74,9 @@ public:
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes();
-    QVector<Channel *> const & GetChannels();
+    QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
-    Plot *GetPlot();
+    Plot *GetPlot() const;
     State GetState() { return m_state; }
     Axis *CreateAxis(QColor const & color);
     void RemoveAxis(Axis * axis);
@@ -84,7 +84,7 @@ public:
     unsigned GetChannelCount();
 
 signals:
-    void stateChanged(unsigned state);
+    void stateChanged();
     void nameChanged();
 public slots:
     void start();

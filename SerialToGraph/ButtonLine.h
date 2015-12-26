@@ -1,13 +1,13 @@
 #ifndef BUTTONLINE_H
 #define BUTTONLINE_H
 
-#include <Measurement.h>
 #include <QWidget>
 #include <QMap>
 #include <QVector>
 
 class Axis;
 class Channel;
+class Measurement;
 class QAction;
 class QDialog;
 class QKeySequence;
@@ -22,7 +22,7 @@ class ButtonLine : public QWidget
 {
     Q_OBJECT
 
-    void _UpdateStartButtonState();
+    void _UpdateStartAndStopButtonsState();
     QAction * _InsertAction(QMenu *menu, QString title, const QKeySequence &keySequence, bool checkable, QAction *before = NULL);
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
@@ -46,12 +46,12 @@ class ButtonLine : public QWidget
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
     Context const &m_context;
-    QVector<Measurement *> &m_measurements;
+    Measurement *m_measurement;
 
 public:
-    ButtonLine(QWidget *parent, const Context &context, QVector<Measurement *> &measurements);
+    ButtonLine(QWidget *parent, const Context &context);
     void AddChannel(Channel *channel);
-
+    void ChngeMeasurement(Measurement *measurement);
 signals:
     void periodChanged(unsigned period);
     void start();
@@ -76,7 +76,7 @@ public slots:
     void measurementMenuButtonPressed();
     void actionStateChanged();
     void channelSettingChanged();
-    void measurementStateChanged(unsigned state);
+    void measurementStateChanged();
 };
 
 #endif // BUTTONLINE_H

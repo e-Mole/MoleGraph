@@ -1,28 +1,26 @@
 #include "Export.h"
-#include <Context.h>
 #include <Channel.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QFile>
 #include <QString>
 #include <string>
-Export::Export(Context const &context) :
-    m_context(context)
+Export::Export()
 {
 }
 
-void Export::ToPng(QString const &fileName)
+void Export::ToPng(QString const &fileName, Measurement const &measurement)
 {
-    m_context.m_currentMeasurement->GetPlot()->savePng(fileName);
+    measurement.GetPlot()->savePng(fileName);
 }
 
-void Export::ToCsv(QString const &fileName)
+void Export::ToCsv(QString const &fileName, Measurement const &measurement)
 {
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
 
     bool first = true;
-    foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
+    foreach (Channel *channel, measurement.GetChannels())
     {
         if (channel->isHidden())
             continue;
@@ -47,7 +45,7 @@ void Export::ToCsv(QString const &fileName)
         haveData = false;
         std::string lineContent;
         bool first = true;
-        foreach (Channel *channel, m_context.m_currentMeasurement->GetChannels())
+        foreach (Channel *channel, measurement.GetChannels())
         {
             if (channel->isHidden())
                 continue;

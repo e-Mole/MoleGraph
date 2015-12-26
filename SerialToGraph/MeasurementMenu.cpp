@@ -1,5 +1,6 @@
 #include "MeasurementMenu.h"
 #include <Context.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementSettings.h>
 #include <QFormLayout>
@@ -64,25 +65,26 @@ void MeasurementMenu::_ReinitGrid()
 
 void MeasurementMenu::addButtonPressed()
 {
-/*    Measurement *newItem = new Measurement(m_context);
+    Measurement *m = m_context.m_mainWindow.CreateMeasurement();
 
-    MeasurementSettings dialog(newItem, m_context);
+    MeasurementSettings dialog(m, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-        m_context.m_measurements.push_back(newItem);
+        m_context.m_mainWindow.ConfirmMeasurement(m);
         //_ReinitGrid();
     }
     else
-        delete newItem;
+        m_context.m_mainWindow.RemoveMeasurement(m, false);
 
-    close();*/
+    close();
 }
 
 void MeasurementMenu::removeButtonPressed()
 {
-    Measurement *measurement = m_removeButtonToIten.find((QPushButton*)sender()).value();
-    m_context.m_measurements.removeOne(measurement);
-    delete measurement;
+    m_context.m_mainWindow.RemoveMeasurement(
+        m_removeButtonToIten.find((QPushButton*)sender()).value(),
+        true
+    );
 
     //_ReinitGrid();
 

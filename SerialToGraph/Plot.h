@@ -24,10 +24,9 @@ class Plot : public QCustomPlot
 {
     Q_OBJECT
 
-    Measurement * m_measurement;
+    Measurement const &m_measurement;
     bool m_moveMode;
     bool m_disabled;
-    Context const &m_context;
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
@@ -40,7 +39,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 
 public:
-    Plot(Measurement *measurement, const Context &context);
+    Plot(Measurement *measurement);
 
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }

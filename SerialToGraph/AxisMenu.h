@@ -5,6 +5,7 @@
 #include <QMap>
 
 class Axis;
+class Measurement;
 class Plot;
 class QFormLayout;
 class QPushButton;
@@ -17,11 +18,12 @@ class AxisMenu : public QDialog
     void _AddRowWithEditAndRemove(Axis *axis);
 
     Context const &m_context;
+    Measurement &m_measurement;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
     QFormLayout *m_formLayout;
 public:
-    AxisMenu(Context const &context);
+    AxisMenu(Context const &context, Measurement &measurement);
 
 signals:
 

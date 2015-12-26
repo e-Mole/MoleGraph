@@ -16,9 +16,10 @@
 #include <QString>
 #include <QWidget>
 
-AxisMenu::AxisMenu(const Context &context) :
+AxisMenu::AxisMenu(const Context &context,  Measurement &measurement) :
     QDialog(NULL, Qt::Popup),
     m_context(context),
+    m_measurement(measurement),
     m_formLayout(new QFormLayout(this))
 {
   setLayout(m_formLayout);
@@ -59,7 +60,7 @@ void AxisMenu::_ReinitAxisGrid()
         delete forDeletion;
     }
 
-    foreach (Axis *axis, m_context.m_currentMeasurement->GetAxes())
+    foreach (Axis *axis, m_measurement.GetAxes())
         _AddRowWithEditAndRemove(axis);
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
@@ -69,14 +70,14 @@ void AxisMenu::_ReinitAxisGrid()
 
 void AxisMenu::addButtonPressed()
 {
-    Axis *newAxis = m_context.m_currentMeasurement->CreateAxis(Qt::black);
+    Axis *newAxis = m_measurement.CreateAxis(Qt::black);
     AxisSettings dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         //_ReinitAxisGrid();
     }
     else
-        m_context.m_currentMeasurement->RemoveAxis(newAxis);
+        m_measurement.RemoveAxis(newAxis);
 
     close();
 }
@@ -85,7 +86,7 @@ void AxisMenu::removeButtonPressed()
 {
     Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
     Axis *firstVertical = NULL;
-    foreach (Axis * axis, m_context.m_currentMeasurement->GetAxes())
+    foreach (Axis * axis, m_measurement.GetAxes())
     {
         //first vertical is not possible to delete as same as horizontal
         if (!axis->IsHorizontal())
@@ -121,7 +122,7 @@ void AxisMenu::removeButtonPressed()
         if (axis == channel->GetAxis())
             channel->SetAxis(firstVertical);
     }
-    m_context.m_currentMeasurement->RemoveAxis(axis);
+    m_measurement.RemoveAxis(axis);
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();
 

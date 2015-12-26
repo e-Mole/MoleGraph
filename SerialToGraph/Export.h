@@ -1,16 +1,15 @@
 #ifndef EXPORT_H
 #define EXPORT_H
 
-class Context;
+class Measurement;
 class QString;
 class Export
 {
-    Context const &m_context;
 public:
-    Export(const Context &context);
+    Export();
 
-    void ToPng(QString const &fileName);
-    void ToCsv(QString const &fileName);
+    void ToPng(QString const &fileName, const Measurement &measurement);
+    void ToCsv(QString const &fileName, const Measurement &measurement);
 };
 
 #endif // EXPORT_H

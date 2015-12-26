@@ -31,7 +31,7 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
-    m_plot(new Plot(this, context)),
+    m_plot(new Plot(this)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, this))
 {
     if (name.size() == 0)
@@ -223,7 +223,8 @@ void Measurement::start()
         return;
     }
 
-    stateChanged((unsigned)(m_state = Measurement::Running));
+    m_state = Running;
+    stateChanged();
 }
 void Measurement::_DrawRestData()
 {
@@ -259,7 +260,8 @@ void Measurement::stop()
     );
     m_context.m_currentMeasurement = m_context.m_measurements.last();*/
 
-    stateChanged((unsigned)(m_state = Measurement::Finished));
+    m_state = Finished;
+    stateChanged();
 }
 
 void Measurement::sliderMoved(int value)
@@ -322,7 +324,7 @@ void Measurement::showGraph(bool show)
     m_plot->setVisible(show);
 }
 
-Plot *Measurement::GetPlot()
+Plot *Measurement::GetPlot() const
 {
     return m_plot;
 }
@@ -382,7 +384,7 @@ void Measurement::_InitializeAxesAndChanels()
 
 void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 {
-    static unsigned order = 0;
+    unsigned order = m_channels.size()-1;
     m_channels.push_back(
         new Channel(
             this,
@@ -418,7 +420,7 @@ QVector<Axis *> const & Measurement::GetAxes()
     return m_axes;
 }
 
-QVector<Channel *> const & Measurement::GetChannels()
+QVector<Channel *> const & Measurement::GetChannels() const
 {
     return m_channels;
 }

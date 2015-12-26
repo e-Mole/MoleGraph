@@ -21,7 +21,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_measurements, m_serialPort, m_settings),
+    m_context(m_measurements, m_serialPort, m_settings, *this),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -52,14 +52,14 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     centralWidget->setLayout(centralLayout);
     setCentralWidget(centralWidget);
 
-    m_buttonLine = new ButtonLine(this, m_context, m_measurements);
+    m_buttonLine = new ButtonLine(this, m_context);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
     centralLayout->addWidget(m_buttonLine);
     connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
-    _InitializeMeasurement();
+    ConfirmMeasurement(CreateMeasurement());
 }
 
 MainWindow::~MainWindow()
@@ -70,21 +70,42 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::_InitializeMeasurement()
+Measurement *MainWindow::CreateMeasurement()
 {
     Measurement *m = new Measurement(this, m_context);
+    return m;
+}
+
+Measurement * MainWindow::_GetCurrentMeasurement()
+{
+    if (m_measurementTabs->count() == 0)
+        return NULL;
+
+    return (Measurement*)m_measurementTabs->currentWidget();
+}
+
+void MainWindow::ConfirmMeasurement(Measurement *m)
+{
+    if (NULL !=_GetCurrentMeasurement())
+        disconnect(_GetCurrentMeasurement(), SIGNAL(stateChanged()), 0, 0);
+
     m_measurements.push_back(m);
-    m_context.SetCurrentMeasurement(m);
-    m_measurementTabs->addTab(m, m->GetName());
+    m_measurementTabs->setCurrentIndex(m_measurementTabs->addTab(m, m->GetName()));
+    m_buttonLine->ChngeMeasurement(m);
 
-    connect(m_buttonLine, SIGNAL(start()), m, SLOT(start()));
-    connect(m_buttonLine, SIGNAL(stop()), m, SLOT(stop()));
-    connect(m_buttonLine, SIGNAL(graphTriggered(bool)), m, SLOT(showGraph(bool)));
-    connect(m, SIGNAL(stateChanged(unsigned)), m_buttonLine, SLOT(measurementStateChanged(unsigned)));
+    connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
     connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
-    foreach (Channel *channel, m->GetChannels())
-        m_buttonLine->AddChannel(channel);
+}
 
+void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
+{
+    if (confirmed)
+    {
+        m_measurementTabs->removeTab(m_measurements.indexOf(m));
+        m_measurements.removeOne(m);
+    }
+
+    delete m;
 }
 
 void MainWindow::measurementNameChanged()

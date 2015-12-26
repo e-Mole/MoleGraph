@@ -61,8 +61,8 @@ Channel::Channel(
 ) :
     QGroupBox(name, measurement),
     m_valueLabel(NULL),
-    m_context(context),
     m_measurement(measurement),
+    m_context(context),
     m_name(name),
     m_hwIndex(hwIndex),
     m_color(color),
@@ -201,7 +201,7 @@ void Channel::displayValueOnIndex(int index)
     if (!m_axis->IsHorizontal())
     {
         m_graphPoint->clearData();
-        m_graphPoint->addData(m_context.m_plot->GetHorizontalChannel()->GetValue(index), m_values[index]);
+        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), m_values[index]);
     }
 }
 
@@ -225,7 +225,7 @@ void Channel::_ShowOrHideGraphAndPoin(bool shown)
 {
     m_graph->setVisible(shown);
     m_graphPoint->setVisible(shown);
-    m_context.m_plot->RescaleAllAxes();
+    m_measurement->GetPlot()->RescaleAllAxes();
 }
 
 void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
@@ -235,7 +235,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
-    m_context.m_plot->RescaleAxis(graphAxis);
+    m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
 void Channel::AssignToAxis(Axis *axis)
@@ -257,11 +257,11 @@ void Channel::SetColor(QColor &color)
 {
     m_color = color;
     m_valueLabel->SetColor(color);
-    m_context.m_plot->SetGraphColor(m_graph, color);
-    m_context.m_plot->SetGraphPointColor(m_graphPoint, color);
+    m_measurement->GetPlot()->SetGraphColor(m_graph, color);
+    m_measurement->GetPlot()->SetGraphPointColor(m_graphPoint, color);
 }
 
-Measurement * Channel::GetRelevantMeasurement()
+Measurement * Channel::GetMeasurement()
 {
     return m_measurement;
 }

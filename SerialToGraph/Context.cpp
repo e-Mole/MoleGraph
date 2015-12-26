@@ -18,16 +18,10 @@ Context::Context(
     m_channels(channels),
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
-    m_plot(NULL),
     m_measurements(measurements),
     m_currentMeasurement(NULL),
     m_serialPort(serialPort)
 {
-}
-
-void Context::SetPlot(Plot *plot)
-{
-    m_plot = plot;
 }
 
 void Context::SetCurrentMeasurement(Measurement *currentMeasurement)

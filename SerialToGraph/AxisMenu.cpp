@@ -3,6 +3,7 @@
 #include <AxisSettings.h>
 #include <Context.h>
 #include <Channel.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QFormLayout>
 #include <QLabel>
@@ -18,7 +19,6 @@
 AxisMenu::AxisMenu(const Context &context) :
     QDialog(NULL, Qt::Popup),
     m_context(context),
-    m_plot(*context.m_plot),
     m_formLayout(new QFormLayout(this))
 {
   setLayout(m_formLayout);
@@ -69,15 +69,14 @@ void AxisMenu::_ReinitAxisGrid()
 
 void AxisMenu::addButtonPressed()
 {
-    Axis *newAxis = new Axis(m_context);
-
+    Axis *newAxis = m_context.m_currentMeasurement->CreateAxis(Qt::black);
     AxisSettings dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         //_ReinitAxisGrid();
     }
     else
-        delete newAxis;
+        m_context.m_currentMeasurement->RemoveAxis(newAxis);
 
     close();
 }
@@ -122,8 +121,7 @@ void AxisMenu::removeButtonPressed()
         if (axis == channel->GetAxis())
             channel->SetAxis(firstVertical);
     }
-    m_context.m_axes.removeOne(axis);
-    m_plot.RemoveAxis(axis->GetGraphAxis());
+    m_context.m_currentMeasurement->RemoveAxis(axis);
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();
 

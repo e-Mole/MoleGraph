@@ -1,17 +1,21 @@
 #include "Axis.h"
 #include <Context.h>
 #include <Channel.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-Axis::Axis(Context const &context,
-    QString title,
+Axis::Axis(
+    Measurement *measurement,
+    Context const &context,
     QColor const & color,
+    QCPAxis *graphAxis,
+    QString title,
     bool isRemovable,
-    bool isHorizontal,
-    QCPAxis *graphAxis
+    bool isHorizontal
 ) :
+    m_measurement(measurement),
     m_context(context),
     m_title(title),
     m_isRemovable(isRemovable),
@@ -22,7 +26,7 @@ Axis::Axis(Context const &context,
     m_displayName(false)
 {
     if (title == "")
-        m_title = m_context.m_plot->GetDefaultAxisName();
+        m_title = m_measurement->GetPlot()->GetDefaultAxisName();
 
     _AssignGraphAxis(graphAxis);
 }
@@ -37,7 +41,7 @@ void Axis::_AssignGraphAxis(QCPAxis *axis)
                 channel->AssignToGraphAxis(axis);
         }
 
-        m_context.m_plot->RemoveAxis(m_graphAxis);
+        m_measurement->GetPlot()->RemoveAxis(m_graphAxis);
     }
 
     m_graphAxis = axis;
@@ -46,7 +50,7 @@ void Axis::_AssignGraphAxis(QCPAxis *axis)
         _SetColor(m_color);
         UpdateGraphAxisName();
         UpdateVisiblility();
-        m_context.m_plot->RescaleAxis(axis);
+        m_measurement->GetPlot()->RescaleAxis(axis);
 
     }
 }
@@ -68,7 +72,7 @@ void Axis::UpdateGraphAxisName()
     if (m_displayName)
     {
         m_graphAxis->setLabel(m_title);
-        m_context.m_plot->ReplotIfNotDisabled();
+        m_measurement->GetPlot()->ReplotIfNotDisabled();
         return;
     }
 
@@ -116,7 +120,7 @@ void Axis::UpdateGraphAxisName()
     }
 
     m_graphAxis->setLabel(channels + ((0 == units.size() || "/n" == units) ? "" : " [" + units + "]"));
-    m_context.m_plot->ReplotIfNotDisabled();
+    m_measurement->GetPlot()->ReplotIfNotDisabled();
 }
 
 void Axis::UpdateVisiblility()
@@ -126,12 +130,12 @@ void Axis::UpdateVisiblility()
         if (!channel->isHidden() && channel->GetAxis() == this)
         {
             m_graphAxis->setVisible(true);
-            m_context.m_plot->ReplotIfNotDisabled();
+            m_measurement->GetPlot()->ReplotIfNotDisabled();
             return;
         }
     }
     m_graphAxis->setVisible(IsHorizontal());
-    m_context.m_plot->ReplotIfNotDisabled();
+    m_measurement->GetPlot()->ReplotIfNotDisabled();
 
 }
 

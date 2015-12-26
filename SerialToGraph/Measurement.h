@@ -9,6 +9,7 @@
 class Axis;
 class Channel;
 class Plot;
+class QColor;
 class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
@@ -75,6 +76,8 @@ public:
     void ReplaceDisplays(bool grid);
     Plot *GetPlot();
     State GetState() { return m_state; }
+    Axis *CreateAxis(QColor const & color);
+    void RemoveAxis(Axis * axis);
 
 signals:
     void stateChanged(unsigned state);

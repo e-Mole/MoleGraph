@@ -22,12 +22,10 @@ public:
     QVector<Channel*> &m_channels;
     QString m_applicationName;
     QSettings &m_settings;
-    Plot *m_plot;
     QVector<Measurement *> &m_measurements;
     Measurement *m_currentMeasurement;
     SerialPort &m_serialPort;
 
-    void SetPlot(Plot *plot);
     void SetCurrentMeasurement(Measurement *currentMeasurement);
 };
 

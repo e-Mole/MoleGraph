@@ -19,7 +19,6 @@ class AxisMenu : public QDialog
     Context const &m_context;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
-    Plot &m_plot;
     QFormLayout *m_formLayout;
 public:
     AxisMenu(Context const &context);

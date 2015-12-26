@@ -4,7 +4,7 @@
 #include <QColor>
 #include <QString>
 
-
+class Measurement;
 class QCPAxis;
 class QString;
 struct Context;
@@ -15,11 +15,7 @@ class Axis
     friend class AxesDialog;
     friend class AxisSettings;
 
-    void _SetName(QString const &name) { m_title = name; }
-    void _SetColor(QColor const & color);
-    void _AssignGraphAxis(QCPAxis *axis);
-
-protected:
+    Measurement * m_measurement;
     Context const &m_context;
     QString m_title;
     bool m_isRemovable;
@@ -28,15 +24,19 @@ protected:
     bool m_isHorizontal;
     QCPAxis * m_graphAxis;
     bool m_displayName;
+
+    void _SetName(QString const &name) { m_title = name; }
+    void _SetColor(QColor const & color);
+    void _AssignGraphAxis(QCPAxis *axis);
+
 public:
-    Axis(
+    Axis(Measurement *measurement,
         Context const &context,
+        QColor const & color,
+        QCPAxis *graphAxis = NULL,
         QString title = "",
-        QColor const & color= Qt::black,
         bool isRemovable = true,
-        bool isHorizontal = false,
-        QCPAxis *graphAxis = NULL
-    );
+        bool isHorizontal = false);
 
     const Axis &operator =(const Axis &axis);
 

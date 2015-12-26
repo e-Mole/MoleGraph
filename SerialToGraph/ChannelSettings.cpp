@@ -3,6 +3,7 @@
 #include <AxisSettings.h>
 #include <Channel.h>
 #include <Context.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QComboBox>
 #include <QCheckBox>
@@ -65,7 +66,7 @@ bool ChannelSettings::BeforeAccept()
     {
         changed = true;
         m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
-        m_context.m_plot->SetShape(m_channel->m_graphPoint, m_channel->m_shapeIndex);
+        m_channel->GetMeasurement()->GetPlot()->SetShape(m_channel->m_graphPoint, m_channel->m_shapeIndex);
     }
 
     bool changedHorizontal = false;
@@ -78,7 +79,7 @@ bool ChannelSettings::BeforeAccept()
             _MoveLastHorizontalToVertical();
             changedHorizontal = true;
             m_channel->_ShowOrHideGraphAndPoin(false);
-            m_context.m_plot->SetHorizontalChannel(m_channel);
+            m_channel->GetMeasurement()->GetPlot()->SetHorizontalChannel(m_channel);
         }
 
         Axis *lastAxis = m_channel->m_axis;
@@ -96,7 +97,7 @@ bool ChannelSettings::BeforeAccept()
         else
             m_channel->stateChanged();
 
-        m_context.m_plot->ReplotIfNotDisabled();
+        m_channel->GetMeasurement()->GetPlot()->ReplotIfNotDisabled();
 
     }
 
@@ -187,7 +188,7 @@ void ChannelSettings::axisChanged(int index)
 {
     if (0 == index) //New Axis...
     {
-        Axis*newAxis = new Axis(m_context, "", m_channel->GetColor());
+        Axis*newAxis = m_channel->GetMeasurement()->CreateAxis(m_channel->GetColor());
 
         AxisSettings dialog(newAxis, m_context);
         if (QDialog::Accepted == dialog.exec())
@@ -196,7 +197,7 @@ void ChannelSettings::axisChanged(int index)
              m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
         }
         else
-            delete newAxis;
+            m_channel->GetMeasurement()->RemoveAxis(newAxis);
     }
 }
 

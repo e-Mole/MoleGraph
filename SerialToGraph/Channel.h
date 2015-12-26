@@ -53,8 +53,8 @@ class Channel : public QGroupBox
     bool isVisible()
     { return QGroupBox::isVisible(); }
 
-    Context const & m_context;
     Measurement * m_measurement;
+    Context const & m_context;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
@@ -122,7 +122,7 @@ public:
     void setVisible(bool visible);
     void SetColor(QColor &color);
 
-    Measurement * GetRelevantMeasurement();
+    Measurement * GetMeasurement();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

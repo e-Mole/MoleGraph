@@ -4,6 +4,7 @@
 #include <Context.h>
 #include <Plot.h>
 #include <QByteArray>
+#include <QColor>
 #include <QDateTime>
 #include <QDebug>
 #include <QHBoxLayout>
@@ -33,8 +34,6 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     m_plot(new Plot(this, context)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, this))
 {
-    context.SetPlot(m_plot);
-
     if (name.size() == 0)
         m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -115,7 +114,7 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     else if (drawDelay > m_drawPeriod)
     {
         if (drawDelay > 500) //delay will be still longer, I have to stop drawing for this run
-            m_context.m_plot->SetDisabled(true);
+            m_plot->SetDisabled(true);
         else
         {
             m_drawPeriod *= 2;
@@ -148,18 +147,18 @@ void Measurement::draw()
                 m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
             }
 
-            m_sampleChannel->UpdateGraph(m_context.m_plot->GetHorizontalChannel()->GetLastValue());
+            m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
             foreach (Channel *channel, m_trackedHwChannels)
-                channel->UpdateGraph(m_context.m_plot->GetHorizontalChannel()->GetLastValue());
+                channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
         }
 
-        unsigned index = m_context.m_plot->GetHorizontalChannel()->GetValueCount() - 1;
-        if (!m_context.m_plot->IsInMoveMode())
+        unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
+        if (!m_plot->IsInMoveMode())
         {
             foreach (Channel *channel, m_context.m_channels)
                 channel->displayValueOnIndex(index);
 
-            m_context.m_plot->RescaleAxis(m_context.m_plot->xAxis);
+            m_plot->RescaleAxis(m_plot->xAxis);
         }
 
         unsigned scrollBarMax = index;
@@ -169,10 +168,10 @@ void Measurement::draw()
             m_scrollBar->setValue(scrollBarMax);
         }
 
-        if (!m_context.m_plot->IsInMoveMode())
-            m_context.m_plot->RescaleAllAxes();
+        if (!m_plot->IsInMoveMode())
+            m_plot->RescaleAllAxes();
 
-        m_context.m_plot->ReplotIfNotDisabled();
+        m_plot->ReplotIfNotDisabled();
     }
 
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
@@ -220,10 +219,10 @@ void Measurement::start()
 }
 void Measurement::_DrawRestData()
 {
-    m_context.m_plot->SetDisabled(false); //may be disabled form last run
+    m_plot->SetDisabled(false); //may be disabled form last run
     draw(); //may be something is still in the buffer
     //just for case last draw set a disable again
-    m_context.m_plot->SetDisabled(false);
+    m_plot->SetDisabled(false);
 
     if (m_anySampleMissed)
         QMessageBox::warning(
@@ -260,8 +259,8 @@ void Measurement::sliderMoved(int value)
     foreach (Channel * channel, m_context.m_channels)
         channel->displayValueOnIndex(value);
 
-    m_context.m_plot->SetMoveMode(true);
-    m_context.m_plot->ReplotIfNotDisabled();
+    m_plot->SetMoveMode(true);
+    m_plot->ReplotIfNotDisabled();
 }
 
 /*QVector<Axis *> const & Measurement::GetAxes()
@@ -325,21 +324,23 @@ void Measurement::_InitializeAxesAndChanels()
 {
     Axis * xAxis =
         new Axis(
+            this,
             m_context,
-            tr("Horizontal"),
             Qt::black,
+            m_plot->xAxis,
+            tr("Horizontal"),
             false,
-            true,
-            m_plot->xAxis
+            true
         );
     Axis * yAxis =
         new Axis(
+            this,
             m_context,
-            tr("Vertical"),
             Qt::black,
+            m_plot->yAxis,
+            tr("Vertical"),
             false,
-            false,
-            m_plot->yAxis
+            false
         );
     m_context.m_axes.push_back(xAxis);
     m_context.m_axes.push_back(yAxis);
@@ -388,4 +389,18 @@ void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
         )
     );
     order++;
+}
+
+Axis * Measurement::CreateAxis(QColor const & color)
+{
+    Axis *newAxis = new Axis(this, m_context, color, m_plot->AddYAxis(false));
+    m_context.m_axes.push_back(newAxis);
+    return newAxis;
+}
+
+void Measurement::RemoveAxis(Axis * axis)
+{
+    m_plot->RemoveAxis(axis->GetGraphAxis());
+    m_context.m_axes.removeOne(axis);
+    delete axis;
 }

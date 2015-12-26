@@ -199,7 +199,7 @@ void ButtonLine::actionStateChanged()
             if (it.value() == senderAction)
             {
                 it.key()->changeChannelVisibility(it.value()->isChecked(), true);
-                it.key()->GetRelevantMeasurement()->ReplaceDisplays(!m_graphAction->isChecked());
+                it.key()->GetMeasurement()->ReplaceDisplays(!m_graphAction->isChecked());
             }
         }
     }
@@ -210,7 +210,7 @@ void ButtonLine::actionStateChanged()
 void ButtonLine::_UpdateStartButtonState()
 {
     if (!m_connected ||
-        m_context.m_channels.first()->GetRelevantMeasurement()->GetState() != Measurement::Ready)
+        m_context.m_channels.first()->GetMeasurement()->GetState() != Measurement::Ready)
     {
         m_startButton->setEnabled(false);
         return;

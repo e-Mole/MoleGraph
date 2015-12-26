@@ -1,6 +1,7 @@
 #include "AxisSettings.h"
 #include <Axis.h>
 #include <Context.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QComboBox>
 #include <QFormLayout>
@@ -76,17 +77,17 @@ bool AxisSettings::BeforeAccept()
     if (!m_context.m_axes.contains(m_axisOriginal))
     {
         m_context.m_axes.push_back(m_axisOriginal);
-        m_axisOriginal->_AssignGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
+        m_axisOriginal->_AssignGraphAxis(m_axisOriginal->m_measurement->GetPlot()->AddYAxis(m_axisOriginal->IsOnRight()));
     }
     else
     {
         if (sideChanged)
-            m_axisOriginal->_AssignGraphAxis(m_context.m_plot->AddYAxis(m_axisOriginal->IsOnRight()));
+            m_axisOriginal->_AssignGraphAxis(m_axisOriginal->m_measurement->GetPlot()->AddYAxis(m_axisOriginal->IsOnRight()));
         if (displayNameChanged)
             m_axisOriginal->UpdateGraphAxisName();
     }
 
-    m_context.m_plot->ReplotIfNotDisabled();
+    m_axisOriginal->m_measurement->GetPlot()->ReplotIfNotDisabled();
     return true;
 }
 

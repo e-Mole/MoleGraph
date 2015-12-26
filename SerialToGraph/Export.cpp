@@ -1,6 +1,7 @@
 #include "Export.h"
 #include <Context.h>
 #include <Channel.h>
+#include <Measurement.h>
 #include <Plot.h>
 #include <QFile>
 #include <QString>
@@ -12,7 +13,7 @@ Export::Export(Context const &context) :
 
 void Export::ToPng(QString const &fileName)
 {
-    m_context.m_plot->savePng(fileName);
+    m_context.m_currentMeasurement->GetPlot()->savePng(fileName);
 }
 
 void Export::ToCsv(QString const &fileName)

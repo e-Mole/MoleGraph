@@ -57,7 +57,6 @@ public:
     QCPAxis *AddYAxis(bool onRight);
     void RescaleAxis(QCPAxis *axis);
     void RescaleAllAxes();
-    QString GetDefaultAxisName();
     void SetHorizontalChannel(Channel *channel);
     Channel *GetHorizontalChannel();
     void PauseDrawing();

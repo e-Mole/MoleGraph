@@ -13,10 +13,10 @@ class FormDialogColor : public FormDialogBase
     void _SetColorButtonColor();
 
     QWidget *m_colorButtonWidget;
-    QColor m_color;
 protected:
-    void AddColorButtonRow(QColor &color);
-    virtual void ColorChanged(QColor &color) = 0;
+    void AddColorButtonRow(QColor const &color);
+
+    QColor m_color;
 public:
     FormDialogColor(QWidget *parent, const QString &title);
 

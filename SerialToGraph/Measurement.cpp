@@ -53,6 +53,14 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     _InitializeAxesAndChanels();
 }
 
+Measurement::~Measurement()
+{
+    foreach (Axis *axis, m_axes)
+    {
+        delete axis;
+    }
+}
+
 void Measurement::_InitializeLayouts()
 {
     m_mainLayout = new QHBoxLayout(this);
@@ -342,8 +350,8 @@ void Measurement::_InitializeAxesAndChanels()
             false,
             false
         );
-    m_context.m_axes.push_back(xAxis);
-    m_context.m_axes.push_back(yAxis);
+    m_axes.push_back(xAxis);
+    m_axes.push_back(yAxis);
 
     m_sampleChannel =
         new Channel(
@@ -394,13 +402,18 @@ void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
 Axis * Measurement::CreateAxis(QColor const & color)
 {
     Axis *newAxis = new Axis(this, m_context, color, m_plot->AddYAxis(false));
-    m_context.m_axes.push_back(newAxis);
+    m_axes.push_back(newAxis);
     return newAxis;
 }
 
 void Measurement::RemoveAxis(Axis * axis)
 {
     m_plot->RemoveAxis(axis->GetGraphAxis());
-    m_context.m_axes.removeOne(axis);
+    m_axes.removeOne(axis);
     delete axis;
+}
+
+QVector<Axis *> const &Measurement::GetAxes()
+{
+    return m_axes;
 }

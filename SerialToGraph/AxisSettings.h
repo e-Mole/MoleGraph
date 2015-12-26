@@ -3,10 +3,11 @@
 
 #include <Axis.h>
 #include <FormDialogColor.h>
-#include <QColor>
 
 class AxisCopy;
 class Context;
+class QColor;
+class QComboBox;
 class QLineEdit;
 class QMouseQMouseEvent;
 class QString;
@@ -16,21 +17,14 @@ class AxisSettings : public FormDialogColor
     Q_OBJECT
 
     virtual bool BeforeAccept();
-    virtual void ColorChanged(QColor &color);
-    Axis * m_axisOriginal;
-    Axis m_axisCopy;
+    Axis * m_axis;
     QLineEdit* m_name;
     Context const & m_context;
+    QComboBox *m_side;
+    QComboBox *m_display;
 
 public:
     AxisSettings(Axis *axis, const Context &context);
-
-signals:
-
-private slots:
-    void sideChanged(int index);
-    void nameChanged(QString const &text);
-    void displayChanged(int index);
 };
 
 #endif // AXIS_SETTINGS_H

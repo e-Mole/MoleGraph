@@ -281,12 +281,6 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-QString Plot::GetDefaultAxisName()
-{
-    return QString(tr("Axis %1")).arg(m_context.m_axes.count() + 1);
-}
-
-
 void Plot::_RefillGraphs()
 {
     foreach (Channel *channel, m_context.m_channels)

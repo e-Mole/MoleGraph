@@ -22,8 +22,7 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     m_channel(channel),
     m_name(NULL),
     m_shapeComboBox(NULL),
-    m_axisComboBox(NULL),
-    m_color(channel->m_color)
+    m_axisComboBox(NULL)
 {
     m_name = new QLineEdit(channel->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
@@ -110,7 +109,7 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
     {
         if (channel->m_axis->IsHorizontal())
         {
-            foreach (Axis *axis, m_context.m_axes)
+            foreach (Axis *axis, channel->GetMeasurement()->GetAxes())
             {
                 if (!axis->IsHorizontal())
                 {
@@ -172,7 +171,7 @@ void ChannelSettings::_InitializeAxisCombo()
 {
     m_axisComboBox = new QComboBox(this);
     m_axisComboBox->addItem(tr("New Axis..."));
-    foreach (Axis *axis, m_context.m_axes)
+    foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
     {
        m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
     }
@@ -199,9 +198,4 @@ void ChannelSettings::axisChanged(int index)
         else
             m_channel->GetMeasurement()->RemoveAxis(newAxis);
     }
-}
-
-void ChannelSettings::ColorChanged(QColor &color)
-{
-    m_color = color;
 }

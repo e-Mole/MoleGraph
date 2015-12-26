@@ -21,7 +21,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
-    m_context(m_axes, m_channels, m_measurements, m_serialPort, m_settings),
+    m_context(m_channels, m_measurements, m_serialPort, m_settings),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -64,11 +64,6 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
 MainWindow::~MainWindow()
 {
-    foreach (Axis *axis, m_axes)
-    {
-        delete axis;
-    }
-
     foreach (Measurement *measurement, m_measurements)
     {
         delete measurement;

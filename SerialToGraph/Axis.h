@@ -2,14 +2,16 @@
 #define AXIS_H
 
 #include <QColor>
+#include <QObject>
 #include <QString>
 
 class Measurement;
 class QCPAxis;
 class QString;
 struct Context;
-class Axis
+class Axis : public QObject
 {
+    Q_OBJECT
 
     friend class AxisCopy;
     friend class AxesDialog;

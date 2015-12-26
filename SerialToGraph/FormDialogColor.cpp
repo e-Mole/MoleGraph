@@ -14,7 +14,7 @@ FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title) :
 {
 }
 
-void FormDialogColor::AddColorButtonRow(QColor &color)
+void FormDialogColor::AddColorButtonRow(const QColor &color)
 {
     m_color = color;
     QPushButton * colorButton = new QPushButton("", this);
@@ -38,7 +38,6 @@ void FormDialogColor::colorButtonClicked()
     {
         m_color = colorDialog.currentColor();
         _SetColorButtonColor();
-        ColorChanged(m_color);
     }
 }
 

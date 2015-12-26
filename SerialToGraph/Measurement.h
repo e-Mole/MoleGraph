@@ -58,7 +58,7 @@ private:
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
     Channel *m_sampleChannel;
-    //QVector<Axis*> m_axes;
+    QVector<Axis*> m_axes;
     //QVector<Channel*> m_channels;
     QHBoxLayout *m_mainLayout;
     QVBoxLayout *m_plotAndSliderLayout;
@@ -68,10 +68,12 @@ private:
     QScrollBar *m_scrollBar;
 public:
     Measurement(QWidget *parent, Context &context, SampleUnits units = Hz, unsigned period = 1, QString const &name = "");
+    ~Measurement();
+
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
-    //QVector<Axis *> const & GetAxes();
+    QVector<Axis *> const & GetAxes();
     //QVector<Channel *> const & GetChannels();
     void ReplaceDisplays(bool grid);
     Plot *GetPlot();

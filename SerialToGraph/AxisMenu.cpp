@@ -59,7 +59,7 @@ void AxisMenu::_ReinitAxisGrid()
         delete forDeletion;
     }
 
-    foreach (Axis *axis, m_context.m_axes)
+    foreach (Axis *axis, m_context.m_currentMeasurement->GetAxes())
         _AddRowWithEditAndRemove(axis);
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
@@ -85,7 +85,7 @@ void AxisMenu::removeButtonPressed()
 {
     Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
     Axis *firstVertical = NULL;
-    foreach (Axis * axis, m_context.m_axes)
+    foreach (Axis * axis, m_context.m_currentMeasurement->GetAxes())
     {
         //first vertical is not possible to delete as same as horizontal
         if (!axis->IsHorizontal())

@@ -9,12 +9,10 @@
 #include <QSettings>
 #include <SerialPort.h>
 Context::Context(
-        QVector<Axis*> &axis,
         QVector<Channel*> &channels,
         QVector<Measurement *> &measurements,
         SerialPort &serialPort,
         QSettings &settings):
-    m_axes(axis),
     m_channels(channels),
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),

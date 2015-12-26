@@ -25,7 +25,6 @@ class MainWindow : public QMainWindow
 	SerialPort m_serialPort;
     ButtonLine* m_buttonLine;
 
-    QVector<Axis *> m_axes;
     QVector<Channel *> m_channels;
     QVector<Measurement*> m_measurements;
     Context m_context;

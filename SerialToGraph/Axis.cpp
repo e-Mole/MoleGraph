@@ -15,6 +15,7 @@ Axis::Axis(
     bool isRemovable,
     bool isHorizontal
 ) :
+    QObject(NULL),
     m_measurement(measurement),
     m_context(context),
     m_title(title),
@@ -26,7 +27,7 @@ Axis::Axis(
     m_displayName(false)
 {
     if (title == "")
-        m_title = m_measurement->GetPlot()->GetDefaultAxisName();
+        m_title =  QString(tr("Axis %1")).arg(measurement->GetAxes().count() + 1);
 
     _AssignGraphAxis(graphAxis);
 }

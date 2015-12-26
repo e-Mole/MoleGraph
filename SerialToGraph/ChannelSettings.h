@@ -19,7 +19,6 @@ class ChannelSettings : public FormDialogColor
     void _InitializeAxisCombo();
     void _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
-    void ColorChanged(QColor &color);
 
     Context const & m_context;
     Channel *m_channel;
@@ -29,8 +28,6 @@ class ChannelSettings : public FormDialogColor
 	QCheckBox * m_toRightSide;
     QComboBox * m_shapeComboBox;
     QComboBox * m_axisComboBox;
-    QColor m_color;
-
 
     Channel * m_lastHorrizontalChannel;
 public:

@@ -22,8 +22,8 @@ class MainWindow : public QMainWindow
     QVector<Measurement*> m_measurements;
     Context m_context;
     QTabWidget *m_measurementTabs;
+    Measurement *m_currentMeasurement;
 
-    Measurement * _GetCurrentMeasurement();
 
 public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
@@ -36,6 +36,7 @@ public:
     bool m_close;
 private slots:
     void measurementNameChanged();
+    void currentMeasurementChanged(int index);
 };
 
 #endif // MAINWINDOW_H

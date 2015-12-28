@@ -22,6 +22,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
     m_context(m_measurements, m_serialPort, m_settings, *this),
+    m_currentMeasurement(NULL),
     m_close(false)
 {
     QTranslator *translator = new QTranslator(this);
@@ -59,6 +60,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
+    connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateMeasurement());
 }
 
@@ -76,33 +78,19 @@ Measurement *MainWindow::CreateMeasurement()
     return m;
 }
 
-Measurement * MainWindow::_GetCurrentMeasurement()
-{
-    if (m_measurementTabs->count() == 0)
-        return NULL;
-
-    return (Measurement*)m_measurementTabs->currentWidget();
-}
-
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
-    if (NULL !=_GetCurrentMeasurement())
-        disconnect(_GetCurrentMeasurement(), SIGNAL(stateChanged()), 0, 0);
-
     m_measurements.push_back(m);
     m_measurementTabs->setCurrentIndex(m_measurementTabs->addTab(m, m->GetName()));
-    m_buttonLine->ChngeMeasurement(m);
-
-    connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
-    connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
 }
 
 void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
     if (confirmed)
     {
-        m_measurementTabs->removeTab(m_measurements.indexOf(m));
         m_measurements.removeOne(m);
+        m_currentMeasurement = NULL;
+        m_measurementTabs->removeTab(m_measurements.indexOf(m));
     }
 
     delete m;
@@ -121,3 +109,22 @@ void MainWindow::measurementNameChanged()
     }
 }
 
+void MainWindow::currentMeasurementChanged(int index)
+{
+    if (-1 == index)
+    {
+        m_currentMeasurement = NULL;
+        return;
+    }
+
+    if (NULL != m_currentMeasurement)
+        disconnect(m_currentMeasurement, SIGNAL(stateChanged()), 0, 0);
+
+    Measurement *m = (Measurement*)m_measurementTabs->widget(index);
+    m_buttonLine->ChngeMeasurement(m);
+
+    connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
+    connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
+
+    m_currentMeasurement = m;
+}

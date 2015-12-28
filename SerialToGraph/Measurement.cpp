@@ -189,6 +189,7 @@ void Measurement::draw()
 
 void Measurement::start()
 {
+    qDebug() << "start";
     if (!m_context.m_serialPort.IsDeviceConnected())
         return;
 

@@ -54,9 +54,6 @@ public:
     void ChngeMeasurement(Measurement *measurement);
 signals:
     void periodChanged(unsigned period);
-    void start();
-    void stop();
-    void graphTriggered(bool checked);
     void channelTriggered(Channel *channel, bool checked);
     void axesPressed();
     void allChannelsDisplayedOrHidden();
@@ -66,6 +63,8 @@ private slots:
     void openFile();
     void saveFile();
     void saveAsFile();
+    void start();
+    void stop();
 public slots:
     void exportPng();
     void exportCsv();

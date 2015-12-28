@@ -63,14 +63,14 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
     buttonLayout->addWidget(m_startButton);
-    connect(m_startButton, SIGNAL(clicked()), this, SIGNAL(start()));
+    connect(m_startButton, SIGNAL(clicked()), this, SLOT(start()));
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
-    connect(m_stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
+    connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
     buttonLayout->addWidget(m_stopButton);
 
@@ -181,7 +181,7 @@ void ButtonLine::actionStateChanged()
 {
     QAction *senderAction = (QAction*)sender();
     if (senderAction == m_graphAction)
-        graphTriggered(m_graphAction->isChecked());
+        m_measurement->showGraph(m_graphAction->isChecked());
     else if (senderAction == m_allAction || senderAction == m_noneAction)
     {
         QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
@@ -300,21 +300,22 @@ void ButtonLine::ChngeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
 
-    disconnect(this, SIGNAL(start()), 0, 0);
-    connect(this, SIGNAL(start()), measurement, SLOT(start()));
-
-    disconnect(this, SIGNAL(stop()), 0, 0);
-    connect(this, SIGNAL(stop()), measurement, SLOT(stop()));
-
-    disconnect(this, SIGNAL(graphTriggered(bool)), 0, 0);
-    connect(this, SIGNAL(graphTriggered(bool)), measurement, SLOT(showGraph(bool)));
-
     foreach (QAction *action, m_channelActions.values())
+    {
         m_panelMenu->removeAction(action);
+        delete action;
+    }
     m_channelActions.clear();
 
     foreach (Channel *channel, measurement->GetChannels())
         AddChannel(channel);
+}
 
-
+void ButtonLine::start()
+{
+    m_measurement->start();
+}
+void ButtonLine::stop()
+{
+    m_measurement->stop();
 }

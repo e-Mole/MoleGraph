@@ -66,6 +66,7 @@ private:
     QGridLayout *m_displayLayout;
     Plot *m_plot;
     QScrollBar *m_scrollBar;
+    bool m_startNewDraw;
 public:
     Measurement(QWidget *parent, Context &context, SampleUnits units = Hz, unsigned period = 1, QString const &name = "");
     ~Measurement();

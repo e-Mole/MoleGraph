@@ -32,7 +32,8 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
     m_plot(new Plot(this)),
-    m_scrollBar(new QScrollBar(Qt::Horizontal, this))
+    m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
+    m_startNewDraw(false)
 {
     if (name.size() == 0)
         m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
@@ -117,7 +118,7 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     if (m_drawPeriod >= 20 && drawDelay < m_drawPeriod /2) //20 ms - I guess the program will not use a dog
     {
         m_drawPeriod /= 2;
-        qDebug() << "draw period decreased to:" << m_drawPeriod;
+        //qDebug() << "draw period decreased to:" << m_drawPeriod;
     }
     else if (drawDelay > m_drawPeriod)
     {
@@ -126,7 +127,7 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
         else
         {
             m_drawPeriod *= 2;
-            qDebug() << "draw period increased to:" << m_drawPeriod;
+            //qDebug() << "draw period increased to:" << m_drawPeriod;
         }
     }
 }
@@ -184,7 +185,8 @@ void Measurement::draw()
 
     _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
 
-    m_drawTimer->start(m_drawPeriod);
+    if (m_startNewDraw)
+        m_drawTimer->start(m_drawPeriod);
 }
 
 void Measurement::start()
@@ -217,6 +219,7 @@ void Measurement::start()
     }
     m_context.m_serialPort.SetSelectedChannels(selectedChannels);
 
+    m_startNewDraw = true;
     m_drawTimer->start(m_drawPeriod);
     if (!m_context.m_serialPort.Start())
     {
@@ -243,6 +246,8 @@ void Measurement::_DrawRestData()
 }
 void Measurement::stop()
 {
+    //because of _DrawRestData
+    m_startNewDraw = false;
     m_drawTimer->stop();
 
     if (!m_context.m_serialPort.Stop())

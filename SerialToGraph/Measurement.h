@@ -77,6 +77,7 @@ public:
     QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
     Plot *GetPlot() const;
+    bool IsPlotVisible() const;
     State GetState() { return m_state; }
     Axis *CreateAxis(QColor const & color);
     void RemoveAxis(Axis * axis);

@@ -1,21 +1,22 @@
 #ifndef BUTTONLINE_H
 #define BUTTONLINE_H
 
-#include <QWidget>
+#include <QKeySequence>
 #include <QMap>
 #include <QVector>
+#include <QWidget>
 
 class Axis;
 class Channel;
 class Measurement;
 class QAction;
 class QDialog;
-class QKeySequence;
 class QLabel;
 class QLineEdit;
 class QMenu;
 class QPoint;
 class QPushButton;
+class QShortcut;
 struct Context;
 
 class ButtonLine : public QWidget
@@ -23,10 +24,17 @@ class ButtonLine : public QWidget
     Q_OBJECT
 
     void _UpdateStartAndStopButtonsState();
-    QAction * _InsertAction(QMenu *menu, QString title, const QKeySequence &keySequence, bool checkable, QAction *before = NULL);
+    QAction * _InsertAction(
+        QMenu *menu,
+        QString title,
+        const QKeySequence &keySequence,
+        bool checkable,
+        bool checked,
+        QAction *before = NULL);
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
     void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
+    void _RefreshPanelMenu();
 
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
@@ -47,10 +55,11 @@ class ButtonLine : public QWidget
     QAction *m_afterLastChannelSeparator;
     Context const &m_context;
     Measurement *m_measurement;
+    QMap<QKeySequence, QShortcut*> m_shortcuts;
 
 public:
     ButtonLine(QWidget *parent, const Context &context);
-    void AddChannel(Channel *channel);
+    void AddChannel(Channel *channel, QMenu *panelMenu);
     void ChngeMeasurement(Measurement *measurement);
 signals:
     void periodChanged(unsigned period);

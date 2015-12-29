@@ -103,6 +103,33 @@ void ButtonLine::fileMenuButtonPressed()
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 
+void ButtonLine::_RefreshPanelMenu()
+{
+    if (m_panelMenu != NULL)
+    {
+        delete m_panelMenu;
+        m_channelActions.clear();
+    }
+
+    m_panelMenu = new QMenu(this);
+    m_panelMenu->setTitle(tr("Panels"));
+    m_graphAction =
+        _InsertAction(
+            m_panelMenu,
+            tr("Graph"),
+            QKeySequence(Qt::ALT + Qt::Key_G),
+            true,
+            m_measurement->IsPlotVisible()
+        );
+
+    m_afterLastChannelSeparator = m_panelMenu->addSeparator();
+    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::ALT + Qt::Key_A), false, false);
+    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::ALT + Qt::Key_N), false, false);
+
+    foreach (Channel *channel, m_measurement->GetChannels())
+        AddChannel(channel, m_panelMenu);
+
+}
 void ButtonLine::panelMenuButtonPressed()
 {
     m_panelMenu->exec(_GetGlobalMenuPosition(m_panelMenuButton));
@@ -120,21 +147,33 @@ void ButtonLine::measurementMenuButtonPressed()
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
-QAction * ButtonLine::_InsertAction(QMenu *menu, QString title, QKeySequence const &keySequence, bool checkable, QAction *before)
+QAction * ButtonLine::_InsertAction(
+    QMenu *menu,
+    QString title,
+    QKeySequence const &keySequence,
+    bool checkable,
+    bool checked,
+    QAction *before)
 {
-    QAction * action = new QAction(title, this);
-    action->connect(action, SIGNAL(triggered()), this, SLOT(actionStateChanged()));
+    QAction * action = new QAction(title, menu);
     action->setShortcut(keySequence);
-    if (checkable)
-    {
-        action->setCheckable(true);
-        action->setChecked(true);
-    }
+    action->setCheckable(checkable);
+    action->setChecked(checked);
+
     menu->insertAction(before, action);
 
+    QMap<QKeySequence, QShortcut*>::iterator it = m_shortcuts.find(keySequence);
+    if (it != m_shortcuts.end())
+        delete it.value();
     //Key sequence as addAction parameter doesn't work
+    //to work must be created separatell as a child of the ButtonLine class (not a child of menu)
+    //because menu is a context menu and doesn't all the time
     QShortcut *shortcut = new QShortcut(keySequence, this);
-    m_graphAction->connect(shortcut, SIGNAL(activated()), action, SLOT(trigger()));
+    m_shortcuts[keySequence] = shortcut;
+
+    connect(action, SIGNAL(triggered()), this, SLOT(actionStateChanged()));
+    connect(shortcut, SIGNAL(activated()), action, SLOT(trigger()));
+
     return action;
 
 }
@@ -150,23 +189,20 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
     m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsv()));
-
-    m_panelMenu = new QMenu(this);
-    m_panelMenu->setTitle(tr("Panels"));
-
-    m_graphAction = _InsertAction(m_panelMenu, tr("Graph"), QKeySequence(Qt::ALT + Qt::Key_G), true);
-
-    m_afterLastChannelSeparator = m_panelMenu->addSeparator();
-    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::ALT + Qt::Key_A), false);
-    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::ALT + Qt::Key_N), false);
 }
 
-void ButtonLine::AddChannel(Channel *channel)
+void ButtonLine::AddChannel(Channel *channel, QMenu *panelMenu)
 {
     m_channelActions[channel] =
-        _InsertAction(m_panelMenu, channel->GetName(), QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), true, m_afterLastChannelSeparator);
+        _InsertAction(
+            panelMenu,
+            channel->GetName(),
+            QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1),
+            true,
+            !channel->isHidden(),
+            m_afterLastChannelSeparator
+        );
     connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
-    channel->changeChannelVisibility(true, true);
     _UpdateStartAndStopButtonsState();
 }
 
@@ -200,11 +236,11 @@ void ButtonLine::actionStateChanged()
             if (it.value() == senderAction)
             {
                 it.key()->changeChannelVisibility(it.value()->isChecked(), true);
-                it.key()->GetMeasurement()->ReplaceDisplays(!m_graphAction->isChecked());
             }
         }
     }
 
+    m_measurement->ReplaceDisplays(!m_measurement->IsPlotVisible());
     _UpdateStartAndStopButtonsState();
 }
 
@@ -299,16 +335,9 @@ void ButtonLine::measurementStateChanged()
 void ButtonLine::ChngeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
+    _RefreshPanelMenu();
 
-    foreach (QAction *action, m_channelActions.values())
-    {
-        m_panelMenu->removeAction(action);
-        delete action;
-    }
-    m_channelActions.clear();
-
-    foreach (Channel *channel, measurement->GetChannels())
-        AddChannel(channel);
+    //TODO:no measurement active
 }
 
 void ButtonLine::start()

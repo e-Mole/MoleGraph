@@ -330,6 +330,11 @@ Plot *Measurement::GetPlot() const
     return m_plot;
 }
 
+bool Measurement::IsPlotVisible() const
+{
+    return m_plot->isVisible();
+}
+
 
 void Measurement::_InitializeAxesAndChanels()
 {

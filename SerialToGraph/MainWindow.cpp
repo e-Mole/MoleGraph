@@ -113,7 +113,7 @@ void MainWindow::currentMeasurementChanged(int index)
 {
     if (-1 == index)
     {
-        m_currentMeasurement = NULL;
+        m_buttonLine->ChngeMeasurement(NULL);
         return;
     }
 

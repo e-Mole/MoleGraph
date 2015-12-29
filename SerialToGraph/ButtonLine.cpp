@@ -105,11 +105,16 @@ void ButtonLine::fileMenuButtonPressed()
 
 void ButtonLine::_RefreshPanelMenu()
 {
-    if (m_panelMenu != NULL)
-    {
-        delete m_panelMenu;
-        m_channelActions.clear();
-    }
+    delete m_panelMenu;
+    m_panelMenu = NULL;
+    \
+    m_channelActions.clear();
+
+    m_panelMenuButton->setEnabled(m_measurement != NULL);
+    m_axisMenuButton->setEnabled(m_measurement != NULL);
+
+    if (m_measurement == NULL)
+        return;
 
     m_panelMenu = new QMenu(this);
     m_panelMenu->setTitle(tr("Panels"));
@@ -336,8 +341,6 @@ void ButtonLine::ChngeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
     _RefreshPanelMenu();
-
-    //TODO:no measurement active
 }
 
 void ButtonLine::start()

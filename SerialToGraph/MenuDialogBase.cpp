@@ -29,7 +29,7 @@ void MenuDialogBase::ReinitGrid()
     }
 
     FillGrid();
-    adjustSize();
+    //adjustSize();
 }
 
 

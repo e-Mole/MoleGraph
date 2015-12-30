@@ -61,7 +61,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
-    ConfirmMeasurement(CreateMeasurement());
+    ConfirmMeasurement(CloneCurrentMeasurement());
 }
 
 MainWindow::~MainWindow()
@@ -72,10 +72,12 @@ MainWindow::~MainWindow()
     }
 }
 
-Measurement *MainWindow::CreateMeasurement()
+Measurement *MainWindow::CloneCurrentMeasurement()
 {
-    Measurement *m = new Measurement(this, m_context);
-    return m;
+    Measurement *current = GetCurrnetMeasurement();
+    return (current == NULL) ?
+        new Measurement(this, m_context) :
+        new Measurement(this, m_context, current->GetSampleUnits(), current->GetPeriod());
 }
 
 void MainWindow::ConfirmMeasurement(Measurement *m)
@@ -127,4 +129,9 @@ void MainWindow::currentMeasurementChanged(int index)
     connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
 
     m_currentMeasurement = m;
+}
+
+Measurement *MainWindow::GetCurrnetMeasurement()
+{
+    return (Measurement*)m_measurementTabs->currentWidget();
 }

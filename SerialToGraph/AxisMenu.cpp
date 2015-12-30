@@ -118,7 +118,7 @@ void AxisMenu::removeButtonPressed()
     firstVertical->UpdateVisiblility();
 
     ReinitGrid();
-
+    adjustSize();
     CloseIfPopup();
 }
 

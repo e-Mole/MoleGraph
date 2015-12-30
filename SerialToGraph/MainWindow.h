@@ -29,9 +29,10 @@ public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
     ~MainWindow();
 
-    Measurement *CreateMeasurement();
+    Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void RemoveMeasurement(Measurement *m, bool confirmed);
+    Measurement * GetCurrnetMeasurement();
 
     bool m_close;
 private slots:

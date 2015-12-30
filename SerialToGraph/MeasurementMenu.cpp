@@ -3,6 +3,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementSettings.h>
+#include <QFont>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
@@ -26,7 +27,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     buttonLayout->setMargin(0);
     rowWidget->setLayout(buttonLayout);
 
-    QPushButton * editButton = new QPushButton(tr("Edit"/* \u25BA \u25A0*/), rowWidget);
+    QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtonToItem.insert(editButton, measurement);
     connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()), Qt::DirectConnection);
@@ -41,6 +42,10 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     QPalette palette(label->palette());
     palette.setColor(QPalette::Foreground, Qt::black);
     label->setPalette(palette);
+
+    QFont font = label->font();
+    font.setBold(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
+    label->setFont(font);
     m_formLayout->addRow(label, rowWidget);
 }
 
@@ -56,7 +61,7 @@ void MeasurementMenu::FillGrid()
 
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *m = m_context.m_mainWindow.CreateMeasurement();
+    Measurement *m = m_context.m_mainWindow.CloneCurrentMeasurement();
 
     MeasurementSettings dialog(m, m_context);
     if (QDialog::Accepted == dialog.exec())
@@ -86,15 +91,31 @@ void MeasurementMenu::removeButtonPressed()
                 tr("Cancel")
             )
         )
+        {
             return;
-
+        }
         m->stop();
+    }
+    else if (m->GetState() == Measurement::Finished)
+    {
+        if (1 ==
+            QMessageBox::question(
+                this,
+                m_context.m_applicationName,
+                QString(tr("The measurement '%1' alread contains data. Really remove it?")).arg(m->GetName()),
+                tr("Remove"),
+                tr("Cancel")
+            )
+        )
+        {
+            return;
+        }
     }
 
     m_context.m_mainWindow.RemoveMeasurement(m, true);
 
     ReinitGrid();
-
+    adjustSize();
     CloseIfPopup();
 }
 

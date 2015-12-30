@@ -193,7 +193,8 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
-    m_fileMenu->addAction(tr("Export to CSV"), this, SLOT(exportCsv()));
+    m_fileMenu->addAction(tr("Export current measurement to CSV"), this, SLOT(exportCsv()));
+    m_fileMenu->addAction(tr("Export All measurements to CSV"), this, SLOT(exportAllCsv()));
 }
 
 void ButtonLine::AddChannel(Channel *channel, QMenu *panelMenu)
@@ -284,7 +285,7 @@ void ButtonLine::exportPng()
         Export().ToPng(fileName, *m_measurement);
 }
 
-void ButtonLine::exportCsv()
+void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
     QString fileName = QFileDialog::getSaveFileName(
         this,
@@ -294,9 +295,20 @@ void ButtonLine::exportCsv()
             fileName += ".csv";
 
     if (0 != fileName.size())
-       Export().ToCsv(fileName, *m_measurement);
+       Export().ToCsv(fileName, measurements);
 }
 
+void ButtonLine::exportCsv()
+{
+    QVector<Measurement *> measurements;
+    measurements.push_back(m_measurement);
+    _ExportCSV(measurements);
+}
+
+void ButtonLine::exportAllCsv()
+{
+    _ExportCSV(m_context.m_measurements);
+}
 void ButtonLine::connectivityStateChange(bool connected)
 {
     m_connected = connected;

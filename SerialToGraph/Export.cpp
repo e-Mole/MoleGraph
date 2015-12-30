@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QString>
 #include <string>
+
 Export::Export()
 {
 }
@@ -14,30 +15,45 @@ void Export::ToPng(QString const &fileName, Measurement const &measurement)
     measurement.GetPlot()->savePng(fileName);
 }
 
-void Export::ToCsv(QString const &fileName, Measurement const &measurement)
+void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measurements)
 {
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
 
-    bool first = true;
-    foreach (Channel *channel, measurement.GetChannels())
+    std::string msmtLine;
+    std::string channelLine;
+    bool firstForLine = true;
+    foreach (Measurement *m, measurements)
     {
-        if (channel->isHidden())
-            continue;
+        bool firstForMsmt = true;
+        foreach (Channel *channel, m->GetChannels())
+        {
+            if (channel->isHidden())
+                continue;
+            if (firstForMsmt)
+            {
+                msmtLine.append(m->GetName().toStdString().c_str());
+                firstForMsmt = false;
+            }
+            else
+                msmtLine.append(";");
 
-        if (first)
-            first = false;
-        else
-            file.write(";");
+            if (firstForLine)
+                firstForLine = false;
+            else
+                channelLine.append(";");
 
-        file.write(
-            channel->GetUnits().size() > 0 ?
-                QString("%1 [%2]").arg(channel->GetName()).arg(channel->GetUnits()).toStdString().c_str() :
-                channel->GetName().toStdString().c_str()
-        );
+            channelLine.append(
+                channel->GetUnits().size() > 0 ?
+                    QString("%1 [%2]").arg(channel->GetName()).arg(channel->GetUnits()).toStdString().c_str() :
+                    channel->GetName().toStdString().c_str()
+            );
+        }
     }
-
-    file.write("\n");
+    msmtLine.append("\n");
+    channelLine.append("\n");
+    file.write(msmtLine.c_str(), msmtLine.size());
+    file.write(channelLine.c_str(), channelLine.size());
     unsigned sampleNr = 0;
     bool haveData;
     do
@@ -45,24 +61,26 @@ void Export::ToCsv(QString const &fileName, Measurement const &measurement)
         haveData = false;
         std::string lineContent;
         bool first = true;
-        foreach (Channel *channel, measurement.GetChannels())
+        foreach (Measurement *m, measurements)
         {
-            if (channel->isHidden())
-                continue;
-
-            if (channel->GetValueCount() > sampleNr)
+            foreach (Channel *channel, m->GetChannels())
             {
-                haveData = true;
+                if (channel->isHidden())
+                    continue;
 
-                if (first)
-                    first = false;
-                else
-                    lineContent.append(";");
+                if (channel->GetValueCount() > sampleNr)
+                {
+                    haveData = true;
 
-                lineContent.append(QString("%1").arg(channel->GetValue(sampleNr)).toStdString());
+                    if (first)
+                        first = false;
+                    else
+                        lineContent.append(";");
+
+                    lineContent.append(QString("%1").arg(channel->GetValue(sampleNr)).toStdString());
+                }
             }
         }
-
         if (haveData)
         {
             lineContent.append("\n");

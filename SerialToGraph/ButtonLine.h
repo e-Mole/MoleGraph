@@ -35,6 +35,7 @@ class ButtonLine : public QWidget
     QPoint _GetGlobalMenuPosition(QPushButton *button);
     void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
     void _RefreshPanelMenu();
+    void _ExportCSV(QVector<Measurement *> const & measurements);
 
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
@@ -77,6 +78,7 @@ private slots:
 public slots:
     void exportPng();
     void exportCsv();
+    void exportAllCsv();
     void connectivityStateChange(bool connected);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();

@@ -81,10 +81,26 @@ void MeasurementMenu::addButtonPressed()
 
 void MeasurementMenu::removeButtonPressed()
 {
-    m_context.m_mainWindow.RemoveMeasurement(
-        m_removeButtonToIten.find((QPushButton*)sender()).value(),
-        true
-    );
+    Measurement *m =
+        m_removeButtonToIten.find((QPushButton*)sender()).value();
+
+    if (m->GetState() == Measurement::Running)
+    {
+        if (1 ==
+            QMessageBox::question(
+                this,
+                m_context.m_applicationName,
+                QString(tr("The measurement '%1' is in progress. Really remove it?")).arg(m->GetName()),
+                tr("Remove"),
+                tr("Cancel")
+            )
+        )
+            return;
+
+        m->stop();
+    }
+
+    m_context.m_mainWindow.RemoveMeasurement(m, true);
 
     //_ReinitGrid();
 

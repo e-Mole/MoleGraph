@@ -189,9 +189,34 @@ void Measurement::draw()
         m_drawTimer->start(m_drawPeriod);
 }
 
+bool Measurement::_CheckOtherMeasurementsForRun()
+{
+    foreach (Measurement *m,  m_context.m_measurements)
+    {
+        if (Measurement::Running != m->GetState())
+            continue;
+
+        if (0 ==
+            QMessageBox::question(
+                this,
+                m_context.m_applicationName,
+                QString(tr("The measurement '%1' is alread in progress. Terminate it?")).arg(m->GetName()),
+                tr("Terminate"),
+                tr("Cancel")
+            )
+        )
+           m->stop();
+        else
+            return true;
+    }
+    return false;
+}
 void Measurement::start()
 {
     qDebug() << "start";
+    if (_CheckOtherMeasurementsForRun())
+        return;
+
     if (!m_context.m_serialPort.IsDeviceConnected())
         return;
 

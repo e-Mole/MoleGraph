@@ -107,7 +107,7 @@ void ButtonLine::_RefreshPanelMenu()
 {
     delete m_panelMenu;
     m_panelMenu = NULL;
-    \
+
     m_channelActions.clear();
 
     m_panelMenuButton->setEnabled(m_measurement != NULL);

@@ -1,27 +1,25 @@
 #ifndef AXISMENU_H
 #define AXISMENU_H
 
-#include <QDialog>
+#include <MenuDialogBase.h>
 #include <QMap>
 
 class Axis;
 class Measurement;
 class Plot;
-class QFormLayout;
 class QPushButton;
 struct Context;
-class AxisMenu : public QDialog
+class AxisMenu : public MenuDialogBase
 {
     Q_OBJECT
 
-    void _ReinitAxisGrid();
+    void FillGrid();
     void _AddRowWithEditAndRemove(Axis *axis);
 
     Context const &m_context;
     Measurement &m_measurement;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
-    QFormLayout *m_formLayout;
 public:
     AxisMenu(Context const &context, Measurement &measurement);
 

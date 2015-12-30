@@ -1,22 +1,20 @@
 #ifndef MEASUREMENTMENU_H
 #define MEASUREMENTMENU_H
 
-#include <QDialog>
+#include <MenuDialogBase.h>
 #include <QMap>
 
 class Measurement;
-class QFormLayout;
 class QPushButton;
 struct Context;
 
-class MeasurementMenu : public QDialog
+class MeasurementMenu : public MenuDialogBase
 {
     Q_OBJECT
 
     void _AddRowWithEditAndRemove(Measurement *measurement);
-    void _ReinitGrid();
+    void FillGrid();
 
-    QFormLayout *m_formLayout;
     Context const &m_context;
     QMap<QPushButton*, Measurement*> m_removeButtonToIten;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;

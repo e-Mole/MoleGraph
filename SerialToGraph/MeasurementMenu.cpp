@@ -13,12 +13,10 @@
 #include <QString>
 
 MeasurementMenu::MeasurementMenu(Context const &context) :
-    QDialog(NULL, Qt::Popup),
-    m_formLayout(new QFormLayout(this)),
+    MenuDialogBase(tr("Measurements")),
     m_context(context)
 {
-    setLayout(m_formLayout);
-    _ReinitGrid();
+    ReinitGrid();
 }
 
 void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
@@ -46,15 +44,8 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     m_formLayout->addRow(label, rowWidget);
 }
 
-void MeasurementMenu::_ReinitGrid()
+void MeasurementMenu::FillGrid()
 {
-    while ( m_formLayout->count() != 0)
-    {
-        QLayoutItem *forDeletion = m_formLayout->takeAt(0);
-        delete forDeletion->widget();
-        delete forDeletion;
-    }
-
     foreach (Measurement *measurement, m_context.m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
@@ -71,12 +62,12 @@ void MeasurementMenu::addButtonPressed()
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.ConfirmMeasurement(m);
-        //_ReinitGrid();
+        ReinitGrid();
     }
     else
         m_context.m_mainWindow.RemoveMeasurement(m, false);
 
-    close();
+    CloseIfPopup();
 }
 
 void MeasurementMenu::removeButtonPressed()
@@ -102,9 +93,9 @@ void MeasurementMenu::removeButtonPressed()
 
     m_context.m_mainWindow.RemoveMeasurement(m, true);
 
-    //_ReinitGrid();
+    ReinitGrid();
 
-    close();
+    CloseIfPopup();
 }
 
 void MeasurementMenu::editButtonPressed()
@@ -113,9 +104,9 @@ void MeasurementMenu::editButtonPressed()
     MeasurementSettings dialog(measurement, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-    //    _ReinitGrid();
+        ReinitGrid();
     }
 
-    close();
+    CloseIfPopup();
 }
 

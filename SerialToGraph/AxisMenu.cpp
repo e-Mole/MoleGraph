@@ -17,13 +17,11 @@
 #include <QWidget>
 
 AxisMenu::AxisMenu(const Context &context,  Measurement &measurement) :
-    QDialog(NULL, Qt::Popup),
+    MenuDialogBase(tr("Axes")),
     m_context(context),
-    m_measurement(measurement),
-    m_formLayout(new QFormLayout(this))
+    m_measurement(measurement)
 {
-  setLayout(m_formLayout);
-    _ReinitAxisGrid();
+    ReinitGrid();
 }
 
 void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
@@ -51,15 +49,8 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
     m_formLayout->addRow(label, rowWidget);
 }
 
-void AxisMenu::_ReinitAxisGrid()
+void AxisMenu::FillGrid()
 {
-    while ( m_formLayout->count() != 0)
-    {
-        QLayoutItem *forDeletion = m_formLayout->takeAt(0);
-        delete forDeletion->widget();
-        delete forDeletion;
-    }
-
     foreach (Axis *axis, m_measurement.GetAxes())
         _AddRowWithEditAndRemove(axis);
 
@@ -74,12 +65,12 @@ void AxisMenu::addButtonPressed()
     AxisSettings dialog(newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-        //_ReinitAxisGrid();
+        ReinitGrid();
     }
     else
         m_measurement.RemoveAxis(newAxis);
 
-    close();
+    CloseIfPopup();
 }
 
 void AxisMenu::removeButtonPressed()
@@ -110,7 +101,7 @@ void AxisMenu::removeButtonPressed()
                 )
             )
             {
-                close();
+                CloseIfPopup();
                 return;
             }
 
@@ -126,9 +117,9 @@ void AxisMenu::removeButtonPressed()
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();
 
-    //_ReinitAxisGrid();
+    ReinitGrid();
 
-    close();
+    CloseIfPopup();
 }
 
 void AxisMenu::editButtonPressed()
@@ -137,7 +128,7 @@ void AxisMenu::editButtonPressed()
     AxisSettings dialog(axis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-        //_ReinitAxisGrid();
+        ReinitGrid();
     }
 
     close();

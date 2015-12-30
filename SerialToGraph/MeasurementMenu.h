@@ -26,6 +26,7 @@ private slots:
     void addButtonPressed();
     void editButtonPressed();
     void removeButtonPressed();
+    void cloneButtonPressed();
 };
 
 #endif // MEASUREMENTMENU_H

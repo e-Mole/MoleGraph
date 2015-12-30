@@ -46,7 +46,9 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
     QPalette palette(label->palette());
     palette.setColor(QPalette::Foreground, axis->GetColor());
     label->setPalette(palette);
-    m_formLayout->addRow(label, rowWidget);
+    unsigned row = m_gridLayout->rowCount();
+    m_gridLayout->addWidget(label, row, 0);
+    m_gridLayout->addWidget(rowWidget, row, 1);
 }
 
 void AxisMenu::FillGrid()
@@ -55,7 +57,10 @@ void AxisMenu::FillGrid()
         _AddRowWithEditAndRemove(axis);
 
     QPushButton * addbutton = new QPushButton(tr("Add"), this);
-    m_formLayout->addRow(new QLabel("", this), addbutton);
+
+    unsigned row = m_gridLayout->rowCount();
+    m_gridLayout->addWidget(new QLabel("", this), row, 0);
+    m_gridLayout->addWidget(addbutton, row, 1);
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 }
 

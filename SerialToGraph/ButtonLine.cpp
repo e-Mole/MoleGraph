@@ -193,8 +193,8 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
-    m_fileMenu->addAction(tr("Export current measurement to CSV"), this, SLOT(exportCsv()));
-    m_fileMenu->addAction(tr("Export All measurements to CSV"), this, SLOT(exportAllCsv()));
+    m_fileMenu->addAction(tr("Export Current Measurement to CSV"), this, SLOT(exportCsv()));
+    m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));
 }
 
 void ButtonLine::AddChannel(Channel *channel, QMenu *panelMenu)

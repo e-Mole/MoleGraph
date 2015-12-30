@@ -2,7 +2,7 @@
 #define MENUDIALOGBASE_H
 
 #include <QDialog>
-class QFormLayout;
+class QGridLayout;
 class MenuDialogBase : public QDialog
 {
     Q_OBJECT
@@ -11,7 +11,7 @@ protected:
     virtual void FillGrid() = 0;
     void ReinitGrid();
 
-    QFormLayout *m_formLayout;
+    QGridLayout *m_gridLayout;
 public:
     MenuDialogBase(const QString &title);
     ~MenuDialogBase();

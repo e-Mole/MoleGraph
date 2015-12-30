@@ -39,6 +39,7 @@ class ButtonLine : public QWidget
 
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
+    QPushButton *m_cloneButton;
     QLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;

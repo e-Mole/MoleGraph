@@ -3,10 +3,10 @@
 
 MenuDialogBase::MenuDialogBase(QString const &title) :
     QDialog(NULL, Qt::Tool),
-    m_formLayout(new QFormLayout(this))
+    m_gridLayout(new QGridLayout(this))
 {
     setWindowTitle(title);
-    setLayout(m_formLayout);
+    setLayout(m_gridLayout);
 }
 
 MenuDialogBase::~MenuDialogBase()
@@ -21,9 +21,9 @@ void MenuDialogBase::CloseIfPopup()
 
 void MenuDialogBase::ReinitGrid()
 {
-    while ( m_formLayout->count() != 0)
+    while ( m_gridLayout->count() != 0)
     {
-        QLayoutItem *forDeletion = m_formLayout->takeAt(0);
+        QLayoutItem *forDeletion = m_gridLayout->takeAt(0);
         delete forDeletion->widget();
         delete forDeletion;
     }

@@ -11,7 +11,9 @@
 #include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QString>
+
 
 MeasurementMenu::MeasurementMenu(Context const &context) :
     MenuDialogBase(tr("Measurements")),
@@ -38,15 +40,19 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     m_removeButtonToIten.insert(removeButton, measurement);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()), Qt::DirectConnection);
 
-    QLabel *label = new QLabel(measurement->GetName(), this);
+    /*QLabel *label = new QLabel(measurement->GetName(), this);
     QPalette palette(label->palette());
     palette.setColor(QPalette::Foreground, Qt::black);
     label->setPalette(palette);
 
     QFont font = label->font();
     font.setBold(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
-    label->setFont(font);
-    m_formLayout->addRow(label, rowWidget);
+    label->setFont(font);*/
+
+    QRadioButton *rb = new QRadioButton(measurement->GetName(), this);
+    unsigned row = m_gridLayout->rowCount();
+    m_gridLayout->addWidget(rb, row, 0);
+    m_gridLayout->addWidget(rowWidget, row, 1);
 }
 
 void MeasurementMenu::FillGrid()
@@ -54,9 +60,16 @@ void MeasurementMenu::FillGrid()
     foreach (Measurement *measurement, m_context.m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
-    QPushButton * addbutton = new QPushButton(tr("Add"), this);
-    m_formLayout->addRow(new QLabel("", this), addbutton);
-    connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()), Qt::DirectConnection);
+    QPushButton * addButton = new QPushButton(tr("Add New"), this);
+    unsigned row = m_gridLayout->rowCount();
+    m_gridLayout->addWidget(new QLabel("", this), row, 0);
+    m_gridLayout->addWidget(addButton, row, 1);
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
+
+    QPushButton * clonebutton = new QPushButton(tr("Clone Selected"), this);
+    m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
+    m_gridLayout->addWidget(clonebutton, row+1, 1);
+    connect(clonebutton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
 }
 
 void MeasurementMenu::addButtonPressed()
@@ -73,6 +86,11 @@ void MeasurementMenu::addButtonPressed()
         m_context.m_mainWindow.RemoveMeasurement(m, false);
 
     CloseIfPopup();
+}
+
+void MeasurementMenu::cloneButtonPressed()
+{
+
 }
 
 void MeasurementMenu::removeButtonPressed()

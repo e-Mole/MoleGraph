@@ -24,6 +24,7 @@ class SerialPort : public QObject
 
     QSerialPort m_serialPort;
     QSettings &m_settings;
+    bool m_knownIssue;
 public:
     enum Instructions
     {
@@ -56,7 +57,7 @@ public:
     void SetSelectedChannels(unsigned char channels);
     bool IsDeviceConnected();
 
-    void LineIssueSolver();
+    void PortIssueSolver();
 signals:
     void PortConnectivityChanged(bool connected);
 public slots:

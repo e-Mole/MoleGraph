@@ -30,7 +30,8 @@ ExtendedSerialPortInfo::ExtendedSerialPortInfo(QSerialPortInfo const &info, QSet
 
 SerialPort::SerialPort(QSettings &settings, QObject *parent) :
     QObject(parent),
-    m_settings(settings)
+    m_settings(settings),
+    m_knownIssue(false)
 {
 
 }
@@ -71,6 +72,7 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
         }
 
         PortConnectivityChanged(true);
+        m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
         return true;
     }
 
@@ -101,7 +103,7 @@ bool SerialPort::FindAndOpenMySerialPort(QList<ExtendedSerialPortInfo> &portInfo
     if (portInfos.empty())
     {
         qDebug() << "hardware not found";
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
 
@@ -118,15 +120,19 @@ void SerialPort::ReadAll(QByteArray &array)
     array = m_serialPort.readAll();
 }
 
-void SerialPort::LineIssueSolver()
+void SerialPort::PortIssueSolver()
 {
 	m_serialPort.close();
 
-    QMessageBox::warning(
-        NULL,
-        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
-    );
+    if (!m_knownIssue)
+    {
+        m_knownIssue = true;
+        QMessageBox::warning(
+            NULL,
+            QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+            tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
+        );
+    }
 
 	PortConnectivityChanged(false);
 }
@@ -161,7 +167,7 @@ bool SerialPort::SetFrequency(unsigned frequency)
     tmp.append((char const *)&frequency, 2);
     if (!Write(INS_SET_FREQUENCY, tmp))
     {
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
     return true;
@@ -173,7 +179,7 @@ bool SerialPort::SetTime(unsigned time)
     tmp.append((char const *)&time, 2);
     if (!Write(INS_SET_TIME, tmp))
     {
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
     return true;
@@ -183,7 +189,7 @@ bool SerialPort::Start()
 {
     if (!Write(INS_START, ""))
     {
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
     return true;
@@ -193,7 +199,7 @@ bool SerialPort::Stop()
 {
     if (!Write(INS_STOP, ""))
     {
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
     return true;
@@ -211,7 +217,7 @@ bool SerialPort::IsDeviceConnected()
 {
     if (!m_serialPort.isOpen())
     {
-        LineIssueSolver();
+        PortIssueSolver();
         return false;
     }
     return true;

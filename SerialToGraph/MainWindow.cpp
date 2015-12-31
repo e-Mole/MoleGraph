@@ -43,7 +43,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
             }
 
             qDebug() << "hardware not found";
-            m_serialPort.LineIssueSolver();
+            m_serialPort.PortIssueSolver();
         }
     }
 

@@ -20,12 +20,11 @@
 #define CHANNEL_DATA_SIZE 5
 #define VERTIACAL_MAX 3
 
-Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, unsigned period, const QString &name):
+Measurement::Measurement(QWidget *parent, Context &context, Measurement *source):
     QWidget(parent),
     m_context(context),
-    m_name(name),
-    m_sampleUnits(units),
-    m_period(period),
+    m_sampleUnits(source != NULL ? source->GetSampleUnits() : Hz),
+    m_period(source != NULL ? source->GetPeriod() : 1),
     m_state(Ready),
     m_anySampleMissed(false),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
@@ -35,8 +34,7 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
     m_startNewDraw(false)
 {
-    if (name.size() == 0)
-        m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
+    m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
     m_drawTimer->setSingleShot(true); //will be started from timeout slot
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
@@ -51,7 +49,7 @@ Measurement::Measurement(QWidget *parent, Context &context, SampleUnits units, u
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
-    _InitializeAxesAndChanels();
+    _InitializeAxesAndChanels(source);
 }
 
 Measurement::~Measurement()
@@ -366,7 +364,7 @@ bool Measurement::IsPlotVisible() const
 }
 
 
-void Measurement::_InitializeAxesAndChanels()
+void Measurement::_InitializeAxesAndChanels(Measurement *source)
 {
     Axis * xAxis =
         new Axis(

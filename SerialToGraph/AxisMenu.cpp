@@ -56,7 +56,7 @@ void AxisMenu::FillGrid()
     foreach (Axis *axis, m_measurement.GetAxes())
         _AddRowWithEditAndRemove(axis);
 
-    QPushButton * addbutton = new QPushButton(tr("Add"), this);
+    QPushButton * addbutton = new QPushButton(tr("Add New"), this);
 
     unsigned row = m_gridLayout->rowCount();
     m_gridLayout->addWidget(new QLabel("", this), row, 0);

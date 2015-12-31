@@ -37,19 +37,14 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
     removeButton->setEnabled(true);
     buttonLayout->addWidget(removeButton);
-    m_removeButtonToIten.insert(removeButton, measurement);
+    m_removeButtonToItem.insert(removeButton, measurement);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()), Qt::DirectConnection);
 
-    /*QLabel *label = new QLabel(measurement->GetName(), this);
-    QPalette palette(label->palette());
-    palette.setColor(QPalette::Foreground, Qt::black);
-    label->setPalette(palette);
-
-    QFont font = label->font();
-    font.setBold(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
-    label->setFont(font);*/
-
     QRadioButton *rb = new QRadioButton(measurement->GetName(), this);
+    rb->setChecked(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
+    connect(rb, SIGNAL(clicked()), this, SLOT(radioButtonClicked()));
+    m_radioButtonToItem[rb] = measurement;
+
     unsigned row = m_gridLayout->rowCount();
     m_gridLayout->addWidget(rb, row, 0);
     m_gridLayout->addWidget(rowWidget, row, 1);
@@ -57,24 +52,28 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
 
 void MeasurementMenu::FillGrid()
 {
+    m_removeButtonToItem.clear();
+    m_editButtonToItem.clear();
+    m_radioButtonToItem.clear();
+
     foreach (Measurement *measurement, m_context.m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
     QPushButton * addButton = new QPushButton(tr("Add New"), this);
     unsigned row = m_gridLayout->rowCount();
-    m_gridLayout->addWidget(new QLabel("", this), row, 0);
+    //m_gridLayout->addWidget(new QLabel("", this), row, 0);
     m_gridLayout->addWidget(addButton, row, 1);
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 
     QPushButton * clonebutton = new QPushButton(tr("Clone Selected"), this);
-    m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
+    //m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
     m_gridLayout->addWidget(clonebutton, row+1, 1);
     connect(clonebutton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
 }
 
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *m = m_context.m_mainWindow.CloneCurrentMeasurement();
+    Measurement *m = m_context.m_mainWindow.CreateNewMeasurement();
 
     MeasurementSettings dialog(m, m_context);
     if (QDialog::Accepted == dialog.exec())
@@ -90,13 +89,24 @@ void MeasurementMenu::addButtonPressed()
 
 void MeasurementMenu::cloneButtonPressed()
 {
+    Measurement *m = m_context.m_mainWindow.CloneCurrentMeasurement();
 
+    MeasurementSettings dialog(m, m_context);
+    if (QDialog::Accepted == dialog.exec())
+    {
+        m_context.m_mainWindow.ConfirmMeasurement(m);
+        ReinitGrid();
+    }
+    else
+        m_context.m_mainWindow.RemoveMeasurement(m, false);
+
+    CloseIfPopup();
 }
 
 void MeasurementMenu::removeButtonPressed()
 {
     Measurement *m =
-        m_removeButtonToIten.find((QPushButton*)sender()).value();
+        m_removeButtonToItem.find((QPushButton*)sender()).value();
 
     if (m->GetState() == Measurement::Running)
     {
@@ -149,3 +159,7 @@ void MeasurementMenu::editButtonPressed()
     CloseIfPopup();
 }
 
+void MeasurementMenu::radioButtonClicked()
+{
+     m_context.m_mainWindow.SwichCurrentMeasurement(m_radioButtonToItem[(QRadioButton*)sender()]);
+}

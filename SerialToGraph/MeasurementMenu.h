@@ -6,6 +6,7 @@
 
 class Measurement;
 class QPushButton;
+class QRadioButton;
 struct Context;
 
 class MeasurementMenu : public MenuDialogBase
@@ -16,8 +17,9 @@ class MeasurementMenu : public MenuDialogBase
     void FillGrid();
 
     Context const &m_context;
-    QMap<QPushButton*, Measurement*> m_removeButtonToIten;
+    QMap<QPushButton*, Measurement*> m_removeButtonToItem;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
+    QMap<QRadioButton*,Measurement*> m_radioButtonToItem;
 public:
     MeasurementMenu(const Context &context);
 signals:
@@ -27,6 +29,7 @@ private slots:
     void editButtonPressed();
     void removeButtonPressed();
     void cloneButtonPressed();
+    void radioButtonClicked();
 };
 
 #endif // MEASUREMENTMENU_H

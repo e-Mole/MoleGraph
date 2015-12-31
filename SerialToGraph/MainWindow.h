@@ -29,8 +29,10 @@ public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
     ~MainWindow();
 
+    Measurement *CreateNewMeasurement();
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
+    void SwichCurrentMeasurement(Measurement *m);
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
 

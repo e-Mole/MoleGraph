@@ -8,6 +8,7 @@
 
 class Axis;
 class Channel;
+class ConnectivityLabel;
 class Measurement;
 class QAction;
 class QDialog;
@@ -40,7 +41,7 @@ class ButtonLine : public QWidget
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
     QPushButton *m_cloneButton;
-    QLabel *m_connectivityLabel;
+    ConnectivityLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
     QPushButton * m_axisMenuButton;

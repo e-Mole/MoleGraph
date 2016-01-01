@@ -30,22 +30,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     if (translator->load("./serialToGraph_cs.qm"))
         application.installTranslator(translator);
 
-    QList<ExtendedSerialPortInfo> portInfos;
-    if (!m_serialPort.FindAndOpenMySerialPort(portInfos))
-    {
-        PortListDialog *portListDialog = new PortListDialog(m_serialPort, portInfos, m_settings);
-        if (QDialog::Rejected == portListDialog->exec())
-        {
-            if (portListDialog->CloseApp())
-            {
-                m_close = true;
-                return;
-            }
-
-            qDebug() << "hardware not found";
-            m_serialPort.PortIssueSolver();
-        }
-    }
+    OpenSerialPort();
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *centralLayout = new QVBoxLayout(this);
@@ -62,6 +47,26 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement());
+}
+
+void MainWindow::OpenSerialPort()
+{
+    QList<ExtendedSerialPortInfo> portInfos;
+    if (!m_serialPort.FindAndOpenMySerialPort(portInfos))
+    {
+        PortListDialog *portListDialog = new PortListDialog(m_serialPort, portInfos, m_settings);
+        if (QDialog::Rejected == portListDialog->exec())
+        {
+            if (portListDialog->CloseApp())
+            {
+                m_close = true;
+                return;
+            }
+
+            qDebug() << "hardware not found";
+            m_serialPort.PortIssueSolver();
+        }
+    }
 }
 
 MainWindow::~MainWindow()

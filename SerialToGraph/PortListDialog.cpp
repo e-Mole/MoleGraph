@@ -1,5 +1,6 @@
 #include "PortListDialog.h"
 #include <PortListWidget.h>
+#include <QCloseEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -60,4 +61,10 @@ void PortListDialog::closeClicked(bool checked)
 void PortListDialog::refreshClicked(bool checked)
 {
     _Refresh();
+}
+
+void PortListDialog::closeEvent(QCloseEvent *event)
+{
+    m_close = true;
+    reject();
 }

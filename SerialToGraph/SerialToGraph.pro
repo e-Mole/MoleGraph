@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     MeasurementMenu.cpp \
     AxisMenu.cpp \
     MeasurementSettings.cpp \
-    MenuDialogBase.cpp
+    MenuDialogBase.cpp \
+    ConnectivityLabel.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -53,6 +54,7 @@ HEADERS  += MainWindow.h \
     MeasurementMenu.h \
     AxisMenu.h \
     MeasurementSettings.h \
-    MenuDialogBase.h
+    MenuDialogBase.h \
+    ConnectivityLabel.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

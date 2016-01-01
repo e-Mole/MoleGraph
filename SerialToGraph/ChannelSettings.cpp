@@ -83,6 +83,7 @@ bool ChannelSettings::BeforeAccept()
 
         Axis *lastAxis = m_channel->m_axis;
         m_channel->AssignToAxis(axis);
+        lastAxis->UpdateGraphAxisName();
         lastAxis->UpdateVisiblility();
     }
 

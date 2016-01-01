@@ -6,6 +6,7 @@
 
 class ExtendedSerialPortInfo;
 class SerialPort;
+class QCloseEvent;
 class QSettings;
 class PortListWidget;
 class PortListDialog : public QDialog
@@ -13,6 +14,7 @@ class PortListDialog : public QDialog
     Q_OBJECT
 
     void _Refresh();
+    void closeEvent(QCloseEvent *event);
 
     PortListWidget *m_mainWidget;
     bool m_close;

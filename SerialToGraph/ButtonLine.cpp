@@ -1,6 +1,7 @@
 #include "ButtonLine.h"
 #include <Axis.h>
 #include <AxisMenu.h>
+#include <ConnectivityLabel.h>
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
@@ -74,8 +75,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
     buttonLayout->addWidget(m_stopButton);
 
-    m_connectivityLabel = new QLabel("", this);
-    m_connectivityLabel->setMargin(5);
+    m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
     buttonLayout->addWidget(m_connectivityLabel);
 
     buttonLayout->insertStretch(6, 1);
@@ -312,17 +312,7 @@ void ButtonLine::exportAllCsv()
 void ButtonLine::connectivityStateChange(bool connected)
 {
     m_connected = connected;
-    if (connected)
-    {
-        m_connectivityLabel->setStyleSheet("QLabel { background-color : green; color : white; }");
-        m_connectivityLabel->setText(tr("Connected"));
-    }
-    else
-    {
-        m_connectivityLabel->setStyleSheet("QLabel { background-color : red; color : yellow; }");
-        m_connectivityLabel->setText(tr("Disconnected"));
-    }
-    m_connectivityLabel->repaint();
+    m_connectivityLabel->SetConnected(connected);
 
     m_startButton->setEnabled(m_enabledBChannels && m_connected);
 }

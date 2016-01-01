@@ -353,7 +353,8 @@ Plot *Measurement::GetPlot() const
 
 bool Measurement::IsPlotVisible() const
 {
-    return m_plot->isVisible();
+    //isVisible return false when widget is not display yet (initialization)
+    return !m_plot->isHidden();
 }
 
 
@@ -410,7 +411,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         if (channel->IsOnHorizontalAxis())
             m_plot->SetHorizontalChannel(m_channels.last());
     }
-    ReplaceDisplays(false);
+
+    foreach (Axis *axis, m_axes)
+        axis->UpdateGraphAxisName();
+
+     ReplaceDisplays(false);
 }
 
 void Measurement::_InitializeAxesAndChanels()
@@ -461,6 +466,9 @@ void Measurement::_InitializeAxesAndChanels()
     _AddYChannel(Qt::cyan, yAxis);
     _AddYChannel(Qt::green, yAxis);
     _AddYChannel(Qt::darkRed, yAxis);
+
+    foreach (Axis *axis, m_axes)
+        axis->UpdateGraphAxisName();
 
     ReplaceDisplays(false);
 }

@@ -65,10 +65,11 @@ void MeasurementMenu::FillGrid()
     m_gridLayout->addWidget(addButton, row, 1);
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 
-    QPushButton * clonebutton = new QPushButton(tr("Clone Selected"), this);
+    QPushButton * cloneButton = new QPushButton(tr("Clone Selected"), this);
     //m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
-    m_gridLayout->addWidget(clonebutton, row+1, 1);
-    connect(clonebutton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
+    m_gridLayout->addWidget(cloneButton, row+1, 1);
+    cloneButton->setEnabled(m_context.m_measurements.size() > 0);
+    connect(cloneButton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
 }
 
 void MeasurementMenu::addButtonPressed()
@@ -89,17 +90,10 @@ void MeasurementMenu::addButtonPressed()
 
 void MeasurementMenu::cloneButtonPressed()
 {
-    Measurement *m = m_context.m_mainWindow.CloneCurrentMeasurement();
-
-    MeasurementSettings dialog(m, m_context);
-    if (QDialog::Accepted == dialog.exec())
-    {
-        m_context.m_mainWindow.ConfirmMeasurement(m);
-        ReinitGrid();
-    }
-    else
-        m_context.m_mainWindow.RemoveMeasurement(m, false);
-
+    m_context.m_mainWindow.ConfirmMeasurement(
+        m_context.m_mainWindow.CloneCurrentMeasurement()
+    );
+    ReinitGrid();
     CloseIfPopup();
 }
 

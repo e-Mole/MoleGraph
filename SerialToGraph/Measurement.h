@@ -45,6 +45,7 @@ private:
     void _DrawRestData();
     void _AdjustDrawPeriod(unsigned drawDelay);
     void _InitializeAxesAndChanels(Measurement *source);
+    void _InitializeAxesAndChanels();
     void _AddYChannel(Qt::GlobalColor color, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
 
@@ -85,6 +86,8 @@ public:
     void RemoveAxis(Axis * axis);
     Channel *GetChannel(unsigned index);
     unsigned GetChannelCount();
+    int GetAxisIndex(Axis *axis);
+    Axis *GetAxis(int index);
 
 signals:
     void stateChanged();

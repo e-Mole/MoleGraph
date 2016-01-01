@@ -5,6 +5,7 @@
 #include <Plot.h>
 #include <QByteArray>
 #include <QColor>
+#include <qcustomplot/qcustomplot.h>
 #include <QDateTime>
 #include <QDebug>
 #include <QHBoxLayout>
@@ -49,7 +50,10 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
-    _InitializeAxesAndChanels(source);
+    if (source != NULL)
+        _InitializeAxesAndChanels(source);
+    else
+        _InitializeAxesAndChanels();
 }
 
 Measurement::~Measurement()
@@ -278,17 +282,6 @@ void Measurement::stop()
 
     _DrawRestData();
 
-    /*m_context.m_measurements.push_back(
-        (m_context.m_currentMeasurement != NULL) ?
-            new Measurement(
-                        m_context,
-                        m_context.m_currentMeasurement->GetSampleUnits(),
-                        m_context.m_currentMeasurement->GetPeriod()
-            ):
-            new Measurement(m_context)
-    );
-    m_context.m_currentMeasurement = m_context.m_measurements.last();*/
-
     m_state = Finished;
     stateChanged();
 }
@@ -365,6 +358,62 @@ bool Measurement::IsPlotVisible() const
 
 
 void Measurement::_InitializeAxesAndChanels(Measurement *source)
+{
+    bool firstY = true;
+    foreach (Axis *axis, source->GetAxes())
+    {
+        QCPAxis * graphAxis;
+        if (axis->IsHorizontal())
+            graphAxis = m_plot->xAxis;
+        else if (firstY)
+        {
+            firstY = false;
+            graphAxis = m_plot->yAxis;
+        }
+        else
+            graphAxis = m_plot->AddYAxis(axis->IsOnRight());
+
+
+        m_axes.push_back(
+            new Axis(
+                this,
+                m_context,
+                axis->GetColor(),
+                graphAxis,
+                axis->GetTitle(),
+                axis->IsRemovable(),
+                axis->IsHorizontal(),
+                axis->IsOnRight(),
+                axis->IsShownName()
+            )
+        );
+    }
+
+    foreach (Channel *channel, source->GetChannels())
+    {
+        m_channels.push_back(
+            new Channel(
+                this,
+                m_context,
+                channel->GetHwIndex(),
+                channel->GetName(),
+                channel->GetColor(),
+                GetAxis(source->GetAxisIndex(channel->GetAxis())),
+                channel->GetShapeIndex(),
+                m_plot->AddGraph(channel->GetColor()),
+                m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
+                !channel->isHidden()
+            )
+        );
+        if (!channel->IsHwChannel())
+            m_sampleChannel = m_channels.last();
+        if (channel->IsOnHorizontalAxis())
+            m_plot->SetHorizontalChannel(m_channels.last());
+    }
+    ReplaceDisplays(false);
+}
+
+void Measurement::_InitializeAxesAndChanels()
 {
     Axis * xAxis =
         new Axis(
@@ -467,4 +516,20 @@ Channel *Measurement::GetChannel(unsigned index)
 unsigned Measurement::GetChannelCount()
 {
     return m_channels.count();
+}
+
+int Measurement::GetAxisIndex(Axis *axis)
+{
+    for (int i = 0; i < m_axes.size(); i++)
+    {
+        if (m_axes[i] == axis)
+            return i;
+    }
+
+    return -1;
+}
+
+Axis *Measurement::GetAxis(int index)
+{
+    return m_axes[index];
 }

@@ -6,14 +6,15 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-Axis::Axis(
-    Measurement *measurement,
+Axis::Axis(Measurement *measurement,
     Context const &context,
     QColor const & color,
     QCPAxis *graphAxis,
     QString title,
     bool isRemovable,
-    bool isHorizontal
+    bool isHorizontal,
+    bool isOnRight,
+    bool isShownName
 ) :
     QObject(NULL),
     m_measurement(measurement),
@@ -21,10 +22,10 @@ Axis::Axis(
     m_title(title),
     m_isRemovable(isRemovable),
     m_color(color),
-    m_isOnRight(false),
+    m_isOnRight(isOnRight),
     m_isHorizontal(isHorizontal),
     m_graphAxis(NULL),
-    m_displayName(false)
+    m_isShownName(isShownName)
 {
     if (title == "")
         m_title =  QString(tr("Axis %1")).arg(measurement->GetAxes().count() + 1);
@@ -64,13 +65,13 @@ const Axis &Axis::operator =(const Axis &axis)
     m_isOnRight = axis.m_isOnRight;
     m_isHorizontal = axis.m_isHorizontal;
     m_graphAxis = axis.m_graphAxis;
-    m_displayName = axis.m_displayName;
+    m_isShownName = axis.m_isShownName;
     return *this;
 }
 
 void Axis::UpdateGraphAxisName()
 {
-    if (m_displayName)
+    if (m_isShownName)
     {
         m_graphAxis->setLabel(m_title);
         m_measurement->GetPlot()->ReplotIfNotDisabled();

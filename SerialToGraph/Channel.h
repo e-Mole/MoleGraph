@@ -68,7 +68,19 @@ class Channel : public QGroupBox
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
 public:
-    Channel(Measurement *measurement, Context const & context, int hwIndex, QString const &name, QColor const &color, Axis * axis, unsigned shapeIndex, QCPGraph *graph, QCPGraph *graphPoint);
+    Channel(
+        Measurement *measurement,
+        Context const & context,
+        int hwIndex,
+        QString const &name,
+        QColor const &color,
+        Axis * axis,
+        unsigned shapeIndex,
+        QCPGraph *graph,
+        QCPGraph *graphPoint,
+        bool visible = true
+    );
+
     ~Channel();
 
     QColor &GetColor() { return m_color; }

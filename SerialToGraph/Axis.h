@@ -25,7 +25,7 @@ class Axis : public QObject
     bool m_isOnRight;
     bool m_isHorizontal;
     QCPAxis * m_graphAxis;
-    bool m_displayName;
+    bool m_isShownName;
 
     void _SetName(QString const &name) { m_title = name; }
     void _SetColor(QColor const & color);
@@ -38,7 +38,9 @@ public:
         QCPAxis *graphAxis = NULL,
         QString title = "",
         bool isRemovable = true,
-        bool isHorizontal = false);
+        bool isHorizontal = false,
+        bool isOnRight = false,
+        bool isShownName = false);
 
     const Axis &operator =(const Axis &axis);
 
@@ -48,6 +50,7 @@ public:
     bool IsRemovable() { return m_isRemovable; }
     bool IsHorizontal() { return m_isHorizontal; }
     bool IsOnRight() { return m_isOnRight; }
+    bool IsShownName() { return m_isShownName; }
     QCPAxis *GetGraphAxis(){ return m_graphAxis; }
 
     Measurement * GetMeasurement();

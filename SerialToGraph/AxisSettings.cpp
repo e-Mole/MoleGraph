@@ -36,8 +36,8 @@ AxisSettings::AxisSettings(Axis *axis, Context const & context) :
 
     m_display->addItem(tr("Channels and Units"));
     m_display->addItem(tr("Name"));
-    m_display->setCurrentIndex((int)m_axis->m_displayName);
-    m_formLayout->addRow(new QLabel(tr("Display in Graph"), this), m_display);
+    m_display->setCurrentIndex((int)m_axis->m_isShownName);
+    m_formLayout->addRow(new QLabel(tr("Show in Graph"), this), m_display);
 
 }
 
@@ -46,10 +46,10 @@ bool AxisSettings::BeforeAccept()
     m_axis->m_title = m_name->text();
 
     bool newDisplayName = (bool)m_display->currentIndex();
-    if (m_axis->m_displayName != newDisplayName ||
+    if (m_axis->m_isShownName != newDisplayName ||
         (newDisplayName && m_axis->m_title != m_name->text()))
     {
-        m_axis->m_displayName = newDisplayName;
+        m_axis->m_isShownName = newDisplayName;
             m_axis->UpdateGraphAxisName();
     }
 

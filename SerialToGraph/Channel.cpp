@@ -57,7 +57,8 @@ Channel::Channel(
     Axis * axis,
     unsigned shapeIndex,
     QCPGraph *graph,
-    QCPGraph *graphPoint
+    QCPGraph *graphPoint,
+    bool visible
 ) :
     QGroupBox(name, measurement),
     m_valueLabel(NULL),
@@ -88,6 +89,8 @@ Channel::Channel(
 
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
+
+    changeChannelVisibility(visible, false);
 
 }
 

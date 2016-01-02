@@ -1,16 +1,17 @@
 #ifndef CONNECTIVITYLABEL_H
 #define CONNECTIVITYLABEL_H
 
-#include <QLabel>
+#include <ClickableLabel.h>
 
 class QString;
 class QWidget;
 struct Context;
-class ConnectivityLabel : public QLabel
+class ConnectivityLabel : public ClickableLabel
 {
     Q_OBJECT
 
-    void mousePressEvent ( QMouseEvent * event );
+    void MousePress();
+
     Context const &m_context;
 public:
     ConnectivityLabel(Context const &context, const QString &text, QWidget *parent = 0);

@@ -173,10 +173,14 @@ void Channel::_UpdateTitle()
     m_axis->UpdateGraphAxisName();
 }
 
-void Channel::mousePressEvent(QMouseEvent * event)
+void Channel::EditChannel()
 {
     ChannelSettings *settings = new ChannelSettings(this, m_context);
     settings->exec();
+}
+void Channel::mousePressEvent(QMouseEvent * event)
+{
+    EditChannel();
 }
 
 void Channel::displayValueOnIndex(int index)

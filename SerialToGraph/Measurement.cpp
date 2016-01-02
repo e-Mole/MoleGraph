@@ -460,12 +460,12 @@ void Measurement::_InitializeAxesAndChanels()
 
     _AddYChannel(Qt::red, yAxis);
     _AddYChannel(Qt::blue, yAxis);
-    _AddYChannel(Qt::black, yAxis);
     _AddYChannel(Qt::darkGreen, yAxis);
     _AddYChannel(Qt::magenta, yAxis);
     _AddYChannel(Qt::cyan, yAxis);
     _AddYChannel(Qt::green, yAxis);
     _AddYChannel(Qt::darkRed, yAxis);
+    _AddYChannel(Qt::darkGray, yAxis);
 
     foreach (Axis *axis, m_axes)
         axis->UpdateGraphAxisName();

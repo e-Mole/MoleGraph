@@ -1,6 +1,7 @@
 #include "ButtonLine.h"
 #include <Axis.h>
 #include <AxisMenu.h>
+#include <ChannelMenu.h>
 #include <ConnectivityLabel.h>
 #include <Context.h>
 #include <Channel.h>
@@ -12,6 +13,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QKeySequence>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -31,7 +33,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_axisMenuButton(NULL),
     m_measurementButton(NULL),
     m_fileMenu(NULL),
-    m_panelMenu(NULL),
+    m_channelMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
@@ -39,7 +41,10 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_noneAction(NULL),
     m_afterLastChannelSeparator(NULL),
     m_context(context),
-    m_measurement(NULL)
+    m_measurement(NULL),
+    m_graphShortcut(NULL),
+    m_allChannelsShortcut(NULL),
+    m_noChannelsShortcut(NULL)
 {
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->setMargin(1);
@@ -81,7 +86,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     buttonLayout->insertStretch(6, 1);
 
     _InitializeMenu();
-    //_UpdateStartButtonState();
 }
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
@@ -105,10 +109,8 @@ void ButtonLine::fileMenuButtonPressed()
 
 void ButtonLine::_RefreshPanelMenu()
 {
-    delete m_panelMenu;
-    m_panelMenu = NULL;
-
-    m_channelActions.clear();
+    delete m_channelMenu;
+    m_channelMenu = NULL;
 
     m_panelMenuButton->setEnabled(m_measurement != NULL);
     m_axisMenuButton->setEnabled(m_measurement != NULL);
@@ -116,28 +118,15 @@ void ButtonLine::_RefreshPanelMenu()
     if (m_measurement == NULL)
         return;
 
-    m_panelMenu = new QMenu(this);
-    m_panelMenu->setTitle(tr("Panels"));
-    m_graphAction =
-        _InsertAction(
-            m_panelMenu,
-            tr("Graph"),
-            QKeySequence(Qt::ALT + Qt::Key_G),
-            true,
-            m_measurement->IsPlotVisible()
-        );
-
-    m_afterLastChannelSeparator = m_panelMenu->addSeparator();
-    m_allAction = _InsertAction(m_panelMenu, tr("Show All"), QKeySequence(Qt::ALT + Qt::Key_A), false, false);
-    m_noneAction = _InsertAction(m_panelMenu, tr("Show None"), QKeySequence(Qt::ALT + Qt::Key_N), false, false);
-
-    foreach (Channel *channel, m_measurement->GetChannels())
-        AddChannel(channel, m_panelMenu);
-
+    m_channelMenu = new ChannelMenu(*m_measurement, this);
+    _CreateShortcuts();
+    m_channelMenu->FillGrid();
+    UpdateStartAndStopButtonsState();
 }
+
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_panelMenu->exec(_GetGlobalMenuPosition(m_panelMenuButton));
+    _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
 }
 
 void ButtonLine::axisMenuButtonPressed()
@@ -150,37 +139,6 @@ void ButtonLine::measurementMenuButtonPressed()
 {
     MeasurementMenu measurementMenu(m_context);
     _OpenMenuDialog(m_measurementButton, measurementMenu);
-}
-
-QAction * ButtonLine::_InsertAction(
-    QMenu *menu,
-    QString title,
-    QKeySequence const &keySequence,
-    bool checkable,
-    bool checked,
-    QAction *before)
-{
-    QAction * action = new QAction(title, menu);
-    action->setShortcut(keySequence);
-    action->setCheckable(checkable);
-    action->setChecked(checked);
-
-    menu->insertAction(before, action);
-
-    QMap<QKeySequence, QShortcut*>::iterator it = m_shortcuts.find(keySequence);
-    if (it != m_shortcuts.end())
-        delete it.value();
-    //Key sequence as addAction parameter doesn't work
-    //to work must be created separatell as a child of the ButtonLine class (not a child of menu)
-    //because menu is a context menu and doesn't all the time
-    QShortcut *shortcut = new QShortcut(keySequence, this);
-    m_shortcuts[keySequence] = shortcut;
-
-    connect(action, SIGNAL(triggered()), this, SLOT(actionStateChanged()));
-    connect(shortcut, SIGNAL(activated()), action, SLOT(trigger()));
-
-    return action;
-
 }
 
 void ButtonLine::_InitializeMenu()
@@ -197,60 +155,7 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));
 }
 
-void ButtonLine::AddChannel(Channel *channel, QMenu *panelMenu)
-{
-    m_channelActions[channel] =
-        _InsertAction(
-            panelMenu,
-            channel->GetName(),
-            QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1),
-            true,
-            !channel->isHidden(),
-            m_afterLastChannelSeparator
-        );
-    connect(channel, SIGNAL(stateChanged()), this, SLOT(channelSettingChanged()));
-    _UpdateStartAndStopButtonsState();
-}
-
-void ButtonLine::channelSettingChanged()
-{
-    Channel *channel = (Channel*)sender();
-    if (channel->GetName() != m_channelActions[channel]->text())
-        m_channelActions[channel]->setText(channel->GetName());
-
-}
-void ButtonLine::actionStateChanged()
-{
-    QAction *senderAction = (QAction*)sender();
-    if (senderAction == m_graphAction)
-        m_measurement->showGraph(m_graphAction->isChecked());
-    else if (senderAction == m_allAction || senderAction == m_noneAction)
-    {
-        QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
-        for (;it !=m_channelActions.end(); ++it)
-        {
-            it.value()->setChecked(senderAction != m_noneAction);
-            it.key()->changeChannelVisibility(senderAction == m_allAction, false);
-        }
-        allChannelsDisplayedOrHidden();
-    }
-    else
-    {
-        QMap<Channel *, QAction*>::iterator it = m_channelActions.begin();
-        for  (; it != m_channelActions.end(); ++it)
-        {
-            if (it.value() == senderAction)
-            {
-                it.key()->changeChannelVisibility(it.value()->isChecked(), true);
-            }
-        }
-    }
-
-    m_measurement->ReplaceDisplays(!m_measurement->IsPlotVisible());
-    _UpdateStartAndStopButtonsState();
-}
-
-void ButtonLine::_UpdateStartAndStopButtonsState()
+void ButtonLine::UpdateStartAndStopButtonsState()
 {
     m_stopButton->setEnabled(
         (Measurement::State)m_measurement->GetState() == Measurement::Running);
@@ -336,12 +241,84 @@ void ButtonLine::saveAsFile()
 
 void ButtonLine::measurementStateChanged()
 {
-    _UpdateStartAndStopButtonsState();
+    UpdateStartAndStopButtonsState();
 }
 
-void ButtonLine::ChngeMeasurement(Measurement *measurement)
+void ButtonLine::_ClearShortcuts()
+{
+    delete m_graphShortcut;
+    m_graphShortcut = NULL;
+
+    foreach (QShortcut *shortcut, m_shortcutChannels.keys())
+        delete shortcut;
+    m_shortcutChannels.clear();
+
+    delete m_allChannelsShortcut;
+    m_allChannelsShortcut = NULL;
+
+    delete m_noChannelsShortcut;
+    m_noChannelsShortcut = NULL;
+}
+
+void ButtonLine::_CreateShortcuts()
+{
+    m_graphShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this);
+    connect (m_graphShortcut, SIGNAL(activated()), m_channelMenu, SLOT(graphActivated()));
+
+    foreach (Channel *channel, m_measurement->GetChannels())
+    {
+        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), this);
+        connect(s, SIGNAL(activated()), this, SLOT(channelActivated()));
+        m_shortcutChannels[s] = channel;
+    }
+
+    m_allChannelsShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_A), this);
+    connect(m_allChannelsShortcut, SIGNAL(activated()), m_channelMenu, SLOT(allChannelsActivated()));
+
+    m_noChannelsShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_N), this);
+    connect(m_noChannelsShortcut, SIGNAL(activated()), m_channelMenu, SLOT(noChannelsActivated()));
+}
+
+QString ButtonLine::GetGraphShortcutText()
+{
+    return m_graphShortcut->key().toString();
+}
+
+QString ButtonLine::GetAllChannelShortcutText()
+{
+    return m_allChannelsShortcut->key().toString();
+}
+
+QString ButtonLine::GetNoChannelShortcutText()
+{
+    return m_noChannelsShortcut->key().toString();
+}
+
+QString ButtonLine::GetChannelShortcutText(Channel *channel)
+{
+    //only a few channels to create inverted map
+    QMap<QShortcut*, Channel*>::iterator it =  m_shortcutChannels.begin();
+    for (;it != m_shortcutChannels.end(); ++it)
+    {
+        if (it.value() == channel)
+            return it.key()->key().toString();
+    }
+
+    //should not be reached;
+    return "";
+}
+
+void ButtonLine::channelActivated()
+{
+    Channel *channel = m_shortcutChannels[(QShortcut*)sender()];
+    m_channelMenu->ActivateChannel(channel, channel->isHidden());
+}
+
+
+void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
+    _ClearShortcuts();
     _RefreshPanelMenu();
 }
 

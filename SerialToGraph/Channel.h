@@ -135,6 +135,7 @@ public:
     void SetColor(QColor &color);
 
     Measurement * GetMeasurement();
+    void EditChannel();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

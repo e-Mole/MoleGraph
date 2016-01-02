@@ -126,7 +126,7 @@ void MainWindow::currentMeasurementChanged(int index)
 {
     if (-1 == index)
     {
-        m_buttonLine->ChngeMeasurement(NULL);
+        m_buttonLine->ChangeMeasurement(NULL);
         return;
     }
 
@@ -134,7 +134,7 @@ void MainWindow::currentMeasurementChanged(int index)
         disconnect(m_currentMeasurement, SIGNAL(stateChanged()), 0, 0);
 
     Measurement *m = (Measurement*)m_measurementTabs->widget(index);
-    m_buttonLine->ChngeMeasurement(m);
+    m_buttonLine->ChangeMeasurement(m);
 
     connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
     connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));

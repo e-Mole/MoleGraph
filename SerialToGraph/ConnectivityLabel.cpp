@@ -3,15 +3,10 @@
 #include <MainWindow.h>
 
 ConnectivityLabel::ConnectivityLabel(Context const &context, const QString &text, QWidget *parent) :
-    QLabel(text, parent),
+    ClickableLabel(text, parent),
     m_context(context)
 {
     setMargin(5);
-}
-
-void ConnectivityLabel::mousePressEvent ( QMouseEvent * event )
-{
-    m_context.m_mainWindow.OpenSerialPort();
 }
 
 void ConnectivityLabel::SetConnected(bool connected)
@@ -28,4 +23,9 @@ void ConnectivityLabel::SetConnected(bool connected)
     }
 
     repaint();
+}
+
+void ConnectivityLabel::MousePress()
+{
+    m_context.m_mainWindow.OpenSerialPort();
 }

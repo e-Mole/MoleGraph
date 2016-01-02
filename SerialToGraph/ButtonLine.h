@@ -8,6 +8,7 @@
 
 class Axis;
 class Channel;
+class ChannelMenu;
 class ConnectivityLabel;
 class Measurement;
 class QAction;
@@ -24,19 +25,14 @@ class ButtonLine : public QWidget
 {
     Q_OBJECT
 
-    void _UpdateStartAndStopButtonsState();
-    QAction * _InsertAction(
-        QMenu *menu,
-        QString title,
-        const QKeySequence &keySequence,
-        bool checkable,
-        bool checked,
-        QAction *before = NULL);
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
     void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
     void _RefreshPanelMenu();
     void _ExportCSV(QVector<Measurement *> const & measurements);
+    void _ClearShortcuts();
+    void _CreateShortcuts();
+    void _ActivateChannel(Channel *channel, bool checked);
 
     QPushButton *m_startButton;
     QPushButton *m_stopButton;
@@ -47,7 +43,7 @@ class ButtonLine : public QWidget
     QPushButton * m_axisMenuButton;
     QPushButton * m_measurementButton;
     QMenu *m_fileMenu;
-    QMenu *m_panelMenu;
+    ChannelMenu *m_channelMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 
@@ -58,12 +54,21 @@ class ButtonLine : public QWidget
     QAction *m_afterLastChannelSeparator;
     Context const &m_context;
     Measurement *m_measurement;
-    QMap<QKeySequence, QShortcut*> m_shortcuts;
+
+    QShortcut *m_graphShortcut;
+    QMap<QShortcut*, Channel*> m_shortcutChannels;
+    QShortcut *m_allChannelsShortcut;
+    QShortcut *m_noChannelsShortcut;
 
 public:
+    void UpdateStartAndStopButtonsState();
     ButtonLine(QWidget *parent, const Context &context);
-    void AddChannel(Channel *channel, QMenu *panelMenu);
-    void ChngeMeasurement(Measurement *measurement);
+    void ChangeMeasurement(Measurement *measurement);
+    QString GetGraphShortcutText();
+    QString GetAllChannelShortcutText();
+    QString GetNoChannelShortcutText();
+    QString GetChannelShortcutText(Channel *channel);
+
 signals:
     void periodChanged(unsigned period);
     void channelTriggered(Channel *channel, bool checked);
@@ -86,9 +91,8 @@ public slots:
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();
     void measurementMenuButtonPressed();
-    void actionStateChanged();
-    void channelSettingChanged();
     void measurementStateChanged();
+    void channelActivated();
 };
 
 #endif // BUTTONLINE_H

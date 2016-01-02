@@ -35,7 +35,7 @@ public:
     void SwichCurrentMeasurement(Measurement *m);
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
-    void OpenSerialPort();
+    bool OpenSerialPort();
 
     bool m_close;
 private slots:

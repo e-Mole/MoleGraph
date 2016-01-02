@@ -12,7 +12,7 @@
 namespace {
     struct RadioButtonWithInfo : public QRadioButton
     {
-        ExtendedSerialPortInfo const &m_info;
+        ExtendedSerialPortInfo m_info;
         RadioButtonWithInfo(const QString &text, QWidget *parent, ExtendedSerialPortInfo const &info):
             QRadioButton(text, parent),
             m_info(info)
@@ -26,8 +26,6 @@ PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<Extended
     m_serialPort(port),
     m_settings(settings)
 {
-    setMinimumSize(200,50);
-
     m_gridLayout = new QGridLayout(this);
     setLayout(m_gridLayout);
 
@@ -45,8 +43,10 @@ void PortListWidget::Refresh()
     QList<QWidget *> widgets = findChildren<QWidget *>();
     foreach(QWidget * widget, widgets)
     {
+        m_gridLayout->removeWidget(widget);
         delete widget;
     }
+    adjustSize();
 
     QList<ExtendedSerialPortInfo> portInfos;
     if (m_serialPort.FindAndOpenMySerialPort(portInfos))

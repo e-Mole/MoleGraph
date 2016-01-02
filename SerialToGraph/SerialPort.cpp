@@ -38,11 +38,18 @@ SerialPort::SerialPort(QSettings &settings, QObject *parent) :
 
 SerialPort::~SerialPort()
 {
-    Stop();
+    if (m_serialPort.isOpen())
+        Stop();
 }
 
 bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
 {
+    if (m_serialPort.isOpen())
+    {
+        m_serialPort.close();
+        PortConnectivityChanged(false);
+    }
+
     m_serialPort.setPort(info);
     m_serialPort.setBaudRate(QSerialPort::Baud115200);
 

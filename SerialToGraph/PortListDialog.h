@@ -13,7 +13,6 @@ class PortListDialog : public QDialog
 {
     Q_OBJECT
 
-    void _Refresh();
     void closeEvent(QCloseEvent *event);
 
     PortListWidget *m_mainWidget;

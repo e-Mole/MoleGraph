@@ -30,7 +30,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     if (translator->load("./serialToGraph_cs.qm"))
         application.installTranslator(translator);
 
-    OpenSerialPort();
+    if (!OpenSerialPort()) //returns false when user pressed the Close button
+        return;
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *centralLayout = new QVBoxLayout(this);
@@ -49,7 +50,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     ConfirmMeasurement(CreateNewMeasurement());
 }
 
-void MainWindow::OpenSerialPort()
+bool MainWindow::OpenSerialPort()
 {
     QList<ExtendedSerialPortInfo> portInfos;
     if (!m_serialPort.FindAndOpenMySerialPort(portInfos))
@@ -60,13 +61,14 @@ void MainWindow::OpenSerialPort()
             if (portListDialog->CloseApp())
             {
                 m_close = true;
-                return;
+                return false;
             }
 
             qDebug() << "hardware not found";
             m_serialPort.PortIssueSolver();
         }
     }
+    return true;
 }
 
 MainWindow::~MainWindow()

@@ -48,11 +48,6 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
 
 }
 
-void PortListDialog::_Refresh()
-{
-    m_mainWidget->Refresh();
-}
-
 void PortListDialog::closeClicked(bool checked)
 {
     m_close = true;
@@ -60,7 +55,8 @@ void PortListDialog::closeClicked(bool checked)
 }
 void PortListDialog::refreshClicked(bool checked)
 {
-    _Refresh();
+    m_mainWidget->Refresh();
+    adjustSize();
 }
 
 void PortListDialog::closeEvent(QCloseEvent *event)

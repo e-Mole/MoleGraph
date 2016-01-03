@@ -8,7 +8,7 @@
 #include <QMessageBox>
 
 MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const& context):
-    FormDialogBase(NULL, tr("Edit measurement...")),
+    FormDialogBase(NULL, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
     m_name(NULL),

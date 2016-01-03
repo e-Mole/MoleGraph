@@ -14,7 +14,7 @@
 #include <QWidget>
 
 AxisSettings::AxisSettings(Axis *axis, Context const & context) :
-    FormDialogColor(NULL, tr("Edit Axis...")),
+    FormDialogColor(NULL, tr("Axis Setting")),
     m_axis(axis),
     m_name(new QLineEdit(axis->GetTitle(), this)),
     m_context(context),
@@ -35,7 +35,7 @@ AxisSettings::AxisSettings(Axis *axis, Context const & context) :
     }
 
     m_display->addItem(tr("Channels and Units"));
-    m_display->addItem(tr("Name"));
+    m_display->addItem(tr("Axis Name"));
     m_display->setCurrentIndex((int)m_axis->m_isShownName);
     m_formLayout->addRow(new QLabel(tr("Show in Graph"), this), m_display);
 

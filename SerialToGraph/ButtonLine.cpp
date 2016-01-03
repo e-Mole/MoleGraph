@@ -329,6 +329,7 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     m_measurement = measurement;
     _ClearShortcuts();
     _RefreshPanelMenu();
+    UpdateStartAndStopButtonsState();
 }
 
 void ButtonLine::start()

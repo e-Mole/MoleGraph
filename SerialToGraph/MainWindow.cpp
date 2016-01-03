@@ -106,6 +106,7 @@ void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
         m_measurements.removeOne(m);
         m_currentMeasurement = NULL;
         m_measurementTabs->removeTab(m_measurements.indexOf(m));
+        m_buttonLine->ChangeMeasurement(NULL);
     }
 
     delete m;

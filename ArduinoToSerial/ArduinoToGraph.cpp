@@ -68,20 +68,14 @@ namespace
   }
 }
 
-void ProcessChannels()
-{
-  g_updateFunction();  
-  SendData();
-}
-
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
    if (0 != g_requiredTime && (++g_currentTime) != g_requiredTime)
     return;
-
    g_currentTime = 0;
   
-   ProcessChannels();
+   g_updateFunction();  
+   SendData();
 }
 
 void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
@@ -150,10 +144,9 @@ void ArtuinoToGraph::Loop()
           g_channelCount++;       
     break;
     case INS_START:
-      g_currentTime = 0;
+      g_currentTime = g_currentTime - 1; //to be data send immediately
       g_fullWriteBufferDetected = false;
       TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
-      ProcessChannels();
     break;
     case INS_STOP:
       TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt

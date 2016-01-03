@@ -175,15 +175,16 @@ void ButtonLine::UpdateStartAndStopButtonsState()
         return;
     }
 
+    bool horizontalPreset = false;
+    bool hwChannelPresent = false;
     foreach (Channel *channel, m_measurement->GetChannels())
     {
         if (channel->IsHwChannel() && !channel->isHidden())
-        {
-            m_startButton->setEnabled(true);
-            return;
-        }
+            hwChannelPresent = true;
+        if (channel->IsOnHorizontalAxis() && !channel->isHidden())
+            horizontalPreset = true;
     }
-    m_startButton->setEnabled(false);
+    m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
 void ButtonLine::exportPng()

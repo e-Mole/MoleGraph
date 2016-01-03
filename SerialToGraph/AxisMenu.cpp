@@ -116,7 +116,7 @@ void AxisMenu::removeButtonPressed()
     foreach (Channel * channel, axis->GetMeasurement()->GetChannels())
     {
         if (axis == channel->GetAxis())
-            channel->SetAxis(firstVertical);
+            channel->AssignToAxis(firstVertical);
     }
     m_measurement.RemoveAxis(axis);
     firstVertical->UpdateGraphAxisName();
@@ -136,5 +136,5 @@ void AxisMenu::editButtonPressed()
         ReinitGrid();
     }
 
-    close();
+    CloseIfPopup();
 }

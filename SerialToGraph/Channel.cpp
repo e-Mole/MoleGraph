@@ -101,7 +101,6 @@ Channel::~Channel()
 void Channel::changeChannelVisibility(bool visible, bool signal)
 {
     setVisible(visible);
-    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
     if (signal)
         stateChanged();
 }
@@ -166,7 +165,7 @@ void Channel::_UpdateTitle()
 {
     setTitle(
         QString("(%1) ").arg(m_hwIndex + 1) +
-        (IsOnHorizontalAxis() ? "- " : "| ") +
+        /*(IsOnHorizontalAxis() ? "- " : "| ") +*/
         m_name
     );
     m_axis->UpdateGraphAxisName();
@@ -257,6 +256,7 @@ void Channel::setVisible(bool visible)
     QGroupBox::setVisible(visible);
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
+    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
 }
 
 void Channel::SetColor(QColor &color)

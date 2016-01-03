@@ -96,13 +96,18 @@ void ChannelMenu::edit()
     ClickableLabel *label = m_channelLabels[channel];
     label->setText(channel->GetName());
     label->SetColor(channel->GetColor());
+
+    m_buttonLine->UpdateStartAndStopButtonsState();
 }
 
 void ChannelMenu::channelActivated()
 {
     Channel *channel;
     if (m_checkBoxChannels.find((QCheckBox*)sender()) == m_checkBoxChannels.end())
+    {
         channel = m_labelChannels[(ClickableLabel*)sender()];
+        m_channelCheckBoxes[channel]->setChecked(channel->isHidden());
+    }
     else
         channel = m_checkBoxChannels[(QCheckBox*)sender()];
 

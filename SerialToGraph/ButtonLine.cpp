@@ -145,11 +145,11 @@ void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
-    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
+    /*m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
     m_fileMenu->addAction(tr("Open"), this, SLOT(openFile()));
     m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
     m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
-    m_fileMenu->addSeparator();
+    m_fileMenu->addSeparator();*/
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
     m_fileMenu->addAction(tr("Export Current Measurement to CSV"), this, SLOT(exportCsv()));
     m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));

@@ -4,15 +4,14 @@
 #include <QString>
 
 FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
-    QDialog(parent),
-    m_formLayout(NULL)
+    QDialog(parent)
 {
     setWindowTitle(title);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    m_formLayout = new QFormLayout(this);
+    m_formLayout = new QFormLayout();
     mainLayout->addLayout(m_formLayout);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     mainLayout->addLayout(buttonLayout);
 
     QPushButton *store = new QPushButton(tr("Store"), this);

@@ -18,12 +18,11 @@ void FormDialogColor::AddColorButtonRow(const QColor &color)
 {
     m_color = color;
     QPushButton * colorButton = new QPushButton("", this);
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    QHBoxLayout *layout = new QHBoxLayout(colorButton);
     layout->setMargin(7);
     m_colorButtonWidget = new QWidget(colorButton);
     _SetColorButtonColor();
     layout->addWidget(m_colorButtonWidget);
-    colorButton->setLayout(layout);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(colorButtonClicked()));
 
     m_formLayout->addRow(new QLabel(tr("Color"), this), colorButton);

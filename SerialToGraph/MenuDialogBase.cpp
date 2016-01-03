@@ -6,7 +6,6 @@ MenuDialogBase::MenuDialogBase(QString const &title) :
     m_gridLayout(new QGridLayout(this))
 {
     setWindowTitle(title);
-    setLayout(m_gridLayout);
 }
 
 MenuDialogBase::~MenuDialogBase()

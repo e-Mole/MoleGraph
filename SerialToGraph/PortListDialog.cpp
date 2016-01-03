@@ -16,7 +16,6 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
     m_close(false)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
-    this->setLayout(layout);
 
     QLabel *description = new QLabel(tr("Please, select a port with a comatible device."),this);
 
@@ -26,7 +25,7 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
     connect(m_mainWidget, SIGNAL(selectedValidPort()), this, SLOT(accept()));
     layout->addWidget(m_mainWidget);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     layout->addLayout(buttonLayout);
 
     QPushButton *refresh = new QPushButton(tr("Refresh"), this);

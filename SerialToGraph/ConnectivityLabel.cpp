@@ -27,5 +27,6 @@ void ConnectivityLabel::SetConnected(bool connected)
 
 void ConnectivityLabel::MousePress()
 {
+    //TODO: connectivity dialog is not ready yet
     //m_context.m_mainWindow.OpenSerialPort();
 }

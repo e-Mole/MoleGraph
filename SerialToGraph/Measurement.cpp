@@ -31,6 +31,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
+    m_mainLayout(new QHBoxLayout(this)),
     m_plot(new Plot(this)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
     m_startNewDraw(false)
@@ -85,19 +86,17 @@ void Measurement::portConnectivityChanged(bool connected)
 
 void Measurement::_InitializeLayouts()
 {
-    m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setMargin(1);
-    setLayout(m_mainLayout);
 
-    m_plotAndSliderLayout = new QVBoxLayout(this);
+    m_plotAndSliderLayout = new QVBoxLayout();
     m_plotAndSliderLayout->setMargin(0);
     m_mainLayout->insertLayout(0, m_plotAndSliderLayout, 1);
 
-    m_displaysAndSliderLayout = new QVBoxLayout(this);
+    m_displaysAndSliderLayout = new QVBoxLayout();
     m_displaysAndSliderLayout->setMargin(0);
     m_mainLayout->insertLayout(1, m_displaysAndSliderLayout, 0);
 
-    m_displayLayout = new QGridLayout(this);
+    m_displayLayout = new QGridLayout();
 
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }

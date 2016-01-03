@@ -109,6 +109,7 @@ void ChannelMenu::channelActivated()
     channel->setVisible(channel->isHidden());
 
     m_buttonLine->UpdateStartAndStopButtonsState();
+    m_measurement.ReplaceDisplays();
 }
 
 void ChannelMenu::ActivateChannel(Channel *channel, bool checked)
@@ -140,4 +141,5 @@ void ChannelMenu::allChannelsActivated()
         ActivateChannel(channel, true);
 
     m_buttonLine->UpdateStartAndStopButtonsState();
+    m_measurement.ReplaceDisplays();
 }

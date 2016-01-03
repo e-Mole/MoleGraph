@@ -78,7 +78,6 @@ Channel::Channel(
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(4);
-    setLayout(layout);
 
     m_valueLabel = new ValueLabel("", color, IsHwChannel(), this);
     layout->addWidget(m_valueLabel);

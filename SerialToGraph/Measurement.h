@@ -19,6 +19,7 @@ struct Context;
 class Measurement : public QWidget
 {
     Q_OBJECT
+
 public:
     enum SampleUnits{
         Hz, Sec
@@ -79,6 +80,8 @@ public:
     QVector<Axis *> const & GetAxes();
     QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
+    void ReplaceDisplays()
+        { ReplaceDisplays(!IsPlotVisible()); }
     Plot *GetPlot() const;
     bool IsPlotVisible() const;
     State GetState() { return m_state; }

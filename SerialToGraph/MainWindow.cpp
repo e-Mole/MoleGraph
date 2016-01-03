@@ -34,7 +34,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
         return;
 
     QWidget *centralWidget = new QWidget(this);
-    QVBoxLayout *centralLayout = new QVBoxLayout(this);
+    QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
     centralLayout->setMargin(2);
     centralWidget->setLayout(centralLayout);
     setCentralWidget(centralWidget);
@@ -42,7 +42,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_buttonLine = new ButtonLine(this, m_context);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
     centralLayout->addWidget(m_buttonLine);
-    connect(&m_serialPort, SIGNAL(PortConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
+    connect(&m_serialPort, SIGNAL(portConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
 
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);

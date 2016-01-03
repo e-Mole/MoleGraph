@@ -8,13 +8,11 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QSettings>
 #include <QString>
-#include <QVBoxLayout>
 
 ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     FormDialogColor(channel, tr("Channel settings")),

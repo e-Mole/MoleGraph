@@ -157,12 +157,21 @@ void ButtonLine::_InitializeMenu()
 
 void ButtonLine::UpdateStartAndStopButtonsState()
 {
+    if (NULL == m_measurement)
+    {
+        m_startButton->setEnabled(false);
+        m_stopButton->setEnabled(false);
+        return;
+    }
+
     m_stopButton->setEnabled(
+        m_connected &&
         (Measurement::State)m_measurement->GetState() == Measurement::Running);
 
     if (!m_connected || m_measurement->GetState() != Measurement::Ready)
     {
         m_startButton->setEnabled(false);
+        m_startButton->repaint(); //because of calling from serial port
         return;
     }
 
@@ -219,7 +228,7 @@ void ButtonLine::connectivityStateChange(bool connected)
     m_connected = connected;
     m_connectivityLabel->SetConnected(connected);
 
-    m_startButton->setEnabled(m_enabledBChannels && m_connected);
+    UpdateStartAndStopButtonsState();
 }
 
 void ButtonLine::newFile()

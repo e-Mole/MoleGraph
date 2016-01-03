@@ -47,7 +47,7 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
     if (m_serialPort.isOpen())
     {
         m_serialPort.close();
-        PortConnectivityChanged(false);
+        portConnectivityChanged(false);
     }
 
     m_serialPort.setPort(info);
@@ -78,7 +78,7 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
             return false;
         }
 
-        PortConnectivityChanged(true);
+        portConnectivityChanged(true);
         m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
         return true;
     }
@@ -141,7 +141,7 @@ void SerialPort::PortIssueSolver()
         );
     }
 
-	PortConnectivityChanged(false);
+    portConnectivityChanged(false);
 }
 
 bool SerialPort::Write(Instructions instruction, std::string const &data)
@@ -204,6 +204,8 @@ bool SerialPort::Start()
 
 bool SerialPort::Stop()
 {
+    if (!m_serialPort.isOpen())
+        return false;
     if (!Write(INS_STOP, ""))
     {
         PortIssueSolver();

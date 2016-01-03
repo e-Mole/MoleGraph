@@ -54,6 +54,10 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
         _InitializeAxesAndChanels(source);
     else
         _InitializeAxesAndChanels();
+
+    connect(
+        &m_context.m_serialPort, SIGNAL(portConnectivityChanged(bool)),
+        this, SLOT(portConnectivityChanged(bool)));
 }
 
 Measurement::~Measurement()
@@ -61,6 +65,21 @@ Measurement::~Measurement()
     foreach (Axis *axis, m_axes)
     {
         delete axis;
+    }
+}
+
+void Measurement::portConnectivityChanged(bool connected)
+{
+    if (!connected && m_state == Running)
+    {
+        stop();
+        QMessageBox::warning(
+            this,
+            m_context.m_applicationName,
+            QString(
+                tr("Measurement '%1' has been terminated because of a connectivity issue.")
+            ).arg(m_name)
+        );
     }
 }
 
@@ -101,6 +120,7 @@ bool Measurement::_FillQueue()
 {
     QByteArray array;
     m_context.m_serialPort.ReadAll(array);
+
     if (array.size() == 0)
         return false; //nothing to fill
 

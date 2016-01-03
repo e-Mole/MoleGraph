@@ -27,5 +27,5 @@ void ConnectivityLabel::SetConnected(bool connected)
 
 void ConnectivityLabel::MousePress()
 {
-    m_context.m_mainWindow.OpenSerialPort();
+    //m_context.m_mainWindow.OpenSerialPort();
 }

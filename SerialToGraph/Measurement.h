@@ -99,6 +99,7 @@ public slots:
     void showGraph(bool show);
 private slots:
     void draw();
+    void portConnectivityChanged(bool connected);
 };
 
 #endif // MEASUREMENT_H

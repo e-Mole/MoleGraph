@@ -59,7 +59,7 @@ public:
 
     void PortIssueSolver();
 signals:
-    void PortConnectivityChanged(bool connected);
+    void portConnectivityChanged(bool connected);
 public slots:
 };
 

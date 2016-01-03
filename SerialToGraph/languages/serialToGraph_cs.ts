@@ -647,7 +647,7 @@
     <message>
         <location filename="../MeasurementMenu.cpp" line="68"/>
         <source>Clone Selected</source>
-        <translation>Zavřít vybrané</translation>
+        <translation>Klonovat vybrané</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="111"/>

@@ -29,7 +29,6 @@ QSize Channel::ValueLabel::GetSize(QString const &text)
 void Channel::ValueLabel::resizeEvent(QResizeEvent * event)
 {
     QFont font = this->font();
-    QFontMetrics metrics(font);
 
     QSize size = GetLongestTextSize();
     qreal factor = qMin(
@@ -141,6 +140,7 @@ bool Channel::IsOnHorizontalAxis()
 
 void Channel::_SetMinimumSize()
 {
+    //setMinimumWidth(GetMinimumSize().width());
      setMinimumSize(GetMinimumSize());
 }
 

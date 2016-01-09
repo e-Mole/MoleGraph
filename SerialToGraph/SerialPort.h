@@ -3,11 +3,13 @@
 
 #include <QObject>
 #include <QList>
+#include <QQueue>
 #include <QtCore/QDebug>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
 class QSettings;
+
 
 class ExtendedSerialPortInfo : public QSerialPortInfo
 {
@@ -22,10 +24,6 @@ class SerialPort : public QObject
 {
     Q_OBJECT
 
-    QSerialPort m_serialPort;
-    QSettings &m_settings;
-    bool m_knownIssue;
-public:
     enum Instructions
     {
         INS_GET_VERSION = 1,
@@ -33,8 +31,16 @@ public:
         INS_SET_FREQUENCY = 3,
         INS_ENABLED_CHANNELS = 4,
         INS_START = 5,
-        INS_STOP = 6
+        INS_STOP = 6,
+        INS_GET_SAMLPE = 7,
     };
+
+    bool _WriteInstruction(Instructions instruction);
+
+    QSerialPort m_serialPort;
+    QSettings &m_settings;
+    bool m_knownIssue;
+public:
 
     SerialPort(QSettings &settings, QObject *parent = 0);
     ~SerialPort();
@@ -54,10 +60,11 @@ public:
     bool SetTime(unsigned time);
     bool Start();
     bool Stop();
+    bool SampleRequest();
     void SetSelectedChannels(unsigned char channels);
     bool IsDeviceConnected();
-
     void PortIssueSolver();
+    bool FillQueue(QQueue<unsigned char> &queue);
 signals:
     void portConnectivityChanged(bool connected);
 public slots:

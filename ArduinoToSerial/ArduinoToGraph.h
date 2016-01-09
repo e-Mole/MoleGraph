@@ -16,7 +16,8 @@ class ArtuinoToGraph
     INS_SET_FREQUENCY = 3,
     INS_ENABLED_CHANNELS = 4,
     INS_START = 5,
-    INS_STOP = 6
+    INS_STOP = 6,
+    INS_TYPE = 7,
   };
 public:
   void Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8);
@@ -25,5 +26,6 @@ public:
   bool SetChannelValue(int channel, float value);
   float GetChannelValue(int channel);
   void SetUpdateCallbackFunction(void (*update)(void) );
+  void SampleRequest();
 };
 #endif //_ARDUINO_TO_SERIAL_H_

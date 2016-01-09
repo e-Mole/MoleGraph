@@ -116,7 +116,7 @@ void MeasurementMenu::removeButtonPressed()
         {
             return;
         }
-        m->stop();
+        m->Stop();
     }
     else if (m->GetState() == Measurement::Finished)
     {

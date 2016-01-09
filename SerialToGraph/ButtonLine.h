@@ -81,6 +81,7 @@ private slots:
     void saveFile();
     void saveAsFile();
     void start();
+    void sampleRequest();
     void stop();
 public slots:
     void exportPng();

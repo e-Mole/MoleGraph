@@ -129,7 +129,7 @@ void SerialPort::ReadAll(QByteArray &array)
 
 void SerialPort::PortIssueSolver()
 {
-	m_serialPort.close();
+    m_serialPort.close();
 
     if (!m_knownIssue)
     {
@@ -146,31 +146,31 @@ void SerialPort::PortIssueSolver()
 
 bool SerialPort::Write(Instructions instruction, std::string const &data)
 {
-	if (!m_serialPort.isOpen())
+    if (!m_serialPort.isOpen())
         return false;
 
     qDebug() << "writen instruction:" << instruction << " data size:" <<
         m_serialPort.write((char const *)&instruction , 1);
-	if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
-	{
-		//_LineIssueSolver();
-		//return;
-	}
+    if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
+    {
+        //_LineIssueSolver();
+        //return;
+    }
     if (data.size() > 0)
-	{
+    {
        qDebug() << "data present" << data.c_str() << " size:" << data.size();
        m_serialPort.write(data.c_str(), data.size());
-	  if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
-	  {
-		//_LineIssueSolver();
-	  }
+      if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
+      {
+        //_LineIssueSolver();
+      }
     }
     return true;
 }
 
 bool SerialPort::SetFrequency(unsigned frequency)
 {
-	std::string tmp;
+    std::string tmp;
     tmp.append((char const *)&frequency, 2);
     if (!Write(INS_SET_FREQUENCY, tmp))
     {
@@ -192,9 +192,11 @@ bool SerialPort::SetTime(unsigned time)
     return true;
 }
 
-bool SerialPort::Start()
+bool SerialPort::_WriteInstruction(Instructions instruction)
 {
-    if (!Write(INS_START, ""))
+    if (!m_serialPort.isOpen())
+        return false;
+    if (!Write(instruction, ""))
     {
         PortIssueSolver();
         return false;
@@ -202,16 +204,19 @@ bool SerialPort::Start()
     return true;
 }
 
+bool SerialPort::Start()
+{
+    return _WriteInstruction(INS_START);
+}
+
 bool SerialPort::Stop()
 {
-    if (!m_serialPort.isOpen())
-        return false;
-    if (!Write(INS_STOP, ""))
-    {
-        PortIssueSolver();
-        return false;
-    }
-    return true;
+    return _WriteInstruction(INS_STOP);
+}
+
+bool SerialPort::SampleRequest()
+{
+    return _WriteInstruction(INS_GET_SAMLPE);
 }
 
 void SerialPort::SetSelectedChannels(unsigned char channels)
@@ -229,5 +234,19 @@ bool SerialPort::IsDeviceConnected()
         PortIssueSolver();
         return false;
     }
+    return true;
+}
+
+bool SerialPort::FillQueue(QQueue<unsigned char> &queue)
+{
+    QByteArray array;
+    ReadAll(array);
+
+    if (array.size() == 0)
+        return false; //nothing to fill
+
+    for (int i = 0; i< array.size(); i++)
+         queue.enqueue(array[i]);
+
     return true;
 }

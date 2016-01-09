@@ -29,6 +29,11 @@ public:
         Running,
         Finished
     };
+    enum Type
+    {
+        Periodical,
+        OnDemand
+    };
 private:
     struct GraphItem
     {
@@ -70,6 +75,7 @@ private:
     Plot *m_plot;
     QScrollBar *m_scrollBar;
     bool m_startNewDraw;
+    Type m_type;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source);
     ~Measurement();
@@ -91,13 +97,14 @@ public:
     unsigned GetChannelCount();
     int GetAxisIndex(Axis *axis);
     Axis *GetAxis(int index);
+    void Start();
+    void Stop();
+    void SampleRequest();
 
 signals:
     void stateChanged();
     void nameChanged();
 public slots:
-    void start();
-    void stop();
     void sliderMoved(int value);
     void showGraph(bool show);
 private slots:

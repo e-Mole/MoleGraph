@@ -1,16 +1,25 @@
 #include "ArduinoToGraph.h"
 
-#define VERSION "ATG_1" //arduino to graph version 1
-#define MESSAGE_SIZE 5
+
+#define VERSION "ATG_1" //arduino to graph version
+#define MESSAGE_SIZE 1 + sizeof(float)
 
 namespace
 {
+  enum Type
+  {
+      typePeriodical = 0,
+      typeOnRequest = 1
+  } g_type = typePeriodical;
+  
   unsigned char g_enabledChannels = 0;
   unsigned char g_channelCount = 0;
   unsigned g_requiredTime = 0;
   unsigned g_currentTime = 0;
   float g_channels[8];
   bool g_fullWriteBufferDetected = false;
+float g_timeFromStart = 0;
+bool g_sampleRequest = false;
   
   void (*g_updateFunction)(void);
   
@@ -26,24 +35,24 @@ namespace
     interrupts();             // enable all interrupts
   }
   
-  void WriteValue(unsigned char channel, float value, bool firstInSample, bool writingDelay)
+  void WriteValue(unsigned char channel, float value, bool isCommandResponse, bool writingDelay, bool containsTimestamp)
   {
     unsigned char mixture = channel;
-    mixture |= firstInSample << 7;
+    mixture |= isCommandResponse << 7;
     mixture |= writingDelay << 6;
     
     Serial.write(mixture);
-    Serial.write((char *)&value, 4);
+    Serial.write((char *)&value, sizeof(float));
   }
 
-  void SendData()
+  void SendData(bool timestamp)
   {
     //it can happen when user set to high frequency or too many channels
     //number of data is then higher then baud rate.
     // I try to check Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE but it happend always
     // the buffer is probably less then 40 and => I could 
     
-    bool bufferIsFull = (Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE); 
+    bool bufferIsFull = (Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE + (timestamp ? sizeof(float) : 0)); 
   
     g_fullWriteBufferDetected |= bufferIsFull;
     
@@ -53,29 +62,57 @@ namespace
     
     if (bufferIsFull)
       return; //have to throw data form this sample :(
-  
-    bool firstNotWritten = true;
+
+    if (timestamp)
+      Serial.write((char *)&timestamp, sizeof(float));
     for (int i = 0; i < 8; i++)
     {
       if (0 != ((g_enabledChannels >> i) & 1)) 
-      {
-        WriteValue(i, g_channels[i], firstNotWritten, g_fullWriteBufferDetected); 
-        firstNotWritten = false;
-      }  
+        WriteValue(i, g_channels[i], false, g_fullWriteBufferDetected, false); 
     }
   
      g_fullWriteBufferDetected = false;
   }
-}
+
+  void FillFromSerial(unsigned char &value)
+  {
+    while (0 == Serial.available())
+    {}
+    value = Serial.read();
+  }
+
+  void FillFromSerial(unsigned &value)
+  {
+    while (0 == Serial.available())
+    {}
+    value = Serial.read();
+    while (0 == Serial.available())
+    {}
+    value |= Serial.read() << 8;
+  }
+
+} //namespace
+
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
-   if (0 != g_requiredTime && (++g_currentTime) != g_requiredTime)
-    return;
-   g_currentTime = 0;
-  
-   g_updateFunction();  
-   SendData();
+  if (g_type == typeOnRequest)
+  {
+    g_timeFromStart += 1/62500;
+    if (!g_sampleRequest)  
+      return;
+
+     g_sampleRequest = false;
+  }
+  else //type periodical
+  {
+    if (0 != g_requiredTime && (++g_currentTime) != g_requiredTime)
+      return;
+    g_currentTime = 0;
+  }
+    
+  g_updateFunction();  
+  SendData(g_type == typeOnRequest);
 }
 
 void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
@@ -108,13 +145,8 @@ void ArtuinoToGraph::Loop()
     break;
     case INS_SET_FREQUENCY:
     {
-      while (0 == Serial.available())
-      {}
-      unsigned frequency = Serial.read();
-      while (0 == Serial.available())
-      {}
-      frequency |= (Serial.read() << 8);
-      g_requiredTime = 0; //there maight left a value from last run 
+      unsigned frequency;
+      FillFromSerial(frequency);
       
       InitTimer(); //workaround there was a 1s lag after start when there had been set 1 Hz period and user set 200 Hz period   
       OCR1A = 62500/frequency;            // compare match register 16MHz/256/2Hz
@@ -122,34 +154,40 @@ void ArtuinoToGraph::Loop()
     break;
     case INS_SET_TIME:
     {
-      while (0 == Serial.available())
-      {}
-      g_requiredTime = Serial.read();
-      while (0 == Serial.available())
-      {}
-      g_requiredTime |= (Serial.read() << 8);
-      g_currentTime = g_requiredTime; 
+      FillFromSerial(g_requiredTime);
 
       InitTimer(); //workaround as in set frequenc case
       OCR1A = 62500;            // compare match register 16MHz/256/2Hz
     }
     break;
     case INS_ENABLED_CHANNELS:
-      while (0 == Serial.available())
-      {}
-      g_enabledChannels  = Serial.read();
+      FillFromSerial(g_enabledChannels);
       g_channelCount = 0;
       for (int i = 0; i < 8; i++)
         if (0 != (g_enabledChannels & (1 << i)))
           g_channelCount++;       
     break;
     case INS_START:
-      g_currentTime = g_currentTime - 1; //to be data send immediately
       g_fullWriteBufferDetected = false;
       TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
     break;
     case INS_STOP:
       TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
+    break;
+    case INS_TYPE:
+      unsigned char type;
+      FillFromSerial(type);
+      g_type = (Type)type;
+      if (g_type == typeOnRequest)
+      {
+        g_sampleRequest = false;
+        g_timeFromStart = 0;
+        OCR1A = 1; //1/62500 s
+      }
+      else
+      {
+        g_currentTime = g_requiredTime - 1; //to be data send immediately
+      }
     break;
     }
   }
@@ -176,4 +214,9 @@ float ArtuinoToGraph::GetChannelValue(int channel)
 void ArtuinoToGraph::SetUpdateCallbackFunction(void (*f)(void) )
 {
   g_updateFunction = f;
+}
+
+void ArtuinoToGraph::SampleRequest()
+{
+  g_sampleRequest = true;
 }

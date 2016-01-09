@@ -34,7 +34,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     m_mainLayout(new QHBoxLayout(this)),
     m_plot(new Plot(this)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
-    m_startNewDraw(false)
+    m_startNewDraw(false),
+    m_type(Periodical)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -73,7 +74,7 @@ void Measurement::portConnectivityChanged(bool connected)
 {
     if (!connected && m_state == Running)
     {
-        stop();
+        Stop();
         QMessageBox::warning(
             this,
             m_context.m_applicationName,
@@ -102,7 +103,6 @@ void Measurement::_InitializeLayouts()
 }
 void Measurement::_FillGraphItem(GraphItem &item)
 {
-    //FIXME: firstInSample is not used any more. remove it
     unsigned char mixture = m_queue.dequeue();
     item.afterMissingSample = ((mixture >> 6) & 1);
     item.channelIndex = mixture & 7; //lowest 3 bits
@@ -113,20 +113,6 @@ void Measurement::_FillGraphItem(GraphItem &item)
     value[3] = m_queue.dequeue();
 
     item.value = *((float*)value);
-}
-
-bool Measurement::_FillQueue()
-{
-    QByteArray array;
-    m_context.m_serialPort.ReadAll(array);
-
-    if (array.size() == 0)
-        return false; //nothing to fill
-
-    for (int i = 0; i< array.size(); i++)
-         m_queue.enqueue(array[i]);
-
-    return true;
 }
 
 bool Measurement::_IsCompleteSetInQueue()
@@ -157,7 +143,7 @@ void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (_FillQueue() && _IsCompleteSetInQueue())
+    if (m_context.m_serialPort.FillQueue(m_queue) && _IsCompleteSetInQueue())
     {
         while (_IsCompleteSetInQueue())
         {
@@ -226,13 +212,13 @@ bool Measurement::_CheckOtherMeasurementsForRun()
                 tr("Cancel")
             )
         )
-           m->stop();
+           m->Stop();
         else
             return true;
     }
     return false;
 }
-void Measurement::start()
+void Measurement::Start()
 {
     qDebug() << "start";
     if (_CheckOtherMeasurementsForRun())
@@ -276,6 +262,12 @@ void Measurement::start()
     m_state = Running;
     stateChanged();
 }
+
+void Measurement::SampleRequest()
+{
+    m_context.m_serialPort.SampleRequest();
+}
+
 void Measurement::_DrawRestData()
 {
     m_plot->SetDisabled(false); //may be disabled form last run
@@ -290,7 +282,7 @@ void Measurement::_DrawRestData()
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );
 }
-void Measurement::stop()
+void Measurement::Stop()
 {
     //because of _DrawRestData
     m_startNewDraw = false;

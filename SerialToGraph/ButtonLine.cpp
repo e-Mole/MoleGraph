@@ -74,6 +74,11 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
 
+    QPushButton *sampleRequestButton = new QPushButton(tr("Sample"), this);
+    sampleRequestButton->setDisabled(true);
+    buttonLayout->addWidget(sampleRequestButton);
+    connect(sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
+
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
     connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
@@ -83,7 +88,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
     buttonLayout->addWidget(m_connectivityLabel);
 
-    buttonLayout->insertStretch(6, 1);
+    buttonLayout->insertStretch(7, 1);
 
     _InitializeMenu();
 }
@@ -335,9 +340,15 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
 
 void ButtonLine::start()
 {
-    m_measurement->start();
+    m_measurement->Start();
 }
+
+void ButtonLine::sampleRequest()
+{
+    m_measurement->SampleRequest();
+}
+
 void ButtonLine::stop()
 {
-    m_measurement->stop();
+    m_measurement->Stop();
 }

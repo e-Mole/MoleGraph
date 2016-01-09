@@ -11,24 +11,38 @@ MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const
     FormDialogBase(NULL, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
-    m_name(NULL),
-    m_period(NULL),
-    m_sampleUnits(NULL)
+    m_name(new QLineEdit(measurement->m_name, this)),
+    m_type(new QComboBox(this)),
+    m_period(new QLineEdit(QString("%1").arg(measurement->m_period), this)),
+    m_sampleUnits(new QComboBox(this))
 {
-    m_name = new QLineEdit(measurement->m_name, this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
-    m_period = new QLineEdit(QString("%1").arg(measurement->m_period), this);
-    m_period->setEnabled(measurement->m_state == Measurement::Ready);
+    m_type->addItem(tr("Periodical"));
+    m_type->addItem(tr("On Demand"));
+    m_type->setCurrentIndex((int)m_measurement->m_type);
+    m_formLayout->addRow(new QLabel(tr("Type"), this), m_type);
+    connect(m_type, SIGNAL(currentIndexChanged(int)), this, SLOT(disablePeriodAndUnits(int)));
+
+    bool enablePeriodItems =
+        m_measurement->m_type == Measurement::Periodical &&
+        m_measurement->m_state == Measurement::Ready;
+
+    m_period->setEnabled(enablePeriodItems);
     m_formLayout->addRow(new QLabel(tr("Period"), this), m_period);
 
-    m_sampleUnits = new QComboBox(this);
     m_sampleUnits->addItem(tr("Hz"));
     m_sampleUnits->addItem(tr("Sec", "seconds"));
     m_sampleUnits->setCurrentIndex((unsigned)measurement->m_sampleUnits);
-    m_sampleUnits->setEnabled(measurement->m_state == Measurement::Ready);
+    m_sampleUnits->setEnabled(enablePeriodItems);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_sampleUnits);
 
+}
+
+void MeasurementSettings::disablePeriodAndUnits(int disabled)
+{
+    m_period->setDisabled(disabled);
+    m_sampleUnits->setDisabled(disabled);
 }
 
 bool MeasurementSettings::BeforeAccept()
@@ -46,6 +60,6 @@ bool MeasurementSettings::BeforeAccept()
     }
 
     m_measurement->m_period = m_period->text().toInt();
-
+    m_measurement->m_type = (Measurement::Type)m_type->currentIndex();
     return true;
 }

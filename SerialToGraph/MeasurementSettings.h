@@ -13,11 +13,15 @@ class MeasurementSettings  : public FormDialogBase
     Context const &m_context;
     Measurement * m_measurement;
     QLineEdit *m_name;
+    QComboBox *m_type;
     QLineEdit *m_period;
     QComboBox *m_sampleUnits;
+
     bool BeforeAccept();
 public:
     MeasurementSettings(Measurement *measurement, Context const& context);
+private slots:
+    void disablePeriodAndUnits(int disabled);
 };
 
 #endif // MEASUREMENTSETTINGS_H

@@ -2,12 +2,13 @@
 #define CHANNELWITHTIME_H
 #include <Channel.h>
 #include <QVector>
+#include <QDateTime>
+class QDateTime;
 class ChannelWithTime : public Channel
 {
     Q_OBJECT
 
-    friend class ChannelSettings;
-
+    void AddValue(double value) { Channel::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits
     {
@@ -26,6 +27,20 @@ public:
         RealTime
     };
 
+private:
+
+    friend class ChannelSettings;
+
+    void _SetStyle(Style style);
+    void _SetTimeUnits(TimeUnits units);
+    void _UpdateAxisAndValues();
+
+    QVector<qreal> m_timeFromStart; //sample time from measurement srart
+    QDateTime m_startDateTime;
+    Style m_style;
+    TimeUnits m_timeUnits;
+
+public:
     ChannelWithTime(Measurement *measurement,
         Context const & context,
         int hwIndex,
@@ -38,12 +53,12 @@ public:
         bool visible,
         Style format, TimeUnits timeUnits);
 
-    QVector<long> m_miliSecondsFromStart; //sample time from measurement srart
-    Style m_style;
-    TimeUnits m_timeUnits;
 
     Style GetStyle() {return m_style; }
     TimeUnits GetTimeUnits() { return m_timeUnits; }
+    void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
+    void AddValue(double value, qreal timeFromStart);
+    virtual double GetValue(unsigned index);
 signals:
 
 public slots:

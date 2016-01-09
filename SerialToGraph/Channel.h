@@ -17,7 +17,7 @@ class Channel : public QGroupBox
 {
     friend class ChannelSettings;
     Q_OBJECT
-
+protected:
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);
@@ -57,9 +57,8 @@ class Channel : public QGroupBox
     Context const & m_context;
     QString m_name;
     int m_hwIndex;
-    QVector<double> m_values;
+    QVector<double> m_values1;
     QColor m_color;
-    QString m_units;
     double m_channelMinValue;
     double m_channelMaxValue;
     Axis *m_axis;
@@ -68,6 +67,7 @@ class Channel : public QGroupBox
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
     ValueLabel *m_valueLabel;
+    QString m_units;
 public:
     Channel(
         Measurement *measurement,
@@ -90,16 +90,15 @@ public:
     QString GetUnits();
 
     unsigned GetValueCount()
-    { return m_values.size();}
+    { return m_values1.size();}
 
-    double GetValue(unsigned index)
-    { return m_values[index]; }
+    virtual double GetValue(unsigned index)
+    { return m_values1[index]; }
 
     double GetLastValue()
-    { return m_values.last(); }
+    { return GetValue(m_values1.count()-1); } //GetValue is virtual
 
     void AddValue( double value);
-    void ClearValues();
 
     Axis * GetAxis()
     { return m_axis; }

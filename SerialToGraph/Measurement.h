@@ -6,8 +6,10 @@
 #include <QMap>
 #include <QVector>
 #include <QWidget>
+
 class Axis;
 class Channel;
+class ChannelWithTime;
 class Plot;
 class QColor;
 class QHBoxLayout;
@@ -60,7 +62,7 @@ private:
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
-    Channel *m_sampleChannel;
+    ChannelWithTime *m_sampleChannel;
     QVector<Axis*> m_axes;
     QVector<Channel*> m_channels;
     QHBoxLayout *m_mainLayout;

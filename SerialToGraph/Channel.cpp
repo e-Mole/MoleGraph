@@ -28,6 +28,7 @@ QSize Channel::ValueLabel::GetSize(QString const &text)
 
 void Channel::ValueLabel::resizeEvent(QResizeEvent * event)
 {
+    Q_UNUSED(event);
     QFont font = this->font();
     QFontMetrics metrics(font);
 
@@ -115,22 +116,13 @@ QString Channel::GetUnits()
 
 void Channel::AddValue( double value)
 {
-    m_values.push_back(value);
+    m_values1.push_back(value);
 
     if (value < m_channelMinValue)
         m_channelMinValue = value;
 
     if (value > m_channelMaxValue)
         m_channelMaxValue = value;
-}
-
-void Channel::ClearValues()
-{
-	m_values.clear();
-
-    m_channelMinValue = std::numeric_limits<double>::max();
-    m_channelMaxValue = -std::numeric_limits<double>::max();
-    _DisplayNAValue();
 }
 
 bool Channel::IsOnHorizontalAxis()
@@ -176,18 +168,19 @@ void Channel::EditChannel()
 }
 void Channel::mousePressEvent(QMouseEvent * event)
 {
+    Q_UNUSED(event);
     EditChannel();
 }
 
 void Channel::displayValueOnIndex(int index)
 {
-    if (index >= m_values.size())
+    if (index >= m_values1.size())
     {
         _DisplayNAValue();
         return; //probably setRange in start method
     }
 
-    double value = m_values[index];
+    double value = GetValue(index);
     double absValue = std::abs(value);
 
     QString strValue;
@@ -204,7 +197,7 @@ void Channel::displayValueOnIndex(int index)
     if (!m_axis->IsHorizontal())
     {
         m_graphPoint->clearData();
-        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), m_values[index]);
+        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), GetValue(index));
     }
 }
 
@@ -220,7 +213,7 @@ QCPGraph *Channel::GetGraphPoint()
 }
 void Channel::UpdateGraph(double xValue)
 {
-    m_graph->data()->insert(xValue, QCPData(xValue, m_values.last()));
+    m_graph->data()->insert(xValue, QCPData(xValue, GetLastValue()));
 
 }
 

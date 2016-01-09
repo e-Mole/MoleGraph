@@ -62,13 +62,13 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(((ChannelWithTime*)m_channel)->m_timeUnits);
-    m_timeUnits->setEnabled(((ChannelWithTime*)m_channel)->m_style != ChannelWithTime::Samples);
+    m_timeUnits->setEnabled(((ChannelWithTime*)m_channel)->m_style == ChannelWithTime::TimeFromStart);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 }
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled(index != 0);
+    m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeFromStart);
 }
 
 bool ChannelSettings::BeforeAccept()
@@ -79,15 +79,6 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
         m_channel->m_name = m_name->text();
         m_channel->_UpdateTitle();
-    }
-
-
-    if (m_channel->m_units != m_units->text())
-    {
-        changed = true;
-        m_channel->m_units = m_units->text();
-        m_channel->_ShowLastValueWithUnits();
-        m_channel->m_axis->UpdateGraphAxisName();
     }
 
     if (m_channel->m_color != m_color)
@@ -122,6 +113,32 @@ bool ChannelSettings::BeforeAccept()
         lastAxis->UpdateVisiblility();
     }
 
+    if (m_channel->IsHwChannel())
+    {
+        if (m_channel->m_units != m_units->text())
+        {
+            changed = true;
+            m_channel->m_units = m_units->text();
+            m_channel->_ShowLastValueWithUnits();
+            m_channel->m_axis->UpdateGraphAxisName();
+        }
+    }
+    else
+    {
+        ChannelWithTime *channelWithTime = (ChannelWithTime *)m_channel;
+        if ((int)channelWithTime->m_timeUnits != m_timeUnits->currentIndex())
+        {
+            changed = true;
+            channelWithTime->_SetTimeUnits((ChannelWithTime::TimeUnits)m_timeUnits->currentIndex());
+        }
+
+        if ((int)channelWithTime->m_style != m_style->currentIndex())
+        {
+            changed = true;
+            channelWithTime->_SetStyle((ChannelWithTime::Style)m_style->currentIndex());
+        }
+    }
+
     if (changed)
     {
         if (changedHorizontal)
@@ -134,12 +151,6 @@ bool ChannelSettings::BeforeAccept()
 
         m_channel->GetMeasurement()->GetPlot()->ReplotIfNotDisabled();
 
-    }
-
-    if (!m_channel->IsHwChannel())
-    {
-        ((ChannelWithTime *)m_channel)->m_style = (ChannelWithTime::Style)m_style->currentIndex();
-        ((ChannelWithTime *)m_channel)->m_timeUnits = (ChannelWithTime::TimeUnits)m_timeUnits->currentIndex();
     }
 
     return true;

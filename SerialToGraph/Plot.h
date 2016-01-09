@@ -30,7 +30,6 @@ class Plot : public QCustomPlot
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
-    void _RefillGraphs();
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -63,6 +62,7 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
+    void RefillGraphs();
 
 public slots:
 private slots:

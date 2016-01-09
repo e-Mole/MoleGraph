@@ -7,7 +7,6 @@
 #include <QByteArray>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
-#include <QDateTime>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -162,7 +161,11 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
-            m_sampleChannel->AddValue(m_sampleChannel->GetValueCount());
+            qreal offset =
+                    (double)m_sampleChannel->GetValueCount() *
+                    ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period );
+
+            m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
 
             GraphItem item;
             for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
@@ -273,6 +276,7 @@ void Measurement::start()
         m_drawTimer->stop();
         return;
     }
+    m_sampleChannel->SetStartTime(QDateTime::currentDateTime());
 
     m_state = Running;
     stateChanged();
@@ -431,7 +435,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         }
         else
         {
-            m_channels.push_back(
+            m_sampleChannel =
                 new ChannelWithTime(
                     this,
                     m_context,
@@ -445,11 +449,10 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     !channel->isHidden(),
                     ((ChannelWithTime *)channel)->GetStyle(),
                     ((ChannelWithTime *)channel)->GetTimeUnits()
-                )
-            );
+                );
+            m_channels.push_back(m_sampleChannel);
         }
-        if (!channel->IsHwChannel())
-            m_sampleChannel = m_channels.last();
+
         if (channel->IsOnHorizontalAxis())
             m_plot->SetHorizontalChannel(m_channels.last());
     }

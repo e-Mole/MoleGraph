@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     MenuDialogBase.cpp \
     ConnectivityLabel.cpp \
     ChannelMenu.cpp \
-    ClickableLabel.cpp
+    ClickableLabel.cpp \
+    ChannelWithTime.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -59,6 +60,9 @@ HEADERS  += MainWindow.h \
     MenuDialogBase.h \
     ConnectivityLabel.h \
     ChannelMenu.h \
-    ClickableLabel.h
+    ClickableLabel.h \
+    ChannelWithTime.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
+
+CONFIG += c++11

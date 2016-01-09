@@ -61,7 +61,6 @@ Channel::Channel(
     bool visible
 ) :
     QGroupBox(name, measurement),
-    m_valueLabel(NULL),
     m_measurement(measurement),
     m_context(context),
     m_name(name),
@@ -72,14 +71,13 @@ Channel::Channel(
     m_axis(NULL), //will be assigned inside constructor
     m_shapeIndex(shapeIndex),
     m_graph(graph),
-    m_graphPoint(graphPoint)
+    m_graphPoint(graphPoint),
+    m_valueLabel(new ValueLabel("", color, IsHwChannel(), this))
 {
     AssignToAxis(axis);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(4);
-
-    m_valueLabel = new ValueLabel("", color, IsHwChannel(), this);
     layout->addWidget(m_valueLabel);
 
     _DisplayNAValue();

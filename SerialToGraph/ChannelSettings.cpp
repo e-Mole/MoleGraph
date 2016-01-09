@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <AxisSettings.h>
 #include <Channel.h>
+#include <ChannelWithTime.h>
 #include <Context.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -18,20 +19,56 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     FormDialogColor(channel, tr("Channel settings")),
     m_context(context),
     m_channel(channel),
-    m_name(NULL),
-    m_shapeComboBox(NULL),
-    m_axisComboBox(NULL)
+    m_name(new QLineEdit(channel->GetName(), this)),
+    m_units(NULL),
+    m_shapeComboBox(new QComboBox(this)),
+    m_axisComboBox(new QComboBox(this)),
+    m_style(NULL),
+    m_timeUnits(NULL)
 {
-    m_name = new QLineEdit(channel->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
-    m_units = new QLineEdit(channel->GetUnits(), this);
-    m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+    if (m_channel->IsHwChannel())
+    {
+        m_units = new QLineEdit(channel->GetUnits(), this);
+        m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+    }
+    else
+    {
+        _InitializeTimeFeatures();
+    }
 
     AddColorButtonRow(m_channel->m_color);
 
-    _InitializeShapeCombo();
     _InitializeAxisCombo();
+    _InitializeShapeCombo();
+}
+
+void ChannelSettings::_InitializeTimeFeatures()
+{
+    m_style = new QComboBox(this);
+    m_style->addItem(tr("Samples"));
+    m_style->addItem(tr("Time From Start"));
+    m_style->addItem(tr("Real Time"));
+    m_style->setCurrentIndex(((ChannelWithTime*)m_channel)->m_style);//unfortunately I cant use a template with a Qt class
+    connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
+    m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
+
+    m_timeUnits = new QComboBox(this);
+    m_timeUnits->addItem(tr("Microseconds"));
+    m_timeUnits->addItem(tr("Miliseconds"));
+    m_timeUnits->addItem(tr("Seconds"));
+    m_timeUnits->addItem(tr("Minuts"));
+    m_timeUnits->addItem(tr("Hours"));
+    m_timeUnits->addItem(tr("Days"));
+    m_timeUnits->setCurrentIndex(((ChannelWithTime*)m_channel)->m_timeUnits);
+    m_timeUnits->setEnabled(((ChannelWithTime*)m_channel)->m_style != ChannelWithTime::Samples);
+    m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
+}
+
+void ChannelSettings::styleChanged(int index)
+{
+    m_timeUnits->setEnabled(index != 0);
 }
 
 bool ChannelSettings::BeforeAccept()
@@ -99,6 +136,12 @@ bool ChannelSettings::BeforeAccept()
 
     }
 
+    if (!m_channel->IsHwChannel())
+    {
+        ((ChannelWithTime *)m_channel)->m_style = (ChannelWithTime::Style)m_style->currentIndex();
+        ((ChannelWithTime *)m_channel)->m_timeUnits = (ChannelWithTime::TimeUnits)m_timeUnits->currentIndex();
+    }
+
     return true;
 }
 
@@ -143,8 +186,6 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
 
 void ChannelSettings::_InitializeShapeCombo()
 {
-    m_shapeComboBox = new QComboBox(this);
-
     m_shapeComboBox->addItem(tr("Cross"));
     m_shapeComboBox->addItem(tr("Plus"));
     m_shapeComboBox->addItem(tr("Circle"));
@@ -159,16 +200,13 @@ void ChannelSettings::_InitializeShapeCombo()
     m_shapeComboBox->addItem(tr("Cross and Circle"));
     m_shapeComboBox->addItem(tr("Plus and Circle"));
     m_shapeComboBox->addItem(tr("Peace"));
-
     m_shapeComboBox->setCurrentIndex(m_channel->m_shapeIndex);
-
+    m_shapeComboBox->setEnabled(!m_channel->IsOnHorizontalAxis());
     m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
-
 }
 
 void ChannelSettings::_InitializeAxisCombo()
 {
-    m_axisComboBox = new QComboBox(this);
     m_axisComboBox->addItem(tr("New Axis..."));
     foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
     {
@@ -193,8 +231,14 @@ void ChannelSettings::axisChanged(int index)
         {
              m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
              m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
+             m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one
         }
         else
             m_channel->GetMeasurement()->RemoveAxis(newAxis);
+    }
+    else
+    {
+        Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
+        m_shapeComboBox->setEnabled(!axis->IsHorizontal());
     }
 }

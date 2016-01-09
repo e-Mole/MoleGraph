@@ -39,7 +39,7 @@ class Channel : public QGroupBox
         QSize GetSize(QString const &text);
         QSize GetLongestTextSize();
 
-    } * m_valueLabel;
+    };
 
     void _SetMinimumSize();
     void _DisplayNAValue();
@@ -67,6 +67,7 @@ class Channel : public QGroupBox
     QString m_lastValueText;
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
+    ValueLabel *m_valueLabel;
 public:
     Channel(
         Measurement *measurement,
@@ -78,7 +79,7 @@ public:
         unsigned shapeIndex,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        bool visible = true
+        bool visible
     );
 
     ~Channel();

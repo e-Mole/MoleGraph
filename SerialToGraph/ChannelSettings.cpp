@@ -178,41 +178,54 @@ bool ChannelSettings::BeforeAccept()
     return true;
 }
 
+void ChannelSettings::_AssignToFirstVerticalAxis(Channel *channel)
+{
+    foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
+    {
+        if (!axis->IsHorizontal())
+        {
+            channel->m_axis = axis;
+            QMessageBox::information(
+                this,
+                m_context.m_applicationName,
+                QString(tr("There might be just one channel on a horizontal axis. Channel '%1' has been moved to an axis '%2'.")).
+                    arg(channel->GetName()).
+                    arg(axis->GetTitle())
+            );
+
+            channel->_UpdateTitle(); //FIXME: may be I dont need it
+            return;
+        }
+    }
+}
+
+void ChannelSettings::_AssignToNewAxis(ChannelWithTime *channel)
+{
+    channel->AssignToAxis(channel->GetMeasurement()->CreateAxis(channel->GetColor()));
+    channel->UpdateGraphAxisStyle();
+
+    QMessageBox::information(
+        this,
+        m_context.m_applicationName,
+        QString(tr("There might be just one channel on a horizontal axis. Created an axis named '%1' for a real time styled channel '%2'.")).
+            arg(channel->GetAxis()->GetTitle()).
+            arg(channel->GetName())
+    );
+
+}
 void ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (Channel *channel, m_channel->GetMeasurement()->GetChannels())
     {
         if (channel->m_axis->IsHorizontal())
         {
-            foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
-            {
-                if (!axis->IsHorizontal())
-                {
-                    channel->m_axis = axis;
-                    if (!m_context.m_settings.value("horizontalSwitchMessageHidden1", false).toBool() &&
-                        1 == QMessageBox::warning(
-                            this,
-                            m_context.m_applicationName,
-                            QString(tr("There might be just one channel on a horizontal axis. Channel '%1' has been moved to an axis '%2'.")).
-                                arg(channel->GetName()).
-                                arg(axis->GetTitle()),
-                            tr("OK"),
-                            tr("Don't show it again"),
-                            "",
-                            0,
-                            0
-                        )
-                    )
-                    {
-                        m_context.m_settings.setValue("horizontalSwitchMessageHidden", true);
-                    }
+            if (!channel->IsHwChannel() && ((ChannelWithTime *)channel)->IsInRealtimeStyle())
+                _AssignToNewAxis((ChannelWithTime *)channel);
+            else
+                _AssignToFirstVerticalAxis(channel);
 
-                    channel->_UpdateTitle();
-                    channel->_ShowOrHideGraphAndPoin(!channel->isHidden());
-
-                    return;
-                }
-            }
+            channel->_ShowOrHideGraphAndPoin(!channel->isHidden());
+            return;
         }
     }
 }
@@ -262,9 +275,9 @@ void ChannelSettings::axisChanged(int index)
         AxisSettings dialog(newAxis, m_context);
         if (QDialog::Accepted == dialog.exec())
         {
-             m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
-             m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
-             m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one
+            m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
+            m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
+            m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one
         }
         else
             m_channel->GetMeasurement()->RemoveAxis(newAxis);

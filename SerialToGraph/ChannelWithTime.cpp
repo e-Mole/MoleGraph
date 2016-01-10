@@ -37,16 +37,14 @@ void ChannelWithTime::_SetTimeUnits(TimeUnits units)
 {
     m_timeUnits = units;
 
-    if (m_style == TimeFromStart)
-        _UpdateAxisAndValues();
+    _UpdateAxisAndValues();
 }
 
 void ChannelWithTime::_SetFormat(RealTimeFormat format)
 {
     m_realTimeFormat = format;
 
-    if (m_style == RealTime)
-        _UpdateAxisAndValues();
+    _UpdateAxisAndValues();
 }
 
 void ChannelWithTime::_UpdateAxisAndValues()
@@ -167,4 +165,25 @@ void ChannelWithTime::_FillLastValueText(int index)
     {
         Channel::_FillLastValueText(index);
     }
+}
+
+double ChannelWithTime::GetMinValue()
+{
+    if (!IsInRealtimeStyle())
+        return Channel::GetMinValue();
+    if (GetValueCount() > 0)
+        return GetValue(0);
+
+    return 0;
+}
+
+double ChannelWithTime::GetMaxValue()
+{
+    if (!IsInRealtimeStyle())
+        return Channel::GetMaxValue();
+
+    if (GetValueCount() > 0)
+        return GetValue(GetValueCount()-1);
+
+    return 1;
 }

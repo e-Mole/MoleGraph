@@ -76,6 +76,9 @@ public:
     QString GetRealTimeFormatText();
     RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
     void UpdateGraphAxisStyle();
+    bool IsInRealtimeStyle() { return m_style == RealTime; }
+    virtual double GetMinValue();
+    virtual double GetMaxValue();
 signals:
 
 public slots:

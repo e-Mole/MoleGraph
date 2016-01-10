@@ -106,10 +106,10 @@ public:
     void SetAxis(Axis * axis)
     { m_axis = axis; }
 
-    double GetMinValue()
+    virtual double GetMinValue()
     { return m_channelMinValue; }
 
-    double GetMaxValue()
+    virtual double GetMaxValue()
     { return m_channelMaxValue; }
 
     void SetAxisValueRange(double min, double max);

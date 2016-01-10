@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QString>
 
+class Channel;
 class Measurement;
 class QCPAxis;
 class QString;
@@ -57,6 +58,7 @@ public:
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();
+    bool IsEmpty(Channel *invisible);
 };
 
 #endif // AXIS_H

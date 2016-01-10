@@ -1,5 +1,6 @@
 #include "ChannelSettings.h"
 #include <Axis.h>
+#include <AxisChooseDialog.h>
 #include <AxisSettings.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
@@ -87,6 +88,28 @@ void ChannelSettings::styleChanged(int index)
 bool ChannelSettings::BeforeAccept()
 {
     bool changed = false;
+    bool changedHorizontal = false;
+    Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
+    if (m_channel->m_axis != axis)
+    {
+        if (axis->IsHorizontal())
+        {
+            if (!_MoveLastHorizontalToVertical())
+                return false; //no axis has been selected
+
+            changedHorizontal = true;
+            m_channel->_ShowOrHideGraphAndPoin(false);
+            m_channel->GetMeasurement()->GetPlot()->SetHorizontalChannel(m_channel);
+        }
+
+        Axis *lastAxis = m_channel->m_axis;
+        m_channel->AssignToAxis(axis);
+        lastAxis->UpdateGraphAxisName();
+        lastAxis->UpdateVisiblility();
+        m_channel->UpdateGraphAxisStyle();
+        changed = true;
+    }
+
     if (m_channel->m_name != m_name->text())
     {
         changed = true;
@@ -105,26 +128,6 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
         m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
         m_channel->GetMeasurement()->GetPlot()->SetShape(m_channel->m_graphPoint, m_channel->m_shapeIndex);
-    }
-
-    bool changedHorizontal = false;
-    Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
-    if (m_channel->m_axis != axis)
-    {
-        changed = true;
-        if (axis->IsHorizontal())
-        {
-            _MoveLastHorizontalToVertical();
-            changedHorizontal = true;
-            m_channel->_ShowOrHideGraphAndPoin(false);
-            m_channel->GetMeasurement()->GetPlot()->SetHorizontalChannel(m_channel);
-        }
-
-        Axis *lastAxis = m_channel->m_axis;
-        m_channel->AssignToAxis(axis);
-        lastAxis->UpdateGraphAxisName();
-        lastAxis->UpdateVisiblility();
-        m_channel->UpdateGraphAxisStyle();
     }
 
     if (m_channel->IsHwChannel())
@@ -178,56 +181,18 @@ bool ChannelSettings::BeforeAccept()
     return true;
 }
 
-void ChannelSettings::_AssignToFirstVerticalAxis(Channel *channel)
-{
-    foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
-    {
-        if (!axis->IsHorizontal())
-        {
-            channel->m_axis = axis;
-            QMessageBox::information(
-                this,
-                m_context.m_applicationName,
-                QString(tr("There might be just one channel on a horizontal axis. Channel '%1' has been moved to an axis '%2'.")).
-                    arg(channel->GetName()).
-                    arg(axis->GetTitle())
-            );
-
-            channel->_UpdateTitle(); //FIXME: may be I dont need it
-            return;
-        }
-    }
-}
-
-void ChannelSettings::_AssignToNewAxis(ChannelWithTime *channel)
-{
-    channel->AssignToAxis(channel->GetMeasurement()->CreateAxis(channel->GetColor()));
-    channel->UpdateGraphAxisStyle();
-
-    QMessageBox::information(
-        this,
-        m_context.m_applicationName,
-        QString(tr("There might be just one channel on a horizontal axis. Created an axis named '%1' for a real time styled channel '%2'.")).
-            arg(channel->GetAxis()->GetTitle()).
-            arg(channel->GetName())
-    );
-
-}
-void ChannelSettings::_MoveLastHorizontalToVertical()
+bool ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (Channel *channel, m_channel->GetMeasurement()->GetChannels())
     {
+        //find last horizontal axis
         if (channel->m_axis->IsHorizontal())
         {
-            if (!channel->IsHwChannel() && ((ChannelWithTime *)channel)->IsInRealtimeStyle())
-                _AssignToNewAxis((ChannelWithTime *)channel);
-            else
-                _AssignToFirstVerticalAxis(channel);
-
-            channel->_ShowOrHideGraphAndPoin(!channel->isHidden());
-            return;
+            AxisChooseDialog dialog(m_context, channel, m_channel);
+            return (QDialog::Rejected != dialog.exec());
         }
     }
+    return false; //it should never reach this point
 }
 
 void ChannelSettings::_InitializeShapeCombo()

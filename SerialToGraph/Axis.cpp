@@ -169,3 +169,17 @@ Measurement * Axis::GetMeasurement()
 {
     return m_measurement;
 }
+
+bool Axis::IsEmpty(Channel *invisible)
+{
+    foreach (Channel *channel, m_measurement->GetChannels())
+    {
+        if (channel == invisible)
+            continue; //channel will probably be moved and we don't want to see then in this axis any more
+
+        if (channel->GetAxis() == this)
+            return false;
+    }
+
+    return true;
+}

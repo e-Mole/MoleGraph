@@ -120,6 +120,8 @@ public:
     bool IsHwChannel()
     { return m_hwIndex != -1; }
 
+    bool IsSampleChannel() { return !IsHwChannel(); }
+
     bool IsOnHorizontalAxis();
 
     static QSize GetMinimumSize()
@@ -137,6 +139,7 @@ public:
     Measurement * GetMeasurement();
     void EditChannel();
     virtual void UpdateGraphAxisStyle();
+
 signals:
     void stateChanged();
     void wasSetToHorizontal();

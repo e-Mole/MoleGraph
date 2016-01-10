@@ -19,11 +19,9 @@ class ChannelSettings : public FormDialogColor
 
     void _InitializeShapeCombo();
     void _InitializeAxisCombo();
-    void _MoveLastHorizontalToVertical();
+    bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
     void _InitializeTimeFeatures();
-    void _AssignToFirstVerticalAxis(Channel *channel);
-    void _AssignToNewAxis(ChannelWithTime *channel);
 
     Context const & m_context;
     Channel *m_channel;

@@ -318,3 +318,9 @@ void Plot::setGraphPointPosition(int position)
 {
     m_graphPointsPosition = position;
 }
+
+void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
+{
+    axis->setTickLabelType(dateTime ?  QCPAxis::ltDateTime : QCPAxis::ltNumber);
+    axis->setDateTimeFormat(format);
+}

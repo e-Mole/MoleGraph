@@ -429,7 +429,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     channel->GetShapeIndex(),
                     m_plot->AddGraph(channel->GetColor()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
-                    !channel->isHidden()
+                    !channel->isHidden(),
+                    channel->GetUnits()
                 )
             );
         }
@@ -447,10 +448,17 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     m_plot->AddGraph(channel->GetColor()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     !channel->isHidden(),
+                    channel->GetUnits(),
                     ((ChannelWithTime *)channel)->GetStyle(),
-                    ((ChannelWithTime *)channel)->GetTimeUnits()
+                    ((ChannelWithTime *)channel)->GetTimeUnits(),
+                    ((ChannelWithTime *)channel)->GetRealTimeFormat()
                 );
             m_channels.push_back(m_sampleChannel);
+            m_plot->SetAxisStyle(
+                m_sampleChannel->GetAxis()->GetGraphAxis(),
+                m_sampleChannel->GetStyle() == ChannelWithTime::RealTime,
+                m_sampleChannel->GetRealTimeFormatText()
+            );
         }
 
         if (channel->IsOnHorizontalAxis())
@@ -500,8 +508,10 @@ void Measurement::_InitializeAxesAndChanels()
             m_plot->AddGraph(Qt::black),
             m_plot->AddPoint(Qt::black, 0),
             true,
+            "",
             ChannelWithTime::Samples,
-            ChannelWithTime::Sec
+            ChannelWithTime::Sec,
+            ChannelWithTime::hh_mm_ss
         );
     m_channels.push_back(m_sampleChannel);
     m_plot->SetHorizontalChannel(m_sampleChannel);
@@ -535,7 +545,8 @@ void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
             order,
             m_plot->AddGraph(color),
             m_plot->AddPoint(color, order),
-            true
+            true,
+            ""
         )
     );
     order++;
@@ -545,6 +556,7 @@ Axis * Measurement::CreateAxis(QColor const & color)
 {
     Axis *newAxis = new Axis(this, m_context, color, m_plot->AddYAxis(false));
     m_axes.push_back(newAxis);
+
     return newAxis;
 }
 

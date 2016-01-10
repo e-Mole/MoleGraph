@@ -59,7 +59,8 @@ Channel::Channel(
     unsigned shapeIndex,
     QCPGraph *graph,
     QCPGraph *graphPoint,
-    bool visible
+    bool visible,
+    QString const & units
 ) :
     QGroupBox(name, measurement),
     m_measurement(measurement),
@@ -73,7 +74,8 @@ Channel::Channel(
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint),
-    m_valueLabel(new ValueLabel("", color, IsHwChannel(), this))
+    m_valueLabel(new ValueLabel("", color, IsHwChannel(), this)),
+    m_units(units)
 {
     AssignToAxis(axis);
 
@@ -172,14 +174,8 @@ void Channel::mousePressEvent(QMouseEvent * event)
     EditChannel();
 }
 
-void Channel::displayValueOnIndex(int index)
+void Channel::_FillLastValueText(int index)
 {
-    if (index >= m_values1.size())
-    {
-        _DisplayNAValue();
-        return; //probably setRange in start method
-    }
-
     double value = GetValue(index);
     double absValue = std::abs(value);
 
@@ -192,6 +188,16 @@ void Channel::displayValueOnIndex(int index)
         strValue = QString::number(value, 'g', 6);
 
     m_lastValueText = strValue;
+}
+void Channel::displayValueOnIndex(int index)
+{
+    if (index >= m_values1.size())
+    {
+        _DisplayNAValue();
+        return; //probably setRange in start method
+    }
+
+    _FillLastValueText(index);
     _ShowLastValueWithUnits();
 
     if (!m_axis->IsHorizontal())
@@ -261,4 +267,9 @@ void Channel::SetColor(QColor &color)
 Measurement * Channel::GetMeasurement()
 {
     return m_measurement;
+}
+
+void Channel::UpdateGraphAxisStyle()
+{
+     m_measurement->GetPlot()->SetAxisStyle(m_axis->GetGraphAxis(), false, "");
 }

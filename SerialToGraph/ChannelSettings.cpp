@@ -24,7 +24,8 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     m_shapeComboBox(new QComboBox(this)),
     m_axisComboBox(new QComboBox(this)),
     m_style(NULL),
-    m_timeUnits(NULL)
+    m_timeUnits(NULL),
+    m_format(NULL)
 {
     m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
@@ -46,11 +47,13 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
 
 void ChannelSettings::_InitializeTimeFeatures()
 {
+    ChannelWithTime * channel = (ChannelWithTime*)m_channel;
+
     m_style = new QComboBox(this);
     m_style->addItem(tr("Samples"));
     m_style->addItem(tr("Time From Start"));
     m_style->addItem(tr("Real Time"));
-    m_style->setCurrentIndex(((ChannelWithTime*)m_channel)->m_style);//unfortunately I cant use a template with a Qt class
+    m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
 
@@ -61,14 +64,24 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Minuts"));
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
-    m_timeUnits->setCurrentIndex(((ChannelWithTime*)m_channel)->m_timeUnits);
-    m_timeUnits->setEnabled(((ChannelWithTime*)m_channel)->m_style == ChannelWithTime::TimeFromStart);
+    m_timeUnits->setCurrentIndex(channel->m_timeUnits);
+    m_timeUnits->setEnabled(channel->m_style == ChannelWithTime::TimeFromStart);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
+
+    m_format = new QComboBox(this);
+    m_format->addItem(tr("day.month.year"));
+    m_format->addItem(tr("day.month.hour:minute"));
+    m_format->addItem(tr("hour:minute:second"));
+    m_format->addItem(tr("minute:second.milisecond"));
+    m_format->setCurrentIndex(channel->m_realTimeFormat);
+    m_format->setEnabled(channel->m_style == ChannelWithTime::RealTime);
+    m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
 }
 
 void ChannelSettings::styleChanged(int index)
 {
     m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeFromStart);
+     m_format->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::RealTime);
 }
 
 bool ChannelSettings::BeforeAccept()
@@ -111,6 +124,7 @@ bool ChannelSettings::BeforeAccept()
         m_channel->AssignToAxis(axis);
         lastAxis->UpdateGraphAxisName();
         lastAxis->UpdateVisiblility();
+        m_channel->UpdateGraphAxisStyle();
     }
 
     if (m_channel->IsHwChannel())
@@ -132,11 +146,19 @@ bool ChannelSettings::BeforeAccept()
             channelWithTime->_SetTimeUnits((ChannelWithTime::TimeUnits)m_timeUnits->currentIndex());
         }
 
+        if ((int)channelWithTime->m_realTimeFormat != m_format->currentIndex())
+        {
+            changed = true;
+            channelWithTime->_SetFormat((ChannelWithTime::RealTimeFormat)m_format->currentIndex());
+        }
+
         if ((int)channelWithTime->m_style != m_style->currentIndex())
         {
             changed = true;
             channelWithTime->_SetStyle((ChannelWithTime::Style)m_style->currentIndex());
         }
+
+
     }
 
     if (changed)
@@ -167,13 +189,13 @@ void ChannelSettings::_MoveLastHorizontalToVertical()
                 if (!axis->IsHorizontal())
                 {
                     channel->m_axis = axis;
-                    if (!m_context.m_settings.value("horizontalSwitchMessageHidden", false).toBool() &&
+                    if (!m_context.m_settings.value("horizontalSwitchMessageHidden1", false).toBool() &&
                         1 == QMessageBox::warning(
                             this,
                             m_context.m_applicationName,
-                            QString(tr("Axis '%1' has been assigned to a channel '%2'.")).
-                                arg(axis->GetTitle()).
-                                arg(channel->GetName()),
+                            QString(tr("There might be just one channel on a horizontal axis. Channel '%1' has been moved to an axis '%2'.")).
+                                arg(channel->GetName()).
+                                arg(axis->GetTitle()),
                             tr("OK"),
                             tr("Don't show it again"),
                             "",

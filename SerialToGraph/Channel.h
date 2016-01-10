@@ -47,6 +47,7 @@ protected:
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
+    virtual void _FillLastValueText(int index);
 
     //I dont want to use is visible because it returns false when widget is not diplayed yet
     //use !isHidden() instead
@@ -69,8 +70,7 @@ protected:
     ValueLabel *m_valueLabel;
     QString m_units;
 public:
-    Channel(
-        Measurement *measurement,
+    Channel(Measurement *measurement,
         Context const & context,
         int hwIndex,
         QString const &name,
@@ -79,8 +79,8 @@ public:
         unsigned shapeIndex,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        bool visible
-    );
+        bool visible,
+        const QString &units);
 
     ~Channel();
 
@@ -136,6 +136,7 @@ public:
 
     Measurement * GetMeasurement();
     void EditChannel();
+    virtual void UpdateGraphAxisStyle();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

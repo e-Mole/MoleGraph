@@ -29,6 +29,7 @@ class ChannelSettings : public FormDialogColor
     QComboBox * m_axisComboBox;
     QComboBox * m_style;
     QComboBox * m_timeUnits;
+    QComboBox * m_format;
 public:
     ChannelSettings(Channel *channel, Context const &context);
 signals:

@@ -4,8 +4,7 @@
 #include <Plot.h>
 #include <QDateTime>
 
-ChannelWithTime::ChannelWithTime(
-    Measurement *measurement,
+ChannelWithTime::ChannelWithTime(Measurement *measurement,
     Context const & context,
     int hwIndex,
     QString const &name,
@@ -15,13 +14,16 @@ ChannelWithTime::ChannelWithTime(
     QCPGraph *graph,
     QCPGraph *graphPoint,
     bool visible,
+    QString const & units,
     Style format,
-    TimeUnits timeUnits
+    TimeUnits timeUnits,
+    RealTimeFormat realTimeFormat
 ) :
-    Channel(measurement, context, hwIndex, name, color, axis, shapeIndex, graph, graphPoint, visible),
+    Channel(measurement, context, hwIndex, name, color, axis, shapeIndex, graph, graphPoint, visible, units),
     m_startDateTime(),
     m_style(format),
-    m_timeUnits(timeUnits)
+    m_timeUnits(timeUnits),
+    m_realTimeFormat(realTimeFormat)
 {
 }
 
@@ -39,35 +41,46 @@ void ChannelWithTime::_SetTimeUnits(TimeUnits units)
         _UpdateAxisAndValues();
 }
 
+void ChannelWithTime::_SetFormat(RealTimeFormat format)
+{
+    m_realTimeFormat = format;
+
+    if (m_style == RealTime)
+        _UpdateAxisAndValues();
+}
+
 void ChannelWithTime::_UpdateAxisAndValues()
 {
-    switch (m_timeUnits)
+    if (m_style == TimeFromStart)
     {
-    case Us:
-        m_units = tr("μs");
-        break;
-    case Ms:
-        m_units = tr("ms");
-        break;
-    case Sec:
-        m_units = tr("s");
-        break;
-    case Min:
-        m_units = tr("minute");
-        break;
-    case Hours:
-        m_units = tr("hour");
-        break;
-    case Days:
-        m_units = tr("day");
-        break;
-    default:
-        m_units = "";
+        switch (m_timeUnits)
+        {
+        case Us:
+            m_units = tr("μs");
+            break;
+        case Ms:
+            m_units = tr("ms");
+            break;
+        case Sec:
+            m_units = tr("s");
+            break;
+        case Min:
+            m_units = tr("minutes");
+            break;
+        case Hours:
+            m_units = tr("hours");
+            break;
+        case Days:
+            m_units = tr("days");
+            break;
+        }
     }
+    else
+        m_units = "";
 
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();
-    for (int i = 0; i < GetValueCount(); i++)
+    for (unsigned i = 0; i < GetValueCount(); i++)
     {
         double value = GetValue(i);
         if (value < m_channelMinValue)
@@ -79,6 +92,16 @@ void ChannelWithTime::_UpdateAxisAndValues()
     _ShowLastValueWithUnits();
     m_axis->UpdateGraphAxisName();
     m_measurement->GetPlot()->RefillGraphs();
+    UpdateGraphAxisStyle();
+}
+
+void ChannelWithTime::UpdateGraphAxisStyle()
+{
+     m_measurement->GetPlot()->SetAxisStyle(
+        m_axis->GetGraphAxis(),
+        m_style == RealTime,
+        GetRealTimeFormatText()
+     );
 }
 
 void  ChannelWithTime::AddValue(double value, qreal timeFromStart)
@@ -93,8 +116,8 @@ double ChannelWithTime::GetValue(unsigned index)
     {
     case Samples:
         return Channel::GetValue(index);
-    //case RealTime:
-    //    return m_startDateTime + m_timeFromStart[index] * 1000;
+    case RealTime:
+        return m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index]; //in seconds
     case TimeFromStart:
         switch (m_timeUnits)
         {
@@ -112,8 +135,36 @@ double ChannelWithTime::GetValue(unsigned index)
             return m_timeFromStart[index] /(60*60*24);
         }
     }
+    return -1; //it should be never reached
+}
 
 
-
-
+QString ChannelWithTime::GetRealTimeFormatText()
+{
+    switch (m_realTimeFormat)
+    {
+    case dd_MM_yyyy:
+        return "dd.MM.yyyy";
+    case dd_MM_hh_mm:
+        return "dd.MM.hh:ss";
+    case hh_mm_ss:
+        return "hh:mm:ss";
+    case mm_ss_zzz:
+        return "mm:ss.zzz";
+    default:
+        return ""; //it should be never reached
+    }
+}
+void ChannelWithTime::_FillLastValueText(int index)
+{
+    if (m_style == RealTime)
+    {
+        QDateTime dateTime;
+        dateTime.setMSecsSinceEpoch(GetValue(index)*1000);
+        m_lastValueText = dateTime.toString(GetRealTimeFormatText());
+    }
+    else
+    {
+        Channel::_FillLastValueText(index);
+    }
 }

@@ -63,6 +63,7 @@ public:
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
     void RefillGraphs();
+    void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
 
 public slots:
 private slots:

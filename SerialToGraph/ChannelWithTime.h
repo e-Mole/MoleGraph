@@ -17,14 +17,22 @@ public:
         Sec,
         Min,
         Hours,
-        Days
+        Days,
     };
 
     enum Style
     {
         Samples,
         TimeFromStart,
-        RealTime
+        RealTime,
+    };
+
+    enum RealTimeFormat
+    {
+        dd_MM_yyyy,
+        dd_MM_hh_mm,
+        hh_mm_ss,
+        mm_ss_zzz,
     };
 
 private:
@@ -33,12 +41,15 @@ private:
 
     void _SetStyle(Style style);
     void _SetTimeUnits(TimeUnits units);
+    void _SetFormat(RealTimeFormat format);
     void _UpdateAxisAndValues();
+    void _FillLastValueText(int index);
 
     QVector<qreal> m_timeFromStart; //sample time from measurement srart
     QDateTime m_startDateTime;
     Style m_style;
     TimeUnits m_timeUnits;
+    RealTimeFormat m_realTimeFormat;
 
 public:
     ChannelWithTime(Measurement *measurement,
@@ -51,7 +62,10 @@ public:
         QCPGraph *graph,
         QCPGraph *graphPoint,
         bool visible,
-        Style format, TimeUnits timeUnits);
+        const QString &units,
+        Style format,
+        TimeUnits timeUnits,
+        RealTimeFormat realTimeFormat);
 
 
     Style GetStyle() {return m_style; }
@@ -59,6 +73,9 @@ public:
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
     void AddValue(double value, qreal timeFromStart);
     virtual double GetValue(unsigned index);
+    QString GetRealTimeFormatText();
+    RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
+    void UpdateGraphAxisStyle();
 signals:
 
 public slots:

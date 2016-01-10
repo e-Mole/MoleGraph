@@ -79,7 +79,7 @@ public:
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
-    QVector<Axis *> const & GetAxes();
+    QVector<Axis *> const & GetAxes() const;
     QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
     void ReplaceDisplays()

@@ -567,7 +567,7 @@ void Measurement::RemoveAxis(Axis * axis)
     delete axis;
 }
 
-QVector<Axis *> const & Measurement::GetAxes()
+QVector<Axis *> const & Measurement::GetAxes() const
 {
     return m_axes;
 }

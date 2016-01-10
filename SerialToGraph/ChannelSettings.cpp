@@ -181,6 +181,9 @@ bool ChannelSettings::BeforeAccept()
     return true;
 }
 
+/*void ChannelSettings::_AssignToNewAxis(ChannelWithTime *channel)
+}*/
+
 bool ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (Channel *channel, m_channel->GetMeasurement()->GetChannels())

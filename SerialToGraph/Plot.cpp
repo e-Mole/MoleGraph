@@ -283,7 +283,7 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Plot::_RefillGraphs()
+void Plot::RefillGraphs()
 {
     foreach (Channel *channel, m_measurement.GetChannels())
     {
@@ -306,7 +306,7 @@ void Plot::_RefillGraphs()
 void Plot::SetHorizontalChannel(Channel *channel)
 {
     m_horizontalChannel = channel;
-    _RefillGraphs();
+    RefillGraphs();
 }
 
 Channel * Plot::GetHorizontalChannel()
@@ -317,4 +317,10 @@ Channel * Plot::GetHorizontalChannel()
 void Plot::setGraphPointPosition(int position)
 {
     m_graphPointsPosition = position;
+}
+
+void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
+{
+    axis->setTickLabelType(dateTime ?  QCPAxis::ltDateTime : QCPAxis::ltNumber);
+    axis->setDateTimeFormat(format);
 }

@@ -17,7 +17,7 @@ class Channel : public QGroupBox
 {
     friend class ChannelSettings;
     Q_OBJECT
-
+protected:
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);
@@ -39,7 +39,7 @@ class Channel : public QGroupBox
         QSize GetSize(QString const &text);
         QSize GetLongestTextSize();
 
-    } * m_valueLabel;
+    };
 
     void _SetMinimumSize();
     void _DisplayNAValue();
@@ -47,6 +47,7 @@ class Channel : public QGroupBox
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
+    virtual void _FillLastValueText(int index);
 
     //I dont want to use is visible because it returns false when widget is not diplayed yet
     //use !isHidden() instead
@@ -57,9 +58,8 @@ class Channel : public QGroupBox
     Context const & m_context;
     QString m_name;
     int m_hwIndex;
-    QVector<double> m_values;
+    QVector<double> m_values1;
     QColor m_color;
-    QString m_units;
     double m_channelMinValue;
     double m_channelMaxValue;
     Axis *m_axis;
@@ -67,9 +67,10 @@ class Channel : public QGroupBox
     QString m_lastValueText;
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
+    ValueLabel *m_valueLabel;
+    QString m_units;
 public:
-    Channel(
-        Measurement *measurement,
+    Channel(Measurement *measurement,
         Context const & context,
         int hwIndex,
         QString const &name,
@@ -78,8 +79,8 @@ public:
         unsigned shapeIndex,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        bool visible = true
-    );
+        bool visible,
+        const QString &units);
 
     ~Channel();
 
@@ -89,16 +90,15 @@ public:
     QString GetUnits();
 
     unsigned GetValueCount()
-    { return m_values.size();}
+    { return m_values1.size();}
 
-    double GetValue(unsigned index)
-    { return m_values[index]; }
+    virtual double GetValue(unsigned index)
+    { return m_values1[index]; }
 
     double GetLastValue()
-    { return m_values.last(); }
+    { return GetValue(m_values1.count()-1); } //GetValue is virtual
 
     void AddValue( double value);
-    void ClearValues();
 
     Axis * GetAxis()
     { return m_axis; }
@@ -106,10 +106,10 @@ public:
     void SetAxis(Axis * axis)
     { m_axis = axis; }
 
-    double GetMinValue()
+    virtual double GetMinValue()
     { return m_channelMinValue; }
 
-    double GetMaxValue()
+    virtual double GetMaxValue()
     { return m_channelMaxValue; }
 
     void SetAxisValueRange(double min, double max);
@@ -119,6 +119,8 @@ public:
     
     bool IsHwChannel()
     { return m_hwIndex != -1; }
+
+    bool IsSampleChannel() { return !IsHwChannel(); }
 
     bool IsOnHorizontalAxis();
 
@@ -136,6 +138,7 @@ public:
 
     Measurement * GetMeasurement();
     void EditChannel();
+
 signals:
     void stateChanged();
     void wasSetToHorizontal();

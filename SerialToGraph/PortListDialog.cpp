@@ -49,17 +49,20 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
 
 void PortListDialog::closeClicked(bool checked)
 {
+    Q_UNUSED(checked);
     m_close = true;
     reject();
 }
 void PortListDialog::refreshClicked(bool checked)
 {
+    Q_UNUSED(checked);
     m_mainWidget->Refresh();
     adjustSize();
 }
 
 void PortListDialog::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     m_close = true;
     reject();
 }

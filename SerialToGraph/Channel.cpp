@@ -9,6 +9,7 @@
 #include <QCheckBox>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
+#include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
@@ -28,6 +29,7 @@ QSize Channel::ValueLabel::GetSize(QString const &text)
 
 void Channel::ValueLabel::resizeEvent(QResizeEvent * event)
 {
+    Q_UNUSED(event);
     QFont font = this->font();
 
     QSize size = GetLongestTextSize();
@@ -57,10 +59,10 @@ Channel::Channel(
     unsigned shapeIndex,
     QCPGraph *graph,
     QCPGraph *graphPoint,
-    bool visible
+    bool visible,
+    QString const & units
 ) :
     QGroupBox(name, measurement),
-    m_valueLabel(NULL),
     m_measurement(measurement),
     m_context(context),
     m_name(name),
@@ -71,14 +73,14 @@ Channel::Channel(
     m_axis(NULL), //will be assigned inside constructor
     m_shapeIndex(shapeIndex),
     m_graph(graph),
-    m_graphPoint(graphPoint)
+    m_graphPoint(graphPoint),
+    m_valueLabel(new ValueLabel("", color, IsHwChannel(), this)),
+    m_units(units)
 {
     AssignToAxis(axis);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(4);
-
-    m_valueLabel = new ValueLabel("", color, IsHwChannel(), this);
     layout->addWidget(m_valueLabel);
 
     _DisplayNAValue();
@@ -116,22 +118,13 @@ QString Channel::GetUnits()
 
 void Channel::AddValue( double value)
 {
-    m_values.push_back(value);
+    m_values1.push_back(value);
 
     if (value < m_channelMinValue)
         m_channelMinValue = value;
 
     if (value > m_channelMaxValue)
         m_channelMaxValue = value;
-}
-
-void Channel::ClearValues()
-{
-	m_values.clear();
-
-    m_channelMinValue = std::numeric_limits<double>::max();
-    m_channelMaxValue = -std::numeric_limits<double>::max();
-    _DisplayNAValue();
 }
 
 bool Channel::IsOnHorizontalAxis()
@@ -178,18 +171,13 @@ void Channel::EditChannel()
 }
 void Channel::mousePressEvent(QMouseEvent * event)
 {
+    Q_UNUSED(event);
     EditChannel();
 }
 
-void Channel::displayValueOnIndex(int index)
+void Channel::_FillLastValueText(int index)
 {
-    if (index >= m_values.size())
-    {
-        _DisplayNAValue();
-        return; //probably setRange in start method
-    }
-
-    double value = m_values[index];
+    double value = GetValue(index);
     double absValue = std::abs(value);
 
     QString strValue;
@@ -201,12 +189,22 @@ void Channel::displayValueOnIndex(int index)
         strValue = QString::number(value, 'g', 6);
 
     m_lastValueText = strValue;
+}
+void Channel::displayValueOnIndex(int index)
+{
+    if (index >= m_values1.size())
+    {
+        _DisplayNAValue();
+        return; //probably setRange in start method
+    }
+
+    _FillLastValueText(index);
     _ShowLastValueWithUnits();
 
     if (!m_axis->IsHorizontal())
     {
         m_graphPoint->clearData();
-        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), m_values[index]);
+        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), GetValue(index));
     }
 }
 
@@ -222,7 +220,7 @@ QCPGraph *Channel::GetGraphPoint()
 }
 void Channel::UpdateGraph(double xValue)
 {
-    m_graph->data()->insert(xValue, QCPData(xValue, m_values.last()));
+    m_graph->data()->insert(xValue, QCPData(xValue, GetLastValue()));
 
 }
 
@@ -240,6 +238,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
+    _ShowOrHideGraphAndPoin(!isHidden());
     m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
@@ -248,15 +247,16 @@ void Channel::AssignToAxis(Axis *axis)
     m_axis = axis;
     AssignToGraphAxis(axis->GetGraphAxis());
     m_axis->UpdateGraphAxisName();
+    m_axis->UpdateGraphAxisStyle();
     m_axis->UpdateVisiblility();
 }
 
 void Channel::setVisible(bool visible)
 {
     QGroupBox::setVisible(visible);
+    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
-    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
 }
 
 void Channel::SetColor(QColor &color)

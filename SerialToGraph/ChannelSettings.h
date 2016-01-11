@@ -4,7 +4,9 @@
 #include <FormDialogColor.h>
 #include <QColor>
 
+class Axis;
 class Channel;
+class ChannelWithTime;
 class QCheckBox;
 class QComboBox;
 class QFormLayout;
@@ -17,25 +19,28 @@ class ChannelSettings : public FormDialogColor
 
     void _InitializeShapeCombo();
     void _InitializeAxisCombo();
-    void _MoveLastHorizontalToVertical();
+    bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
+    void _InitializeTimeFeatures();
+    void _RefillAxisCombo();
+    bool _AxisCheckForRealTimeMode();
 
     Context const & m_context;
     Channel *m_channel;
     QLineEdit * m_name;
 	QLineEdit * m_units;
-	QCheckBox * m_xAxis;
-	QCheckBox * m_toRightSide;
     QComboBox * m_shapeComboBox;
     QComboBox * m_axisComboBox;
-
-    Channel * m_lastHorrizontalChannel;
+    QComboBox * m_style;
+    QComboBox * m_timeUnits;
+    QComboBox * m_format;
 public:
     ChannelSettings(Channel *channel, Context const &context);
 signals:
 
 private slots:
     void axisChanged(int index);
+    void styleChanged(int index);
 };
 
 #endif // CHANNELSETTINGS_H

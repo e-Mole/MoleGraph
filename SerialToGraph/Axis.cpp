@@ -1,6 +1,7 @@
 #include "Axis.h"
 #include <Context.h>
 #include <Channel.h>
+#include <ChannelWithTime.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
@@ -168,4 +169,57 @@ void Axis::_SetColor(QColor const & color)
 Measurement * Axis::GetMeasurement()
 {
     return m_measurement;
+}
+
+bool Axis::IsEmptyExcept(Channel *except)
+{
+    foreach (Channel *channel, m_measurement->GetChannels())
+    {
+        if (channel == except)
+            continue;
+
+        if (channel->GetAxis() == this)
+            return false;
+    }
+
+    return true;
+}
+
+bool Axis::ContainsChannelWithRealTimeStyle()
+{
+    foreach (Channel *channel, m_measurement->GetChannels())
+    {
+        if (
+            channel->GetAxis() == this &&
+            channel->IsSampleChannel() &&
+            ((ChannelWithTime*)channel)->IsInRealtimeStyle()
+        )
+            return true;
+    }
+    return false;
+}
+
+void Axis::UpdateGraphAxisStyle()
+{
+    Channel *axisChannel = NULL;
+    foreach (Channel *channel, m_measurement->GetChannels())
+        if (channel->GetAxis() == this)
+        {
+            axisChannel = channel;
+            break; //I know, that real time channel is on oun axis
+        }
+
+    if (axisChannel == NULL)
+        return; //empty axis
+
+    bool realTimeStyle = false;
+    QString formatText = "";
+
+    if (axisChannel->IsSampleChannel())
+    {
+        realTimeStyle = ((ChannelWithTime *)axisChannel)->GetStyle() == ChannelWithTime::RealTime;
+        formatText = ((ChannelWithTime *)axisChannel)->GetRealTimeFormatText();
+    }
+
+    m_measurement->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
 }

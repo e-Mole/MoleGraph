@@ -6,8 +6,10 @@
 #include <QMap>
 #include <QVector>
 #include <QWidget>
+
 class Axis;
 class Channel;
+class ChannelWithTime;
 class Plot;
 class QColor;
 class QHBoxLayout;
@@ -65,7 +67,7 @@ private:
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
-    Channel *m_sampleChannel;
+    ChannelWithTime *m_sampleChannel;
     QVector<Axis*> m_axes;
     QVector<Channel*> m_channels;
     QHBoxLayout *m_mainLayout;
@@ -83,7 +85,7 @@ public:
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
-    QVector<Axis *> const & GetAxes();
+    QVector<Axis *> const & GetAxes() const;
     QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
     void ReplaceDisplays()

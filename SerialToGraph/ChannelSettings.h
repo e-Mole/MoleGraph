@@ -22,6 +22,8 @@ class ChannelSettings : public FormDialogColor
     bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
     void _InitializeTimeFeatures();
+    void _RefillAxisCombo();
+    bool _AxisCheckForRealTimeMode();
 
     Context const & m_context;
     Channel *m_channel;

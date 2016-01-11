@@ -51,9 +51,9 @@ void ChannelSettings::_InitializeTimeFeatures()
     ChannelWithTime * channel = (ChannelWithTime*)m_channel;
 
     m_style = new QComboBox(this);
-    m_style->addItem(tr("Samples"));
-    m_style->addItem(tr("Time From Start"));
-    m_style->addItem(tr("Real Time"));
+    m_style->addItem(tr("Samples"), false);
+    m_style->addItem(tr("Time From Start"), false);
+    m_style->addItem(tr("Real Time"), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
@@ -82,11 +82,32 @@ void ChannelSettings::_InitializeTimeFeatures()
 void ChannelSettings::styleChanged(int index)
 {
     m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeFromStart);
-     m_format->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::RealTime);
+    m_format->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::RealTime);
+    _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
 
+bool ChannelSettings::_AxisCheckForRealTimeMode()
+{
+    if (m_style != NULL && m_style->currentData().toBool()) //channel with realtime style
+    {
+        Axis *axis = ((Axis *)m_axisComboBox->currentData().toLongLong());
+        if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channel))
+        {
+            QMessageBox::critical(
+                this,
+                m_context.m_applicationName,
+                tr("Real Time style channel must be placed on a separate axis. Please, choose one.")
+            );
+            return false;
+        }
+    }
+    return true;
+}
 bool ChannelSettings::BeforeAccept()
 {
+    if (!_AxisCheckForRealTimeMode())
+        return false;
+
     bool changed = false;
     bool changedHorizontal = false;
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
@@ -105,8 +126,10 @@ bool ChannelSettings::BeforeAccept()
         Axis *lastAxis = m_channel->m_axis;
         m_channel->AssignToAxis(axis);
         lastAxis->UpdateGraphAxisName();
+        lastAxis->UpdateGraphAxisStyle();
         lastAxis->UpdateVisiblility();
-        m_channel->UpdateGraphAxisStyle();
+        m_channel->GetMeasurement()->GetPlot()->RescaleAxis(lastAxis->GetGraphAxis());
+
         changed = true;
     }
 
@@ -219,19 +242,39 @@ void ChannelSettings::_InitializeShapeCombo()
     m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
 }
 
-void ChannelSettings::_InitializeAxisCombo()
+void ChannelSettings::_RefillAxisCombo()
 {
+    disconnect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
+    m_axisComboBox->clear();
     m_axisComboBox->addItem(tr("New Axis..."));
     foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
     {
-       m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
+        bool valid =
+                m_channel->GetAxis() == axis || //I should be able to switch back to original axis
+                axis->IsHorizontal(); //as same as to horizontal
+
+        if (!valid)
+        {
+            if (m_channel->IsSampleChannel() && m_style->currentData().toBool())
+                valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
+            else
+                valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
+        }
+
+        if (valid)
+            m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
     }
 
     m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(m_channel->m_axis)));
+    connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
+}
+void ChannelSettings::_InitializeAxisCombo()
+{
+    _RefillAxisCombo();
+
     if (m_channel->IsOnHorizontalAxis())
         m_axisComboBox->setEnabled(false);
     m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
-    connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
 }
 
 void ChannelSettings::axisChanged(int index)

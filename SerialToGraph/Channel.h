@@ -138,7 +138,6 @@ public:
 
     Measurement * GetMeasurement();
     void EditChannel();
-    virtual void UpdateGraphAxisStyle();
 
 signals:
     void stateChanged();

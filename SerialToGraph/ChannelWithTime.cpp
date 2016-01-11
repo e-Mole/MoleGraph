@@ -90,16 +90,7 @@ void ChannelWithTime::_UpdateAxisAndValues()
     _ShowLastValueWithUnits();
     m_axis->UpdateGraphAxisName();
     m_measurement->GetPlot()->RefillGraphs();
-    UpdateGraphAxisStyle();
-}
-
-void ChannelWithTime::UpdateGraphAxisStyle()
-{
-     m_measurement->GetPlot()->SetAxisStyle(
-        m_axis->GetGraphAxis(),
-        m_style == RealTime,
-        GetRealTimeFormatText()
-     );
+    m_axis->UpdateGraphAxisStyle();
 }
 
 void  ChannelWithTime::AddValue(double value, qreal timeFromStart)

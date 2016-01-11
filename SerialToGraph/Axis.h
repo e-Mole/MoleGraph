@@ -58,7 +58,9 @@ public:
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();
-    bool IsEmpty(Channel *invisible);
+    bool IsEmptyExcept(Channel *except);
+    bool ContainsChannelWithRealTimeStyle();
+    void UpdateGraphAxisStyle();
 };
 
 #endif // AXIS_H

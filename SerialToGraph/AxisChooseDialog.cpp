@@ -51,7 +51,7 @@ AxisChooseDialog::AxisChooseDialog(
         if (axis == originalHChannel->GetAxis())
             continue;
 
-        if (m_isOriginalChannelRealTime && !axis->IsEmpty(m_newHChannel))
+        if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHChannel))
             continue;
 
         QRadioButton *rb = new QRadioButton(axis->GetTitle(), this);
@@ -70,8 +70,6 @@ void AxisChooseDialog::newAxisSelected()
     if (QDialog::Accepted == dialog.exec())
     {
         m_originalHChannel->AssignToAxis(newAxis);
-        if (m_isOriginalChannelRealTime)
-            m_originalHChannel->UpdateGraphAxisStyle();
         accept();
     }
     else
@@ -88,9 +86,6 @@ void AxisChooseDialog::axisSelected()
             break;
         }
     }
-
-    if (m_isOriginalChannelRealTime)
-        m_originalHChannel->UpdateGraphAxisStyle();
 
     accept();
 }

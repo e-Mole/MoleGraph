@@ -9,6 +9,7 @@
 #include <QCheckBox>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
+#include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
@@ -237,6 +238,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
+    _ShowOrHideGraphAndPoin(!isHidden());
     m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
@@ -245,15 +247,16 @@ void Channel::AssignToAxis(Axis *axis)
     m_axis = axis;
     AssignToGraphAxis(axis->GetGraphAxis());
     m_axis->UpdateGraphAxisName();
+    m_axis->UpdateGraphAxisStyle();
     m_axis->UpdateVisiblility();
 }
 
 void Channel::setVisible(bool visible)
 {
     QGroupBox::setVisible(visible);
+    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
-    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
 }
 
 void Channel::SetColor(QColor &color)
@@ -267,9 +270,4 @@ void Channel::SetColor(QColor &color)
 Measurement * Channel::GetMeasurement()
 {
     return m_measurement;
-}
-
-void Channel::UpdateGraphAxisStyle()
-{
-     m_measurement->GetPlot()->SetAxisStyle(m_axis->GetGraphAxis(), false, "");
 }

@@ -168,23 +168,14 @@ bool SerialPort::Write(Instructions instruction, std::string const &data)
     return true;
 }
 
-bool SerialPort::SetFrequency(unsigned frequency)
+bool SerialPort::_WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
 {
-    std::string tmp;
-    tmp.append((char const *)&frequency, 2);
-    if (!Write(INS_SET_FREQUENCY, tmp))
-    {
-        PortIssueSolver();
+    if (!m_serialPort.isOpen())
         return false;
-    }
-    return true;
-}
 
-bool SerialPort::SetTime(unsigned time)
-{
     std::string tmp;
-    tmp.append((char const *)&time, 2);
-    if (!Write(INS_SET_TIME, tmp))
+    tmp.append((char const *)&parameter, length);
+    if (!Write(instruction, tmp))
     {
         PortIssueSolver();
         return false;
@@ -202,6 +193,21 @@ bool SerialPort::_WriteInstruction(Instructions instruction)
         return false;
     }
     return true;
+}
+
+bool SerialPort::SetFrequency(unsigned frequency)
+{
+    return _WriteInstruction(INS_SET_FREQUENCY, frequency, 2);
+}
+
+bool SerialPort::SetTime(unsigned time)
+{
+    return _WriteInstruction(INS_SET_TIME, time, 2);
+}
+
+bool SerialPort::SetType(unsigned type)
+{
+    return _WriteInstruction(INS_SET_TYPE, type, 1);
 }
 
 bool SerialPort::Start()

@@ -32,10 +32,12 @@ class SerialPort : public QObject
         INS_ENABLED_CHANNELS = 4,
         INS_START = 5,
         INS_STOP = 6,
-        INS_GET_SAMLPE = 7,
+        INS_SET_TYPE = 7,
+        INS_GET_SAMLPE = 8,
     };
 
     bool _WriteInstruction(Instructions instruction);
+    bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
 
     QSerialPort m_serialPort;
     QSettings &m_settings;
@@ -58,6 +60,7 @@ public:
 
     bool SetFrequency(unsigned frequency);
     bool SetTime(unsigned time);
+    bool SetType(unsigned type);
     bool Start();
     bool Stop();
     bool SampleRequest();

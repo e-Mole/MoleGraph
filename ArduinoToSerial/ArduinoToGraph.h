@@ -17,7 +17,8 @@ class ArtuinoToGraph
     INS_ENABLED_CHANNELS = 4,
     INS_START = 5,
     INS_STOP = 6,
-    INS_TYPE = 7,
+    INS_SET_TYPE = 7,
+    INS_GET_SAMLPE = 8,
   };
 public:
   void Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8);

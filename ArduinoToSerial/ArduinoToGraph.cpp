@@ -9,7 +9,7 @@ namespace
   enum Type
   {
       typePeriodical = 0,
-      typeOnRequest = 1
+      typeOnDemand = 1
   } g_type = typePeriodical;
   
   unsigned char g_enabledChannels = 0;
@@ -18,8 +18,8 @@ namespace
   unsigned g_currentTime = 0;
   float g_channels[8];
   bool g_fullWriteBufferDetected = false;
-float g_timeFromStart = 0;
-bool g_sampleRequest = false;
+  float g_timeFromStart = 0;
+  bool g_sampleRequest = false;
   
   void (*g_updateFunction)(void);
   
@@ -96,7 +96,7 @@ bool g_sampleRequest = false;
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
-  if (g_type == typeOnRequest)
+  if (g_type == typeOnDemand)
   {
     g_timeFromStart += 1/62500;
     if (!g_sampleRequest)  
@@ -112,7 +112,7 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   }
     
   g_updateFunction();  
-  SendData(g_type == typeOnRequest);
+  SendData(g_type == typeOnDemand);
 }
 
 void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
@@ -174,11 +174,11 @@ void ArtuinoToGraph::Loop()
     case INS_STOP:
       TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
     break;
-    case INS_TYPE:
+    case INS_SET_TYPE:
       unsigned char type;
       FillFromSerial(type);
       g_type = (Type)type;
-      if (g_type == typeOnRequest)
+      if (g_type == typeOnDemand)
       {
         g_sampleRequest = false;
         g_timeFromStart = 0;
@@ -189,6 +189,10 @@ void ArtuinoToGraph::Loop()
         g_currentTime = g_requiredTime - 1; //to be data send immediately
       }
     break;
+    case INS_GET_SAMLPE:
+      g_sampleRequest = true;
+    break;
+      
     }
   }
 }

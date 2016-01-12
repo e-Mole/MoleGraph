@@ -35,8 +35,8 @@ class ButtonLine : public QWidget
     void _ActivateChannel(Channel *channel, bool checked);
 
     QPushButton *m_startButton;
+    QPushButton *m_sampleRequestButton;
     QPushButton *m_stopButton;
-    QPushButton *m_cloneButton;
     ConnectivityLabel *m_connectivityLabel;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
@@ -61,7 +61,7 @@ class ButtonLine : public QWidget
     QShortcut *m_noChannelsShortcut;
 
 public:
-    void UpdateStartAndStopButtonsState();
+    void UpdateRunButtonsState();
     ButtonLine(QWidget *parent, const Context &context);
     void ChangeMeasurement(Measurement *measurement);
     QString GetGraphShortcutText();

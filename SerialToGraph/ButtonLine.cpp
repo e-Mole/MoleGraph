@@ -26,6 +26,7 @@
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QWidget(parent),
     m_startButton(NULL),
+    m_sampleRequestButton(NULL),
     m_stopButton(NULL),
     m_connectivityLabel(NULL),
     m_fileMenuButton(NULL),
@@ -74,10 +75,10 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
 
-    QPushButton *sampleRequestButton = new QPushButton(tr("Sample"), this);
-    sampleRequestButton->setDisabled(true);
-    buttonLayout->addWidget(sampleRequestButton);
-    connect(sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
+    m_sampleRequestButton = new QPushButton(tr("Sample"), this);
+    m_sampleRequestButton->setDisabled(true);
+    buttonLayout->addWidget(m_sampleRequestButton);
+    connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
@@ -126,7 +127,7 @@ void ButtonLine::_RefreshPanelMenu()
     m_channelMenu = new ChannelMenu(*m_measurement, this);
     _CreateShortcuts();
     m_channelMenu->FillGrid();
-    UpdateStartAndStopButtonsState();
+    UpdateRunButtonsState();
 }
 
 void ButtonLine::panelMenuButtonPressed()
@@ -160,18 +161,25 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));
 }
 
-void ButtonLine::UpdateStartAndStopButtonsState()
+void ButtonLine::UpdateRunButtonsState()
 {
     if (NULL == m_measurement)
     {
         m_startButton->setEnabled(false);
         m_stopButton->setEnabled(false);
+        m_sampleRequestButton->setEnabled(false);
         return;
     }
 
     m_stopButton->setEnabled(
         m_connected &&
-        (Measurement::State)m_measurement->GetState() == Measurement::Running);
+        m_measurement->GetState() == Measurement::Running);
+
+    m_sampleRequestButton->setEnabled(
+        m_connected &&
+        m_measurement->GetState() == Measurement::Running &&
+        m_measurement->GetType() == Measurement::OnDemand);
+
 
     if (!m_connected || m_measurement->GetState() != Measurement::Ready)
     {
@@ -189,6 +197,7 @@ void ButtonLine::UpdateStartAndStopButtonsState()
         if (channel->IsOnHorizontalAxis() && !channel->isHidden())
             horizontalPreset = true;
     }
+
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
@@ -234,7 +243,7 @@ void ButtonLine::connectivityStateChange(bool connected)
     m_connected = connected;
     m_connectivityLabel->SetConnected(connected);
 
-    UpdateStartAndStopButtonsState();
+    UpdateRunButtonsState();
 }
 
 void ButtonLine::newFile()
@@ -256,7 +265,7 @@ void ButtonLine::saveAsFile()
 
 void ButtonLine::measurementStateChanged()
 {
-    UpdateStartAndStopButtonsState();
+    UpdateRunButtonsState();
 }
 
 void ButtonLine::_ClearShortcuts()
@@ -335,7 +344,7 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     m_measurement = measurement;
     _ClearShortcuts();
     _RefreshPanelMenu();
-    UpdateStartAndStopButtonsState();
+    UpdateRunButtonsState();
 }
 
 void ButtonLine::start()

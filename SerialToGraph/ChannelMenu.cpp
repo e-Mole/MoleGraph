@@ -97,7 +97,7 @@ void ChannelMenu::edit()
     label->setText(channel->GetName());
     label->SetColor(channel->GetColor());
 
-    m_buttonLine->UpdateStartAndStopButtonsState();
+    m_buttonLine->UpdateRunButtonsState();
 }
 
 void ChannelMenu::channelActivated()
@@ -113,7 +113,7 @@ void ChannelMenu::channelActivated()
 
     channel->setVisible(channel->isHidden());
 
-    m_buttonLine->UpdateStartAndStopButtonsState();
+    m_buttonLine->UpdateRunButtonsState();
     m_measurement.ReplaceDisplays();
 }
 
@@ -137,7 +137,7 @@ void ChannelMenu::noChannelsActivated()
     foreach (Channel *channel, m_measurement.GetChannels())
         ActivateChannel(channel, false);
 
-    m_buttonLine->UpdateStartAndStopButtonsState();
+    m_buttonLine->UpdateRunButtonsState();
 }
 
 void ChannelMenu::allChannelsActivated()
@@ -145,6 +145,6 @@ void ChannelMenu::allChannelsActivated()
     foreach (Channel *channel, m_measurement.GetChannels())
         ActivateChannel(channel, true);
 
-    m_buttonLine->UpdateStartAndStopButtonsState();
+    m_buttonLine->UpdateRunButtonsState();
     m_measurement.ReplaceDisplays();
 }

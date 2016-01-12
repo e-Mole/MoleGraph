@@ -223,18 +223,26 @@ bool Measurement::_CheckOtherMeasurementsForRun()
     return false;
 }
 
-void Measurement::_SetPeriod()
+bool Measurement::_SetModeWithPeriod()
 {
+    if (!m_context.m_serialPort.SetType(m_type))
+        return false;
+
+    if (m_type == OnDemand)
+        return true;
+
     if (m_sampleUnits == Measurement::Hz)
     {
         if (!m_context.m_serialPort.SetFrequency(m_period))
-            return;
+            return false;
     }
     else
     {
         if (!m_context.m_serialPort.SetTime(m_period))
-            return;
+            return false;
     }
+
+    return true;
 }
 
 void Measurement::_ProcessSelectedChannels()
@@ -251,17 +259,6 @@ void Measurement::_ProcessSelectedChannels()
     m_context.m_serialPort.SetSelectedChannels(selectedChannels);
 }
 
-void Measurement::_StartDrawing()
-{
-    m_startNewDraw = true;
-    m_drawTimer->start(m_drawPeriod);
-    if (!m_context.m_serialPort.Start())
-    {
-        m_drawTimer->stop();
-        return;
-    }
-}
-
 void Measurement::Start()
 {
     qDebug() << "start";
@@ -272,9 +269,18 @@ void Measurement::Start()
         return;
 
     m_context.m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
-    _SetPeriod();
+    if(!_SetModeWithPeriod())
+        return;
     _ProcessSelectedChannels();
-    _StartDrawing();
+
+    m_startNewDraw = true;
+    m_drawTimer->start(m_drawPeriod);
+    if (!m_context.m_serialPort.Start())
+    {
+        m_drawTimer->stop();
+        return;
+    }
+
     m_sampleChannel->SetStartTime(QDateTime::currentDateTime());
 
     m_state = Running;

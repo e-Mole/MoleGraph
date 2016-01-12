@@ -33,7 +33,7 @@ public:
     };
     enum Type
     {
-        Periodical,
+        Periodical = 0,
         OnDemand
     };
 private:
@@ -56,9 +56,8 @@ private:
     void _InitializeAxesAndChanels();
     void _AddYChannel(Qt::GlobalColor color, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
-    void _SetPeriod();
+    bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
-    void _StartDrawing();
 
     Context const &m_context;
     QString m_name;
@@ -105,6 +104,7 @@ public:
     void Start();
     void Stop();
     void SampleRequest();
+    Type GetType() { return m_type; }
 
 signals:
     void stateChanged();

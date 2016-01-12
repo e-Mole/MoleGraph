@@ -222,17 +222,9 @@ bool Measurement::_CheckOtherMeasurementsForRun()
     }
     return false;
 }
-void Measurement::Start()
+
+void Measurement::_SetPeriod()
 {
-    qDebug() << "start";
-    if (_CheckOtherMeasurementsForRun())
-        return;
-
-    if (!m_context.m_serialPort.IsDeviceConnected())
-        return;
-
-    m_context.m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
-
     if (m_sampleUnits == Measurement::Hz)
     {
         if (!m_context.m_serialPort.SetFrequency(m_period))
@@ -243,7 +235,10 @@ void Measurement::Start()
         if (!m_context.m_serialPort.SetTime(m_period))
             return;
     }
+}
 
+void Measurement::_ProcessSelectedChannels()
+{
     unsigned selectedChannels = 0;
     foreach (Channel *channel, m_channels)
     {
@@ -254,7 +249,10 @@ void Measurement::Start()
         }
     }
     m_context.m_serialPort.SetSelectedChannels(selectedChannels);
+}
 
+void Measurement::_StartDrawing()
+{
     m_startNewDraw = true;
     m_drawTimer->start(m_drawPeriod);
     if (!m_context.m_serialPort.Start())
@@ -262,6 +260,21 @@ void Measurement::Start()
         m_drawTimer->stop();
         return;
     }
+}
+
+void Measurement::Start()
+{
+    qDebug() << "start";
+    if (_CheckOtherMeasurementsForRun())
+        return;
+
+    if (!m_context.m_serialPort.IsDeviceConnected())
+        return;
+
+    m_context.m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
+    _SetPeriod();
+    _ProcessSelectedChannels();
+    _StartDrawing();
     m_sampleChannel->SetStartTime(QDateTime::currentDateTime());
 
     m_state = Running;

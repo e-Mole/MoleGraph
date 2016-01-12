@@ -56,6 +56,9 @@ private:
     void _InitializeAxesAndChanels();
     void _AddYChannel(Qt::GlobalColor color, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
+    void _SetPeriod();
+    void _ProcessSelectedChannels();
+    void _StartDrawing();
 
     Context const &m_context;
     QString m_name;

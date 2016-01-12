@@ -19,6 +19,7 @@
 
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 5
+#define TIMESTAMP_SIZE 4
 #define VERTIACAL_MAX 3
 
 Measurement::Measurement(QWidget *parent, Context &context, Measurement *source):
@@ -35,7 +36,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     m_plot(new Plot(this)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
     m_startNewDraw(false),
-    m_type(Periodical)
+    m_type(source != NULL ? source->m_type : Periodical)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -101,23 +102,32 @@ void Measurement::_InitializeLayouts()
 
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
-void Measurement::_FillGraphItem(GraphItem &item)
+
+float Measurement::_DequeueFloat()
 {
-    unsigned char mixture = m_queue.dequeue();
-    item.afterMissingSample = ((mixture >> 6) & 1);
-    item.channelIndex = mixture & 7; //lowest 3 bits
     char value[4];
     value[0] = m_queue.dequeue();
     value[1] = m_queue.dequeue();
     value[2] = m_queue.dequeue();
     value[3] = m_queue.dequeue();
 
-    item.value = *((float*)value);
+    return *((float*)value);
+}
+
+void Measurement::_FillGraphItem(GraphItem &item)
+{
+    unsigned char mixture = m_queue.dequeue();
+    item.afterMissingSample = ((mixture >> 6) & 1);
+    item.channelIndex = mixture & 7; //lowest 3 bits
+    item.value = _DequeueFloat();
 }
 
 bool Measurement::_IsCompleteSetInQueue()
 {
-    return m_queue.size() >= m_trackedHwChannels.size() * CHANNEL_DATA_SIZE;
+    unsigned size = m_trackedHwChannels.size() * CHANNEL_DATA_SIZE;
+    if (m_type == OnDemand)
+        size += TIMESTAMP_SIZE;
+    return m_queue.size() >= size;
 }
 
 void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
@@ -147,8 +157,11 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
-            qreal offset =
-                    (double)m_sampleChannel->GetValueCount() *
+            qreal offset = 0;
+            if (m_type == OnDemand)
+                offset = _DequeueFloat();
+            else
+                offset = (double)m_sampleChannel->GetValueCount() *
                     ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period );
 
             m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);

@@ -58,6 +58,7 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
+    float _DequeueFloat();
 
     Context const &m_context;
     QString m_name;

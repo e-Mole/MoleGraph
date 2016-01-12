@@ -64,7 +64,8 @@ namespace
       return; //have to throw data form this sample :(
 
     if (timestamp)
-      Serial.write((char *)&timestamp, sizeof(float));
+      Serial.write((char *)&g_timeFromStart, sizeof(float));
+
     for (int i = 0; i < 8; i++)
     {
       if (0 != ((g_enabledChannels >> i) & 1)) 
@@ -98,7 +99,7 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
   if (g_type == typeOnDemand)
   {
-    g_timeFromStart += 1/62500;
+    g_timeFromStart += 1.0/62500.0;
     if (!g_sampleRequest)  
       return;
 
@@ -182,12 +183,11 @@ void ArtuinoToGraph::Loop()
       {
         g_sampleRequest = false;
         g_timeFromStart = 0;
+        InitTimer();
         OCR1A = 1; //1/62500 s
       }
       else
-      {
         g_currentTime = g_requiredTime - 1; //to be data send immediately
-      }
     break;
     case INS_GET_SAMLPE:
       g_sampleRequest = true;

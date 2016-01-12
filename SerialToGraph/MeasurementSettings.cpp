@@ -21,6 +21,7 @@ MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const
     m_type->addItem(tr("Periodical"));
     m_type->addItem(tr("On Demand"));
     m_type->setCurrentIndex((int)m_measurement->m_type);
+    m_type->setEnabled(m_measurement->m_state == Measurement::Ready);
     m_formLayout->addRow(new QLabel(tr("Type"), this), m_type);
     connect(m_type, SIGNAL(currentIndexChanged(int)), this, SLOT(disablePeriodAndUnits(int)));
 

@@ -51,7 +51,7 @@ private:
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
     float _DequeueFloat();
-    void _FillValueSet();
+    bool _ProcessValueSet();
 
     Context const &m_context;
     QString m_name;

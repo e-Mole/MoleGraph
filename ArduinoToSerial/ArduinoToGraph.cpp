@@ -35,10 +35,10 @@ namespace
     interrupts();             // enable all interrupts
   }
 
-  void WriteHeader(unsigned char commandId, bool writingDelay)
+  void WriteHeader(unsigned char commandId)
   {
     unsigned char mixture = commandId;
-    mixture |= writingDelay << 7;
+    mixture |= g_fullWriteBufferDetected << 7;
     
     Serial.write(mixture);  
   }
@@ -61,7 +61,7 @@ namespace
     if (bufferIsFull)
       return; //have to throw data form this sample :(
 
-    WriteHeader(0 /*INS_NONE*/, g_fullWriteBufferDetected);
+    WriteHeader(0 /*INS_NONE*/);
     
     if (timestamp)
       Serial.write((char *)&g_timeFromStart, sizeof(float));
@@ -133,7 +133,7 @@ void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float
   InitTimer();  
 }
 
-void ArtuinoToGraph::Loop()
+void ArtuinoToGraph::InLoop()
 {
   if (0 != Serial.available())
   {
@@ -224,7 +224,12 @@ void ArtuinoToGraph::SampleRequest()
   g_sampleRequest = true;
 }
 
+void ArtuinoToGraph::StartMeasurement()
+{
+  WriteHeader(INS_START);
+}
+
 void ArtuinoToGraph::StopMeasurement()
 {
-  
+  WriteHeader(INS_STOP);
 }

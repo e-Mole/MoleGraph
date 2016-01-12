@@ -43,7 +43,8 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
     centralLayout->addWidget(m_buttonLine);
     connect(&m_serialPort, SIGNAL(portConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
-
+    connect(&m_serialPort, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
+    connect(&m_serialPort, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));

@@ -26,6 +26,7 @@ class SerialPort : public QObject
 
     enum Instructions
     {
+        INS_NONE = 0,
         INS_GET_VERSION = 1,
         INS_SET_TIME = 2,
         INS_SET_FREQUENCY = 3,
@@ -68,8 +69,11 @@ public:
     bool IsDeviceConnected();
     void PortIssueSolver();
     bool FillQueue(QQueue<unsigned char> &queue);
+    bool ProcessCommand(unsigned char command);
 signals:
     void portConnectivityChanged(bool connected);
+    void StartCommandDetected();
+    void StopCommandDetected();
 public slots:
 };
 

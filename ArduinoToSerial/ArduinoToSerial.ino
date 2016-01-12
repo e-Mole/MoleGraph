@@ -34,5 +34,5 @@ void setup()
 
 void loop() 
 {
-  arduinoToGraph.Loop();
+  arduinoToGraph.InLoop();  
 }

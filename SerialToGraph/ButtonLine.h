@@ -80,9 +80,7 @@ private slots:
     void openFile();
     void saveFile();
     void saveAsFile();
-    void start();
     void sampleRequest();
-    void stop();
 public slots:
     void exportPng();
     void exportCsv();
@@ -94,6 +92,8 @@ public slots:
     void measurementMenuButtonPressed();
     void measurementStateChanged();
     void channelActivated();
+    void start();
+    void stop();
 };
 
 #endif // BUTTONLINE_H

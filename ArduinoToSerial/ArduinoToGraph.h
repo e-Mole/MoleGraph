@@ -24,11 +24,12 @@ class ArtuinoToGraph
 public:
   void Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8);
   void Setup() { Setup(0, 0, 0, 0, 0, 0, 0, 0); }
-  void Loop();
+  void InLoop();
   bool SetChannelValue(int channel, float value);
   float GetChannelValue(int channel);
   void SetUpdateCallbackFunction(void (*update)(void) );
   void SampleRequest();
+  void StartMeasurement();
   void StopMeasurement();
 };
 #endif //_ARDUINO_TO_SERIAL_H_

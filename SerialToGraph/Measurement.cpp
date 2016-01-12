@@ -116,6 +116,11 @@ float Measurement::_DequeueFloat()
 
 bool Measurement::_IsCompleteSetInQueue()
 {
+    if (m_queue.size() > 0)
+    {
+        if ((m_queue[0] & 0x7F) != 0) //a command present
+            return true;
+    }
     unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE; //Header + tracked channels data
     if (m_type == OnDemand)
         size += TIMESTAMP_SIZE;
@@ -141,10 +146,14 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
-void Measurement::_FillValueSet()
+bool Measurement::_ProcessValueSet()
 {
-    unsigned mixture = m_queue.dequeue(); //I already know it is not command
+    unsigned mixture = m_queue.dequeue();
+    unsigned char command = mixture & 0x7f;
     m_anySampleMissed |= mixture >> 7;
+
+    if (m_context.m_serialPort.ProcessCommand(command))
+        return false; //message is a command
 
     qreal offset = 0;
     if (m_type == OnDemand)
@@ -159,6 +168,8 @@ void Measurement::_FillValueSet()
 
     foreach (Channel *channel,  m_trackedHwChannels)
         channel->AddValue(_DequeueFloat());
+
+    return true;
 }
 
 void Measurement::draw()
@@ -169,7 +180,8 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
-            _FillValueSet();
+            if (!_ProcessValueSet())
+                goto FINISH_DRAW;
 
             m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
             foreach (Channel *channel, m_trackedHwChannels)
@@ -196,11 +208,11 @@ void Measurement::draw()
             m_plot->RescaleAllAxes();
 
         m_plot->ReplotIfNotDisabled();
+
+        _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
     }
 
-    _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
-
-    if (m_startNewDraw)
+FINISH_DRAW: if (m_startNewDraw)
         m_drawTimer->start(m_drawPeriod);
 }
 

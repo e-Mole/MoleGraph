@@ -256,3 +256,18 @@ bool SerialPort::FillQueue(QQueue<unsigned char> &queue)
 
     return true;
 }
+
+bool SerialPort::ProcessCommand(unsigned char command)
+{
+    switch (command)
+    {
+    case INS_NONE:
+        return false;
+    case INS_START:
+        StartCommandDetected();
+    case INS_STOP:
+        StopCommandDetected();
+    break;
+    }
+    return true;
+}

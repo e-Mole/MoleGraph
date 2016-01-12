@@ -11,6 +11,7 @@ class ArtuinoToGraph
 {
   enum Instructions
   {
+    INS_NONE = 0, //data
     INS_GET_VERSION = 1,
     INS_SET_TIME = 2,
     INS_SET_FREQUENCY = 3,
@@ -28,5 +29,6 @@ public:
   float GetChannelValue(int channel);
   void SetUpdateCallbackFunction(void (*update)(void) );
   void SampleRequest();
+  void StopMeasurement();
 };
 #endif //_ARDUINO_TO_SERIAL_H_

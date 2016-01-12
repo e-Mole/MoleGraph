@@ -1,7 +1,7 @@
 #include "ArduinoToGraph.h"
 
 
-#define VERSION "ATG_1" //arduino to graph version
+#define VERSION "ATG_2" //arduino to graph version
 #define MESSAGE_SIZE 1 + sizeof(float)
 
 namespace
@@ -34,17 +34,15 @@ namespace
     TCCR1B |= (1 << CS12);    // 256 prescaler 
     interrupts();             // enable all interrupts
   }
-  
-  void WriteValue(unsigned char channel, float value, bool isCommandResponse, bool writingDelay, bool containsTimestamp)
-  {
-    unsigned char mixture = channel;
-    mixture |= isCommandResponse << 7;
-    mixture |= writingDelay << 6;
-    
-    Serial.write(mixture);
-    Serial.write((char *)&value, sizeof(float));
-  }
 
+  void WriteHeader(unsigned char commandId, bool writingDelay)
+  {
+    unsigned char mixture = commandId;
+    mixture |= writingDelay << 7;
+    
+    Serial.write(mixture);  
+  }
+  
   void SendData(bool timestamp)
   {
     //it can happen when user set to high frequency or too many channels
@@ -63,13 +61,14 @@ namespace
     if (bufferIsFull)
       return; //have to throw data form this sample :(
 
+    WriteHeader(0 /*INS_NONE*/, g_fullWriteBufferDetected);
+    
     if (timestamp)
       Serial.write((char *)&g_timeFromStart, sizeof(float));
-
     for (int i = 0; i < 8; i++)
     {
       if (0 != ((g_enabledChannels >> i) & 1)) 
-        WriteValue(i, g_channels[i], false, g_fullWriteBufferDetected, false); 
+        Serial.write((char *)&g_channels[i], sizeof(float));
     }
   
      g_fullWriteBufferDetected = false;
@@ -223,4 +222,9 @@ void ArtuinoToGraph::SetUpdateCallbackFunction(void (*f)(void) )
 void ArtuinoToGraph::SampleRequest()
 {
   g_sampleRequest = true;
+}
+
+void ArtuinoToGraph::StopMeasurement()
+{
+  
 }

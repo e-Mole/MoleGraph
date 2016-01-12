@@ -18,7 +18,7 @@
 #include <SerialPort.h>
 
 #define INITIAL_DRAW_PERIOD 50
-#define CHANNEL_DATA_SIZE 5
+#define CHANNEL_DATA_SIZE 4
 #define TIMESTAMP_SIZE 4
 #define VERTIACAL_MAX 3
 
@@ -114,17 +114,9 @@ float Measurement::_DequeueFloat()
     return *((float*)value);
 }
 
-void Measurement::_FillGraphItem(GraphItem &item)
-{
-    unsigned char mixture = m_queue.dequeue();
-    item.afterMissingSample = ((mixture >> 6) & 1);
-    item.channelIndex = mixture & 7; //lowest 3 bits
-    item.value = _DequeueFloat();
-}
-
 bool Measurement::_IsCompleteSetInQueue()
 {
-    unsigned size = m_trackedHwChannels.size() * CHANNEL_DATA_SIZE;
+    unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE; //Header + tracked channels data
     if (m_type == OnDemand)
         size += TIMESTAMP_SIZE;
     return m_queue.size() >= size;
@@ -149,6 +141,26 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
+void Measurement::_FillValueSet()
+{
+    unsigned mixture = m_queue.dequeue(); //I already know it is not command
+    m_anySampleMissed |= mixture >> 7;
+
+    qreal offset = 0;
+    if (m_type == OnDemand)
+        offset = _DequeueFloat();
+    else
+    {
+        offset =
+            (double)m_sampleChannel->GetValueCount() *
+            ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period );
+    }
+    m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
+
+    foreach (Channel *channel,  m_trackedHwChannels)
+        channel->AddValue(_DequeueFloat());
+}
+
 void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
@@ -157,28 +169,7 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
-            qreal offset = 0;
-            if (m_type == OnDemand)
-                offset = _DequeueFloat();
-            else
-                offset = (double)m_sampleChannel->GetValueCount() *
-                    ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period );
-
-            m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
-
-            GraphItem item;
-            for (int i = 0; i < m_trackedHwChannels.size(); i++) //i is not used. just for right count of reading from the queue
-            {
-                _FillGraphItem(item);
-
-                if (item.afterMissingSample)
-                {
-                    m_anySampleMissed = true;
-                    qDebug() << "missing sample detected";
-                }
-
-                m_trackedHwChannels[item.channelIndex]->AddValue(item.value);
-            }
+            _FillValueSet();
 
             m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
             foreach (Channel *channel, m_trackedHwChannels)

@@ -8,7 +8,7 @@
 #include <QString>
 #include <string>
 
-
+#define PROTOCOL_ID "ATG_2"
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
 ExtendedSerialPortInfo::ExtendedSerialPortInfo(QSerialPortInfo const &info, QSettings const &settings) :
@@ -71,7 +71,7 @@ bool SerialPort::OpenSerialPort(QSerialPortInfo const& info)
         }
 
         ReadAll(array);
-        if (array.toStdString() != "ATG_1")
+        if (array.toStdString() != PROTOCOL_ID)
         {
             qDebug() << "unknown protocol version";
             m_serialPort.close();

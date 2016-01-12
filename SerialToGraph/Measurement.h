@@ -37,17 +37,9 @@ public:
         OnDemand
     };
 private:
-    struct GraphItem
-    {
-        bool afterMissingSample;
-        quint8 channelIndex;
-        float value;
-    };
-
     friend class MeasurementSettings;
 
     void _InitializeLayouts();
-    void _FillGraphItem(GraphItem &item);
     bool _FillQueue();
     bool _IsCompleteSetInQueue();
     void _DrawRestData();
@@ -59,6 +51,7 @@ private:
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
     float _DequeueFloat();
+    void _FillValueSet();
 
     Context const &m_context;
     QString m_name;

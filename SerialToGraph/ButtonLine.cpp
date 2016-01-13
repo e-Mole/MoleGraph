@@ -349,7 +349,8 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
 
 void ButtonLine::start()
 {
-    m_measurement->Start();
+    if (m_startButton->isEnabled()) //when slot is called from a remote
+        m_measurement->Start();
 }
 
 void ButtonLine::sampleRequest()
@@ -359,5 +360,6 @@ void ButtonLine::sampleRequest()
 
 void ButtonLine::stop()
 {
-    m_measurement->Stop();
+    if (m_stopButton->isEnabled()) //when slot is called from a remote
+        m_measurement->Stop();
 }

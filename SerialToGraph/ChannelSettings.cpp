@@ -96,7 +96,7 @@ bool ChannelSettings::_AxisCheckForRealTimeMode()
             QMessageBox::critical(
                 this,
                 m_context.m_applicationName,
-                tr("Real Time style channel must be placed on a separate axis. Please, choose one.")
+                tr("Time format channel must be placed on a separate axis. Please, choose one.")
             );
             return false;
         }
@@ -203,9 +203,6 @@ bool ChannelSettings::BeforeAccept()
 
     return true;
 }
-
-/*void ChannelSettings::_AssignToNewAxis(ChannelWithTime *channel)
-}*/
 
 bool ChannelSettings::_MoveLastHorizontalToVertical()
 {

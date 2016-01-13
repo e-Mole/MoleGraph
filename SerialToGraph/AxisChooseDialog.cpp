@@ -29,7 +29,7 @@ AxisChooseDialog::AxisChooseDialog(
     if (m_isOriginalChannelRealTime)
     {
         text =
-            QString(tr("There might be just one channel on a horizontal axis. Channel '%1' have Real time style and must be assigned to an empty axis. Please, choose one.")).
+            QString(tr("There might be just one channel on a horizontal axis. Values of a hannel '%1' are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.")).
                 arg(originalHChannel->GetName());
     }
     else

@@ -34,6 +34,7 @@ public:
     explicit ChannelMenu(Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(Channel *channel, bool checked);
     void FillGrid();
+    void UpdateLabels();
 signals:
 
 public slots:

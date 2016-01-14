@@ -88,6 +88,14 @@ void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
     m_gridLayout->addWidget(pb, row, 3);
 }
 
+void ChannelMenu::UpdateLabels()
+{
+    for (auto it =  m_channelLabels.begin(); it != m_channelLabels.end(); ++it)
+    {
+        it.value()->setText(it.key()->GetName());
+        it.value()->SetColor(it.key()->GetColor());
+    }
+}
 void ChannelMenu::edit()
 {
     Channel *channel = m_editChannels[(QPushButton*)sender()];

@@ -132,6 +132,7 @@ void ButtonLine::_RefreshPanelMenu()
 
 void ButtonLine::panelMenuButtonPressed()
 {
+    m_channelMenu->UpdateLabels();
     _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
 }
 

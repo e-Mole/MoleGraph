@@ -17,10 +17,6 @@
 #include <QTranslator>
 #include <QWidget>
 
-#include <QToolBar>
-#include <QMenu>
-#include <QWidgetAction>
-
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
@@ -45,8 +41,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
 
     m_buttonLine = new ButtonLine(this, m_context);
     m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
-    addToolBar(m_buttonLine);
-
+    centralLayout->addWidget(m_buttonLine);
     connect(&m_serialPort, SIGNAL(portConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
     connect(&m_serialPort, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_serialPort, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));

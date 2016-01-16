@@ -22,8 +22,9 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QWidget>
+
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
-    QToolBar(parent),
+    QWidget(parent),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
     m_stopButton(NULL),
@@ -46,29 +47,29 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL)
 {
-    //QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    //buttonLayout->setMargin(1);
-    //setLayout(buttonLayout);
+    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    buttonLayout->setMargin(1);
+    setLayout(buttonLayout);
 
     m_fileMenuButton = new QPushButton(tr("File"), this);
-    addWidget(m_fileMenuButton);
+    buttonLayout->addWidget(m_fileMenuButton);
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
     m_measurementButton = new QPushButton(tr("Measurements"), this);
-    addWidget(m_measurementButton);
+    buttonLayout->addWidget(m_measurementButton);
     connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
 
     m_panelMenuButton = new QPushButton(tr("Panels"), this);
-    addWidget(m_panelMenuButton);
+    buttonLayout->addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
     m_axisMenuButton = new QPushButton(tr("Axes"), this);
-    addWidget(m_axisMenuButton);
+    buttonLayout->addWidget(m_axisMenuButton);
     connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
 
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
-    addWidget(m_startButton);
+    buttonLayout->addWidget(m_startButton);
     connect(m_startButton, SIGNAL(clicked()), this, SLOT(start()));
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
@@ -76,23 +77,19 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     m_sampleRequestButton = new QPushButton(tr("Sample"), this);
     m_sampleRequestButton->setDisabled(true);
-    addWidget(m_sampleRequestButton);
+    buttonLayout->addWidget(m_sampleRequestButton);
     connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
     connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
-    addWidget(m_stopButton);
-
-    QWidget* space = new QWidget();
-    space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
-    addWidget(space);
+    buttonLayout->addWidget(m_stopButton);
 
     m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
-    addWidget(m_connectivityLabel);
+    buttonLayout->addWidget(m_connectivityLabel);
 
-    //buttonLayout->insertStretch(7, 1);
+    buttonLayout->insertStretch(7, 1);
 
     _InitializeMenu();
 }
@@ -147,8 +144,8 @@ void ButtonLine::axisMenuButtonPressed()
 
 void ButtonLine::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(this, m_context);
-    measurementMenu.exec(_GetGlobalMenuPosition(m_measurementButton));
+    MeasurementMenu measurementMenu(m_context);
+    _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
 void ButtonLine::_InitializeMenu()

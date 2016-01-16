@@ -4,7 +4,7 @@
 #include <QKeySequence>
 #include <QMap>
 #include <QVector>
-#include <QToolBar>
+#include <QWidget>
 
 class Axis;
 class Channel;
@@ -21,7 +21,7 @@ class QPushButton;
 class QShortcut;
 struct Context;
 
-class ButtonLine : public QToolBar
+class ButtonLine : public QWidget
 {
     Q_OBJECT
 

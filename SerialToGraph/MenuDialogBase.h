@@ -15,7 +15,7 @@ protected:
     virtual void FillGrid() = 0;
     QGridLayout *m_gridLayout;
     void ReinitGrid();
-    void activateWindow();
+    void Activate();
 public:
     MenuDialogBase(QWidget *parent, const QString &title);
     ~MenuDialogBase();
@@ -24,7 +24,6 @@ public:
 signals:
 
 public slots:
-    void deleteme();
 };
 
 #endif // MENUDIALOGBASE_H

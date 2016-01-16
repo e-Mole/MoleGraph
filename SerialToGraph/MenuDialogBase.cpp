@@ -5,13 +5,14 @@
 #include <QWidget>
 
 MenuDialogBase::MenuDialogBase(QWidget *parent, QString const &title) :
-    QDialog(parent, Qt::Tool | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint),
+    QDialog(parent, Qt::CustomizeWindowHint),
     m_gridLayout(new QGridLayout(this)),
     m_focusOutDisabled(false)
 {
     setWindowTitle(title);
     this->setFocusPolicy(Qt::ClickFocus);
     layout()->setSizeConstraint( QLayout::SetFixedSize );
+    activateWindow();
     setFocus();
 
 }
@@ -41,6 +42,7 @@ void MenuDialogBase::ReinitGrid()
 
 void MenuDialogBase::focusOutEvent(QFocusEvent *event)
 {
+    qDebug() << "focus out";
     if (m_focusOutDisabled)
     {
         m_focusOutDisabled = false;
@@ -56,19 +58,16 @@ void MenuDialogBase::focusOutEvent(QFocusEvent *event)
         reject();
 }
 
-void MenuDialogBase::deleteme()
-{
-    qDebug() << "deleteme";
-}
-
 void MenuDialogBase::show()
 {
     ReinitGrid();
     QDialog::show();
 }
 
-void MenuDialogBase::activateWindow()
+void MenuDialogBase::Activate()
 {
-    m_focusOutDisabled = true;
-    QDialog::activateWindow();
+    hide();
+    show();
+    //m_focusOutDisabled = true;
+    //QDialog::activateWindow();
 }

@@ -108,8 +108,8 @@ void ChannelMenu::edit()
 
     m_buttonLine->UpdateRunButtonsState();
 
-    //FIXME: workaround. I dont understand why in this case focus doesnt return to this window
-    activateWindow();
+    //FIXME: workaround. I dont understand why in this case focus doesnt return to this window.
+    Activate();
 }
 
 void ChannelMenu::channelActivated()

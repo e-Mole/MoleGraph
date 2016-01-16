@@ -107,7 +107,7 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 
 void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 {
-    dialog.move(_GetGlobalMenuPosition(button));
+    //dialog.move(_GetGlobalMenuPosition(button));
     dialog.exec();
 }
 

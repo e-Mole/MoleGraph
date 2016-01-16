@@ -98,6 +98,7 @@ void ChannelMenu::UpdateLabels()
 }
 void ChannelMenu::edit()
 {
+    hide();
     Channel *channel = m_editChannels[(QPushButton*)sender()];
     channel->EditChannel();
 
@@ -106,6 +107,7 @@ void ChannelMenu::edit()
     label->SetColor(channel->GetColor());
 
     m_buttonLine->UpdateRunButtonsState();
+    show();
 }
 
 void ChannelMenu::channelActivated()

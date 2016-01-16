@@ -29,11 +29,10 @@ class ChannelMenu : public MenuDialogBase
     QMap<Channel*, ClickableLabel*> m_channelLabels;
     QMap<QPushButton*, Channel*> m_editChannels;
     void _SetGraph(bool checked);
-
+    void FillGrid();
 public:
     explicit ChannelMenu(Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(Channel *channel, bool checked);
-    void FillGrid();
     void UpdateLabels();
 signals:
 
@@ -43,7 +42,6 @@ public slots:
     void noChannelsActivated();
     void allChannelsActivated();
     void edit();
-
 };
 
 #endif // CHANNELMENU_H

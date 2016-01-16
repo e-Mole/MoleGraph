@@ -105,7 +105,7 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 {
     dialog.move(_GetGlobalMenuPosition(button));
-    dialog.exec();
+    dialog.show();
 }
 
 void ButtonLine::fileMenuButtonPressed()
@@ -126,7 +126,7 @@ void ButtonLine::_RefreshPanelMenu()
 
     m_channelMenu = new ChannelMenu(*m_measurement, this);
     _CreateShortcuts();
-    m_channelMenu->FillGrid();
+    m_channelMenu->ReinitGrid();
     UpdateRunButtonsState();
 }
 

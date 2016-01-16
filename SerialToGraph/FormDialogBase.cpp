@@ -4,7 +4,7 @@
 #include <QString>
 
 FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
-    QDialog(parent)
+    QDialog(parent, Qt::Tool)
 {
     setWindowTitle(title);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -21,7 +21,6 @@ FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
     QPushButton *cancel = new QPushButton(tr("Cancel"), this);
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
-
 }
 
 void FormDialogBase::storeAndAccept()

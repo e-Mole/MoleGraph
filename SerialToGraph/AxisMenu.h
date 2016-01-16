@@ -8,6 +8,7 @@ class Axis;
 class Measurement;
 class Plot;
 class QPushButton;
+class QWidget;
 struct Context;
 class AxisMenu : public MenuDialogBase
 {
@@ -21,7 +22,7 @@ class AxisMenu : public MenuDialogBase
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
 public:
-    AxisMenu(Context const &context, Measurement &measurement);
+    AxisMenu(QWidget *parent, Context const &context, Measurement &measurement);
 
 signals:
 

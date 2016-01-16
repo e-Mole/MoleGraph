@@ -3,6 +3,7 @@
 
 #include <MenuDialogBase.h>
 #include <QMap>
+class ButtonLine;
 class Channel;
 class ClickableLabel;
 class Context;
@@ -10,8 +11,7 @@ class Measurement;
 class QCheckBox;
 class QLabel;
 class QPushButton;
-class ButtonLine;
-
+class QWidget;
 class ChannelMenu : public MenuDialogBase
 {
     Q_OBJECT
@@ -31,7 +31,7 @@ class ChannelMenu : public MenuDialogBase
     void _SetGraph(bool checked);
     void FillGrid();
 public:
-    explicit ChannelMenu(Measurement &measurement, ButtonLine *buttonLine);
+    explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(Channel *channel, bool checked);
     void UpdateLabels();
 signals:

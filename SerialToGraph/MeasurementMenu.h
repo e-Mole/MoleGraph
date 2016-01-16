@@ -7,6 +7,7 @@
 class Measurement;
 class QPushButton;
 class QRadioButton;
+class QWidget;
 struct Context;
 
 class MeasurementMenu : public MenuDialogBase
@@ -21,7 +22,7 @@ class MeasurementMenu : public MenuDialogBase
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
     QMap<QRadioButton*,Measurement*> m_radioButtonToItem;
 public:
-    MeasurementMenu(const Context &context);
+    MeasurementMenu(QWidget *parent, const Context &context);
 signals:
 
 private slots:

@@ -7,12 +7,14 @@
 #include <QWidget>
 
 class Axis;
+class AxisMenu;
 class Channel;
 class ChannelMenu;
 class ConnectivityLabel;
 class Measurement;
+class MeasurementMenu;
+class MenuDialogBase;
 class QAction;
-class QDialog;
 class QLabel;
 class QLineEdit;
 class QMenu;
@@ -27,8 +29,7 @@ class ButtonLine : public QWidget
 
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
-    void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
-    void _RefreshPanelMenu();
+    void _OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog);
     void _ExportCSV(QVector<Measurement *> const & measurements);
     void _ClearShortcuts();
     void _CreateShortcuts();
@@ -43,7 +44,9 @@ class ButtonLine : public QWidget
     QPushButton * m_axisMenuButton;
     QPushButton * m_measurementButton;
     QMenu *m_fileMenu;
+    MeasurementMenu *m_measurementMenu;
     ChannelMenu *m_channelMenu;
+    AxisMenu *m_axisMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 

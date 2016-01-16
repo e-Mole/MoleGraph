@@ -128,17 +128,17 @@
         <translation>Přidat novou</translation>
     </message>
     <message>
-        <location filename="../AxisMenu.cpp" line="103"/>
+        <location filename="../AxisMenu.cpp" line="101"/>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
         <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
     </message>
     <message>
-        <location filename="../AxisMenu.cpp" line="105"/>
+        <location filename="../AxisMenu.cpp" line="103"/>
         <source>Remove anyway</source>
         <translation>I tak odstranit</translation>
     </message>
     <message>
-        <location filename="../AxisMenu.cpp" line="105"/>
+        <location filename="../AxisMenu.cpp" line="103"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
@@ -228,17 +228,17 @@
         <translation type="vanished">Hz</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="70"/>
+        <location filename="../ButtonLine.cpp" line="72"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="78"/>
+        <location filename="../ButtonLine.cpp" line="80"/>
         <source>Sample</source>
         <translation>Vzorek</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="83"/>
+        <location filename="../ButtonLine.cpp" line="85"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
@@ -259,17 +259,17 @@
         <translation type="vanished">Uložit jako</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="159"/>
+        <location filename="../ButtonLine.cpp" line="142"/>
         <source>Export to PNG</source>
         <translation>Exportovat do PNG</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="160"/>
+        <location filename="../ButtonLine.cpp" line="143"/>
         <source>Export Current Measurement to CSV</source>
         <translation>Exportovat aktuální měření do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="161"/>
+        <location filename="../ButtonLine.cpp" line="144"/>
         <source>Export All Measurements to CSV</source>
         <translation>Exportovat všechna měření do CSV</translation>
     </message>
@@ -278,22 +278,22 @@
         <translation type="vanished">Exportovat do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="62"/>
+        <location filename="../ButtonLine.cpp" line="64"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="54"/>
+        <location filename="../ButtonLine.cpp" line="56"/>
         <source>File</source>
         <translation>Soubor</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="58"/>
+        <location filename="../ButtonLine.cpp" line="60"/>
         <source>Measurements</source>
         <translation>Měření</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="66"/>
+        <location filename="../ButtonLine.cpp" line="68"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
@@ -337,27 +337,27 @@
 <context>
     <name>ChannelMenu</name>
     <message>
-        <location filename="../ChannelMenu.cpp" line="15"/>
+        <location filename="../ChannelMenu.cpp" line="16"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="35"/>
+        <location filename="../ChannelMenu.cpp" line="36"/>
         <source>Graph</source>
         <translation>Graf</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="47"/>
+        <location filename="../ChannelMenu.cpp" line="48"/>
         <source>All Channels</source>
         <translation>Všechny kanály</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="55"/>
+        <location filename="../ChannelMenu.cpp" line="56"/>
         <source>No Channels</source>
         <translation>Žádné kanály</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="85"/>
+        <location filename="../ChannelMenu.cpp" line="86"/>
         <source>Edit</source>
         <translation>Editovat</translation>
     </message>
@@ -768,8 +768,8 @@
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="37"/>
-        <location filename="../MeasurementMenu.cpp" line="112"/>
-        <location filename="../MeasurementMenu.cpp" line="128"/>
+        <location filename="../MeasurementMenu.cpp" line="109"/>
+        <location filename="../MeasurementMenu.cpp" line="125"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
@@ -784,18 +784,18 @@
         <translation>Klonovat vybrané</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="111"/>
+        <location filename="../MeasurementMenu.cpp" line="108"/>
         <source>The measurement &apos;%1&apos; is in progress. Really remove it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Opravdu ho chcete odstranit?</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="113"/>
-        <location filename="../MeasurementMenu.cpp" line="129"/>
+        <location filename="../MeasurementMenu.cpp" line="110"/>
+        <location filename="../MeasurementMenu.cpp" line="126"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="127"/>
+        <location filename="../MeasurementMenu.cpp" line="124"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
         <translation>Měření &apos;%1&apos; již obsahuje data. Opravdu ho chcete odstranit?</translation>
     </message>

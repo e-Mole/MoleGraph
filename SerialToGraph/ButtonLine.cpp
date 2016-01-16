@@ -8,9 +8,9 @@
 #include <Export.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
+#include <MenuDialogBase.h>
 #include <QHBoxLayout>
 #include <QCoreApplication>
-#include <QDialog>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeySequence>
@@ -34,7 +34,9 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_axisMenuButton(NULL),
     m_measurementButton(NULL),
     m_fileMenu(NULL),
+    m_measurementMenu(new MeasurementMenu(this, context)),
     m_channelMenu(NULL),
+    m_axisMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
@@ -102,7 +104,7 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
         );
 }
 
-void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
+void ButtonLine::_OpenMenuDialog(QPushButton *button, MenuDialogBase &dialog)
 {
     dialog.move(_GetGlobalMenuPosition(button));
     dialog.show();
@@ -113,39 +115,19 @@ void ButtonLine::fileMenuButtonPressed()
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 
-void ButtonLine::_RefreshPanelMenu()
-{
-    delete m_channelMenu;
-    m_channelMenu = NULL;
-
-    m_panelMenuButton->setEnabled(m_measurement != NULL);
-    m_axisMenuButton->setEnabled(m_measurement != NULL);
-
-    if (m_measurement == NULL)
-        return;
-
-    m_channelMenu = new ChannelMenu(*m_measurement, this);
-    _CreateShortcuts();
-    m_channelMenu->ReinitGrid();
-    UpdateRunButtonsState();
-}
-
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_channelMenu->UpdateLabels();
     _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
 }
 
 void ButtonLine::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(m_context, *m_measurement);
-    _OpenMenuDialog(m_axisMenuButton, axisMenu);
+    _OpenMenuDialog(m_axisMenuButton, *m_axisMenu);
 }
 
 void ButtonLine::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(m_context);
-    _OpenMenuDialog(m_measurementButton, measurementMenu);
+    _OpenMenuDialog(m_measurementButton, *m_measurementMenu);
 }
 
 void ButtonLine::_InitializeMenu()
@@ -344,7 +326,24 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
     _ClearShortcuts();
-    _RefreshPanelMenu();
+
+    delete m_channelMenu;
+    m_channelMenu = NULL;
+
+    delete m_axisMenu;
+    m_axisMenu = NULL;
+
+    m_panelMenuButton->setEnabled(m_measurement != NULL);
+    m_axisMenuButton->setEnabled(m_measurement != NULL);
+
+    if (m_measurement == NULL)
+        return;
+
+    m_channelMenu = new ChannelMenu(this, *m_measurement, this);
+    m_axisMenu = new AxisMenu(this, m_context, *m_measurement);
+    _CreateShortcuts();
+    UpdateRunButtonsState();
+
     UpdateRunButtonsState();
 }
 

@@ -13,10 +13,10 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QString>
+#include <QWidget>
 
-
-MeasurementMenu::MeasurementMenu(Context const &context) :
-    MenuDialogBase(tr("Measurements")),
+MeasurementMenu::MeasurementMenu(QWidget *parent, Context const &context) :
+    MenuDialogBase(parent, tr("Measurements")),
     m_context(context)
 {
     ReinitGrid();
@@ -84,8 +84,6 @@ void MeasurementMenu::addButtonPressed()
     }
     else
         m_context.m_mainWindow.RemoveMeasurement(m, false);
-
-    CloseIfPopup();
 }
 
 void MeasurementMenu::cloneButtonPressed()
@@ -94,7 +92,6 @@ void MeasurementMenu::cloneButtonPressed()
         m_context.m_mainWindow.CloneCurrentMeasurement()
     );
     ReinitGrid();
-    CloseIfPopup();
 }
 
 void MeasurementMenu::removeButtonPressed()
@@ -138,7 +135,6 @@ void MeasurementMenu::removeButtonPressed()
 
     ReinitGrid();
     adjustSize();
-    CloseIfPopup();
 }
 
 void MeasurementMenu::editButtonPressed()
@@ -146,11 +142,7 @@ void MeasurementMenu::editButtonPressed()
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
     MeasurementSettings dialog(measurement, m_context);
     if (QDialog::Accepted == dialog.exec())
-    {
         ReinitGrid();
-    }
-
-    CloseIfPopup();
 }
 
 void MeasurementMenu::radioButtonClicked()

@@ -10,9 +10,10 @@
 #include <QPalette>
 #include <QPushButton>
 #include <QShortcut>
+#include <QWidget>
 
-ChannelMenu::ChannelMenu(Measurement &measurement, ButtonLine *buttonLine) :
-    MenuDialogBase(tr("Panels")),
+ChannelMenu::ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine) :
+    MenuDialogBase(parent, tr("Panels")),
     m_measurement(measurement),
     m_buttonLine(buttonLine)
 {
@@ -98,7 +99,6 @@ void ChannelMenu::UpdateLabels()
 }
 void ChannelMenu::edit()
 {
-    hide();
     Channel *channel = m_editChannels[(QPushButton*)sender()];
     channel->EditChannel();
 
@@ -107,7 +107,9 @@ void ChannelMenu::edit()
     label->SetColor(channel->GetColor());
 
     m_buttonLine->UpdateRunButtonsState();
-    show();
+
+    //FIXME: workaround. I dont understand why in this case focus doesnt return to this window
+    activateWindow();
 }
 
 void ChannelMenu::channelActivated()

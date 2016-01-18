@@ -6,9 +6,10 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QWidget>
 
-MeasurementSettings::MeasurementSettings(Measurement *measurement, Context const& context):
-    FormDialogBase(NULL, tr("Measurement Setting")),
+MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
+    FormDialogBase(parent, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
     m_name(new QLineEdit(measurement->m_name, this)),

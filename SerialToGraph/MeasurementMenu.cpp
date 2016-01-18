@@ -12,11 +12,12 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QWidget>
 #include <QString>
 
 
-MeasurementMenu::MeasurementMenu(Context const &context) :
-    MenuDialogBase(tr("Measurements")),
+MeasurementMenu::MeasurementMenu(QWidget *parent, Context const &context) :
+    MenuDialogBase(parent, tr("Measurements")),
     m_context(context)
 {
     ReinitGrid();
@@ -76,7 +77,7 @@ void MeasurementMenu::addButtonPressed()
 {
     Measurement *m = m_context.m_mainWindow.CreateNewMeasurement();
 
-    MeasurementSettings dialog(m, m_context);
+    MeasurementSettings dialog(this, m, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.ConfirmMeasurement(m);
@@ -144,7 +145,7 @@ void MeasurementMenu::removeButtonPressed()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(measurement, m_context);
+    MeasurementSettings dialog(this, measurement, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         ReinitGrid();

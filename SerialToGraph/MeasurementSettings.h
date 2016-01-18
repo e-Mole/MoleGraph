@@ -5,6 +5,7 @@
 class Measurement;
 class QLineEdit;
 class QComboBox;
+class QWidget;
 struct Context;
 class MeasurementSettings  : public FormDialogBase
 {
@@ -19,7 +20,7 @@ class MeasurementSettings  : public FormDialogBase
 
     bool BeforeAccept();
 public:
-    MeasurementSettings(Measurement *measurement, Context const& context);
+    MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context);
 private slots:
     void disablePeriodAndUnits(int disabled);
 };

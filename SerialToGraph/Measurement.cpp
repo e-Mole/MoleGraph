@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <MainWindow.h>
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QString>
@@ -317,7 +318,7 @@ void Measurement::_DrawRestData()
 
     if (m_anySampleMissed)
         QMessageBox::warning(
-            NULL,
+            m_context.m_mainWindow.centralWidget(),
             m_context.m_applicationName,
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );

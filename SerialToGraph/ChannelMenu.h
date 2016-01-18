@@ -31,7 +31,7 @@ class ChannelMenu : public MenuDialogBase
     void _SetGraph(bool checked);
 
 public:
-    explicit ChannelMenu(Measurement &measurement, ButtonLine *buttonLine);
+    explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(Channel *channel, bool checked);
     void FillGrid();
     void UpdateLabels();

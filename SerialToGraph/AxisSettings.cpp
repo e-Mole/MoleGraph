@@ -13,8 +13,8 @@
 #include <QVector>
 #include <QWidget>
 
-AxisSettings::AxisSettings(Axis *axis, Context const & context) :
-    FormDialogColor(NULL, tr("Axis Setting")),
+AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context) :
+    FormDialogColor(parent, tr("Axis Setting")),
     m_axis(axis),
     m_name(new QLineEdit(axis->GetTitle(), this)),
     m_context(context),

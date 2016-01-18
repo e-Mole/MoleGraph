@@ -11,8 +11,8 @@
 #include <QPushButton>
 #include <QShortcut>
 
-ChannelMenu::ChannelMenu(Measurement &measurement, ButtonLine *buttonLine) :
-    MenuDialogBase(tr("Panels")),
+ChannelMenu::ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine) :
+    MenuDialogBase(parent, tr("Panels")),
     m_measurement(measurement),
     m_buttonLine(buttonLine)
 {

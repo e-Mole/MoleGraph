@@ -13,7 +13,7 @@ protected:
 
     QGridLayout *m_gridLayout;
 public:
-    MenuDialogBase(const QString &title);
+    MenuDialogBase(QWidget *parent, const QString &title);
     ~MenuDialogBase();
 
 signals:

@@ -6,6 +6,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
 #include <QHBoxLayout>
@@ -127,7 +128,7 @@ void ButtonLine::_RefreshPanelMenu()
     if (m_measurement == NULL)
         return;
 
-    m_channelMenu = new ChannelMenu(*m_measurement, this);
+    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
     _CreateShortcuts();
     m_channelMenu->FillGrid();
     UpdateRunButtonsState();
@@ -141,13 +142,13 @@ void ButtonLine::panelMenuButtonPressed()
 
 void ButtonLine::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(m_context, *m_measurement);
+    AxisMenu axisMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement);
     _OpenMenuDialog(m_axisMenuButton, axisMenu);
 }
 
 void ButtonLine::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(m_context);
+    MeasurementMenu measurementMenu(m_context.m_mainWindow.centralWidget(), m_context);
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 

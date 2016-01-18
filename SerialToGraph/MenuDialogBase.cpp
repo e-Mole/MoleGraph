@@ -1,8 +1,8 @@
 #include "MenuDialogBase.h"
 #include <QFormLayout>
 
-MenuDialogBase::MenuDialogBase(QString const &title) :
-    QDialog(NULL, Qt::Tool),
+MenuDialogBase::MenuDialogBase(QWidget *parent, QString const &title) :
+    QDialog(parent, Qt::Tool),
     m_gridLayout(new QGridLayout(this))
 {
     setWindowTitle(title);
@@ -30,5 +30,3 @@ void MenuDialogBase::ReinitGrid()
     FillGrid();
     //adjustSize();
 }
-
-

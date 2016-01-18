@@ -5,14 +5,17 @@
 #include <ChannelWithTime.h>
 #include <Context.h>
 #include <Measurement.h>
-#include <QRadioButton>
-#include <QVBoxLayout>
-#include <QString>
 #include <QLabel>
+#include <QRadioButton>
+#include <QString>
+#include <QVBoxLayout>
+#include <QWidget>
+
+
 AxisChooseDialog::AxisChooseDialog(
-    Context const &context, Channel *originalHChannel, Channel *newHChannel
+    QWidget *parent, Context const &context, Channel *originalHChannel, Channel *newHChannel
 ) :
-    QDialog(NULL),
+    QDialog(parent),
     m_context(context),
     m_newAxis(new QRadioButton(tr("New Axis..."), this)),
     m_originalHChannel(originalHChannel),
@@ -66,7 +69,7 @@ void AxisChooseDialog::newAxisSelected()
 {
     Axis*newAxis = m_originalHChannel->GetMeasurement()->CreateAxis(m_originalHChannel->GetColor());
 
-    AxisSettings dialog(newAxis, m_context);
+    AxisSettings dialog(this, newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         m_originalHChannel->AssignToAxis(newAxis);

@@ -24,7 +24,7 @@ class AxisSettings : public FormDialogColor
     QComboBox *m_display;
 
 public:
-    AxisSettings(Axis *axis, const Context &context);
+    AxisSettings(QWidget *parent, Axis *axis, const Context &context);
 };
 
 #endif // AXIS_SETTINGS_H

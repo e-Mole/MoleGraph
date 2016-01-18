@@ -211,7 +211,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
         //find last horizontal axis
         if (channel->m_axis->IsHorizontal())
         {
-            AxisChooseDialog dialog(m_context, channel, m_channel);
+            AxisChooseDialog dialog(this, m_context, channel, m_channel);
             return (QDialog::Rejected != dialog.exec());
         }
     }
@@ -280,7 +280,7 @@ void ChannelSettings::axisChanged(int index)
     {
         Axis*newAxis = m_channel->GetMeasurement()->CreateAxis(m_channel->GetColor());
 
-        AxisSettings dialog(newAxis, m_context);
+        AxisSettings dialog(this, newAxis, m_context);
         if (QDialog::Accepted == dialog.exec())
         {
             m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);

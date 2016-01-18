@@ -7,6 +7,7 @@ class Axis;
 class Channel;
 class QRadioButton;
 class QString;
+class QWidget;
 struct Context;
 class AxisChooseDialog : public QDialog
 {
@@ -20,7 +21,7 @@ class AxisChooseDialog : public QDialog
     bool m_isOriginalChannelRealTime;
 public:
     AxisChooseDialog(
-        Context const &context, Channel *originalHChannel, Channel *newHChannel);
+        QWidget *parent, Context const &context, Channel *originalHChannel, Channel *newHChannel);
 
 signals:
 

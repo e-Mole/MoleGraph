@@ -16,8 +16,8 @@
 #include <QString>
 #include <QWidget>
 
-AxisMenu::AxisMenu(const Context &context,  Measurement &measurement) :
-    MenuDialogBase(tr("Axes")),
+AxisMenu::AxisMenu(QWidget *parent, const Context &context,  Measurement &measurement) :
+    MenuDialogBase(parent, tr("Axes")),
     m_context(context),
     m_measurement(measurement)
 {
@@ -67,7 +67,7 @@ void AxisMenu::FillGrid()
 void AxisMenu::addButtonPressed()
 {
     Axis *newAxis = m_measurement.CreateAxis(Qt::black);
-    AxisSettings dialog(newAxis, m_context);
+    AxisSettings dialog(this, newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         ReinitGrid();
@@ -130,7 +130,7 @@ void AxisMenu::removeButtonPressed()
 void AxisMenu::editButtonPressed()
 {
     Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
-    AxisSettings dialog(axis, m_context);
+    AxisSettings dialog(this, axis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
         ReinitGrid();

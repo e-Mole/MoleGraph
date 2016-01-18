@@ -105,6 +105,12 @@ void MainWindow::SwichCurrentMeasurement(Measurement *m)
 {
     m_measurementTabs->setCurrentWidget(m);
 }
+
+void MainWindow::RemoveAllmeasurements()
+{
+    foreach (Measurement *m, m_measurements)
+        RemoveMeasurement(m, true);
+}
 void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
     if (confirmed)

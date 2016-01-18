@@ -12,6 +12,7 @@ class Channel;
 class ChannelWithTime;
 class Plot;
 class QColor;
+class QDataStream;
 class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
@@ -22,6 +23,7 @@ class Measurement : public QWidget
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString Name READ GetName() WRITE _SetName)
 public:
     enum SampleUnits{
         Hz, Sec
@@ -53,6 +55,7 @@ private:
     float _DequeueFloat();
     bool _ProcessValueSet();
 
+    void _SetName(QString &name) { m_name = name; }
     Context const &m_context;
     QString m_name;
     SampleUnits m_sampleUnits;
@@ -77,6 +80,18 @@ private:
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source);
     ~Measurement();
+    friend QDataStream &operator<<(QDataStream &out, const Measurement *m)
+    {
+        out << m->m_name;
+        return out;
+    }
+
+    friend QDataStream &operator>>(QDataStream &in, Measurement *m)
+    {
+
+        in >> m->m_name;
+        return in;
+    }
 
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
@@ -110,5 +125,6 @@ private slots:
     void draw();
     void portConnectivityChanged(bool connected);
 };
+
 
 #endif // MEASUREMENT_H

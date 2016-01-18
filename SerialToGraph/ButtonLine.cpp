@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QCoreApplication>
 #include <QDialog>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeySequence>
@@ -23,6 +24,12 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QWidget>
+
+#include <QDataStream>
+#include <QMetaObject>
+#include <QMetaProperty>
+#include <QVariant>
+
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
     m_startButton(NULL),
@@ -108,6 +115,7 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 
 void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 {
+    Q_UNUSED(button);
     //dialog.move(_GetGlobalMenuPosition(button));
     dialog.exec();
 }
@@ -156,11 +164,11 @@ void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
-    /*m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
+    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
     m_fileMenu->addAction(tr("Open"), this, SLOT(openFile()));
     m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
     m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
-    m_fileMenu->addSeparator();*/
+    m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
     m_fileMenu->addAction(tr("Export Current Measurement to CSV"), this, SLOT(exportCsv()));
     m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));
@@ -257,12 +265,38 @@ void ButtonLine::newFile()
 }
 void ButtonLine::openFile()
 {
+    QFile file("deleteme.dat");
+    file.open(QIODevice::ReadOnly);
 
+    QDataStream in(&file);   // we will serialize the data into the file
+    int count;
+    in >> count;
+    m_context.m_mainWindow.RemoveAllmeasurements();
+    for (int i = 0; i < count; i++)
+    {
+        Measurement *m = m_context.m_mainWindow.CreateNewMeasurement();
+        in >> m;
+        m_context.m_mainWindow.ConfirmMeasurement(m);
+    }
+
+    file.close();
 }
 void ButtonLine::saveFile()
 {
+    QFile file("deleteme.dat");
+    file.open(QIODevice::WriteOnly);
 
+    QDataStream out(&file);   // we will serialize the data into the file
+    out << m_context.m_measurements.size();
+    foreach (Measurement *m, m_context.m_measurements)
+    {
+        out << m;
+    }
+
+    file.flush();
+    file.close();
 }
+
 void ButtonLine::saveAsFile()
 {
 

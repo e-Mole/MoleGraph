@@ -33,6 +33,7 @@ public:
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void SwichCurrentMeasurement(Measurement *m);
+    void RemoveAllmeasurements();
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
     bool OpenSerialPort();

@@ -125,7 +125,7 @@ bool Measurement::_IsCompleteSetInQueue()
     unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE; //Header + tracked channels data
     if (m_type == OnDemand)
         size += TIMESTAMP_SIZE;
-    return m_queue.size() >= size;
+    return (unsigned)m_queue.size() >= size;
 }
 
 void Measurement::_AdjustDrawPeriod(unsigned drawDelay)

@@ -1,9 +1,11 @@
 #ifndef MEASUREMENT_H
 #define MEASUREMENT_H
 
+#include <QMap>
+#include <QMetaProperty>
+#include <QObject>
 #include <QQueue>
 #include <QString>
-#include <QMap>
 #include <QVector>
 #include <QWidget>
 
@@ -19,7 +21,8 @@ class QScrollBar;
 class QTimer;
 class QVBoxLayout;
 struct Context;
-class Measurement : public QWidget
+
+class Measurement : public QObject
 {
     Q_OBJECT
 
@@ -56,6 +59,7 @@ private:
     bool _ProcessValueSet();
 
     void _SetName(QString &name) { m_name = name; }
+    QWidget  m_widget;
     Context const &m_context;
     QString m_name;
     SampleUnits m_sampleUnits;
@@ -77,19 +81,32 @@ private:
     QScrollBar *m_scrollBar;
     bool m_startNewDraw;
     Type m_type;
+
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source);
     ~Measurement();
     friend QDataStream &operator<<(QDataStream &out, const Measurement *m)
     {
-        out << m->m_name;
+        //out << m->m_name;
+        //return out;
+        for(int i=0; i<m->metaObject()->propertyCount(); ++i) {
+            if(m->metaObject()->property(i).isStored(m)) {
+                out << m->metaObject()->property(i).read(m);
+
+            }
+        }
         return out;
     }
 
     friend QDataStream &operator>>(QDataStream &in, Measurement *m)
     {
-
-        in >> m->m_name;
+        QVariant var;
+        for(int i=0; i<m->metaObject()->propertyCount(); ++i) {
+            if(m->metaObject()->property(i).isStored(m)) {
+                in >> var;
+                m->metaObject()->property(i).write(m, var);
+            }
+        }
         return in;
     }
 
@@ -114,6 +131,7 @@ public:
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
+    QWidget *GetWidget() { return &m_widget; }
 
 signals:
     void stateChanged();

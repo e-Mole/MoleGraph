@@ -24,7 +24,8 @@
 #define VERTIACAL_MAX 3
 
 Measurement::Measurement(QWidget *parent, Context &context, Measurement *source):
-    QWidget(parent),
+    QObject(parent),
+    m_widget(parent),
     m_context(context),
     m_sampleUnits(source != NULL ? source->GetSampleUnits() : Hz),
     m_period(source != NULL ? source->GetPeriod() : 1),
@@ -33,9 +34,9 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
-    m_mainLayout(new QHBoxLayout(this)),
+    m_mainLayout(new QHBoxLayout(&m_widget)),
     m_plot(new Plot(this)),
-    m_scrollBar(new QScrollBar(Qt::Horizontal, this)),
+    m_scrollBar(new QScrollBar(Qt::Horizontal, &m_widget)),
     m_startNewDraw(false),
     m_type(source != NULL ? source->m_type : Periodical)
 {
@@ -78,7 +79,7 @@ void Measurement::portConnectivityChanged(bool connected)
     {
         Stop();
         QMessageBox::warning(
-            this,
+            &m_widget,
             m_context.m_applicationName,
             QString(
                 tr("Measurement '%1' has been terminated because of a connectivity issue.")
@@ -226,7 +227,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
 
         if (0 ==
             QMessageBox::question(
-                this,
+                &m_widget,
                 m_context.m_applicationName,
                 QString(tr("The measurement '%1' is alread in progress. Terminate it?")).arg(m->GetName()),
                 tr("Terminate"),

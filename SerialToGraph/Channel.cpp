@@ -62,7 +62,7 @@ Channel::Channel(
     bool visible,
     QString const & units
 ) :
-    QGroupBox(name, measurement),
+    QGroupBox(name, measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
     m_name(name),

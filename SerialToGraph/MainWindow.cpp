@@ -98,12 +98,12 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    m_measurementTabs->setCurrentIndex(m_measurementTabs->addTab(m, m->GetName()));
+    m_measurementTabs->setCurrentIndex(m_measurementTabs->addTab(m->GetWidget(), m->GetName()));
 }
 
 void MainWindow::SwichCurrentMeasurement(Measurement *m)
 {
-    m_measurementTabs->setCurrentWidget(m);
+    m_measurementTabs->setCurrentWidget(m->GetWidget());
 }
 
 void MainWindow::RemoveAllmeasurements()
@@ -129,7 +129,7 @@ void MainWindow::measurementNameChanged()
     Measurement *measurement = (Measurement*)sender();
     for(int i = 0; i < m_measurementTabs->count(); i++)
     {
-        if (m_measurementTabs->widget(i) == measurement)
+        if (m_measurementTabs->widget(i) == measurement->GetWidget())
         {
             m_measurementTabs->setTabText(i, measurement->GetName());
             break;
@@ -148,16 +148,26 @@ void MainWindow::currentMeasurementChanged(int index)
     if (NULL != m_currentMeasurement)
         disconnect(m_currentMeasurement, SIGNAL(stateChanged()), 0, 0);
 
-    Measurement *m = (Measurement*)m_measurementTabs->widget(index);
-    m_buttonLine->ChangeMeasurement(m);
+    foreach (Measurement *m, m_measurements)
+    {
+        if (m->GetWidget() == m_measurementTabs->widget(index))
+        {
 
-    connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
-    connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
+            m_buttonLine->ChangeMeasurement(m);
 
-    m_currentMeasurement = m;
+            connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
+            connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
+
+            m_currentMeasurement = m;
+        }
+    }
 }
 
 Measurement *MainWindow::GetCurrnetMeasurement()
 {
-    return (Measurement*)m_measurementTabs->currentWidget();
+    foreach (Measurement *m, m_measurements)
+        if (m->GetWidget() == m_measurementTabs->currentWidget())
+            return m;
+
+    return NULL;
 }

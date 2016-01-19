@@ -20,7 +20,7 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
 }
 
 Plot::Plot(Measurement *measurement) :
-    QCustomPlot(measurement),
+    QCustomPlot(measurement->GetWidget()),
     m_measurement(*measurement),
     m_moveMode(false),
     m_disabled(false),

@@ -52,20 +52,21 @@ private:
     RealTimeFormat m_realTimeFormat;
 
 public:
-    ChannelWithTime(Measurement *measurement,
+    ChannelWithTime(
+        Measurement *measurement,
         Context const & context,
-        int hwIndex,
-        QString const &name,
-        QColor const &color,
         Axis * axis,
-        unsigned shapeIndex,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        bool visible,
-        const QString &units,
-        Style format,
-        TimeUnits timeUnits,
-        RealTimeFormat realTimeFormat);
+        int hwIndex,
+        QString const &name = "",
+        QColor const &color = Qt::black,
+        unsigned shapeIndex = 0,
+        bool visible = true,
+        const QString &units = "",
+        Style format = Samples,
+        TimeUnits timeUnits = Sec,
+        RealTimeFormat realTimeFormat = hh_mm_ss);
 
 
     Style GetStyle() {return m_style; }

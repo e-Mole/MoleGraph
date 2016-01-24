@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     ChannelMenu.cpp \
     ClickableLabel.cpp \
     ChannelWithTime.cpp \
-    AxisChooseDialog.cpp
+    AxisChooseDialog.cpp \
+    ClickableGroupBox.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -64,7 +65,8 @@ HEADERS  += MainWindow.h \
     ClickableLabel.h \
     ChannelWithTime.h \
     AxisChooseDialog.h \
-    Serializer.h
+    Serializer.h \
+    ClickableGroupBox.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 

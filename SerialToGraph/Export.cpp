@@ -28,7 +28,7 @@ void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measur
         bool firstForMsmt = true;
         foreach (Channel *channel, m->GetChannels())
         {
-            if (channel->isHidden())
+            if (!channel->IsVisible())
                 continue;
             if (firstForMsmt)
             {
@@ -65,7 +65,7 @@ void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measur
         {
             foreach (Channel *channel, m->GetChannels())
             {
-                if (channel->isHidden())
+                if (!channel->IsVisible())
                     continue;
 
                 if (channel->GetValueCount() > sampleNr)

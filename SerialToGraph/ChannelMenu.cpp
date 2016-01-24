@@ -63,7 +63,7 @@ void ChannelMenu::FillGrid()
 void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
 {
     QCheckBox *cb = new QCheckBox(this);
-    cb->setChecked(!channel->isHidden());
+    cb->setChecked(channel->IsVisible());
 
     m_channelCheckBoxes[channel] = cb;
     m_checkBoxChannels[cb] = channel;
@@ -99,7 +99,7 @@ void ChannelMenu::UpdateLabels()
 void ChannelMenu::edit()
 {
     Channel *channel = m_editChannels[(QPushButton*)sender()];
-    channel->EditChannel();
+    channel->editChannel();
 
     ClickableLabel *label = m_channelLabels[channel];
     label->setText(channel->GetName());
@@ -114,12 +114,12 @@ void ChannelMenu::channelActivated()
     if (m_checkBoxChannels.find((QCheckBox*)sender()) == m_checkBoxChannels.end())
     {
         channel = m_labelChannels[(ClickableLabel*)sender()];
-        m_channelCheckBoxes[channel]->setChecked(channel->isHidden());
+        m_channelCheckBoxes[channel]->setChecked(!channel->IsVisible());
     }
     else
         channel = m_checkBoxChannels[(QCheckBox*)sender()];
 
-    channel->setVisible(channel->isHidden());
+    channel->setVisible(!channel->IsVisible());
 
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.ReplaceDisplays();

@@ -1,6 +1,7 @@
 #include "Channel.h"
 #include <ChannelSettings.h>
 #include <Axis.h>
+#include <ClickableGroupBox.h>
 #include <Context.h>
 #include <cmath>
 #include <Measurement.h>
@@ -49,22 +50,22 @@ void Channel::ValueLabel::SetColor(const QColor &color)
     setPalette(palette);
 }
 
-Channel::Channel(
-    Measurement *measurement,
+Channel::Channel(Measurement *measurement,
     Context const & context,
+    Axis * axis,
+    QCPGraph *graph,
+    QCPGraph *graphPoint,
     int hwIndex,
     QString const &name,
     QColor const &color,
-    Axis * axis,
     unsigned shapeIndex,
-    QCPGraph *graph,
-    QCPGraph *graphPoint,
     bool visible,
-    QString const & units
+    const QString &units
 ) :
-    QGroupBox(name, measurement->GetWidget()),
+    QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
+    m_widget(new ClickableGroupBox(name, measurement->GetWidget())),
     m_name(name),
     m_hwIndex(hwIndex),
     m_color(color),
@@ -74,12 +75,12 @@ Channel::Channel(
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint),
-    m_valueLabel(new ValueLabel("", color, IsHwChannel(), this)),
+    m_valueLabel(new ValueLabel("", color, IsHwChannel(), m_widget)),
     m_units(units)
 {
     AssignToAxis(axis);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    QHBoxLayout *layout = new QHBoxLayout(m_widget);
     layout->setMargin(4);
     layout->addWidget(m_valueLabel);
 
@@ -92,6 +93,8 @@ Channel::Channel(
 
     changeChannelVisibility(visible, false);
 
+
+    connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 }
 
 Channel::~Channel()
@@ -134,7 +137,7 @@ bool Channel::IsOnHorizontalAxis()
 void Channel::_SetMinimumSize()
 {
     //setMinimumWidth(GetMinimumSize().width());
-     setMinimumSize(GetMinimumSize());
+     m_widget->setMinimumSize(GetMinimumSize());
 }
 
 void Channel::_ShowLastValueWithUnits()
@@ -156,7 +159,7 @@ void Channel::_DisplayNAValue()
 
 void Channel::_UpdateTitle()
 {
-    setTitle(
+    m_widget->setTitle(
         QString("(%1) ").arg(m_hwIndex + 1) +
         /*(IsOnHorizontalAxis() ? "- " : "| ") +*/
         m_name
@@ -164,16 +167,12 @@ void Channel::_UpdateTitle()
     m_axis->UpdateGraphAxisName();
 }
 
-void Channel::EditChannel()
+void Channel::editChannel()
 {
     ChannelSettings *settings = new ChannelSettings(this, m_context);
     settings->exec();
 }
-void Channel::mousePressEvent(QMouseEvent * event)
-{
-    Q_UNUSED(event);
-    EditChannel();
-}
+
 
 void Channel::_FillLastValueText(int index)
 {
@@ -238,7 +237,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
-    _ShowOrHideGraphAndPoin(!isHidden());
+    _ShowOrHideGraphAndPoin(IsVisible());
     m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
@@ -253,7 +252,7 @@ void Channel::AssignToAxis(Axis *axis)
 
 void Channel::setVisible(bool visible)
 {
-    QGroupBox::setVisible(visible);
+    m_widget->setVisible(visible);
     _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
@@ -270,4 +269,35 @@ void Channel::SetColor(QColor &color)
 Measurement * Channel::GetMeasurement()
 {
     return m_measurement;
+}
+
+bool Channel::IsVisible()
+{
+    //I dont want to use is visible because it returns false when widget is not diplayed yet
+    //use !isHidden() instead
+    return !m_widget->isHidden();
+}
+
+ClickableGroupBox *Channel::GetWidget()
+{
+    return m_widget;
+}
+
+void Channel::_SetName(QString const &name)
+{
+    m_name = name;
+    _UpdateTitle();
+}
+
+void Channel::_SetShapeIndex(unsigned index)
+{
+    m_shapeIndex = index;
+    GetMeasurement()->GetPlot()->SetShape(m_graphPoint, m_shapeIndex);
+}
+
+void Channel::_SetUnits(QString const &units)
+{
+    m_units = units;
+    _ShowLastValueWithUnits();
+    m_axis->UpdateGraphAxisName();
 }

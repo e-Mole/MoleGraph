@@ -4,22 +4,23 @@
 #include <Plot.h>
 #include <QDateTime>
 
-ChannelWithTime::ChannelWithTime(Measurement *measurement,
+ChannelWithTime::ChannelWithTime(
+    Measurement *measurement,
     Context const & context,
+    Axis * axis,
+    QCPGraph *graph,
+    QCPGraph *graphPoint,
     int hwIndex,
     QString const &name,
     QColor const &color,
-    Axis * axis,
     unsigned shapeIndex,
-    QCPGraph *graph,
-    QCPGraph *graphPoint,
     bool visible,
     QString const & units,
     Style format,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    Channel(measurement, context, hwIndex, name, color, axis, shapeIndex, graph, graphPoint, visible, units),
+    Channel(measurement, context, axis,graph, graphPoint, hwIndex, name, color,  shapeIndex,  visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),

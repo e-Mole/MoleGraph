@@ -4,6 +4,7 @@
 #include <AxisSettings.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
+#include <ClickableGroupBox.h>
 #include <Context.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -17,7 +18,7 @@
 #include <QString>
 
 ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
-    FormDialogColor(channel, tr("Channel settings")),
+    FormDialogColor(channel->GetWidget(), tr("Channel settings")),
     m_context(context),
     m_channel(channel),
     m_name(new QLineEdit(channel->GetName(), this)),
@@ -136,8 +137,7 @@ bool ChannelSettings::BeforeAccept()
     if (m_channel->m_name != m_name->text())
     {
         changed = true;
-        m_channel->m_name = m_name->text();
-        m_channel->_UpdateTitle();
+        m_channel->_SetName(m_name->text());
     }
 
     if (m_channel->m_color != m_color)
@@ -149,8 +149,7 @@ bool ChannelSettings::BeforeAccept()
     if (m_channel->m_shapeIndex != (unsigned)m_shapeComboBox->currentIndex())
     {
         changed = true;
-        m_channel->m_shapeIndex = m_shapeComboBox->currentIndex();
-        m_channel->GetMeasurement()->GetPlot()->SetShape(m_channel->m_graphPoint, m_channel->m_shapeIndex);
+        m_channel->_SetShapeIndex(m_shapeComboBox->currentIndex());
     }
 
     if (m_channel->IsHwChannel())
@@ -158,9 +157,7 @@ bool ChannelSettings::BeforeAccept()
         if (m_channel->m_units != m_units->text())
         {
             changed = true;
-            m_channel->m_units = m_units->text();
-            m_channel->_ShowLastValueWithUnits();
-            m_channel->m_axis->UpdateGraphAxisName();
+            m_channel->_SetUnits(m_units->text());
         }
     }
     else

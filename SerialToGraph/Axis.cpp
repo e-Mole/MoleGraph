@@ -87,17 +87,17 @@ void Axis::UpdateGraphAxisName()
 
     for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
     {
-        if ((!m_measurement->GetChannel(i)->isHidden() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
+        if ((m_measurement->GetChannel(i)->IsVisible() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
             m_measurement->GetChannel(i)->GetAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != m_measurement->GetChannelCount() &&
-                    !m_measurement->GetChannel(i+1)->isHidden() &&
+                    m_measurement->GetChannel(i+1)->IsVisible() &&
                     this == m_measurement->GetChannel(i+1)->GetAxis() &&
                     i != 0 &&
-                    !m_measurement->GetChannel(i-1)->isHidden() &&
+                    m_measurement->GetChannel(i-1)->IsVisible() &&
                     this == m_measurement->GetChannel(i-1)->GetAxis())
                 {
                     addMiddle = true;
@@ -131,7 +131,7 @@ void Axis::UpdateVisiblility()
 {
     foreach (Channel *channel, m_measurement->GetChannels())
     {
-        if (!channel->isHidden() && channel->GetAxis() == this)
+        if (channel->IsVisible() && channel->GetAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_measurement->GetPlot()->ReplotIfNotDisabled();
@@ -222,4 +222,14 @@ void Axis::UpdateGraphAxisStyle()
     }
 
     m_measurement->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
+}
+
+unsigned Axis::GetAssignedChannelCount()
+{
+    unsigned count = 0;
+    foreach (Channel *channel, m_measurement->GetChannels())
+        if (channel->GetAxis() == this)
+            count++;
+
+    return count;
 }

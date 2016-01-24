@@ -3,20 +3,31 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QGroupBox>
 #include <QColor>
 #include <QLabel>
+#include <QObject>
 
 class Axis;
 class Measurement;
+class ClickableGroupBox;
 class QString;
 class QCPAxis;
 class QCPGraph;
 struct Context;
-class Channel : public QGroupBox
+class Channel : public QObject
 {
     friend class ChannelSettings;
     Q_OBJECT
+
+    Q_PROPERTY(QString name READ GetName() WRITE _SetName())
+    Q_PROPERTY(QColor color READ GetColor() WRITE SetColor())
+    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex())
+    Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits())
+
+    void _SetName(QString const &name);
+    void _SetShapeIndex(unsigned index) ;
+    void _SetUnits(QString const &units);
+
 protected:
     class ValueLabel : public QLabel
     {
@@ -49,13 +60,9 @@ protected:
     void _ShowOrHideGraphAndPoin(bool shown);
     virtual void _FillLastValueText(int index);
 
-    //I dont want to use is visible because it returns false when widget is not diplayed yet
-    //use !isHidden() instead
-    bool isVisible()
-    { return QGroupBox::isVisible(); }
-
     Measurement * m_measurement;
     Context const & m_context;
+    ClickableGroupBox *m_widget;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values1;
@@ -70,17 +77,19 @@ protected:
     ValueLabel *m_valueLabel;
     QString m_units;
 public:
-    Channel(Measurement *measurement,
+    Channel(
+        Measurement *measurement,
         Context const & context,
-        int hwIndex,
-        QString const &name,
-        QColor const &color,
         Axis * axis,
-        unsigned shapeIndex,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        bool visible,
-        const QString &units);
+        int hwIndex,
+        QString const &name = "",
+        QColor const &color = Qt::black,
+        unsigned shapeIndex = 0,
+        bool visible = true,
+        const QString &units = ""
+        );
 
     ~Channel();
 
@@ -137,7 +146,12 @@ public:
     void SetColor(QColor &color);
 
     Measurement * GetMeasurement();
-    void EditChannel();
+    bool IsVisible();
+    ClickableGroupBox *GetWidget();
+
+    //to be comaptible with measurement, to be able serialized then by the same way
+    void SerializationOutOfProperties(QDataStream &out){Q_UNUSED(out);}
+    void DeserializationOutOfProperties(QDataStream &in){Q_UNUSED(in);}
 
 signals:
     void stateChanged();
@@ -145,6 +159,7 @@ signals:
 public slots:
     void changeChannelVisibility(bool visible, bool signal);
     void displayValueOnIndex(int index);
+    void editChannel();
 };
 
 #endif // CHANNEL_H

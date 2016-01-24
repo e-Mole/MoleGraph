@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
+#include <ClickableGroupBox.h>
 #include <Context.h>
 #include <Plot.h>
 #include <QByteArray>
@@ -271,7 +272,7 @@ void Measurement::_ProcessSelectedChannels()
     unsigned selectedChannels = 0;
     foreach (Channel *channel, m_channels)
     {
-        if (channel->IsHwChannel() && !channel->isHidden())
+        if (channel->IsHwChannel() && channel->IsVisible())
         {
             m_trackedHwChannels.insert(channel->GetHwIndex(), channel);
             selectedChannels |= 1 << channel->GetHwIndex();
@@ -368,11 +369,11 @@ void Measurement::ReplaceDisplays(bool grid)
         m_displayLayout->setColumnStretch(i,0);
 
     foreach (Channel * channel, m_channels)
-        m_displayLayout->removeWidget(channel);
+        m_displayLayout->removeWidget(channel->GetWidget());
 
     foreach (Channel * channel, m_channels)
     {
-        if (channel->isHidden())
+        if (!channel->IsVisible())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -381,7 +382,7 @@ void Measurement::ReplaceDisplays(bool grid)
         unsigned row = (grid) ? count % VERTIACAL_MAX : count;
         unsigned column = (grid) ? count / VERTIACAL_MAX : 0;
 
-        m_displayLayout->addWidget(channel, row, column);
+        m_displayLayout->addWidget(channel->GetWidget(), row, column);
         m_displayLayout->setColumnStretch(column, 1);
     }
 
@@ -454,14 +455,16 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                 new Channel(
                     this,
                     m_context,
+                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
+                    m_plot->AddGraph(channel->GetColor()),
+                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetHwIndex(),
                     channel->GetName(),
                     channel->GetColor(),
-                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
+
                     channel->GetShapeIndex(),
-                    m_plot->AddGraph(channel->GetColor()),
-                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
-                    !channel->isHidden(),
+
+                    channel->IsVisible(),
                     channel->GetUnits()
                 )
             );
@@ -472,14 +475,14 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                 new ChannelWithTime(
                     this,
                     m_context,
+                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
+                    m_plot->AddGraph(channel->GetColor()),
+                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetHwIndex(),
                     channel->GetName(),
                     channel->GetColor(),
-                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
                     channel->GetShapeIndex(),
-                    m_plot->AddGraph(channel->GetColor()),
-                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
-                    !channel->isHidden(),
+                    channel->IsVisible(),
                     channel->GetUnits(),
                     ((ChannelWithTime *)channel)->GetStyle(),
                     ((ChannelWithTime *)channel)->GetTimeUnits(),
@@ -532,13 +535,14 @@ void Measurement::_InitializeAxesAndChanels()
         new ChannelWithTime(
             this,
             m_context,
+            xAxis,
+            m_plot->AddGraph(Qt::black),
+            m_plot->AddPoint(Qt::black, 0),
             -1,
             tr("Samples"),
             Qt::black,
-            xAxis,
             0,
-            m_plot->AddGraph(Qt::black),
-            m_plot->AddPoint(Qt::black, 0),
+
             true,
             "",
             ChannelWithTime::Samples,
@@ -570,13 +574,13 @@ void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
         new Channel(
             this,
             m_context,
+            axis,
+            m_plot->AddGraph(color),
+            m_plot->AddPoint(color, order),
             order,
             QString(tr("Channel %1")).arg(order+1),
             color,
-            axis,
             order,
-            m_plot->AddGraph(color),
-            m_plot->AddPoint(color, order),
             true,
             ""
         )
@@ -664,7 +668,16 @@ void Measurement::SerializationOutOfProperties(QDataStream &out)
     unsigned count = GetAxes().size();
     out << count;
     foreach (Axis *axis, GetAxes())
+    {
         out << axis;
+        out << axis->GetAssignedChannelCount();
+        foreach (Channel *channel, m_channels)
+            if (channel->GetAxis() == axis)
+            {
+                out << channel->GetHwIndex();
+                out << channel;
+            }
+    }
 }
 
 void Measurement::DeserializationOutOfProperties(QDataStream &in)
@@ -673,8 +686,60 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in)
     in >> count;
     for (unsigned i = 0; i < count; ++i)
     {
-        Axis *axis = new Axis(this, m_context,Qt::black);
+        QCPAxis *graphAxis;
+        switch (i)
+        {
+        case 0:
+            graphAxis = m_plot->xAxis;
+        break;
+        case 1:
+            graphAxis = m_plot->yAxis;
+        break;
+        default:
+            graphAxis = m_plot->AddYAxis(false);
+        }
+
+        Axis *axis = new Axis(this, m_context,Qt::black, graphAxis);
         m_axes.push_back(axis);
         in >> axis;
+        int channelCount;
+        in >> channelCount;
+        for (int j = 0; j < channelCount; j++)
+        {
+            int hwIndex;
+            in >> hwIndex;
+
+            Channel *channel;
+            if (hwIndex == -1)
+            {
+                channel =
+                    new ChannelWithTime(
+                        this,
+                        m_context,
+                        axis,
+                        m_plot->AddGraph(Qt::black),
+                        m_plot->AddPoint(Qt::black, 0),
+                        hwIndex
+                    );
+                m_sampleChannel = (ChannelWithTime*)channel;
+            }
+            else
+            {
+                channel =
+                    new Channel(
+                        this,
+                        m_context,
+                        axis,
+                        m_plot->AddGraph(Qt::black),
+                        m_plot->AddPoint(Qt::black, 0),
+                        hwIndex
+                    );
+            }
+            in >> channel;
+            m_channels.push_back(channel);
+            if (channel->IsOnHorizontalAxis())
+                m_plot->SetHorizontalChannel(channel);
+        }
+        ReplaceDisplays(false);
     }
 }

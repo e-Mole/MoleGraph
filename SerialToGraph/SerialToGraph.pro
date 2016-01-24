@@ -63,7 +63,8 @@ HEADERS  += MainWindow.h \
     ChannelMenu.h \
     ClickableLabel.h \
     ChannelWithTime.h \
-    AxisChooseDialog.h
+    AxisChooseDialog.h \
+    Serializer.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 

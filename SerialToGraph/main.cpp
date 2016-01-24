@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include <QApplication>
+#include <AxisQml.h>
 
 int main(int argc, char *argv[])
 {

@@ -11,6 +11,7 @@
 #include <MeasurementMenu.h>
 #include <QHBoxLayout>
 #include <QCoreApplication>
+#include <QDataStream>
 #include <QDialog>
 #include <QFile>
 #include <QFileDialog>
@@ -25,10 +26,6 @@
 #include <QShortcut>
 #include <QWidget>
 
-#include <QDataStream>
-#include <QMetaObject>
-#include <QMetaProperty>
-#include <QVariant>
 
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
@@ -268,16 +265,8 @@ void ButtonLine::openFile()
     QFile file("deleteme.dat");
     file.open(QIODevice::ReadOnly);
 
-    QDataStream in(&file);   // we will serialize the data into the file
-    int count;
-    in >> count;
-    m_context.m_mainWindow.RemoveAllmeasurements();
-    for (int i = 0; i < count; i++)
-    {
-        Measurement *m = m_context.m_mainWindow.CreateNewMeasurement();
-        in >> m;
-        m_context.m_mainWindow.ConfirmMeasurement(m);
-    }
+    QDataStream stream(&file);
+    m_context.m_mainWindow.DeserializeMeasurements(stream);
 
     file.close();
 }
@@ -286,12 +275,8 @@ void ButtonLine::saveFile()
     QFile file("deleteme.dat");
     file.open(QIODevice::WriteOnly);
 
-    QDataStream out(&file);   // we will serialize the data into the file
-    out << m_context.m_measurements.size();
-    foreach (Measurement *m, m_context.m_measurements)
-    {
-        out << m;
-    }
+    QDataStream stream(&file);
+    m_context.m_mainWindow.SerializeMeasurements(stream);
 
     file.flush();
     file.close();

@@ -11,6 +11,7 @@
 class CentralWidget;
 class Measurement;
 class QApplication;
+class QDataStream;
 class QTabWidget;
 class MainWindow : public QMainWindow
 {
@@ -29,7 +30,7 @@ public:
     MainWindow(QApplication const &application, QWidget *parent = 0);
     ~MainWindow();
 
-    Measurement *CreateNewMeasurement();
+    Measurement *CreateNewMeasurement(bool initializeAxesandChannels);
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void SwichCurrentMeasurement(Measurement *m);
@@ -37,6 +38,8 @@ public:
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
     bool OpenSerialPort();
+    void DeserializeMeasurements(QDataStream &stream);
+    void SerializeMeasurements(QDataStream &stream);
 
     bool m_close;
 private slots:

@@ -12,6 +12,7 @@
 #include <QtCore/QDebug>
 #include <QTimer>
 #include <QApplication>
+#include <QDataStream>
 #include <QLocale>
 #include <QTabWidget>
 #include <QTranslator>
@@ -20,6 +21,7 @@
 #include <QToolBar>
 #include <QMenu>
 #include <QWidgetAction>
+#include <Serializer.h>
 
 MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     QMainWindow(parent),
@@ -53,7 +55,7 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
-    ConfirmMeasurement(CreateNewMeasurement());
+    ConfirmMeasurement(CreateNewMeasurement(true));
 }
 
 bool MainWindow::OpenSerialPort()
@@ -85,14 +87,14 @@ MainWindow::~MainWindow()
     }
 }
 
-Measurement *MainWindow::CreateNewMeasurement()
+Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesandChannels)
 {
-    return new Measurement(this, m_context, NULL);
+    return new Measurement(this, m_context, NULL, initializeAxesandChannels);
 }
 
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
-    return new Measurement(this, m_context, GetCurrnetMeasurement());
+    return new Measurement(this, m_context, GetCurrnetMeasurement(), true);
 }
 
 void MainWindow::ConfirmMeasurement(Measurement *m)
@@ -170,4 +172,26 @@ Measurement *MainWindow::GetCurrnetMeasurement()
             return m;
 
     return NULL;
+}
+
+void MainWindow::DeserializeMeasurements(QDataStream &stream)
+{
+    int count;
+    stream >> count;
+    RemoveAllmeasurements();
+    for (int i = 0; i < count; i++)
+    {
+        Measurement *m = CreateNewMeasurement(false);
+        stream >> m;
+        ConfirmMeasurement(m);
+    }
+}
+
+void MainWindow::SerializeMeasurements(QDataStream &stream)
+{
+    stream << m_measurements.size();
+    foreach (Measurement *m, m_measurements)
+    {
+        stream << m;
+    }
 }

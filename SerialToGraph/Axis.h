@@ -14,6 +14,19 @@ class Axis : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString title READ GetTitle WRITE _SetTitle)
+    Q_PROPERTY(bool isRemovable READ IsRemovable WRITE _SetIsRemovable)
+    Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
+    Q_PROPERTY(bool isOnRight READ IsOnRight WRITE _SetIsOnRight)
+    Q_PROPERTY(bool isHorizontal READ IsHorizontal WRITE _SetIsHorizontal)
+    Q_PROPERTY(bool isShownName READ IsShownName WRITE _SetIsShownName)
+
+    void _SetTitle(QString const& title) { m_title = title; }
+    void _SetIsRemovable(bool isRemovable) { m_isRemovable = isRemovable;}
+    void _SetIsOnRight(bool isOnRight) { m_isOnRight = isOnRight;}
+    void _SetIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal;}
+    void _SetIsShownName(bool isShownName) { m_isShownName = isShownName;}
+
     friend class AxisCopy;
     friend class AxesDialog;
     friend class AxisSettings;
@@ -61,6 +74,10 @@ public:
     bool IsEmptyExcept(Channel *except);
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
+
+    //to be comaptible with measurement, to be able serialized then by the same way
+    void SerializationOutOfProperties(QDataStream &out){Q_UNUSED(out);}
+    void DeserializationOutOfProperties(QDataStream &in){Q_UNUSED(in);}
 };
 
 #endif // AXIS_H

@@ -26,7 +26,15 @@ class Measurement : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString Name READ GetName() WRITE _SetName)
+    Q_PROPERTY(QString name READ GetName() WRITE _SetName)
+    Q_PROPERTY(SampleUnits sampleUnits READ GetSampleUnits() WRITE _SetSampleUnits)
+    Q_PROPERTY(unsigned  period READ GetPeriod() WRITE _SetPeriod)
+    Q_PROPERTY(unsigned  anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
+    Q_PROPERTY(Type type READ GetType() WRITE _SetType)
+    Q_PROPERTY(unsigned axisCount)
+    Q_ENUMS(SampleUnits)
+    Q_ENUMS(Type)
+
 public:
     enum SampleUnits{
         Hz, Sec
@@ -59,6 +67,15 @@ private:
     bool _ProcessValueSet();
 
     void _SetName(QString &name) { m_name = name; }
+    void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
+    void _SetPeriod(unsigned period) {m_period = period; }
+    bool _IsAnySampleMissed() {return m_anySampleMissed; }
+    void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
+    void _SetType(Type type) {m_type = type; }
+    unsigned _GetAxisCount() { return m_axes.size(); }
+    //void _SetAxisCount(unsigned count) { }
+
+
     QWidget  m_widget;
     Context const &m_context;
     QString m_name;
@@ -66,7 +83,7 @@ private:
     unsigned m_period;
     State m_state;
     bool m_anySampleMissed;
-    QMap<unsigned, Channel *> m_trackedHwChannels;
+    QMap<unsigned, Channel *> m_trackedHwChannels; //used just during measurement
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
@@ -83,32 +100,8 @@ private:
     Type m_type;
 
 public:
-    Measurement(QWidget *parent, Context &context, Measurement *source);
+    Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
-    friend QDataStream &operator<<(QDataStream &out, const Measurement *m)
-    {
-        //out << m->m_name;
-        //return out;
-        for(int i=0; i<m->metaObject()->propertyCount(); ++i) {
-            if(m->metaObject()->property(i).isStored(m)) {
-                out << m->metaObject()->property(i).read(m);
-
-            }
-        }
-        return out;
-    }
-
-    friend QDataStream &operator>>(QDataStream &in, Measurement *m)
-    {
-        QVariant var;
-        for(int i=0; i<m->metaObject()->propertyCount(); ++i) {
-            if(m->metaObject()->property(i).isStored(m)) {
-                in >> var;
-                m->metaObject()->property(i).write(m, var);
-            }
-        }
-        return in;
-    }
 
     QString &GetName() { return m_name; }
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
@@ -132,7 +125,8 @@ public:
     void SampleRequest();
     Type GetType() { return m_type; }
     QWidget *GetWidget() { return &m_widget; }
-
+    void SerializationOutOfProperties(QDataStream &out);
+    void DeserializationOutOfProperties(QDataStream &in);
 signals:
     void stateChanged();
     void nameChanged();
@@ -143,6 +137,5 @@ private slots:
     void draw();
     void portConnectivityChanged(bool connected);
 };
-
 
 #endif // MEASUREMENT_H

@@ -16,6 +16,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <Serializer.h>
 #include <SerialPort.h>
 
 #define INITIAL_DRAW_PERIOD 50
@@ -23,7 +24,7 @@
 #define TIMESTAMP_SIZE 4
 #define VERTIACAL_MAX 3
 
-Measurement::Measurement(QWidget *parent, Context &context, Measurement *source):
+Measurement::Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels):
     QObject(parent),
     m_widget(parent),
     m_context(context),
@@ -55,11 +56,13 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source)
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
-    if (source != NULL)
-        _InitializeAxesAndChanels(source);
-    else
-        _InitializeAxesAndChanels();
-
+    if (initializeAxiesAndChannels)
+    {
+        if (source != NULL)
+            _InitializeAxesAndChanels(source);
+        else
+            _InitializeAxesAndChanels();
+    }
     connect(
         &m_context.m_serialPort, SIGNAL(portConnectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
@@ -630,4 +633,48 @@ int Measurement::GetAxisIndex(Axis *axis)
 Axis *Measurement::GetAxis(int index)
 {
     return m_axes[index];
+}
+
+/*
+void Measurement::_SetAxes(QQmlListProperty<AxisQml> &axes)
+{
+    foreach (AxisQml const &axisQml, axes)
+    {
+        m_axes.push_back(
+            new Axis(
+                this,
+                m_context,
+                axisQml,
+                axisQml.IsHorizontal() ? m_plot->xAxis : m_plot->AddYAxis(axisQml.IsOnRight())
+            )
+        );
+    }
+}
+QQmlListProperty<AxisQml> Measurement::_GetAxes()
+{
+    QQmlListProperty<AxisQml> qmlAxes;
+    foreach (Axis *axis, m_axes)
+        qmlAxes.push_back(AxisQml(*axis));
+
+    return qmlAxes;
+}*/
+
+void Measurement::SerializationOutOfProperties(QDataStream &out)
+{
+    unsigned count = GetAxes().size();
+    out << count;
+    foreach (Axis *axis, GetAxes())
+        out << axis;
+}
+
+void Measurement::DeserializationOutOfProperties(QDataStream &in)
+{
+    unsigned count;
+    in >> count;
+    for (unsigned i = 0; i < count; ++i)
+    {
+        Axis *axis = new Axis(this, m_context,Qt::black);
+        m_axes.push_back(axis);
+        in >> axis;
+    }
 }

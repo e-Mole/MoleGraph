@@ -8,22 +8,21 @@
 #include <PortListDialog.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
-#include <QVBoxLayout>
-#include <QtCore/QDebug>
-#include <QTimer>
 #include <QApplication>
 #include <QDataStream>
+#include <QFileInfo>
 #include <QLocale>
-#include <QTabWidget>
-#include <QTranslator>
-#include <QWidget>
-
-#include <QToolBar>
 #include <QMenu>
-#include <QWidgetAction>
+#include <QTabWidget>
+#include <QtCore/QDebug>
+#include <QToolBar>
+#include <QTranslator>
+#include <QTimer>
+#include <QVBoxLayout>
+#include <QWidget>
 #include <Serializer.h>
 
-MainWindow::MainWindow(const QApplication &application, QWidget *parent):
+MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
@@ -56,6 +55,21 @@ MainWindow::MainWindow(const QApplication &application, QWidget *parent):
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
+
+    if (fileNameToOpen.length() != 0)
+    {
+        DeserializeMeasurements(fileNameToOpen);
+    }
+}
+void MainWindow::_SetCurrentFileName(QString const &fileName)
+{
+    m_currentFileName = QFileInfo(fileName).fileName();;
+    setWindowTitle(m_currentFileName + " - " + m_context.m_applicationName);
+}
+
+QString &MainWindow::GetCurrentFileName()
+{
+    return m_currentFileName;
 }
 
 bool MainWindow::OpenSerialPort()
@@ -174,8 +188,14 @@ Measurement *MainWindow::GetCurrnetMeasurement()
     return NULL;
 }
 
-void MainWindow::DeserializeMeasurements(QDataStream &stream)
+void MainWindow::DeserializeMeasurements(QString const &fileName)
 {
+    _SetCurrentFileName(fileName);
+
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    QDataStream stream(&file);
+
     int count;
     stream >> count;
     RemoveAllmeasurements();
@@ -185,13 +205,24 @@ void MainWindow::DeserializeMeasurements(QDataStream &stream)
         stream >> m;
         ConfirmMeasurement(m);
     }
+
+    file.close();
 }
 
-void MainWindow::SerializeMeasurements(QDataStream &stream)
+void MainWindow::SerializeMeasurements(QString const &fileName)
 {
+    _SetCurrentFileName(fileName);
+
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+
+    QDataStream stream(&file);
     stream << m_measurements.size();
     foreach (Measurement *m, m_measurements)
     {
         stream << m;
     }
+
+    file.flush();
+    file.close();
 }

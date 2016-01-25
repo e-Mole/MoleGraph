@@ -1,11 +1,14 @@
 #include "MainWindow.h"
 #include <QApplication>
-#include <AxisQml.h>
-
+#include <QString>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w(a);
+
+    QString fileNameToOpen;
+    if (argc > 1)
+        fileNameToOpen = argv[1];
+    MainWindow w(a, fileNameToOpen);
     if (w.m_close)
         return 0;
 

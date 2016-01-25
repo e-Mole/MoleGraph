@@ -17,6 +17,8 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    void _SetCurrentFileName(QString const &fileName);
+
     QSettings m_settings;
     SerialPort m_serialPort;
     ButtonLine* m_buttonLine;
@@ -24,10 +26,10 @@ class MainWindow : public QMainWindow
     Context m_context;
     QTabWidget *m_measurementTabs;
     Measurement *m_currentMeasurement;
-
+    QString m_currentFileName;
 
 public:
-    MainWindow(QApplication const &application, QWidget *parent = 0);
+    MainWindow(QApplication const &application, QString fileNameToOpen, QWidget *parent = 0);
     ~MainWindow();
 
     Measurement *CreateNewMeasurement(bool initializeAxesandChannels);
@@ -38,8 +40,9 @@ public:
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
     bool OpenSerialPort();
-    void DeserializeMeasurements(QDataStream &stream);
-    void SerializeMeasurements(QDataStream &stream);
+    void DeserializeMeasurements(QString const &fileName);
+    void SerializeMeasurements(const QString &fileName);
+    QString &GetCurrentFileName();
 
     bool m_close;
 private slots:

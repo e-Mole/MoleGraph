@@ -26,6 +26,7 @@
 #include <QShortcut>
 #include <QWidget>
 
+#define ATOG_FILE_EXTENSION "atog"
 
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
@@ -211,28 +212,27 @@ void ButtonLine::UpdateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-void ButtonLine::exportPng()
+QString ButtonLine::_GetFileNameToSave(QString const &extension)
 {
     QString fileName = QFileDialog::getSaveFileName(
         this,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", "*.png");
-    if (!fileName.contains(".png", Qt::CaseInsensitive))
-            fileName += ".png";
+        "./", "*." + extension);
+    if (!fileName.contains("." + extension, Qt::CaseInsensitive))
+            fileName += "." + extension;
 
+    return fileName;
+}
+void ButtonLine::exportPng()
+{
+    QString fileName = _GetFileNameToSave("png");
     if (0 != fileName.size())
         Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
-    QString fileName = QFileDialog::getSaveFileName(
-        this,
-        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", "*.csv");
-    if (!fileName.contains(".csv", Qt::CaseInsensitive))
-            fileName += ".csv";
-
+    QString fileName = _GetFileNameToSave("");
     if (0 != fileName.size())
        Export().ToCsv(fileName, measurements);
 }
@@ -260,31 +260,35 @@ void ButtonLine::newFile()
 {
 
 }
+
+
 void ButtonLine::openFile()
 {
-    QFile file("deleteme.dat");
-    file.open(QIODevice::ReadOnly);
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
+        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION));
 
-    QDataStream stream(&file);
-    m_context.m_mainWindow.DeserializeMeasurements(stream);
-
-    file.close();
+    m_context.m_mainWindow.DeserializeMeasurements(fileName);
 }
 void ButtonLine::saveFile()
 {
-    QFile file("deleteme.dat");
-    file.open(QIODevice::WriteOnly);
-
-    QDataStream stream(&file);
-    m_context.m_mainWindow.SerializeMeasurements(stream);
-
-    file.flush();
-    file.close();
+    if (m_context.m_mainWindow.GetCurrentFileName() != "")
+        _SaveFile(m_context.m_mainWindow.GetCurrentFileName());
+    else
+        saveAsFile();
+}
+void ButtonLine::_SaveFile(const QString &fileName)
+{
+    m_context.m_mainWindow.SerializeMeasurements(fileName);
 }
 
 void ButtonLine::saveAsFile()
 {
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
 
+    if (0 != fileName.size())
+        _SaveFile(fileName);
 }
 
 void ButtonLine::measurementStateChanged()

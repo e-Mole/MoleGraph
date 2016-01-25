@@ -734,6 +734,10 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in)
             if (channel->IsOnHorizontalAxis())
                 m_plot->SetHorizontalChannel(channel);
         }
+        //Now I have all channels for the axis and can display corect label
+        axis->UpdateVisiblility();
+        axis->UpdateGraphAxisStyle();
+        axis->UpdateGraphAxisName();
     }
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
     ReplaceDisplays(false);

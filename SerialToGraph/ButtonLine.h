@@ -33,6 +33,8 @@ class ButtonLine : public QToolBar
     void _ClearShortcuts();
     void _CreateShortcuts();
     void _ActivateChannel(Channel *channel, bool checked);
+    QString _GetFileNameToSave(const QString &extension);
+    void _SaveFile(const QString &fileName);
 
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;

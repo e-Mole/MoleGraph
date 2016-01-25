@@ -8,6 +8,15 @@ class ChannelWithTime : public Channel
 {
     Q_OBJECT
 
+    Q_PROPERTY(QDateTime startDateTime READ _GetStartDateTime WRITE SetStartTime)
+    Q_PROPERTY(Style style READ GetStyle WRITE _SetStyle)
+    Q_PROPERTY(TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
+    Q_PROPERTY(RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE _SetFormat)
+
+    Q_ENUMS(Style)
+    Q_ENUMS(TimeUnits)
+    Q_ENUMS(RealTimeFormat)
+
     void AddValue(double value) { Channel::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits
@@ -44,6 +53,7 @@ private:
     void _SetFormat(RealTimeFormat format);
     void _UpdateAxisAndValues();
     void _FillLastValueText(int index);
+    QDateTime _GetStartDateTime() { return m_startDateTime; }
 
     QVector<qreal> m_timeFromStart; //sample time from measurement srart
     QDateTime m_startDateTime;

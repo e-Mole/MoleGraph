@@ -14,6 +14,7 @@ class Channel;
 class ChannelWithTime;
 class Plot;
 class QColor;
+class QCPAxis;
 class QDataStream;
 class QHBoxLayout;
 class QGridLayout;
@@ -65,6 +66,7 @@ private:
     void _ProcessSelectedChannels();
     float _DequeueFloat();
     bool _ProcessValueSet();
+    QCPAxis *_GetGraphAxis(unsigned index);
 
     void _SetName(QString &name) { m_name = name; }
     void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
@@ -73,7 +75,6 @@ private:
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type) {m_type = type; }
     unsigned _GetAxisCount() { return m_axes.size(); }
-    //void _SetAxisCount(unsigned count) { }
 
 
     QWidget  m_widget;

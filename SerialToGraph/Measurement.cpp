@@ -679,6 +679,23 @@ void Measurement::SerializationOutOfProperties(QDataStream &out)
             }
     }
 }
+QCPAxis * Measurement::_GetGraphAxis(unsigned index)
+{
+    switch (index)
+    {
+    case 0:
+        return m_plot->xAxis;
+    case 1:
+        return m_plot->yAxis;
+    default:
+        return m_plot->AddYAxis(false);
+    }
+}
+
+bool SortChannels(Channel *first, Channel *second)
+{
+    return first->GetHwIndex() < second->GetHwIndex();
+}
 
 void Measurement::DeserializationOutOfProperties(QDataStream &in)
 {
@@ -686,19 +703,8 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in)
     in >> count;
     for (unsigned i = 0; i < count; ++i)
     {
-        QCPAxis *graphAxis;
-        switch (i)
-        {
-        case 0:
-            graphAxis = m_plot->xAxis;
-        break;
-        case 1:
-            graphAxis = m_plot->yAxis;
-        break;
-        default:
-            graphAxis = m_plot->AddYAxis(false);
-        }
 
+        QCPAxis *graphAxis = _GetGraphAxis(i);
         Axis *axis = new Axis(this, m_context,Qt::black, graphAxis);
         m_axes.push_back(axis);
         in >> axis;
@@ -712,34 +718,23 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in)
             Channel *channel;
             if (hwIndex == -1)
             {
-                channel =
-                    new ChannelWithTime(
-                        this,
-                        m_context,
-                        axis,
-                        m_plot->AddGraph(Qt::black),
-                        m_plot->AddPoint(Qt::black, 0),
-                        hwIndex
-                    );
+                channel = new ChannelWithTime(
+                    this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+                );
                 m_sampleChannel = (ChannelWithTime*)channel;
             }
             else
             {
-                channel =
-                    new Channel(
-                        this,
-                        m_context,
-                        axis,
-                        m_plot->AddGraph(Qt::black),
-                        m_plot->AddPoint(Qt::black, 0),
-                        hwIndex
-                    );
+                channel = new Channel(
+                    this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+                );
             }
             in >> channel;
             m_channels.push_back(channel);
             if (channel->IsOnHorizontalAxis())
                 m_plot->SetHorizontalChannel(channel);
         }
-        ReplaceDisplays(false);
     }
+    qSort(m_channels.begin(), m_channels.end(), SortChannels);
+    ReplaceDisplays(false);
 }

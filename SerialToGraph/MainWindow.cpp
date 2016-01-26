@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <Serializer.h>
 
-MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, QWidget *parent):
+MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
     m_serialPort(m_settings),
@@ -58,7 +58,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     if (fileNameToOpen.length() != 0)
     {
-        DeserializeMeasurements(fileNameToOpen);
+        DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
@@ -122,7 +122,7 @@ void MainWindow::SwichCurrentMeasurement(Measurement *m)
     m_measurementTabs->setCurrentWidget(m->GetWidget());
 }
 
-void MainWindow::RemoveAllmeasurements()
+void MainWindow::RemoveAllMeasurements()
 {
     foreach (Measurement *m, m_measurements)
         RemoveMeasurement(m, true);
@@ -188,7 +188,7 @@ Measurement *MainWindow::GetCurrnetMeasurement()
     return NULL;
 }
 
-void MainWindow::DeserializeMeasurements(QString const &fileName)
+void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
 {
     _SetCurrentFileName(fileName);
 
@@ -198,7 +198,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName)
 
     int count;
     stream >> count;
-    RemoveAllmeasurements();
+    RemoveAllMeasurements();
     for (int i = 0; i < count; i++)
     {
         Measurement *m = CreateNewMeasurement(false);
@@ -209,7 +209,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName)
     file.close();
 }
 
-void MainWindow::SerializeMeasurements(QString const &fileName)
+void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
 {
     _SetCurrentFileName(fileName);
 
@@ -225,4 +225,11 @@ void MainWindow::SerializeMeasurements(QString const &fileName)
 
     file.flush();
     file.close();
+}
+
+void MainWindow::OpenNew()
+{
+    m_currentFileName = "";
+    RemoveAllMeasurements();
+    ConfirmMeasurement(CreateNewMeasurement(true));
 }

@@ -19,10 +19,11 @@ class Channel : public QObject
     friend class ChannelSettings;
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ GetName() WRITE _SetName())
-    Q_PROPERTY(QColor color READ GetColor() WRITE SetColor())
-    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex())
-    Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits())
+    Q_PROPERTY(QString name READ GetName() WRITE _SetName)
+    Q_PROPERTY(QColor color READ GetColor() WRITE SetColor)
+    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex)
+    Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
+    Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
 
     void _SetName(QString const &name);
     void _SetShapeIndex(unsigned index) ;

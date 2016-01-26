@@ -34,7 +34,8 @@ class ButtonLine : public QToolBar
     void _CreateShortcuts();
     void _ActivateChannel(Channel *channel, bool checked);
     QString _GetFileNameToSave(const QString &extension);
-    void _SaveFile(const QString &fileName);
+    void _SaveFile(const QString &fileName, bool values);
+    void _OpenFile(bool values);
 
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
@@ -61,6 +62,7 @@ class ButtonLine : public QToolBar
     QMap<QShortcut*, Channel*> m_shortcutChannels;
     QShortcut *m_allChannelsShortcut;
     QShortcut *m_noChannelsShortcut;
+    bool m_storedValues;
 
 public:
     void UpdateRunButtonsState();
@@ -79,9 +81,11 @@ signals:
 
 private slots:
     void newFile();
+    void openWithoutValues();
     void openFile();
     void saveFile();
     void saveAsFile();
+    void saveWithoutValuesAsFile();
     void sampleRequest();
 public slots:
     void exportPng();

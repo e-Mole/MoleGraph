@@ -50,7 +50,8 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_measurement(NULL),
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
-    m_noChannelsShortcut(NULL)
+    m_noChannelsShortcut(NULL),
+    m_storedValues(false)
 {
     //QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     //buttonLayout->setMargin(1);
@@ -163,13 +164,15 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
     m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
-    m_fileMenu->addAction(tr("Open"), this, SLOT(openFile()));
+    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()));
+    m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openFileWithoutValues()));
     m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
-    m_fileMenu->addAction(tr("Save As"), this, SLOT(saveAsFile()));
+    m_fileMenu->addAction(tr("Save As..."), this, SLOT(saveAsFile()));
+    m_fileMenu->addAction(tr("Save without Values As..."), this, SLOT(saveWithoutValuesAsFile()));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Export to PNG"), this, SLOT(exportPng()));
-    m_fileMenu->addAction(tr("Export Current Measurement to CSV"), this, SLOT(exportCsv()));
-    m_fileMenu->addAction(tr("Export All Measurements to CSV"), this, SLOT(exportAllCsv()));
+    m_fileMenu->addAction(tr("Export to PNG..."), this, SLOT(exportPng()));
+    m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SLOT(exportCsv()));
+    m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SLOT(exportAllCsv()));
 }
 
 void ButtonLine::UpdateRunButtonsState()
@@ -217,7 +220,10 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension)
     QString fileName = QFileDialog::getSaveFileName(
         this,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", "*." + extension);
+        "./", "*." + extension, 0, QFileDialog::DontUseNativeDialog );
+    if (fileName.size() == 0)
+        return "";
+
     if (!fileName.contains("." + extension, Qt::CaseInsensitive))
             fileName += "." + extension;
 
@@ -258,39 +264,65 @@ void ButtonLine::connectivityStateChange(bool connected)
 
 void ButtonLine::newFile()
 {
-
+    m_context.m_mainWindow.OpenNew();
 }
 
 
-void ButtonLine::openFile()
+void ButtonLine::_OpenFile(bool values)
 {
     QString fileName = QFileDialog::getOpenFileName(
         this,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION));
+        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION),
+        0/*,
+        QFileDialog::DontUseNativeDialog*/);
 
-    m_context.m_mainWindow.DeserializeMeasurements(fileName);
+    if (fileName.size() == 0)
+        return;
+
+    m_context.m_mainWindow.DeserializeMeasurements(fileName, values);
+}
+
+void ButtonLine::openWithoutValues()
+{
+    _OpenFile(false);
+}
+
+void ButtonLine::openFile()
+{
+    _OpenFile(true);
 }
 void ButtonLine::saveFile()
 {
     if (m_context.m_mainWindow.GetCurrentFileName() != "")
-        _SaveFile(m_context.m_mainWindow.GetCurrentFileName());
+        _SaveFile(m_context.m_mainWindow.GetCurrentFileName(), m_storedValues);
     else
         saveAsFile();
 }
-void ButtonLine::_SaveFile(const QString &fileName)
+void ButtonLine::_SaveFile(const QString &fileName, bool values)
 {
-    m_context.m_mainWindow.SerializeMeasurements(fileName);
+    m_context.m_mainWindow.SerializeMeasurements(fileName, values);
 }
 
 void ButtonLine::saveAsFile()
 {
     QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
-
     if (0 != fileName.size())
-        _SaveFile(fileName);
+    {
+        _SaveFile(fileName, true);
+        m_storedValues = true;
+    }
 }
 
+void ButtonLine::saveWithoutValuesAsFile()
+{
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
+    if (0 != fileName.size())
+    {
+        _SaveFile(fileName, false);
+        m_storedValues = false;
+    }
+}
 void ButtonLine::measurementStateChanged()
 {
     UpdateRunButtonsState();

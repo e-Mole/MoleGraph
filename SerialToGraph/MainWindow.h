@@ -29,20 +29,21 @@ class MainWindow : public QMainWindow
     QString m_currentFileName;
 
 public:
-    MainWindow(QApplication const &application, QString fileNameToOpen, QWidget *parent = 0);
+    MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
 
     Measurement *CreateNewMeasurement(bool initializeAxesandChannels);
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void SwichCurrentMeasurement(Measurement *m);
-    void RemoveAllmeasurements();
+    void RemoveAllMeasurements();
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
     bool OpenSerialPort();
-    void DeserializeMeasurements(QString const &fileName);
-    void SerializeMeasurements(const QString &fileName);
+    void DeserializeMeasurements(QString const &fileName, bool values);
+    void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileName();
+    void OpenNew();
 
     bool m_close;
 private slots:

@@ -119,16 +119,15 @@ void ChannelMenu::channelActivated()
     else
         channel = m_checkBoxChannels[(QCheckBox*)sender()];
 
-    channel->setVisible(!channel->IsVisible());
-
-    m_buttonLine->UpdateRunButtonsState();
-    m_measurement.ReplaceDisplays();
+    ActivateChannel(channel, !channel->IsVisible());
 }
 
 void ChannelMenu::ActivateChannel(Channel *channel, bool checked)
 {
     channel->setVisible(checked);
     m_channelCheckBoxes[channel]->setChecked(checked);
+    m_buttonLine->UpdateRunButtonsState();
+    m_measurement.ReplaceDisplays();
 }
 
 void ChannelMenu::graphActivated()

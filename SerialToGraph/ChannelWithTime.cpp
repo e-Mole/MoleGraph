@@ -179,3 +179,8 @@ double ChannelWithTime::GetMaxValue()
 
     return 1;
 }
+
+qreal ChannelWithTime::GettimeFromStart(unsigned index)
+{
+    return m_timeFromStart[index];
+}

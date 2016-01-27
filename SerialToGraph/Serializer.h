@@ -18,8 +18,6 @@ QDataStream &operator<<(QDataStream &out, T *t)
 
         }
     }
-
-    t->SerializationOutOfProperties(out);
     return out;
 }
 
@@ -36,7 +34,6 @@ QDataStream &operator>>(QDataStream &in, T *t)
            t->metaObject()->property(i).write(t, var);
         }
     }
-    t->DeserializationOutOfProperties(in);
     return in;
 }
 

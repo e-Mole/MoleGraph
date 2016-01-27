@@ -165,7 +165,7 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->setTitle("File");
     m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
     m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()));
-    m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openFileWithoutValues()));
+    m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openWithoutValues()));
     m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
     m_fileMenu->addAction(tr("Save As..."), this, SLOT(saveAsFile()));
     m_fileMenu->addAction(tr("Save without Values As..."), this, SLOT(saveWithoutValuesAsFile()));

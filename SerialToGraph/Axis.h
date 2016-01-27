@@ -75,9 +75,6 @@ public:
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
     unsigned GetAssignedChannelCount();
-    //to be comaptible with measurement, to be able serialized then by the same way
-    void SerializationOutOfProperties(QDataStream &out){Q_UNUSED(out);}
-    void DeserializationOutOfProperties(QDataStream &in){Q_UNUSED(in);}
 };
 
 #endif // AXIS_H

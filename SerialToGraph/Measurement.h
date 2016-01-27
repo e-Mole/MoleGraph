@@ -27,13 +27,15 @@ class Measurement : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ GetName() WRITE _SetName)
+    Q_PROPERTY(QString name READ GetName WRITE _SetName)
     Q_PROPERTY(SampleUnits sampleUnits READ GetSampleUnits() WRITE _SetSampleUnits)
-    Q_PROPERTY(unsigned  period READ GetPeriod() WRITE _SetPeriod)
-    Q_PROPERTY(unsigned  anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
-    Q_PROPERTY(Type type READ GetType() WRITE _SetType)
+    Q_PROPERTY(unsigned  period READ GetPeriod WRITE _SetPeriod)
+    Q_PROPERTY(State  state READ GetState WRITE _SetState)
+    Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
+    Q_PROPERTY(Type type READ GetType WRITE _SetType)
     Q_PROPERTY(unsigned axisCount)
     Q_ENUMS(SampleUnits)
+    Q_ENUMS(State)
     Q_ENUMS(Type)
 
 public:
@@ -67,15 +69,21 @@ private:
     float _DequeueFloat();
     bool _ProcessValueSet();
     QCPAxis *_GetGraphAxis(unsigned index);
+    void _DeserializeChannel(QDataStream &in, Axis *axis);
+    void _DeserializeAxis(QDataStream &in, unsigned index);
+    void _DeserializeChannelData(QDataStream &in);
 
     void _SetName(QString &name) { m_name = name; }
     void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
     void _SetPeriod(unsigned period) {m_period = period; }
+    void _SetState(State state) {m_state = state;}
     bool _IsAnySampleMissed() {return m_anySampleMissed; }
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type) {m_type = type; }
     unsigned _GetAxisCount() { return m_axes.size(); }
-
+    Channel *_FindChannel(int hwIndex);
+    void _SerializeChannelValues(Channel *channel, QDataStream &out);
+    void _ReadingValuesPostProcess();
 
     QWidget  m_widget;
     Context const &m_context;
@@ -126,8 +134,8 @@ public:
     void SampleRequest();
     Type GetType() { return m_type; }
     QWidget *GetWidget() { return &m_widget; }
-    void SerializationOutOfProperties(QDataStream &out);
-    void DeserializationOutOfProperties(QDataStream &in);
+    void SerializationOutOfProperties(QDataStream &out, bool values);
+    void DeserializationOutOfProperties(QDataStream &in, bool values);
 signals:
     void stateChanged();
     void nameChanged();

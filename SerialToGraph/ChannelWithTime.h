@@ -89,6 +89,7 @@ public:
     bool IsInRealtimeStyle() { return m_style == RealTime; }
     virtual double GetMinValue();
     virtual double GetMaxValue();
+    qreal GettimeFromStart(unsigned index);
 signals:
 
 public slots:

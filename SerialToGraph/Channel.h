@@ -139,6 +139,7 @@ public:
 
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();
+    void UpdateGraph(double xValue, double yValue);
     void UpdateGraph(double xValue);
     void AssignToGraphAxis(QCPAxis *graphAxis);
     void AssignToAxis(Axis *axis);
@@ -149,10 +150,6 @@ public:
     Measurement * GetMeasurement();
     bool IsVisible();
     ClickableGroupBox *GetWidget();
-
-    //to be comaptible with measurement, to be able serialized then by the same way
-    void SerializationOutOfProperties(QDataStream &out){Q_UNUSED(out);}
-    void DeserializationOutOfProperties(QDataStream &in){Q_UNUSED(in);}
 
 signals:
     void stateChanged();

@@ -217,10 +217,15 @@ QCPGraph *Channel::GetGraphPoint()
 {
     return m_graphPoint;
 }
+
+void Channel::UpdateGraph(double xValue, double yValue)
+{
+    m_graph->data()->insert(xValue, QCPData(xValue, yValue));
+}
+
 void Channel::UpdateGraph(double xValue)
 {
-    m_graph->data()->insert(xValue, QCPData(xValue, GetLastValue()));
-
+    UpdateGraph(xValue, GetLastValue());
 }
 
 void Channel::_ShowOrHideGraphAndPoin(bool shown)

@@ -175,9 +175,38 @@ bool Measurement::_ProcessValueSet()
     foreach (Channel *channel,  m_trackedHwChannels)
         channel->AddValue(_DequeueFloat());
 
+    //im sure I have a horizontal value and may start to draw
+    m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
+    foreach (Channel *channel, m_trackedHwChannels)
+        channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
+
     return true;
 }
 
+void Measurement::_ReadingValuesPostProcess()
+{
+    unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
+    if (!m_plot->IsInMoveMode())
+    {
+        foreach (Channel *channel, m_channels)
+            channel->displayValueOnIndex(index);
+
+        m_plot->RescaleAxis(m_plot->xAxis);
+    }
+
+    unsigned scrollBarMax = index;
+    m_scrollBar->setRange(0, scrollBarMax);
+    if (!m_plot->IsInMoveMode())
+    {
+        m_scrollBar->setValue(scrollBarMax);
+    }
+
+    if (!m_plot->IsInMoveMode())
+        m_plot->RescaleAllAxes();
+
+    m_plot->ReplotIfNotDisabled();
+
+}
 void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
@@ -188,33 +217,9 @@ void Measurement::draw()
         {
             if (!_ProcessValueSet())
                 goto FINISH_DRAW;
-
-            m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
-            foreach (Channel *channel, m_trackedHwChannels)
-                channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
         }
 
-        unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
-        if (!m_plot->IsInMoveMode())
-        {
-            foreach (Channel *channel, m_channels)
-                channel->displayValueOnIndex(index);
-
-            m_plot->RescaleAxis(m_plot->xAxis);
-        }
-
-        unsigned scrollBarMax = index;
-        m_scrollBar->setRange(0, scrollBarMax);
-        if (!m_plot->IsInMoveMode())
-        {
-            m_scrollBar->setValue(scrollBarMax);
-        }
-
-        if (!m_plot->IsInMoveMode())
-            m_plot->RescaleAllAxes();
-
-        m_plot->ReplotIfNotDisabled();
-
+        _ReadingValuesPostProcess();
         _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
     }
 
@@ -639,31 +644,19 @@ Axis *Measurement::GetAxis(int index)
     return m_axes[index];
 }
 
-/*
-void Measurement::_SetAxes(QQmlListProperty<AxisQml> &axes)
+void Measurement::_SerializeChannelValues(Channel *channel, QDataStream &out)
 {
-    foreach (AxisQml const &axisQml, axes)
+    out << channel->GetHwIndex();
+    out << channel->GetValueCount();
+    for (unsigned i = 0; i < channel->GetValueCount(); ++i)
     {
-        m_axes.push_back(
-            new Axis(
-                this,
-                m_context,
-                axisQml,
-                axisQml.IsHorizontal() ? m_plot->xAxis : m_plot->AddYAxis(axisQml.IsOnRight())
-            )
-        );
+        out << channel->GetValue(i);
+        if (channel->IsSampleChannel())
+            out << ((ChannelWithTime*)channel)->GettimeFromStart(i);
     }
 }
-QQmlListProperty<AxisQml> Measurement::_GetAxes()
-{
-    QQmlListProperty<AxisQml> qmlAxes;
-    foreach (Axis *axis, m_axes)
-        qmlAxes.push_back(AxisQml(*axis));
 
-    return qmlAxes;
-}*/
-
-void Measurement::SerializationOutOfProperties(QDataStream &out)
+void Measurement::SerializationOutOfProperties(QDataStream &out, bool values)
 {
     unsigned count = GetAxes().size();
     out << count;
@@ -672,13 +665,24 @@ void Measurement::SerializationOutOfProperties(QDataStream &out)
         out << axis;
         out << axis->GetAssignedChannelCount();
         foreach (Channel *channel, m_channels)
+        {
             if (channel->GetAxis() == axis)
             {
                 out << channel->GetHwIndex();
                 out << channel;
             }
+        }
+    }
+    if (values)
+    {
+        _SerializeChannelValues(m_sampleChannel, out);
+
+        out << m_trackedHwChannels.size();
+        foreach (Channel *channel, m_trackedHwChannels.values())
+            _SerializeChannelValues(channel, out);
     }
 }
+
 QCPAxis * Measurement::_GetGraphAxis(unsigned index)
 {
     switch (index)
@@ -697,48 +701,120 @@ bool SortChannels(Channel *first, Channel *second)
     return first->GetHwIndex() < second->GetHwIndex();
 }
 
-void Measurement::DeserializationOutOfProperties(QDataStream &in)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
 {
-    unsigned count;
-    in >> count;
-    for (unsigned i = 0; i < count; ++i)
+    int hwIndex;
+    in >> hwIndex;
+
+    Channel *channel;
+    if (hwIndex == -1)
     {
-
-        QCPAxis *graphAxis = _GetGraphAxis(i);
-        Axis *axis = new Axis(this, m_context,Qt::black, graphAxis);
-        m_axes.push_back(axis);
-        in >> axis;
-        int channelCount;
-        in >> channelCount;
-        for (int j = 0; j < channelCount; j++)
-        {
-            int hwIndex;
-            in >> hwIndex;
-
-            Channel *channel;
-            if (hwIndex == -1)
-            {
-                channel = new ChannelWithTime(
-                    this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
-                );
-                m_sampleChannel = (ChannelWithTime*)channel;
-            }
-            else
-            {
-                channel = new Channel(
-                    this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
-                );
-            }
-            in >> channel;
-            m_channels.push_back(channel);
-            if (channel->IsOnHorizontalAxis())
-                m_plot->SetHorizontalChannel(channel);
-        }
-        //Now I have all channels for the axis and can display corect label
-        axis->UpdateVisiblility();
-        axis->UpdateGraphAxisStyle();
-        axis->UpdateGraphAxisName();
+        channel = new ChannelWithTime(
+            this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+        );
+        m_sampleChannel = (ChannelWithTime*)channel;
     }
+    else
+    {
+        channel = new Channel(
+            this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+        );
+    }
+    in >> channel;
+    m_channels.push_back(channel);
+    if (channel->IsOnHorizontalAxis())
+        m_plot->SetHorizontalChannel(channel);
+}
+
+void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
+{
+    QCPAxis *graphAxis = _GetGraphAxis(index);
+    Axis *axis = new Axis(this, m_context,Qt::black, graphAxis);
+    m_axes.push_back(axis);
+    in >> axis;
+    int channelCount;
+    in >> channelCount;
+    for (int i = 0; i < channelCount; i++)
+        _DeserializeChannel(in, axis);
+
+    //Now I have all channels for the axis and can display corect label
+    axis->UpdateVisiblility();
+    axis->UpdateGraphAxisStyle();
+    axis->UpdateGraphAxisName();
+}
+
+Channel *Measurement::_FindChannel(int hwIndex)
+{
+    foreach (Channel* channel, m_channels)
+        if (channel->GetHwIndex() == hwIndex)
+            return channel;
+
+    return NULL;
+}
+void Measurement::_DeserializeChannelData(QDataStream &in)
+{
+    int hwIndex;
+    in >> hwIndex;
+
+    Channel * channel = _FindChannel(hwIndex);
+    if (NULL == channel)
+        return; //It should not happen
+
+    if (channel->IsHwChannel())
+        m_trackedHwChannels[hwIndex] = channel;
+
+    unsigned valueCount;
+    in >> valueCount;
+    double value;
+    for (unsigned i = 0; i < valueCount; ++i)
+    {
+        in >> value;
+
+        if (channel->IsSampleChannel())
+        {
+            qreal timeFromStart;
+            in >> timeFromStart;
+            ((ChannelWithTime *)channel)->AddValue(value, timeFromStart);
+        }
+        else
+             channel->AddValue(value);
+    }
+
+
+}
+
+void Measurement::DeserializationOutOfProperties(QDataStream &in, bool values)
+{
+    unsigned axisCount;
+    in >> axisCount;
+    for (unsigned i = 0; i < axisCount; ++i)
+        _DeserializeAxis(in, i);
+
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
+
+    if (values)
+    {
+        //samples
+        _DeserializeChannelData(in);
+
+        unsigned trackedHwChannelCount;
+        in >> trackedHwChannelCount;
+        for (unsigned i = 0; i < trackedHwChannelCount; ++i)
+            _DeserializeChannelData(in);
+
+        for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
+        {
+            float xValue = m_plot->GetHorizontalChannel()->GetValue(i);
+            foreach (Channel *channel, m_channels)
+                channel->UpdateGraph(xValue, channel->GetValue(i));
+        }
+        _ReadingValuesPostProcess();
+    }
+    else
+    {
+        _SetState(Ready);
+        m_anySampleMissed = false;
+    }
+
     ReplaceDisplays(false);
 }

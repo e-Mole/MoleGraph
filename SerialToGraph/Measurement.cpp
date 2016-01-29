@@ -352,6 +352,7 @@ void Measurement::Stop()
 
 void Measurement::sliderActionTriggered(int action)
 {
+    Q_UNUSED(action);
     foreach (Channel * channel, m_channels)
         channel->displayValueOnIndex(m_scrollBar->sliderPosition());
 

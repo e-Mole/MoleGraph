@@ -104,7 +104,7 @@ signals:
     void stateChanged();
     void nameChanged();
 public slots:
-    void sliderMoved(int value);
+    void sliderActionTriggered(int action);
     void showGraph(bool show);
 private slots:
     void draw();

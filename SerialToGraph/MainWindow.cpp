@@ -223,7 +223,7 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
 
     QDataStream out(&file);
 
-    out << GetSerializerVersion(); //to be able do some changes later
+    out << ATOG_SERIALIZER_VERSION; //to be able do some changes later
     out << m_measurements.size();
     foreach (Measurement *m, m_measurements)
     {

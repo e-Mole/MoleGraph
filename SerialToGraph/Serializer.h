@@ -8,10 +8,7 @@
 #include <QVariant>
 #include <QDebug>
 
-static unsigned GetSerializerVersion()
-{
-    return 1;
-}
+#define ATOG_SERIALIZER_VERSION 1
 
 template <class T>
 QDataStream &operator<<(QDataStream &out, T *t)

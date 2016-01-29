@@ -136,7 +136,7 @@ void ButtonLine::_RefreshPanelMenu()
         return;
 
     m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
-    _CreateShortcuts();
+    _CreatePanelShortcuts();
     m_channelMenu->FillGrid();
     UpdateRunButtonsState();
 }
@@ -163,10 +163,21 @@ void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
-    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()));
-    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()));
+
+    QShortcut *newShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this);
+    connect (newShortcut, SIGNAL(activated()), this, SLOT(newFile()));
+    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()), newShortcut->key());
+
+    QShortcut *openShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this);
+    connect (openShortcut, SIGNAL(activated()), this, SLOT(openFile()));
+    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()), openShortcut->key());
+
     m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openWithoutValues()));
-    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()));
+
+    QShortcut *saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
+    connect (saveShortcut, SIGNAL(activated()), this, SLOT(saveFile()));
+    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()), saveShortcut->key());
+
     m_fileMenu->addAction(tr("Save As..."), this, SLOT(saveAsFile()));
     m_fileMenu->addAction(tr("Save without Values As..."), this, SLOT(saveWithoutValuesAsFile()));
     m_fileMenu->addSeparator();
@@ -326,7 +337,7 @@ void ButtonLine::measurementStateChanged()
     UpdateRunButtonsState();
 }
 
-void ButtonLine::_ClearShortcuts()
+void ButtonLine::_ClearPanelShortcuts()
 {
     delete m_graphShortcut;
     m_graphShortcut = NULL;
@@ -340,9 +351,10 @@ void ButtonLine::_ClearShortcuts()
 
     delete m_noChannelsShortcut;
     m_noChannelsShortcut = NULL;
+
 }
 
-void ButtonLine::_CreateShortcuts()
+void ButtonLine::_CreatePanelShortcuts()
 {
     m_graphShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this);
     connect (m_graphShortcut, SIGNAL(activated()), m_channelMenu, SLOT(graphActivated()));
@@ -360,6 +372,7 @@ void ButtonLine::_CreateShortcuts()
     m_noChannelsShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_N), this);
     connect(m_noChannelsShortcut, SIGNAL(activated()), m_channelMenu, SLOT(noChannelsActivated()));
 }
+
 
 QString ButtonLine::GetGraphShortcutText()
 {
@@ -400,7 +413,7 @@ void ButtonLine::channelActivated()
 void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
-    _ClearShortcuts();
+    _ClearPanelShortcuts();
     _RefreshPanelMenu();
     UpdateRunButtonsState();
 }

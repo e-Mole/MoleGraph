@@ -30,8 +30,8 @@ class ButtonLine : public QToolBar
     void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
     void _RefreshPanelMenu();
     void _ExportCSV(QVector<Measurement *> const & measurements);
-    void _ClearShortcuts();
-    void _CreateShortcuts();
+    void _ClearPanelShortcuts();
+    void _CreatePanelShortcuts();
     void _ActivateChannel(Channel *channel, bool checked);
     QString _GetFileNameToSave(const QString &extension);
     void _SaveFile(const QString &fileName, bool values);

@@ -30,12 +30,12 @@ class Measurement : public QObject
     Q_PROPERTY(QString name READ GetName WRITE _SetName)
     Q_PROPERTY(SampleUnits sampleUnits READ GetSampleUnits() WRITE _SetSampleUnits)
     Q_PROPERTY(unsigned  period READ GetPeriod WRITE _SetPeriod)
-    Q_PROPERTY(State  state READ GetState WRITE _SetState)
+    Q_PROPERTY(State  state READ _GetStateForSerialization WRITE _SetState)
     Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
 
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
-    Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections);
+    Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections)
 
     Q_ENUMS(SampleUnits)
     Q_ENUMS(State)
@@ -89,7 +89,7 @@ private:
     void _ReadingValuesPostProcess();
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
-
+    State _GetStateForSerialization() { return (m_state == Running) ? Finished : m_state; }
     QWidget  m_widget;
     Context const &m_context;
     QString m_name;

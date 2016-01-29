@@ -233,3 +233,22 @@ unsigned Axis::GetAssignedChannelCount()
 
     return count;
 }
+
+void Axis::_SetIsOnRight(bool isOnRight)
+{
+    m_isOnRight = isOnRight;
+    if (!IsHorizontal())
+        _AssignGraphAxis(m_measurement->GetPlot()->AddYAxis(isOnRight));
+}
+
+void Axis::_SetIsShownName(bool isShownName)
+{
+    m_isShownName = isShownName;
+    UpdateGraphAxisName();
+}
+
+void Axis::_SetTitle(QString const& title)
+{
+    m_title = title;
+    UpdateGraphAxisName();
+}

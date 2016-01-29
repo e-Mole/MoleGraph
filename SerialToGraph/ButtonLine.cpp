@@ -220,7 +220,7 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension)
     QString fileName = QFileDialog::getSaveFileName(
         this,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", "*." + extension, 0, QFileDialog::DontUseNativeDialog );
+        "./", "*." + extension);
     if (fileName.size() == 0)
         return "";
 
@@ -273,9 +273,7 @@ void ButtonLine::_OpenFile(bool values)
     QString fileName = QFileDialog::getOpenFileName(
         this,
         QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION),
-        0/*,
-        QFileDialog::DontUseNativeDialog*/);
+        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION));
 
     if (fileName.size() == 0)
         return;

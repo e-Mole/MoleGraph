@@ -33,7 +33,10 @@ class Measurement : public QObject
     Q_PROPERTY(State  state READ GetState WRITE _SetState)
     Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
-    Q_PROPERTY(unsigned axisCount)
+
+    //I was not patient to search how to serialize collections like axis or channels so I do it manually
+    Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections);
+
     Q_ENUMS(SampleUnits)
     Q_ENUMS(State)
     Q_ENUMS(Type)
@@ -84,6 +87,8 @@ private:
     Channel *_FindChannel(int hwIndex);
     void _SerializeChannelValues(Channel *channel, QDataStream &out);
     void _ReadingValuesPostProcess();
+    void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
+    bool _PhonyGetcollections() { return false; }
 
     QWidget  m_widget;
     Context const &m_context;
@@ -107,6 +112,7 @@ private:
     QScrollBar *m_scrollBar;
     bool m_startNewDraw;
     Type m_type;
+    bool m_saveLoadValues; //for serialization and deserialization too
 
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
@@ -134,8 +140,11 @@ public:
     void SampleRequest();
     Type GetType() { return m_type; }
     QWidget *GetWidget() { return &m_widget; }
-    void SerializationOutOfProperties(QDataStream &out, bool values);
-    void DeserializationOutOfProperties(QDataStream &in, bool values);
+    void SerializeColections(QDataStream &out);
+    void DeserializeColections(QDataStream &in);
+    void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
+        { m_saveLoadValues = saveLoadValues; }
+
 signals:
     void stateChanged();
     void nameChanged();

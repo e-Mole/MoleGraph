@@ -6,6 +6,12 @@
 #include <QMetaProperty>
 #include <QString>
 #include <QVariant>
+#include <QDebug>
+
+static unsigned GetSerializerVersion()
+{
+    return 1;
+}
 
 template <class T>
 QDataStream &operator<<(QDataStream &out, T *t)
@@ -14,6 +20,10 @@ QDataStream &operator<<(QDataStream &out, T *t)
     {
         if(t->metaObject()->property(i).isStored(t))
         {
+            //I was not patient to search how to serialize collections like axis or channels so I do it manually
+            if (t->metaObject()->property(i).name() == QString("colections"))
+                t->SerializeColections(out);
+            else
             out << t->metaObject()->property(i).read(t);
 
         }
@@ -29,9 +39,13 @@ QDataStream &operator>>(QDataStream &in, T *t)
     {
         if(t->metaObject()->property(i).isStored(t))
         {
-           in >> var;
-
-           t->metaObject()->property(i).write(t, var);
+            if (t->metaObject()->property(i).name() == QString("colections"))
+                t->DeserializeColections(in);
+            else
+            {
+                in >> var;
+                t->metaObject()->property(i).write(t, var);
+            }
         }
     }
     return in;

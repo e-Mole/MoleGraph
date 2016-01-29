@@ -8,6 +8,7 @@
 #include <QByteArray>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
+#include <QDataStream>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -40,7 +41,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_plot(new Plot(this)),
     m_scrollBar(new QScrollBar(Qt::Horizontal, &m_widget)),
     m_startNewDraw(false),
-    m_type(source != NULL ? source->m_type : Periodical)
+    m_type(source != NULL ? source->m_type : Periodical),
+    m_saveLoadValues(false)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -656,7 +658,7 @@ void Measurement::_SerializeChannelValues(Channel *channel, QDataStream &out)
     }
 }
 
-void Measurement::SerializationOutOfProperties(QDataStream &out, bool values)
+void Measurement::SerializeColections(QDataStream &out)
 {
     unsigned count = GetAxes().size();
     out << count;
@@ -673,7 +675,7 @@ void Measurement::SerializationOutOfProperties(QDataStream &out, bool values)
             }
         }
     }
-    if (values)
+    if (m_saveLoadValues)
     {
         _SerializeChannelValues(m_sampleChannel, out);
 
@@ -779,11 +781,9 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
         else
              channel->AddValue(value);
     }
-
-
 }
 
-void Measurement::DeserializationOutOfProperties(QDataStream &in, bool values)
+void Measurement::DeserializeColections(QDataStream &in)
 {
     unsigned axisCount;
     in >> axisCount;
@@ -792,7 +792,7 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in, bool values)
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
-    if (values)
+    if (m_saveLoadValues)
     {
         //samples
         _DeserializeChannelData(in);
@@ -808,7 +808,8 @@ void Measurement::DeserializationOutOfProperties(QDataStream &in, bool values)
             foreach (Channel *channel, m_channels)
                 channel->UpdateGraph(xValue, channel->GetValue(i));
         }
-        _ReadingValuesPostProcess();
+        if (m_sampleChannel->GetValueCount() != 0)
+            _ReadingValuesPostProcess();
     }
     else
     {

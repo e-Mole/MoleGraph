@@ -30,6 +30,7 @@ class Plot : public QCustomPlot
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
+    bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);

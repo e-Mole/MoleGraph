@@ -196,14 +196,18 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
 
+    unsigned serializerVersion;
+    in >> serializerVersion; //not used yet
+
     int count;
     in >> count;
+
     RemoveAllMeasurements();
     for (int i = 0; i < count; i++)
     {
         Measurement *m = CreateNewMeasurement(false);
+        m->SetSaveLoadValues(values);
         in >> m;
-        m->DeserializationOutOfProperties(in, values);
         ConfirmMeasurement(m);
     }
 
@@ -218,11 +222,13 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
     file.open(QIODevice::WriteOnly);
 
     QDataStream out(&file);
+
+    out << GetSerializerVersion(); //to be able do some changes later
     out << m_measurements.size();
     foreach (Measurement *m, m_measurements)
     {
+        m->SetSaveLoadValues(values);
         out << m;
-        m->SerializationOutOfProperties(out, values);
     }
 
     file.flush();

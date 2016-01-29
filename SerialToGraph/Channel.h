@@ -151,6 +151,10 @@ public:
     bool IsVisible();
     ClickableGroupBox *GetWidget();
 
+    //to be compatible with measurement and would be possible to use the same serializer
+    void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
+    void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
+
 signals:
     void stateChanged();
     void wasSetToHorizontal();

@@ -195,13 +195,27 @@ void Plot::RemoveAxis(QCPAxis *axis)
     axis->setVisible(false);
     ReplotIfNotDisabled();
 
-    axisRect()->removeAxis(axis);
-    ReplotIfNotDisabled();
+    if (axis != yAxis)
+    {
+        axisRect()->removeAxis(axis);
+        ReplotIfNotDisabled();
+    }
+}
+
+bool Plot::_IsGraphAxisEmpty(QCPAxis *graphAxis)
+{
+    foreach (Axis *axis, m_measurement.GetAxes())
+        if (axis->GetGraphAxis() == graphAxis)
+            return false;
+    return true;
 }
 
 QCPAxis *Plot::AddYAxis(bool onRight)
 {
-    QCPAxis *axis = axisRect()->addAxis(onRight ? QCPAxis::atRight : QCPAxis::atLeft);
+    QCPAxis *axis =
+            (!onRight && _IsGraphAxisEmpty(yAxis)) ?
+                yAxis : //yAxis and xAxis are not removed just hidden
+                axisRect()->addAxis(onRight ? QCPAxis::atRight : QCPAxis::atLeft);
 
     axis->setRange(0, 1);
     axis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);

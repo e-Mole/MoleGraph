@@ -17,15 +17,15 @@ class Axis : public QObject
     Q_PROPERTY(QString title READ GetTitle WRITE _SetTitle)
     Q_PROPERTY(bool isRemovable READ IsRemovable WRITE _SetIsRemovable)
     Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
-    Q_PROPERTY(bool isOnRight READ IsOnRight WRITE _SetIsOnRight)
     Q_PROPERTY(bool isHorizontal READ IsHorizontal WRITE _SetIsHorizontal)
+    Q_PROPERTY(bool isOnRight READ IsOnRight WRITE _SetIsOnRight)
     Q_PROPERTY(bool isShownName READ IsShownName WRITE _SetIsShownName)
 
-    void _SetTitle(QString const& title) { m_title = title; }
+    void _SetTitle(QString const& title);
     void _SetIsRemovable(bool isRemovable) { m_isRemovable = isRemovable;}
-    void _SetIsOnRight(bool isOnRight) { m_isOnRight = isOnRight;}
+    void _SetIsOnRight(bool isOnRight);
     void _SetIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal;}
-    void _SetIsShownName(bool isShownName) { m_isShownName = isShownName;}
+    void _SetIsShownName(bool isShownName);
 
     friend class AxisCopy;
     friend class AxesDialog;
@@ -75,6 +75,10 @@ public:
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
     unsigned GetAssignedChannelCount();
+
+    //to be compatible with measurement and would be possible to use the same serializer
+    void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
+    void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
 };
 
 #endif // AXIS_H

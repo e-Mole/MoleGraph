@@ -11,7 +11,6 @@ ChannelWithTime::ChannelWithTime(
     QCPGraph *graph,
     QCPGraph *graphPoint,
     int hwIndex,
-    QString const &name,
     QColor const &color,
     unsigned shapeIndex,
     bool visible,
@@ -20,17 +19,19 @@ ChannelWithTime::ChannelWithTime(
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    Channel(measurement, context, axis,graph, graphPoint, hwIndex, name, color,  shapeIndex,  visible, units),
+    Channel(measurement, context, axis,graph, graphPoint, hwIndex, "", color,  shapeIndex,  visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
     m_realTimeFormat(realTimeFormat)
 {
+    _SetName(GetStyleText());
 }
 
 void ChannelWithTime::_SetStyle(Style style)
 {
     m_style = style;
+    _SetName(GetStyleText());
     _UpdateAxisAndValues();
 
 }
@@ -50,7 +51,7 @@ void ChannelWithTime::_SetFormat(RealTimeFormat format)
 
 void ChannelWithTime::_UpdateAxisAndValues()
 {
-    if (m_style == TimeFromStart)
+    if (m_style == TimeOffset)
     {
         switch (m_timeUnits)
         {
@@ -108,7 +109,7 @@ double ChannelWithTime::GetValue(unsigned index)
         return Channel::GetValue(index);
     case RealTime:
         return m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index]; //in seconds
-    case TimeFromStart:
+    case TimeOffset:
         switch (m_timeUnits)
         {
         case Us:
@@ -187,17 +188,18 @@ qreal ChannelWithTime::GettimeFromStart(unsigned index)
     return m_timeFromStart[index];
 }
 
-QString ChannelWithTime::GetTimestamp(double timeInMs)
-{
-    return _GetRealTimeText(timeInMs, "yyyy-MM-dd hh:mm:ss.ms");
-}
 
-QString ChannelWithTime::GetValueTimestamp(unsigned index)
+QString ChannelWithTime::GetStyleText(Style style)
 {
-    return ChannelWithTime::GetTimestamp(GetValue(index)*1000);
-}
-
-QString ChannelWithTime::GetStartTimestamp()
-{
-    return ChannelWithTime::GetTimestamp(m_startDateTime.toMSecsSinceEpoch());
+    switch (style)
+    {
+    case Samples:
+        return tr("Sample Number");
+    case TimeOffset:
+        return tr("Time Offset");
+    case RealTime:
+        return tr("Real Time");
+    default:
+        return "";
+    }
 }

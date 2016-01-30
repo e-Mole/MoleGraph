@@ -25,10 +25,6 @@ class Channel : public QObject
     Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
     Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
 
-    void _SetName(QString const &name);
-    void _SetShapeIndex(unsigned index) ;
-    void _SetUnits(QString const &units);
-
 protected:
     class ValueLabel : public QLabel
     {
@@ -60,6 +56,9 @@ protected:
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
     virtual void _FillLastValueText(int index);
+    void _SetName(QString const &name);
+    void _SetShapeIndex(unsigned index) ;
+    void _SetUnits(QString const &units);
 
     Measurement * m_measurement;
     Context const & m_context;

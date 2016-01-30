@@ -29,15 +29,16 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     m_timeUnits(NULL),
     m_format(NULL)
 {
-    m_formLayout->addRow(new QLabel(tr("Title"), this),  m_name);
 
     if (m_channel->IsHwChannel())
     {
+        m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_units = new QLineEdit(channel->GetUnits(), this);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
     }
     else
     {
+        m_name->setVisible(false);
         _InitializeTimeFeatures();
     }
 
@@ -52,9 +53,9 @@ void ChannelSettings::_InitializeTimeFeatures()
     ChannelWithTime * channel = (ChannelWithTime*)m_channel;
 
     m_style = new QComboBox(this);
-    m_style->addItem(tr("Samples"), false);
-    m_style->addItem(tr("Time From Start"), false);
-    m_style->addItem(tr("Real Time"), true); //RealTime state as data
+    m_style->addItem(channel->GetStyleText(ChannelWithTime::Samples), false);
+    m_style->addItem(channel->GetStyleText(ChannelWithTime::TimeOffset), false);
+    m_style->addItem(channel->GetStyleText(ChannelWithTime::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
@@ -67,7 +68,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(channel->m_timeUnits);
-    m_timeUnits->setEnabled(channel->m_style == ChannelWithTime::TimeFromStart);
+    m_timeUnits->setEnabled(channel->m_style == ChannelWithTime::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
     m_format = new QComboBox(this);
@@ -82,7 +83,7 @@ void ChannelSettings::_InitializeTimeFeatures()
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeFromStart);
+    m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeOffset);
     m_format->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::RealTime);
     _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
@@ -134,7 +135,7 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
     }
 
-    if (m_channel->m_name != m_name->text())
+    if (m_channel->m_name != m_name->text() && m_channel->IsHwChannel())
     {
         changed = true;
         m_channel->_SetName(m_name->text());

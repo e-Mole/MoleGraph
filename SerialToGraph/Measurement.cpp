@@ -487,7 +487,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     m_plot->AddGraph(channel->GetColor()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetHwIndex(),
-                    channel->GetName(),
                     channel->GetColor(),
                     channel->GetShapeIndex(),
                     channel->IsVisible(),
@@ -547,7 +546,6 @@ void Measurement::_InitializeAxesAndChanels()
             m_plot->AddGraph(Qt::black),
             m_plot->AddPoint(Qt::black, 0),
             -1,
-            tr("Samples"),
             Qt::black,
             0,
 

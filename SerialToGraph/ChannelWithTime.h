@@ -32,7 +32,7 @@ public:
     enum Style
     {
         Samples,
-        TimeFromStart,
+        TimeOffset,
         RealTime,
     };
 
@@ -63,14 +63,12 @@ private:
     RealTimeFormat m_realTimeFormat;
 
 public:
-    ChannelWithTime(
-        Measurement *measurement,
+    ChannelWithTime(Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,
         QCPGraph *graphPoint,
         int hwIndex,
-        QString const &name = "",
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
         bool visible = true,
@@ -91,6 +89,8 @@ public:
     virtual double GetMinValue();
     virtual double GetMaxValue();
     qreal GettimeFromStart(unsigned index);
+    static QString GetStyleText(Style style);
+    QString GetStyleText() { return GetStyleText(m_style); }
     QString GetTimestamp(double timeInMs);
     QString GetValueTimestamp(unsigned index);
     QString GetStartTimestamp();

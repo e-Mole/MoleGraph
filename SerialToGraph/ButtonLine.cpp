@@ -249,7 +249,7 @@ void ButtonLine::exportPng()
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
-    QString fileName = _GetFileNameToSave("");
+    QString fileName = _GetFileNameToSave("csv");
     if (0 != fileName.size())
        Export().ToCsv(fileName, measurements);
 }

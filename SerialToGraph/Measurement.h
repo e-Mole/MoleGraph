@@ -145,6 +145,8 @@ public:
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
         { m_saveLoadValues = saveLoadValues; }
 
+    ChannelWithTime *GetSampleChannel() {return m_sampleChannel; }
+
 signals:
     void stateChanged();
     void nameChanged();

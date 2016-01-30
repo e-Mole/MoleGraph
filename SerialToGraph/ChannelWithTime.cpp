@@ -145,18 +145,20 @@ QString ChannelWithTime::GetRealTimeFormatText()
         return ""; //it should be never reached
     }
 }
+
+QString ChannelWithTime::_GetRealTimeText(unsigned msSinceEpoch, QString const &format)
+{
+    QDateTime dateTime;
+    dateTime.setMSecsSinceEpoch(msSinceEpoch);
+    return dateTime.toString(format);
+}
+
 void ChannelWithTime::_FillLastValueText(int index)
 {
     if (m_style == RealTime)
-    {
-        QDateTime dateTime;
-        dateTime.setMSecsSinceEpoch(GetValue(index)*1000);
-        m_lastValueText = dateTime.toString(GetRealTimeFormatText());
-    }
+        m_lastValueText = _GetRealTimeText(GetValue(index)*1000, GetRealTimeFormatText());
     else
-    {
         Channel::_FillLastValueText(index);
-    }
 }
 
 double ChannelWithTime::GetMinValue()
@@ -183,4 +185,19 @@ double ChannelWithTime::GetMaxValue()
 qreal ChannelWithTime::GettimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
+}
+
+QString ChannelWithTime::GetTimestamp(double timeInMs)
+{
+    return _GetRealTimeText(timeInMs, "yyyy-MM-dd hh:mm:ss.ms");
+}
+
+QString ChannelWithTime::GetValueTimestamp(unsigned index)
+{
+    return ChannelWithTime::GetTimestamp(GetValue(index)*1000);
+}
+
+QString ChannelWithTime::GetStartTimestamp()
+{
+    return ChannelWithTime::GetTimestamp(m_startDateTime.toMSecsSinceEpoch());
 }

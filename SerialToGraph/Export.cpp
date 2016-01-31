@@ -44,19 +44,13 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
             }
             ChannelWithTime *sampleChannel = m->GetSampleChannel();
             if (channel == sampleChannel && sampleChannel->GetStyle() != ChannelWithTime::Samples)
-            {
-                //channelLine.append(tr("Sample Number"));
-                channelLine.append(";");
-                //channelLine.append()
-            }
-            else
-            {
-                channelLine.append(
-                    channel->GetUnits().size() > 0 ?
-                        QString("%1 [%2]").arg(channel->GetName()).arg(channel->GetUnits()).toStdString().c_str() :
-                        channel->GetName().toStdString().c_str()
-                );
-            }
+                channelLine.append(sampleChannel->GetStyleText(ChannelWithTime::Samples).toStdString() + ";");
+
+            channelLine.append(
+                channel->GetUnits().size() > 0 ?
+                    QString("%1 [%2]").arg(channel->GetName()).arg(channel->GetUnits()).toStdString().c_str() :
+                    channel->GetName().toStdString().c_str()
+            );
         }
     }
     measurementLine.append("\n");
@@ -81,17 +75,21 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
                 if (!channel->IsVisible())
                     continue;
 
-                if (channel->GetValueCount() > sampleNr)
-                {
-                    haveData = true;
+                if (channel->GetValueCount() <= sampleNr)
+                    continue;
 
-                    if (first)
-                        first = false;
-                    else
-                        lineContent.append(";");
+                haveData = true;
 
-                    lineContent.append(_GetValueText(channel, sampleNr).toStdString());
-                }
+                if (first)
+                    first = false;
+                else
+                    lineContent.append(";");
+
+                ChannelWithTime *sampleChannel = m->GetSampleChannel();
+                if (channel == sampleChannel && sampleChannel->GetStyle() != ChannelWithTime::Samples)
+                    lineContent.append(QString("%1;").arg(sampleNr).toStdString());
+
+                lineContent.append(_GetValueText(channel, sampleNr).toStdString());
             }
         }
         if (haveData)

@@ -153,17 +153,17 @@ QString ChannelWithTime::GetRealTimeFormatText()
     }
 }
 
-QString ChannelWithTime::_GetRealTimeText(unsigned msSinceEpoch, QString const &format)
+QString ChannelWithTime::_GetRealTimeText(double secSinceEpoch, QString const &format)
 {
     QDateTime dateTime;
-    dateTime.setMSecsSinceEpoch(msSinceEpoch);
+    dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
     return dateTime.toString(format);
 }
 
 void ChannelWithTime::_FillLastValueText(int index)
 {
     if (m_style == RealTime)
-        m_lastValueText = _GetRealTimeText(GetValue(index)*1000, GetRealTimeFormatText());
+        m_lastValueText = _GetRealTimeText(GetValue(index), GetRealTimeFormatText());
     else
         Channel::_FillLastValueText(index);
 }
@@ -196,17 +196,12 @@ qreal ChannelWithTime::GetTimeFromStart(unsigned index)
 
 QString ChannelWithTime::GetTimestamp(double timeInMs)
 {
-    return _GetRealTimeText(timeInMs, "yyyy-MM-dd hh:mm:ss.ms");
+
 }
 
 QString ChannelWithTime::GetValueTimestamp(unsigned index)
 {
-    return ChannelWithTime::GetTimestamp(GetValue(index)*1000);
-}
-
-QString ChannelWithTime::GetStartTimestamp()
-{
-    return ChannelWithTime::GetTimestamp(m_startDateTime.toMSecsSinceEpoch());
+    return _GetRealTimeText(GetValue(index), "hh:mm:ss.ms");
 }
 
 QString ChannelWithTime::GetStyleText(Style style)

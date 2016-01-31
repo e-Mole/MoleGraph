@@ -54,7 +54,7 @@ private:
     void _UpdateAxisAndValues();
     void _FillLastValueText(int index);
     QDateTime _GetStartDateTime() { return m_startDateTime; }
-    QString _GetRealTimeText(unsigned msSinceEpoch, QString const &format);
+    QString _GetRealTimeText(double secSinceEpoch, QString const &format);
 
     QVector<qreal> m_timeFromStart; //sample time from measurement srart
     QDateTime m_startDateTime;
@@ -94,7 +94,6 @@ public:
     double GetSampleNr(unsigned index);
     QString GetTimestamp(double timeInMs);
     QString GetValueTimestamp(unsigned index);
-    QString GetStartTimestamp();
 signals:
 
 public slots:

@@ -51,8 +51,9 @@ void ChannelWithTime::_SetFormat(RealTimeFormat format)
 
 void ChannelWithTime::_UpdateAxisAndValues()
 {
-    if (m_style == TimeOffset)
+    switch (m_style)
     {
+    case TimeOffset:
         switch (m_timeUnits)
         {
         case Us:
@@ -74,9 +75,13 @@ void ChannelWithTime::_UpdateAxisAndValues()
             m_units = tr("days");
             break;
         }
-    }
-    else
+    break;
+    case RealTime:
+        m_units = GetRealTimeFormatText();
+    break;
+    default:
         m_units = "";
+    }
 
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();
@@ -138,6 +143,8 @@ double ChannelWithTime::GetValue(unsigned index)
 
 QString ChannelWithTime::GetRealTimeFormatText()
 {
+    QLocale locale(QLocale::system());
+
     switch (m_realTimeFormat)
     {
     case dd_MM_yyyy:
@@ -147,23 +154,23 @@ QString ChannelWithTime::GetRealTimeFormatText()
     case hh_mm_ss:
         return "hh:mm:ss";
     case mm_ss_zzz:
-        return "mm:ss.zzz";
+        return QString("mm:ss") + locale.decimalPoint() + QString("ms");
     default:
         return ""; //it should be never reached
     }
 }
 
-QString ChannelWithTime::_GetRealTimeText(double secSinceEpoch, QString const &format)
+QString ChannelWithTime::_GetRealTimeText(double secSinceEpoch)
 {
     QDateTime dateTime;
     dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
-    return dateTime.toString(format);
+    return dateTime.toString(GetRealTimeFormatText());
 }
 
 void ChannelWithTime::_FillLastValueText(int index)
 {
     if (m_style == RealTime)
-        m_lastValueText = _GetRealTimeText(GetValue(index), GetRealTimeFormatText());
+        m_lastValueText = GetValueTimestamp(index);
     else
         Channel::_FillLastValueText(index);
 }
@@ -194,14 +201,9 @@ qreal ChannelWithTime::GetTimeFromStart(unsigned index)
     return m_timeFromStart[index];
 }
 
-QString ChannelWithTime::GetTimestamp(double timeInMs)
-{
-
-}
-
 QString ChannelWithTime::GetValueTimestamp(unsigned index)
 {
-    return _GetRealTimeText(GetValue(index), "hh:mm:ss.ms");
+    return _GetRealTimeText(GetValue(index));
 }
 
 QString ChannelWithTime::GetStyleText(Style style)

@@ -54,7 +54,7 @@ private:
     void _UpdateAxisAndValues();
     void _FillLastValueText(int index);
     QDateTime _GetStartDateTime() { return m_startDateTime; }
-    QString _GetRealTimeText(double secSinceEpoch, QString const &format);
+    QString _GetRealTimeText(double secSinceEpoch);
 
     QVector<qreal> m_timeFromStart; //sample time from measurement srart
     QDateTime m_startDateTime;

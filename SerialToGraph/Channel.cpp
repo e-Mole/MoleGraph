@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLocale>
 #include <QPalette>
 #include <QString>
 #include <limits>
@@ -179,13 +180,15 @@ void Channel::_FillLastValueText(int index)
     double value = GetValue(index);
     double absValue = std::abs(value);
 
+    QLocale locale(QLocale::system());
+
     QString strValue;
     if (absValue < 0.0001 && absValue != 0)
-        strValue = QString::number(value, 'e', 3);
+        strValue = locale.toString(value, 'e', 3); //QString::number(value, 'e', 3);
     else if (absValue < 1)
-        strValue = QString::number(value, 'g', 4);
+        strValue = locale.toString(value, 'g', 4);
     else
-        strValue = QString::number(value, 'g', 6);
+        strValue = locale.toString(value, 'g', 6);
 
     m_lastValueText = strValue;
 }

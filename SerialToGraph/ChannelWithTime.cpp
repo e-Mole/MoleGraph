@@ -101,14 +101,20 @@ void  ChannelWithTime::AddValue(double value, qreal timeFromStart)
     AddValue(value);
 }
 
+double ChannelWithTime::GetSampleNr(unsigned index)
+{
+    return Channel::GetValue(index);
+}
 double ChannelWithTime::GetValue(unsigned index)
 {
     switch (m_style)
     {
     case Samples:
-        return Channel::GetValue(index);
+        return GetSampleNr(index);
     case RealTime:
-        return m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index]; //in seconds
+        return
+            m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index] - //in seconds
+            m_timeFromStart[0]; //first sample is on offset 0
     case TimeOffset:
         switch (m_timeUnits)
         {
@@ -183,7 +189,7 @@ double ChannelWithTime::GetMaxValue()
     return 1;
 }
 
-qreal ChannelWithTime::GettimeFromStart(unsigned index)
+qreal ChannelWithTime::GetTimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
 }
@@ -208,7 +214,7 @@ QString ChannelWithTime::GetStyleText(Style style)
     switch (style)
     {
     case Samples:
-        return tr("Sample Number");
+        return tr("Sample");
     case TimeOffset:
         return tr("Time Offset");
     case RealTime:

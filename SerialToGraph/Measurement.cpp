@@ -651,9 +651,15 @@ void Measurement::_SerializeChannelValues(Channel *channel, QDataStream &out)
     out << channel->GetValueCount();
     for (unsigned i = 0; i < channel->GetValueCount(); ++i)
     {
-        out << channel->GetValue(i);
         if (channel->IsSampleChannel())
-            out << ((ChannelWithTime*)channel)->GettimeFromStart(i);
+        {
+            out << ((ChannelWithTime*)channel)->GetSampleNr(i);
+            out << ((ChannelWithTime*)channel)->GetTimeFromStart(i);
+        }
+        else
+        {
+            out << channel->GetValue(i);
+        }
     }
 }
 

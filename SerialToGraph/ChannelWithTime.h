@@ -87,9 +87,10 @@ public:
     bool IsInRealtimeStyle() { return m_style == RealTime; }
     virtual double GetMinValue();
     virtual double GetMaxValue();
-    qreal GettimeFromStart(unsigned index);
+    qreal GetTimeFromStart(unsigned index);
     static QString GetStyleText(Style style);
-    QString GetStyleText() { return GetStyleText(m_style); }
+    QString GetStyleText() { return GetStyleText(m_style); }\
+    double GetSampleNr(unsigned index);
 signals:
 
 public slots:

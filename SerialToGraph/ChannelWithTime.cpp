@@ -188,6 +188,20 @@ qreal ChannelWithTime::GettimeFromStart(unsigned index)
     return m_timeFromStart[index];
 }
 
+QString ChannelWithTime::GetTimestamp(double timeInMs)
+{
+    return _GetRealTimeText(timeInMs, "yyyy-MM-dd hh:mm:ss.ms");
+}
+
+QString ChannelWithTime::GetValueTimestamp(unsigned index)
+{
+    return ChannelWithTime::GetTimestamp(GetValue(index)*1000);
+}
+
+QString ChannelWithTime::GetStartTimestamp()
+{
+    return ChannelWithTime::GetTimestamp(m_startDateTime.toMSecsSinceEpoch());
+}
 
 QString ChannelWithTime::GetStyleText(Style style)
 {

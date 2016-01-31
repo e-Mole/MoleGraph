@@ -4,7 +4,7 @@
 #include <QString>
 
 FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
-    QDialog(parent)
+    QDialog(parent, Qt::Tool)
 {
     setWindowTitle(title);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);

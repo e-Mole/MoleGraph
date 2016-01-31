@@ -121,7 +121,7 @@ QString Channel::GetUnits()
 
 void Channel::AddValue( double value)
 {
-    m_values1.push_back(value);
+    m_values.push_back(value);
 
     if (value < m_channelMinValue)
         m_channelMinValue = value;
@@ -191,7 +191,7 @@ void Channel::_FillLastValueText(int index)
 }
 void Channel::displayValueOnIndex(int index)
 {
-    if (index >= m_values1.size())
+    if (index >= m_values.size())
     {
         _DisplayNAValue();
         return; //probably setRange in start method

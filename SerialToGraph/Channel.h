@@ -65,7 +65,7 @@ protected:
     ClickableGroupBox *m_widget;
     QString m_name;
     int m_hwIndex;
-    QVector<double> m_values1;
+    QVector<double> m_values;
     QColor m_color;
     double m_channelMinValue;
     double m_channelMaxValue;
@@ -99,13 +99,13 @@ public:
     QString GetUnits();
 
     unsigned GetValueCount()
-    { return m_values1.size();}
+    { return m_values.size();}
 
     virtual double GetValue(unsigned index)
-    { return m_values1[index]; }
+    { return m_values[index]; }
 
     double GetLastValue()
-    { return GetValue(m_values1.count()-1); } //GetValue is virtual
+    { return GetValue(m_values.count()-1); } //GetValue is virtual
 
     void AddValue( double value);
 

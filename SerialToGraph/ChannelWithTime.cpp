@@ -112,7 +112,9 @@ double ChannelWithTime::GetValue(unsigned index)
     case Samples:
         return GetSampleNr(index);
     case RealTime:
-        return m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index]; //in seconds
+        return
+            m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index] - //in seconds
+            m_timeFromStart[0]; //first sample is on offset 0
     case TimeOffset:
         switch (m_timeUnits)
         {

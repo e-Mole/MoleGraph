@@ -87,7 +87,7 @@ bool MainWindow::OpenSerialPort()
             }
 
             qDebug() << "hardware not found";
-            m_serialPort.PortIssueSolver();
+            m_serialPort.WorkOffline();
         }
     }
     return true;

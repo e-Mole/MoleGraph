@@ -70,6 +70,7 @@ public:
     void PortIssueSolver();
     bool FillQueue(QQueue<unsigned char> &queue);
     bool ProcessCommand(unsigned char command);
+    void WorkOffline();
 signals:
     void portConnectivityChanged(bool connected);
     void StartCommandDetected();

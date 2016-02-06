@@ -127,13 +127,19 @@ void SerialPort::ReadAll(QByteArray &array)
     array = m_serialPort.readAll();
 }
 
+void SerialPort::WorkOffline()
+{
+    if (m_serialPort.isOpen())
+        m_serialPort.close();
+
+    m_knownIssue = true;
+}
+
 void SerialPort::PortIssueSolver()
 {
-    m_serialPort.close();
-
     if (!m_knownIssue)
     {
-        m_knownIssue = true;
+        WorkOffline();
         QMessageBox::warning(
             NULL,
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),

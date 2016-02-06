@@ -36,7 +36,7 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
     connect(refresh, SIGNAL(clicked(bool)), this, SLOT(refreshClicked(bool)));
     buttonLayout->addWidget(refresh);
 
-    QPushButton *skip = new QPushButton(tr("Skip"), this);
+    QPushButton *skip = new QPushButton(tr("Work Offline"), this);
     connect(skip, SIGNAL(clicked(bool)), this, SLOT(reject()));
     buttonLayout->addWidget(skip);
 

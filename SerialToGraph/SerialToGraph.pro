@@ -4,7 +4,20 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport
+QT       += core gui
+
+linux:android
+{
+INCLUDEPATH += $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/include
+INCLUDEPATH += $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/libs/armeabi-v7a/include
+LIBS += -L$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/libs/armeabi
+}
+
+!linux:android{
+QT += serialport
+SOURCES += hw/SerialPort.cpp
+HEADERS  += hw/SerialPort.h
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -39,8 +52,8 @@ SOURCES += main.cpp\
     AxisChooseDialog.cpp \
     ClickableGroupBox.cpp \
     hw/HwSink.cpp \
-    hw/SerialPort.cpp \
-    hw/PortBase.cpp
+    hw/PortBase.cpp \
+    hw/Bluetooth.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
@@ -69,8 +82,8 @@ HEADERS  += MainWindow.h \
     Serializer.h \
     ClickableGroupBox.h \
     hw/HwSink.h \
-    hw/SerialPort.h \
-    hw/PortBase.h
+    hw/PortBase.h \
+    hw/Bluetooth.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 

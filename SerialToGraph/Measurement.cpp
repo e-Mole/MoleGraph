@@ -19,7 +19,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <Serializer.h>
-#include <SerialPort.h>
+#include <hw/HwSink.h>
 
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 4
@@ -68,7 +68,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
             _InitializeAxesAndChanels();
     }
     connect(
-        &m_context.m_serialPort, SIGNAL(portConnectivityChanged(bool)),
+        &m_context.m_hwSink, SIGNAL(connectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
 }
 
@@ -161,7 +161,7 @@ bool Measurement::_ProcessValueSet()
     unsigned char command = mixture & 0x7f;
     m_anySampleMissed |= mixture >> 7;
 
-    if (m_context.m_serialPort.ProcessCommand(command))
+    if (m_context.m_hwSink.ProcessCommand(command))
         return false; //message is a command
 
     qreal offset = 0;
@@ -214,7 +214,7 @@ void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (m_context.m_serialPort.FillQueue(m_queue) && _IsCompleteSetInQueue())
+    if (m_context.m_hwSink.FillQueue(m_queue) && _IsCompleteSetInQueue())
     {
         while (_IsCompleteSetInQueue())
         {
@@ -255,7 +255,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
 
 bool Measurement::_SetModeWithPeriod()
 {
-    if (!m_context.m_serialPort.SetType(m_type))
+    if (!m_context.m_hwSink.SetType(m_type))
         return false;
 
     if (m_type == OnDemand)
@@ -263,12 +263,12 @@ bool Measurement::_SetModeWithPeriod()
 
     if (m_sampleUnits == Measurement::Hz)
     {
-        if (!m_context.m_serialPort.SetFrequency(m_period))
+        if (!m_context.m_hwSink.SetFrequency(m_period))
             return false;
     }
     else
     {
-        if (!m_context.m_serialPort.SetTime(m_period))
+        if (!m_context.m_hwSink.SetTime(m_period))
             return false;
     }
 
@@ -286,7 +286,7 @@ void Measurement::_ProcessSelectedChannels()
             selectedChannels |= 1 << channel->GetHwIndex();
         }
     }
-    m_context.m_serialPort.SetSelectedChannels(selectedChannels);
+    m_context.m_hwSink.SetSelectedChannels(selectedChannels);
 }
 
 void Measurement::Start()
@@ -295,17 +295,17 @@ void Measurement::Start()
     if (_CheckOtherMeasurementsForRun())
         return;
 
-    if (!m_context.m_serialPort.IsDeviceConnected())
+    if (!m_context.m_hwSink.IsDeviceConnected())
         return;
 
-    m_context.m_serialPort.Clear(); //throw buffered data avay. I want to start to listen now
+    m_context.m_hwSink.ClearCache(); //throw buffered data avay. I want to start to listen now
     if(!_SetModeWithPeriod())
         return;
     _ProcessSelectedChannels();
 
     m_startNewDraw = true;
     m_drawTimer->start(m_drawPeriod);
-    if (!m_context.m_serialPort.Start())
+    if (!m_context.m_hwSink.Start())
     {
         m_drawTimer->stop();
         return;
@@ -319,7 +319,7 @@ void Measurement::Start()
 
 void Measurement::SampleRequest()
 {
-    m_context.m_serialPort.SampleRequest();
+    m_context.m_hwSink.SampleRequest();
 }
 
 void Measurement::_DrawRestData()
@@ -342,7 +342,7 @@ void Measurement::Stop()
     m_startNewDraw = false;
     m_drawTimer->stop();
 
-    if (!m_context.m_serialPort.Stop())
+    if (!m_context.m_hwSink.Stop())
         qDebug() << "stop was not deliveried";
 
     _DrawRestData();

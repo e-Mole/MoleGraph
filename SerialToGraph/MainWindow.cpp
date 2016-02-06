@@ -25,8 +25,8 @@
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
     m_settings("eMole", "ArduinoToGraph"),
-    m_serialPort(m_settings),
-    m_context(m_measurements, m_serialPort, m_settings, *this),
+    m_hwSink(m_settings),
+    m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL),
     m_close(false)
 {
@@ -45,12 +45,12 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     setCentralWidget(centralWidget);
 
     m_buttonLine = new ButtonLine(this, m_context);
-    m_buttonLine->connectivityStateChange(m_serialPort.IsDeviceConnected());
+    m_buttonLine->connectivityStateChange(m_hwSink.IsDeviceConnected());
     addToolBar(m_buttonLine);
 
-    connect(&m_serialPort, SIGNAL(portConnectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
-    connect(&m_serialPort, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
-    connect(&m_serialPort, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
+    connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
+    connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
+    connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(centralWidget);
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
@@ -74,10 +74,10 @@ QString &MainWindow::GetCurrentFileName()
 
 bool MainWindow::OpenSerialPort()
 {
-    QList<ExtendedSerialPortInfo> portInfos;
-    if (!m_serialPort.FindAndOpenMySerialPort(portInfos))
+    QList<hw::PortInfo> portInfos;
+    if (!m_hwSink.FindAndOpenMyPort(portInfos))
     {
-        PortListDialog *portListDialog = new PortListDialog(m_serialPort, portInfos, m_settings);
+        PortListDialog *portListDialog = new PortListDialog(m_hwSink, portInfos, m_settings);
         if (QDialog::Rejected == portListDialog->exec())
         {
             if (portListDialog->CloseApp())
@@ -87,7 +87,7 @@ bool MainWindow::OpenSerialPort()
             }
 
             qDebug() << "hardware not found";
-            m_serialPort.WorkOffline();
+            m_hwSink.WorkOffline();
         }
     }
     return true;

@@ -15,7 +15,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     qcustomplot/qcustomplot.cpp \
-    SerialPort.cpp \
     ChannelSettings.cpp \
     Channel.cpp \
     PortListDialog.cpp \
@@ -38,11 +37,13 @@ SOURCES += main.cpp\
     ClickableLabel.cpp \
     ChannelWithTime.cpp \
     AxisChooseDialog.cpp \
-    ClickableGroupBox.cpp
+    ClickableGroupBox.cpp \
+    hw/HwSink.cpp \
+    hw/SerialPort.cpp \
+    hw/PortBase.cpp
 
 HEADERS  += MainWindow.h \
     qcustomplot/qcustomplot.h \
-    SerialPort.h \
     ChannelSettings.h \
     Channel.h \
     PortListDialog.h \
@@ -66,7 +67,10 @@ HEADERS  += MainWindow.h \
     ChannelWithTime.h \
     AxisChooseDialog.h \
     Serializer.h \
-    ClickableGroupBox.h
+    ClickableGroupBox.h \
+    hw/HwSink.h \
+    hw/SerialPort.h \
+    hw/PortBase.h
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 

@@ -10,20 +10,20 @@ class MainWindow;
 class Measurement;
 class Plot;
 class QSettings;
-class SerialPort;
+
+namespace hw { class HwSink; }
 struct Context
 {
 public:
-    Context(
-        QVector<Measurement *> &measurements,
-        SerialPort &serialPort,
+    Context(QVector<Measurement *> &measurements,
+        hw::HwSink &hwSink,
         QSettings &settings,
         MainWindow &mainWindow);
 
     QString m_applicationName;
     QSettings &m_settings;
     QVector<Measurement *> &m_measurements;
-    SerialPort &m_serialPort;
+    hw::HwSink &m_hwSink;
     MainWindow &m_mainWindow;
 
     void SetCurrentMeasurement(Measurement *currentMeasurement);

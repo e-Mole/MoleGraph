@@ -5,7 +5,7 @@
 #include <Context.h>
 #include <QMainWindow>
 #include <QSettings>
-#include <SerialPort.h>
+#include <hw/HwSink.h>
 #include <QVector>
 
 class CentralWidget;
@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     void _SetCurrentFileName(QString const &fileName);
 
     QSettings m_settings;
-    SerialPort m_serialPort;
+    hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
     Context m_context;

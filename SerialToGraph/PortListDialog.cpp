@@ -7,10 +7,10 @@
 #include <QSettings>
 #include <QShortcut>
 #include <QVBoxLayout>
-#include <SerialPort.h>
+#include <hw/HwSink.h>
 
 
-PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos, QSettings &settings) :
+PortListDialog::PortListDialog(hw::HwSink &hwSink, QList<hw::PortInfo> const& portInfos, QSettings &settings) :
     QDialog(),
     m_mainWidget(NULL),
     m_close(false)
@@ -21,7 +21,7 @@ PortListDialog::PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> c
 
     layout->addWidget(description);
 
-    m_mainWidget = new PortListWidget(this, port, portInfos, settings);
+    m_mainWidget = new PortListWidget(this, hwSink, portInfos, settings);
     connect(m_mainWidget, SIGNAL(selectedValidPort()), this, SLOT(accept()));
     layout->addWidget(m_mainWidget);
 

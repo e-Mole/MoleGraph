@@ -4,11 +4,11 @@
 #include <QDialog>
 #include <QList>
 
-class ExtendedSerialPortInfo;
-class SerialPort;
 class QCloseEvent;
 class QSettings;
 class PortListWidget;
+
+namespace hw { class HwSink; class PortInfo; }
 class PortListDialog : public QDialog
 {
     Q_OBJECT
@@ -18,7 +18,7 @@ class PortListDialog : public QDialog
     PortListWidget *m_mainWidget;
     bool m_close;
 public:
-    PortListDialog(SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos, QSettings &settings);
+    PortListDialog(hw::HwSink &hwSink, QList<hw::PortInfo> const& portInfos, QSettings &settings);
     bool CloseApp()
     { return m_close; }
 signals:

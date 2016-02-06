@@ -4,7 +4,8 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QSettings>
-#include <SerialPort.h>
+#include <hw/HwSink.h>
+#include <hw/PortBase.h>
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -12,8 +13,8 @@
 namespace {
     struct RadioButtonWithInfo : public QRadioButton
     {
-        ExtendedSerialPortInfo m_info;
-        RadioButtonWithInfo(const QString &text, QWidget *parent, ExtendedSerialPortInfo const &info):
+        hw::PortInfo m_info;
+        RadioButtonWithInfo(const QString &text, QWidget *parent, hw::PortInfo const &info):
             QRadioButton(text, parent),
             m_info(info)
         {
@@ -21,9 +22,9 @@ namespace {
         }
     };
 }
-PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos, QSettings &settings) :
+PortListWidget::PortListWidget(QWidget *parent, hw::HwSink &hwSink, QList<hw::PortInfo> const& portInfos, QSettings &settings) :
     QWidget(parent),
-    m_serialPort(port),
+    m_hwSink(hwSink),
     m_settings(settings)
 {
     m_gridLayout = new QGridLayout(this);
@@ -32,10 +33,10 @@ PortListWidget::PortListWidget(QWidget *parent, SerialPort &port, QList<Extended
     _Initialize(portInfos);
 }
 
-void PortListWidget::_Initialize(QList<ExtendedSerialPortInfo> const& portInfos)
+void PortListWidget::_Initialize(const QList<hw::PortInfo> &portInfos)
 {
      unsigned counter = 0;
-    foreach (ExtendedSerialPortInfo const &info, portInfos)
+    foreach (hw::PortInfo const &info, portInfos)
         _AddPortInfoLine(info, m_gridLayout, counter++);
 }
 void PortListWidget::Refresh()
@@ -48,16 +49,16 @@ void PortListWidget::Refresh()
     }
     adjustSize();
 
-    QList<ExtendedSerialPortInfo> portInfos;
-    if (m_serialPort.FindAndOpenMySerialPort(portInfos))
+    QList<hw::PortInfo> portInfos;
+    if (m_hwSink.FindAndOpenMyPort(portInfos))
         selectedValidPort();
     else
         _Initialize(portInfos);
 }
 
-void PortListWidget::_AddPortInfoLine(ExtendedSerialPortInfo const &info, QGridLayout *layout, unsigned counter)
+void PortListWidget::_AddPortInfoLine(hw::PortInfo const &info, QGridLayout *layout, unsigned counter)
 {
-    RadioButtonWithInfo * radioButton = new RadioButtonWithInfo(info.portName(), this, info);
+    RadioButtonWithInfo * radioButton = new RadioButtonWithInfo(info.m_id, this, info);
     connect(radioButton, SIGNAL(clicked()), this, SLOT(portSelected()));
        layout->addWidget(radioButton, counter, 0);
     if (info.m_preferred)
@@ -68,10 +69,10 @@ void PortListWidget::_AddPortInfoLine(ExtendedSerialPortInfo const &info, QGridL
 void PortListWidget::portSelected()
 {
     this->setCursor(QCursor(Qt::WaitCursor));
-    if (m_serialPort.OpenSerialPort(((RadioButtonWithInfo *)sender())->m_info))
+    if (m_hwSink.OpenPort(((RadioButtonWithInfo *)sender())->m_info.m_id))
     {
         selectedValidPort();
-        m_settings.setValue("lastSerialPort", ((RadioButtonWithInfo *)sender())->m_info.portName());
+        m_settings.setValue("lastSerialPort", ((RadioButtonWithInfo *)sender())->m_info.m_id);
     }
     else
     {

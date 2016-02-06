@@ -6,20 +6,20 @@
 
 class QGridLayout;
 class ExtendedSerialPortInfo;
-class SerialPort;
 class QSettings;
 
+namespace hw { class HwSink; class PortInfo;}
 class PortListWidget : public QWidget
 {
     Q_OBJECT
 
-    void _AddPortInfoLine(const ExtendedSerialPortInfo &info, QGridLayout *layout, unsigned counter);
-    void _Initialize(QList<ExtendedSerialPortInfo> const& portInfos);
-    SerialPort &m_serialPort;
+    void _AddPortInfoLine(const hw::PortInfo &info, QGridLayout *layout, unsigned counter);
+    void _Initialize(QList<hw::PortInfo> const& portInfos);
+    hw::HwSink &m_hwSink;
     QSettings &m_settings;
     QGridLayout *m_gridLayout;
 public:
-    PortListWidget(QWidget *parent, SerialPort &port, QList<ExtendedSerialPortInfo> const& portInfos, QSettings &settings);
+    PortListWidget(QWidget *parent, hw::HwSink &hwSink, QList<hw::PortInfo> const& portInfos, QSettings &settings);
     void Refresh();
 signals:
     void selectedValidPort();

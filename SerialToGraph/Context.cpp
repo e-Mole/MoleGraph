@@ -8,16 +8,17 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QFileInfo>
 #include <QSettings>
-#include <SerialPort.h>
+#include <hw/HwSink.h>
+
 Context::Context(
         QVector<Measurement *> &measurements,
-        SerialPort &serialPort,
+        hw::HwSink &hwSink,
         QSettings &settings,
         MainWindow &mainWindow):
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
     m_measurements(measurements),
-    m_serialPort(serialPort),
+    m_hwSink(hwSink),
     m_mainWindow(mainWindow)
 {
 }

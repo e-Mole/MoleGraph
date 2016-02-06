@@ -30,18 +30,7 @@ protected:
     {
         virtual void resizeEvent(QResizeEvent * event);
     public:
-        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
-            QLabel(text, parent)
-        {
-            setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
-            SetColor(foreColor);
-
-            if (haveBackColor)
-                setStyleSheet("QLabel { background-color : white;}");
-            else
-                setStyleSheet("QLabel { background-color : #e0e0e0;}");
-            setMargin(3);
-        }
+        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent);
         void SetMimimumFontSize();
         void SetColor(const QColor &color);
         QSize GetSize(QString const &text);

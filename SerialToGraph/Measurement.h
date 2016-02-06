@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QMetaProperty>
+#include <QColor>
 #include <QObject>
 #include <QQueue>
 #include <QString>
@@ -33,7 +34,7 @@ class Measurement : public QObject
     Q_PROPERTY(State  state READ _GetStateForSerialization WRITE _SetState)
     Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
-
+    Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
     Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections)
 
@@ -65,7 +66,7 @@ private:
     void _AdjustDrawPeriod(unsigned drawDelay);
     void _InitializeAxesAndChanels(Measurement *source);
     void _InitializeAxesAndChanels();
-    void _AddYChannel(Qt::GlobalColor color, Axis *axis);
+    void _AddYChannel(const QColor &color, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
@@ -90,6 +91,8 @@ private:
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
     State _GetStateForSerialization() { return (m_state == Running) ? Finished : m_state; }
+    QColor _GetColorByOrder(unsigned order);
+    void _SetColor(QColor const &color);
     QWidget  m_widget;
     Context const &m_context;
     QString m_name;
@@ -113,7 +116,7 @@ private:
     bool m_startNewDraw;
     Type m_type;
     bool m_saveLoadValues; //for serialization and deserialization too
-
+    QColor m_color;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
@@ -146,10 +149,12 @@ public:
         { m_saveLoadValues = saveLoadValues; }
 
     ChannelWithTime *GetSampleChannel() {return m_sampleChannel; }
+    QColor &GetColor() { return m_color; }
 
 signals:
     void stateChanged();
     void nameChanged();
+    void colorChanged();
 public slots:
     void sliderActionTriggered(int action);
     void showGraph(bool show);

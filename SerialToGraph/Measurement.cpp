@@ -25,7 +25,7 @@
 #define CHANNEL_DATA_SIZE 4
 #define TIMESTAMP_SIZE 4
 #define VERTIACAL_MAX 3
-
+#define CHANNEL_COUNT 8
 Measurement::Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels):
     QObject(parent),
     m_widget(parent),
@@ -42,7 +42,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_scrollBar(new QScrollBar(Qt::Horizontal, &m_widget)),
     m_startNewDraw(false),
     m_type(source != NULL ? source->m_type : Periodical),
-    m_saveLoadValues(false)
+    m_saveLoadValues(false),
+    m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -558,14 +559,9 @@ void Measurement::_InitializeAxesAndChanels()
     m_channels.push_back(m_sampleChannel);
     m_plot->SetHorizontalChannel(m_sampleChannel);
 
-    _AddYChannel(Qt::red, yAxis);
-    _AddYChannel(Qt::blue, yAxis);
-    _AddYChannel(Qt::darkGreen, yAxis);
-    _AddYChannel(Qt::magenta, yAxis);
-    _AddYChannel(Qt::cyan, yAxis);
-    _AddYChannel(Qt::green, yAxis);
-    _AddYChannel(Qt::darkRed, yAxis);
-    _AddYChannel(Qt::darkGray, yAxis);
+    for (unsigned i = 1; i <= CHANNEL_COUNT; i++)
+        _AddYChannel(_GetColorByOrder(i), yAxis);
+
 
     foreach (Axis *axis, m_axes)
         axis->UpdateGraphAxisName();
@@ -573,7 +569,22 @@ void Measurement::_InitializeAxesAndChanels()
     ReplaceDisplays(false);
 }
 
-void Measurement::_AddYChannel(Qt::GlobalColor color, Axis *axis)
+QColor Measurement::_GetColorByOrder(unsigned order)
+{
+    switch (order)
+    {
+    case 1: return Qt::red;
+    case 2: return Qt::blue;
+    case 3: return Qt::darkGreen;
+    case 4: return Qt::magenta;
+    case 5: return Qt::cyan;
+    case 6: return Qt::green;
+    case 7: return Qt::darkRed;
+    case 8: return Qt::darkGray;
+    default: return Qt::black; //also for 0
+    }
+}
+void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 {
     unsigned order = m_channels.size()-1;
     m_channels.push_back(
@@ -823,4 +834,13 @@ void Measurement::DeserializeColections(QDataStream &in)
     }
 
     ReplaceDisplays(false);
+}
+
+void Measurement::_SetColor(QColor const &color)
+{
+    if (m_color == color)
+        return;
+
+    m_color = color;
+    colorChanged();
 }

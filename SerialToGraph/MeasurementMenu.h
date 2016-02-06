@@ -4,6 +4,7 @@
 #include <MenuDialogBase.h>
 #include <QMap>
 
+class ClickableLabel;
 class Measurement;
 class QPushButton;
 class QRadioButton;
@@ -21,6 +22,7 @@ class MeasurementMenu : public MenuDialogBase
     QMap<QPushButton*, Measurement*> m_removeButtonToItem;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
     QMap<QRadioButton*,Measurement*> m_radioButtonToItem;
+    QMap<ClickableLabel*,Measurement*> m_nameToItem;
 public:
     MeasurementMenu(QWidget *parent, const Context &context);
 signals:
@@ -31,6 +33,7 @@ private slots:
     void removeButtonPressed();
     void cloneButtonPressed();
     void radioButtonClicked();
+    void nameClicked();
 };
 
 #endif // MEASUREMENTMENU_H

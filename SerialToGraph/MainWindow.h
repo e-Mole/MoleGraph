@@ -49,6 +49,7 @@ public:
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
+    void measurementColorChanged();
 };
 
 #endif // MAINWINDOW_H

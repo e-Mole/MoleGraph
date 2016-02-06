@@ -9,7 +9,7 @@
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
-    FormDialogBase(parent, tr("Measurement Setting")),
+    FormDialogColor(parent, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
     m_name(new QLineEdit(measurement->m_name, this)),
@@ -39,6 +39,7 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     m_sampleUnits->setEnabled(enablePeriodItems);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_sampleUnits);
 
+    AddColorButtonRow(m_measurement->m_color);
 }
 
 void MeasurementSettings::disablePeriodAndUnits(int disabled)
@@ -63,5 +64,6 @@ bool MeasurementSettings::BeforeAccept()
 
     m_measurement->m_period = m_period->text().toInt();
     m_measurement->m_type = (Measurement::Type)m_type->currentIndex();
+    m_measurement->_SetColor(m_color);
     return true;
 }

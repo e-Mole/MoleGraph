@@ -1,4 +1,5 @@
 #include "MeasurementMenu.h"
+#include <ClickableLabel.h>
 #include <Context.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -30,6 +31,12 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     buttonLayout->setMargin(0);
     rowWidget->setLayout(buttonLayout);
 
+    ClickableLabel *name = new ClickableLabel(measurement->GetName(), rowWidget);
+    name->SetColor(measurement->GetColor());
+    connect(name, SIGNAL(mousePressed()), this, SLOT(nameClicked()));
+    m_nameToItem[name] = measurement;
+    buttonLayout->addWidget(name);
+
     QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtonToItem.insert(editButton, measurement);
@@ -41,7 +48,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     m_removeButtonToItem.insert(removeButton, measurement);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()), Qt::DirectConnection);
 
-    QRadioButton *rb = new QRadioButton(measurement->GetName(), this);
+    QRadioButton *rb = new QRadioButton(this);
     rb->setChecked(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
     connect(rb, SIGNAL(clicked()), this, SLOT(radioButtonClicked()));
     m_radioButtonToItem[rb] = measurement;
@@ -152,6 +159,16 @@ void MeasurementMenu::editButtonPressed()
     }
 
     CloseIfPopup();
+}
+
+void MeasurementMenu::nameClicked()
+{
+    Measurement *measurement = m_nameToItem[(ClickableLabel*)sender()];
+    for (auto it = m_radioButtonToItem.begin(); it != m_radioButtonToItem.end(); ++it)
+        if (it.value() == measurement)
+            it.key()->setChecked(true);
+
+    m_context.m_mainWindow.SwichCurrentMeasurement(m_nameToItem[(ClickableLabel*)sender()]);
 }
 
 void MeasurementMenu::radioButtonClicked()

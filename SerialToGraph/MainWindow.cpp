@@ -114,7 +114,19 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    m_measurementTabs->setCurrentIndex(m_measurementTabs->addTab(m->GetWidget(), m->GetName()));
+
+    int index = m_measurementTabs->addTab(m->GetWidget(), m->GetName());
+    m_measurementTabs->setCurrentIndex(index);
+    m_measurementTabs->tabBar()->setTabTextColor(index, m->GetColor());
+    connect(m, SIGNAL(colorChanged()), this, SLOT(measurementColorChanged()));
+}
+
+void MainWindow::measurementColorChanged()
+{
+    Measurement * m = (Measurement*)sender();
+    for (int i = 0; i < m_measurementTabs->count(); ++i)
+        if (m_measurementTabs->widget(i) == m->GetWidget())
+            m_measurementTabs->tabBar()->setTabTextColor(i, m->GetColor());
 }
 
 void MainWindow::SwichCurrentMeasurement(Measurement *m)

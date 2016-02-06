@@ -18,6 +18,20 @@
 #include <QString>
 #include <limits>
 
+Channel::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
+    QLabel(text, parent)
+{
+    setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
+    SetColor(foreColor);
+
+    if (haveBackColor)
+        setStyleSheet("QLabel { background-color : white;}");
+    else
+        setStyleSheet("QLabel { background-color : #e0e0e0;}");
+
+    setMargin(3);
+}
+
 QSize Channel::ValueLabel::GetLongestTextSize()
 {
     return GetSize("-0.000e-00\n");
@@ -94,8 +108,14 @@ Channel::Channel(Measurement *measurement,
 
     changeChannelVisibility(visible, false);
 
-
     connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
+
+    /*m_widget->setStyleSheet(
+        QString("QGroupBox::title { color: rgb(%1, %2, %3)}").
+            arg(measurement->GetColor().red()).
+            arg(measurement->GetColor().green()).
+            arg(measurement->GetColor().blue())
+    );*/
 }
 
 Channel::~Channel()

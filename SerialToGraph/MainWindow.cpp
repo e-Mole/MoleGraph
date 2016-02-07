@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QMenu>
+#include <QRect>
 #include <QTabWidget>
 #include <QtCore/QDebug>
 #include <QToolBar>
@@ -30,6 +31,16 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_currentMeasurement(NULL),
     m_close(false)
 {
+#if defined(Q_OS_ANDROID)
+    this->showMaximized();
+#endif
+
+    QRect desktopRect = QApplication::desktop()->screenGeometry();
+    if (desktopRect .width() > 800)
+        setMinimumWidth(800);
+    if (desktopRect .height() >740)
+        setMinimumHeight(740);
+
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);
     if (translator->load("./serialToGraph_cs.qm"))
@@ -252,4 +263,13 @@ void MainWindow::OpenNew()
     m_currentFileName = "";
     RemoveAllMeasurements();
     ConfirmMeasurement(CreateNewMeasurement(true));
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent * event)
+{
+    if (event->key() == Qt::Key_Back) //used on android
+    {
+        close();
+        event->accept();
+    }
 }

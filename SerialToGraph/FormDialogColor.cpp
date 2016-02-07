@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QString>
-
+#include <QtConcurrent/QtConcurrent>
 FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title) :
     FormDialogBase(parent, title),
     m_colorButtonWidget(NULL),
@@ -32,7 +32,9 @@ void FormDialogColor::colorButtonClicked()
 {
     QColorDialog colorDialog(NULL);
     colorDialog.setCurrentColor(m_color);
+#if not defined(Q_OS_ANDROID)
     colorDialog.setOption(QColorDialog::DontUseNativeDialog, true);
+#endif
     if (QDialog::Accepted == colorDialog.exec())
     {
         m_color = colorDialog.currentColor();

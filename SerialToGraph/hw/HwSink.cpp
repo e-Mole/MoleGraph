@@ -1,8 +1,8 @@
 #include "HwSink.h"
 
-//#if not defined(Q_OS_ANDROID)
-//#   include <hw/SerialPort.h>
-//#endif
+#if not defined(Q_OS_ANDROID)
+#   include <hw/SerialPort.h>
+#endif
 #include <hw/Bluetooth.h>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -13,10 +13,16 @@ namespace hw
 {
 HwSink::HwSink(QSettings &settings, QObject *parent) :
     QObject(parent),
-    //m_port(new SerialPort(settings, this)),
+#if defined(Q_OS_ANDROID)
     m_port(new Bluetooth(this)),
+#else
+    m_port(new SerialPort(settings, this)),
+#endif
     m_knownIssue(false)
 {
+#if defined(Q_OS_ANDROID)
+    Q_UNUSED(settings);
+#endif
 }
 
 HwSink::~HwSink()

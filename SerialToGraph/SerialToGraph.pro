@@ -1,23 +1,10 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-04-27T21:14:15
+# Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
 
 QT       += core gui
-
-linux:android
-{
-INCLUDEPATH += $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/include
-INCLUDEPATH += $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/libs/armeabi-v7a/include
-LIBS += -L$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(ANDROID_NDK_TOOLCHAIN_VERSION)/libs/armeabi
-}
-
-!linux:android{
-QT += serialport
-SOURCES += hw/SerialPort.cpp
-HEADERS  += hw/SerialPort.h
-}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -27,64 +14,74 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    qcustomplot/qcustomplot.cpp \
-    ChannelSettings.cpp \
-    Channel.cpp \
-    PortListDialog.cpp \
-    PortListWidget.cpp \
-    ButtonLine.cpp \
-    FormDialogBase.cpp \
-    Axis.cpp \
-    Context.cpp \
-    Plot.cpp \
-    Export.cpp \
-    FormDialogColor.cpp \
-    AxisSettings.cpp \
-    Measurement.cpp \
-    MeasurementMenu.cpp \
-    AxisMenu.cpp \
-    MeasurementSettings.cpp \
-    MenuDialogBase.cpp \
-    ConnectivityLabel.cpp \
-    ChannelMenu.cpp \
-    ClickableLabel.cpp \
-    ChannelWithTime.cpp \
-    AxisChooseDialog.cpp \
-    ClickableGroupBox.cpp \
+    hw/Bluetooth.cpp \
     hw/HwSink.cpp \
     hw/PortBase.cpp \
-    hw/Bluetooth.cpp
+    qcustomplot/qcustomplot.cpp \
+    Axis.cpp \
+    AxisChooseDialog.cpp \
+    AxisMenu.cpp \
+    AxisSettings.cpp \
+    ButtonLine.cpp \
+    ClickableGroupBox.cpp \
+    ClickableLabel.cpp \
+    ConnectivityLabel.cpp \
+    Context.cpp \
+    Export.cpp \
+    FormDialogBase.cpp \
+    FormDialogColor.cpp \
+    Channel.cpp \
+    ChannelMenu.cpp \
+    ChannelSettings.cpp \
+    ChannelWithTime.cpp \
+    Measurement.cpp \
+    MeasurementMenu.cpp \
+    MeasurementSettings.cpp \
+    MenuDialogBase.cpp \
+    Plot.cpp \
+    PortListDialog.cpp \
+    PortListWidget.cpp
 
 HEADERS  += MainWindow.h \
-    qcustomplot/qcustomplot.h \
-    ChannelSettings.h \
-    Channel.h \
-    PortListDialog.h \
-    PortListWidget.h \
-    ButtonLine.h \
-    FormDialogBase.h \
-    Axis.h \
-    Context.h \
-    Plot.h \
-    Export.h \
-    FormDialogColor.h \
-    AxisSettings.h \
-    Measurement.h \
-    MeasurementMenu.h \
-    AxisMenu.h \
-    MeasurementSettings.h \
-    MenuDialogBase.h \
-    ConnectivityLabel.h \
-    ChannelMenu.h \
-    ClickableLabel.h \
-    ChannelWithTime.h \
-    AxisChooseDialog.h \
-    Serializer.h \
-    ClickableGroupBox.h \
+    hw/Bluetooth.h \
     hw/HwSink.h \
     hw/PortBase.h \
-    hw/Bluetooth.h
+    qcustomplot/qcustomplot.h \
+    Axis.h \
+    AxisChooseDialog.h \
+    AxisMenu.h \
+    AxisSettings.h \
+    ButtonLine.h \
+    ClickableGroupBox.h \
+    ClickableLabel.h \
+    ConnectivityLabel.h \
+    Context.h \
+    Export.h \
+    FormDialogBase.h \
+    FormDialogColor.h \
+    Channel.h \
+    ChannelMenu.h \
+    ChannelSettings.h \
+    ChannelWithTime.h \
+    Measurement.h \
+    MeasurementMenu.h \
+    MeasurementSettings.h \
+    MenuDialogBase.h \
+    Plot.h \
+    PortListDialog.h \
+    PortListWidget.h \
+    Serializer.h
+
+CONFIG += mobility
+CONFIG += c++11
+MOBILITY = 
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 
-CONFIG += c++11
+!android{
+QT += serialport
+SOURCES += hw/SerialPort.cpp
+HEADERS += hw/SerialPort.h
+}
+
+

@@ -136,6 +136,7 @@ void ButtonLine::_RefreshPanelMenu()
         return;
 
     m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
+    m_channelMenu->setVisible(false); //mainly for android
     _CreatePanelShortcuts();
     m_channelMenu->FillGrid();
     UpdateRunButtonsState();

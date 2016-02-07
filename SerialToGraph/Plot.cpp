@@ -39,7 +39,7 @@ Plot::Plot(Measurement *measurement) :
 
     xAxis->setRange(0, 1);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
-    setMinimumSize(700, 500);
+    //setMinimumSize(700, 500);
 
     yAxis->setVisible(false);
     xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);

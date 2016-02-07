@@ -3,9 +3,13 @@
 
 #include <QDialog>
 class QGridLayout;
+class QMouseEvent;
 class MenuDialogBase : public QDialog
 {
     Q_OBJECT
+
+    void keyReleaseEvent(QKeyEvent * event);
+
 protected:
     void CloseIfPopup();
     virtual void FillGrid() = 0;

@@ -19,6 +19,8 @@ class MainWindow : public QMainWindow
 
     void _SetCurrentFileName(QString const &fileName);
 
+    void keyReleaseEvent(QKeyEvent * event);
+
     QSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;

@@ -243,42 +243,42 @@
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="169"/>
+        <location filename="../ButtonLine.cpp" line="170"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="173"/>
+        <location filename="../ButtonLine.cpp" line="174"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="175"/>
+        <location filename="../ButtonLine.cpp" line="176"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="181"/>
+        <location filename="../ButtonLine.cpp" line="182"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="182"/>
+        <location filename="../ButtonLine.cpp" line="183"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="184"/>
+        <location filename="../ButtonLine.cpp" line="185"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="185"/>
+        <location filename="../ButtonLine.cpp" line="186"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="186"/>
+        <location filename="../ButtonLine.cpp" line="187"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
@@ -287,7 +287,7 @@
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="179"/>
+        <location filename="../ButtonLine.cpp" line="180"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -359,7 +359,7 @@
 <context>
     <name>Channel</name>
     <message>
-        <location filename="../Channel.cpp" line="157"/>
+        <location filename="../Channel.cpp" line="177"/>
         <source>n/a</source>
         <translation>n/a</translation>
     </message>
@@ -695,12 +695,12 @@
 <context>
     <name>FormDialogBase</name>
     <message>
-        <location filename="../FormDialogBase.cpp" line="17"/>
+        <location filename="../FormDialogBase.cpp" line="23"/>
         <source>Store</source>
         <translation>Ulož</translation>
     </message>
     <message>
-        <location filename="../FormDialogBase.cpp" line="21"/>
+        <location filename="../FormDialogBase.cpp" line="27"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
@@ -750,42 +750,42 @@
 <context>
     <name>Measurement</name>
     <message>
-        <location filename="../Measurement.cpp" line="47"/>
+        <location filename="../Measurement.cpp" line="48"/>
         <source>Measurement %1</source>
         <translation>Měření %1</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="91"/>
+        <location filename="../Measurement.cpp" line="92"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
         <translation>Měření &apos;%1&apos; bylo ukončeno kvůli problému se spojením.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="243"/>
+        <location filename="../Measurement.cpp" line="244"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Ukončit ho?</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="244"/>
+        <location filename="../Measurement.cpp" line="245"/>
         <source>Terminate</source>
         <translation>Ukonči</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="245"/>
+        <location filename="../Measurement.cpp" line="246"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="335"/>
+        <location filename="../Measurement.cpp" line="336"/>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
         <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="524"/>
+        <location filename="../Measurement.cpp" line="525"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="534"/>
+        <location filename="../Measurement.cpp" line="535"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
@@ -794,7 +794,7 @@
         <translation>Vzorky</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="587"/>
+        <location filename="../Measurement.cpp" line="598"/>
         <source>Channel %1</source>
         <translation>Kanál %1</translation>
     </message>
@@ -802,45 +802,45 @@
 <context>
     <name>MeasurementMenu</name>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="20"/>
+        <location filename="../MeasurementMenu.cpp" line="21"/>
         <source>Measurements</source>
         <translation>Měření</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="33"/>
+        <location filename="../MeasurementMenu.cpp" line="40"/>
         <source>Edit</source>
         <translation>Editovat</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="38"/>
-        <location filename="../MeasurementMenu.cpp" line="113"/>
-        <location filename="../MeasurementMenu.cpp" line="129"/>
+        <location filename="../MeasurementMenu.cpp" line="45"/>
+        <location filename="../MeasurementMenu.cpp" line="120"/>
+        <location filename="../MeasurementMenu.cpp" line="136"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="63"/>
+        <location filename="../MeasurementMenu.cpp" line="70"/>
         <source>Add New</source>
         <translation>Přidat nové</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="69"/>
+        <location filename="../MeasurementMenu.cpp" line="76"/>
         <source>Clone Selected</source>
         <translation>Klonovat vybrané</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="112"/>
+        <location filename="../MeasurementMenu.cpp" line="119"/>
         <source>The measurement &apos;%1&apos; is in progress. Really remove it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Opravdu ho chcete odstranit?</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="114"/>
-        <location filename="../MeasurementMenu.cpp" line="130"/>
+        <location filename="../MeasurementMenu.cpp" line="121"/>
+        <location filename="../MeasurementMenu.cpp" line="137"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../MeasurementMenu.cpp" line="128"/>
+        <location filename="../MeasurementMenu.cpp" line="135"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
         <translation>Měření &apos;%1&apos; již obsahuje data. Opravdu ho chcete odstranit?</translation>
     </message>
@@ -898,7 +898,7 @@
         <translation>Jednotky</translation>
     </message>
     <message>
-        <location filename="../MeasurementSettings.cpp" line="60"/>
+        <location filename="../MeasurementSettings.cpp" line="61"/>
         <source>Period must be a positive number.</source>
         <translation>Perioda musí být kladné číslo.</translation>
     </message>
@@ -924,6 +924,10 @@
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="39"/>
+        <source>Work Offline</source>
+        <translation>Pracovat odpojený</translation>
+    </message>
+    <message>
         <source>Skip</source>
         <translation>Přeskočit</translation>
     </message>
@@ -936,12 +940,12 @@
 <context>
     <name>PortListWidget</name>
     <message>
-        <location filename="../PortListWidget.cpp" line="64"/>
+        <location filename="../PortListWidget.cpp" line="65"/>
         <source>preferred</source>
         <translation>preferovaný</translation>
     </message>
     <message>
-        <location filename="../PortListWidget.cpp" line="81"/>
+        <location filename="../PortListWidget.cpp" line="82"/>
         <source>the port doesn&apos;t respond properly. Please, check if the device is connected and the port read/write permitions.</source>
         <translation>Port neodpovídá podle očekávání. Zkontrolujte, prosím, připojení zařízení a nastavení oprávnění pro čtení a zápis.</translation>
     </message>
@@ -949,7 +953,14 @@
 <context>
     <name>SerialPort</name>
     <message>
-        <location filename="../SerialPort.cpp" line="140"/>
+        <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
+        <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
+    </message>
+</context>
+<context>
+    <name>hw::HwSink</name>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="126"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
     </message>
@@ -959,7 +970,7 @@
     <message>
         <location filename="../main.cpp" line="19"/>
         <source>Open file.</source>
-        <translation>Otevři soubor</translation>
+        <translation>Otevři soubor.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="19"/>
@@ -969,7 +980,7 @@
     <message>
         <location filename="../main.cpp" line="23"/>
         <source>Modifier for opening file without values (just measurement template).</source>
-        <translation>Modifikátor pro otevření souboru bez hodnot (pouze šablona pro měření)</translation>
+        <translation>Modifikátor pro otevření souboru bez hodnot (pouze šablona pro měření).</translation>
     </message>
 </context>
 </TS>

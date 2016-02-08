@@ -127,7 +127,7 @@ void ChannelMenu::ActivateChannel(Channel *channel, bool checked)
     channel->setVisible(checked);
     m_channelCheckBoxes[channel]->setChecked(checked);
     m_buttonLine->UpdateRunButtonsState();
-    m_measurement.ReplaceDisplays();
+    m_measurement.replaceDisplays();
 }
 
 void ChannelMenu::graphActivated()
@@ -153,5 +153,5 @@ void ChannelMenu::allChannelsActivated()
         ActivateChannel(channel, true);
 
     m_buttonLine->UpdateRunButtonsState();
-    m_measurement.ReplaceDisplays();
+    m_measurement.replaceDisplays();
 }

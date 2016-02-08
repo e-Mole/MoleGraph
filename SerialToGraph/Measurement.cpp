@@ -70,6 +70,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     connect(
         &m_context.m_hwSink, SIGNAL(connectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
+
+    connect(&m_widget, SIGNAL(resized()), this, SLOT(replaceDisplays()));
 }
 
 Measurement::~Measurement()
@@ -371,6 +373,11 @@ QVector<Channel *> const & Measurement::GetChannels()
     return m_channels;
 }*/
 
+void Measurement::replaceDisplays()
+{
+    ReplaceDisplays(!IsPlotVisible());
+}
+
 void Measurement::ReplaceDisplays(bool grid)
 {
     //reset stretch
@@ -378,7 +385,19 @@ void Measurement::ReplaceDisplays(bool grid)
         m_displayLayout->setColumnStretch(i,0);
 
     foreach (Channel * channel, m_channels)
+    {
         m_displayLayout->removeWidget(channel->GetWidget());
+    }
+
+    unsigned channelMinHeight= m_channels[0]->GetMinimumSize().height();
+    unsigned verticalMax = grid ?
+        VERTIACAL_MAX :
+        (unsigned)((double)m_widget.height() / (double)channelMinHeight);
+
+    //when application starts m_widget.height() == 0.
+    //There must not be 0 because of zero dividing;
+    if (verticalMax == 0)
+        verticalMax = 1;
 
     foreach (Channel * channel, m_channels)
     {
@@ -387,9 +406,8 @@ void Measurement::ReplaceDisplays(bool grid)
 
         unsigned count =  m_displayLayout->count();
 
-        //when there is graph it will be dipsplayed as sidebar
-        unsigned row = (grid) ? count % VERTIACAL_MAX : count;
-        unsigned column = (grid) ? count / VERTIACAL_MAX : 0;
+        unsigned row = count % verticalMax;
+        unsigned column = count / verticalMax;
 
         m_displayLayout->addWidget(channel->GetWidget(), row, column);
         m_displayLayout->setColumnStretch(column, 1);

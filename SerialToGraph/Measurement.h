@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QObject>
 #include <QQueue>
+#include <QSize>
 #include <QString>
 #include <QVector>
 #include <QWidget>
@@ -23,6 +24,17 @@ class QScrollBar;
 class QTimer;
 class QVBoxLayout;
 struct Context;
+
+class WidgetWithResizeEvent : public QWidget
+{
+    Q_OBJECT
+    virtual void resizeEvent(QResizeEvent *){ resized(); }
+    virtual QSize sizeHint() const { return QSize(800,700); }
+public:
+    WidgetWithResizeEvent(QWidget *parent) : QWidget(parent) {}
+signals:
+    void resized();
+};
 
 class Measurement : public QObject
 {
@@ -93,7 +105,7 @@ private:
     State _GetStateForSerialization() { return (m_state == Running) ? Finished : m_state; }
     QColor _GetColorByOrder(unsigned order);
     void _SetColor(QColor const &color);
-    QWidget  m_widget;
+    WidgetWithResizeEvent  m_widget;
     Context const &m_context;
     QString m_name;
     SampleUnits m_sampleUnits;
@@ -127,8 +139,6 @@ public:
     QVector<Axis *> const & GetAxes() const;
     QVector<Channel *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
-    void ReplaceDisplays()
-        { ReplaceDisplays(!IsPlotVisible()); }
     Plot *GetPlot() const;
     bool IsPlotVisible() const;
     State GetState() { return m_state; }
@@ -158,6 +168,7 @@ signals:
 public slots:
     void sliderActionTriggered(int action);
     void showGraph(bool show);
+    void replaceDisplays();
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);

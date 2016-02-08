@@ -14,6 +14,7 @@
 #include <QLocale>
 #include <QMenu>
 #include <QRect>
+#include <QSizePolicy>
 #include <QTabWidget>
 #include <QtCore/QDebug>
 #include <QToolBar>
@@ -36,10 +37,10 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 #endif
 
     QRect desktopRect = QApplication::desktop()->screenGeometry();
-    if (desktopRect .width() > 800)
-        setMinimumWidth(800);
-    if (desktopRect .height() >740)
-        setMinimumHeight(740);
+    if (desktopRect .width() > 600)
+        setMinimumWidth(600);
+    if (desktopRect .height() >300)
+        setMinimumHeight(300);
 
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);

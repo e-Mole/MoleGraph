@@ -1,10 +1,11 @@
 #ifndef MENUDIALOGBASE_H
 #define MENUDIALOGBASE_H
 
-#include <QDialog>
+#include <widgets/PlatformDialog.h>
 class QGridLayout;
 class QMouseEvent;
-class MenuDialogBase : public QDialog
+class QScrollArea;
+class MenuDialogBase : public widgets::PlatformDialog
 {
     Q_OBJECT
 
@@ -13,16 +14,13 @@ class MenuDialogBase : public QDialog
 protected:
     void CloseIfPopup();
     virtual void FillGrid() = 0;
-    void ReinitGrid();
 
     QGridLayout *m_gridLayout;
 public:
+    void ReinitGrid();
     MenuDialogBase(QWidget *parent, const QString &title);
     ~MenuDialogBase();
 
-signals:
-
-public slots:
 };
 
 #endif // MENUDIALOGBASE_H

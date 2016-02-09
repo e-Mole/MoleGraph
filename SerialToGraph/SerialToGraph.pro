@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     MenuDialogBase.cpp \
     Plot.cpp \
     PortListDialog.cpp \
-    PortListWidget.cpp
+    PortListWidget.cpp \
+    widgets/PlatformDialog.cpp
 
 HEADERS  += MainWindow.h \
     hw/Bluetooth.h \
@@ -70,7 +71,8 @@ HEADERS  += MainWindow.h \
     Plot.h \
     PortListDialog.h \
     PortListWidget.h \
-    Serializer.h
+    Serializer.h \
+    widgets/PlatformDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

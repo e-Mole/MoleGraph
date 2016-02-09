@@ -3,19 +3,14 @@
 #include <QKeySequence>
 #include <QMouseEvent>
 #include <QShortcut>
-MenuDialogBase::MenuDialogBase(QWidget *parent, QString const &title) :
-    QDialog(parent
-#if not defined(Q_OS_ANDROID)
-        , Qt::Tool
-#endif
-    ),
-    m_gridLayout(new QGridLayout(this))
-{
-    setWindowTitle(title);
 
-#if defined(Q_OS_ANDROID)
-    this->showMaximized();
-#endif
+#include <Measurement.h>
+
+MenuDialogBase::MenuDialogBase(QWidget *parent, QString const &title) :
+    widgets::PlatformDialog(parent, title)
+{
+    m_gridLayout = new QGridLayout();
+    setLayout(m_gridLayout);
 }
 
 MenuDialogBase::~MenuDialogBase()
@@ -38,6 +33,10 @@ void MenuDialogBase::ReinitGrid()
     }
 
     FillGrid();
+
+    QWidget* space = new QWidget();
+    space->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    m_gridLayout->addWidget(space, m_gridLayout->rowCount(), 0);
 }
 
 void MenuDialogBase::keyReleaseEvent(QKeyEvent * event)

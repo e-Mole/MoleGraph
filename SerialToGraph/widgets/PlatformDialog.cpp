@@ -14,8 +14,6 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
     m_viewport(NULL)
 {
 #if defined(Q_OS_ANDROID)
-    this->showMaximized();
-
     QGridLayout *baseLayout = new QGridLayout(this);
     QScrollArea *sa = new QScrollArea(this);
     sa->setWidgetResizable(true);

@@ -4,14 +4,11 @@
 #include <QString>
 
 FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
-    QDialog(parent
-#if not defined(Q_OS_ANDROID)
-        , Qt::Tool
-#endif
-    )
+    widgets::PlatformDialog(parent, title)
 {
-    setWindowTitle(title);
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
+    setLayout(mainLayout);
+
     m_formLayout = new QFormLayout();
     mainLayout->addLayout(m_formLayout);
 

@@ -1,11 +1,11 @@
 #ifndef SETTINGDIALOGBASE_H
 #define SETTINGDIALOGBASE_H
 
-#include <QDialog>
+#include <widgets/PlatformDialog.h>
 
 class QFormLayout;
 class QString;
-class FormDialogBase : public QDialog
+class FormDialogBase : public widgets::PlatformDialog
 {
     Q_OBJECT
 protected:

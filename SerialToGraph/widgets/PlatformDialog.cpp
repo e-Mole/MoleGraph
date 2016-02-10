@@ -14,6 +14,7 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
     m_viewport(NULL)
 {
 #if defined(Q_OS_ANDROID)
+    Q_UNUSED(title);
     QGridLayout *baseLayout = new QGridLayout(this);
     QScrollArea *sa = new QScrollArea(this);
     sa->setWidgetResizable(true);
@@ -38,6 +39,14 @@ void PlatformDialog::setLayout(QLayout *layout)
         layout->setParent(this);
         QDialog::setLayout(layout);
     }
+}
+
+int PlatformDialog::exec()
+{
+#if defined(Q_OS_ANDROID)
+    showMaximized();
+#endif
+    return QDialog::exec();
 }
 
 } //namespace widgets

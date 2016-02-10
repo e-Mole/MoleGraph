@@ -19,6 +19,7 @@ public:
 signals:
 
 public slots:
+    int exec();
 };
 
 }//namespace widgets

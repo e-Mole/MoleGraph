@@ -58,6 +58,8 @@ void ChannelMenu::FillGrid()
     m_gridLayout->addWidget(
         _GetShortcutLabel(m_buttonLine->GetNoChannelShortcutText()), row, 2
     );
+
+    m_gridLayout->setColumnStretch(3, 1);
 }
 
 void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
@@ -70,13 +72,13 @@ void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivated()));
     m_gridLayout->addWidget(cb, row, 0);
 
-    ClickableLabel *l = new ClickableLabel(channel->GetName(), this);
-    l->SetColor(channel->GetColor());
-    m_labelChannels[l] = channel;
-    m_channelLabels[channel] = l;
-    connect(l, SIGNAL(mousePressed()), this, SLOT(channelActivated()));
+    ClickableLabel *name = new ClickableLabel(channel->GetName(), this);
+    name->SetColor(channel->GetColor());
+    m_labelChannels[name] = channel;
+    m_channelLabels[channel] = name;
+    connect(name, SIGNAL(mousePressed()), this, SLOT(channelActivated()));
 
-    m_gridLayout->addWidget(l, row, 1);
+    m_gridLayout->addWidget(name, row, 1);
 
     m_gridLayout->addWidget(
         _GetShortcutLabel(m_buttonLine->GetChannelShortcutText(channel)), row, 2

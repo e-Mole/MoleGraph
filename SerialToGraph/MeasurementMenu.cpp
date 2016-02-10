@@ -14,7 +14,9 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QWidget>
+#include <QScrollArea>
 #include <QString>
+#include <QWidget>
 
 
 MeasurementMenu::MeasurementMenu(QWidget *parent, Context const &context) :
@@ -35,7 +37,6 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     name->SetColor(measurement->GetColor());
     connect(name, SIGNAL(mousePressed()), this, SLOT(nameClicked()));
     m_nameToItem[name] = measurement;
-    buttonLayout->addWidget(name);
 
     QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
@@ -55,7 +56,8 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
 
     unsigned row = m_gridLayout->rowCount();
     m_gridLayout->addWidget(rb, row, 0);
-    m_gridLayout->addWidget(rowWidget, row, 1);
+    m_gridLayout->addWidget(name, row, 1, Qt::AlignLeft);
+    m_gridLayout->addWidget(rowWidget, row, 2);
 }
 
 void MeasurementMenu::FillGrid()
@@ -70,14 +72,16 @@ void MeasurementMenu::FillGrid()
     QPushButton * addButton = new QPushButton(tr("Add New"), this);
     unsigned row = m_gridLayout->rowCount();
     //m_gridLayout->addWidget(new QLabel("", this), row, 0);
-    m_gridLayout->addWidget(addButton, row, 1);
+    m_gridLayout->addWidget(addButton, row, 2);
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 
     QPushButton * cloneButton = new QPushButton(tr("Clone Selected"), this);
     //m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
-    m_gridLayout->addWidget(cloneButton, row+1, 1);
+    m_gridLayout->addWidget(cloneButton, row+1, 2);
     cloneButton->setEnabled(m_context.m_measurements.size() > 0);
     connect(cloneButton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
+
+    m_gridLayout->setColumnStretch(2, 1);
 }
 
 void MeasurementMenu::addButtonPressed()

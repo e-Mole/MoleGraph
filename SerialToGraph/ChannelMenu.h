@@ -19,6 +19,7 @@ class ChannelMenu : public MenuDialogBase
     void _AddChannel(Channel *channel, unsigned row);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
+    void FillGrid();
 
     Measurement &m_measurement;
     ButtonLine *m_buttonLine;
@@ -33,7 +34,6 @@ class ChannelMenu : public MenuDialogBase
 public:
     explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(Channel *channel, bool checked);
-    void FillGrid();
     void UpdateLabels();
 signals:
 

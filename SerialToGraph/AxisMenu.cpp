@@ -62,6 +62,7 @@ void AxisMenu::FillGrid()
     m_gridLayout->addWidget(new QLabel("", this), row, 0);
     m_gridLayout->addWidget(addbutton, row, 1);
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
+    m_gridLayout->setColumnStretch(1, 1);
 }
 
 void AxisMenu::addButtonPressed()

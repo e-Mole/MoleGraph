@@ -136,7 +136,7 @@ void ButtonLine::_RefreshPanelMenu()
 
     m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
     _CreatePanelShortcuts();
-    m_channelMenu->FillGrid();
+    m_channelMenu->ReinitGrid();
     UpdateRunButtonsState();
 }
 

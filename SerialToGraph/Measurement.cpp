@@ -396,8 +396,9 @@ void Measurement::ReplaceDisplays(bool grid)
 
     //when application starts m_widget.height() == 0.
     //There must not be 0 because of zero dividing;
+    //I try to place all of them vertically first
     if (verticalMax == 0)
-        verticalMax = 1;
+        verticalMax = m_channels.count();
 
     foreach (Channel * channel, m_channels)
     {

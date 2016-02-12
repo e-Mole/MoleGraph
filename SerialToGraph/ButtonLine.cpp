@@ -93,13 +93,11 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     addWidget(m_stopButton);
 
     QWidget* space = new QWidget();
-    space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+    space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     addWidget(space);
 
     m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
     addWidget(m_connectivityLabel);
-
-    //buttonLayout->insertStretch(7, 1);
 
     _InitializeMenu();
 }

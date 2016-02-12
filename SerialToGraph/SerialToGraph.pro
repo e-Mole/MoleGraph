@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     Plot.cpp \
     PortListDialog.cpp \
     PortListWidget.cpp \
-    widgets/PlatformDialog.cpp
+    widgets/PlatformDialog.cpp \
+    widgets/ColorPickerDialog.cpp \
+    widgets/ClickableWidget.cpp
 
 HEADERS  += MainWindow.h \
     hw/Bluetooth.h \
@@ -72,7 +74,9 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     Serializer.h \
-    widgets/PlatformDialog.h
+    widgets/PlatformDialog.h \
+    widgets/ColorPickerDialog.h \
+    widgets/ClickableWidget.h
 
 CONFIG += mobility
 CONFIG += c++11
@@ -85,5 +89,8 @@ QT += serialport
 SOURCES += hw/SerialPort.cpp
 HEADERS += hw/SerialPort.h
 }
+
+RESOURCES += \
+    translations.qrc
 
 

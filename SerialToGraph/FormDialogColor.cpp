@@ -1,12 +1,12 @@
 #include "FormDialogColor.h"
 #include <QColor>
-#include <QColorDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
+#include <widgets/ColorPickerDialog.h>
 FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title) :
     FormDialogBase(parent, title),
     m_colorButtonWidget(NULL),
@@ -30,14 +30,10 @@ void FormDialogColor::AddColorButtonRow(const QColor &color)
 
 void FormDialogColor::colorButtonClicked()
 {
-    QColorDialog colorDialog(NULL);
-    colorDialog.setCurrentColor(m_color);
-#if not defined(Q_OS_ANDROID)
-    colorDialog.setOption(QColorDialog::DontUseNativeDialog, true);
-#endif
-    if (QDialog::Accepted == colorDialog.exec())
+    widgets::ColorPickerDialog colorPicker(this, tr("Color Picker"));
+    if (QDialog::Accepted ==  colorPicker.exec())
     {
-        m_color = colorDialog.currentColor();
+        m_color = colorPicker.GetSelectedColor();
         _SetColorButtonColor();
     }
 }

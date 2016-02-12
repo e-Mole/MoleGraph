@@ -58,7 +58,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     m_buttonLine = new ButtonLine(this, m_context);
     m_buttonLine->connectivityStateChange(m_hwSink.IsDeviceConnected());
-    addToolBar(m_buttonLine);
+
+#if defined(Q_OS_ANDROID)
+    addToolBar(Qt::LeftToolBarArea, m_buttonLine);
+#else
+    addToolBar(Qt::TopToolBarArea, m_buttonLine);
+#endif
+
+
 
     connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));

@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QPalette>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QShortcut>
 
 ChannelMenu::ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine) :
@@ -27,23 +28,6 @@ void ChannelMenu::FillGrid()
 {
     unsigned row = 0;
 
-    m_graphCheckBox = new QCheckBox(this);
-    m_graphCheckBox->setChecked(m_measurement.IsPlotVisible());
-    connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
-    m_gridLayout->addWidget(m_graphCheckBox, row, 0);
-
-    ClickableLabel *graphLabel = new ClickableLabel(tr("Graph"), this);
-    connect(graphLabel, SIGNAL(mousePressed()), this, SLOT(graphActivated()));
-    m_gridLayout->addWidget(graphLabel, row, 1);
-
-    m_gridLayout->addWidget(
-        _GetShortcutLabel(m_buttonLine->GetGraphShortcutText()), row, 2
-    );
-
-    foreach (Channel *channel, m_measurement.GetChannels())
-        _AddChannel(channel, ++row);
-
-    ++row;
     QPushButton *m_showAllButton = new QPushButton(tr("All Channels"), this);
     connect(m_showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
     m_gridLayout->addWidget(m_showAllButton, row, 1);
@@ -58,6 +42,27 @@ void ChannelMenu::FillGrid()
     m_gridLayout->addWidget(
         _GetShortcutLabel(m_buttonLine->GetNoChannelShortcutText()), row, 2
     );
+
+    ++row;
+    m_graphCheckBox = new QCheckBox(this);
+    m_graphCheckBox->setStyleSheet("padding=0");
+    m_graphCheckBox->setChecked(m_measurement.IsPlotVisible());
+    connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
+    m_gridLayout->addWidget(m_graphCheckBox, row, 0);
+
+    //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
+    m_graphCheckBox->setMaximumHeight(m_showAllButton->sizeHint().height());
+
+    ClickableLabel *graphLabel = new ClickableLabel(tr("Graph"), this);
+    connect(graphLabel, SIGNAL(mousePressed()), this, SLOT(graphActivated()));
+    m_gridLayout->addWidget(graphLabel, row, 1);
+
+    m_gridLayout->addWidget(
+        _GetShortcutLabel(m_buttonLine->GetGraphShortcutText()), row, 2
+    );
+
+    foreach (Channel *channel, m_measurement.GetChannels())
+        _AddChannel(channel, ++row);
 
     m_gridLayout->setColumnStretch(3, 1);
 }
@@ -88,6 +93,9 @@ void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
     m_editChannels[pb] = channel;
     connect(pb, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(pb, row, 3);
+
+    //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
+    cb->setMaximumHeight(pb->sizeHint().height());
 }
 
 void ChannelMenu::UpdateLabels()

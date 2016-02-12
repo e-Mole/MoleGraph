@@ -5,6 +5,11 @@
 #include <Context.h>
 #include <Measurement.h>
 #include <QColor>
+#include <QEvent>
+#include <QGesture>
+#include <QGestureEvent>
+#include <QPinchGesture>
+#include <QWheelEvent>
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
@@ -47,8 +52,63 @@ Plot::Plot(Measurement *measurement) :
 
     connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
+
+    setAttribute( Qt::WA_AcceptTouchEvents );
+    grabGesture( Qt::PinchGesture );
 }
 
+bool Plot::event(QEvent *event)
+{
+ /*   switch( event->type() )
+    {
+        case QEvent::Gesture:
+        {
+            QGestureEvent *gestureEve = static_cast<QGestureEvent*>(event);
+            if( QGesture *pinch = gestureEve->gesture(Qt::PinchGesture) )
+            {
+                QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
+                qreal scaleFactor = pinchEve->totalScaleFactor( );
+                if( scaleFactor > 1.0 )
+                    scaleFactor *= 10;
+                else
+                    scaleFactor *= -10;
+
+                QWheelEvent *wheelEve = new QWheelEvent(
+                    m_currentTouchPointPos, scaleFactor, Qt::NoButton, Qt::NoModifier, Qt::Vertical );
+                wheelEvent( wheelEve );
+            }
+            return true;
+        }
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        case QEvent::TouchEnd:
+        {
+            QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
+            QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints( );
+            if( touchPoints.count( ) == 1 )
+            {
+                const QTouchEvent::TouchPoint &touchPoint0 = touchPoints.first( );
+                m_currentTouchPointPos = touchPoint0.pos();
+                QMouseEvent *mouseEve = new QMouseEvent(
+                    QEvent::MouseButtonPress, m_currentTouchPointPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+
+                if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointPressed )
+                    mousePressEvent( mouseEve );
+                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointMoved )
+                    mouseMoveEvent( mouseEve );
+                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointReleased )
+                    mouseReleaseEvent( mouseEve );
+            }
+            return true;
+        }
+        default:
+    {
+            break;
+        }
+    }
+*/
+    return QCustomPlot::event(event);
+}
 void Plot::mousePressEvent(QMouseEvent *event)
 {
     //to deselect all of plotables when user click out of axes

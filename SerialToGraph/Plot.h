@@ -2,8 +2,9 @@
 #define PLOT_H
 
 #include <qcustomplot/qcustomplot.h>
-
+#include <QPointF>
 class QColor;
+class QEvent;
 class Context;
 class Channel;
 class Measurement;
@@ -17,6 +18,7 @@ public:
 
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
+
     bool IsDragging(){ return mDragging; }
 };
 
@@ -24,19 +26,22 @@ class Plot : public QCustomPlot
 {
     Q_OBJECT
 
+    void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
+    bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
+
     Measurement const &m_measurement;
     bool m_moveMode;
     bool m_disabled;
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
-    void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
-    bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
+    QPointF m_currentTouchPointPos;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual bool event( QEvent *event );
 
 public:
     Plot(Measurement *measurement);

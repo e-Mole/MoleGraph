@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>languages/serialToGraph_cs.qm</file>
+    </qresource>
+</RCC>

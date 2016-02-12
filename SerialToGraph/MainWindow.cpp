@@ -44,7 +44,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);
-    if (translator->load("./serialToGraph_cs.qm"))
+    if (translator->load("serialToGraph_cs.qm", ":/languages"))
         application.installTranslator(translator);
 
     if (!OpenSerialPort()) //returns false when user pressed the Close button

@@ -841,7 +841,10 @@ void Measurement::DeserializeColections(QDataStream &in)
         {
             float xValue = m_plot->GetHorizontalChannel()->GetValue(i);
             foreach (Channel *channel, m_channels)
-                channel->UpdateGraph(xValue, channel->GetValue(i));
+            {
+                if (channel->GetValueCount() > i)
+                    channel->UpdateGraph(xValue, channel->GetValue(i));
+            }
         }
         if (m_sampleChannel->GetValueCount() != 0)
             _ReadingValuesPostProcess();

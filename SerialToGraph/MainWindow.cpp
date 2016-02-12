@@ -91,6 +91,13 @@ QString &MainWindow::GetCurrentFileName()
     return m_currentFileName;
 }
 
+#if defined(Q_OS_ANDROID)
+bool MainWindow::OpenSerialPort()
+{
+    m_hwSink.WorkOffline();
+    return true;
+}
+#else
 bool MainWindow::OpenSerialPort()
 {
     QList<hw::PortInfo> portInfos;
@@ -111,6 +118,7 @@ bool MainWindow::OpenSerialPort()
     }
     return true;
 }
+#endif
 
 MainWindow::~MainWindow()
 {

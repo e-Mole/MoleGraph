@@ -2,6 +2,7 @@
 #include <QLayout>
 #include <QString>
 #include <QScrollArea>
+#include <QScroller>
 namespace widgets
 {
 
@@ -16,12 +17,14 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
 #if defined(Q_OS_ANDROID)
     Q_UNUSED(title);
     QGridLayout *baseLayout = new QGridLayout(this);
-    QScrollArea *sa = new QScrollArea(this);
-    sa->setWidgetResizable(true);
-    baseLayout->addWidget(sa, 0,0);
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    baseLayout->addWidget(scrollArea, 0,0);
 
-    m_viewport = new QWidget(sa);
-    sa->setWidget(m_viewport);
+    m_viewport = new QWidget(scrollArea);
+    scrollArea->setWidget(m_viewport);
+    scrollArea->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+    QScroller::grabGesture(scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 #else
     setWindowTitle(title);
 #endif

@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <bases/ClickableGroupBox.h>
 #include <Channel.h>
+#include <ChannelWidget.h>
 #include <ChannelWithTime.h>
 #include <Context.h>
 #include <Plot.h>

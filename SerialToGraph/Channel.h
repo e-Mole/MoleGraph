@@ -8,12 +8,13 @@
 #include <QObject>
 
 class Axis;
+class ChannelWidget;
 class Measurement;
 class QString;
 class QCPAxis;
 class QCPGraph;
 struct Context;
-namespace bases {class ClickableGroupBox;}
+
 class Channel : public QObject
 {
     friend class ChannelSettings;
@@ -26,19 +27,6 @@ class Channel : public QObject
     Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
 
 protected:
-    class ValueLabel : public QLabel
-    {
-        virtual void resizeEvent(QResizeEvent * event);
-    public:
-        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent);
-        void SetMimimumFontSize();
-        void SetColor(const QColor &color);
-        QSize GetSize(QString const &text);
-        QSize GetLongestTextSize();
-
-    };
-
-    void _SetMinimumSize();
     void _DisplayNAValue();
     void _ShowLastValueWithUnits();
     void _UpdateTitle();
@@ -51,7 +39,7 @@ protected:
 
     Measurement * m_measurement;
     Context const & m_context;
-    bases::ClickableGroupBox *m_widget;
+    ChannelWidget *m_widget;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
@@ -63,7 +51,6 @@ protected:
     QString m_lastValueText;
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
-    ValueLabel *m_valueLabel;
     QString m_units;
 public:
     Channel(
@@ -122,8 +109,7 @@ public:
 
     bool IsOnHorizontalAxis();
 
-    static QSize GetMinimumSize()
-    {  return QSize(110, 68); }
+    QSize GetMinimumSize();
 
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();
@@ -137,7 +123,7 @@ public:
 
     Measurement * GetMeasurement();
     bool IsVisible();
-    bases::ClickableGroupBox *GetWidget();
+    ChannelWidget *GetWidget();
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}

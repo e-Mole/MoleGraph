@@ -211,7 +211,7 @@ QString ChannelWithTime::GetStyleText(Style style)
     switch (style)
     {
     case Samples:
-        return tr("Sample");
+        return tr("Samples");
     case TimeOffset:
         return tr("Time Offset");
     case RealTime:

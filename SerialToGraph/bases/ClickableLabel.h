@@ -4,6 +4,9 @@
 
 class QString;
 class QWidget;
+
+namespace bases
+{
 class ClickableLabel : public QLabel
 {
     Q_OBJECT
@@ -18,5 +21,5 @@ public:
 signals:
     void mousePressed();
 };
-
+} //namespace bases
 #endif // CLICKABLELABEL_H

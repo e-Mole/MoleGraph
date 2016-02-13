@@ -2,18 +2,16 @@
 #define COLORPICKERDIALOG_H
 
 #include <QColor>
-#include <widgets/PlatformDialog.h>
+#include <bases/PlatformDialog.h>
 #include <QMap>
 
-namespace widgets
-{
-class ClickableWidget;
-class ColorPickerDialog : public PlatformDialog
+namespace bases {class ClickableWidget; }
+class ColorPickerDialog : public bases::PlatformDialog
 {
     Q_OBJECT
 
     QColor m_color;
-    QMap<ClickableWidget*, QColor> m_colors;
+    QMap<bases::ClickableWidget*, QColor> m_colors;
 public:
     ColorPickerDialog(QWidget *parent, const QString &title);
     QColor GetSelectedColor();
@@ -22,5 +20,4 @@ private slots:
 
 };
 
-} //namespace widgets
 #endif // COLORPICKERDIALOG_H

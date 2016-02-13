@@ -1,10 +1,9 @@
 #ifndef CHANNELMENU_H
 #define CHANNELMENU_H
 
-#include <MenuDialogBase.h>
+#include <bases/MenuDialogBase.h>
 #include <QMap>
 class Channel;
-class ClickableLabel;
 class Context;
 class Measurement;
 class QCheckBox;
@@ -12,7 +11,9 @@ class QLabel;
 class QPushButton;
 class ButtonLine;
 
-class ChannelMenu : public MenuDialogBase
+namespace bases { class ClickableLabel; }
+
+class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
@@ -26,8 +27,8 @@ class ChannelMenu : public MenuDialogBase
     QCheckBox *m_graphCheckBox;
     QMap<Channel*, QCheckBox*> m_channelCheckBoxes;
     QMap<QCheckBox*, Channel*> m_checkBoxChannels;
-    QMap<ClickableLabel*, Channel*> m_labelChannels;
-    QMap<Channel*, ClickableLabel*> m_channelLabels;
+    QMap<bases::ClickableLabel*, Channel*> m_labelChannels;
+    QMap<Channel*, bases::ClickableLabel*> m_channelLabels;
     QMap<QPushButton*, Channel*> m_editChannels;
     void _SetGraph(bool checked);
 

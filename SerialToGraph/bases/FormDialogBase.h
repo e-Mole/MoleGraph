@@ -1,11 +1,14 @@
 #ifndef SETTINGDIALOGBASE_H
 #define SETTINGDIALOGBASE_H
 
-#include <widgets/PlatformDialog.h>
+#include <bases/PlatformDialog.h>
 
 class QFormLayout;
 class QString;
-class FormDialogBase : public widgets::PlatformDialog
+
+namespace bases
+{
+class FormDialogBase : public PlatformDialog
 {
     Q_OBJECT
 protected:
@@ -19,5 +22,7 @@ signals:
 private slots:
     void storeAndAccept();
 };
+
+} //namespace bases
 
 #endif // SETTINGDIALOGBASE_H

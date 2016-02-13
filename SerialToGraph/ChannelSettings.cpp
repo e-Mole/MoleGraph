@@ -2,9 +2,9 @@
 #include <Axis.h>
 #include <AxisChooseDialog.h>
 #include <AxisSettings.h>
+#include <bases/ClickableGroupBox.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
-#include <ClickableGroupBox.h>
 #include <Context.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -18,7 +18,7 @@
 #include <QString>
 
 ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
-    FormDialogColor(channel->GetWidget(), tr("Channel settings")),
+    bases::FormDialogColor(channel->GetWidget(), tr("Channel settings")),
     m_context(context),
     m_channel(channel),
     m_name(new QLineEdit(channel->GetName(), this)),

@@ -1,17 +1,17 @@
 #ifndef MEASUREMENTMENU_H
 #define MEASUREMENTMENU_H
 
-#include <MenuDialogBase.h>
+#include <bases/MenuDialogBase.h>
 #include <QMap>
 
-class ClickableLabel;
+namespace bases{ class ClickableLabel; }
 class Measurement;
 class QPushButton;
 class QRadioButton;
 class QWidget;
 struct Context;
 
-class MeasurementMenu : public MenuDialogBase
+class MeasurementMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ class MeasurementMenu : public MenuDialogBase
     QMap<QPushButton*, Measurement*> m_removeButtonToItem;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
     QMap<QRadioButton*,Measurement*> m_radioButtonToItem;
-    QMap<ClickableLabel*,Measurement*> m_nameToItem;
+    QMap<bases::ClickableLabel*,Measurement*> m_nameToItem;
 public:
     MeasurementMenu(QWidget *parent, const Context &context);
 signals:

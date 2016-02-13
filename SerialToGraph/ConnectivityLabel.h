@@ -1,12 +1,12 @@
 #ifndef CONNECTIVITYLABEL_H
 #define CONNECTIVITYLABEL_H
 
-#include <ClickableLabel.h>
+#include <bases/ClickableLabel.h>
 
 class QString;
 class QWidget;
 struct Context;
-class ConnectivityLabel : public ClickableLabel
+class ConnectivityLabel : public bases::ClickableLabel
 {
     Q_OBJECT
 

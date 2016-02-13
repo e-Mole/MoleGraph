@@ -3,9 +3,9 @@
 
 #include <ButtonLine.h>
 #include <Context.h>
+#include <hw/HwSink.h>
 #include <QMainWindow>
 #include <QSettings>
-#include <hw/HwSink.h>
 #include <QVector>
 
 class CentralWidget;

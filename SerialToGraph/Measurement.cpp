@@ -1,8 +1,8 @@
 #include "Measurement.h"
 #include <Axis.h>
+#include <bases/ClickableGroupBox.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
-#include <ClickableGroupBox.h>
 #include <Context.h>
 #include <Plot.h>
 #include <QByteArray>

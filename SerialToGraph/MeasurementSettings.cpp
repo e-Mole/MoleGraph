@@ -9,7 +9,7 @@
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
-    FormDialogColor(parent, tr("Measurement Setting")),
+    bases::FormDialogColor(parent, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
     m_name(new QLineEdit(measurement->m_name, this)),

@@ -1,12 +1,10 @@
 #include "ColorPickerDialog.h"
 #include <QGridLayout>
 #include <QPalette>
-#include <widgets/ClickableWidget.h>
-namespace widgets
-{
+#include <bases/ClickableWidget.h>
 
 ColorPickerDialog::ColorPickerDialog(QWidget *parent, QString const &title):
-    PlatformDialog(parent, title),
+    bases::PlatformDialog(parent, title),
     m_color(Qt::black)
 {
     QGridLayout *m_gridLayout = new QGridLayout();
@@ -16,7 +14,7 @@ ColorPickerDialog::ColorPickerDialog(QWidget *parent, QString const &title):
     {
         for (unsigned j = 0; j < 10; j++)
         {
-            ClickableWidget *colorWidget = new ClickableWidget(this);
+            bases::ClickableWidget *colorWidget = new bases::ClickableWidget(this);
             colorWidget->setMinimumSize(20,20);
             QColor color = (j == 0) ?
                 QColor::fromHsl(0, 0, (int)((double)i * 255 / 9)) :
@@ -43,9 +41,6 @@ QColor ColorPickerDialog::GetSelectedColor()
 
 void ColorPickerDialog::colorClicked()
 {
-    m_color = m_colors[(ClickableWidget*)sender()];
+    m_color = m_colors[(bases::ClickableWidget*)sender()];
     accept();
 }
-
-} //namespace widgets
-

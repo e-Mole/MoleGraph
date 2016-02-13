@@ -1,6 +1,10 @@
 #include "ClickableLabel.h"
 #include <QWidget>
 #include <QColor>
+
+namespace bases
+{
+
 ClickableLabel::ClickableLabel(QString const& text, QWidget *parent):
     QLabel(text, parent)
 {
@@ -19,3 +23,5 @@ void ClickableLabel::SetColor(QColor const &color)
     pallete.setColor(foregroundRole(), color);
     setPalette(pallete);
 }
+
+} //namespace bases

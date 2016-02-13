@@ -3,8 +3,12 @@
 #include <QPushButton>
 #include <QString>
 
+
+namespace bases
+{
+
 FormDialogBase::FormDialogBase(QWidget *parent, const QString &title) :
-    widgets::PlatformDialog(parent, title)
+    PlatformDialog(parent, title)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -29,3 +33,5 @@ void FormDialogBase::storeAndAccept()
     if (BeforeAccept())
         accept();
 }
+
+} //namespace bases

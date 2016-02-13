@@ -17,7 +17,7 @@
 #include <QWidget>
 
 AxisMenu::AxisMenu(QWidget *parent, const Context &context,  Measurement &measurement) :
-    MenuDialogBase(parent, tr("Axes")),
+    bases::MenuDialogBase(parent, tr("Axes")),
     m_context(context),
     m_measurement(measurement)
 {

@@ -3,7 +3,7 @@
 #include <MainWindow.h>
 
 ConnectivityLabel::ConnectivityLabel(Context const &context, const QString &text, QWidget *parent) :
-    ClickableLabel(text, parent),
+    bases::ClickableLabel(text, parent),
     m_context(context)
 {
     setMargin(5);

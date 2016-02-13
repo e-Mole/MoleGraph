@@ -3,6 +3,8 @@
 
 #include <QGroupBox>
 
+namespace bases
+{
 class ClickableGroupBox : public QGroupBox
 {
     Q_OBJECT
@@ -17,5 +19,7 @@ signals:
 public slots:
 
 };
+
+}// namespace bases
 
 #endif // CLICKABLEGROUPBOX_H

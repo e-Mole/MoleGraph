@@ -1,11 +1,14 @@
 #ifndef FORMDIALOGCOLOR_H
 #define FORMDIALOGCOLOR_H
 
-#include <FormDialogBase.h>
+#include <bases/FormDialogBase.h>
 #include <QColor>
 
 class QString;
 class QWidget;
+
+namespace bases
+{
 class FormDialogColor : public FormDialogBase
 {
     Q_OBJECT
@@ -24,5 +27,5 @@ signals:
 private slots:
     void colorButtonClicked();
 };
-
+} //namespace bases
 #endif // FORMDIALOGCOLOR_H

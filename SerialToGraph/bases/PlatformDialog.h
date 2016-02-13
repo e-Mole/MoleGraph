@@ -5,7 +5,7 @@
 class QWidget;
 class QLayout;
 class QString;
-namespace widgets
+namespace bases
 {
 class PlatformDialog : public QDialog
 {
@@ -22,6 +22,6 @@ public slots:
     int exec();
 };
 
-}//namespace widgets
+}//namespace bases
 
 #endif // PLATFORMDIALOG_H

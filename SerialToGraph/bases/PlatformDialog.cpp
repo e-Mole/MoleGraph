@@ -3,7 +3,7 @@
 #include <QString>
 #include <QScrollArea>
 #include <QScroller>
-namespace widgets
+namespace bases
 {
 
 PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
@@ -52,5 +52,5 @@ int PlatformDialog::exec()
     return QDialog::exec();
 }
 
-} //namespace widgets
+} //namespace bases
 

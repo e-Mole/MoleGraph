@@ -13,23 +13,27 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp \
+    MainWindow.cpp \
+    bases/ClickableGroupBox.cpp \
+    bases/ClickableLabel.cpp \
+    bases/ClickableWidget.cpp \
+    bases/FormDialogBase.cpp \
+    bases/FormDialogColor.cpp \
+    bases/MenuDialogBase.cpp \
+    bases/PlatformDialog.cpp \
     hw/Bluetooth.cpp \
     hw/HwSink.cpp \
-    hw/PortBase.cpp \
+    hw/PortBase.cpp \    
     qcustomplot/qcustomplot.cpp \
     Axis.cpp \
     AxisChooseDialog.cpp \
     AxisMenu.cpp \
     AxisSettings.cpp \
     ButtonLine.cpp \
-    ClickableGroupBox.cpp \
-    ClickableLabel.cpp \
+    ColorPickerDialog.cpp \
     ConnectivityLabel.cpp \
     Context.cpp \
     Export.cpp \
-    FormDialogBase.cpp \
-    FormDialogColor.cpp \
     Channel.cpp \
     ChannelMenu.cpp \
     ChannelSettings.cpp \
@@ -37,15 +41,18 @@ SOURCES += main.cpp\
     Measurement.cpp \
     MeasurementMenu.cpp \
     MeasurementSettings.cpp \
-    MenuDialogBase.cpp \
     Plot.cpp \
     PortListDialog.cpp \
-    PortListWidget.cpp \
-    widgets/PlatformDialog.cpp \
-    widgets/ColorPickerDialog.cpp \
-    widgets/ClickableWidget.cpp
+    PortListWidget.cpp
 
 HEADERS  += MainWindow.h \
+    bases/ClickableGroupBox.h \
+    bases/ClickableLabel.h \
+    bases/ClickableWidget.h \
+    bases/FormDialogBase.h \
+    bases/FormDialogColor.h \
+    bases/MenuDialogBase.h \
+    bases/PlatformDialog.h \
     hw/Bluetooth.h \
     hw/HwSink.h \
     hw/PortBase.h \
@@ -55,13 +62,10 @@ HEADERS  += MainWindow.h \
     AxisMenu.h \
     AxisSettings.h \
     ButtonLine.h \
-    ClickableGroupBox.h \
-    ClickableLabel.h \
+    ColorPickerDialog.h \
     ConnectivityLabel.h \
     Context.h \
     Export.h \
-    FormDialogBase.h \
-    FormDialogColor.h \
     Channel.h \
     ChannelMenu.h \
     ChannelSettings.h \
@@ -69,14 +73,10 @@ HEADERS  += MainWindow.h \
     Measurement.h \
     MeasurementMenu.h \
     MeasurementSettings.h \
-    MenuDialogBase.h \
     Plot.h \
     PortListDialog.h \
     PortListWidget.h \
-    Serializer.h \
-    widgets/PlatformDialog.h \
-    widgets/ColorPickerDialog.h \
-    widgets/ClickableWidget.h
+    Serializer.h
 
 CONFIG += mobility
 CONFIG += c++11

@@ -6,7 +6,11 @@
 #include <QPushButton>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
-#include <widgets/ColorPickerDialog.h>
+#include <ColorPickerDialog.h>
+
+namespace bases
+{
+
 FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title) :
     FormDialogBase(parent, title),
     m_colorButtonWidget(NULL),
@@ -30,7 +34,7 @@ void FormDialogColor::AddColorButtonRow(const QColor &color)
 
 void FormDialogColor::colorButtonClicked()
 {
-    widgets::ColorPickerDialog colorPicker(this, tr("Color Picker"));
+    ColorPickerDialog colorPicker(this, tr("Color Picker"));
     if (QDialog::Accepted ==  colorPicker.exec())
     {
         m_color = colorPicker.GetSelectedColor();
@@ -43,3 +47,5 @@ void FormDialogColor::_SetColorButtonColor()
     QString style = "background-color: rgb(%1, %2, %3);";
     m_colorButtonWidget->setStyleSheet(style.arg(m_color.red()).arg(m_color.green()).arg(m_color.blue()));
 }
+
+} //namespace bases

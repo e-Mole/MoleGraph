@@ -2,7 +2,7 @@
 #define CLICKABLEWIDGET_H
 
 #include <QWidget>
-namespace widgets
+namespace bases
 {
 class ClickableWidget : public QWidget
 {
@@ -16,5 +16,5 @@ signals:
 public slots:
 
 };
-} //namespace widgets
+} //namespace bass
 #endif // CLICKABLEWIDGET_H

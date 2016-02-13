@@ -9,11 +9,11 @@
 
 class Axis;
 class Measurement;
-class ClickableGroupBox;
 class QString;
 class QCPAxis;
 class QCPGraph;
 struct Context;
+namespace bases {class ClickableGroupBox;}
 class Channel : public QObject
 {
     friend class ChannelSettings;
@@ -51,7 +51,7 @@ protected:
 
     Measurement * m_measurement;
     Context const & m_context;
-    ClickableGroupBox *m_widget;
+    bases::ClickableGroupBox *m_widget;
     QString m_name;
     int m_hwIndex;
     QVector<double> m_values;
@@ -137,7 +137,7 @@ public:
 
     Measurement * GetMeasurement();
     bool IsVisible();
-    ClickableGroupBox *GetWidget();
+    bases::ClickableGroupBox *GetWidget();
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}

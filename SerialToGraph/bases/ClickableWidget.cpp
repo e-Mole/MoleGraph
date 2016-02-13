@@ -1,5 +1,5 @@
 #include "ClickableWidget.h"
-namespace widgets
+namespace bases
 {
 ClickableWidget::ClickableWidget(QWidget *parent) : QWidget(parent)
 {
@@ -11,5 +11,5 @@ void ClickableWidget::mouseReleaseEvent( QMouseEvent * event)
     Q_UNUSED(event);
     clicked();
 }
-} //namespace widgets
+} //namespace bases
 

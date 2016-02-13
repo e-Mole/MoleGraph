@@ -2,7 +2,7 @@
 #define AXIS_SETTINGS_H
 
 #include <Axis.h>
-#include <FormDialogColor.h>
+#include <bases/FormDialogColor.h>
 
 class AxisCopy;
 class Context;
@@ -12,7 +12,7 @@ class QLineEdit;
 class QMouseQMouseEvent;
 class QString;
 class QWidget;
-class AxisSettings : public FormDialogColor
+class AxisSettings : public bases::FormDialogColor
 {
     Q_OBJECT
 

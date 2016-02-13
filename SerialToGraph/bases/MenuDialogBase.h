@@ -1,11 +1,15 @@
 #ifndef MENUDIALOGBASE_H
 #define MENUDIALOGBASE_H
 
-#include <widgets/PlatformDialog.h>
+#include <bases/PlatformDialog.h>
 class QGridLayout;
 class QMouseEvent;
 class QScrollArea;
-class MenuDialogBase : public widgets::PlatformDialog
+
+namespace bases
+{
+
+class MenuDialogBase : public PlatformDialog
 {
     Q_OBJECT
 
@@ -23,4 +27,5 @@ public:
 
 };
 
+} //namespace bases
 #endif // MENUDIALOGBASE_H

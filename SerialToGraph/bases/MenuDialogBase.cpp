@@ -6,8 +6,10 @@
 
 #include <Measurement.h>
 
+namespace bases
+{
 MenuDialogBase::MenuDialogBase(QWidget *parent, QString const &title) :
-    widgets::PlatformDialog(parent, title)
+    PlatformDialog(parent, title)
 {
     m_gridLayout = new QGridLayout();
     setLayout(m_gridLayout);
@@ -47,3 +49,5 @@ void MenuDialogBase::keyReleaseEvent(QKeyEvent * event)
         event->accept();
     }
 }
+
+}//namespace bases

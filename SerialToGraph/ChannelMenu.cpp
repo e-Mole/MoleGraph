@@ -1,7 +1,7 @@
 #include "ChannelMenu.h"
 #include <ButtonLine.h>
 #include <Channel.h>
-#include <ClickableLabel.h>
+#include <bases/ClickableLabel.h>
 #include <QKeySequence>
 #include <Measurement.h>
 #include <QCheckBox>
@@ -13,7 +13,7 @@
 #include <QShortcut>
 
 ChannelMenu::ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine) :
-    MenuDialogBase(parent, tr("Panels")),
+    bases::MenuDialogBase(parent, tr("Panels")),
     m_measurement(measurement),
     m_buttonLine(buttonLine)
 {
@@ -53,7 +53,7 @@ void ChannelMenu::FillGrid()
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(m_showAllButton->sizeHint().height());
 
-    ClickableLabel *graphLabel = new ClickableLabel(tr("Graph"), this);
+    bases::ClickableLabel *graphLabel = new bases::ClickableLabel(tr("Graph"), this);
     connect(graphLabel, SIGNAL(mousePressed()), this, SLOT(graphActivated()));
     m_gridLayout->addWidget(graphLabel, row, 1);
 
@@ -77,7 +77,7 @@ void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivated()));
     m_gridLayout->addWidget(cb, row, 0);
 
-    ClickableLabel *name = new ClickableLabel(channel->GetName(), this);
+    bases::ClickableLabel *name = new bases::ClickableLabel(channel->GetName(), this);
     name->SetColor(channel->GetColor());
     m_labelChannels[name] = channel;
     m_channelLabels[channel] = name;
@@ -111,7 +111,7 @@ void ChannelMenu::edit()
     Channel *channel = m_editChannels[(QPushButton*)sender()];
     channel->editChannel();
 
-    ClickableLabel *label = m_channelLabels[channel];
+    bases::ClickableLabel *label = m_channelLabels[channel];
     label->setText(channel->GetName());
     label->SetColor(channel->GetColor());
 
@@ -123,7 +123,7 @@ void ChannelMenu::channelActivated()
     Channel *channel;
     if (m_checkBoxChannels.find((QCheckBox*)sender()) == m_checkBoxChannels.end())
     {
-        channel = m_labelChannels[(ClickableLabel*)sender()];
+        channel = m_labelChannels[(bases::ClickableLabel*)sender()];
         m_channelCheckBoxes[channel]->setChecked(!channel->IsVisible());
     }
     else

@@ -1,7 +1,7 @@
 #ifndef AXISMENU_H
 #define AXISMENU_H
 
-#include <MenuDialogBase.h>
+#include <bases/MenuDialogBase.h>
 #include <QMap>
 
 class Axis;
@@ -10,7 +10,7 @@ class Plot;
 class QPushButton;
 class QWidget;
 struct Context;
-class AxisMenu : public MenuDialogBase
+class AxisMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 

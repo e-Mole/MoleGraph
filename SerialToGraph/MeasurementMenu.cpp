@@ -1,5 +1,5 @@
 #include "MeasurementMenu.h"
-#include <ClickableLabel.h>
+#include <bases/ClickableLabel.h>
 #include <Context.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -20,7 +20,7 @@
 
 
 MeasurementMenu::MeasurementMenu(QWidget *parent, Context const &context) :
-    MenuDialogBase(parent, tr("Measurements")),
+    bases::MenuDialogBase(parent, tr("Measurements")),
     m_context(context)
 {
     ReinitGrid();
@@ -33,7 +33,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     buttonLayout->setMargin(0);
     rowWidget->setLayout(buttonLayout);
 
-    ClickableLabel *name = new ClickableLabel(measurement->GetName(), rowWidget);
+    bases::ClickableLabel *name = new bases::ClickableLabel(measurement->GetName(), rowWidget);
     name->SetColor(measurement->GetColor());
     connect(name, SIGNAL(mousePressed()), this, SLOT(nameClicked()));
     m_nameToItem[name] = measurement;
@@ -170,12 +170,12 @@ void MeasurementMenu::editButtonPressed()
 
 void MeasurementMenu::nameClicked()
 {
-    Measurement *measurement = m_nameToItem[(ClickableLabel*)sender()];
+    Measurement *measurement = m_nameToItem[(bases::ClickableLabel*)sender()];
     for (auto it = m_radioButtonToItem.begin(); it != m_radioButtonToItem.end(); ++it)
         if (it.value() == measurement)
             it.key()->setChecked(true);
 
-    m_context.m_mainWindow.SwichCurrentMeasurement(m_nameToItem[(ClickableLabel*)sender()]);
+    m_context.m_mainWindow.SwichCurrentMeasurement(m_nameToItem[(bases::ClickableLabel*)sender()]);
 }
 
 void MeasurementMenu::radioButtonClicked()

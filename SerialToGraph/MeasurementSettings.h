@@ -1,13 +1,13 @@
 #ifndef MEASUREMENTSETTINGS_H
 #define MEASUREMENTSETTINGS_H
 
-#include <FormDialogColor.h>
+#include <bases/FormDialogColor.h>
 class Measurement;
 class QLineEdit;
 class QComboBox;
 class QWidget;
 struct Context;
-class MeasurementSettings  : public FormDialogColor
+class MeasurementSettings  : public bases::FormDialogColor
 {
     Q_OBJECT
 

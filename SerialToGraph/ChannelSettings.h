@@ -1,7 +1,7 @@
 #ifndef CHANNELSETTINGS_H
 #define CHANNELSETTINGS_H
 
-#include <FormDialogColor.h>
+#include <bases/FormDialogColor.h>
 #include <QColor>
 
 class Axis;
@@ -13,7 +13,7 @@ class QFormLayout;
 class QLineEdit;
 class QString;
 struct Context;
-class ChannelSettings : public FormDialogColor
+class ChannelSettings : public bases::FormDialogColor
 {
     Q_OBJECT
 

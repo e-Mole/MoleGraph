@@ -44,7 +44,8 @@ SOURCES += main.cpp\
     Plot.cpp \
     PortListDialog.cpp \
     PortListWidget.cpp \
-    ChannelWidget.cpp
+    ChannelWidget.cpp \
+    FileDialog.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableGroupBox.h \
@@ -78,7 +79,8 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     Serializer.h \
-    ChannelWidget.h
+    ChannelWidget.h \
+    FileDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

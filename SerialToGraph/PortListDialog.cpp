@@ -43,8 +43,6 @@ PortListDialog::PortListDialog(hw::HwSink &hwSink, QList<hw::PortInfo> const& po
     QPushButton *close = new QPushButton(tr("Close"), this);
     connect(close, SIGNAL(clicked(bool)), this, SLOT(closeClicked(bool)));
     buttonLayout->addWidget(close);
-
-
 }
 
 void PortListDialog::closeClicked(bool checked)

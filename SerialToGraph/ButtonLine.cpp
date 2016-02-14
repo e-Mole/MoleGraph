@@ -6,6 +6,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
+#include <FileDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
@@ -291,7 +292,9 @@ void ButtonLine::_OpenFile(bool values)
 
 void ButtonLine::openWithoutValues()
 {
-    _OpenFile(false);
+    //_OpenFile(false);
+    FileDialog *fd = new FileDialog(this, true, "atog");
+    fd->exec();
 }
 
 void ButtonLine::openFile()

@@ -94,6 +94,10 @@ SOURCES += hw/SerialPort.cpp
 HEADERS += hw/SerialPort.h
 }
 
+android{
+QT += androidextras
+}
+
 RESOURCES += \
     translations.qrc
 

@@ -15,7 +15,6 @@
 #include <QDataStream>
 #include <QDialog>
 #include <QFile>
-#include <QFileDialog>
 #include <QFileInfo>
 #include <QKeySequence>
 #include <QLabel>
@@ -226,10 +225,8 @@ void ButtonLine::UpdateRunButtonsState()
 
 QString ButtonLine::_GetFileNameToSave(QString const &extension)
 {
-    QString fileName = QFileDialog::getSaveFileName(
-        this,
-        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", "*." + extension);
+    QString fileName = FileDialog::getSaveFileName(
+        this, tr("Save as"), "./", "*." + extension);
     if (fileName.size() == 0)
         return "";
 
@@ -279,10 +276,13 @@ void ButtonLine::newFile()
 
 void ButtonLine::_OpenFile(bool values)
 {
-    QString fileName = QFileDialog::getOpenFileName(
-        this,
-        QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
-        "./", QString("*.%1").arg(ATOG_FILE_EXTENSION));
+    QString fileName =
+        FileDialog::getOpenFileName
+        (
+            this,
+            "Open File",
+            "./", QString("*.%1").arg(ATOG_FILE_EXTENSION)
+        );
 
     if (fileName.size() == 0)
         return;
@@ -292,9 +292,7 @@ void ButtonLine::_OpenFile(bool values)
 
 void ButtonLine::openWithoutValues()
 {
-    //_OpenFile(false);
-    FileDialog *fd = new FileDialog(this, true, "atog");
-    fd->exec();
+    _OpenFile(false);
 }
 
 void ButtonLine::openFile()

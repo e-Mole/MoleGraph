@@ -44,7 +44,6 @@ SOURCES += main.cpp\
     Plot.cpp \
     PortListDialog.cpp \
     PortListWidget.cpp \
-    ChannelWidget.cpp \
     FileDialog.cpp
 
 HEADERS  += MainWindow.h \
@@ -79,7 +78,6 @@ HEADERS  += MainWindow.h \
     PortListDialog.h \
     PortListWidget.h \
     Serializer.h \
-    ChannelWidget.h \
     FileDialog.h
 
 CONFIG += mobility

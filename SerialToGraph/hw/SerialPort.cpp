@@ -82,12 +82,6 @@ bool SerialPort::IsOpen()
 
 void SerialPort::FillPots(QList<PortInfo> &portInfos)
 {
-    /*foreach(PortInfo const& item, portInfos)
-    {
-        if (item.m_type == PortInfo::pt_serialPort)
-            portInfos.removeOne(item);
-    }*/
-
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
         portInfos.push_back(
@@ -100,28 +94,6 @@ void SerialPort::FillPots(QList<PortInfo> &portInfos)
         );
     }
 }
-
-/*
-    if (NULL != lastPort && OpenPort(lastPort->m_id))
-        return true;
-
-    if (1 == prefferedPortInfos.size() && OpenPort(prefferedPortInfos.last().portName()))
-        return true;
-
-    if (portInfos.empty())
-    {
-        qDebug() << "hardware not found";
-        //PortIssueSolver();
-        return false;
-    }
-
-    if (prefferedPortInfos.size() > 1)
-        qDebug() << "more then one preferred port found";
-    else if (!portInfos.empty())
-        qDebug() << "found unpreffered serial ports only";
-
-    return false;
-}*/
 
 void SerialPort::ReadData(QByteArray &array)
 {

@@ -2,6 +2,7 @@
 #define SERIALPORT_H
 
 #include <hw/PortBase.h>
+#include <hw/PortInfo.h>
 #include <QList>
 #include <QQueue>
 #include <QtCore/QDebug>
@@ -26,7 +27,7 @@ public:
     SerialPort(QSettings &settings, QObject *parent = 0);
 
     bool OpenPort(QString id);
-    bool FindAndOpenMyPort(QList<PortInfo> &portInfos);
+    void FillPots(QList<PortInfo> &portInfos);
 
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
@@ -37,7 +38,9 @@ public:
     void Close()  { m_serialPort.close(); }
 
 signals:
-public slots:
+
+private slots:
+    void portOpenTimeout();
 };
 
 } //namespace hw

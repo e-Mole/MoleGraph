@@ -1,11 +1,12 @@
 #include "SerialPort.h"
+#include <hw/PortInfo.h>
 #include <QList>
 #include <QMessageBox>
 #include <QThread>
 #include <QSettings>
 #include <QString>
+#include <QTimer>
 #include <string>
-
 namespace hw
 {
 
@@ -30,8 +31,15 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
         return false;
     }
 
-    QThread::sleep(3); //arduino is reseted after serial port connection I have to wait to be ready
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(portOpenTimeout()));
+    timer->start(3000); //arduino is reseted after serial port connection I have to wait to be ready
+    return true;
+}
 
+void SerialPort::portOpenTimeout()
+{
     WriteInstruction(INS_GET_VERSION, "");
     QByteArray array;
     unsigned counter = RESPONSE_WAITING;
@@ -41,7 +49,8 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
         {
             qDebug() << "no response from serial port";
             m_serialPort.close();
-            return false;
+            portOpeningFinished(false);
+            return;
         }
     }
 
@@ -50,9 +59,11 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
     {
         qDebug() << "unknown protocol version";
         m_serialPort.close();
-        return false;
+        portOpeningFinished(false);
+        return;
     }
-    return true;
+    portOpeningFinished(true);
+    return;
 }
 
 bool SerialPort::OpenPort(QString id)
@@ -69,20 +80,28 @@ bool SerialPort::IsOpen()
     return m_serialPort.isOpen();
 }
 
-bool SerialPort::FindAndOpenMyPort(QList<PortInfo> &portInfos)
+void SerialPort::FillPots(QList<PortInfo> &portInfos)
 {
-    QList<QSerialPortInfo> prefferedPortInfos;
-    PortInfo *lastPort = NULL;
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    /*foreach(PortInfo const& item, portInfos)
     {
-        portInfos.push_back(PortInfo(info.portName(), info.manufacturer(), m_settings));
+        if (item.m_type == PortInfo::pt_serialPort)
+            portInfos.removeOne(item);
+    }*/
 
-        if (portInfos.last().m_preferred)
-            prefferedPortInfos.push_back(info);
-        if (portInfos.last().m_lastUsed)
-            lastPort = &portInfos.last();
+    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        portInfos.push_back(
+            PortInfo(
+                PortInfo::pt_serialPort,
+                info.portName(),
+                info.manufacturer() == "wch.cn",
+                m_settings
+            )
+        );
     }
+}
 
+/*
     if (NULL != lastPort && OpenPort(lastPort->m_id))
         return true;
 
@@ -102,7 +121,7 @@ bool SerialPort::FindAndOpenMyPort(QList<PortInfo> &portInfos)
         qDebug() << "found unpreffered serial ports only";
 
     return false;
-}
+}*/
 
 void SerialPort::ReadData(QByteArray &array)
 {

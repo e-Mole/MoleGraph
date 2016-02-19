@@ -100,21 +100,17 @@ bool MainWindow::OpenSerialPort()
 #else
 bool MainWindow::OpenSerialPort()
 {
-    QList<hw::PortInfo> portInfos;
-    if (!m_hwSink.FindAndOpenMyPort(portInfos))
+    PortListDialog *portListDialog = new PortListDialog(NULL, m_hwSink, m_settings);
+    if (QDialog::Rejected == portListDialog->exec())
     {
-        PortListDialog *portListDialog = new PortListDialog(m_hwSink, portInfos, m_settings);
-        if (QDialog::Rejected == portListDialog->exec())
+        if (portListDialog->CloseApp())
         {
-            if (portListDialog->CloseApp())
-            {
-                m_close = true;
-                return false;
-            }
-
-            qDebug() << "hardware not found";
-            m_hwSink.WorkOffline();
+            m_close = true;
+            return false;
         }
+
+        qDebug() << "hardware not found";
+        m_hwSink.WorkOffline();
     }
     return true;
 }

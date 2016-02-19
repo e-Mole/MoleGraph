@@ -2,18 +2,20 @@
 #define HWSINK_H
 
 #include <QObject>
-#include <hw/PortBase.h>
+#include <hw/PortInfo.h>
 #include <QList>
 
 class QSettings;
 namespace hw
 {
+class PortBase;
 class HwSink : public QObject
 {
     Q_OBJECT
 
     PortBase *m_port;
     bool m_knownIssue;
+    QSettings &m_settings;
 public:
     explicit HwSink(QSettings &settings, QObject *parent = 0);
     ~HwSink();
@@ -30,14 +32,19 @@ public:
     bool FillQueue(QQueue<unsigned char> &queue);
     bool ProcessCommand(unsigned char command);
     void WorkOffline();
-    bool OpenPort(QString id);
-    bool FindAndOpenMyPort(QList<PortInfo> &portInfos);
-    void ClearCache() {m_port->ClearCache();}
+    bool OpenPort(const PortInfo &info);
+    void StartPortSearching();
+    void ClearCache();
+
+    void FillComPortList(QList<PortInfo> &portInfo);
 signals:
     void StartCommandDetected();
     void StopCommandDetected();
     void connectivityChanged(bool connected);
+    void portsFound();
+    void portOpened();
 public slots:
+    void portOpeningFinished(bool opened);
 
 };
 } //namespace hw

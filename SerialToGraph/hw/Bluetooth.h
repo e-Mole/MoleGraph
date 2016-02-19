@@ -3,13 +3,17 @@
 
 #include <hw/PortBase.h>
 
+class QSettings;
+class QBluetoothDeviceInfo;
 namespace hw
 {
 class Bluetooth : public PortBase
 {
     Q_OBJECT
+
+    QSettings &m_settings;
 public:
-    explicit Bluetooth(QObject *parent = 0);
+    explicit Bluetooth(QSettings &settings, QObject *parent = 0);
 
     virtual void ReadData(QByteArray &array) { Q_UNUSED(array); }
     virtual void ClearCache() {}
@@ -21,12 +25,10 @@ public:
     virtual bool IsOpen() {return false; }
     virtual void Close() {}
     virtual bool OpenPort(QString id) { Q_UNUSED(id); return false;}
-    virtual bool FindAndOpenMyPort(QList<PortInfo> &portInfos)
-        { Q_UNUSED(portInfos); return false; }
 signals:
 
-public slots:
-
+private slots:
+    void deviceDiscovered(QBluetoothDeviceInfo const &info);
 };
 
 } //namespace hw

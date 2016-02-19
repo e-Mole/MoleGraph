@@ -4,6 +4,8 @@
 #   include <hw/SerialPort.h>
 #endif
 #include <hw/Bluetooth.h>
+#include <hw/PortBase.h>
+#include <hw/PortInfo.h>
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -13,21 +15,16 @@ namespace hw
 {
 HwSink::HwSink(QSettings &settings, QObject *parent) :
     QObject(parent),
-#if defined(Q_OS_ANDROID)
-    m_port(new Bluetooth(this)),
-#else
-    m_port(new SerialPort(settings, this)),
-#endif
-    m_knownIssue(false)
+    m_port(NULL),
+    m_knownIssue(false),
+    m_settings(settings)
 {
-#if defined(Q_OS_ANDROID)
-    Q_UNUSED(settings);
-#endif
+
 }
 
 HwSink::~HwSink()
 {
-    if (m_port->IsOpen())
+    if (m_port != NULL && m_port->IsOpen())
         Stop();
 }
 
@@ -70,7 +67,7 @@ void HwSink::SetSelectedChannels(unsigned char channels)
 
 bool HwSink::IsDeviceConnected()
 {
-    if (!m_port->IsOpen())
+    if (m_port == NULL || !m_port->IsOpen())
     {
         PortIssueSolver();
         return false;
@@ -109,7 +106,7 @@ bool HwSink::ProcessCommand(unsigned char command)
 
 void HwSink::WorkOffline()
 {
-    if (m_port->IsOpen())
+    if (m_port != NULL && m_port->IsOpen())
         m_port->Close();
 
     m_knownIssue = true;
@@ -125,30 +122,89 @@ void HwSink::PortIssueSolver()
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
         );
+        connectivityChanged(false);
     }
-
-    connectivityChanged(false);
 }
 
-bool HwSink::OpenPort(QString id)
+bool HwSink::OpenPort(PortInfo const &info)
 {
+    switch (info.m_portType)
+    {
+#if not defined(Q_OS_ANDROID)
+        case PortInfo::pt_serialPort:
+            m_port = new SerialPort(m_settings, this);
+        break;
+#endif
+        case PortInfo::pt_bluetooth:
+            m_port = new Bluetooth(m_settings, this);
+        default:
+            qWarning() << "try to open unsuported port";
+    }
+
+    connect(m_port, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
+
     if (m_port->IsOpen())
     {
         m_port->Close();
         connectivityChanged(false);
     }
 
-    if (!m_port->OpenPort(id))
+    if (!m_port->OpenPort(info.m_id))
+    {
+        QMessageBox::warning(
+            (QWidget*)parent(),
+            "",
+            tr("Selected port is byssy. it is probably oppened by another process.")
+        );
+        m_knownIssue = true; //will be displayed message about it
         return false;
+    }
 
-    connectivityChanged(true);
-    m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
     return true;
 }
 
-bool HwSink::FindAndOpenMyPort(QList<PortInfo> &portInfos)
+void HwSink::portOpeningFinished(bool opened)
 {
-    return m_port->FindAndOpenMyPort(portInfos);
+    if (opened)
+        m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
+
+    connectivityChanged(opened);
+}
+
+
+void HwSink::FillComPortList(QList<PortInfo> &portInfo)
+{
+#if not defined(Q_OS_ANDROID)
+     SerialPort sp(m_settings);
+     sp.FillPots(portInfo);
+#endif
+}
+
+void HwSink::StartPortSearching()
+{
+#if not defined(Q_OS_ANDROID)
+/*    SerialPort *sp = new SerialPort(m_settings, this);
+    if (sp->FindAndOpenMyPort(portInfos))
+    {
+        m_port = sp;
+        portOpened();
+        return true;
+    }
+    portsFound();*/
+
+#endif
+
+    /*Bluetooth *bt = new Bluetooth(m_settings, this);
+    if (bt->FindAndOpenMyPort(portInfos))
+    {
+        m_port = bt;
+        return true;
+    }*/
+}
+
+void HwSink::ClearCache()
+{
+    m_port->ClearCache();
 }
 
 } //namespace hw

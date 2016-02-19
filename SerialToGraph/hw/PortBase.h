@@ -9,16 +9,6 @@ class QSettings;
 namespace hw
 {
 
-class PortInfo
-{
-public:
-    PortInfo(QString const &id, QString hwHint, QSettings const &settings);
-
-    QString m_id;
-    bool m_preferred;
-    bool m_lastUsed;
-};
-
 class PortBase : public QObject
 {
     Q_OBJECT
@@ -47,8 +37,8 @@ public:
     virtual bool IsOpen() = 0;
     virtual void Close() = 0;
     virtual bool OpenPort(QString id) = 0;
-    virtual bool FindAndOpenMyPort(QList<PortInfo> &portInfos) = 0;
 signals:
+    void portOpeningFinished(bool opened);
 public slots:
 
 };

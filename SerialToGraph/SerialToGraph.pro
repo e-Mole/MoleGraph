@@ -43,7 +43,6 @@ SOURCES += main.cpp\
     MeasurementSettings.cpp \
     Plot.cpp \
     PortListDialog.cpp \
-    ChannelWidget.cpp \
     FileDialog.cpp \
     hw/PortInfo.cpp
 
@@ -78,7 +77,6 @@ HEADERS  += MainWindow.h \
     Plot.h \
     PortListDialog.h \
     Serializer.h \
-    ChannelWidget.h \
     FileDialog.h \
     hw/PortInfo.h
 

@@ -172,34 +172,20 @@ void HwSink::portOpeningFinished(bool opened)
 }
 
 
-void HwSink::FillComPortList(QList<PortInfo> &portInfo)
-{
-#if not defined(Q_OS_ANDROID)
-     SerialPort sp(m_settings);
-     sp.FillPots(portInfo);
-#endif
-}
-
 void HwSink::StartPortSearching()
 {
 #if not defined(Q_OS_ANDROID)
-/*    SerialPort *sp = new SerialPort(m_settings, this);
-    if (sp->FindAndOpenMyPort(portInfos))
-    {
-        m_port = sp;
-        portOpened();
-        return true;
-    }
-    portsFound();*/
-
+    SerialPort sp(m_settings, this);
+    QList<PortInfo> portInfos;
+    sp.FillPots(portInfos);
+    foreach (PortInfo const  &item, portInfos)
+        portFound(item);
 #endif
 
-    /*Bluetooth *bt = new Bluetooth(m_settings, this);
-    if (bt->FindAndOpenMyPort(portInfos))
-    {
-        m_port = bt;
-        return true;
-    }*/
+    //FIXME it should be destucted
+    Bluetooth *bt = new Bluetooth(m_settings, this);
+    connect(bt, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+    bt->StartPortSearching();
 }
 
 void HwSink::ClearCache()

@@ -65,7 +65,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, QSettings &s
     buttonLayout->addWidget(close);
 
     connect(&hwSink, SIGNAL(connectivityChanged(bool)), this, SLOT(connectivityChanged(bool)));
-
+    connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
     this->startScannimg();
 }
 
@@ -82,9 +82,8 @@ void PortListDialog::startScannimg()
     m_progressText->setText(tr("Scanning..."));
     m_progressText->setVisible(true);
 
-    QList<hw::PortInfo> portInfos;
-    m_hwSink.FillComPortList(portInfos);
-    _RefreshPortList(portInfos);
+    _CleanPortList();
+    m_hwSink.StartPortSearching();
 }
 
 void PortListDialog::stopScanning()
@@ -94,7 +93,7 @@ void PortListDialog::stopScanning()
     m_progressText->setVisible(false);
     adjustSize();
 }
-void PortListDialog::_AddPort(hw::PortInfo const &item)
+void PortListDialog::addPort(hw::PortInfo const &item)
 {
     unsigned rowNumber = m_portLayout->rowCount();
     QRadioButton *rb = new QRadioButton(item.m_id, m_portWidget);
@@ -158,7 +157,7 @@ void PortListDialog::connectivityChanged(bool connected)
     accept();
 }
 
-void PortListDialog::_RefreshPortList(QList<hw::PortInfo> &portInfos)
+void PortListDialog::_CleanPortList()
 {
     QList<QWidget *> widgets = m_portWidget->findChildren<QWidget *>();
     foreach(QWidget * widget, widgets)
@@ -166,12 +165,8 @@ void PortListDialog::_RefreshPortList(QList<hw::PortInfo> &portInfos)
         m_portLayout->removeWidget(widget);
         delete widget;
     }
-
-    foreach(hw::PortInfo const &item, portInfos)
-    {
-        _AddPort(item);
-    }
 }
+
 void PortListDialog::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);

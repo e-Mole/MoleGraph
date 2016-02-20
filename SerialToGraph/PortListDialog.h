@@ -20,7 +20,6 @@ class PortListDialog : public bases::PlatformDialog
     Q_OBJECT
 
     void closeEvent(QCloseEvent *event);
-    void _AddPort(const hw::PortInfo &item);
     void _UncheckRadioButton(QRadioButton *rb);
 
     hw::HwSink &m_hwSink;
@@ -39,7 +38,8 @@ public:
     bool CloseApp()
     { return m_close; }
 
-    void _RefreshPortList(QList<hw::PortInfo> &portInfos);
+    void _CleanPortList();
+
 signals:
 private slots:
     void closeClicked();
@@ -47,6 +47,7 @@ private slots:
     void portToggeled(bool checked);
     void connectivityChanged(bool connected);
     void stopScanning();
+    void addPort(const hw::PortInfo &item);
 };
 
 #endif // PORTLISTDIALOG_H

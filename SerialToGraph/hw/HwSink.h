@@ -36,12 +36,11 @@ public:
     void StartPortSearching();
     void ClearCache();
 
-    void FillComPortList(QList<PortInfo> &portInfo);
 signals:
     void StartCommandDetected();
     void StopCommandDetected();
     void connectivityChanged(bool connected);
-    void portsFound();
+    void portFound(hw::PortInfo const &portInfo);
     void portOpened();
 public slots:
     void portOpeningFinished(bool opened);

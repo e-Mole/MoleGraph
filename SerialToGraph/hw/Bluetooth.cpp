@@ -1,4 +1,5 @@
 #include "Bluetooth.h"
+#include <hw/PortInfo.h>
 #include <QSettings>
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceDiscoveryAgent>
@@ -22,12 +23,16 @@ void Bluetooth::StartPortSearching()
         discoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)),
         this, SLOT(deviceDiscovered(QBluetoothDeviceInfo)));
 
-    discoveryAgent.start();
+    discoveryAgent->start();
 }
 
 void Bluetooth::deviceDiscovered(QBluetoothDeviceInfo const &info)
 {
-//QList<PortInfo> &portInfos
+    PortInfo item;
+    item.m_id =  info.name() + " (" + info.address().toString() + ")";
+    item.m_portType = PortInfo::pt_bluetooth;
+    item.m_status = PortInfo::st_ordinary;
+    deviceFound(item);
 }
 
 } //namespace hw

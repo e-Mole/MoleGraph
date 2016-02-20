@@ -7,6 +7,7 @@ class QSettings;
 class QBluetoothDeviceInfo;
 namespace hw
 {
+class PortInfo;
 class Bluetooth : public PortBase
 {
     Q_OBJECT
@@ -27,7 +28,7 @@ public:
     virtual bool OpenPort(QString id) { Q_UNUSED(id); return false;}
 
 signals:
-
+    void deviceFound(hw::PortInfo const  &item);
 private slots:
     void deviceDiscovered(QBluetoothDeviceInfo const &info);
 };

@@ -14,7 +14,7 @@ class Bluetooth : public PortBase
     QSettings &m_settings;
 public:
     explicit Bluetooth(QSettings &settings, QObject *parent = 0);
-
+    void StartPortSearching();
     virtual void ReadData(QByteArray &array) { Q_UNUSED(array); }
     virtual void ClearCache() {}
     virtual bool WriteInstruction(Instructions instruction) { Q_UNUSED(instruction); return false;}
@@ -25,6 +25,7 @@ public:
     virtual bool IsOpen() {return false; }
     virtual void Close() {}
     virtual bool OpenPort(QString id) { Q_UNUSED(id); return false;}
+
 signals:
 
 private slots:

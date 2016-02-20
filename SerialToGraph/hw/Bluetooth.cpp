@@ -15,7 +15,7 @@ Bluetooth::Bluetooth(QSettings &settings, QObject *parent) :
 }
 
 
-/*bool Bluetooth::StartPortSearching(QList<PortInfo> &portInfos)
+void Bluetooth::StartPortSearching()
 {
     QBluetoothDeviceDiscoveryAgent *discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
     connect(
@@ -23,14 +23,11 @@ Bluetooth::Bluetooth(QSettings &settings, QObject *parent) :
         this, SLOT(deviceDiscovered(QBluetoothDeviceInfo)));
 
     discoveryAgent.start();
-
-    portInfos.push_back(PortInfo(PortInfo::pt_bluetooth, "test", "bla", m_settings));
-    return false;
-}*/
+}
 
 void Bluetooth::deviceDiscovered(QBluetoothDeviceInfo const &info)
 {
-
+//QList<PortInfo> &portInfos
 }
 
 } //namespace hw

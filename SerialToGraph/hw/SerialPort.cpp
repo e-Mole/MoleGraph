@@ -99,7 +99,7 @@ void SerialPort::FillPots(QList<PortInfo> &portInfos)
 
 qint64 SerialPort::Write(char const *data, unsigned size)
 {
-    m_serialPort.write(data, size);
+    return m_serialPort.write(data, size);
 }
 
 void SerialPort::WaitForBytesWritten()

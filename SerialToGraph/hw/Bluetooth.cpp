@@ -79,7 +79,7 @@ void Bluetooth::ReadData(QByteArray &array)
 }
 qint64 Bluetooth::Write(char const *data, unsigned size)
 {
-    m_socket->write(data, size);
+    return m_socket->write(data, size);
 }
 void Bluetooth::WaitForBytesWritten()
 {

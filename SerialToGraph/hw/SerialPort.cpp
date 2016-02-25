@@ -7,15 +7,17 @@
 #include <QString>
 #include <QTimer>
 #include <string>
+#include <hw/HwSink.h>
 namespace hw
 {
 
 #define PROTOCOL_ID "ATG_2"
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
-SerialPort::SerialPort(QSettings &settings, QObject *parent) :
-    PortBase(parent),
-    m_settings(settings)
+SerialPort::SerialPort(QSettings &settings, HwSink *hwSink) :
+    PortBase(hwSink),
+    m_settings(settings),
+    m_hwSink(hwSink)
 {
 
 }
@@ -40,7 +42,7 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
 
 void SerialPort::portOpenTimeout()
 {
-    WriteInstruction(INS_GET_VERSION, "");
+    m_hwSink->GetVersion();
     QByteArray array;
     unsigned counter = RESPONSE_WAITING;
     while (!m_serialPort.waitForReadyRead(1))
@@ -95,58 +97,18 @@ void SerialPort::FillPots(QList<PortInfo> &portInfos)
     }
 }
 
+qint64 SerialPort::Write(char const *data, unsigned size)
+{
+    m_serialPort.write(data, size);
+}
+
+void SerialPort::WaitForBytesWritten()
+{
+    m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
+}
 void SerialPort::ReadData(QByteArray &array)
 {
     array = m_serialPort.readAll();
-}
-
-bool SerialPort::WriteInstruction(Instructions instruction, std::string const &data)
-{
-    if (!m_serialPort.isOpen())
-        return false;
-
-    qDebug() << "writen instruction:" << instruction << " data size:" <<
-        m_serialPort.write((char const *)&instruction , 1);
-    if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
-    {
-        //_LineIssueSolver();
-        //return;
-    }
-    if (data.size() > 0)
-    {
-       qDebug() << "data present" << data.c_str() << " size:" << data.size();
-       m_serialPort.write(data.c_str(), data.size());
-      if (!m_serialPort.waitForBytesWritten(RESPONSE_WAITING))
-      {
-        //_LineIssueSolver();
-      }
-    }
-    return true;
-}
-
-bool SerialPort::WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
-{
-    if (!m_serialPort.isOpen())
-        return false;
-
-    std::string tmp;
-    tmp.append((char const *)&parameter, length);
-    if (!WriteInstruction(instruction, tmp))
-    {
-        return false;
-    }
-    return true;
-}
-
-bool SerialPort::WriteInstruction(Instructions instruction)
-{
-    if (!m_serialPort.isOpen())
-        return false;
-    if (!WriteInstruction(instruction, ""))
-    {
-        return false;
-    }
-    return true;
 }
 
 } //namespace hw

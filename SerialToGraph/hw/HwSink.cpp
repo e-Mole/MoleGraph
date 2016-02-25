@@ -7,6 +7,7 @@
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QSettings>
@@ -16,6 +17,8 @@ namespace hw
 HwSink::HwSink(QSettings &settings, QObject *parent) :
     QObject(parent),
     m_port(NULL),
+    m_bluetooth(NULL),
+    m_serialPort(NULL),
     m_knownIssue(false),
     m_settings(settings)
 {
@@ -30,39 +33,44 @@ HwSink::~HwSink()
 
 bool HwSink::SetFrequency(unsigned frequency)
 {
-    return m_port->WriteInstruction(PortBase::INS_SET_FREQUENCY, frequency, 2);
+    return _WriteInstruction(INS_SET_FREQUENCY, frequency, 2);
 }
 
 bool HwSink::SetTime(unsigned time)
 {
-    return m_port->WriteInstruction(PortBase::INS_SET_TIME, time, 2);
+    return _WriteInstruction(INS_SET_TIME, time, 2);
 }
 
 bool HwSink::SetType(unsigned type)
 {
-    return m_port->WriteInstruction(PortBase::INS_SET_TYPE, type, 1);
+    return _WriteInstruction(INS_SET_TYPE, type, 1);
 }
 
 bool HwSink::Start()
 {
-    return m_port->WriteInstruction(PortBase::INS_START);
+    return _WriteInstruction(INS_START);
 }
 
 bool HwSink::Stop()
 {
-    return m_port->WriteInstruction(PortBase::INS_STOP);
+    return _WriteInstruction(INS_STOP);
 }
 
 bool HwSink::SampleRequest()
 {
-    return m_port->WriteInstruction(PortBase::INS_GET_SAMLPE);
+    return _WriteInstruction(INS_GET_SAMLPE);
+}
+
+bool HwSink::GetVersion()
+{
+    return _WriteInstruction(INS_GET_VERSION);
 }
 
 void HwSink::SetSelectedChannels(unsigned char channels)
 {
     std::string tmp;
     tmp.append((char const *)&channels, 1);
-    m_port->WriteInstruction(PortBase::INS_ENABLED_CHANNELS, tmp);
+    _WriteInstruction(INS_ENABLED_CHANNELS, tmp);
 }
 
 bool HwSink::IsDeviceConnected()
@@ -93,11 +101,11 @@ bool HwSink::ProcessCommand(unsigned char command)
 {
     switch (command)
     {
-    case PortBase::INS_NONE:
+    case INS_NONE:
         return false;
-    case PortBase::INS_START:
+    case INS_START:
         StartCommandDetected();
-    case PortBase::INS_STOP:
+    case INS_STOP:
         StopCommandDetected();
     break;
     }
@@ -128,26 +136,27 @@ void HwSink::PortIssueSolver()
 
 bool HwSink::OpenPort(PortInfo const &info)
 {
+    if (m_port != NULL &&  m_port->IsOpen())
+    {
+        m_port->Close();
+        connectivityChanged(false);
+    }
+
     switch (info.m_portType)
     {
 #if not defined(Q_OS_ANDROID)
         case PortInfo::pt_serialPort:
-            m_port = new SerialPort(m_settings, this);
+            m_port = m_serialPort;
         break;
 #endif
         case PortInfo::pt_bluetooth:
-            m_port = new Bluetooth(m_settings, this);
+            m_port = m_bluetooth;
+        break;
         default:
             qWarning() << "try to open unsuported port";
     }
 
     connect(m_port, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
-
-    if (m_port->IsOpen())
-    {
-        m_port->Close();
-        connectivityChanged(false);
-    }
 
     if (!m_port->OpenPort(info.m_id))
     {
@@ -175,22 +184,54 @@ void HwSink::portOpeningFinished(bool opened)
 void HwSink::StartPortSearching()
 {
 #if not defined(Q_OS_ANDROID)
-    SerialPort sp(m_settings, this);
+    m_serialPort = new SerialPort(m_settings, this);
     QList<PortInfo> portInfos;
-    sp.FillPots(portInfos);
+    m_serialPort->FillPots(portInfos);
     foreach (PortInfo const  &item, portInfos)
         portFound(item);
 #endif
 
     //FIXME it should be destucted
-    Bluetooth *bt = new Bluetooth(m_settings, this);
-    connect(bt, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
-    bt->StartPortSearching();
+    m_bluetooth = new Bluetooth(m_settings, this);
+    connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+    m_bluetooth->StartPortSearching();
 }
 
 void HwSink::ClearCache()
 {
     m_port->ClearCache();
+}
+
+bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data)
+{
+    if (!m_port->IsOpen())
+        return false;
+
+    qDebug() << "writen instruction:" << instruction <<
+                " data size:" << m_port->Write((char const *)&instruction , 1);
+    m_port->WaitForBytesWritten();
+    if (data.size() > 0)
+    {
+        qDebug() << "data present" << data.c_str() << " size:" << data.size();
+        m_port->Write(data.c_str(), data.size());
+        m_port->WaitForBytesWritten();
+    }
+    return true;
+}
+
+bool HwSink::_WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
+{
+    if (!m_port->IsOpen())
+        return false;
+
+    std::string tmp;
+    tmp.append((char const *)&parameter, length);
+    return _WriteInstruction(instruction, tmp);
+}
+
+bool HwSink::_WriteInstruction(Instructions instruction)
+{
+    return _WriteInstruction(instruction, "");
 }
 
 } //namespace hw

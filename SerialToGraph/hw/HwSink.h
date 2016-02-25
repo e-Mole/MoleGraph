@@ -8,12 +8,33 @@
 class QSettings;
 namespace hw
 {
+class Bluetooth;
 class PortBase;
+class SerialPort;
 class HwSink : public QObject
 {
     Q_OBJECT
 
-    PortBase *m_port;
+    enum Instructions
+    {
+        INS_NONE = 0,
+        INS_GET_VERSION = 1,
+        INS_SET_TIME = 2,
+        INS_SET_FREQUENCY = 3,
+        INS_ENABLED_CHANNELS = 4,
+        INS_START = 5,
+        INS_STOP = 6,
+        INS_SET_TYPE = 7,
+        INS_GET_SAMLPE = 8,
+    };
+
+    bool _WriteInstruction(Instructions instruction, std::string const &data);
+    bool _WriteInstruction(Instructions instruction);
+    bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
+
+    PortBase * m_port;
+    Bluetooth * m_bluetooth;
+    SerialPort * m_serialPort;
     bool m_knownIssue;
     QSettings &m_settings;
 public:
@@ -26,6 +47,7 @@ public:
     bool Start();
     bool Stop();
     bool SampleRequest();
+    bool GetVersion();
     void SetSelectedChannels(unsigned char channels);
     bool IsDeviceConnected();
     void PortIssueSolver();
@@ -35,6 +57,7 @@ public:
     bool OpenPort(const PortInfo &info);
     void StartPortSearching();
     void ClearCache();
+
 
 signals:
     void StartCommandDetected();

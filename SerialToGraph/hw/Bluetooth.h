@@ -2,9 +2,13 @@
 #define BLUETOOTH_H
 
 #include <hw/PortBase.h>
+#include <QBluetoothServiceInfo>
+#include <QMap>
+#include <QString>
 
+class QBluetoothSocket;
 class QSettings;
-class QBluetoothDeviceInfo;
+
 namespace hw
 {
 class PortInfo;
@@ -13,24 +17,24 @@ class Bluetooth : public PortBase
     Q_OBJECT
 
     QSettings &m_settings;
+    QBluetoothSocket *m_socket;
 public:
     explicit Bluetooth(QSettings &settings, QObject *parent = 0);
     void StartPortSearching();
-    virtual void ReadData(QByteArray &array) { Q_UNUSED(array); }
+    virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
-    virtual bool WriteInstruction(Instructions instruction) { Q_UNUSED(instruction); return false;}
-    virtual bool WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
-        { Q_UNUSED(instruction); Q_UNUSED(parameter); Q_UNUSED(length); return false;}
-    virtual bool WriteInstruction(Instructions instruction, std::string const &data)
-        { Q_UNUSED(instruction); Q_UNUSED(data); return false;}
-    virtual bool IsOpen() {return false; }
-    virtual void Close() {}
-    virtual bool OpenPort(QString id) { Q_UNUSED(id); return false;}
+    qint64 Write(char const *data, unsigned size);
+    void WaitForBytesWritten();
+    virtual bool IsOpen();
+    virtual void Close();
+    virtual bool OpenPort(QString id);
 
+    QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
 signals:
     void deviceFound(hw::PortInfo const  &item);
 private slots:
-    void deviceDiscovered(QBluetoothDeviceInfo const &info);
+    void serviceDiscovered(const QBluetoothServiceInfo &info);
+    void clientConnected();
 };
 
 } //namespace hw

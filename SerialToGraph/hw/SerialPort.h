@@ -13,7 +13,7 @@ class QSettings;
 class QString;
 namespace hw
 {
-
+class HwSink;
 class SerialPort : public PortBase
 {
     Q_OBJECT
@@ -22,18 +22,17 @@ class SerialPort : public PortBase
 
     QSerialPort m_serialPort;
     QSettings &m_settings;
+    HwSink *m_hwSink;
 public:
 
-    SerialPort(QSettings &settings, QObject *parent = 0);
+    SerialPort(QSettings &settings, HwSink *hwSink);
 
     bool OpenPort(QString id);
     void FillPots(QList<PortInfo> &portInfos);
-
+    qint64 Write(char const *data, unsigned size);
+    void WaitForBytesWritten();
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
-    bool WriteInstruction(Instructions instruction, std::string const &data);
-    bool WriteInstruction(Instructions instruction);
-    bool WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
     bool IsOpen();
     void Close()  { m_serialPort.close(); }
 

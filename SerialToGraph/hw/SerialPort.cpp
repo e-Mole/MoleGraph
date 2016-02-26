@@ -45,7 +45,7 @@ void SerialPort::portOpenTimeout()
     m_hwSink->GetVersion();
     QByteArray array;
     unsigned counter = RESPONSE_WAITING;
-    while (!m_serialPort.waitForReadyRead(1))
+    while (!m_serialPort.waitForReadyRead(100)) //100 to be sure I get response from baudrate 9600 too
     {
         if (0 == --counter)
         {

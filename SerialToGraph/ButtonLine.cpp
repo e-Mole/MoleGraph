@@ -16,6 +16,7 @@
 #include <QDialog>
 #include <QFile>
 #include <QFileInfo>
+#include <QFont>
 #include <QKeySequence>
 #include <QLabel>
 #include <QLineEdit>
@@ -118,6 +119,14 @@ void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 
 void ButtonLine::fileMenuButtonPressed()
 {
+#if defined(Q_OS_ANDROID)
+    QFont font = m_fileMenu->font();
+    font.setPointSizeF(font.pointSizeF()*1.2);
+    m_fileMenu->setFont(font);
+    m_fileMenu->setStyleSheet(
+        "QMenu::item { border: 8px solid transparent; }");
+    m_fileMenu->showMaximized();
+#endif
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 

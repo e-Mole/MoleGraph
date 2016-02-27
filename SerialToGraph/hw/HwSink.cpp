@@ -184,6 +184,7 @@ void HwSink::portOpeningFinished(bool opened)
 void HwSink::StartPortSearching()
 {
 #if not defined(Q_OS_ANDROID)
+    delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
     QList<PortInfo> portInfos;
     m_serialPort->FillPots(portInfos);
@@ -191,7 +192,7 @@ void HwSink::StartPortSearching()
         portFound(item);
 #endif
 
-    //FIXME it should be destucted
+    delete m_bluetooth;
     m_bluetooth = new Bluetooth(m_settings, this);
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
     m_bluetooth->StartPortSearching();

@@ -22,6 +22,11 @@ SerialPort::SerialPort(QSettings &settings, HwSink *hwSink) :
 
 }
 
+SerialPort::~SerialPort()
+{
+    Close();
+}
+
 bool SerialPort::_OpenPort(QSerialPortInfo const &info)
 {
     m_serialPort.setPort(info);
@@ -51,7 +56,7 @@ void SerialPort::portOpenTimeout()
         {
             qDebug() << "no response from serial port";
             m_serialPort.close();
-            portOpeningFinished(false);
+            portOpeningFinished();
             return;
         }
     }
@@ -61,10 +66,11 @@ void SerialPort::portOpenTimeout()
     {
         qDebug() << "unknown protocol version";
         m_serialPort.close();
-        portOpeningFinished(false);
+        portOpeningFinished();
         return;
     }
-    portOpeningFinished(true);
+    portOpeningFinished();
+    connectivityChanged(true);
     return;
 }
 
@@ -109,6 +115,15 @@ void SerialPort::WaitForBytesWritten()
 void SerialPort::ReadData(QByteArray &array)
 {
     array = m_serialPort.readAll();
+}
+
+void SerialPort::Close()
+{
+    if (m_serialPort.isOpen())
+    {
+        m_serialPort.close();
+        connectivityChanged(false);
+    }
 }
 
 } //namespace hw

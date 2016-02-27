@@ -18,6 +18,11 @@ Bluetooth::Bluetooth(QSettings &settings, QObject *parent) :
 {
 }
 
+Bluetooth::~Bluetooth()
+{
+    Close();
+}
+
 
 void Bluetooth::StartPortSearching()
 {
@@ -48,12 +53,13 @@ bool Bluetooth::OpenPort(QString id)
     if (m_socket->isOpen())
     {
         qDebug() << "bluetooth " << id << "has been opened";
-        portOpeningFinished(true);
+        connectivityChanged(true);
+        portOpeningFinished();
         return true;
     }
 
     qDebug() << "bluetooth " << id << "is not opened";
-    portOpeningFinished(false);
+    portOpeningFinished();
     return false;
 }
 
@@ -64,13 +70,11 @@ bool Bluetooth::IsOpen()
 
 void Bluetooth::Close()
 {
-    if (m_socket != NULL)
+    if (IsOpen())
+    {
         m_socket->close();
-}
-
-void Bluetooth::clientConnected()
-{
-    qDebug() << "client connected";
+        connectivityChanged(false);
+    }
 }
 
 void Bluetooth::ReadData(QByteArray &array)

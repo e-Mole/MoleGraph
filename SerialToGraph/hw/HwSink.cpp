@@ -139,7 +139,6 @@ bool HwSink::OpenPort(PortInfo const &info)
     if (m_port != NULL &&  m_port->IsOpen())
     {
         m_port->Close();
-        connectivityChanged(false);
     }
 
     switch (info.m_portType)
@@ -156,7 +155,8 @@ bool HwSink::OpenPort(PortInfo const &info)
             qWarning() << "try to open unsuported port";
     }
 
-    connect(m_port, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
+    connect(m_port, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinishedLocal()));
+    connect(m_port, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 
     if (!m_port->OpenPort(info.m_id))
     {
@@ -172,12 +172,12 @@ bool HwSink::OpenPort(PortInfo const &info)
     return true;
 }
 
-void HwSink::portOpeningFinished(bool opened)
+void HwSink::portOpeningFinishedLocal()
 {
-    if (opened)
+    if (m_port->IsOpen())
         m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
 
-    connectivityChanged(opened);
+    portOpeningFinished(m_port->IsOpen());
 }
 
 

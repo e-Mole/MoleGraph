@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QMenu>
+#include <QMetaObject>
 #include <QRect>
 #include <QSizePolicy>
 #include <QTabWidget>
@@ -29,8 +30,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_settings("eMole", "ArduinoToGraph"),
     m_hwSink(m_settings),
     m_context(m_measurements, m_hwSink, m_settings, *this),
-    m_currentMeasurement(NULL),
-    m_close(false)
+    m_currentMeasurement(NULL)
 {
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -47,9 +47,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load("serialToGraph_cs.qm", ":/languages"))
         application.installTranslator(translator);
 
-    if (!OpenSerialPort()) //returns false when user pressed the Close button
-        return;
-
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
     centralLayout->setMargin(2);
@@ -57,15 +54,12 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     setCentralWidget(centralWidget);
 
     m_buttonLine = new ButtonLine(this, m_context);
-    m_buttonLine->connectivityStateChange(m_hwSink.IsDeviceConnected());
 
 #if defined(Q_OS_ANDROID)
     addToolBar(Qt::LeftToolBarArea, m_buttonLine);
 #else
     addToolBar(Qt::TopToolBarArea, m_buttonLine);
 #endif
-
-
 
     connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
@@ -79,6 +73,9 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     {
         DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
+
+    repaint();
+    QMetaObject::invokeMethod(this, "openSerialPortAutoConnect", Qt::QueuedConnection);
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
@@ -90,31 +87,21 @@ QString &MainWindow::GetCurrentFileName()
 {
     return m_currentFileName;
 }
-
-#if defined(Q_OS_ANDROID)
-bool MainWindow::OpenSerialPort()
+void MainWindow::openSerialPortAutoConnect()
 {
-    m_hwSink.WorkOffline();
-    return true;
+    OpenSerialPort(true);
 }
-#else
-bool MainWindow::OpenSerialPort()
-{
-    PortListDialog *portListDialog = new PortListDialog(NULL, m_hwSink, m_settings);
-    if (QDialog::Rejected == portListDialog->exec())
-    {
-        if (portListDialog->CloseApp())
-        {
-            m_close = true;
-            return false;
-        }
 
+void MainWindow::OpenSerialPort(bool autoConnect)
+{
+    PortListDialog portListDialog(this, m_hwSink, m_settings, autoConnect);
+    if (QDialog::Rejected == portListDialog.exec())
+    {
         qDebug() << "hardware not found";
         m_hwSink.WorkOffline();
     }
-    return true;
+    return;
 }
-#endif
 
 MainWindow::~MainWindow()
 {

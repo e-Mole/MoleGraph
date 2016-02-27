@@ -41,17 +41,17 @@ public:
     void RemoveAllMeasurements();
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
-    bool OpenSerialPort();
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileName();
     void OpenNew();
+    void OpenSerialPort(bool autoConnect);
 
-    bool m_close;
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
+    void openSerialPortAutoConnect();
 };
 
 #endif // MAINWINDOW_H

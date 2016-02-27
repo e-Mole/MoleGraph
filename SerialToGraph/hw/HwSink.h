@@ -65,8 +65,9 @@ signals:
     void connectivityChanged(bool connected);
     void portFound(hw::PortInfo const &portInfo);
     void portOpened();
+    void portOpeningFinished(bool connected);
 public slots:
-    void portOpeningFinished(bool opened);
+    void portOpeningFinishedLocal();
 
 };
 } //namespace hw

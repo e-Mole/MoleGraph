@@ -20,6 +20,7 @@ class Bluetooth : public PortBase
     QBluetoothSocket *m_socket;
 public:
     explicit Bluetooth(QSettings &settings, QObject *parent = 0);
+    ~Bluetooth();
     void StartPortSearching();
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
@@ -34,7 +35,6 @@ signals:
     void deviceFound(hw::PortInfo const  &item);
 private slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
-    void clientConnected();
 };
 
 } //namespace hw

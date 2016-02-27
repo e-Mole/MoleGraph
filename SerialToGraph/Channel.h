@@ -36,6 +36,7 @@ protected:
         QSize GetSize(QString const &text);
         QSize GetLongestTextSize();
 
+        static QSize GetMinimumSize();
     };
 
     void _SetMinimumSize();
@@ -122,8 +123,7 @@ public:
 
     bool IsOnHorizontalAxis();
 
-    static QSize GetMinimumSize()
-    {  return QSize(110, 68); }
+    QSize GetMinimumSize();
 
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();

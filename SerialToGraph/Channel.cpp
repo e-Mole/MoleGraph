@@ -30,6 +30,8 @@ Channel::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, bo
         setStyleSheet("QLabel { background-color : #e0e0e0;}");
 
     setMargin(3);
+
+    setMinimumSize(GetMinimumSize());
 }
 
 QSize Channel::ValueLabel::GetLongestTextSize()
@@ -64,6 +66,9 @@ void Channel::ValueLabel::SetColor(const QColor &color)
     palette.setColor(foregroundRole(), color);
     setPalette(palette);
 }
+
+QSize Channel::ValueLabel::GetMinimumSize()
+{  return QSize(80, 40); }
 
 Channel::Channel(Measurement *measurement,
     Context const & context,
@@ -328,4 +333,10 @@ void Channel::_SetUnits(QString const &units)
     m_units = units;
     _ShowLastValueWithUnits();
     m_axis->UpdateGraphAxisName();
+}
+
+QSize Channel::GetMinimumSize()
+{
+    return m_widget->sizeHint() - m_valueLabel->size() + m_valueLabel->GetMinimumSize();
+
 }

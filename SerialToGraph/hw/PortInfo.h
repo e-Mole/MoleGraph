@@ -12,7 +12,7 @@ public:
     enum status
     {
         st_ordinary,
-        st_match,
+        st_recognized,
         st_lastTimeUsed,
         st_identified,
         st_doesntAnswer

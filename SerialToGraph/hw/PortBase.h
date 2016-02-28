@@ -2,7 +2,6 @@
 #define PORTBASE_H
 
 #include <QObject>
-#include <QString>
 class QByteArray;
 class QSettings;
 
@@ -14,7 +13,7 @@ class PortBase : public QObject
     Q_OBJECT
 
 public:
-    explicit PortBase(QObject *parent = 0);
+    PortBase(QObject *parent);
     virtual void ReadData(QByteArray &array) = 0;
     virtual void ClearCache() = 0;
     virtual qint64 Write(char const *data, unsigned size) = 0;

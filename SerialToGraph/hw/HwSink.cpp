@@ -1,4 +1,5 @@
 #include "HwSink.h"
+#include <QDebug>
 #include <GlobalSettings.h>
 #if not defined(Q_OS_ANDROID)
 #   include <hw/SerialPort.h>
@@ -12,15 +13,18 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QQueue>
+#include <QWidget>
 namespace hw
 {
-HwSink::HwSink(GlobalSettings &settings, QObject *parent) :
-    QObject(parent),
+HwSink::HwSink(GlobalSettings &settings, QWidget *parent) :
+    QObject((QObject*)parent),
     m_port(NULL),
     m_bluetooth(NULL),
     m_serialPort(NULL),
     m_knownIssue(false),
-    m_settings(settings)
+    m_settings(settings),
+    m_state(Offline),
+    parentWidget(parent)
 {
 
 }
@@ -112,12 +116,24 @@ bool HwSink::ProcessCommand(unsigned char command)
     return true;
 }
 
+void HwSink::_ChangeState(State status)
+{
+    m_state = status;
+    stateChanged(GetStateString(), m_state);
+}
+
 void HwSink::WorkOffline()
 {
     if (m_port != NULL && m_port->IsOpen())
         m_port->Close();
 
     m_knownIssue = true;
+
+    if (m_bluetooth != NULL)
+        m_bluetooth->StopPortSearching();
+
+    if (m_state != Offline)
+        _ChangeState(Offline);
 }
 
 void HwSink::PortIssueSolver()
@@ -126,7 +142,7 @@ void HwSink::PortIssueSolver()
     {
         WorkOffline();
         QMessageBox::warning(
-            NULL,
+            parentWidget,
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
         );
@@ -134,11 +150,17 @@ void HwSink::PortIssueSolver()
     }
 }
 
-bool HwSink::OpenPort(PortInfo const &info)
+void HwSink::OpenPort(PortInfo const &info)
 {
+    if (info.m_id == m_openedPortInfo.m_id)
+        return; //already opened
+
+    _ChangeState(Opening);
+
     if (m_port != NULL &&  m_port->IsOpen())
     {
         m_port->Close();
+        m_openedPortInfo = PortInfo();
     }
 
     switch (info.m_portType)
@@ -155,34 +177,47 @@ bool HwSink::OpenPort(PortInfo const &info)
             qWarning() << "try to open unsuported port";
     }
 
-    connect(m_port, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinishedLocal()));
-    connect(m_port, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
-
+    m_openedPortInfo = info;
     if (!m_port->OpenPort(info.m_id))
     {
         QMessageBox::warning(
             (QWidget*)parent(),
             "",
-            tr("Selected port is byssy. it is probably oppened by another process.")
+            tr("Selected port is byssy. It is probably oppened by another process.")
         );
         m_knownIssue = true; //will be displayed message about it
-        return false;
+        _ChangeState(Scanning);
     }
-
-    return true;
 }
 
-void HwSink::portOpeningFinishedLocal()
+void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
+    {
         m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
 
-    portOpeningFinished(m_port->IsOpen());
+        m_settings.SetLastSerialPortType(m_openedPortInfo.m_portType);
+        m_settings.SetLastSerialPortId(m_openedPortInfo.m_id);
+
+        _ChangeState(Connected);
+
+    }
+    else
+    {
+        QMessageBox::warning(
+            (QWidget*)parent(),
+            "",
+            tr("Selected port doesn't responding. Please, check a device connection and the port read/write permitions.")
+        );
+        _ChangeState(m_bluetooth->IsActive() ? Scanning : Offline);
+    }
 }
 
 
 void HwSink::StartPortSearching()
 {
+    _ChangeState(Scanning);
+
 #if not defined(Q_OS_ANDROID)
     delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
@@ -190,12 +225,17 @@ void HwSink::StartPortSearching()
     m_serialPort->FillPots(portInfos);
     foreach (PortInfo const  &item, portInfos)
         portFound(item);
+
+    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+    connect(m_serialPort, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 #endif
 
     delete m_bluetooth;
     m_bluetooth = new Bluetooth(m_settings, this);
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
     m_bluetooth->StartPortSearching();
+    connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+    connect(m_bluetooth, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 }
 
 void HwSink::ClearCache()
@@ -233,6 +273,23 @@ bool HwSink::_WriteInstruction(Instructions instruction, unsigned parameter, uns
 bool HwSink::_WriteInstruction(Instructions instruction)
 {
     return _WriteInstruction(instruction, "");
+}
+
+QString HwSink::GetStateString()
+{
+    switch(m_state)
+    {
+        case Offline:
+            return tr("Offline");
+        case Scanning:
+            return tr("Scanning");
+        case Opening:
+            return tr("Opening");
+        case Connected:
+            return tr("Connected");
+        default:
+            qWarning("unsupported HwSink state");
+    }
 }
 
 } //namespace hw

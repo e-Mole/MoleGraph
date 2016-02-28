@@ -3,6 +3,7 @@
 
 #include <bases/PlatformDialog.h>
 #include <hw/PortInfo.h>
+#include <hw/HwSink.h>
 #include <QMap>
 
 class GlobalSettings;
@@ -14,14 +15,12 @@ class QPushButton;
 class QRadioButton;
 class QWidget;
 
-namespace hw { class HwSink; class PortInfo; }
 class PortListDialog : public bases::PlatformDialog
 {
     Q_OBJECT
 
     void closeEvent(QCloseEvent *event);
     void _UncheckRadioButton(QRadioButton *rb);
-    void _DisplayScanning();
 
     hw::HwSink &m_hwSink;
     GlobalSettings &m_settings;
@@ -35,16 +34,17 @@ class PortListDialog : public bases::PlatformDialog
     QRadioButton * m_selectedRadioButton;
     bool m_autoConnect;
 public:
-    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings, bool autoConnect);
+    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings);
+    void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
+    void StartSearching();
 
     void _CleanPortList();
 
 signals:
 private slots:
     void refresh();
-    void portToggeled(bool checked);
-    void portOpeningFinished(bool connected);
-    void connectivityChanged(bool connected);
+    void portRadioButtonReleased();
+    void stateChanged(const QString &stateString, hw::HwSink::State state);
     void addPort(const hw::PortInfo &item);
     void workDisconnected();
 };

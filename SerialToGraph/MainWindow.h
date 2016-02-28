@@ -11,6 +11,7 @@
 
 class CentralWidget;
 class Measurement;
+class PortListDialog;
 class QApplication;
 class QDataStream;
 class QTabWidget;
@@ -30,8 +31,8 @@ class MainWindow : public QMainWindow
     QTabWidget *m_measurementTabs;
     Measurement *m_currentMeasurement;
     QString m_currentFileName;
-
     QString m_langBcp47;
+    PortListDialog *m_portListDialog;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -47,13 +48,12 @@ public:
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileName();
     void OpenNew();
-    void OpenSerialPort(bool autoConnect);
+    void OpenSerialPort();
 
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
-    void openSerialPortAutoConnect();
 };
 
 #endif // MAINWINDOW_H

@@ -27,9 +27,10 @@
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
-    m_hwSink(m_settings),
+    m_hwSink(m_settings, this),
     m_context(m_measurements, m_hwSink, m_settings, *this),
-    m_currentMeasurement(NULL)
+    m_currentMeasurement(NULL),
+    m_portListDialog(new PortListDialog(this, m_hwSink, m_settings))
 {
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -64,7 +65,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     addToolBar(Qt::TopToolBarArea, m_buttonLine);
 #endif
 
-    connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
+    connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
+            m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(centralWidget);
@@ -77,7 +79,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
 
-    QMetaObject::invokeMethod(this, "openSerialPortAutoConnect", Qt::QueuedConnection);
+    m_portListDialog->StartSearching();
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
@@ -89,23 +91,10 @@ QString &MainWindow::GetCurrentFileName()
 {
     return m_currentFileName;
 }
-void MainWindow::openSerialPortAutoConnect()
-{
-    if (isVisible())
-        OpenSerialPort(true);
-    else
-        QMetaObject::invokeMethod(this, "openSerialPortAutoConnect", Qt::QueuedConnection);
-}
 
-void MainWindow::OpenSerialPort(bool autoConnect)
+void MainWindow::OpenSerialPort()
 {
-    PortListDialog portListDialog(this, m_hwSink, m_settings, autoConnect);
-    if (QDialog::Rejected == portListDialog.exec())
-    {
-        qDebug() << "hardware not found";
-        m_hwSink.WorkOffline();
-    }
-    return;
+    m_portListDialog->exec();
 }
 
 MainWindow::~MainWindow()

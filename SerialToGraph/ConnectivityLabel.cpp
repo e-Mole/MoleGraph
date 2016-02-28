@@ -9,23 +9,24 @@ ConnectivityLabel::ConnectivityLabel(Context const &context, const QString &text
     setMargin(5);
 }
 
-void ConnectivityLabel::SetConnected(bool connected)
+void ConnectivityLabel::SetState(const QString &stateString, hw::HwSink::State state)
 {
-    if (connected)
+    switch (state)
     {
-        setStyleSheet("QLabel { background-color : green; color : white; }");
-        setText(tr("Connected"));
+        case hw::HwSink::Offline:
+            setStyleSheet("QLabel { background-color : red; color : yellow; }");
+        break;
+        case hw::HwSink::Connected:
+            setStyleSheet("QLabel { background-color : green; color : white; }");
+        break;
+        default:
+            setStyleSheet("QLabel { background-color : yellow; color : black; }");
     }
-    else
-    {
-        setStyleSheet("QLabel { background-color : red; color : yellow; }");
-        setText(tr("Disconnected"));
-    }
-
+    setText(stateString);
     repaint();
 }
 
 void ConnectivityLabel::MousePress()
 {
-    m_context.m_mainWindow.OpenSerialPort(false);
+    m_context.m_mainWindow.OpenSerialPort();
 }

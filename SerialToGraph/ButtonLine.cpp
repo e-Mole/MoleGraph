@@ -100,7 +100,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     addWidget(space);
 
     m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
-    connectivityStateChange(false);
     addWidget(m_connectivityLabel);
 
     _InitializeMenu();
@@ -281,10 +280,10 @@ void ButtonLine::exportAllCsv()
 {
     _ExportCSV(m_context.m_measurements);
 }
-void ButtonLine::connectivityStateChange(bool connected)
+void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::State state)
 {
-    m_connected = connected;
-    m_connectivityLabel->SetConnected(connected);
+    m_connected = (state == hw::HwSink::Connected);
+    m_connectivityLabel->SetState(stateText, state);
 
     UpdateRunButtonsState();
 }

@@ -19,10 +19,14 @@ class Bluetooth : public PortBase
 
     GlobalSettings &m_settings;
     QBluetoothSocket *m_socket;
+    QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
+    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
+
 public:
-    explicit Bluetooth(GlobalSettings &settings, QObject *parent = 0);
+    Bluetooth(GlobalSettings &settings, QObject *parent);
     ~Bluetooth();
     void StartPortSearching();
+    void StopPortSearching();
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
     qint64 Write(char const *data, unsigned size);
@@ -30,9 +34,8 @@ public:
     virtual bool IsOpen();
     virtual void Close();
     virtual bool OpenPort(QString id);
+    bool IsActive();
 
-    QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
-    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 signals:
     void deviceFound(hw::PortInfo const  &item);
 private slots:

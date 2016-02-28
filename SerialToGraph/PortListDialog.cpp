@@ -16,20 +16,20 @@
 
 
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings, bool autoConnect) :
-    bases::PlatformDialog(parent, tr("Hardware connection")),
+PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings) :
+    bases::PlatformDialog(parent, tr("Device connecting")),
     m_hwSink(hwSink),
     m_settings(settings),
     m_progress(new QProgressBar(this)),
     m_progressText(new QLabel(this)),
     m_refresh(new QPushButton(tr("Refresh"), this)),
-    m_description(new QLabel(tr("Please, select a port with a comatible device."),this)),
+    m_description(new QLabel(tr("Please, select a comatible device port."),this)),
     m_portWidget(new QWidget(this)),
     m_portLayout(new QGridLayout(m_portWidget)),
     m_selectedRadioButton(NULL),
-    m_autoConnect(autoConnect)
-
+    m_autoConnect(true)
 {
+    setHidden(true);
     QVBoxLayout *layout = new QVBoxLayout();
     setLayout(layout);
 
@@ -39,6 +39,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
 
     m_progress->setMinimum(0);
     m_progress->setMaximum(0);
+    m_progress->setTextVisible(false);
     layout->addWidget(m_progress);
 
     m_progressText->setAlignment(Qt::AlignHCenter);
@@ -58,28 +59,25 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     connect(skip, SIGNAL(clicked(bool)), this, SLOT(workDisconnected()));
     buttonLayout->addWidget(skip);
 
-    connect(&hwSink, SIGNAL(connectivityChanged(bool)), this, SLOT(connectivityChanged(bool)));
-    connect(&hwSink, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
+    connect(&hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
+            this, SLOT(stateChanged(QString,hw::HwSink::State)));
     connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
-    this->refresh();
+}
+
+void PortListDialog::StartSearching()
+{
+    m_hwSink.StartPortSearching();
 }
 
 void PortListDialog::workDisconnected()
 {
     m_hwSink.WorkOffline();
-    reject();
-}
-
-void PortListDialog::_DisplayScanning()
-{
-    m_progressText->setText(tr("Scanning..."));
 }
 
 void PortListDialog::refresh()
 {
-    _DisplayScanning();
     _CleanPortList();
-    m_hwSink.StartPortSearching();
+    StartSearching();
 }
 
 void PortListDialog::addPort(hw::PortInfo const &item)
@@ -89,7 +87,7 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     m_radioToInfo[rb] = item;
 
     //I have to call it queued to be finish dialog painting
-    connect(rb, SIGNAL(toggled(bool)), this, SLOT(portToggeled(bool)), Qt::QueuedConnection);
+    connect(rb, SIGNAL(released()), this, SLOT(portRadioButtonReleased()), Qt::QueuedConnection);
 
     m_portLayout->addWidget(rb, rowNumber, 0);
     m_portLayout->addWidget(new QLabel(item.GetStatusText(), m_portWidget), rowNumber, 1);
@@ -98,7 +96,8 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     if (m_autoConnect &&
         (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
     )
-       rb->setChecked(true);
+       m_hwSink.OpenPort(item);
+
     repaint();
 }
 
@@ -110,48 +109,49 @@ void PortListDialog::_UncheckRadioButton(QRadioButton *rb)
     rb->setAutoExclusive(false);
     rb->setChecked(false);
     rb->setAutoExclusive(true);
+    m_selectedRadioButton = NULL;
 }
-void PortListDialog::portToggeled(bool checked)
+void PortListDialog::portRadioButtonReleased()
 {
-    if (!checked)
-        return;
-
-    m_progressText->setText(tr("Openning..."));
-    m_progressText->repaint();
     m_selectedRadioButton = (QRadioButton*)sender();
     hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
+    m_hwSink.OpenPort(portInfo);
+}
 
-    if (!m_hwSink.OpenPort(portInfo))
+void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State state)
+{
+    m_progressText->setText(stateString);
+
+    switch (state)
     {
+        case  hw::HwSink::Connected:
+        {
+            QString connectedId = m_settings.GetLastSerialPortId();
+            foreach (QRadioButton *rb, m_radioToInfo.keys())
+                if (rb->text() == connectedId)
+                    rb->setChecked(true);
+
+            //to progess stop mooving and diplay finish state
+            m_progress->setMaximum(1);
+            m_progress->setValue(1);
+            m_progress->setEnabled(true);
+        }
+        break;
+        case hw::HwSink::Offline:
+            //to progess stop mooving and display emprt state
+            m_progress->setMaximum(1);
+            m_progress->setValue(0);
+            m_progress->setEnabled(false);
+        break;
+        default:
+            //to display progess mooving
+            m_progress->setMaximum(0);
+            m_progress->setValue(0);
+            m_progress->setEnabled(true);
+    }
+
+    if (state != hw::HwSink::Connected)
         _UncheckRadioButton(m_selectedRadioButton);
-       _DisplayScanning();
-    }
-}
-
-void PortListDialog::portOpeningFinished(bool connected)
-{
-    if (connected)
-        return; //will be handled in connectivityChanged
-
-    QMessageBox::warning(
-        this,
-        "",
-        tr("Selected port doesn't responding properly. Please, check a device connection and the port read/write permitions.")
-    );
-
-    _UncheckRadioButton(m_selectedRadioButton);
-    _DisplayScanning();
-}
-void PortListDialog::connectivityChanged(bool connected)
-{
-    if (connected)
-    {
-        hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
-        m_settings.SetLastSerialPortType(portInfo.m_portType);
-        m_settings.SetLastSerialPortId(portInfo.m_id);
-
-        accept();
-    }
 }
 
 void PortListDialog::_CleanPortList()
@@ -162,6 +162,10 @@ void PortListDialog::_CleanPortList()
         m_portLayout->removeWidget(widget);
         delete widget;
     }
+
+    m_selectedRadioButton = NULL;
+    m_radioToInfo.clear();
+    adjustSize();
 }
 
 void PortListDialog::closeEvent(QCloseEvent *event)

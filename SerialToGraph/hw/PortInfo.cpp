@@ -17,13 +17,13 @@ PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSett
     m_portType(portType),
     m_id(id)
 {
-    if (portType == settings.GetLastSerialPortType() &&  id == settings.GetLastSerialPortId())
+   if (portType == settings.GetLastSerialPortType().toInt() &&  id == settings.GetLastSerialPortId())
         m_status = st_lastTimeUsed;
 
     if (hwHint)
     {
         qDebug() << id << "looks like my port";
-        m_status = (m_status == st_lastTimeUsed) ? st_identified : st_match;
+        m_status = (m_status == st_lastTimeUsed) ? st_identified : st_recognized;
     }
 }
 
@@ -40,8 +40,8 @@ QString PortInfo::GetStatusText() const
     {
     case st_ordinary:
         return "";
-    case st_match:
-        return QObject::tr("Match");
+    case st_recognized:
+        return QObject::tr("Recognized");
     case st_lastTimeUsed:
         return QObject::tr("Last time used");
     case st_identified:

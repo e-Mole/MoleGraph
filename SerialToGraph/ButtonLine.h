@@ -1,6 +1,7 @@
 #ifndef BUTTONLINE_H
 #define BUTTONLINE_H
 
+#include <hw/HwSink.h>
 #include <QKeySequence>
 #include <QMap>
 #include <QVector>
@@ -94,7 +95,7 @@ public slots:
     void exportPng();
     void exportCsv();
     void exportAllCsv();
-    void connectivityStateChange(bool connected);
+    void connectivityStateChanged(QString const & stateText, hw::HwSink::State state);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();

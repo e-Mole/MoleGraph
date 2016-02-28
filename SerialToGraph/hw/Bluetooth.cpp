@@ -34,12 +34,27 @@ void Bluetooth::StartPortSearching()
     m_discoveryAgent->start();
 }
 
+void Bluetooth::StopPortSearching()
+{
+    m_discoveryAgent->stop();
+}
+
+bool Bluetooth::IsActive()
+{
+    return m_discoveryAgent->isActive();
+}
+
 void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
 {
-    PortInfo item;
-    item.m_id = info.device().name() + " (" + info.serviceName() + ", " +  info.device().address().toString() + ")";
-    item.m_portType = PortInfo::pt_bluetooth;
-    item.m_status = PortInfo::st_ordinary;
+    if (info.socketProtocol() != QBluetoothServiceInfo::RfcommProtocol)
+        return; //only rfcomm can be used as serial port
+
+    PortInfo item(
+        PortInfo::pt_bluetooth,
+        info.device().name() + " (" + info.serviceName() + ", " +  info.device().address().toString() + ")",
+        false,
+        m_settings
+    );
 
     m_serviceInfos[item.m_id] = info;
     deviceFound(item);
@@ -73,6 +88,8 @@ void Bluetooth::Close()
     if (IsOpen())
     {
         m_socket->close();
+        delete m_socket;
+        m_socket = NULL;
         connectivityChanged(false);
     }
 }

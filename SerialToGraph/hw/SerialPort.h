@@ -26,6 +26,8 @@ class SerialPort : public PortBase
 public:
 
     SerialPort(GlobalSettings &settings, HwSink *hwSink);
+    ~SerialPort();
+
 
     bool OpenPort(QString id);
     void FillPots(QList<PortInfo> &portInfos);
@@ -34,7 +36,7 @@ public:
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
     bool IsOpen();
-    void Close()  { m_serialPort.close(); }
+    void Close();
 
 signals:
 

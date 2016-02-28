@@ -139,7 +139,6 @@ bool HwSink::OpenPort(PortInfo const &info)
     if (m_port != NULL &&  m_port->IsOpen())
     {
         m_port->Close();
-        connectivityChanged(false);
     }
 
     switch (info.m_portType)
@@ -156,7 +155,8 @@ bool HwSink::OpenPort(PortInfo const &info)
             qWarning() << "try to open unsuported port";
     }
 
-    connect(m_port, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
+    connect(m_port, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinishedLocal()));
+    connect(m_port, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 
     if (!m_port->OpenPort(info.m_id))
     {
@@ -172,18 +172,19 @@ bool HwSink::OpenPort(PortInfo const &info)
     return true;
 }
 
-void HwSink::portOpeningFinished(bool opened)
+void HwSink::portOpeningFinishedLocal()
 {
-    if (opened)
+    if (m_port->IsOpen())
         m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
 
-    connectivityChanged(opened);
+    portOpeningFinished(m_port->IsOpen());
 }
 
 
 void HwSink::StartPortSearching()
 {
 #if not defined(Q_OS_ANDROID)
+    delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
     QList<PortInfo> portInfos;
     m_serialPort->FillPots(portInfos);
@@ -191,7 +192,7 @@ void HwSink::StartPortSearching()
         portFound(item);
 #endif
 
-    //FIXME it should be destucted
+    delete m_bluetooth;
     m_bluetooth = new Bluetooth(m_settings, this);
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
     m_bluetooth->StartPortSearching();

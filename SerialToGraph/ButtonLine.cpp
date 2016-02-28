@@ -100,6 +100,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     addWidget(space);
 
     m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
+    connectivityStateChange(false);
     addWidget(m_connectivityLabel);
 
     _InitializeMenu();

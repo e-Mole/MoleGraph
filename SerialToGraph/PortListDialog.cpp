@@ -16,32 +16,31 @@
 
 
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings) :
+PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings, bool autoConnect) :
     bases::PlatformDialog(parent, tr("Hardware connection")),
     m_hwSink(hwSink),
-    m_close(false),
     m_settings(settings),
     m_progress(new QProgressBar(this)),
     m_progressText(new QLabel(this)),
-    m_scan(new QPushButton(tr("Scan"), this)),
+    m_refresh(new QPushButton(tr("Refresh"), this)),
     m_description(new QLabel(tr("Please, select a port with a comatible device."),this)),
     m_portWidget(new QWidget(this)),
-    m_portLayout(new QGridLayout(m_portWidget))
+    m_portLayout(new QGridLayout(m_portWidget)),
+    m_selectedRadioButton(NULL),
+    m_autoConnect(autoConnect)
 
 {
     QVBoxLayout *layout = new QVBoxLayout();
     setLayout(layout);
 
-    m_description->setHidden(true);
+    //m_description->setHidden(true);
     layout->addWidget(m_description);
     layout->addWidget(m_portWidget);
 
     m_progress->setMinimum(0);
     m_progress->setMaximum(0);
-    m_progress->setHidden(true);
     layout->addWidget(m_progress);
 
-    m_progressText->setHidden(true);
     m_progressText->setAlignment(Qt::AlignHCenter);
     layout->addWidget(m_progressText);
 
@@ -49,49 +48,40 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     layout->addLayout(buttonLayout);
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
-    connect(shortcut, SIGNAL(activated()), m_scan, SLOT(animateClick()));
+    connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
-    connect(shortcut, SIGNAL(activated()), m_scan, SLOT(animateClick()));
-    connect(m_scan, SIGNAL(released()), this, SLOT(startScannimg()));
-    buttonLayout->addWidget(m_scan);
+    connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
+    connect(m_refresh, SIGNAL(released()), this, SLOT(refresh()));
+    buttonLayout->addWidget(m_refresh);
 
     QPushButton *skip = new QPushButton(tr("Work Offline"), this);
-    connect(skip, SIGNAL(clicked(bool)), this, SLOT(reject()));
+    connect(skip, SIGNAL(clicked(bool)), this, SLOT(workDisconnected()));
     buttonLayout->addWidget(skip);
 
-    QPushButton *close = new QPushButton(tr("Close"), this);
-    connect(close, SIGNAL(released()), this, SLOT(closeClicked()));
-    buttonLayout->addWidget(close);
-
     connect(&hwSink, SIGNAL(connectivityChanged(bool)), this, SLOT(connectivityChanged(bool)));
+    connect(&hwSink, SIGNAL(portOpeningFinished(bool)), this, SLOT(portOpeningFinished(bool)));
     connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
-    this->startScannimg();
+    this->refresh();
 }
 
-void PortListDialog::closeClicked()
+void PortListDialog::workDisconnected()
 {
-    m_close = true;
+    m_hwSink.WorkOffline();
     reject();
 }
 
-void PortListDialog::startScannimg()
+void PortListDialog::_DisplayScanning()
 {
-    m_scan->setEnabled(false);
-    m_progress->setVisible(true);
     m_progressText->setText(tr("Scanning..."));
-    m_progressText->setVisible(true);
+}
 
+void PortListDialog::refresh()
+{
+    _DisplayScanning();
     _CleanPortList();
     m_hwSink.StartPortSearching();
 }
 
-void PortListDialog::stopScanning()
-{
-    m_scan->setEnabled(true);
-    m_progress->setVisible(false);
-    m_progressText->setVisible(false);
-    adjustSize();
-}
 void PortListDialog::addPort(hw::PortInfo const &item)
 {
     unsigned rowNumber = m_portLayout->rowCount();
@@ -105,13 +95,17 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     m_portLayout->addWidget(new QLabel(item.GetStatusText(), m_portWidget), rowNumber, 1);
     m_portLayout->addWidget(new QLabel(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
 
-    if (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
+    if (m_autoConnect &&
+        (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
+    )
        rb->setChecked(true);
     repaint();
 }
 
 void PortListDialog::_UncheckRadioButton(QRadioButton *rb)
 {
+    if (NULL == rb)
+        return;
     //workaround. without setAutoExclusive I was not able to uncheck all radio buttons
     rb->setAutoExclusive(false);
     rb->setChecked(false);
@@ -130,30 +124,34 @@ void PortListDialog::portToggeled(bool checked)
     if (!m_hwSink.OpenPort(portInfo))
     {
         _UncheckRadioButton(m_selectedRadioButton);
-        stopScanning();
+       _DisplayScanning();
     }
 }
 
+void PortListDialog::portOpeningFinished(bool connected)
+{
+    if (connected)
+        return; //will be handled in connectivityChanged
+
+    QMessageBox::warning(
+        this,
+        "",
+        tr("Selected port doesn't responding properly. Please, check a device connection and the port read/write permitions.")
+    );
+
+    _UncheckRadioButton(m_selectedRadioButton);
+    _DisplayScanning();
+}
 void PortListDialog::connectivityChanged(bool connected)
 {
-    stopScanning();
-    if (!connected)
+    if (connected)
     {
-        QMessageBox::warning(
-            this,
-            "",
-            tr("Selected port doesn't responding properly. Please, check a device connection and the port read/write permitions.")
-        );
+        hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
+        m_settings.SetLastSerialPortType(portInfo.m_portType);
+        m_settings.SetLastSerialPortId(portInfo.m_id);
 
-        _UncheckRadioButton(m_selectedRadioButton);
-        return;
+        accept();
     }
-
-    hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
-    m_settings.SetLastSerialPortType(portInfo.m_portType);
-    m_settings.SetLastSerialPortId(portInfo.m_id);
-
-    accept();
 }
 
 void PortListDialog::_CleanPortList()
@@ -169,6 +167,5 @@ void PortListDialog::_CleanPortList()
 void PortListDialog::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
-    m_close = true;
     reject();
 }

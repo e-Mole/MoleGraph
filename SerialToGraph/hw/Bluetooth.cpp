@@ -14,25 +14,24 @@ namespace hw
 Bluetooth::Bluetooth(QSettings &settings, QObject *parent) :
     PortBase(parent),
     m_settings(settings),
-    m_socket(NULL)
+    m_socket(NULL),
+    m_discoveryAgent( new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this))
 {
+    connect(
+        m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+        this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
 }
 
 Bluetooth::~Bluetooth()
 {
+    m_discoveryAgent->stop();
     Close();
 }
 
 
 void Bluetooth::StartPortSearching()
 {
-    const QBluetoothAddress adapter = QBluetoothAddress();
-    QBluetoothServiceDiscoveryAgent *discoveryAgent = new QBluetoothServiceDiscoveryAgent(adapter, this);
-    connect(
-        discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
-        this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-
-    discoveryAgent->start();
+    m_discoveryAgent->start();
 }
 
 void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
@@ -52,6 +51,7 @@ bool Bluetooth::OpenPort(QString id)
     m_socket->connectToService(m_serviceInfos[id]);
     if (m_socket->isOpen())
     {
+        m_discoveryAgent->stop();
         qDebug() << "bluetooth " << id << "has been opened";
         connectivityChanged(true);
         portOpeningFinished();

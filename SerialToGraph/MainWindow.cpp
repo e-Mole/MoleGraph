@@ -74,7 +74,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
 
-    repaint();
     QMetaObject::invokeMethod(this, "openSerialPortAutoConnect", Qt::QueuedConnection);
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
@@ -89,7 +88,10 @@ QString &MainWindow::GetCurrentFileName()
 }
 void MainWindow::openSerialPortAutoConnect()
 {
-    OpenSerialPort(true);
+    if (isVisible())
+        OpenSerialPort(true);
+    else
+        QMetaObject::invokeMethod(this, "openSerialPortAutoConnect", Qt::QueuedConnection);
 }
 
 void MainWindow::OpenSerialPort(bool autoConnect)

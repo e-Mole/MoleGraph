@@ -7,6 +7,7 @@
 #include <QString>
 
 class QBluetoothSocket;
+class QBluetoothServiceDiscoveryAgent;
 class QSettings;
 
 namespace hw
@@ -31,6 +32,7 @@ public:
     virtual bool OpenPort(QString id);
 
     QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
+    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 signals:
     void deviceFound(hw::PortInfo const  &item);
 private slots:

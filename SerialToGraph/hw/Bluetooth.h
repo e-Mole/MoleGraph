@@ -6,8 +6,8 @@
 #include <QMap>
 #include <QString>
 
+class GlobalSettings;
 class QBluetoothSocket;
-class QSettings;
 
 namespace hw
 {
@@ -16,10 +16,10 @@ class Bluetooth : public PortBase
 {
     Q_OBJECT
 
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
     QBluetoothSocket *m_socket;
 public:
-    explicit Bluetooth(QSettings &settings, QObject *parent = 0);
+    explicit Bluetooth(GlobalSettings &settings, QObject *parent = 0);
     void StartPortSearching();
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}

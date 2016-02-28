@@ -1,6 +1,6 @@
 #include "PortInfo.h"
+#include <GlobalSettings.h>
 #include <QDebug>
-#include <QSettings>
 #include <QObject>
 namespace hw
 {
@@ -12,12 +12,12 @@ m_id()
 {
 }
 
-PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, QSettings const &settings) :
+PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSettings const &settings) :
     m_status(st_ordinary),
     m_portType(portType),
     m_id(id)
 {
-    if (portType == settings.value("lastSerialPortType", "") &&  id == settings.value("lastSerialPortId", ""))
+    if (portType == settings.GetLastSerialPortType() &&  id == settings.GetLastSerialPortId())
         m_status = st_lastTimeUsed;
 
     if (hwHint)

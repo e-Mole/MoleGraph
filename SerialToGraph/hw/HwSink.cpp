@@ -1,5 +1,5 @@
 #include "HwSink.h"
-
+#include <GlobalSettings.h>
 #if not defined(Q_OS_ANDROID)
 #   include <hw/SerialPort.h>
 #endif
@@ -14,7 +14,7 @@
 #include <QQueue>
 namespace hw
 {
-HwSink::HwSink(QSettings &settings, QObject *parent) :
+HwSink::HwSink(GlobalSettings &settings, QObject *parent) :
     QObject(parent),
     m_port(NULL),
     m_bluetooth(NULL),

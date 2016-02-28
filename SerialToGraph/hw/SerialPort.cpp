@@ -1,9 +1,9 @@
 #include "SerialPort.h"
+#include <GlobalSettings.h>
 #include <hw/PortInfo.h>
 #include <QList>
 #include <QMessageBox>
 #include <QThread>
-#include <QSettings>
 #include <QString>
 #include <QTimer>
 #include <string>
@@ -14,7 +14,7 @@ namespace hw
 #define PROTOCOL_ID "ATG_2"
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
-SerialPort::SerialPort(QSettings &settings, HwSink *hwSink) :
+SerialPort::SerialPort(GlobalSettings &settings, HwSink *hwSink) :
     PortBase(hwSink),
     m_settings(settings),
     m_hwSink(hwSink)

@@ -5,13 +5,13 @@
 #include <hw/PortInfo.h>
 #include <QMap>
 
+class GlobalSettings;
 class QCloseEvent;
 class QGridLayout;
 class QLabel;
 class QProgressBar;
 class QPushButton;
 class QRadioButton;
-class QSettings;
 class QWidget;
 
 namespace hw { class HwSink; class PortInfo; }
@@ -24,7 +24,7 @@ class PortListDialog : public bases::PlatformDialog
 
     hw::HwSink &m_hwSink;
     bool m_close;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
     QProgressBar *m_progress;
     QLabel *m_progressText;
     QPushButton *m_scan;
@@ -34,7 +34,7 @@ class PortListDialog : public bases::PlatformDialog
     QMap<QRadioButton *, hw::PortInfo> m_radioToInfo;
     QRadioButton * m_selectedRadioButton;
 public:
-    PortListDialog(QWidget *parent, hw::HwSink &hwSink, QSettings &settings);
+    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings);
     bool CloseApp()
     { return m_close; }
 

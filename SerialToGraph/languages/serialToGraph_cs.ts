@@ -256,52 +256,52 @@
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="177"/>
+        <location filename="../ButtonLine.cpp" line="178"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="181"/>
+        <location filename="../ButtonLine.cpp" line="182"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="183"/>
+        <location filename="../ButtonLine.cpp" line="184"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="189"/>
+        <location filename="../ButtonLine.cpp" line="190"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="190"/>
+        <location filename="../ButtonLine.cpp" line="191"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="192"/>
+        <location filename="../ButtonLine.cpp" line="193"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="193"/>
+        <location filename="../ButtonLine.cpp" line="194"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="194"/>
+        <location filename="../ButtonLine.cpp" line="195"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="196"/>
+        <location filename="../ButtonLine.cpp" line="197"/>
         <source>Settings...</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="249"/>
+        <location filename="../ButtonLine.cpp" line="250"/>
         <source>Save as</source>
         <translation>Uložit jako</translation>
     </message>
@@ -310,7 +310,7 @@
         <translation type="vanished">Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="187"/>
+        <location filename="../ButtonLine.cpp" line="188"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -1003,41 +1003,37 @@
 <context>
     <name>PortListDialog</name>
     <message>
-        <location filename="../PortListDialog.cpp" line="21"/>
+        <location filename="../PortListDialog.cpp" line="20"/>
         <source>Hardware connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="27"/>
-        <source>Scan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../PortListDialog.cpp" line="28"/>
+        <location filename="../PortListDialog.cpp" line="26"/>
         <source>Please, select a port with a comatible device.</source>
         <translation>Vyberte port s kompatibilním zařízením.</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="82"/>
+        <location filename="../PortListDialog.cpp" line="75"/>
         <source>Scanning...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="126"/>
+        <location filename="../PortListDialog.cpp" line="119"/>
         <source>Openning...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="146"/>
+        <location filename="../PortListDialog.cpp" line="139"/>
         <source>Selected port doesn&apos;t responding properly. Please, check a device connection and the port read/write permitions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../PortListDialog.cpp" line="25"/>
         <source>Refresh</source>
-        <translation type="vanished">Obnovit</translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="59"/>
+        <location filename="../PortListDialog.cpp" line="57"/>
         <source>Work Offline</source>
         <translation>Pracovat odpojený</translation>
     </message>
@@ -1046,9 +1042,8 @@
         <translation type="vanished">Přeskočit</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="63"/>
         <source>Close</source>
-        <translation>Zavřít</translation>
+        <translation type="vanished">Zavřít</translation>
     </message>
 </context>
 <context>
@@ -1065,32 +1060,32 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="48"/>
+        <location filename="../hw/PortInfo.cpp" line="44"/>
         <source>Match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="50"/>
+        <location filename="../hw/PortInfo.cpp" line="46"/>
         <source>Last time used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="52"/>
+        <location filename="../hw/PortInfo.cpp" line="48"/>
         <source>Identified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="54"/>
+        <location filename="../hw/PortInfo.cpp" line="50"/>
         <source>Doesn&apos;t Answer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="66"/>
+        <location filename="../hw/PortInfo.cpp" line="62"/>
         <source>Bluetooth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="68"/>
+        <location filename="../hw/PortInfo.cpp" line="64"/>
         <source>Serial Port</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1137,7 +1132,7 @@
     </message>
     <message>
         <location filename="../hw/HwSink.cpp" line="166"/>
-        <source>Selected port is bussy. it is probably oppened by another process.</source>
+        <source>Selected port is byssy. it is probably oppened by another process.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

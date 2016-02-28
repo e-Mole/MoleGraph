@@ -1,6 +1,6 @@
 #include "Bluetooth.h"
+#include <GlobalSettings.h>
 #include <hw/PortInfo.h>
-#include <QSettings>
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothServiceDiscoveryAgent>
@@ -11,7 +11,7 @@
 namespace hw
 {
 
-Bluetooth::Bluetooth(QSettings &settings, QObject *parent) :
+Bluetooth::Bluetooth(GlobalSettings &settings, QObject *parent) :
     PortBase(parent),
     m_settings(settings),
     m_socket(NULL),

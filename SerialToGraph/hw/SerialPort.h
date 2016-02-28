@@ -9,7 +9,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-class QSettings;
+class GlobalSettings;
 class QString;
 namespace hw
 {
@@ -21,11 +21,11 @@ class SerialPort : public PortBase
     bool _OpenPort(QSerialPortInfo const &info);
 
     QSerialPort m_serialPort;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
     HwSink *m_hwSink;
 public:
 
-    SerialPort(QSettings &settings, HwSink *hwSink);
+    SerialPort(GlobalSettings &settings, HwSink *hwSink);
     ~SerialPort();
 
 

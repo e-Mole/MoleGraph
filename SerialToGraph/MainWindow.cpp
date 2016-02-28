@@ -27,7 +27,6 @@
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
-    m_settings("eMole", "ArduinoToGraph"),
     m_hwSink(m_settings),
     m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL)
@@ -42,9 +41,13 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (desktopRect .height() >300)
         setMinimumHeight(300);
 
+    m_langBcp47 = m_settings.GetLanguage(QLocale().bcp47Name());
+    QString translationFileName =
+        QString("serialToGraph_%1.qm").arg(m_langBcp47);
+
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);
-    if (translator->load("serialToGraph_cs.qm", ":/languages"))
+    if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
     QWidget *centralWidget = new QWidget(this);

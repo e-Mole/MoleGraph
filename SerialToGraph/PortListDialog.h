@@ -5,13 +5,13 @@
 #include <hw/PortInfo.h>
 #include <QMap>
 
+class GlobalSettings;
 class QCloseEvent;
 class QGridLayout;
 class QLabel;
 class QProgressBar;
 class QPushButton;
 class QRadioButton;
-class QSettings;
 class QWidget;
 
 namespace hw { class HwSink; class PortInfo; }
@@ -24,7 +24,7 @@ class PortListDialog : public bases::PlatformDialog
     void _DisplayScanning();
 
     hw::HwSink &m_hwSink;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
     QProgressBar *m_progress;
     QLabel *m_progressText;
     QPushButton *m_refresh;
@@ -35,7 +35,7 @@ class PortListDialog : public bases::PlatformDialog
     QRadioButton * m_selectedRadioButton;
     bool m_autoConnect;
 public:
-    PortListDialog(QWidget *parent, hw::HwSink &hwSink, QSettings &settings, bool autoConnect);
+    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings, bool autoConnect);
 
     void _CleanPortList();
 

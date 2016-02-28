@@ -2,6 +2,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
+#include <GlobalSettings.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
@@ -123,7 +124,12 @@ void Axis::UpdateGraphAxisName()
         }
     }
 
-    m_graphAxis->setLabel(channels + ((0 == units.size() || "/n" == units) ? "" : " [" + units + "]"));
+    bool round = m_context.m_settings.GetUnitBrackets() == "()";
+    QString unitString =
+        (0 == units.size() || "/n" == units) ?
+            "" :
+            (round ? " (" : " [") + units + (round ? ")" : "]");
+    m_graphAxis->setLabel(channels + unitString);
     m_measurement->GetPlot()->ReplotIfNotDisabled();
 }
 

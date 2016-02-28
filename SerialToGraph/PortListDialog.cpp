@@ -1,5 +1,5 @@
 #include "PortListDialog.h"
-
+#include <GlobalSettings.h>
 #include <hw/HwSink.h>
 #include <QCloseEvent>
 #include <QDebug>
@@ -10,14 +10,13 @@
 #include <QPushButton>
 #include <QProgressBar>
 #include <QRadioButton>
-#include <QSettings>
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <QWidget>
 
 
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, QSettings &settings, bool autoConnect) :
+PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings, bool autoConnect) :
     bases::PlatformDialog(parent, tr("Hardware connection")),
     m_hwSink(hwSink),
     m_settings(settings),
@@ -148,8 +147,8 @@ void PortListDialog::connectivityChanged(bool connected)
     if (connected)
     {
         hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
-        m_settings.setValue("lastSerialPortType", portInfo.m_portType);
-        m_settings.setValue("lastSerialPortId", portInfo.m_id);
+        m_settings.SetLastSerialPortType(portInfo.m_portType);
+        m_settings.SetLastSerialPortId(portInfo.m_id);
 
         accept();
     }

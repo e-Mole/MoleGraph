@@ -5,7 +5,7 @@
 #include <hw/PortInfo.h>
 #include <QList>
 
-class QSettings;
+class GlobalSettings;
 namespace hw
 {
 class Bluetooth;
@@ -36,9 +36,9 @@ class HwSink : public QObject
     Bluetooth * m_bluetooth;
     SerialPort * m_serialPort;
     bool m_knownIssue;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
 public:
-    explicit HwSink(QSettings &settings, QObject *parent = 0);
+    explicit HwSink(GlobalSettings &settings, QObject *parent = 0);
     ~HwSink();
 
     bool SetFrequency(unsigned frequency);

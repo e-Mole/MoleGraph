@@ -5,7 +5,8 @@
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <QMainWindow>
-#include <QSettings>
+#include <GlobalSettings.h>
+#include <QString>
 #include <QVector>
 
 class CentralWidget;
@@ -21,7 +22,7 @@ class MainWindow : public QMainWindow
 
     void keyReleaseEvent(QKeyEvent * event);
 
-    QSettings m_settings;
+    GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
@@ -30,6 +31,7 @@ class MainWindow : public QMainWindow
     Measurement *m_currentMeasurement;
     QString m_currentFileName;
 
+    QString m_langBcp47;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();

@@ -33,6 +33,7 @@ public:
     void FillPots(QList<PortInfo> &portInfos);
     qint64 Write(char const *data, unsigned size);
     void WaitForBytesWritten();
+    void ReadData(QByteArray &array, unsigned maxLength);
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
     bool IsOpen();

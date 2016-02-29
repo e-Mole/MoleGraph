@@ -11,7 +11,6 @@
 namespace hw
 {
 
-#define PROTOCOL_ID "ATG_2"
 #define RESPONSE_WAITING 100 //100 ms should be enough
 
 SerialPort::SerialPort(GlobalSettings &settings, HwSink *hwSink) :
@@ -48,7 +47,6 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
 void SerialPort::portOpenTimeout()
 {
     m_hwSink->GetVersion();
-    QByteArray array;
     unsigned counter = RESPONSE_WAITING;
     while (!m_serialPort.waitForReadyRead(100)) //100 to be sure I get response from baudrate 9600 too
     {
@@ -56,21 +54,10 @@ void SerialPort::portOpenTimeout()
         {
             qDebug() << "no response from serial port";
             m_serialPort.close();
-            portOpeningFinished();
-            return;
         }
     }
 
-    ReadData(array);
-    if (array.toStdString() != PROTOCOL_ID)
-    {
-        qDebug() << "unknown protocol version";
-        m_serialPort.close();
-        portOpeningFinished();
-        return;
-    }
     portOpeningFinished();
-    connectivityChanged(true);
     return;
 }
 
@@ -112,6 +99,11 @@ void SerialPort::WaitForBytesWritten()
 {
     m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
 }
+void SerialPort::ReadData(QByteArray &array, unsigned maxLength)
+{
+    array = m_serialPort.read(maxLength);
+}
+
 void SerialPort::ReadData(QByteArray &array)
 {
     array = m_serialPort.readAll();
@@ -120,10 +112,7 @@ void SerialPort::ReadData(QByteArray &array)
 void SerialPort::Close()
 {
     if (m_serialPort.isOpen())
-    {
         m_serialPort.close();
-        connectivityChanged(false);
-    }
 }
 
 } //namespace hw

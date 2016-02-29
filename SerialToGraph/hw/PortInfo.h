@@ -14,8 +14,7 @@ public:
         st_ordinary,
         st_recognized,
         st_lastTimeUsed,
-        st_identified,
-        st_doesntAnswer
+        st_identified
     } m_status;
 
     enum PortType

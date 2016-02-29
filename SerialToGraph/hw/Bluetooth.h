@@ -27,6 +27,7 @@ public:
     ~Bluetooth();
     void StartPortSearching();
     void StopPortSearching();
+    virtual void ReadData(QByteArray &array, unsigned maxLength);
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
     qint64 Write(char const *data, unsigned size);

@@ -156,6 +156,10 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
 
 void PortListDialog::_CleanPortList()
 {
+    m_hwSink.ClosePort();
+    m_selectedRadioButton = NULL;
+    m_radioToInfo.clear();
+
     QList<QWidget *> widgets = m_portWidget->findChildren<QWidget *>();
     foreach(QWidget * widget, widgets)
     {
@@ -163,8 +167,6 @@ void PortListDialog::_CleanPortList()
         delete widget;
     }
 
-    m_selectedRadioButton = NULL;
-    m_radioToInfo.clear();
     adjustSize();
 }
 

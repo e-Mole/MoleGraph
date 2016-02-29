@@ -46,6 +46,8 @@ private:
     bool _WriteInstruction(Instructions instruction);
     bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
     void _ChangeState(State status);
+    bool _CheckProtocol();
+    void _StopSearching();
 
     PortBase * m_port;
     Bluetooth * m_bluetooth;
@@ -72,6 +74,7 @@ public:
     bool FillQueue(QQueue<unsigned char> &queue);
     bool ProcessCommand(unsigned char command);
     void WorkOffline();
+    void ClosePort();
     void OpenPort(const PortInfo &info);
     void StartPortSearching();
     void ClearCache();

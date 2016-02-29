@@ -68,7 +68,6 @@ bool Bluetooth::OpenPort(QString id)
     {
         m_discoveryAgent->stop();
         qDebug() << "bluetooth " << id << "has been opened";
-        connectivityChanged(true);
         portOpeningFinished();
         return true;
     }
@@ -90,10 +89,13 @@ void Bluetooth::Close()
         m_socket->close();
         delete m_socket;
         m_socket = NULL;
-        connectivityChanged(false);
     }
 }
 
+void Bluetooth::ReadData(QByteArray &array, unsigned maxLength)
+{
+    array = m_socket->read(maxLength);
+}
 void Bluetooth::ReadData(QByteArray &array)
 {
     array = m_socket->readAll();

@@ -43,11 +43,9 @@ QString PortInfo::GetStatusText() const
     case st_recognized:
         return QObject::tr("Recognized");
     case st_lastTimeUsed:
-        return QObject::tr("Last time used");
+        return QObject::tr("Last");
     case st_identified:
         return QObject::tr("Identified");
-    case st_doesntAnswer:
-        return QObject::tr("Doesn't Answer");
     default:
         qWarning() << "unsuported port status";
         return "";

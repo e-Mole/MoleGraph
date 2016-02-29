@@ -14,6 +14,9 @@
 #include <QSettings>
 #include <QQueue>
 #include <QWidget>
+
+#define PROTOCOL_ID "ATG_2"
+
 namespace hw
 {
 HwSink::HwSink(GlobalSettings &settings, QWidget *parent) :
@@ -122,6 +125,12 @@ void HwSink::_ChangeState(State status)
     stateChanged(GetStateString(), m_state);
 }
 
+void HwSink::_StopSearching()
+{
+    if (m_bluetooth != NULL)
+        m_bluetooth->StopPortSearching();
+}
+
 void HwSink::WorkOffline()
 {
     if (m_port != NULL && m_port->IsOpen())
@@ -129,8 +138,7 @@ void HwSink::WorkOffline()
 
     m_knownIssue = true;
 
-    if (m_bluetooth != NULL)
-        m_bluetooth->StopPortSearching();
+    _StopSearching();
 
     if (m_state != Offline)
         _ChangeState(Offline);
@@ -146,8 +154,24 @@ void HwSink::PortIssueSolver()
             QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
         );
-        connectivityChanged(false);
     }
+}
+
+void HwSink::ClosePort()
+{
+    if (m_port != NULL &&  m_port->IsOpen())
+    {
+        m_port->Close();
+        connectivityChanged(false);
+        m_openedPortInfo = PortInfo();
+    }
+}
+
+bool HwSink::_CheckProtocol()
+{
+    QByteArray array;
+    m_port->ReadData(array, 100); //it is less then 100. just safe size
+    return  (array.toStdString() == PROTOCOL_ID);
 }
 
 void HwSink::OpenPort(PortInfo const &info)
@@ -156,12 +180,7 @@ void HwSink::OpenPort(PortInfo const &info)
         return; //already opened
 
     _ChangeState(Opening);
-
-    if (m_port != NULL &&  m_port->IsOpen())
-    {
-        m_port->Close();
-        m_openedPortInfo = PortInfo();
-    }
+    ClosePort();
 
     switch (info.m_portType)
     {
@@ -178,28 +197,33 @@ void HwSink::OpenPort(PortInfo const &info)
     }
 
     m_openedPortInfo = info;
-    if (!m_port->OpenPort(info.m_id))
-    {
-        QMessageBox::warning(
-            (QWidget*)parent(),
-            "",
-            tr("Selected port is byssy. It is probably oppened by another process.")
-        );
-        m_knownIssue = true; //will be displayed message about it
-        _ChangeState(Scanning);
-    }
+    m_port->OpenPort(info.m_id);
 }
 
 void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
+        if (!_CheckProtocol())
+        {
+            QMessageBox::warning(
+                (QWidget*)parent(),
+                "",
+                tr("Selected port doesn't responding as expected. Please, check port read/write permitions.")
+            );
+
+            ClosePort();
+            return;
+        }
+
         m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
 
         m_settings.SetLastSerialPortType(m_openedPortInfo.m_portType);
         m_settings.SetLastSerialPortId(m_openedPortInfo.m_id);
 
+        _StopSearching();
         _ChangeState(Connected);
+        connectivityChanged(true);
 
     }
     else
@@ -207,8 +231,10 @@ void HwSink::portOpeningFinished()
         QMessageBox::warning(
             (QWidget*)parent(),
             "",
-            tr("Selected port doesn't responding. Please, check a device connection and the port read/write permitions.")
+            tr("Selected port is byssy. It is probably oppened by another process.")
         );
+
+        m_knownIssue = true; //will be displayed message about it
         _ChangeState(m_bluetooth->IsActive() ? Scanning : Offline);
     }
 }
@@ -227,7 +253,6 @@ void HwSink::StartPortSearching()
         portFound(item);
 
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-    connect(m_serialPort, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 #endif
 
     delete m_bluetooth;
@@ -235,7 +260,6 @@ void HwSink::StartPortSearching()
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
     m_bluetooth->StartPortSearching();
     connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-    connect(m_bluetooth, SIGNAL(connectivityChanged(bool)), this, SIGNAL(connectivityChanged(bool)));
 }
 
 void HwSink::ClearCache()

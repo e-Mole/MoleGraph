@@ -1,6 +1,7 @@
 #include "Context.h"
 #include <Axis.h>
 #include <Channel.h>
+#include <GlobalSettings.h>
 #include <Plot.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -10,10 +11,9 @@
 #include <QSettings>
 #include <hw/HwSink.h>
 
-Context::Context(
-        QVector<Measurement *> &measurements,
+Context::Context(QVector<Measurement *> &measurements,
         hw::HwSink &hwSink,
-        QSettings &settings,
+        GlobalSettings &settings,
         MainWindow &mainWindow):
     m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),

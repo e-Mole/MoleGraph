@@ -3,50 +3,50 @@
 
 #include <bases/PlatformDialog.h>
 #include <hw/PortInfo.h>
+#include <hw/HwSink.h>
 #include <QMap>
 
+class GlobalSettings;
 class QCloseEvent;
 class QGridLayout;
 class QLabel;
 class QProgressBar;
 class QPushButton;
 class QRadioButton;
-class QSettings;
 class QWidget;
 
-namespace hw { class HwSink; class PortInfo; }
 class PortListDialog : public bases::PlatformDialog
 {
     Q_OBJECT
 
     void closeEvent(QCloseEvent *event);
-    void _AddPort(const hw::PortInfo &item);
     void _UncheckRadioButton(QRadioButton *rb);
 
     hw::HwSink &m_hwSink;
-    bool m_close;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
     QProgressBar *m_progress;
     QLabel *m_progressText;
-    QPushButton *m_scan;
+    QPushButton *m_refresh;
     QLabel *m_description;
     QWidget * m_portWidget;
     QGridLayout *m_portLayout;
     QMap<QRadioButton *, hw::PortInfo> m_radioToInfo;
     QRadioButton * m_selectedRadioButton;
+    bool m_autoConnect;
 public:
-    PortListDialog(QWidget *parent, hw::HwSink &hwSink, QSettings &settings);
-    bool CloseApp()
-    { return m_close; }
+    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings);
+    void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
+    void StartSearching();
 
-    void _RefreshPortList(QList<hw::PortInfo> &portInfos);
+    void _CleanPortList();
+
 signals:
 private slots:
-    void closeClicked();
-    void startScannimg();
-    void portToggeled(bool checked);
-    void connectivityChanged(bool connected);
-    void stopScanning();
+    void refresh();
+    void portRadioButtonReleased();
+    void stateChanged(const QString &stateString, hw::HwSink::State state);
+    void addPort(const hw::PortInfo &item);
+    void workDisconnected();
 };
 
 #endif // PORTLISTDIALOG_H

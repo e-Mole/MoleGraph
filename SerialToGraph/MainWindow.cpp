@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QMenu>
+#include <QMetaObject>
 #include <QRect>
 #include <QSizePolicy>
 #include <QTabWidget>
@@ -26,11 +27,10 @@
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
-    m_settings("eMole", "ArduinoToGraph"),
-    m_hwSink(m_settings),
+    m_hwSink(m_settings, this),
     m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL),
-    m_close(false)
+    m_portListDialog(new PortListDialog(this, m_hwSink, m_settings))
 {
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -42,13 +42,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (desktopRect .height() >300)
         setMinimumHeight(300);
 
+    m_langBcp47 = m_settings.GetLanguage(QLocale().bcp47Name());
+    QString translationFileName =
+        QString("serialToGraph_%1.qm").arg(m_langBcp47);
+
     QTranslator *translator = new QTranslator(this);
     application.removeTranslator(translator);
-    if (translator->load("serialToGraph_cs.qm", ":/languages"))
+    if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
-
-    if (!OpenSerialPort()) //returns false when user pressed the Close button
-        return;
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -57,7 +58,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     setCentralWidget(centralWidget);
 
     m_buttonLine = new ButtonLine(this, m_context);
-    m_buttonLine->connectivityStateChange(m_hwSink.IsDeviceConnected());
 
 #if defined(Q_OS_ANDROID)
     addToolBar(Qt::LeftToolBarArea, m_buttonLine);
@@ -65,9 +65,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     addToolBar(Qt::TopToolBarArea, m_buttonLine);
 #endif
 
-
-
-    connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), m_buttonLine, SLOT(connectivityStateChange(bool)));
+    connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
+            m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(centralWidget);
@@ -79,6 +78,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     {
         DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
+
+    m_portListDialog->StartSearching();
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
@@ -91,30 +92,11 @@ QString &MainWindow::GetCurrentFileName()
     return m_currentFileName;
 }
 
-#if defined(Q_OS_ANDROID)
-bool MainWindow::OpenSerialPort()
+void MainWindow::OpenSerialPort()
 {
-    m_hwSink.WorkOffline();
-    return true;
+    m_portListDialog->SetAutoconnect(false);
+    m_portListDialog->exec();
 }
-#else
-bool MainWindow::OpenSerialPort()
-{
-    PortListDialog *portListDialog = new PortListDialog(NULL, m_hwSink, m_settings);
-    if (QDialog::Rejected == portListDialog->exec())
-    {
-        if (portListDialog->CloseApp())
-        {
-            m_close = true;
-            return false;
-        }
-
-        qDebug() << "hardware not found";
-        m_hwSink.WorkOffline();
-    }
-    return true;
-}
-#endif
 
 MainWindow::~MainWindow()
 {

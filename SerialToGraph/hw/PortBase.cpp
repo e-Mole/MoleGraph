@@ -9,4 +9,5 @@ PortBase::PortBase(QObject *parent) :
     QObject(parent)
 {
 }
+
 } //namespace hw

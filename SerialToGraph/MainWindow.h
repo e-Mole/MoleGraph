@@ -5,11 +5,13 @@
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <QMainWindow>
-#include <QSettings>
+#include <GlobalSettings.h>
+#include <QString>
 #include <QVector>
 
 class CentralWidget;
 class Measurement;
+class PortListDialog;
 class QApplication;
 class QDataStream;
 class QTabWidget;
@@ -21,7 +23,7 @@ class MainWindow : public QMainWindow
 
     void keyReleaseEvent(QKeyEvent * event);
 
-    QSettings m_settings;
+    GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
@@ -29,7 +31,8 @@ class MainWindow : public QMainWindow
     QTabWidget *m_measurementTabs;
     Measurement *m_currentMeasurement;
     QString m_currentFileName;
-
+    QString m_langBcp47;
+    PortListDialog *m_portListDialog;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -41,13 +44,12 @@ public:
     void RemoveAllMeasurements();
     void RemoveMeasurement(Measurement *m, bool confirmed);
     Measurement * GetCurrnetMeasurement();
-    bool OpenSerialPort();
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileName();
     void OpenNew();
+    void OpenSerialPort();
 
-    bool m_close;
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);

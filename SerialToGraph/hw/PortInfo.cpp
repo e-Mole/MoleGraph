@@ -1,6 +1,6 @@
 #include "PortInfo.h"
+#include <GlobalSettings.h>
 #include <QDebug>
-#include <QSettings>
 #include <QObject>
 namespace hw
 {
@@ -12,18 +12,18 @@ m_id()
 {
 }
 
-PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, QSettings const &settings) :
+PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSettings const &settings) :
     m_status(st_ordinary),
     m_portType(portType),
     m_id(id)
 {
-    if (portType == settings.value("lastSerialPortType", "") &&  id == settings.value("lastSerialPortId", ""))
+   if (portType == settings.GetLastSerialPortType().toInt() &&  id == settings.GetLastSerialPortId())
         m_status = st_lastTimeUsed;
 
     if (hwHint)
     {
         qDebug() << id << "looks like my port";
-        m_status = (m_status == st_lastTimeUsed) ? st_identified : st_match;
+        m_status = (m_status == st_lastTimeUsed) ? st_identified : st_recognized;
     }
 }
 
@@ -40,14 +40,12 @@ QString PortInfo::GetStatusText() const
     {
     case st_ordinary:
         return "";
-    case st_match:
-        return QObject::tr("Match");
+    case st_recognized:
+        return QObject::tr("Recognized");
     case st_lastTimeUsed:
-        return QObject::tr("Last time used");
+        return QObject::tr("Last");
     case st_identified:
         return QObject::tr("Identified");
-    case st_doesntAnswer:
-        return QObject::tr("Doesn't Answer");
     default:
         qWarning() << "unsuported port status";
         return "";

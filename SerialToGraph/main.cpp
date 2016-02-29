@@ -26,9 +26,6 @@ int main(int argc, char *argv[])
     parser.process(a);
 
     MainWindow w(a, parser.value(openOption), parser.isSet(withoutValuesOption));
-    if (w.m_close)
-        return 0;
-
     w.show();
 
 	return a.exec();

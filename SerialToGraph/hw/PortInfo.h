@@ -2,7 +2,7 @@
 #define PORTINFO_H
 #include <QString>
 
-class QSettings;
+class GlobalSettings;
 class QString;
 namespace hw
 {
@@ -12,10 +12,9 @@ public:
     enum status
     {
         st_ordinary,
-        st_match,
+        st_recognized,
         st_lastTimeUsed,
-        st_identified,
-        st_doesntAnswer
+        st_identified
     } m_status;
 
     enum PortType
@@ -28,7 +27,7 @@ public:
     QString m_id;
 
     PortInfo();
-    PortInfo(PortType portType, QString const &id, bool hwHint, QSettings const &settings);
+    PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSettings const &settings);
     PortInfo(PortInfo const &second);
     QString GetStatusText() const;
     QString GetTypeText() const;

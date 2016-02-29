@@ -9,11 +9,11 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-class QSettings;
+class GlobalSettings;
 class QString;
 namespace hw
 {
-
+class HwSink;
 class SerialPort : public PortBase
 {
     Q_OBJECT
@@ -21,21 +21,23 @@ class SerialPort : public PortBase
     bool _OpenPort(QSerialPortInfo const &info);
 
     QSerialPort m_serialPort;
-    QSettings &m_settings;
+    GlobalSettings &m_settings;
+    HwSink *m_hwSink;
 public:
 
-    SerialPort(QSettings &settings, QObject *parent = 0);
+    SerialPort(GlobalSettings &settings, HwSink *hwSink);
+    ~SerialPort();
+
 
     bool OpenPort(QString id);
     void FillPots(QList<PortInfo> &portInfos);
-
+    qint64 Write(char const *data, unsigned size);
+    void WaitForBytesWritten();
+    void ReadData(QByteArray &array, unsigned maxLength);
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
-    bool WriteInstruction(Instructions instruction, std::string const &data);
-    bool WriteInstruction(Instructions instruction);
-    bool WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
     bool IsOpen();
-    void Close()  { m_serialPort.close(); }
+    void Close();
 
 signals:
 

@@ -48,7 +48,7 @@
 <context>
     <name>Axis</name>
     <message>
-        <location filename="../Axis.cpp" line="32"/>
+        <location filename="../Axis.cpp" line="33"/>
         <source>Axis %1</source>
         <translation>Osa %1</translation>
     </message>
@@ -241,62 +241,67 @@
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="76"/>
+        <location filename="../ButtonLine.cpp" line="79"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="84"/>
+        <location filename="../ButtonLine.cpp" line="87"/>
         <source>Sample</source>
         <translation>Vzorek</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="89"/>
+        <location filename="../ButtonLine.cpp" line="92"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="166"/>
+        <location filename="../ButtonLine.cpp" line="178"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="170"/>
+        <location filename="../ButtonLine.cpp" line="182"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="172"/>
+        <location filename="../ButtonLine.cpp" line="184"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="178"/>
+        <location filename="../ButtonLine.cpp" line="190"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="179"/>
+        <location filename="../ButtonLine.cpp" line="191"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="181"/>
+        <location filename="../ButtonLine.cpp" line="193"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="182"/>
+        <location filename="../ButtonLine.cpp" line="194"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="183"/>
+        <location filename="../ButtonLine.cpp" line="195"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="229"/>
+        <location filename="../ButtonLine.cpp" line="197"/>
+        <source>Settings...</source>
+        <translation>Nastavení...</translation>
+    </message>
+    <message>
+        <location filename="../ButtonLine.cpp" line="250"/>
         <source>Save as</source>
         <translation>Uložit jako</translation>
     </message>
@@ -305,7 +310,7 @@
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="176"/>
+        <location filename="../ButtonLine.cpp" line="188"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -330,22 +335,22 @@
         <translation>Exportovat do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="68"/>
+        <location filename="../ButtonLine.cpp" line="71"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="60"/>
+        <location filename="../ButtonLine.cpp" line="63"/>
         <source>File</source>
         <translation>Soubor</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="64"/>
+        <location filename="../ButtonLine.cpp" line="67"/>
         <source>Measurements</source>
         <translation>Měření</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="72"/>
+        <location filename="../ButtonLine.cpp" line="75"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
@@ -377,7 +382,7 @@
 <context>
     <name>Channel</name>
     <message>
-        <location filename="../Channel.cpp" line="112"/>
+        <location filename="../Channel.cpp" line="177"/>
         <source>n/a</source>
         <translation>n/a</translation>
     </message>
@@ -417,12 +422,12 @@
 <context>
     <name>ChannelSettings</name>
     <message>
-        <location filename="../ChannelSettings.cpp" line="22"/>
+        <location filename="../ChannelSettings.cpp" line="21"/>
         <source>Channel settings</source>
         <translation>Nastavení kanálu</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="36"/>
+        <location filename="../ChannelSettings.cpp" line="35"/>
         <source>Title</source>
         <translation>Název</translation>
     </message>
@@ -431,8 +436,8 @@
         <translation>Vybraný</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="38"/>
-        <location filename="../ChannelSettings.cpp" line="73"/>
+        <location filename="../ChannelSettings.cpp" line="37"/>
+        <location filename="../ChannelSettings.cpp" line="72"/>
         <source>Units</source>
         <translation>Jednotky</translation>
     </message>
@@ -449,12 +454,12 @@
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="238"/>
+        <location filename="../ChannelSettings.cpp" line="237"/>
         <source>Shape</source>
         <translation>Tvar</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="222"/>
+        <location filename="../ChannelSettings.cpp" line="221"/>
         <source>Cross</source>
         <translation>Kříž</translation>
     </message>
@@ -491,142 +496,142 @@
         <translation>Reálný čas</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="62"/>
+        <location filename="../ChannelSettings.cpp" line="61"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="65"/>
+        <location filename="../ChannelSettings.cpp" line="64"/>
         <source>Microseconds</source>
         <translation>Mikrosekundy</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="66"/>
+        <location filename="../ChannelSettings.cpp" line="65"/>
         <source>Miliseconds</source>
         <translation>Milisekundy</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="67"/>
+        <location filename="../ChannelSettings.cpp" line="66"/>
         <source>Seconds</source>
         <translation>Sekundy</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="68"/>
+        <location filename="../ChannelSettings.cpp" line="67"/>
         <source>Minuts</source>
         <translation>Minuty</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="69"/>
+        <location filename="../ChannelSettings.cpp" line="68"/>
         <source>Hours</source>
         <translation>Hodiny</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="70"/>
+        <location filename="../ChannelSettings.cpp" line="69"/>
         <source>Days</source>
         <translation>Dny</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="76"/>
+        <location filename="../ChannelSettings.cpp" line="75"/>
         <source>day.month.year</source>
         <translation>den.měsíc.rok</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="77"/>
+        <location filename="../ChannelSettings.cpp" line="76"/>
         <source>day.month.hour:minute</source>
         <translation>den.měsíc.hodina:minuta</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="78"/>
+        <location filename="../ChannelSettings.cpp" line="77"/>
         <source>hour:minute:second</source>
         <translation>hodina:minuta:sekunda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="79"/>
+        <location filename="../ChannelSettings.cpp" line="78"/>
         <source>minute:second.milisecond</source>
         <translation>minuta:sekunda.milisekunda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="82"/>
+        <location filename="../ChannelSettings.cpp" line="81"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="102"/>
+        <location filename="../ChannelSettings.cpp" line="101"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
         <translation>Kanás s časovým formátem musí být umístěm na samostatnou osu.Prosím, vyberte jednu.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="223"/>
+        <location filename="../ChannelSettings.cpp" line="222"/>
         <source>Plus</source>
         <translation>Plus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="224"/>
+        <location filename="../ChannelSettings.cpp" line="223"/>
         <source>Circle</source>
         <translation>Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="225"/>
+        <location filename="../ChannelSettings.cpp" line="224"/>
         <source>Disc</source>
         <translation>Kružnice</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="226"/>
+        <location filename="../ChannelSettings.cpp" line="225"/>
         <source>Square</source>
         <translation>Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="227"/>
+        <location filename="../ChannelSettings.cpp" line="226"/>
         <source>Diamond</source>
         <translation>Diamant</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="228"/>
+        <location filename="../ChannelSettings.cpp" line="227"/>
         <source>Star</source>
         <translation>Hvězda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="229"/>
+        <location filename="../ChannelSettings.cpp" line="228"/>
         <source>Triangle</source>
         <translation>Trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="230"/>
+        <location filename="../ChannelSettings.cpp" line="229"/>
         <source>Inverted Triangle</source>
         <translation>Obrácený trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="231"/>
+        <location filename="../ChannelSettings.cpp" line="230"/>
         <source>Cross and Square</source>
         <translation>Kříž a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="232"/>
+        <location filename="../ChannelSettings.cpp" line="231"/>
         <source>Plus and Square</source>
         <translation>Plus a Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="233"/>
+        <location filename="../ChannelSettings.cpp" line="232"/>
         <source>Cross and Circle</source>
         <translation>Kříž a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="234"/>
+        <location filename="../ChannelSettings.cpp" line="233"/>
         <source>Plus and Circle</source>
         <translation>Plus a Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="235"/>
+        <location filename="../ChannelSettings.cpp" line="234"/>
         <source>Peace</source>
         <translation>Mír</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="245"/>
+        <location filename="../ChannelSettings.cpp" line="244"/>
         <source>New Axis...</source>
         <translation>Nová osa...</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="273"/>
+        <location filename="../ChannelSettings.cpp" line="272"/>
         <source>Axis</source>
         <translation>Osa</translation>
     </message>
@@ -737,7 +742,7 @@
         <translation>Přidat adresář</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="114"/>
+        <location filename="../FileDialog.cpp" line="115"/>
         <source>Directory alredy contains subdirectory with the same name.</source>
         <translation>Adresář už obsahuje podadresář se stejným jménem.</translation>
     </message>
@@ -747,12 +752,12 @@
         <translation>Adresář už obsahuje soubor se stejným názvem. Přepsat ho?</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="123"/>
+        <location filename="../FileDialog.cpp" line="129"/>
         <source>Rewrite</source>
         <translation>Přepiš</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="124"/>
+        <location filename="../FileDialog.cpp" line="130"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
@@ -773,6 +778,29 @@
     <message>
         <source>Color</source>
         <translation>Barva</translation>
+    </message>
+</context>
+<context>
+    <name>GlobalSettingsDialog</name>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="13"/>
+        <source>Settings</source>
+        <translation>Nastavení</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="38"/>
+        <source>Language</source>
+        <translation>Jazyk</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="46"/>
+        <source>Unit Brackets</source>
+        <translation>Závorky jednotek</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="53"/>
+        <source>The language change will take effect after a restart of the application.</source>
+        <translation>Změna jazyka se projeví až po restartu aplikace.</translation>
     </message>
 </context>
 <context>
@@ -812,42 +840,42 @@
 <context>
     <name>Measurement</name>
     <message>
-        <location filename="../Measurement.cpp" line="49"/>
+        <location filename="../Measurement.cpp" line="48"/>
         <source>Measurement %1</source>
         <translation>Měření %1</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="95"/>
+        <location filename="../Measurement.cpp" line="94"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
         <translation>Měření &apos;%1&apos; bylo ukončeno kvůli problému se spojením.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="247"/>
+        <location filename="../Measurement.cpp" line="246"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Ukončit ho?</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="248"/>
+        <location filename="../Measurement.cpp" line="247"/>
         <source>Terminate</source>
         <translation>Ukonči</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="249"/>
+        <location filename="../Measurement.cpp" line="248"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="339"/>
+        <location filename="../Measurement.cpp" line="338"/>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
         <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="545"/>
+        <location filename="../Measurement.cpp" line="544"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="555"/>
+        <location filename="../Measurement.cpp" line="554"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
@@ -856,7 +884,7 @@
         <translation>Vzorky</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="618"/>
+        <location filename="../Measurement.cpp" line="617"/>
         <source>Channel %1</source>
         <translation>Kanál %1</translation>
     </message>
@@ -975,26 +1003,57 @@
 <context>
     <name>PortListDialog</name>
     <message>
-        <location filename="../PortListDialog.cpp" line="20"/>
+        <source>Hardware connection</source>
+        <translation type="obsolete">Připojení </translation>
+    </message>
+    <message>
         <source>Please, select a port with a comatible device.</source>
         <translation>Vyberte port s kompatibilním zařízením.</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="31"/>
+        <location filename="../PortListDialog.cpp" line="75"/>
+        <source>Scanning...</source>
+        <translation>Skenování...</translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="119"/>
+        <source>Openning...</source>
+        <translation>Otevírání...</translation>
+    </message>
+    <message>
+        <source>Selected port doesn&apos;t responding properly. Please, check a device connection and the port read/write permitions.</source>
+        <translation type="obsolete">Vybraný pory </translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="25"/>
         <source>Refresh</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="39"/>
+        <location filename="../PortListDialog.cpp" line="20"/>
+        <source>Device connecting</source>
+        <translation>Připojování zařízení</translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="26"/>
+        <source>Please, select a comatible device port.</source>
+        <translation>Vyberte kompatibilní port pro zařízení. </translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="57"/>
         <source>Work Offline</source>
         <translation>Pracovat odpojený</translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="139"/>
+        <source>Selected port doesn&apos;t responding. Please, check a device connection and the port read/write permitions.</source>
+        <translation>Vybraný port neodpovídá. Prosím, zkontrolujte spojení se zařízením a přístupová práva.</translation>
     </message>
     <message>
         <source>Skip</source>
         <translation>Přeskočit</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="43"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
@@ -1002,14 +1061,49 @@
 <context>
     <name>PortListWidget</name>
     <message>
-        <location filename="../PortListWidget.cpp" line="65"/>
         <source>preferred</source>
         <translation>preferovaný</translation>
     </message>
     <message>
-        <location filename="../PortListWidget.cpp" line="82"/>
         <source>the port doesn&apos;t respond properly. Please, check if the device is connected and the port read/write permitions.</source>
         <translation>Port neodpovídá podle očekávání. Zkontrolujte, prosím, připojení zařízení a nastavení oprávnění pro čtení a zápis.</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <source>Match</source>
+        <translation type="obsolete">Odpovídající</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="44"/>
+        <source>Recognized</source>
+        <translation>Rozpoznamý</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="46"/>
+        <source>Last time used</source>
+        <translation>Naposledy použitý</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="48"/>
+        <source>Identified</source>
+        <translation>Identifikovaný</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="50"/>
+        <source>Doesn&apos;t Answer</source>
+        <translation>Neodpovídá</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="62"/>
+        <source>Bluetooth</source>
+        <translation>bluetooth</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="64"/>
+        <source>Serial Port</source>
+        <translation>sériový port</translation>
     </message>
 </context>
 <context>
@@ -1048,9 +1142,14 @@
 <context>
     <name>hw::HwSink</name>
     <message>
-        <location filename="../hw/HwSink.cpp" line="126"/>
+        <location filename="../hw/HwSink.cpp" line="131"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="166"/>
+        <source>Selected port is byssy. It is probably oppened by another process.</source>
+        <translation>Vybraný port je zaneprázdněný. Je pravděpodobně otevřený jiným procesem.</translation>
     </message>
 </context>
 <context>

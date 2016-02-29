@@ -7,6 +7,7 @@
 #include <Channel.h>
 #include <Export.h>
 #include <FileDialog.h>
+#include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
@@ -52,7 +53,8 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
-    m_storedValues(false)
+    m_storedValues(false),
+    m_settingsDialog(NULL)
 {
     //QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     //buttonLayout->setMargin(1);
@@ -190,8 +192,17 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export to PNG..."), this, SLOT(exportPng()));
     m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SLOT(exportCsv()));
     m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SLOT(exportAllCsv()));
+    m_fileMenu->addSeparator();
+    m_fileMenu->addAction(tr("Settings..."), this, SLOT(settings()));
 }
 
+void ButtonLine::settings()
+{
+    if (m_settingsDialog == NULL)
+         m_settingsDialog = new GlobalSettingsDialog(this, m_context);
+
+    m_settingsDialog->exec();
+}
 void ButtonLine::UpdateRunButtonsState()
 {
     if (NULL == m_measurement)
@@ -269,10 +280,10 @@ void ButtonLine::exportAllCsv()
 {
     _ExportCSV(m_context.m_measurements);
 }
-void ButtonLine::connectivityStateChange(bool connected)
+void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::State state)
 {
-    m_connected = connected;
-    m_connectivityLabel->SetConnected(connected);
+    m_connected = (state == hw::HwSink::Connected);
+    m_connectivityLabel->SetState(stateText, state);
 
     UpdateRunButtonsState();
 }

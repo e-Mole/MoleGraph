@@ -1,6 +1,7 @@
 #ifndef BUTTONLINE_H
 #define BUTTONLINE_H
 
+#include <hw/HwSink.h>
 #include <QKeySequence>
 #include <QMap>
 #include <QVector>
@@ -10,6 +11,7 @@ class Axis;
 class Channel;
 class ChannelMenu;
 class ConnectivityLabel;
+class GlobalSettingsDialog;
 class Measurement;
 class QAction;
 class QDialog;
@@ -63,6 +65,7 @@ class ButtonLine : public QToolBar
     QShortcut *m_allChannelsShortcut;
     QShortcut *m_noChannelsShortcut;
     bool m_storedValues;
+    GlobalSettingsDialog *m_settingsDialog;
 
 public:
     void UpdateRunButtonsState();
@@ -87,11 +90,12 @@ private slots:
     void saveAsFile();
     void saveWithoutValuesAsFile();
     void sampleRequest();
+    void settings();
 public slots:
     void exportPng();
     void exportCsv();
     void exportAllCsv();
-    void connectivityStateChange(bool connected);
+    void connectivityStateChanged(QString const & stateText, hw::HwSink::State state);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();

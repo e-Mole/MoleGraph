@@ -16,6 +16,7 @@
 #include <QWidget>
 
 #define PROTOCOL_ID "ATG_2"
+#define RESPONSE_WAITING 100 //100 ms should be enough
 
 namespace hw
 {
@@ -167,11 +168,13 @@ void HwSink::ClosePort()
     }
 }
 
-bool HwSink::_CheckProtocol()
+bool HwSink::_CheckProtocolId()
 {
+    GetVersion();
+
     QByteArray array;
-    m_port->ReadData(array, 100); //it is less then 100. just safe size
-    return  (array.toStdString() == PROTOCOL_ID);
+    m_port->ReadData(array, RESPONSE_WAITING, 100); //it is less then 100. just safe size
+    return true;//(array.toStdString() == PROTOCOL_ID);
 }
 
 void HwSink::OpenPort(PortInfo const &info)
@@ -204,7 +207,7 @@ void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
-        if (!_CheckProtocol())
+        if (!_CheckProtocolId())
         {
             QMessageBox::warning(
                 (QWidget*)parent(),
@@ -274,12 +277,12 @@ bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data
 
     qDebug() << "writen instruction:" << instruction <<
                 " data size:" << m_port->Write((char const *)&instruction , 1);
-    m_port->WaitForBytesWritten();
+    m_port->WaitForBytesWritten(RESPONSE_WAITING);
     if (data.size() > 0)
     {
         qDebug() << "data present" << data.c_str() << " size:" << data.size();
         m_port->Write(data.c_str(), data.size());
-        m_port->WaitForBytesWritten();
+        m_port->WaitForBytesWritten(RESPONSE_WAITING);
     }
     return true;
 }
@@ -313,6 +316,7 @@ QString HwSink::GetStateString()
             return tr("Connected");
         default:
             qWarning("unsupported HwSink state");
+            return "";
     }
 }
 

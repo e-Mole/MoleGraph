@@ -46,7 +46,7 @@ private:
     bool _WriteInstruction(Instructions instruction);
     bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
     void _ChangeState(State status);
-    bool _CheckProtocol();
+    bool _CheckProtocolId();
     void _StopSearching();
 
     PortBase * m_port;

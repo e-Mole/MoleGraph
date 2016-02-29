@@ -27,11 +27,11 @@ public:
     ~Bluetooth();
     void StartPortSearching();
     void StopPortSearching();
-    virtual void ReadData(QByteArray &array, unsigned maxLength);
+    virtual void ReadData(QByteArray &array, unsigned timeout, unsigned maxLength);
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
     qint64 Write(char const *data, unsigned size);
-    void WaitForBytesWritten();
+    void WaitForBytesWritten(unsigned timeout);
     virtual bool IsOpen();
     virtual void Close();
     virtual bool OpenPort(QString id);

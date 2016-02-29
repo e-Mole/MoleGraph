@@ -11,8 +11,6 @@
 namespace hw
 {
 
-#define RESPONSE_WAITING 100 //100 ms should be enough
-
 SerialPort::SerialPort(GlobalSettings &settings, HwSink *hwSink) :
     PortBase(hwSink),
     m_settings(settings),
@@ -46,17 +44,6 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
 
 void SerialPort::portOpenTimeout()
 {
-    m_hwSink->GetVersion();
-    unsigned counter = RESPONSE_WAITING;
-    while (!m_serialPort.waitForReadyRead(100)) //100 to be sure I get response from baudrate 9600 too
-    {
-        if (0 == --counter)
-        {
-            qDebug() << "no response from serial port";
-            m_serialPort.close();
-        }
-    }
-
     portOpeningFinished();
     return;
 }
@@ -95,12 +82,17 @@ qint64 SerialPort::Write(char const *data, unsigned size)
     return m_serialPort.write(data, size);
 }
 
-void SerialPort::WaitForBytesWritten()
+void SerialPort::WaitForBytesWritten(unsigned timeout)
 {
-    m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
+    m_serialPort.waitForBytesWritten(timeout);
 }
-void SerialPort::ReadData(QByteArray &array, unsigned maxLength)
+void SerialPort::ReadData(QByteArray &array, unsigned timeout, unsigned maxLength)
 {
+    unsigned counter = timeout;
+    while (--counter > 0 && !m_serialPort.waitForReadyRead(100)) //100 to be sure I get response from baudrate 9600 too
+    {
+    }
+
     array = m_serialPort.read(maxLength);
 }
 

@@ -92,7 +92,7 @@ void Bluetooth::Close()
     }
 }
 
-void Bluetooth::ReadData(QByteArray &array, unsigned maxLength)
+void Bluetooth::ReadData(QByteArray &array, unsigned timeout, unsigned maxLength)
 {
     array = m_socket->read(maxLength);
 }
@@ -104,7 +104,7 @@ qint64 Bluetooth::Write(char const *data, unsigned size)
 {
     return m_socket->write(data, size);
 }
-void Bluetooth::WaitForBytesWritten()
+void Bluetooth::WaitForBytesWritten(unsigned timeout)
 {
     //no waiting needed for bluetooth
 }

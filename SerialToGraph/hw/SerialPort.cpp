@@ -35,6 +35,7 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
     if (!m_serialPort.open(QIODevice::ReadWrite))
     {
         qDebug() << "unable to open port " << info.portName();
+        portOpeningFinished();
         return false;
     }
 

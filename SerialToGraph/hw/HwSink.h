@@ -8,7 +8,7 @@
 
 class GlobalSettings;
 class QWidget;
-
+class QTimer;
 namespace hw
 {
 class Bluetooth;
@@ -25,6 +25,7 @@ public:
         Offline,
         Scanning,
         Opening,
+        Verification,
         Connected
     };
 
@@ -46,8 +47,8 @@ private:
     bool _WriteInstruction(Instructions instruction);
     bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
     void _ChangeState(State status);
-    bool _CheckProtocolId();
     void _StopSearching();
+    void _ConnectionFailed();
 
     PortBase * m_port;
     Bluetooth * m_bluetooth;
@@ -57,6 +58,7 @@ private:
     State m_state;
     QWidget *parentWidget;
     PortInfo m_openedPortInfo;
+    QTimer *protocolIdTimer;
 public:
     HwSink(GlobalSettings &settings, QWidget *parent);
     ~HwSink();
@@ -91,6 +93,8 @@ signals:
     void stateChanged(QString const &stateString, hw::HwSink::State state);
 public slots:
     void portOpeningFinished();
+private slots:
+    void readyRead();
 
 };
 } //namespace hw

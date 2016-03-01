@@ -13,10 +13,9 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QQueue>
+#include <QTimer>
 #include <QWidget>
-
 #define PROTOCOL_ID "ATG_2"
-#define RESPONSE_WAITING 100 //100 ms should be enough
 
 namespace hw
 {
@@ -28,7 +27,8 @@ HwSink::HwSink(GlobalSettings &settings, QWidget *parent) :
     m_knownIssue(false),
     m_settings(settings),
     m_state(Offline),
-    parentWidget(parent)
+    parentWidget(parent),
+    protocolIdTimer(NULL)
 {
 
 }
@@ -168,15 +168,6 @@ void HwSink::ClosePort()
     }
 }
 
-bool HwSink::_CheckProtocolId()
-{
-    GetVersion();
-
-    QByteArray array;
-    m_port->ReadData(array, RESPONSE_WAITING, 100); //it is less then 100. just safe size
-    return true;//(array.toStdString() == PROTOCOL_ID);
-}
-
 void HwSink::OpenPort(PortInfo const &info)
 {
     if (info.m_id == m_openedPortInfo.m_id)
@@ -207,27 +198,18 @@ void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
-        if (!_CheckProtocolId())
-        {
-            QMessageBox::warning(
-                (QWidget*)parent(),
-                "",
-                tr("Selected port doesn't responding as expected. Please, check port read/write permitions.")
-            );
 
-            ClosePort();
-            return;
-        }
+        _ChangeState(Verification);
 
-        m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
+        //I have to check if it is device with supported protocol
+        //It must be done asynchronously because of bloetooth. Waitng to data doesnt work
+        //Reaction is checked in readyRead slot
+        GetVersion();
 
-        m_settings.SetLastSerialPortType(m_openedPortInfo.m_portType);
-        m_settings.SetLastSerialPortId(m_openedPortInfo.m_id);
-
-        _StopSearching();
-        _ChangeState(Connected);
-        connectivityChanged(true);
-
+        protocolIdTimer = new QTimer(this);
+        protocolIdTimer->setSingleShot(true);
+        connect(protocolIdTimer, SIGNAL(timeout()), this, SLOT(readyRead()));
+        protocolIdTimer->start(100); //it should be enough to get response
     }
     else
     {
@@ -237,9 +219,48 @@ void HwSink::portOpeningFinished()
             tr("Selected port is byssy. It is probably oppened by another process.")
         );
 
-        m_knownIssue = true; //will be displayed message about it
-        _ChangeState(m_bluetooth->IsActive() ? Scanning : Offline);
+        _ConnectionFailed();
     }
+}
+
+void HwSink::_ConnectionFailed()
+{
+    ClosePort();//if it was oppened;
+    m_knownIssue = true; //will be displayed message about it
+    _ChangeState(m_bluetooth->IsActive() ? Scanning : Offline);
+}
+
+void HwSink::readyRead()
+{
+    if (m_state != Verification)
+        return;
+
+    delete protocolIdTimer;
+    protocolIdTimer = NULL;
+
+    QByteArray array;
+    m_port->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
+    qDebug() << array;
+    if ((array.toStdString() != PROTOCOL_ID))
+    {
+        QMessageBox::warning(
+            (QWidget*)parent(),
+            "",
+            tr("Selected port doesn't responding as expected. Please, check port read/write permitions.")
+        );
+
+        _ConnectionFailed();
+        return;
+    }
+
+    m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
+
+    m_settings.SetLastSerialPortType(m_openedPortInfo.m_portType);
+    m_settings.SetLastSerialPortId(m_openedPortInfo.m_id);
+
+    _StopSearching();
+    _ChangeState(Connected);
+    connectivityChanged(true);
 }
 
 
@@ -256,13 +277,19 @@ void HwSink::StartPortSearching()
         portFound(item);
 
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+
+    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
+    //connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readyRead()));
 #endif
 
     delete m_bluetooth;
     m_bluetooth = new Bluetooth(m_settings, this);
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
-    m_bluetooth->StartPortSearching();
     connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+
+    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
+    //connect(m_bluetooth, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    m_bluetooth->StartPortSearching();
 }
 
 void HwSink::ClearCache()
@@ -277,12 +304,12 @@ bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data
 
     qDebug() << "writen instruction:" << instruction <<
                 " data size:" << m_port->Write((char const *)&instruction , 1);
-    m_port->WaitForBytesWritten(RESPONSE_WAITING);
+    m_port->WaitForBytesWritten();
     if (data.size() > 0)
     {
         qDebug() << "data present" << data.c_str() << " size:" << data.size();
         m_port->Write(data.c_str(), data.size());
-        m_port->WaitForBytesWritten(RESPONSE_WAITING);
+        m_port->WaitForBytesWritten();
     }
     return true;
 }
@@ -312,6 +339,8 @@ QString HwSink::GetStateString()
             return tr("Scanning");
         case Opening:
             return tr("Opening");
+        case Verification:
+            return tr("Verification");
         case Connected:
             return tr("Connected");
         default:

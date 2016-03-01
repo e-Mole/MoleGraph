@@ -6,7 +6,8 @@
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QBluetoothServer>
 #include <QBluetoothSocket>
-
+#include <QTimer>
+#include <QThread>
 #include <QDebug>
 namespace hw
 {
@@ -27,7 +28,6 @@ Bluetooth::~Bluetooth()
     m_discoveryAgent->stop();
     Close();
 }
-
 
 void Bluetooth::StartPortSearching()
 {
@@ -64,11 +64,20 @@ bool Bluetooth::OpenPort(QString id)
 {
     m_socket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
     m_socket->connectToService(m_serviceInfos[id]);
+    connect(m_socket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
+
     if (m_socket->isOpen())
     {
         m_discoveryAgent->stop();
         qDebug() << "bluetooth " << id << "has been opened";
-        portOpeningFinished();
+
+        QTimer *timer = new QTimer(this);
+        timer->setSingleShot(true);
+        connect(timer, SIGNAL(timeout()), this, SIGNAL(portOpeningFinished()));
+
+        //there must be some while to be connection estabilished
+        //when I dont wait 1 second protocol_id message is not delivered
+        timer->start(1000);
         return true;
     }
 
@@ -92,21 +101,24 @@ void Bluetooth::Close()
     }
 }
 
-void Bluetooth::ReadData(QByteArray &array, unsigned timeout, unsigned maxLength)
+void Bluetooth::ReadData(QByteArray &array, unsigned maxLength)
 {
     array = m_socket->read(maxLength);
 }
+
 void Bluetooth::ReadData(QByteArray &array)
 {
     array = m_socket->readAll();
 }
+
 qint64 Bluetooth::Write(char const *data, unsigned size)
 {
     return m_socket->write(data, size);
 }
-void Bluetooth::WaitForBytesWritten(unsigned timeout)
+
+void Bluetooth::WaitForBytesWritten()
 {
-    //no waiting needed for bluetooth
+    //WaitForBytesWritten is not implemented for bluetotth
 }
 
 } //namespace hw

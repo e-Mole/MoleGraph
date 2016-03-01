@@ -32,8 +32,8 @@ public:
     bool OpenPort(QString id);
     void FillPots(QList<PortInfo> &portInfos);
     qint64 Write(char const *data, unsigned size);
-    void WaitForBytesWritten(unsigned timeout);
-    void ReadData(QByteArray &array, unsigned timeout, unsigned maxLength);
+    void WaitForBytesWritten();
+    void ReadData(QByteArray &array, unsigned maxLength);
     void ReadData(QByteArray &array);
     void ClearCache() { m_serialPort.clear(); }
     bool IsOpen();

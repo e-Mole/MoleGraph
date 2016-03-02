@@ -29,6 +29,7 @@ class FileDialog : public bases::PlatformDialog
     QLabel *m_extension;
     QPushButton *m_actionButton;
     QListView *m_view;
+    bool m_open;
 public:
     FileDialog(QWidget *parent, bool open, const QString &caption, const QString &dir, const QString &extension);
     ~FileDialog();

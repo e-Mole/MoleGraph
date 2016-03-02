@@ -56,7 +56,8 @@ FileDialog::FileDialog(
     m_dir(dir),
     m_extension(new QLabel(filter.mid(filter.lastIndexOf(".")), this)),
     m_actionButton(new QPushButton(open ? tr("Open") : tr("Save"), this)),
-    m_view(new QListView(this))
+    m_view(new QListView(this)),
+    m_open(open)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
@@ -106,6 +107,12 @@ FileDialog::FileDialog(
 
 void FileDialog::fileSelected()
 {
+    if (!m_open)
+    {
+        accept();
+        return;
+    }
+
     QFileInfo file(_GetFilePath());
     if (file.exists())
     {

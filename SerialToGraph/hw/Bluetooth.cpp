@@ -77,7 +77,7 @@ bool Bluetooth::OpenPort(QString id)
 
         //there must be some while to be connection estabilished
         //when I dont wait 1 second protocol_id message is not delivered
-        timer->start(1000);
+        timer->start(1500);
         return true;
     }
 

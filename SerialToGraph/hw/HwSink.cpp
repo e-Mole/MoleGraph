@@ -227,7 +227,7 @@ void HwSink::_ConnectionFailed()
 {
     ClosePort();//if it was oppened;
     m_knownIssue = true; //will be displayed message about it
-    _ChangeState(m_bluetooth->IsActive() ? Scanning : Offline);
+    _ChangeState(m_bluetooth && m_bluetooth->IsActive() ? Scanning : Offline);
 }
 
 void HwSink::readyRead()
@@ -271,12 +271,12 @@ void HwSink::StartPortSearching()
 #if not defined(Q_OS_ANDROID)
     delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
+    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+
     QList<PortInfo> portInfos;
     m_serialPort->FillPots(portInfos);
     foreach (PortInfo const  &item, portInfos)
         portFound(item);
-
-    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
 
     //FIXME: i solved it just by timer because I dont want to solve partially recieved data
     //connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readyRead()));

@@ -78,10 +78,12 @@ public:
     void WorkOffline();
     void ClosePort();
     void OpenPort(const PortInfo &info);
-    void StartPortSearching();
+    void StartSearching();
     void ClearCache();
     State GetState() {return m_state; }
     QString GetStateString();
+    void InitializeBluetooth();
+    void TerminateBluetooth();
 
 
 signals:

@@ -66,7 +66,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
 
 void PortListDialog::StartSearching()
 {
-    m_hwSink.StartPortSearching();
+    m_hwSink.StartSearching();
 }
 
 void PortListDialog::workDisconnected()

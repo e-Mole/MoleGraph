@@ -10,14 +10,16 @@ QString GlobalSettings::_GetStringKey(Key key) const
 {
     switch(key)
     {
-    case LastSerialPortId:
+    case Key_LastSerialPortId:
         return "last_serial_port_id";
-    case LastSerialPortType:
+    case Key_LastSerialPortType:
         return "last_serial_port_type";
-    case GuiLanguage:
+    case Key_GuiLanguage:
         return "gui_language";
-    case UnitBrackets:
+    case Key_UnitBrackets:
         return "unit_brackets";
+    case Key_UseBluetooth:
+        return "use_bluetooth";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -36,40 +38,49 @@ QVariant GlobalSettings::_Get(Key key, QVariant const & defaultValue) const
 
 QVariant GlobalSettings::GetLastSerialPortType() const
 {
-    return _Get(LastSerialPortType, 0);
+    return _Get(Key_LastSerialPortType, 0);
 }
 
 void GlobalSettings::SetLastSerialPortType(QVariant const &portType)
 {
-    _Set(LastSerialPortType, portType);
+    _Set(Key_LastSerialPortType, portType);
 }
 
 QString GlobalSettings::GetLastSerialPortId() const
 {
-    return _Get(LastSerialPortId, "").toString();
+    return _Get(Key_LastSerialPortId, "").toString();
 }
 
 void GlobalSettings::SetLastSerialPortId(QString const &portId)
 {
-    _Set(LastSerialPortId, portId);
+    _Set(Key_LastSerialPortId, portId);
 }
 
 QString GlobalSettings::GetLanguage(QString const &defaut) const
 {
-    return _Get(GuiLanguage, defaut).toString(); //I'm sure there was stored language
+    return _Get(Key_GuiLanguage, defaut).toString(); //I'm sure there was stored language
 }
 
 void GlobalSettings::SetLanguage(QString const &language)
 {
-    _Set(GuiLanguage, language);
+    _Set(Key_GuiLanguage, language);
 }
 
 QString GlobalSettings::GetUnitBrackets() const
 {
-    return _Get(UnitBrackets, "()").toString();
+    return _Get(Key_UnitBrackets, "()").toString();
 }
 
 void GlobalSettings::SetUnitBrackets(QString const &brackets)
 {
-    _Set(UnitBrackets, brackets);
+    _Set(Key_UnitBrackets, brackets);
+}
+
+bool GlobalSettings::GetUseBluetooth()
+{
+    return _Get(Key_UseBluetooth, false).toBool();
+}
+void GlobalSettings::SetUseBluetooth(bool use)
+{
+    _Set(Key_UseBluetooth, use);
 }

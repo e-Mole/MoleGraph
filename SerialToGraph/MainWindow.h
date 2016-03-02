@@ -49,6 +49,8 @@ public:
     QString &GetCurrentFileName();
     void OpenNew();
     void OpenSerialPort();
+    void RefreshHwConnection();
+    void TerminateBluetooth();
 
 private slots:
     void measurementNameChanged();

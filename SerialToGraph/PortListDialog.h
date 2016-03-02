@@ -41,8 +41,9 @@ public:
     void _CleanPortList();
 
 signals:
-private slots:
+public slots:
     void refresh();
+private slots:
     void portRadioButtonReleased();
     void stateChanged(const QString &stateString, hw::HwSink::State state);
     void addPort(const hw::PortInfo &item);

@@ -9,10 +9,11 @@ class GlobalSettings
 {
     enum Key
     {
-        LastSerialPortId,
-        LastSerialPortType,
-        GuiLanguage,
-        UnitBrackets
+        Key_LastSerialPortId,
+        Key_LastSerialPortType,
+        Key_GuiLanguage,
+        Key_UnitBrackets,
+        Key_UseBluetooth
     };
 
     QString _GetStringKey(Key key) const;
@@ -31,6 +32,9 @@ public:
     void SetLanguage(QString const &language);
     QString GetUnitBrackets() const;
     void SetUnitBrackets(QString const &brackets);
+    bool GetUseBluetooth();
+    void SetUseBluetooth(bool use);
+
 };
 
 #endif // GLOBALSETTINGS_H

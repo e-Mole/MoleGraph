@@ -106,6 +106,12 @@ MainWindow::~MainWindow()
     }
 }
 
+void MainWindow::RefreshHwConnection()
+{
+    m_portListDialog->refresh();
+}
+
+
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesandChannels)
 {
     return new Measurement(this, m_context, NULL, initializeAxesandChannels);

@@ -263,12 +263,36 @@ void HwSink::readyRead()
     connectivityChanged(true);
 }
 
-
-void HwSink::StartPortSearching()
+void HwSink::InitializeBluetooth()
 {
-    _ChangeState(Scanning);
+    if (!m_settings.GetUseBluetooth())
+        return;
 
+    delete m_bluetooth;
+    m_bluetooth = new Bluetooth(m_settings, this);
+    connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+    connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+
+    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
+    //connect(m_bluetooth, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    m_bluetooth->StartPortSearching();
+    _ChangeState(Scanning);
+}
+
+void HwSink::TerminateBluetooth()
+{
+    delete m_bluetooth;
+    m_bluetooth = NULL;
+
+    if (m_state == Scanning)
+         _ChangeState(Offline); //scanning for serial port is synchronous and is finished
+
+}
+
+void HwSink::StartSearching()
+{
 #if not defined(Q_OS_ANDROID)
+    _ChangeState(Scanning);
     delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
@@ -280,16 +304,10 @@ void HwSink::StartPortSearching()
 
     //FIXME: i solved it just by timer because I dont want to solve partially recieved data
     //connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    _ChangeState(Offline);
 #endif
 
-    delete m_bluetooth;
-    m_bluetooth = new Bluetooth(m_settings, this);
-    connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
-    connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-
-    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
-    //connect(m_bluetooth, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    m_bluetooth->StartPortSearching();
+    InitializeBluetooth();
 }
 
 void HwSink::ClearCache()

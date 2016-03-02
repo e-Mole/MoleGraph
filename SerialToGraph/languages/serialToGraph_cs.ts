@@ -256,52 +256,52 @@
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="178"/>
+        <location filename="../ButtonLine.cpp" line="177"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="182"/>
+        <location filename="../ButtonLine.cpp" line="181"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="184"/>
+        <location filename="../ButtonLine.cpp" line="183"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="190"/>
+        <location filename="../ButtonLine.cpp" line="189"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="191"/>
+        <location filename="../ButtonLine.cpp" line="190"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="193"/>
+        <location filename="../ButtonLine.cpp" line="192"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="194"/>
+        <location filename="../ButtonLine.cpp" line="193"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="195"/>
+        <location filename="../ButtonLine.cpp" line="194"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="197"/>
+        <location filename="../ButtonLine.cpp" line="196"/>
         <source>Settings...</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="250"/>
+        <location filename="../ButtonLine.cpp" line="249"/>
         <source>Save as</source>
         <translation>Uložit jako</translation>
     </message>
@@ -310,7 +310,7 @@
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="188"/>
+        <location filename="../ButtonLine.cpp" line="187"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -382,7 +382,7 @@
 <context>
     <name>Channel</name>
     <message>
-        <location filename="../Channel.cpp" line="177"/>
+        <location filename="../Channel.cpp" line="182"/>
         <source>n/a</source>
         <translation>n/a</translation>
     </message>
@@ -702,12 +702,10 @@
 <context>
     <name>ConnectivityLabel</name>
     <message>
-        <location filename="../ConnectivityLabel.cpp" line="17"/>
         <source>Connected</source>
         <translation>Připojeno</translation>
     </message>
     <message>
-        <location filename="../ConnectivityLabel.cpp" line="22"/>
         <source>Disconnected</source>
         <translation>Odpojeno</translation>
     </message>
@@ -732,32 +730,32 @@
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="68"/>
+        <location filename="../FileDialog.cpp" line="69"/>
         <source>Go Up</source>
         <translation>Jít nahoru</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="73"/>
+        <location filename="../FileDialog.cpp" line="74"/>
         <source>Add Directory</source>
         <translation>Přidat adresář</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="115"/>
+        <location filename="../FileDialog.cpp" line="122"/>
         <source>Directory alredy contains subdirectory with the same name.</source>
         <translation>Adresář už obsahuje podadresář se stejným jménem.</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="122"/>
+        <location filename="../FileDialog.cpp" line="129"/>
         <source>Directory already contains file with the same name. Rewrite it?</source>
         <translation>Adresář už obsahuje soubor se stejným názvem. Přepsat ho?</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="129"/>
+        <location filename="../FileDialog.cpp" line="136"/>
         <source>Rewrite</source>
         <translation>Přepiš</translation>
     </message>
     <message>
-        <location filename="../FileDialog.cpp" line="130"/>
+        <location filename="../FileDialog.cpp" line="137"/>
         <source>Cancel</source>
         <translation>Zruš</translation>
     </message>
@@ -783,24 +781,38 @@
 <context>
     <name>GlobalSettingsDialog</name>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="13"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="16"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="38"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="32"/>
+        <source>Use Bluetooth</source>
+        <translation>Používat bluetooth</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="49"/>
         <source>Language</source>
         <translation>Jazyk</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="46"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="57"/>
         <source>Unit Brackets</source>
         <translation>Závorky jednotek</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="53"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="64"/>
         <source>The language change will take effect after a restart of the application.</source>
         <translation>Změna jazyka se projeví až po restartu aplikace.</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="81"/>
+        <source>Estbilished connection will be lost. Continue?</source>
+        <translation>Navázané spojení bude ztraceno. Pokračovat?</translation>
+    </message>
+    <message>
+        <source>Estbilished connection will be disconnected. Continue?</source>
+        <translation type="obsolete"> </translation>
     </message>
 </context>
 <context>
@@ -1011,12 +1023,10 @@
         <translation>Vyberte port s kompatibilním zařízením.</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="75"/>
         <source>Scanning...</source>
         <translation>Skenování...</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="119"/>
         <source>Openning...</source>
         <translation>Otevírání...</translation>
     </message>
@@ -1040,12 +1050,11 @@
         <translation>Vyberte kompatibilní port pro zařízení. </translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="57"/>
+        <location filename="../PortListDialog.cpp" line="58"/>
         <source>Work Offline</source>
         <translation>Pracovat odpojený</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="139"/>
         <source>Selected port doesn&apos;t responding. Please, check a device connection and the port read/write permitions.</source>
         <translation>Vybraný port neodpovídá. Prosím, zkontrolujte spojení se zařízením a přístupová práva.</translation>
     </message>
@@ -1081,7 +1090,6 @@
         <translation>Rozpoznamý</translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="46"/>
         <source>Last time used</source>
         <translation>Naposledy použitý</translation>
     </message>
@@ -1091,17 +1099,21 @@
         <translation>Identifikovaný</translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="50"/>
         <source>Doesn&apos;t Answer</source>
         <translation>Neodpovídá</translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="62"/>
+        <location filename="../hw/PortInfo.cpp" line="46"/>
+        <source>Last</source>
+        <translation>Minulý</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="60"/>
         <source>Bluetooth</source>
         <translation>bluetooth</translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="64"/>
+        <location filename="../hw/PortInfo.cpp" line="62"/>
         <source>Serial Port</source>
         <translation>sériový port</translation>
     </message>
@@ -1142,14 +1154,44 @@
 <context>
     <name>hw::HwSink</name>
     <message>
-        <location filename="../hw/HwSink.cpp" line="131"/>
+        <location filename="../hw/HwSink.cpp" line="156"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="166"/>
+        <location filename="../hw/HwSink.cpp" line="219"/>
         <source>Selected port is byssy. It is probably oppened by another process.</source>
         <translation>Vybraný port je zaneprázdněný. Je pravděpodobně otevřený jiným procesem.</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="249"/>
+        <source>Selected port doesn&apos;t responding as expected. Please, check port read/write permitions.</source>
+        <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte páva pro čtení a zápis.</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="355"/>
+        <source>Offline</source>
+        <translation>Odpojeno</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="357"/>
+        <source>Scanning</source>
+        <translation>Skenování</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="359"/>
+        <source>Opening</source>
+        <translation>Otevírání</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="361"/>
+        <source>Verification</source>
+        <translation>Verifikace</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwSink.cpp" line="363"/>
+        <source>Connected</source>
+        <translation>Připojeno</translation>
     </message>
 </context>
 <context>

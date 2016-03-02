@@ -107,7 +107,7 @@ FileDialog::FileDialog(
 
 void FileDialog::fileSelected()
 {
-    if (!m_open)
+    if (m_open)
     {
         accept();
         return;

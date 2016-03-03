@@ -1,7 +1,7 @@
 #include "Channel.h"
 #include <ChannelSettings.h>
 #include <Axis.h>
-#include <bases/ClickableGroupBox.h>
+#include <ChannelWidget.h>
 #include <Context.h>
 #include <cmath>
 #include <Measurement.h>
@@ -85,7 +85,7 @@ Channel::Channel(Measurement *measurement,
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
-    m_widget(new bases::ClickableGroupBox(name, measurement->GetWidget())),
+    m_widget(new ChannelWidget(name, measurement->GetWidget())),
     m_name(name),
     m_hwIndex(hwIndex),
     m_color(color),
@@ -95,6 +95,7 @@ Channel::Channel(Measurement *measurement,
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint),
+
     m_valueLabel(new ValueLabel("", color, IsHwChannel(), m_widget)),
     m_units(units)
 {
@@ -311,7 +312,7 @@ bool Channel::IsVisible()
     return !m_widget->isHidden();
 }
 
-bases::ClickableGroupBox *Channel::GetWidget()
+ChannelWidget *Channel::GetWidget()
 {
     return m_widget;
 }

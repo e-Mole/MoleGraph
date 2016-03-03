@@ -2,7 +2,7 @@
 #include <Axis.h>
 #include <AxisChooseDialog.h>
 #include <AxisSettings.h>
-#include <bases/ClickableGroupBox.h>
+#include <ChannelWidget.h>
 #include <Channel.h>
 #include <ChannelWithTime.h>
 #include <Context.h>

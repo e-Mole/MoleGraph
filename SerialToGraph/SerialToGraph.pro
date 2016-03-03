@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     MainWindow.cpp \
-    bases/ClickableGroupBox.cpp \
     bases/ClickableLabel.cpp \
     bases/ClickableWidget.cpp \
     bases/FormDialogBase.cpp \
@@ -47,10 +46,10 @@ SOURCES += main.cpp\
     hw/PortInfo.cpp \
     GlobalSettings.cpp \
     GlobalSettingsDialog.cpp \
-    MyMessageBox.cpp
+    MyMessageBox.cpp \
+    ChannelWidget.cpp
 
 HEADERS  += MainWindow.h \
-    bases/ClickableGroupBox.h \
     bases/ClickableLabel.h \
     bases/ClickableWidget.h \
     bases/FormDialogBase.h \
@@ -84,7 +83,8 @@ HEADERS  += MainWindow.h \
     hw/PortInfo.h \
     GlobalSettings.h \
     GlobalSettingsDialog.h \
-    MyMessageBox.h
+    MyMessageBox.h \
+    ChannelWidget.h
 
 CONFIG += mobility
 CONFIG += c++11

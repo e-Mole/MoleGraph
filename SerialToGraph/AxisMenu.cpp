@@ -4,13 +4,13 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Measurement.h>
+#include <MessageBox.h>
 #include <Plot.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
 #include <QPalette>
 #include <QMap>
-#include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QString>
@@ -97,13 +97,12 @@ void AxisMenu::removeButtonPressed()
     {
         if (axis == channel->GetAxis())
         {
-            if (1 == //standardButton1 pressed (Cancel)
-                QMessageBox::question(
+            if (MyMessageBox::No ==
+                MyMessageBox::question(
                     this,
-                    m_context.m_applicationName,
                     QString(tr("All channels assigned to the axis '%1' will be moved to an axis '%2'.")).
                         arg(axis->GetTitle()).arg(firstVertical->GetTitle()),
-                    tr("Remove anyway"), tr("Cancel")
+                    tr("Remove anyway")
                 )
             )
             {

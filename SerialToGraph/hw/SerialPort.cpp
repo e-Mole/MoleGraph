@@ -2,7 +2,6 @@
 #include <GlobalSettings.h>
 #include <hw/PortInfo.h>
 #include <QList>
-#include <QMessageBox>
 #include <QThread>
 #include <QString>
 #include <QTimer>

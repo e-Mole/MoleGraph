@@ -4,6 +4,7 @@
 #include <Channel.h>
 #include <ChannelWithTime.h>
 #include <Context.h>
+#include <MessageBox.h>
 #include <Plot.h>
 #include <QByteArray>
 #include <QColor>
@@ -13,7 +14,6 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <MainWindow.h>
-#include <QMessageBox>
 #include <QScrollBar>
 #include <QString>
 #include <QTimer>
@@ -87,9 +87,8 @@ void Measurement::portConnectivityChanged(bool connected)
     if (!connected && m_state == Running)
     {
         Stop();
-        QMessageBox::warning(
+        MyMessageBox::warning(
             &m_widget,
-            m_context.m_applicationName,
             QString(
                 tr("Measurement '%1' has been terminated because of a connectivity issue.")
             ).arg(m_name)
@@ -239,13 +238,11 @@ bool Measurement::_CheckOtherMeasurementsForRun()
         if (Measurement::Running != m->GetState())
             continue;
 
-        if (0 ==
-            QMessageBox::question(
+        if (MyMessageBox::Yes ==
+            MyMessageBox::question(
                 &m_widget,
-                m_context.m_applicationName,
                 QString(tr("The measurement '%1' is alread in progress. Terminate it?")).arg(m->GetName()),
-                tr("Terminate"),
-                tr("Cancel")
+                tr("Terminate")
             )
         )
            m->Stop();
@@ -332,9 +329,8 @@ void Measurement::_DrawRestData()
     m_plot->SetDisabled(false);
 
     if (m_anySampleMissed)
-        QMessageBox::warning(
+        MyMessageBox::warning(
             m_context.m_mainWindow.centralWidget(),
-            m_context.m_applicationName,
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
         );
 }

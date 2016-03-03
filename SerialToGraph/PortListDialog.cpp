@@ -6,7 +6,6 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QProgressBar>
 #include <QRadioButton>

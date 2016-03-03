@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     FileDialog.cpp \
     hw/PortInfo.cpp \
     GlobalSettings.cpp \
-    GlobalSettingsDialog.cpp
+    GlobalSettingsDialog.cpp \
+    MyMessageBox.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableGroupBox.h \
@@ -82,7 +83,8 @@ HEADERS  += MainWindow.h \
     FileDialog.h \
     hw/PortInfo.h \
     GlobalSettings.h \
-    GlobalSettingsDialog.h
+    GlobalSettingsDialog.h \
+    MyMessageBox.h
 
 CONFIG += mobility
 CONFIG += c++11

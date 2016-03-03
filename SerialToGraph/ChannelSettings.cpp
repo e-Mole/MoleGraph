@@ -7,13 +7,13 @@
 #include <ChannelWithTime.h>
 #include <Context.h>
 #include <Measurement.h>
+#include <MessageBox.h>
 #include <Plot.h>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMessageBox>
 #include <QSettings>
 #include <QString>
 
@@ -95,9 +95,8 @@ bool ChannelSettings::_AxisCheckForRealTimeMode()
         Axis *axis = ((Axis *)m_axisComboBox->currentData().toLongLong());
         if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channel))
         {
-            QMessageBox::critical(
+            MyMessageBox::critical(
                 this,
-                m_context.m_applicationName,
                 tr("Time format channel must be placed on a separate axis. Please, choose one.")
             );
             return false;

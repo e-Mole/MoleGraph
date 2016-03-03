@@ -1,5 +1,6 @@
 #include "FileDialog.h"
 #include <bases/FormDialogBase.h>
+#include <MessageBox.h>
 #include <QCommonStyle>
 #include <QDir>
 #include <QFileDialog>
@@ -10,7 +11,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
-#include <QMessageBox>
 #include <QModelIndex>
 #include <QPushButton>
 #include <QScroller>
@@ -119,25 +119,17 @@ void FileDialog::fileSelected()
         if (file.isDir())
         {
 
-            QMessageBox::critical(this, "", tr("Directory alredy contains subdirectory with the same name."));
+            MyMessageBox::critical(this, tr("Directory alredy contains subdirectory with the same name."));
             return;
         }
 
-        QMessageBox question(
-           QMessageBox::Question,
-            "",
-            tr("Directory already contains file with the same name. Rewrite it?"),
-            QMessageBox::Yes | QMessageBox::No,
-            this
-        );
-
-        question.setDefaultButton(QMessageBox::No);
-        question.setEscapeButton(QMessageBox::No);
-        question.setButtonText(QMessageBox::Yes, tr("Rewrite"));
-        question.setButtonText(QMessageBox::No, tr("Cancel"));
-
-
-        if (QMessageBox::No == question.exec())
+        if (MyMessageBox::StandardButton::No ==
+            MyMessageBox::question(
+                this,
+                tr("Directory already contains file with the same name. Rewrite it?"),
+                tr("Rewrite")
+            )
+        )
             return;
     }
     accept();

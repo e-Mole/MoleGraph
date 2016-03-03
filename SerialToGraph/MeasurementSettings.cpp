@@ -1,11 +1,11 @@
 #include "MeasurementSettings.h"
 #include <Context.h>
 #include <Measurement.h>
+#include <MyMessageBox.h>
 #include <QComboBox>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMessageBox>
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
@@ -58,7 +58,7 @@ bool MeasurementSettings::BeforeAccept()
     m_measurement->m_sampleUnits = (Measurement::SampleUnits)m_sampleUnits->currentIndex();
     if (m_period->text().toInt() <= 0)
     {
-        QMessageBox::critical(this, m_context.m_applicationName, tr("Period must be a positive number.") );
+        MyMessageBox::critical(this, tr("Period must be a positive number.") );
         return false;
     }
 

@@ -7,10 +7,10 @@
 #include <hw/Bluetooth.h>
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
+#include <MessageBox.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QSettings>
 #include <QQueue>
 #include <QTimer>
@@ -150,9 +150,8 @@ void HwSink::PortIssueSolver()
     if (!m_knownIssue)
     {
         WorkOffline();
-        QMessageBox::warning(
+        MyMessageBox::warning(
             parentWidget,
-            QFileInfo(QCoreApplication::applicationFilePath()).fileName(),
             tr("You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.")
         );
     }
@@ -213,9 +212,8 @@ void HwSink::portOpeningFinished()
     }
     else
     {
-        QMessageBox::warning(
+        MyMessageBox::warning(
             (QWidget*)parent(),
-            "",
             tr("Selected port is byssy. It is probably oppened by another process.")
         );
 
@@ -243,9 +241,8 @@ void HwSink::readyRead()
     qDebug() << array;
     if ((array.toStdString() != PROTOCOL_ID))
     {
-        QMessageBox::warning(
+        MyMessageBox::warning(
             (QWidget*)parent(),
-            "",
             tr("Selected port doesn't responding as expected. Please, check port read/write permitions.")
         );
 

@@ -4,12 +4,12 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementSettings.h>
+#include <MessageBox.h>
 #include <QFont>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLayoutItem>
 #include <QMap>
-#include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QRadioButton>
@@ -119,13 +119,11 @@ void MeasurementMenu::removeButtonPressed()
 
     if (m->GetState() == Measurement::Running)
     {
-        if (1 ==
-            QMessageBox::question(
+        if (MyMessageBox::No ==
+            MyMessageBox::question(
                 this,
-                m_context.m_applicationName,
                 QString(tr("The measurement '%1' is in progress. Really remove it?")).arg(m->GetName()),
-                tr("Remove"),
-                tr("Cancel")
+                tr("Remove")
             )
         )
         {
@@ -135,13 +133,11 @@ void MeasurementMenu::removeButtonPressed()
     }
     else if (m->GetState() == Measurement::Finished)
     {
-        if (1 ==
-            QMessageBox::question(
+        if (MyMessageBox::No ==
+            MyMessageBox::question(
                 this,
-                m_context.m_applicationName,
                 QString(tr("The measurement '%1' alread contains data. Really remove it?")).arg(m->GetName()),
-                tr("Remove"),
-                tr("Cancel")
+                tr("Remove")
             )
         )
         {

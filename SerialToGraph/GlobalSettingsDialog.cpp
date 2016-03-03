@@ -5,12 +5,12 @@
 #include <hw/HwSink.h>
 #include <MainWindow.h>
 #include <Measurement.h>
+#include <MessageBox.h>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
 #include <QLocale>
 #include <QFormLayout>
-#include <QMessageBox>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
     bases::FormDialogBase(parent, tr("Settings")),
@@ -61,7 +61,7 @@ bool GlobalSettingsDialog::BeforeAccept()
     if (m_settings.GetLanguage() != m_languages->currentData())
     {
         m_settings.SetLanguage(m_languages->currentData().toString());
-        QMessageBox::information(this, "", tr("The language change will take effect after a restart of the application."));
+        MyMessageBox::information(this, tr("The language change will take effect after a restart of the application."));
     }
 
     if (m_settings.GetUnitBrackets() != m_brackets->currentText())
@@ -75,10 +75,10 @@ bool GlobalSettingsDialog::BeforeAccept()
     if (m_settings.GetUseBluetooth() != m_useBluetooth->isChecked())
     {
         if (m_context.m_hwSink.GetState() != hw::HwSink::Connected ||
-            QMessageBox::Yes == QMessageBox::question(
+            MyMessageBox::Yes == MyMessageBox::question(
                 this,
-                "",
-                tr("Estbilished connection will be lost. Continue?")
+                tr("Estbilished connection will be lost. Continue?"),
+                tr("Continue")
             )
         )
         {

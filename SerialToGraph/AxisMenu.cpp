@@ -4,7 +4,7 @@
 #include <Context.h>
 #include <Channel.h>
 #include <Measurement.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <Plot.h>
 #include <QFormLayout>
 #include <QLabel>

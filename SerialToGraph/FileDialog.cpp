@@ -1,6 +1,6 @@
 #include "FileDialog.h"
 #include <bases/FormDialogBase.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <QCommonStyle>
 #include <QDir>
 #include <QFileDialog>

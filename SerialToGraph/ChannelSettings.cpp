@@ -7,7 +7,7 @@
 #include <ChannelWithTime.h>
 #include <Context.h>
 #include <Measurement.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <Plot.h>
 #include <QComboBox>
 #include <QCheckBox>

@@ -267,7 +267,7 @@ void MainWindow::OpenNew()
 
 void MainWindow::keyReleaseEvent(QKeyEvent * event)
 {
-    if (event->key() == Qt::Key_Backspace) //used on android
+    if (event->key() == Qt::Key_Back) //used on android
     {
         if (QMessageBox::Yes == QMessageBox::question(this, "", "Realy quit?"))
         {

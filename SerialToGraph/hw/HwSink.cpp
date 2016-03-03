@@ -7,7 +7,7 @@
 #include <hw/Bluetooth.h>
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFileInfo>

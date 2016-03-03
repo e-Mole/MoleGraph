@@ -4,7 +4,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementSettings.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <QFont>
 #include <QFormLayout>
 #include <QLabel>

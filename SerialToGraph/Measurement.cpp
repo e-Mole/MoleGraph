@@ -4,7 +4,7 @@
 #include <Channel.h>
 #include <ChannelWithTime.h>
 #include <Context.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <Plot.h>
 #include <QByteArray>
 #include <QColor>

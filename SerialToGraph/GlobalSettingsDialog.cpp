@@ -5,7 +5,7 @@
 #include <hw/HwSink.h>
 #include <MainWindow.h>
 #include <Measurement.h>
-#include <MessageBox.h>
+#include <MyMessageBox.h>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>

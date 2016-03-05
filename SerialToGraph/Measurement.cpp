@@ -385,10 +385,11 @@ void Measurement::ReplaceDisplays(bool grid)
         m_displayLayout->removeWidget(channel->GetWidget());
     }
 
+    unsigned widgetHeight = m_widget.height() + m_displayLayout->spacing()*2; //have to compense spacing added to last diplay
     unsigned channelMinHeight= m_channels[0]->GetMinimumSize().height();
     unsigned verticalMax = grid ?
         VERTIACAL_MAX :
-        (unsigned)((double)m_widget.height() / (double)channelMinHeight);
+        (unsigned)((double)widgetHeight / (double)(channelMinHeight + m_displayLayout->spacing()));
 
     //when application starts m_widget.height() == 0.
     //There must not be 0 because of zero dividing;
@@ -571,12 +572,12 @@ void Measurement::_InitializeAxesAndChanels()
             ChannelWithTime::Sec,
             ChannelWithTime::hh_mm_ss
         );
+    connect(m_sampleChannel, SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
     m_channels.push_back(m_sampleChannel);
     m_plot->SetHorizontalChannel(m_sampleChannel);
 
     for (unsigned i = 1; i <= CHANNEL_COUNT; i++)
         _AddYChannel(_GetColorByOrder(i), yAxis);
-
 
     foreach (Axis *axis, m_axes)
         axis->UpdateGraphAxisName();
@@ -617,6 +618,9 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
             ""
         )
     );
+
+    connect(m_channels.last(), SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
+
     order++;
 }
 

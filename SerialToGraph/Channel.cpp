@@ -18,58 +18,6 @@
 #include <QString>
 #include <limits>
 
-Channel::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
-    QLabel(text, parent)
-{
-    setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
-    SetColor(foreColor);
-
-    if (haveBackColor)
-        setStyleSheet("QLabel { background-color : white;}");
-    else
-        setStyleSheet("QLabel { background-color : #e0e0e0;}");
-
-    setMargin(3);
-
-    setMinimumSize(GetMinimumSize());
-}
-
-QSize Channel::ValueLabel::GetLongestTextSize()
-{
-    return GetSize("-0.000e-00\n");
-}
-
-QSize Channel::ValueLabel::GetSize(QString const &text)
-{
-    QFontMetrics metrics(this->font());
-    return  metrics.size(0, text);
-}
-
-void Channel::ValueLabel::resizeEvent(QResizeEvent * event)
-{
-    Q_UNUSED(event);
-    QFont font = this->font();
-
-    QSize size = GetLongestTextSize();
-    qreal factor = qMin(
-                (qreal)width() / ((qreal)size.width()*1.1),
-                (qreal)height() / ((qreal)size.height()*1.1)
-    );
-
-    font.setPointSizeF(font.pointSizeF() * factor);
-    setFont(font);
-}
-
-void Channel::ValueLabel::SetColor(const QColor &color)
-{
-    QPalette palette = this->palette();
-    palette.setColor(foregroundRole(), color);
-    setPalette(palette);
-}
-
-QSize Channel::ValueLabel::GetMinimumSize()
-{  return QSize(80, 40); }
-
 Channel::Channel(Measurement *measurement,
     Context const & context,
     Axis * axis,
@@ -85,9 +33,9 @@ Channel::Channel(Measurement *measurement,
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
-    m_widget(new ChannelWidget(name, measurement->GetWidget())),
     m_name(name),
     m_hwIndex(hwIndex),
+    m_widget(new ChannelWidget(name, IsHwChannel(), color, measurement->GetWidget())),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
@@ -95,18 +43,11 @@ Channel::Channel(Measurement *measurement,
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint),
-
-    m_valueLabel(new ValueLabel("", color, IsHwChannel(), m_widget)),
     m_units(units)
 {
     AssignToAxis(axis);
 
-    QHBoxLayout *layout = new QHBoxLayout(m_widget);
-    layout->setMargin(4);
-    layout->addWidget(m_valueLabel);
-
     _DisplayNAValue();
-    _SetMinimumSize();
     _UpdateTitle();
 
     if (m_axis->IsHorizontal())
@@ -115,13 +56,7 @@ Channel::Channel(Measurement *measurement,
     changeChannelVisibility(visible, false);
 
     connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
-
-    /*m_widget->setStyleSheet(
-        QString("QGroupBox::title { color: rgb(%1, %2, %3)}").
-            arg(measurement->GetColor().red()).
-            arg(measurement->GetColor().green()).
-            arg(measurement->GetColor().blue())
-    );*/
+    connect(m_widget, SIGNAL(sizeChanged()), this, SIGNAL(widgetSizeChanged()));
 }
 
 Channel::~Channel()
@@ -161,27 +96,11 @@ bool Channel::IsOnHorizontalAxis()
 { return m_axis->IsHorizontal(); }
 
 
-void Channel::_SetMinimumSize()
-{
-    //setMinimumWidth(GetMinimumSize().width());
-     m_widget->setMinimumSize(GetMinimumSize());
-}
-
-void Channel::_ShowLastValueWithUnits()
-{
-    QString textWithSpace = m_lastValueText + " " + m_units;
-    unsigned widthMax = m_valueLabel->GetLongestTextSize().width();
-    unsigned widthSpace = m_valueLabel->GetSize(textWithSpace).width();
-    m_valueLabel->setText(
-        (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_units);
-    _SetMinimumSize();
-}
-
 void Channel::_DisplayNAValue()
 {
     //m_lastValueText = "-0.000e-00<br/>mA";
     m_lastValueText = tr("n/a");
-    _ShowLastValueWithUnits();
+    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
 }
 
 void Channel::_UpdateTitle()
@@ -227,7 +146,7 @@ void Channel::displayValueOnIndex(int index)
     }
 
     _FillLastValueText(index);
-    _ShowLastValueWithUnits();
+    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
 
     if (!m_axis->IsHorizontal())
     {
@@ -295,7 +214,7 @@ void Channel::setVisible(bool visible)
 void Channel::SetColor(QColor &color)
 {
     m_color = color;
-    m_valueLabel->SetColor(color);
+    m_widget->SetColor(color);
     m_measurement->GetPlot()->SetGraphColor(m_graph, color);
     m_measurement->GetPlot()->SetGraphPointColor(m_graphPoint, color);
 }
@@ -332,12 +251,11 @@ void Channel::_SetShapeIndex(unsigned index)
 void Channel::_SetUnits(QString const &units)
 {
     m_units = units;
-    _ShowLastValueWithUnits();
+    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
     m_axis->UpdateGraphAxisName();
 }
 
 QSize Channel::GetMinimumSize()
 {
-    return m_widget->sizeHint() - m_valueLabel->size() + m_valueLabel->GetMinimumSize();
-
+    return m_widget->GetMinimumSize();
 }

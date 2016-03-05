@@ -27,22 +27,8 @@ class Channel : public QObject
     Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
 
 protected:
-    class ValueLabel : public QLabel
-    {
-        virtual void resizeEvent(QResizeEvent * event);
-    public:
-        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent);
-        void SetMimimumFontSize();
-        void SetColor(const QColor &color);
-        QSize GetSize(QString const &text);
-        QSize GetLongestTextSize();
 
-        static QSize GetMinimumSize();
-    };
-
-    void _SetMinimumSize();
     void _DisplayNAValue();
-    void _ShowLastValueWithUnits();
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
@@ -53,9 +39,9 @@ protected:
 
     Measurement * m_measurement;
     Context const & m_context;
-    ChannelWidget *m_widget;
     QString m_name;
     int m_hwIndex;
+    ChannelWidget *m_widget;
     QVector<double> m_values;
     QColor m_color;
     double m_channelMinValue;
@@ -65,7 +51,6 @@ protected:
     QString m_lastValueText;
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
-    ValueLabel *m_valueLabel;
     QString m_units;
 public:
     Channel(
@@ -147,6 +132,7 @@ public:
 signals:
     void stateChanged();
     void wasSetToHorizontal();
+    void widgetSizeChanged();
 public slots:
     void changeChannelVisibility(bool visible, bool signal);
     void displayValueOnIndex(int index);

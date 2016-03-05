@@ -1,5 +1,6 @@
 #include "ChannelWithTime.h"
 #include <Axis.h>
+#include <ChannelWidget.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QDateTime>
@@ -94,7 +95,7 @@ void ChannelWithTime::_UpdateAxisAndValues()
             m_channelMaxValue = value;
     }
 
-    _ShowLastValueWithUnits();
+    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
     m_axis->UpdateGraphAxisName();
     m_measurement->GetPlot()->RefillGraphs();
     m_axis->UpdateGraphAxisStyle();

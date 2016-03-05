@@ -9,7 +9,7 @@
 class GlobalSettings;
 class QBluetoothSocket;
 class QBluetoothServiceDiscoveryAgent;
-
+class QTimer;
 namespace hw
 {
 class PortInfo;
@@ -36,11 +36,13 @@ public:
     virtual void Close();
     virtual bool OpenPort(QString id);
     bool IsActive();
+    QTimer *m_timeout;
 
 signals:
     void deviceFound(hw::PortInfo const  &item);
 private slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
+    void connected();
 };
 
 } //namespace hw

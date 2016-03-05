@@ -197,7 +197,6 @@ void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
-
         _ChangeState(Verification);
 
         //I have to check if it is device with supported protocol

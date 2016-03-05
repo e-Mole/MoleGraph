@@ -16,8 +16,13 @@ Bluetooth::Bluetooth(GlobalSettings &settings, QObject *parent) :
     PortBase(parent),
     m_settings(settings),
     m_socket(NULL),
-    m_discoveryAgent( new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this))
+    m_discoveryAgent(
+        new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this)),
+    m_timeout(new QTimer(this))
 {
+    m_timeout->setSingleShot(true);
+    connect(m_timeout, SIGNAL(timeout()), this, SIGNAL(connected()));
+
     connect(
         m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
         this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
@@ -46,8 +51,8 @@ bool Bluetooth::IsActive()
 
 void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
 {
-    if (info.socketProtocol() != QBluetoothServiceInfo::RfcommProtocol)
-        return; //only rfcomm can be used as serial port
+    //if (info.socketProtocol() != QBluetoothServiceInfo::RfcommProtocol)
+    //    return; //only rfcomm can be used as serial port
 
     PortInfo item(
         PortInfo::pt_bluetooth,
@@ -63,27 +68,26 @@ void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
 bool Bluetooth::OpenPort(QString id)
 {
     m_socket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
-    m_socket->connectToService(m_serviceInfos[id]);
     connect(m_socket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
+    connect(m_socket, SIGNAL(connected()), this, SLOT(connected()));
+    m_socket->connectToService(m_serviceInfos[id]);
+    m_timeout->start(5000);
+    return true;
+}
 
-    if (m_socket->isOpen())
-    {
-        m_discoveryAgent->stop();
-        qDebug() << "bluetooth " << id << "has been opened";
+void Bluetooth::connected()
+{
+    m_timeout->stop(); //really connected
 
-        QTimer *timer = new QTimer(this);
-        timer->setSingleShot(true);
-        connect(timer, SIGNAL(timeout()), this, SIGNAL(portOpeningFinished()));
+    if (!m_socket->isOpen()) //timeout
+        portOpeningFinished();
 
-        //there must be some while to be connection estabilished
-        //when I dont wait 1 second protocol_id message is not delivered
-        timer->start(1500);
-        return true;
-    }
-
-    qDebug() << "bluetooth " << id << "is not opened";
-    portOpeningFinished();
-    return false;
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SIGNAL(portOpeningFinished()));
+    //there must be some while to be connection estabilished
+    //when I dont wait 1 second protocol_id message is not delivered
+    timer->start(1500);
 }
 
 bool Bluetooth::IsOpen()

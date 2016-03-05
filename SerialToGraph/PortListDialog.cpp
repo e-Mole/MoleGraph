@@ -13,8 +13,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-
-
 PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings) :
     bases::PlatformDialog(parent, tr("Device connecting")),
     m_hwSink(hwSink),
@@ -166,7 +164,9 @@ void PortListDialog::_CleanPortList()
         delete widget;
     }
 
+#if !defined(Q_OS_ANDROID)
     adjustSize();
+#endif
 }
 
 void PortListDialog::closeEvent(QCloseEvent *event)

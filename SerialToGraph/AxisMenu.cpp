@@ -123,7 +123,9 @@ void AxisMenu::removeButtonPressed()
     firstVertical->UpdateVisiblility();
 
     ReinitGrid();
+#if !defined(Q_OS_ANDROID)
     adjustSize();
+#endif
     CloseIfPopup();
 }
 

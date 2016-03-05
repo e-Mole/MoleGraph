@@ -148,7 +148,9 @@ void MeasurementMenu::removeButtonPressed()
     m_context.m_mainWindow.RemoveMeasurement(m, true);
 
     ReinitGrid();
+#if !defined(Q_OS_ANDROID)
     adjustSize();
+#endif
     CloseIfPopup();
 }
 

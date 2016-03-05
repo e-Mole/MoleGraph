@@ -14,6 +14,7 @@
 #include <QHBoxLayout>
 #include <QCoreApplication>
 #include <QDataStream>
+#include <QDebug>
 #include <QDialog>
 #include <QFile>
 #include <QFileInfo>
@@ -29,6 +30,12 @@
 #include <QWidget>
 
 #define ATOG_FILE_EXTENSION "atog"
+
+#if defined(Q_OS_ANDROID)
+#   define FONT_DPI_FACTOR 6
+#else
+#   define FONT_DPI_FACTOR 8
+#endif
 
 ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
@@ -121,12 +128,14 @@ void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 
 void ButtonLine::fileMenuButtonPressed()
 {
-#if defined(Q_OS_ANDROID)
+
     QFont font = m_fileMenu->font();
-    font.setPointSizeF(font.pointSizeF()*1.2);
+    font.setPixelSize(physicalDpiY() / FONT_DPI_FACTOR);
     m_fileMenu->setFont(font);
-    m_fileMenu->setStyleSheet(
-        "QMenu::item { border: 8px solid transparent; }");
+
+#if defined(Q_OS_ANDROID)
+    //m_fileMenu->setStyleSheet(
+    //    "QMenu::item { border: 8px solid transparent; }");
     m_fileMenu->showMaximized();
 #endif
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));

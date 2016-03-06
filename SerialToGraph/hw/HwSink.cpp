@@ -300,6 +300,7 @@ void HwSink::StartSearching()
 
     //FIXME: i solved it just by timer because I dont want to solve partially recieved data
     //connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
     _ChangeState(Offline);
 #endif
 

@@ -90,7 +90,6 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
 
     f.setPixelSize((unsigned)((qreal)f.pixelSize() * factor));
     setFont(f);
-    qDebug() << font().pixelSize();
 }
 
 void ChannelWidget::ValueLabel::SetColor(const QColor &color)

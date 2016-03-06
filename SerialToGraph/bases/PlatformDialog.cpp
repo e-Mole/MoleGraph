@@ -7,13 +7,11 @@ namespace bases
 {
 
 PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
-    QDialog(parent
-#if not defined(Q_OS_ANDROID)
-        , Qt::Tool
-#endif
-    ),
+    QDialog(parent),
     m_viewport(NULL)
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
 #if defined(Q_OS_ANDROID)
     Q_UNUSED(title);
     QGridLayout *baseLayout = new QGridLayout(this);
@@ -26,6 +24,7 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
     scrollArea->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     QScroller::grabGesture(scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 #else
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle(title);
 #endif
 }

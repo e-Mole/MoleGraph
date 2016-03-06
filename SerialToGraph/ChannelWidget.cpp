@@ -54,8 +54,9 @@ ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreCol
 
     setMargin(1);
 
+    //setFontPointF doesn't work properly on android
     QFont f = font();
-    f.setPointSizeF(f.pointSizeF() * 1.4);
+    f.setPixelSize((float)physicalDpiY() / 8);
     setFont(f);
 
     QSize minSize = GetLongestTextSize();
@@ -67,7 +68,6 @@ ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreCol
 QSize ChannelWidget::ValueLabel::GetLongestTextSize()
 {
     QSize size = GetSize("-0.000e-00\n0");
-    //qDebug() << size.width() <<","<< size.height();
     return size;
 }
 
@@ -84,12 +84,13 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
 
     QSize size = GetLongestTextSize();
     qreal factor = qMin(
-                (qreal)(width() - PADDING * 2 - BORDER * 2) / ((qreal)size.width() * 1.2),
-                (qreal)(height() - PADDING * 2 - BORDER * 2)  / ((qreal)size.height() *1.2)
+                (qreal)(width() - PADDING * 2 - BORDER * 2) / ((qreal)size.width() * 1.05),
+                (qreal)(height() - PADDING * 2 - BORDER * 2)  / ((qreal)size.height() *1.05)
     );
 
-    f.setPointSizeF(f.pointSizeF() * factor);
+    f.setPixelSize((unsigned)((qreal)f.pixelSize() * factor));
     setFont(f);
+    qDebug() << font().pixelSize();
 }
 
 void ChannelWidget::ValueLabel::SetColor(const QColor &color)

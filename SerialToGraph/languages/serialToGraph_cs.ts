@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.0" language="cs_CZ">
 <context>
     <name>AddDirDialog</name>
     <message>
@@ -18,31 +18,31 @@
     <name>AxesDialog</name>
     <message>
         <source>Axes</source>
-        <translation type="vanished">Osy</translation>
+        <translation>Osy</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="vanished">Editovat</translation>
+        <translation>Editovat</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="vanished">Odstranit</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <source>Add a New Axis</source>
-        <translation type="vanished">Přidat novou osu</translation>
+        <translation>Přidat novou osu</translation>
     </message>
     <message>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation type="vanished">Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
+        <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>Remove anyway</source>
-        <translation type="vanished">I tak odstranit</translation>
+        <translation>I tak odstranit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
 </context>
 <context>
@@ -75,47 +75,47 @@
     <name>AxisEditDialog</name>
     <message>
         <source>Edit Axis...</source>
-        <translation type="vanished">Editovat Osy...</translation>
+        <translation>Editovat Osy...</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="vanished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Horizontal</source>
-        <translation type="vanished">Horizontální</translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="vanished">Vertikální</translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="vanished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="vanished">Barva</translation>
+        <translation>Barva</translation>
     </message>
     <message>
         <source>Left</source>
-        <translation type="vanished">Levá</translation>
+        <translation>Levá</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="vanished">Pravá</translation>
+        <translation>Pravá</translation>
     </message>
     <message>
         <source>Side</source>
-        <translation type="vanished">Strana</translation>
+        <translation>Strana</translation>
     </message>
     <message>
         <source>Channels and Units</source>
-        <translation type="vanished">Kanály a jednotky</translation>
+        <translation>Kanály a jednotky</translation>
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Zobrazit v grafu</translation>
+        <translation>Zobrazit v grafu</translation>
     </message>
 </context>
 <context>
@@ -152,7 +152,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
 </context>
 <context>
@@ -218,26 +218,26 @@
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Zobrazit v grafu</translation>
+        <translation>Zobrazit v grafu</translation>
     </message>
 </context>
 <context>
     <name>ButtonLine</name>
     <message>
         <source>Menu</source>
-        <translation type="vanished">Nabídka</translation>
+        <translation>Nabídka</translation>
     </message>
     <message>
         <source>Frequency</source>
-        <translation type="vanished">Frekvence</translation>
+        <translation>Frekvence</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="vanished">Čas</translation>
+        <translation>Čas</translation>
     </message>
     <message>
         <source>Hz</source>
-        <translation type="vanished">Hz</translation>
+        <translation>Hz</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="86"/>
@@ -255,83 +255,83 @@
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="187"/>
+        <location filename="../ButtonLine.cpp" line="188"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="191"/>
+        <location filename="../ButtonLine.cpp" line="192"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="193"/>
+        <location filename="../ButtonLine.cpp" line="194"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="199"/>
+        <location filename="../ButtonLine.cpp" line="200"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="200"/>
+        <location filename="../ButtonLine.cpp" line="201"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="202"/>
+        <location filename="../ButtonLine.cpp" line="203"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="203"/>
+        <location filename="../ButtonLine.cpp" line="204"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="204"/>
+        <location filename="../ButtonLine.cpp" line="205"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="206"/>
+        <location filename="../ButtonLine.cpp" line="207"/>
         <source>Settings...</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="259"/>
+        <location filename="../ButtonLine.cpp" line="260"/>
         <source>Save as</source>
         <translation>Uložit jako</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="vanished">Otevřít</translation>
+        <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="197"/>
+        <location filename="../ButtonLine.cpp" line="198"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
     <message>
         <source>Save As</source>
-        <translation type="vanished">Uložit jako</translation>
+        <translation>Uložit jako</translation>
     </message>
     <message>
         <source>Export to PNG</source>
-        <translation type="vanished">Exportovat do PNG</translation>
+        <translation>Exportovat do PNG</translation>
     </message>
     <message>
         <source>Export Current Measurement to CSV</source>
-        <translation type="vanished">Exportovat aktuální měření do CSV</translation>
+        <translation>Exportovat aktuální měření do CSV</translation>
     </message>
     <message>
         <source>Export All Measurements to CSV</source>
-        <translation type="vanished">Exportovat všechna měření do CSV</translation>
+        <translation>Exportovat všechna měření do CSV</translation>
     </message>
     <message>
         <source>Export to CSV</source>
-        <translation type="vanished">Exportovat do CSV</translation>
+        <translation>Exportovat do CSV</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="78"/>
@@ -355,27 +355,27 @@
     </message>
     <message>
         <source>Graph</source>
-        <translation type="vanished">Graf</translation>
+        <translation>Graf</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">Zobrazit vše</translation>
+        <translation>Zobrazit vše</translation>
     </message>
     <message>
         <source>Show None</source>
-        <translation type="vanished">Skrýt vše</translation>
+        <translation>Skrýt vše</translation>
     </message>
     <message>
         <source>s</source>
-        <translation type="vanished">s</translation>
+        <translation>s</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Připojeno</translation>
+        <translation>Připojeno</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Odpojeno</translation>
+        <translation>Odpojeno</translation>
     </message>
 </context>
 <context>
@@ -387,7 +387,7 @@
     </message>
     <message>
         <source>hidden</source>
-        <translation type="vanished">skrytý</translation>
+        <translation>skrytý</translation>
     </message>
 </context>
 <context>
@@ -432,7 +432,7 @@
     </message>
     <message>
         <source>Selected</source>
-        <translation type="vanished">Vybraný</translation>
+        <translation>Vybraný</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="37"/>
@@ -442,15 +442,15 @@
     </message>
     <message>
         <source>To right side</source>
-        <translation type="vanished">Na pravou stranu</translation>
+        <translation>Na pravou stranu</translation>
     </message>
     <message>
         <source>Store</source>
-        <translation type="vanished">Ulož</translation>
+        <translation>Ulož</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="236"/>
@@ -472,27 +472,27 @@
     </message>
     <message>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;.</source>
-        <translation type="vanished">Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
+        <translation>Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Don&apos;t show it again</source>
-        <translation type="vanished">Příště nezobrazuj</translation>
+        <translation>Příště nezobrazuj</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation>Vzorky</translation>
     </message>
     <message>
         <source>Time From Start</source>
-        <translation type="vanished">Doba od startu</translation>
+        <translation>Doba od startu</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Reálný čas</translation>
+        <translation>Reálný čas</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="61"/>
@@ -639,11 +639,11 @@
     <name>ChannelSideBar</name>
     <message>
         <source>sample</source>
-        <translation type="vanished">vzorek</translation>
+        <translation>vzorek</translation>
     </message>
     <message>
         <source>channel %1</source>
-        <translation type="vanished">kanál %1</translation>
+        <translation>kanál %1</translation>
     </message>
 </context>
 <context>
@@ -685,7 +685,7 @@
     </message>
     <message>
         <source>Sample</source>
-        <translation type="vanished">Vzorek</translation>
+        <translation>Vzorek</translation>
     </message>
     <message>
         <location filename="../ChannelWithTime.cpp" line="217"/>
@@ -702,18 +702,18 @@
     <name>ConnectivityLabel</name>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Připojeno</translation>
+        <translation>Připojeno</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Odpojeno</translation>
+        <translation>Odpojeno</translation>
     </message>
 </context>
 <context>
     <name>DisplayWidget</name>
     <message>
         <source>n/a</source>
-        <translation type="vanished">n/a</translation>
+        <translation>n/a</translation>
     </message>
 </context>
 <context>
@@ -755,25 +755,25 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
 </context>
 <context>
     <name>FormDialogBase</name>
     <message>
         <source>Store</source>
-        <translation type="vanished">Ulož</translation>
+        <translation>Ulož</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
 </context>
 <context>
     <name>FormDialogColor</name>
     <message>
         <source>Color</source>
-        <translation type="vanished">Barva</translation>
+        <translation>Barva</translation>
     </message>
 </context>
 <context>
@@ -822,34 +822,34 @@
     <name>Graph</name>
     <message>
         <source>samples</source>
-        <translation type="vanished">vzorky</translation>
+        <translation>vzorky</translation>
     </message>
     <message>
         <source>channel %1</source>
-        <translation type="vanished">kanál %1</translation>
+        <translation>kanál %1</translation>
     </message>
     <message>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
-        <translation type="vanished">Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
+        <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>Horizontal</source>
-        <translation type="vanished">Horizontální</translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="vanished">Vertikální</translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation>Vzorky</translation>
     </message>
     <message>
         <source>Channel %1</source>
-        <translation type="vanished">Kanál %1</translation>
+        <translation>Kanál %1</translation>
     </message>
 </context>
 <context>
@@ -876,7 +876,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="336"/>
@@ -895,7 +895,7 @@
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation>Vzorky</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="616"/>
@@ -939,7 +939,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation>Zruš</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="139"/>
@@ -951,7 +951,7 @@
     <name>MeasurementSettings</name>
     <message>
         <source>Edit measurement...</source>
-        <translation type="vanished">Editace měření...</translation>
+        <translation>Editace měření...</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="12"/>
@@ -1017,7 +1017,7 @@
     <name>Plot</name>
     <message>
         <source>Axis %1</source>
-        <translation type="vanished">Osa %1</translation>
+        <translation>Osa %1</translation>
     </message>
 </context>
 <context>
@@ -1028,15 +1028,15 @@
     </message>
     <message>
         <source>Please, select a port with a comatible device.</source>
-        <translation type="vanished">Vyberte port s kompatibilním zařízením.</translation>
+        <translation>Vyberte port s kompatibilním zařízením.</translation>
     </message>
     <message>
         <source>Scanning...</source>
-        <translation type="vanished">Skenování...</translation>
+        <translation>Skenování...</translation>
     </message>
     <message>
         <source>Openning...</source>
-        <translation type="vanished">Otevírání...</translation>
+        <translation>Otevírání...</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding properly. Please, check a device connection and the port read/write permitions.</source>
@@ -1044,7 +1044,6 @@
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="22"/>
-        <location filename="../PortListDialog.cpp" line="29"/>
         <source>Refresh</source>
         <translation>Obnovit</translation>
     </message>
@@ -1059,32 +1058,32 @@
         <translation>Vyberte kompatibilní port pro zařízení. </translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="56"/>
+        <location filename="../PortListDialog.cpp" line="55"/>
         <source>Work Offline</source>
         <translation>Pracovat odpojený</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding. Please, check a device connection and the port read/write permitions.</source>
-        <translation type="vanished">Vybraný port neodpovídá. Prosím, zkontrolujte spojení se zařízením a přístupová práva.</translation>
+        <translation>Vybraný port neodpovídá. Prosím, zkontrolujte spojení se zařízením a přístupová práva.</translation>
     </message>
     <message>
         <source>Skip</source>
-        <translation type="vanished">Přeskočit</translation>
+        <translation>Přeskočit</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
     <name>PortListWidget</name>
     <message>
         <source>preferred</source>
-        <translation type="vanished">preferovaný</translation>
+        <translation>preferovaný</translation>
     </message>
     <message>
         <source>the port doesn&apos;t respond properly. Please, check if the device is connected and the port read/write permitions.</source>
-        <translation type="vanished">Port neodpovídá podle očekávání. Zkontrolujte, prosím, připojení zařízení a nastavení oprávnění pro čtení a zápis.</translation>
+        <translation>Port neodpovídá podle očekávání. Zkontrolujte, prosím, připojení zařízení a nastavení oprávnění pro čtení a zápis.</translation>
     </message>
 </context>
 <context>
@@ -1100,7 +1099,7 @@
     </message>
     <message>
         <source>Last time used</source>
-        <translation type="vanished">Naposledy použitý</translation>
+        <translation>Naposledy použitý</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="48"/>
@@ -1109,7 +1108,7 @@
     </message>
     <message>
         <source>Doesn&apos;t Answer</source>
-        <translation type="vanished">Neodpovídá</translation>
+        <translation>Neodpovídá</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="46"/>
@@ -1131,7 +1130,7 @@
     <name>SerialPort</name>
     <message>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation type="vanished">Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
+        <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
     </message>
 </context>
 <context>
@@ -1178,27 +1177,27 @@
         <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte páva pro čtení a zápis.</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="351"/>
+        <location filename="../hw/HwSink.cpp" line="352"/>
         <source>Offline</source>
         <translation>Odpojeno</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="353"/>
+        <location filename="../hw/HwSink.cpp" line="354"/>
         <source>Scanning</source>
         <translation>Skenování</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="355"/>
+        <location filename="../hw/HwSink.cpp" line="356"/>
         <source>Opening</source>
         <translation>Otevírání</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="357"/>
+        <location filename="../hw/HwSink.cpp" line="358"/>
         <source>Verification</source>
         <translation>Verifikace</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="359"/>
+        <location filename="../hw/HwSink.cpp" line="360"/>
         <source>Connected</source>
         <translation>Připojeno</translation>
     </message>

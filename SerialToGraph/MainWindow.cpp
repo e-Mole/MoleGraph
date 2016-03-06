@@ -30,7 +30,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_hwSink(m_settings, this),
     m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL),
-    m_portListDialog(new PortListDialog(this, m_hwSink, m_settings))
+    m_portListDialog(NULL)
 {
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -79,6 +79,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         DeserializeMeasurements(fileNameToOpen, openWithoutValues);
     }
 
+    m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
     m_portListDialog->StartSearching();
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)

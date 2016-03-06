@@ -56,7 +56,10 @@ ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreCol
 
     //setFontPointF doesn't work properly on android
     QFont f = font();
-    f.setPixelSize((float)physicalDpiY() / 8);
+    unsigned fontSize = (float)physicalDpiY() / 8;
+
+    //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
+    f.setPixelSize(fontSize < 17 ? 17 : fontSize);
     setFont(f);
 
     QSize minSize = GetLongestTextSize();

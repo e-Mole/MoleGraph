@@ -128,7 +128,8 @@ void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
 
 void ButtonLine::fileMenuButtonPressed()
 {
-
+    //setFontPointF doesn't work properly on android
+    //as same as logicalDPI one one device qos phisical 254 and logical 108
     QFont font = m_fileMenu->font();
     font.setPixelSize(physicalDpiY() / FONT_DPI_FACTOR);
     m_fileMenu->setFont(font);

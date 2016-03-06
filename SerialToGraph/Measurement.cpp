@@ -4,6 +4,7 @@
 #include <Channel.h>
 #include <ChannelWithTime.h>
 #include <Context.h>
+#include <hw/HwSink.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <QByteArray>
@@ -19,8 +20,9 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <Serializer.h>
-#include <hw/HwSink.h>
 
+
+#include <sstream>
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 4
 #define TIMESTAMP_SIZE 4
@@ -803,6 +805,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
     unsigned valueCount;
     in >> valueCount;
     double value;
+
     for (unsigned i = 0; i < valueCount; ++i)
     {
         in >> value;
@@ -811,9 +814,10 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
         {
             qreal timeFromStart;
             in >> timeFromStart;
-            ((ChannelWithTime *)channel)->AddValue(value, timeFromStart);
+            if (m_saveLoadValues)
+                ((ChannelWithTime *)channel)->AddValue(value, timeFromStart);
         }
-        else
+        else if (m_saveLoadValues)
              channel->AddValue(value);
     }
 }
@@ -827,29 +831,27 @@ void Measurement::DeserializeColections(QDataStream &in)
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
-    if (m_saveLoadValues)
-    {
-        //samples
+    //samples
+    _DeserializeChannelData(in);
+
+    unsigned trackedHwChannelCount;
+    in >> trackedHwChannelCount;
+    for (unsigned i = 0; i < trackedHwChannelCount; ++i)
         _DeserializeChannelData(in);
 
-        unsigned trackedHwChannelCount;
-        in >> trackedHwChannelCount;
-        for (unsigned i = 0; i < trackedHwChannelCount; ++i)
-            _DeserializeChannelData(in);
-
-        for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
+    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
+    {
+        float xValue = m_plot->GetHorizontalChannel()->GetValue(i);
+        foreach (Channel *channel, m_channels)
         {
-            float xValue = m_plot->GetHorizontalChannel()->GetValue(i);
-            foreach (Channel *channel, m_channels)
-            {
-                if (channel->GetValueCount() > i)
-                    channel->UpdateGraph(xValue, channel->GetValue(i));
-            }
+            if (channel->GetValueCount() > i)
+                channel->UpdateGraph(xValue, channel->GetValue(i));
         }
-        if (m_sampleChannel->GetValueCount() != 0)
-            _ReadingValuesPostProcess();
     }
-    else
+    if (m_sampleChannel->GetValueCount() != 0)
+        _ReadingValuesPostProcess();
+
+    if (!m_saveLoadValues)
     {
         _SetState(Ready);
         m_anySampleMissed = false;

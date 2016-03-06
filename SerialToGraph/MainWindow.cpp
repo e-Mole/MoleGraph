@@ -96,6 +96,7 @@ void MainWindow::OpenSerialPort()
 {
     m_portListDialog->SetAutoconnect(false);
     m_portListDialog->exec();
+    m_portListDialog->SetAutoconnect(true);
 }
 
 MainWindow::~MainWindow()

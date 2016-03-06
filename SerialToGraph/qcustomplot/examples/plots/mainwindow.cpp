@@ -1,7 +1,7 @@
 /***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
-**  Copyright (C) 2011, 2012, 2013, 2014 Emanuel Eichhammer               **
+**  Copyright (C) 2011-2015 Emanuel Eichhammer                            **
 **                                                                        **
 **  This program is free software: you can redistribute it and/or modify  **
 **  it under the terms of the GNU General Public License as published by  **
@@ -19,8 +19,8 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 27.12.14                                             **
-**          Version: 1.3.0                                                **
+**             Date: 22.12.15                                             **
+**          Version: 1.3.2                                                **
 ****************************************************************************/
 
 /************************************************************************************************************
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setGeometry(400, 250, 542, 390);
   
-  setupDemo(19);
+  setupDemo(0);
   //setupPlayground(ui->customPlot);
   // 0:  setupQuadraticDemo(ui->customPlot);
   // 1:  setupSimpleDemo(ui->customPlot);
@@ -321,8 +321,7 @@ void MainWindow::setupLineStyleDemo(QCustomPlot *customPlot)
   customPlot->legend->setFont(QFont("Helvetica", 9));
   QPen pen;
   QStringList lineNames;
-  lineNames << "lsNone" << "lsLine" << "lsStepLeft" << "lsStepRight"
-               << "lsStepCenter" << "lsImpulse";
+  lineNames << "lsNone" << "lsLine" << "lsStepLeft" << "lsStepRight" << "lsStepCenter" << "lsImpulse";
   // add graphs with different line styles:
   for (int i=QCPGraph::lsNone; i<=QCPGraph::lsImpulse; ++i)
   {
@@ -993,7 +992,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   bracket->left->setCoords(-8, 1.1);
   bracket->right->setCoords(8, 1.1);
   bracket->setLength(13);
-
+  
   // add the text label at the top:
   QCPItemText *wavePacketText = new QCPItemText(customPlot);
   customPlot->addItem(wavePacketText);
@@ -1002,7 +1001,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   wavePacketText->setPositionAlignment(Qt::AlignBottom|Qt::AlignHCenter);
   wavePacketText->setText("Wavepacket");
   wavePacketText->setFont(QFont(font().family(), 10));
-
+  
   // add the phase tracer (red circle) which sticks to the graph data (and gets updated in bracketDataSlot by timer event):
   QCPItemTracer *phaseTracer = new QCPItemTracer(customPlot);
   customPlot->addItem(phaseTracer);
@@ -1014,7 +1013,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   phaseTracer->setPen(QPen(Qt::red));
   phaseTracer->setBrush(Qt::red);
   phaseTracer->setSize(7);
-
+  
   // add label for phase tracer:
   QCPItemText *phaseTracerText = new QCPItemText(customPlot);
   customPlot->addItem(phaseTracerText);
@@ -1025,7 +1024,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   phaseTracerText->setTextAlignment(Qt::AlignLeft);
   phaseTracerText->setFont(QFont(font().family(), 9));
   phaseTracerText->setPadding(QMargins(8, 0, 0, 0));
-
+  
   // add arrow pointing at phase tracer, coming from label:
   QCPItemCurve *phaseTracerArrow = new QCPItemCurve(customPlot);
   customPlot->addItem(phaseTracerArrow);
@@ -1038,7 +1037,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   phaseTracerArrow->endDir->setCoords(30, 30);
   phaseTracerArrow->setHead(QCPLineEnding::esSpikeArrow);
   phaseTracerArrow->setTail(QCPLineEnding(QCPLineEnding::esBar, (phaseTracerText->bottom->pixelPoint().y()-phaseTracerText->top->pixelPoint().y())*0.85));
-
+  
   // add the group velocity tracer (green circle):
   QCPItemTracer *groupTracer = new QCPItemTracer(customPlot);
   customPlot->addItem(groupTracer);
@@ -1089,8 +1088,8 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot)
   dispersionText->setRotation(40);
   dispersionText->setText("Dispersion with\nvp < vg");
   dispersionText->setFont(QFont(font().family(), 10));
-
-  // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+  
+  // setup a timer that repeatedly calls MainWindow::bracketDataSlot:
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(bracketDataSlot()));
   dataTimer.start(0); // Interval 0 means to refresh as fast as possible
 }

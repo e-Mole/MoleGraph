@@ -131,7 +131,9 @@ void ButtonLine::fileMenuButtonPressed()
     //setFontPointF doesn't work properly on android
     //as same as logicalDPI one one device qos phisical 254 and logical 108
     QFont font = m_fileMenu->font();
-    font.setPixelSize(physicalDpiY() / FONT_DPI_FACTOR);
+    unsigned fontSize = physicalDpiY() / FONT_DPI_FACTOR;
+    //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
+    font.setPixelSize(fontSize < 15 ? 15 : fontSize);
     m_fileMenu->setFont(font);
 
 #if defined(Q_OS_ANDROID)

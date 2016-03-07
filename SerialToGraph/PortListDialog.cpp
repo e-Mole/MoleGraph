@@ -19,8 +19,8 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     m_settings(settings),
     m_progress(new QProgressBar(this)),
     m_progressText(new QLabel(this)),
-    m_refresh(new QPushButton(tr("Refresh"), this)),
-    m_description(new QLabel(tr("Please, select a comatible device port."),this)),
+    m_refresh(new QPushButton(this)),
+    m_description(new QLabel(this)),
     m_portWidget(new QWidget(this)),
     m_portLayout(new QGridLayout(m_portWidget)),
     m_selectedRadioButton(NULL),
@@ -31,6 +31,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     setLayout(layout);
 
     //m_description->setHidden(true);
+    m_description->setText(tr("Please, select a comatible device port."));
     layout->addWidget(m_description);
     layout->addWidget(m_portWidget);
 
@@ -50,6 +51,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
     connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
     connect(m_refresh, SIGNAL(released()), this, SLOT(refresh()));
+    m_refresh->setText(tr("Refresh"));
     buttonLayout->addWidget(m_refresh);
 
     QPushButton *skip = new QPushButton(tr("Work Offline"), this);
@@ -68,6 +70,10 @@ void PortListDialog::StartSearching()
 
 void PortListDialog::workDisconnected()
 {
+    foreach (QRadioButton *rb, m_radioToInfo.keys())
+        if (rb->isChecked())
+            _UncheckRadioButton(rb);
+
     m_hwSink.WorkOffline();
 }
 
@@ -118,7 +124,7 @@ void PortListDialog::portRadioButtonReleased()
 void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State state)
 {
     m_progressText->setText(stateString);
-
+    m_progressText->repaint();
     switch (state)
     {
         case  hw::HwSink::Connected:
@@ -132,6 +138,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
             m_progress->setMaximum(1);
             m_progress->setValue(1);
             m_progress->setEnabled(true);
+            m_progress->repaint();
         }
         break;
         case hw::HwSink::Offline:

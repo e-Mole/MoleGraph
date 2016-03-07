@@ -169,7 +169,7 @@ void HwSink::ClosePort()
 
 void HwSink::OpenPort(PortInfo const &info)
 {
-    if (info.m_id == m_openedPortInfo.m_id)
+    if (m_port != NULL && m_port->IsOpen() && info.m_id == m_openedPortInfo.m_id)
         return; //already opened
 
     _ChangeState(Opening);
@@ -287,6 +287,8 @@ void HwSink::TerminateBluetooth()
 
 void HwSink::StartSearching()
 {
+    m_port = NULL;
+
 #if not defined(Q_OS_ANDROID)
     _ChangeState(Scanning);
     delete m_serialPort;

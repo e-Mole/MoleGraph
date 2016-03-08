@@ -2,7 +2,6 @@
 #include <Axis.h>
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
-#include <ConnectivityLabel.h>
 #include <Context.h>
 #include <Channel.h>
 #include <Export.h>
@@ -42,7 +41,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
     m_stopButton(NULL),
-    m_connectivityLabel(NULL),
+    m_connectivityButton(NULL),
     m_fileMenuButton(NULL),
     m_panelMenuButton(NULL),
     m_axisMenuButton(NULL),
@@ -106,8 +105,10 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     addWidget(space);
 
-    m_connectivityLabel = new ConnectivityLabel(m_context, "", this);
-    addWidget(m_connectivityLabel);
+
+    m_connectivityButton = new QPushButton(this);
+    connect(m_connectivityButton, SIGNAL(released()), &m_context.m_mainWindow, SLOT(openSerialPort()));
+    addWidget(m_connectivityButton);
 
     _InitializeMenu();
 }
@@ -292,10 +293,31 @@ void ButtonLine::exportAllCsv()
 {
     _ExportCSV(m_context.m_measurements);
 }
+
+void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
+{
+    switch (state)
+    {
+        case hw::HwSink::Offline:
+            m_connectivityButton->setStyleSheet(
+                "QPushButton { background-color : red; color : yellow; }");
+        break;
+        case hw::HwSink::Connected:
+            m_connectivityButton->setStyleSheet(
+                "QPushButton { background-color : green; color : white; }");
+        break;
+        default:
+            m_connectivityButton->setStyleSheet(
+                "QPushButton { background-color : yellow; color : black; }");
+    }
+    m_connectivityButton->setText(stateString);
+    repaint();
+}
+
 void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::State state)
 {
     m_connected = (state == hw::HwSink::Connected);
-    m_connectivityLabel->SetState(stateText, state);
+    _SetConnectivityState(stateText, state);
 
     UpdateRunButtonsState();
 }

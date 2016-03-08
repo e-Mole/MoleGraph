@@ -38,11 +38,12 @@ class ButtonLine : public QToolBar
     QString _GetFileNameToSave(const QString &extension);
     void _SaveFile(const QString &fileName, bool values);
     void _OpenFile(bool values);
+    void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
 
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
     QPushButton *m_stopButton;
-    ConnectivityLabel *m_connectivityLabel;
+    QPushButton *m_connectivityButton;
     QPushButton * m_fileMenuButton;
     QPushButton * m_panelMenuButton;
     QPushButton * m_axisMenuButton;

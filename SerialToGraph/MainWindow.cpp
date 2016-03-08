@@ -93,7 +93,7 @@ QString &MainWindow::GetCurrentFileName()
     return m_currentFileName;
 }
 
-void MainWindow::OpenSerialPort()
+void MainWindow::openSerialPort()
 {
     m_portListDialog->SetAutoconnect(false);
     m_portListDialog->exec();

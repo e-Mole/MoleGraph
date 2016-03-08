@@ -20,6 +20,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "unit_brackets";
     case Key_UseBluetooth:
         return "use_bluetooth";
+    case Key_ForcedOffline:
+        return "forced_offline";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -83,4 +85,13 @@ bool GlobalSettings::GetUseBluetooth()
 void GlobalSettings::SetUseBluetooth(bool use)
 {
     _Set(Key_UseBluetooth, use);
+}
+
+bool GlobalSettings::GetForcedOffline()
+{
+    return _Get(Key_ForcedOffline, false).toBool();
+}
+void GlobalSettings::SetForcedOffline(bool offline)
+{
+    _Set(Key_ForcedOffline, offline);
 }

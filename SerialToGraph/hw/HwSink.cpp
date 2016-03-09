@@ -213,7 +213,7 @@ void HwSink::portOpeningFinished()
     {
         MyMessageBox::warning(
             (QWidget*)parent(),
-            tr("Selected port is byssy. It is probably oppened by another process.")
+            tr("Selected port can not be opened. It is oppened by another process or device is disconnected.")
         );
 
         _ConnectionFailed();

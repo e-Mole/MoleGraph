@@ -28,6 +28,7 @@ class Plot : public QCustomPlot
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
+    bool _GetClosestXIndex(double xValue, int &xIndex);
 
     Measurement const &m_measurement;
     bool m_moveMode;
@@ -71,6 +72,8 @@ public:
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
 
+signals:
+    void clockedToPlot(int xIndex);
 public slots:
 private slots:
     void selectionChanged();

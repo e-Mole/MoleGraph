@@ -60,6 +60,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
     connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
+    connect(m_plot, SIGNAL(clockedToPlot(int)), this, SLOT(movePlotAndSliderTo(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
     if (initializeAxiesAndChannels)
@@ -351,14 +352,24 @@ void Measurement::Stop()
     stateChanged();
 }
 
-void Measurement::sliderActionTriggered(int action)
+void Measurement::movePlotAndSliderTo(int position)
 {
-    Q_UNUSED(action);
+    movePlotTo(position);
+    m_scrollBar->setSliderPosition(position);
+
+}
+void Measurement::movePlotTo(int position)
+{
     foreach (Channel * channel, m_channels)
-        channel->displayValueOnIndex(m_scrollBar->sliderPosition());
+        channel->displayValueOnIndex(position);
 
     m_plot->SetMoveMode(true);
     m_plot->ReplotIfNotDisabled();
+}
+void Measurement::sliderActionTriggered(int action)
+{
+    Q_UNUSED(action);
+    movePlotTo(m_scrollBar->sliderPosition());
 }
 
 /*QVector<Axis *> const & Measurement::GetAxes()

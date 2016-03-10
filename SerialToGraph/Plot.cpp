@@ -109,12 +109,29 @@ bool Plot::event(QEvent *event)
 */
     return QCustomPlot::event(event);
 }
+
+
+bool Plot::_GetClosestXIndex(double xValue, int &xIndex)
+{
+    if (graphCount()== 0)
+        return false;
+
+    //Im expecting all X are the same
+    xIndex = graph(0)->data()->lowerBound(xValue).key();
+    qDebug() << xIndex;
+    return true;
+}
+
 void Plot::mousePressEvent(QMouseEvent *event)
 {
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
             plotable->setSelected(false);
+
+    int xIndex;
+    if (_GetClosestXIndex(xAxis->pixelToCoord(event->pos().x()), xIndex))
+        clockedToPlot(xIndex);
 
     QCustomPlot::mousePressEvent(event);
 }

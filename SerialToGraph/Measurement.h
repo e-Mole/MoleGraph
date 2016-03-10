@@ -172,6 +172,8 @@ public slots:
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
+    void movePlotAndSliderTo(int position);
+    void movePlotTo(int position);
 };
 
 #endif // MEASUREMENT_H

@@ -111,14 +111,44 @@ bool Plot::event(QEvent *event)
 }
 
 
-bool Plot::_GetClosestXIndex(double xValue, int &xIndex)
+bool Plot::_GetClosestX(double in, int &out)
 {
     if (graphCount()== 0)
         return false;
 
-    //Im expecting all X are the same
-    xIndex = graph(0)->data()->lowerBound(xValue).key();
-    qDebug() << xIndex;
+    QCPDataMap *dataMap = NULL;
+    for (int i = 0; i < graphCount(); i++)
+    {
+        if (graph(i)->data()->size() > 0)
+        {
+            //Im expecting all X are the same for filled graps
+            dataMap = graph(i)->data();
+            break;
+        }
+    }
+
+    if (dataMap == NULL)
+        return false;
+
+    auto itHi = dataMap->lowerBound(in);
+    if (itHi == dataMap->end())
+    {
+        out = dataMap->last().key;
+        return true;
+    }
+
+    if(itHi == dataMap->begin())
+    {
+        out = dataMap->begin().key();
+        return true;
+    }
+
+    auto itLo = itHi;
+    itLo--;
+
+    out = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
+        itLo.key() : itHi.key();
+
     return true;
 }
 
@@ -130,7 +160,7 @@ void Plot::mousePressEvent(QMouseEvent *event)
             plotable->setSelected(false);
 
     int xIndex;
-    if (_GetClosestXIndex(xAxis->pixelToCoord(event->pos().x()), xIndex))
+    if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
         clockedToPlot(xIndex);
 
     QCustomPlot::mousePressEvent(event);

@@ -28,7 +28,7 @@ class Plot : public QCustomPlot
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
-    bool _GetClosestXIndex(double xValue, int &xIndex);
+    bool _GetClosestX(double in, int &out);
 
     Measurement const &m_measurement;
     bool m_moveMode;

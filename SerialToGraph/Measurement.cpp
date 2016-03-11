@@ -354,7 +354,7 @@ void Measurement::Stop()
 
 void Measurement::movePlotAndSliderTo(int position)
 {
-    movePlotTo(position);
+    //movePlotTo(position);
     m_scrollBar->setSliderPosition(position);
 
 }

@@ -8,6 +8,7 @@
 #include <QEvent>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QMessageBox>
 #include <QPinchGesture>
 #include <QWheelEvent>
 
@@ -30,7 +31,8 @@ Plot::Plot(Measurement *measurement) :
     m_moveMode(false),
     m_disabled(false),
     m_horizontalChannel(NULL),
-    m_graphPointsPosition(0)
+    m_graphPointsPosition(0),
+    m_markerLine(NULL)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -444,4 +446,17 @@ void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
 {
     axis->setTickLabelType(dateTime ?  QCPAxis::ltDateTime : QCPAxis::ltNumber);
     axis->setDateTimeFormat(format);
+}
+
+void Plot::SetMarkerLine(int position)
+{
+    Q_UNUSED(position)
+    delete m_markerLine;
+    m_markerLine = new QCPItemLine(this);
+    addItem(m_markerLine);
+    m_markerLine->setPen(QPen(Qt::DotLine));
+    m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
+    m_markerLine->start->setCoords(position, 0);
+    m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
+    m_markerLine->end->setCoords(position, 100);
 }

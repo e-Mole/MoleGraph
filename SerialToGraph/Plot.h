@@ -36,6 +36,7 @@ class Plot : public QCustomPlot
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
     QPointF m_currentTouchPointPos;
+    QCPItemLine *m_markerLine;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -71,7 +72,7 @@ public:
     void WaitForDrawingIsFinished();
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
-
+    void SetMarkerLine(int position);
 signals:
     void clockedToPlot(int xIndex);
 public slots:

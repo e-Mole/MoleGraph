@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     void _SetCurrentFileName(QString const &fileName);
-
+    void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
 
     GlobalSettings m_settings;

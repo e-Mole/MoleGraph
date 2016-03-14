@@ -267,20 +267,29 @@ void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
     graph->setSelectedPen(pen);
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color)
+QCPGraph *Plot::AddGraph(QColor const &color, unsigned shapeIndex, bool shapeVisible)
 {
     QCPGraph *graph = addGraph();
     SetGraphColor(graph, color);
+    SetShape(graph, shapeVisible ? shapeIndex : -1);
     return graph;
 
 }
 
-void Plot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
+unsigned Plot::GetShape(QCPGraph *graph)
 {
-    QCPScatterStyle style = graphPoint->scatterStyle();
-    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
-    style.setSize(10);
-    graphPoint->setScatterStyle(style);
+    return
+        (graph->scatterStyle().shape() == QCPScatterStyle::ssNone) ?
+            -1:
+            ((unsigned)graph->scatterStyle().shape()) -2;
+}
+
+void Plot::SetShape(QCPGraph *graph, int shapeIndex)
+{
+    QCPScatterStyle style = graph->scatterStyle();
+    style.setShape((QCPScatterStyle::ScatterShape)((shapeIndex == -1) ? 0 : shapeIndex + 2)); //skip none and dot
+    style.setSize(8);
+    graph->setScatterStyle(style);
 }
 
 void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
@@ -451,7 +460,9 @@ void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
 void Plot::SetMarkerLine(int position)
 {
     Q_UNUSED(position)
-    delete m_markerLine;
+    if (NULL != m_markerLine)
+        removeItem(m_markerLine); //removeItem delete the object too
+
     m_markerLine = new QCPItemLine(this);
     addItem(m_markerLine);
     m_markerLine->setPen(QPen(Qt::DotLine));

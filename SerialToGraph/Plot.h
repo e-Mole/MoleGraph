@@ -56,8 +56,9 @@ public:
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
     void SetGraphColor(QCPGraph *graph, const QColor &color);
-    QCPGraph *AddGraph(const QColor &color);
-    void SetShape(QCPGraph *graphPoint, unsigned shapeIndex);
+    QCPGraph *AddGraph(const QColor &color, unsigned shapeIndex, bool shapeVisible);
+    unsigned GetShape(QCPGraph *graph);
+    void SetShape(QCPGraph *graph, int shapeIndex);
     void SetGraphPointColor(QCPGraph *graphPoint, QColor const &color);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void RemoveAxis(QCPAxis *axis);

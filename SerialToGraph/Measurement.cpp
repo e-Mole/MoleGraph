@@ -20,9 +20,10 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <Serializer.h>
-
-
 #include <sstream>
+
+using namespace atog;
+
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_DATA_SIZE 4
 #define TIMESTAMP_SIZE 4
@@ -45,7 +46,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_startNewDraw(false),
     m_type(source != NULL ? source->m_type : Periodical),
     m_saveLoadValues(false),
-    m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/)
+    m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/),
+    m_marksShown(false)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -494,8 +496,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(channel->GetColor()),
-                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
+                    m_plot->AddGraph(channel->GetColor(), channel->GetShapeIndex(), GetMarksShown()),
+                    m_plot->AddPoint(channel->GetColor(),channel->GetShapeIndex() ),
                     channel->GetHwIndex(),
                     channel->GetName(),
                     channel->GetColor(),
@@ -514,7 +516,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(channel->GetColor()),
+                    m_plot->AddGraph(channel->GetColor(), channel->GetShapeIndex(), GetMarksShown()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetHwIndex(),
                     channel->GetColor(),
@@ -573,7 +575,7 @@ void Measurement::_InitializeAxesAndChanels()
             this,
             m_context,
             xAxis,
-            m_plot->AddGraph(Qt::black),
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
             m_plot->AddPoint(Qt::black, 0),
             -1,
             Qt::black,
@@ -621,7 +623,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
             this,
             m_context,
             axis,
-            m_plot->AddGraph(color),
+            m_plot->AddGraph(color, order, GetMarksShown()),
             m_plot->AddPoint(color, order),
             order,
             QString(tr("Channel %1")).arg(order+1),
@@ -760,14 +762,24 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
     if (hwIndex == -1)
     {
         channel = new ChannelWithTime(
-            this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+            this,
+            m_context,
+            axis,
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
+            m_plot->AddPoint(Qt::black, 0),
+            hwIndex
         );
         m_sampleChannel = (ChannelWithTime*)channel;
     }
     else
     {
         channel = new Channel(
-            this, m_context, axis, m_plot->AddGraph(Qt::black), m_plot->AddPoint(Qt::black, 0), hwIndex
+            this,
+            m_context,
+            axis,
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
+            m_plot->AddPoint(Qt::black, 0),
+            hwIndex
         );
     }
     in >> channel;
@@ -878,4 +890,18 @@ void Measurement::_SetColor(QColor const &color)
 
     m_color = color;
     colorChanged();
+}
+
+void Measurement::_SetMarksShown(bool marksShown)
+{
+    m_marksShown = marksShown;
+
+    foreach (Channel *channel, m_channels)
+    {
+        m_plot->SetShape(
+            channel->GetGraph(),
+            marksShown ? m_plot->GetShape(channel->GetGraphPoint()) : -1
+        );
+    }
+    m_plot->ReplotIfNotDisabled();
 }

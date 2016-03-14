@@ -3,8 +3,9 @@
 
 #include <bases/FormDialogColor.h>
 class Measurement;
-class QLineEdit;
+class QCheckBox;
 class QComboBox;
+class QLineEdit;
 class QWidget;
 struct Context;
 class MeasurementSettings  : public bases::FormDialogColor
@@ -17,6 +18,7 @@ class MeasurementSettings  : public bases::FormDialogColor
     QComboBox *m_type;
     QLineEdit *m_period;
     QComboBox *m_sampleUnits;
+    QCheckBox *m_marksShown;
 
     bool BeforeAccept();
 public:

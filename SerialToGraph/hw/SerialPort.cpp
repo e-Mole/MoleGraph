@@ -53,11 +53,11 @@ void SerialPort::portOpenTimeout()
 
 bool SerialPort::OpenPort(QString id)
 {
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
-        if (info.portName() == id)
-            return _OpenPort(info);
+    auto it = m_idToInfo.find(id);
+    if (it == m_idToInfo.end())
+        return false;
 
-    return false;
+    return _OpenPort(it.value());
 }
 
 bool SerialPort::IsOpen()
@@ -65,18 +65,26 @@ bool SerialPort::IsOpen()
     return m_serialPort.isOpen();
 }
 
-void SerialPort::FillPots(QList<PortInfo> &portInfos)
+void SerialPort::FillPorts(QList<PortInfo> &portInfos)
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
+        QString id = info.portName();
+        if (!info.description().isEmpty())
+            id += " (" + info.description() + ")";
+        else if (!info.manufacturer().isEmpty())
+            id += " (" + info.manufacturer() + ")";
+
         portInfos.push_back(
             PortInfo(
                 PortInfo::pt_serialPort,
-                info.portName(),
+                id,
                 info.manufacturer() == "wch.cn",
                 m_settings
             )
         );
+
+        m_idToInfo[id] = info;
     }
 }
 

@@ -16,8 +16,6 @@ namespace atog
 #define TERMINATOR_STRING "!end!"
 #define COLECTIONS_ID "colections"
 
-static unsigned GetSerializerVersion() {return ATOG_SERIALIZER_VERSION;}
-
 template <class T>
 QDataStream &operator<<(QDataStream &out, T *t)
 {

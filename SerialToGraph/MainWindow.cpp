@@ -83,7 +83,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (fileNameToOpen.length() != 0)
     {
         qDebug() << "opening " << fileNameToOpen;
-        DeserializeMeasurements(fileNameToOpen, openWithoutValues);
+        DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
     }
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)

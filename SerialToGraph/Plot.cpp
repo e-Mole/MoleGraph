@@ -448,6 +448,8 @@ Channel * Plot::GetHorizontalChannel()
 
 void Plot::setGraphPointPosition(int position)
 {
+    SetMarkerLine(position);
+    ReplotIfNotDisabled();
     m_graphPointsPosition = position;
 }
 

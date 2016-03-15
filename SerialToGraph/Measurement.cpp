@@ -360,7 +360,7 @@ void Measurement::moveSliderTo(int position)
 }
 void Measurement::movePlotTo(int position)
 {
-    m_plot->SetMarkerLine(position);
+    //m_plot->SetMarkerLine(position);
 
     foreach (Channel * channel, m_channels)
         channel->displayValueOnIndex(position);

@@ -14,6 +14,7 @@
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
+#define MARKER_WIDTH 1.6
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -267,25 +268,34 @@ void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
     graph->setSelectedPen(pen);
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color)
+QCPGraph *Plot::AddGraph(QColor const &color, unsigned shapeIndex, bool shapeVisible)
 {
     QCPGraph *graph = addGraph();
     SetGraphColor(graph, color);
+    SetShape(graph, shapeVisible ? shapeIndex : -1);
     return graph;
 
 }
 
-void Plot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
+unsigned Plot::GetShape(QCPGraph *graph)
 {
-    QCPScatterStyle style = graphPoint->scatterStyle();
-    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
-    style.setSize(10);
-    graphPoint->setScatterStyle(style);
+    return
+        (graph->scatterStyle().shape() == QCPScatterStyle::ssNone) ?
+            -1:
+            ((unsigned)graph->scatterStyle().shape()) -2;
+}
+
+void Plot::SetShape(QCPGraph *graph, int shapeIndex)
+{
+    QCPScatterStyle style = graph->scatterStyle();
+    style.setShape((QCPScatterStyle::ScatterShape)((shapeIndex == -1) ? 0 : shapeIndex + 2)); //skip none and dot
+    style.setSize(8);
+    graph->setScatterStyle(style);
 }
 
 void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
 {
-    graphPoint->setPen(QPen(QBrush(color), 1.6));
+    graphPoint->setPen(QPen(QBrush(color), MARKER_WIDTH));
 }
 
 QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
@@ -439,6 +449,8 @@ Channel * Plot::GetHorizontalChannel()
 
 void Plot::setGraphPointPosition(int position)
 {
+    SetMarkerLine(position);
+    ReplotIfNotDisabled();
     m_graphPointsPosition = position;
 }
 
@@ -451,10 +463,12 @@ void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
 void Plot::SetMarkerLine(int position)
 {
     Q_UNUSED(position)
-    delete m_markerLine;
+    if (NULL != m_markerLine)
+        removeItem(m_markerLine); //removeItem delete the object too
+
     m_markerLine = new QCPItemLine(this);
     addItem(m_markerLine);
-    m_markerLine->setPen(QPen(Qt::DotLine));
+    m_markerLine->setPen(QPen(QBrush(Qt::black), MARKER_WIDTH, Qt::DotLine));
     m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
     m_markerLine->start->setCoords(position, 0);
     m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);

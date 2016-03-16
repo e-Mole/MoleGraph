@@ -296,7 +296,7 @@ void HwSink::StartSearching()
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
     
     QList<PortInfo> portInfos;
-    m_serialPort->FillPots(portInfos);
+    m_serialPort->FillPorts(portInfos);
     foreach (PortInfo const  &item, portInfos)
         portFound(item);
 

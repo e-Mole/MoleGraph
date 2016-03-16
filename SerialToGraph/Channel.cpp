@@ -245,6 +245,7 @@ void Channel::_SetName(QString const &name)
 void Channel::_SetShapeIndex(unsigned index)
 {
     m_shapeIndex = index;
+    GetMeasurement()->GetPlot()->SetShape(m_graph, m_measurement->GetMarksShown() ? m_shapeIndex : -1);
     GetMeasurement()->GetPlot()->SetShape(m_graphPoint, m_shapeIndex);
 }
 

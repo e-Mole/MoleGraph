@@ -47,6 +47,8 @@ class Measurement : public QObject
     Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
     Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
+    Q_PROPERTY(bool marksShown READ GetMarksShown WRITE _SetMarksShown)
+
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
     Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections)
 
@@ -105,6 +107,8 @@ private:
     State _GetStateForSerialization() { return (m_state == Running) ? Finished : m_state; }
     QColor _GetColorByOrder(unsigned order);
     void _SetColor(QColor const &color);
+    void _SetMarksShown(bool marksShown);
+
     WidgetWithResizeEvent  m_widget;
     Context const &m_context;
     QString m_name;
@@ -129,6 +133,7 @@ private:
     Type m_type;
     bool m_saveLoadValues; //for serialization and deserialization too
     QColor m_color;
+    bool m_marksShown;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
@@ -160,7 +165,7 @@ public:
 
     ChannelWithTime *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
-
+    bool GetMarksShown() {return m_marksShown; }
 signals:
     void stateChanged();
     void nameChanged();

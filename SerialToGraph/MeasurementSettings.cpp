@@ -3,6 +3,7 @@
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -15,7 +16,8 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     m_name(new QLineEdit(measurement->m_name, this)),
     m_type(new QComboBox(this)),
     m_period(new QLineEdit(QString("%1").arg(measurement->m_period), this)),
-    m_sampleUnits(new QComboBox(this))
+    m_sampleUnits(new QComboBox(this)),
+    m_marksShown(new QCheckBox(this))
 {
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
@@ -40,6 +42,10 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_sampleUnits);
 
     AddColorButtonRow(m_measurement->m_color);
+
+    m_marksShown->setChecked(m_measurement->m_marksShown);
+    m_formLayout->addRow(new QLabel(tr("Show Marks")), m_marksShown);
+
 }
 
 void MeasurementSettings::disablePeriodAndUnits(int disabled)
@@ -65,5 +71,6 @@ bool MeasurementSettings::BeforeAccept()
     m_measurement->m_period = m_period->text().toInt();
     m_measurement->m_type = (Measurement::Type)m_type->currentIndex();
     m_measurement->_SetColor(m_color);
+    m_measurement->_SetMarksShown(m_marksShown->isChecked());
     return true;
 }

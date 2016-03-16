@@ -21,7 +21,7 @@ Bluetooth::Bluetooth(GlobalSettings &settings, QObject *parent) :
     m_timeout(new QTimer(this))
 {
     m_timeout->setSingleShot(true);
-    connect(m_timeout, SIGNAL(timeout()), this, SIGNAL(connected()));
+    connect(m_timeout, SIGNAL(timeout()), this, SLOT(connected()));
 
     connect(
         m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),

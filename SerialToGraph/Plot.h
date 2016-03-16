@@ -28,6 +28,7 @@ class Plot : public QCustomPlot
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
+    bool _GetClosestX(double in, int &out);
 
     Measurement const &m_measurement;
     bool m_moveMode;
@@ -35,6 +36,7 @@ class Plot : public QCustomPlot
     Channel *m_horizontalChannel;
     int m_graphPointsPosition;
     QPointF m_currentTouchPointPos;
+    QCPItemLine *m_markerLine;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -54,8 +56,9 @@ public:
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
     void SetGraphColor(QCPGraph *graph, const QColor &color);
-    QCPGraph *AddGraph(const QColor &color);
-    void SetShape(QCPGraph *graphPoint, unsigned shapeIndex);
+    QCPGraph *AddGraph(const QColor &color, unsigned shapeIndex, bool shapeVisible);
+    unsigned GetShape(QCPGraph *graph);
+    void SetShape(QCPGraph *graph, int shapeIndex);
     void SetGraphPointColor(QCPGraph *graphPoint, QColor const &color);
     QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
     void RemoveAxis(QCPAxis *axis);
@@ -70,7 +73,9 @@ public:
     void WaitForDrawingIsFinished();
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
-
+    void SetMarkerLine(int position);
+signals:
+    void clockedToPlot(int xIndex);
 public slots:
 private slots:
     void selectionChanged();

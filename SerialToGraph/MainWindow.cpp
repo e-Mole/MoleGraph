@@ -8,6 +8,7 @@
 #include <PortListDialog.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
+#include <MyMessageBox.h>
 #include <QApplication>
 #include <QDataStream>
 #include <QFileInfo>
@@ -24,6 +25,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <Serializer.h>
+
+using namespace atog;
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
@@ -74,13 +77,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 
-    if (fileNameToOpen.length() != 0)
-    {
-        DeserializeMeasurements(fileNameToOpen, openWithoutValues);
-    }
-
     m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
     m_portListDialog->StartSearching();
+
+    if (fileNameToOpen.length() != 0)
+    {
+        qDebug() << "opening " << fileNameToOpen;
+        DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
+    }
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
@@ -93,7 +97,7 @@ QString &MainWindow::GetCurrentFileName()
     return m_currentFileName;
 }
 
-void MainWindow::OpenSerialPort()
+void MainWindow::openSerialPort()
 {
     m_portListDialog->SetAutoconnect(false);
     m_portListDialog->exec();
@@ -224,6 +228,12 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     unsigned serializerVersion;
     in >> serializerVersion; //not used yet
 
+    if (serializerVersion != ATOG_SERIALIZER_VERSION)
+    {
+        MyMessageBox::critical(this, "Unsuported file version");
+        return;
+    }
+
     int count;
     in >> count;
 
@@ -237,6 +247,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     }
 
     file.close();
+
 }
 
 void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
@@ -271,7 +282,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
 {
     if (event->key() == Qt::Key_Back) //used on android
     {
-        if (QMessageBox::Yes == QMessageBox::question(this, "", "Realy quit?"))
+        if (MyMessageBox::question(this, tr("Realy quit?"), tr("Quit")))
         {
             close();
             event->accept();

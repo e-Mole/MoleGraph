@@ -213,7 +213,7 @@ void HwSink::portOpeningFinished()
     {
         MyMessageBox::warning(
             (QWidget*)parent(),
-            tr("Selected port is byssy. It is probably oppened by another process.")
+            tr("Selected port can not be opened. It is used by another process or a device is disconnected.")
         );
 
         _ConnectionFailed();
@@ -294,9 +294,9 @@ void HwSink::StartSearching()
     delete m_serialPort;
     m_serialPort = new SerialPort(m_settings, this);
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-
+    
     QList<PortInfo> portInfos;
-    m_serialPort->FillPots(portInfos);
+    m_serialPort->FillPorts(portInfos);
     foreach (PortInfo const  &item, portInfos)
         portFound(item);
 

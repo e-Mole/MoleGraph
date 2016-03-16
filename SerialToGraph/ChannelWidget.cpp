@@ -131,7 +131,12 @@ void ChannelWidget::ShowValueWithUnits(QString const&value, QString const &units
 
 QSize ChannelWidget::GetMinimumSize()
 {
-    QSize mSize = size() - m_valueLabel->size() + m_valueLabel->minimumSize();
+    //when widget is not fully inicialized (is created from main window constructor)
+    //returns less size then shoud have sizeHint then returns a correct size
+    QSize widgetSize =
+        (size().height() > sizeHint().height()) ? size() : sizeHint();
+
+    QSize mSize = widgetSize - m_valueLabel->size() + m_valueLabel->minimumSize();
     mSize.setHeight(mSize.height() + layout()->margin() * 2);
     mSize.setWidth(width() + layout()->margin() * 2);
     return mSize;

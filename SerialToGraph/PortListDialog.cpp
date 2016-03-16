@@ -75,6 +75,8 @@ void PortListDialog::workDisconnected()
             _UncheckRadioButton(rb);
 
     m_hwSink.WorkOffline();
+
+    m_settings.SetForcedOffline(true);
 }
 
 void PortListDialog::refresh()
@@ -97,6 +99,7 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     m_portLayout->addWidget(new QLabel(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
 
     if (m_autoConnect &&
+        !m_settings.GetForcedOffline() &&
         (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
     )
        m_hwSink.OpenPort(item);
@@ -119,6 +122,7 @@ void PortListDialog::portRadioButtonReleased()
     m_selectedRadioButton = (QRadioButton*)sender();
     hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
     m_hwSink.OpenPort(portInfo);
+    m_settings.SetForcedOffline(false);
 }
 
 void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State state)

@@ -8,6 +8,7 @@
 #include <QEvent>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QMessageBox>
 #include <QPinchGesture>
 #include <QWheelEvent>
 
@@ -30,7 +31,8 @@ Plot::Plot(Measurement *measurement) :
     m_moveMode(false),
     m_disabled(false),
     m_horizontalChannel(NULL),
-    m_graphPointsPosition(0)
+    m_graphPointsPosition(0),
+    m_markerLine(NULL)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -109,12 +111,59 @@ bool Plot::event(QEvent *event)
 */
     return QCustomPlot::event(event);
 }
+
+
+bool Plot::_GetClosestX(double in, int &out)
+{
+    if (graphCount()== 0)
+        return false;
+
+    QCPDataMap *dataMap = NULL;
+    for (int i = 0; i < graphCount(); i++)
+    {
+        if (graph(i)->data()->size() > 0)
+        {
+            //Im expecting all X are the same for filled graps
+            dataMap = graph(i)->data();
+            break;
+        }
+    }
+
+    if (dataMap == NULL)
+        return false;
+
+    auto itHi = dataMap->lowerBound(in);
+    if (itHi == dataMap->end())
+    {
+        out = dataMap->last().key;
+        return true;
+    }
+
+    if(itHi == dataMap->begin())
+    {
+        out = dataMap->begin().key();
+        return true;
+    }
+
+    auto itLo = itHi;
+    itLo--;
+
+    out = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
+        itLo.key() : itHi.key();
+
+    return true;
+}
+
 void Plot::mousePressEvent(QMouseEvent *event)
 {
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
             plotable->setSelected(false);
+
+    int xIndex;
+    if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
+        clockedToPlot(xIndex);
 
     QCustomPlot::mousePressEvent(event);
 }
@@ -218,20 +267,29 @@ void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
     graph->setSelectedPen(pen);
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color)
+QCPGraph *Plot::AddGraph(QColor const &color, unsigned shapeIndex, bool shapeVisible)
 {
     QCPGraph *graph = addGraph();
     SetGraphColor(graph, color);
+    SetShape(graph, shapeVisible ? shapeIndex : -1);
     return graph;
 
 }
 
-void Plot::SetShape(QCPGraph *graphPoint, unsigned shapeIndex)
+unsigned Plot::GetShape(QCPGraph *graph)
 {
-    QCPScatterStyle style = graphPoint->scatterStyle();
-    style.setShape((QCPScatterStyle::ScatterShape)(shapeIndex + 2)); //skip none and dot
-    style.setSize(10);
-    graphPoint->setScatterStyle(style);
+    return
+        (graph->scatterStyle().shape() == QCPScatterStyle::ssNone) ?
+            -1:
+            ((unsigned)graph->scatterStyle().shape()) -2;
+}
+
+void Plot::SetShape(QCPGraph *graph, int shapeIndex)
+{
+    QCPScatterStyle style = graph->scatterStyle();
+    style.setShape((QCPScatterStyle::ScatterShape)((shapeIndex == -1) ? 0 : shapeIndex + 2)); //skip none and dot
+    style.setSize(8);
+    graph->setScatterStyle(style);
 }
 
 void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
@@ -390,6 +448,8 @@ Channel * Plot::GetHorizontalChannel()
 
 void Plot::setGraphPointPosition(int position)
 {
+    SetMarkerLine(position);
+    ReplotIfNotDisabled();
     m_graphPointsPosition = position;
 }
 
@@ -397,4 +457,19 @@ void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
 {
     axis->setTickLabelType(dateTime ?  QCPAxis::ltDateTime : QCPAxis::ltNumber);
     axis->setDateTimeFormat(format);
+}
+
+void Plot::SetMarkerLine(int position)
+{
+    Q_UNUSED(position)
+    if (NULL != m_markerLine)
+        removeItem(m_markerLine); //removeItem delete the object too
+
+    m_markerLine = new QCPItemLine(this);
+    addItem(m_markerLine);
+    m_markerLine->setPen(QPen(Qt::DotLine));
+    m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
+    m_markerLine->start->setCoords(position, 0);
+    m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
+    m_markerLine->end->setCoords(position, 100);
 }

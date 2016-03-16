@@ -4,6 +4,7 @@
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
 #include <QList>
+#include <QMap>
 #include <QQueue>
 #include <QtCore/QDebug>
 #include <QtSerialPort/QSerialPort>
@@ -20,9 +21,11 @@ class SerialPort : public PortBase
 
     bool _OpenPort(QSerialPortInfo const &info);
 
+
     QSerialPort m_serialPort;
     GlobalSettings &m_settings;
     HwSink *m_hwSink;
+    QMap<QString, QSerialPortInfo> m_idToInfo;
 public:
 
     SerialPort(GlobalSettings &settings, HwSink *hwSink);
@@ -30,7 +33,7 @@ public:
 
 
     bool OpenPort(QString id);
-    void FillPots(QList<PortInfo> &portInfos);
+    void FillPorts(QList<PortInfo> &portInfos);
     qint64 Write(char const *data, unsigned size);
     void WaitForBytesWritten();
     void ReadData(QByteArray &array, unsigned maxLength);

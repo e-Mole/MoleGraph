@@ -30,7 +30,6 @@ SOURCES += main.cpp\
     AxisSettings.cpp \
     ButtonLine.cpp \
     ColorPickerDialog.cpp \
-    ConnectivityLabel.cpp \
     Context.cpp \
     Export.cpp \
     Channel.cpp \
@@ -66,7 +65,6 @@ HEADERS  += MainWindow.h \
     AxisSettings.h \
     ButtonLine.h \
     ColorPickerDialog.h \
-    ConnectivityLabel.h \
     Context.h \
     Export.h \
     Channel.h \

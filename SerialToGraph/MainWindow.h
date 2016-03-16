@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     void _SetCurrentFileName(QString const &fileName);
-
+    void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
 
     GlobalSettings m_settings;
@@ -48,7 +48,6 @@ public:
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileName();
     void OpenNew();
-    void OpenSerialPort();
     void RefreshHwConnection();
     void TerminateBluetooth();
 
@@ -56,6 +55,8 @@ private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
+public slots:
+    void openSerialPort();
 };
 
 #endif // MAINWINDOW_H

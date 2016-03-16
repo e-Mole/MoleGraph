@@ -13,7 +13,8 @@ class GlobalSettings
         Key_LastSerialPortType,
         Key_GuiLanguage,
         Key_UnitBrackets,
-        Key_UseBluetooth
+        Key_UseBluetooth,
+        Key_ForcedOffline
     };
 
     QString _GetStringKey(Key key) const;
@@ -28,12 +29,14 @@ public:
     void SetLastSerialPortType(const QVariant &portType);
     QString GetLastSerialPortId() const;
     void SetLastSerialPortId(QString const &portId);
-    QString GetLanguage(QString const &defaut = "") const;
+    QString GetLanguage(QString const &defaut = "en") const;
     void SetLanguage(QString const &language);
     QString GetUnitBrackets() const;
     void SetUnitBrackets(QString const &brackets);
     bool GetUseBluetooth();
     void SetUseBluetooth(bool use);
+    bool GetForcedOffline();
+    void SetForcedOffline(bool offline);
 
 };
 

@@ -14,6 +14,7 @@
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
+#define MARKER_WIDTH 1.6
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -294,7 +295,7 @@ void Plot::SetShape(QCPGraph *graph, int shapeIndex)
 
 void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
 {
-    graphPoint->setPen(QPen(QBrush(color), 1.6));
+    graphPoint->setPen(QPen(QBrush(color), MARKER_WIDTH));
 }
 
 QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
@@ -467,7 +468,7 @@ void Plot::SetMarkerLine(int position)
 
     m_markerLine = new QCPItemLine(this);
     addItem(m_markerLine);
-    m_markerLine->setPen(QPen(Qt::DotLine));
+    m_markerLine->setPen(QPen(QBrush(Qt::black), MARKER_WIDTH, Qt::DotLine));
     m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
     m_markerLine->start->setCoords(position, 0);
     m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);

@@ -567,12 +567,12 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="222"/>
         <source>Circle</source>
-        <translation>Kruh</translation>
+        <translation>Kružnice</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="223"/>
         <source>Disc</source>
-        <translation>Kružnice</translation>
+        <translation>Kruh</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="224"/>

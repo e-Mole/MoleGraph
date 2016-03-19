@@ -4059,21 +4059,23 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <net name="N$15" class="0">
 <segment>
 <pinref part="D0-D7" gate="G$1" pin="D0(RX)"/>
-<pinref part="U$5" gate="G$1" pin="RX"/>
-<wire x1="58.42" y1="0" x2="106.68" y2="0" width="0.1524" layer="91"/>
 <pinref part="D0-D1" gate="G$1" pin="D0(RX)"/>
 <wire x1="106.68" y1="0" x2="124.46" y2="0" width="0.1524" layer="91"/>
-<junction x="106.68" y="0"/>
+<pinref part="U$5" gate="G$1" pin="TX"/>
+<wire x1="58.42" y1="5.08" x2="76.2" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="5.08" x2="81.28" y2="0" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="0" x2="106.68" y2="0" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$16" class="0">
 <segment>
 <pinref part="D0-D7" gate="G$1" pin="D1(TX)"/>
-<pinref part="U$5" gate="G$1" pin="TX"/>
-<wire x1="58.42" y1="5.08" x2="106.68" y2="5.08" width="0.1524" layer="91"/>
 <pinref part="D0-D1" gate="G$1" pin="D1(TX)"/>
 <wire x1="106.68" y1="5.08" x2="124.46" y2="5.08" width="0.1524" layer="91"/>
-<junction x="106.68" y="5.08"/>
+<wire x1="106.68" y1="5.08" x2="81.28" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="5.08" x2="76.2" y2="0" width="0.1524" layer="91"/>
+<pinref part="U$5" gate="G$1" pin="RX"/>
+<wire x1="76.2" y1="0" x2="58.42" y2="0" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$18" class="0">

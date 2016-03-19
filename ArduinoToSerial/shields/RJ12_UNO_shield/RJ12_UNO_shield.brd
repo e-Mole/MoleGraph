@@ -1692,26 +1692,19 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$15">
 <contactref element="D0-D7" pad="D0"/>
-<contactref element="U$5" pad="RX"/>
 <contactref element="D0-D1" pad="D0"/>
-<wire x1="32.2" y1="36.4" x2="32.2" y2="37.8" width="0.35" layer="1"/>
-<wire x1="64.75" y1="3.85" x2="32.2" y2="36.4" width="0.35" layer="1"/>
-<wire x1="32.2" y1="37.8" x2="32.05" y2="38" width="0.35" layer="1"/>
-<wire x1="64.75" y1="3.85" x2="64.96" y2="3.81" width="0.35" layer="1"/>
 <wire x1="64.96" y1="3.81" x2="68.2" y2="3.81" width="0.35" layer="1"/>
+<contactref element="U$5" pad="TX"/>
+<wire x1="64.96" y1="3.81" x2="63.7" y2="3.81" width="0.35" layer="1"/>
+<wire x1="63.7" y1="3.81" x2="29.51" y2="38" width="0.35" layer="1"/>
 </signal>
 <signal name="N$16">
 <contactref element="D0-D7" pad="D1"/>
-<contactref element="U$5" pad="TX"/>
-<wire x1="65.1076" y1="6.4008" x2="64.96" y2="6.35" width="0.35" layer="1"/>
 <contactref element="D0-D1" pad="D1"/>
-<wire x1="30.45" y1="38.15" x2="29.75" y2="38.15" width="0.35" layer="1"/>
-<wire x1="31.5" y1="39.2" x2="30.45" y2="38.15" width="0.35" layer="1"/>
-<wire x1="32.55" y1="39.2" x2="31.5" y2="39.2" width="0.35" layer="1"/>
-<wire x1="29.75" y1="38.15" x2="29.51" y2="38" width="0.35" layer="1"/>
-<wire x1="65.1" y1="6.65" x2="64.96" y2="6.35" width="0.35" layer="1"/>
-<wire x1="65.1" y1="6.65" x2="32.55" y2="39.2" width="0.35" layer="1"/>
 <wire x1="68.2" y1="6.35" x2="64.96" y2="6.35" width="0.35" layer="1"/>
+<contactref element="U$5" pad="RX"/>
+<wire x1="64.96" y1="6.35" x2="63.7" y2="6.35" width="0.35" layer="1"/>
+<wire x1="63.7" y1="6.35" x2="32.05" y2="38" width="0.35" layer="1"/>
 </signal>
 <signal name="N$18">
 <contactref element="CON4" pad="5"/>
@@ -1751,9 +1744,9 @@ design rules under a new name.</description>
 <wire x1="65.1" y1="28" x2="64.96" y2="28.11" width="0.35" layer="1"/>
 <wire x1="10.85" y1="47.6" x2="10.85" y2="46.9" width="0.35" layer="1"/>
 <wire x1="11.8" y1="48.55" x2="10.85" y2="47.6" width="0.35" layer="1"/>
-<wire x1="11.8" y1="51" x2="11.8" y2="48.55" width="0.35" layer="1"/>
-<wire x1="12.6" y1="51.8" x2="11.8" y2="51" width="0.35" layer="1"/>
-<wire x1="36.5" y1="51.8" x2="12.6" y2="51.8" width="0.35" layer="1"/>
+<wire x1="11.8" y1="51.1" x2="11.8" y2="48.55" width="0.35" layer="1"/>
+<wire x1="12.5" y1="51.8" x2="11.8" y2="51.1" width="0.35" layer="1"/>
+<wire x1="36.5" y1="51.8" x2="12.5" y2="51.8" width="0.35" layer="1"/>
 <wire x1="60.3" y1="28" x2="36.5" y2="51.8" width="0.35" layer="1"/>
 <wire x1="64.75" y1="28" x2="60.3" y2="28" width="0.35" layer="1"/>
 <wire x1="10.85" y1="46.9" x2="10.55" y2="46.695" width="0.35" layer="1"/>
@@ -1763,17 +1756,17 @@ design rules under a new name.</description>
 <contactref element="POWER" pad="GBD(2)"/>
 <contactref element="U$5" pad="GND"/>
 <contactref element="POWER" pad="GND(1)"/>
-<polygon width="0.35" layer="1">
+<polygon width="0.35" layer="1" isolate="0.4064">
 <vertex x="1.2" y="56.8"/>
-<vertex x="1.1" y="0.2"/>
+<vertex x="1.2" y="0.2"/>
 <vertex x="69.8" y="0.2"/>
-<vertex x="69.9" y="56.8"/>
+<vertex x="69.8" y="56.8"/>
 </polygon>
-<polygon width="0.35" layer="16">
+<polygon width="0.35" layer="16" isolate="0.4064">
 <vertex x="1.2" y="56.8"/>
-<vertex x="1.1" y="0.2"/>
+<vertex x="1.2" y="0.2"/>
 <vertex x="69.8" y="0.2"/>
-<vertex x="69.9" y="56.8"/>
+<vertex x="69.8" y="56.8"/>
 </polygon>
 <contactref element="POWER1" pad="GBD(2)"/>
 <contactref element="POWER1" pad="GND(1)"/>
@@ -1788,6 +1781,24 @@ design rules under a new name.</description>
 <vertex x="2.6" y="5.3"/>
 <vertex x="8.3" y="5.2"/>
 <vertex x="8.3" y="10.6"/>
+</polygon>
+<polygon width="0.35" layer="1" orphans="yes">
+<vertex x="2.2" y="24.4"/>
+<vertex x="2.2" y="19"/>
+<vertex x="7.9" y="18.9"/>
+<vertex x="7.9" y="24.3"/>
+</polygon>
+<polygon width="0.35" layer="1" orphans="yes">
+<vertex x="2.4" y="37.8"/>
+<vertex x="2.4" y="32.4"/>
+<vertex x="8.1" y="32.3"/>
+<vertex x="8.1" y="37.7"/>
+</polygon>
+<polygon width="0.35" layer="1" orphans="yes">
+<vertex x="2.3" y="51.4"/>
+<vertex x="2.3" y="46"/>
+<vertex x="8" y="45.9"/>
+<vertex x="8" y="51.3"/>
 </polygon>
 </signal>
 <signal name="N$7">
@@ -1927,6 +1938,8 @@ design rules under a new name.</description>
 <contactref element="D0-D1" pad="D5"/>
 <contactref element="D0-D7" pad="D5"/>
 <wire x1="68.2" y1="16.51" x2="64.96" y2="16.51" width="0.35" layer="1"/>
+</signal>
+<signal name="N$10">
 </signal>
 </signals>
 </board>

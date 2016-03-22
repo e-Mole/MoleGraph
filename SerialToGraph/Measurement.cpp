@@ -47,7 +47,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_type(source != NULL ? source->m_type : Periodical),
     m_saveLoadValues(false),
     m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/),
-    m_marksShown(false)
+    m_marksShown(source != NULL ? source->GetMarksShown() :false)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -62,7 +62,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
     connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
-    connect(m_plot, SIGNAL(clockedToPlot(int)), this, SLOT(moveSliderTo(int)));
+    connect(m_plot, SIGNAL(clickedToPlot(int)), this, SLOT(moveSliderTo(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
     if (initializeAxiesAndChannels)
@@ -170,7 +170,7 @@ bool Measurement::_ProcessValueSet()
     if (m_context.m_hwSink.ProcessCommand(command))
         return false; //message is a command
 
-    qreal offset = 0;
+    double offset = 0;
     if (m_type == OnDemand)
         offset = _DequeueFloat();
     else
@@ -835,7 +835,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
 
         if (channel->IsSampleChannel())
         {
-            qreal timeFromStart;
+            double timeFromStart;
             in >> timeFromStart;
             if (m_saveLoadValues)
                 ((ChannelWithTime *)channel)->AddValue(value, timeFromStart);
@@ -864,7 +864,7 @@ void Measurement::DeserializeColections(QDataStream &in)
 
     for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
     {
-        float xValue = m_plot->GetHorizontalChannel()->GetValue(i);
+        double xValue = m_plot->GetHorizontalChannel()->GetValue(i);
         foreach (Channel *channel, m_channels)
         {
             if (channel->GetValueCount() > i)

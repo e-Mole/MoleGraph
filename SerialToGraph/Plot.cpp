@@ -133,26 +133,23 @@ bool Plot::_GetClosestX(double in, int &out)
     if (dataMap == NULL)
         return false;
 
+    double xValue = 0;
     auto itHi = dataMap->lowerBound(in);
     if (itHi == dataMap->end())
+        xValue = dataMap->last().key;
+    else if(itHi == dataMap->begin())
+        xValue = dataMap->begin().key();
+    else
     {
-        out = dataMap->last().key;
-        return true;
+        auto itLo = itHi;
+        itLo--;
+
+        xValue = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
+            itLo.key() : itHi.key();
     }
 
-    if(itHi == dataMap->begin())
-    {
-        out = dataMap->begin().key();
-        return true;
-    }
-
-    auto itLo = itHi;
-    itLo--;
-
-    out = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
-        itLo.key() : itHi.key();
-
-    return true;
+    out = m_horizontalChannel->GetLastValueIndex(xValue);
+    return out != -1;
 }
 
 void Plot::mousePressEvent(QMouseEvent *event)
@@ -164,7 +161,7 @@ void Plot::mousePressEvent(QMouseEvent *event)
 
     int xIndex;
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
-        clockedToPlot(xIndex);
+        clickedToPlot(xIndex);
 
     QCustomPlot::mousePressEvent(event);
 }
@@ -470,7 +467,9 @@ void Plot::SetMarkerLine(int position)
     addItem(m_markerLine);
     m_markerLine->setPen(QPen(QBrush(Qt::black), MARKER_WIDTH, Qt::DotLine));
     m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
-    m_markerLine->start->setCoords(position, 0);
+
+    double xValue = m_horizontalChannel->GetValue(position);
+    m_markerLine->start->setCoords(xValue, 0);
     m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
-    m_markerLine->end->setCoords(position, 100);
+    m_markerLine->end->setCoords(xValue, 100);
 }

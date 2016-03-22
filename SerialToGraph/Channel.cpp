@@ -260,3 +260,13 @@ QSize Channel::GetMinimumSize()
 {
     return m_widget->GetMinimumSize();
 }
+
+int Channel::GetLastValueIndex(double value)
+{
+    for (int i = m_values.count() -1; i >=0; --i)
+    {
+        if (GetValue(i) == value)
+            return i;
+    }
+    return -1;
+}

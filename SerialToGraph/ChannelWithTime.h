@@ -56,7 +56,7 @@ private:
     QDateTime _GetStartDateTime() { return m_startDateTime; }
     QString _GetRealTimeText(double secSinceEpoch);
 
-    QVector<qreal> m_timeFromStart; //sample time from measurement srart
+    QVector<double> m_timeFromStart; //sample time from measurement srart
     QDateTime m_startDateTime;
     Style m_style;
     TimeUnits m_timeUnits;
@@ -81,14 +81,14 @@ public:
     Style GetStyle() {return m_style; }
     TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
-    void AddValue(double value, qreal timeFromStart);
+    void AddValue(double value, double timeFromStart);
     virtual double GetValue(unsigned index);
     QString GetRealTimeFormatText();
     RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
     bool IsInRealtimeStyle() { return m_style == RealTime; }
     virtual double GetMinValue();
     virtual double GetMaxValue();
-    qreal GetTimeFromStart(unsigned index);
+    double GetTimeFromStart(unsigned index);
     static QString GetStyleText(Style style);
     QString GetStyleText() { return GetStyleText(m_style); }\
     double GetSampleNr(unsigned index);

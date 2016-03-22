@@ -75,7 +75,7 @@ public:
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
 signals:
-    void clockedToPlot(int xIndex);
+    void clickedToPlot(int xIndex);
 public slots:
 private slots:
     void selectionChanged();

@@ -540,8 +540,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
     }
 
     foreach (Axis *axis, m_axes)
+    {
         axis->UpdateGraphAxisName();
-
+        axis->UpdateGraphAxisStyle();
+        axis->UpdateVisiblility();
+    }
      ReplaceDisplays(false);
 }
 

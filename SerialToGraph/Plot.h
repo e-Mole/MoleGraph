@@ -37,10 +37,12 @@ class Plot : public QCustomPlot
     int m_graphPointsPosition;
     QPointF m_currentTouchPointPos;
     QCPItemLine *m_markerLine;
+    bool m_mouseHandled;
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual bool event( QEvent *event );

@@ -10730,12 +10730,12 @@ void QCustomPlot::mousePressEvent(QMouseEvent *event)
 {
   emit mousePress(event);
   mMousePressPos = event->pos(); // need this to determine in releaseEvent whether it was a click (no position change between press and release)
-  
+
   // call event of affected layout element:
   mMouseEventElement = layoutElementAt(event->pos());
   if (mMouseEventElement)
     mMouseEventElement->mousePressEvent(event);
-  
+
   QWidget::mousePressEvent(event);
 }
 

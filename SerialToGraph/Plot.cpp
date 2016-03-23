@@ -33,7 +33,8 @@ Plot::Plot(Measurement *measurement) :
     m_disabled(false),
     m_horizontalChannel(NULL),
     m_graphPointsPosition(0),
-    m_markerLine(NULL)
+    m_markerLine(NULL),
+    m_mouseHandled(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -154,16 +155,25 @@ bool Plot::_GetClosestX(double in, int &out)
 
 void Plot::mousePressEvent(QMouseEvent *event)
 {
+    m_mouseHandled = false;
+    QCustomPlot::mousePressEvent(event);
+}
+
+void Plot::mouseReleaseEvent(QMouseEvent *event)
+{
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
             plotable->setSelected(false);
 
+    QCustomPlot::mouseReleaseEvent(event);
+
+    if (m_mouseHandled)
+        return;
+
     int xIndex;
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
         clickedToPlot(xIndex);
-
-    QCustomPlot::mousePressEvent(event);
 }
 void Plot::mouseDoubleClickEvent(QMouseEvent *event)
 {
@@ -251,8 +261,7 @@ void Plot::mouseMoveEvent(QMouseEvent *event)
         double factor = (axis->range().upper - axis->range().lower) * percent;
         axis->setRange(axis->range().lower + factor, axis->range().upper + factor);
     }
-    //mReplotting = true;
-    //replot();
+    m_mouseHandled = true;
 }
 
 void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
@@ -392,6 +401,7 @@ void Plot::selectionChanged()
         return;
     }
 
+    m_mouseHandled = true;
     selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())

@@ -31,6 +31,7 @@ class MainWindow : public QMainWindow
     QTabWidget *m_measurementTabs;
     Measurement *m_currentMeasurement;
     QString m_currentFileName;
+    QString m_currentFileNameWithPath;
     QString m_langBcp47;
     PortListDialog *m_portListDialog;
 public:
@@ -46,7 +47,7 @@ public:
     Measurement * GetCurrnetMeasurement();
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
-    QString &GetCurrentFileName();
+    QString &GetCurrentFileNameWithPath();
     void OpenNew();
     void RefreshHwConnection();
     void TerminateBluetooth();

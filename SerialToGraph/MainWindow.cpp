@@ -88,13 +88,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
-    m_currentFileName = QFileInfo(fileName).fileName();;
+    m_currentFileName = QFileInfo(fileName).fileName();
+    m_currentFileNameWithPath = fileName;
     setWindowTitle(m_currentFileName + " - " + m_context.m_applicationName);
 }
 
-QString &MainWindow::GetCurrentFileName()
+QString &MainWindow::GetCurrentFileNameWithPath()
 {
-    return m_currentFileName;
+    return m_currentFileNameWithPath;
 }
 
 void MainWindow::openSerialPort()
@@ -274,6 +275,7 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
 void MainWindow::OpenNew()
 {
     m_currentFileName = "";
+    m_currentFileNameWithPath = "";
     RemoveAllMeasurements();
     ConfirmMeasurement(CreateNewMeasurement(true));
 }

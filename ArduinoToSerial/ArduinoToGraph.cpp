@@ -20,6 +20,7 @@ namespace
   bool g_fullWriteBufferDetected = false;
   float g_timeFromStart = 0;
   bool g_sampleRequest = false;
+  bool g_measurementInProgress = false;
   
   void (*g_updateFunction)(void);
   
@@ -115,7 +116,7 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   SendData(g_type == typeOnDemand);
 }
 
-void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
+void ArduinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
 {
   g_channels[0] = channel1;
   g_channels[1] = channel2;
@@ -133,7 +134,7 @@ void ArtuinoToGraph::Setup(float channel1, float channel2, float channel3, float
   InitTimer();  
 }
 
-void ArtuinoToGraph::InLoop()
+void ArduinoToGraph::InLoop()
 {
   if (0 != Serial.available())
   {
@@ -170,9 +171,11 @@ void ArtuinoToGraph::InLoop()
     case INS_START:
       g_fullWriteBufferDetected = false;
       TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+      g_measurementInProgress = true;
     break;
     case INS_STOP:
       TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
+      g_measurementInProgress = false;
     break;
     case INS_SET_TYPE:
       unsigned char type;
@@ -196,7 +199,7 @@ void ArtuinoToGraph::InLoop()
   }
 }
 
-bool ArtuinoToGraph::SetChannelValue(int channel, float value)
+bool ArduinoToGraph::SetChannelValue(int channel, float value)
 {
   if (channel < 1 && channel > 8)
     return false;
@@ -206,7 +209,7 @@ bool ArtuinoToGraph::SetChannelValue(int channel, float value)
   return true;
 }
 
-float ArtuinoToGraph::GetChannelValue(int channel)
+float ArduinoToGraph::GetChannelValue(int channel)
 {
   if (channel < 1 && channel > 8)
     return 0;
@@ -214,22 +217,27 @@ float ArtuinoToGraph::GetChannelValue(int channel)
   return g_channels[channel - 1];
 }
 
-void ArtuinoToGraph::SetUpdateCallbackFunction(void (*f)(void) )
+void ArduinoToGraph::SetUpdateCallbackFunction(void (*f)(void) )
 {
   g_updateFunction = f;
 }
 
-void ArtuinoToGraph::SampleRequest()
+void ArduinoToGraph::SampleRequest()
 {
   g_sampleRequest = true;
 }
 
-void ArtuinoToGraph::StartMeasurement()
+void ArduinoToGraph::StartMeasurement()
 {
   WriteHeader(INS_START);
 }
 
-void ArtuinoToGraph::StopMeasurement()
+void ArduinoToGraph::StopMeasurement()
 {
   WriteHeader(INS_STOP);
+}
+
+bool ArduinoToGraph::IsMeasurementInProgress()
+{
+  return g_measurementInProgress;   
 }

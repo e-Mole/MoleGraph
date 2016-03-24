@@ -14,7 +14,9 @@ class GlobalSettings
         Key_GuiLanguage,
         Key_UnitBrackets,
         Key_UseBluetooth,
-        Key_ForcedOffline
+        Key_ForcedOffline,
+        Key_Console,
+        Key_ConsolePosition,
     };
 
     QString _GetStringKey(Key key) const;
@@ -37,7 +39,10 @@ public:
     void SetUseBluetooth(bool use);
     bool GetForcedOffline();
     void SetForcedOffline(bool offline);
-
+    bool GetConsole();
+    void SetConsole(bool visible);
+    int GetConsolePosition();
+    void SetConsolePosition(int position);
 };
 
 #endif // GLOBALSETTINGS_H

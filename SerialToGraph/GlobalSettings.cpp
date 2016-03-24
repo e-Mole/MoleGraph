@@ -22,6 +22,10 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "use_bluetooth";
     case Key_ForcedOffline:
         return "forced_offline";
+    case Key_Console:
+        return "console";
+    case Key_ConsolePosition:
+        return "console_position";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -94,4 +98,22 @@ bool GlobalSettings::GetForcedOffline()
 void GlobalSettings::SetForcedOffline(bool offline)
 {
     _Set(Key_ForcedOffline, offline);
+}
+
+bool GlobalSettings::GetConsole()
+{
+    return _Get(Key_Console, false).toBool();
+}
+void GlobalSettings::SetConsole(bool visible)
+{
+    _Set(Key_Console, visible);
+}
+
+int GlobalSettings::GetConsolePosition()
+{
+    return _Get(Key_ConsolePosition, (int)Qt::BottomDockWidgetArea).toInt();
+}
+void GlobalSettings::SetConsolePosition(int position)
+{
+    _Set(Key_ConsolePosition, position);
 }

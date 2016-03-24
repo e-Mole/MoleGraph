@@ -18,12 +18,20 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_settings(context.m_settings),
     m_languages(new QComboBox(this)),
     m_brackets(new QComboBox(this)),
-    m_useBluetooth(new QCheckBox(this))
+    m_useBluetooth(new QCheckBox(this)),
+    m_showConsole(new QCheckBox(this))
 
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
     _InitializeUseBluetooth();
+    _InitializeShowConsole();
+}
+
+void GlobalSettingsDialog::_InitializeShowConsole()
+{
+    m_showConsole->setChecked(m_settings.GetConsole());
+    m_formLayout->addRow(tr("Show Console"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
@@ -85,7 +93,15 @@ bool GlobalSettingsDialog::BeforeAccept()
             m_settings.SetUseBluetooth(m_useBluetooth->isChecked());
             m_context.m_mainWindow.RefreshHwConnection();
         }
-
     }
+
+    if (m_settings.GetConsole() != m_showConsole->isChecked())
+    {
+        {
+            m_settings.SetConsole(m_showConsole->isChecked());
+            m_context.m_mainWindow.ShowConsole(m_showConsole->isChecked());
+        }
+    }
+
     return true;
 }

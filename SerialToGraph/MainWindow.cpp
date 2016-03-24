@@ -4,6 +4,7 @@
 #include <ButtonLine.h>
 #include <Context.h>
 #include <Channel.h>
+#include <Console.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -33,8 +34,18 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_hwSink(m_settings, this),
     m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL),
-    m_portListDialog(NULL)
+    m_portListDialog(NULL),
+    m_console(new Console(this))
 {
+    m_console->setVisible(m_settings.GetConsole());
+    addDockWidget((Qt::DockWidgetArea)m_settings.GetConsolePosition(), m_console);
+    connect(
+        m_console, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
+        this, SLOT(consoleLocationChanged(Qt::DockWidgetArea)));
+    connect(
+        m_console, SIGNAL(visibilityChanged(bool)),
+        this, SLOT(consoleVisiblityChanged(bool)));
+
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
 #endif
@@ -86,6 +97,16 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
     }
 }
+
+void MainWindow::consoleVisiblityChanged(bool visible)
+{
+    m_settings.SetConsole(visible);
+}
+
+void MainWindow::consoleLocationChanged(Qt::DockWidgetArea area)
+{
+    m_settings.SetConsolePosition((int)area);
+}
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
     m_currentFileName = QFileInfo(fileName).fileName();
@@ -118,6 +139,10 @@ void MainWindow::RefreshHwConnection()
     m_portListDialog->refresh();
 }
 
+void MainWindow::ShowConsole(bool show)
+{
+    m_console->setVisible(show);
+}
 
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesandChannels)
 {

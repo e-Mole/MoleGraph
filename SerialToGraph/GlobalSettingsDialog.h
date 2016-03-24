@@ -17,12 +17,14 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QString _GetStoredUnitBrackets();
     void _InitializeUnitBrackets();
     void _InitializeUseBluetooth();
+    void _InitializeShowConsole();
 
     Context const &m_context;
     GlobalSettings &m_settings;
     QComboBox *m_languages;
     QComboBox *m_brackets;
     QCheckBox *m_useBluetooth;
+    QCheckBox *m_showConsole;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

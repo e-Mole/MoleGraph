@@ -300,7 +300,7 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
     {
         case hw::HwSink::Offline:
             m_connectivityButton->setStyleSheet(
-                "QPushButton { background-color : red; color : yellow; }");
+                "QPushButton { background-color : red; color : yellow;}");
         break;
         case hw::HwSink::Connected:
             m_connectivityButton->setStyleSheet(

@@ -76,6 +76,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
         &m_context.m_hwSink, SIGNAL(connectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
 
+    m_widget.setAutoFillBackground(true);
     connect(&m_widget, SIGNAL(resized()), this, SLOT(replaceDisplays()));
 }
 
@@ -545,7 +546,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         axis->UpdateGraphAxisStyle();
         axis->UpdateVisiblility();
     }
-     ReplaceDisplays(false);
+
+    ReplaceDisplays(false);
 }
 
 void Measurement::_InitializeAxesAndChanels()

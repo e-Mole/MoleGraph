@@ -33,7 +33,8 @@ Plot::Plot(Measurement *measurement) :
     m_disabled(false),
     m_horizontalChannel(NULL),
     m_graphPointsPosition(0),
-    m_markerLine(NULL)
+    m_markerLine(NULL),
+    m_mouseHandled(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -133,40 +134,46 @@ bool Plot::_GetClosestX(double in, int &out)
     if (dataMap == NULL)
         return false;
 
+    double xValue = 0;
     auto itHi = dataMap->lowerBound(in);
     if (itHi == dataMap->end())
+        xValue = dataMap->last().key;
+    else if(itHi == dataMap->begin())
+        xValue = dataMap->begin().key();
+    else
     {
-        out = dataMap->last().key;
-        return true;
+        auto itLo = itHi;
+        itLo--;
+
+        xValue = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
+            itLo.key() : itHi.key();
     }
 
-    if(itHi == dataMap->begin())
-    {
-        out = dataMap->begin().key();
-        return true;
-    }
-
-    auto itLo = itHi;
-    itLo--;
-
-    out = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
-        itLo.key() : itHi.key();
-
-    return true;
+    out = m_horizontalChannel->GetLastValueIndex(xValue);
+    return out != -1;
 }
 
 void Plot::mousePressEvent(QMouseEvent *event)
+{
+    m_mouseHandled = false;
+    QCustomPlot::mousePressEvent(event);
+}
+
+void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
             plotable->setSelected(false);
 
+    QCustomPlot::mouseReleaseEvent(event);
+
+    if (m_mouseHandled)
+        return;
+
     int xIndex;
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
-        clockedToPlot(xIndex);
-
-    QCustomPlot::mousePressEvent(event);
+        clickedToPlot(xIndex);
 }
 void Plot::mouseDoubleClickEvent(QMouseEvent *event)
 {
@@ -254,8 +261,7 @@ void Plot::mouseMoveEvent(QMouseEvent *event)
         double factor = (axis->range().upper - axis->range().lower) * percent;
         axis->setRange(axis->range().lower + factor, axis->range().upper + factor);
     }
-    //mReplotting = true;
-    //replot();
+    m_mouseHandled = true;
 }
 
 void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
@@ -395,6 +401,7 @@ void Plot::selectionChanged()
         return;
     }
 
+    m_mouseHandled = true;
     selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
@@ -470,7 +477,9 @@ void Plot::SetMarkerLine(int position)
     addItem(m_markerLine);
     m_markerLine->setPen(QPen(QBrush(Qt::black), MARKER_WIDTH, Qt::DotLine));
     m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
-    m_markerLine->start->setCoords(position, 0);
+
+    double xValue = m_horizontalChannel->GetValue(position);
+    m_markerLine->start->setCoords(xValue, 0);
     m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
-    m_markerLine->end->setCoords(position, 100);
+    m_markerLine->end->setCoords(xValue, 100);
 }

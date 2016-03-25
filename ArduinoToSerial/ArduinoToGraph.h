@@ -7,7 +7,7 @@
     #include <Arduino.h>
 #endif
 
-class ArtuinoToGraph
+class ArduinoToGraph
 {
   enum Instructions
   {
@@ -31,5 +31,6 @@ public:
   void SampleRequest();
   void StartMeasurement();
   void StopMeasurement();
+  bool IsMeasurementInProgress();
 };
 #endif //_ARDUINO_TO_SERIAL_H_

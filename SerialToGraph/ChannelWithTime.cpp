@@ -101,7 +101,7 @@ void ChannelWithTime::_UpdateAxisAndValues()
     m_axis->UpdateGraphAxisStyle();
 }
 
-void  ChannelWithTime::AddValue(double value, qreal timeFromStart)
+void  ChannelWithTime::AddValue(double value, double timeFromStart)
 {
     m_timeFromStart.push_back(timeFromStart);
     AddValue(value);
@@ -197,7 +197,7 @@ double ChannelWithTime::GetMaxValue()
     return 1;
 }
 
-qreal ChannelWithTime::GetTimeFromStart(unsigned index)
+double ChannelWithTime::GetTimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
 }

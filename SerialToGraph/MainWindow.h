@@ -10,6 +10,7 @@
 #include <QVector>
 
 class CentralWidget;
+class Console;
 class Measurement;
 class PortListDialog;
 class QApplication;
@@ -31,8 +32,10 @@ class MainWindow : public QMainWindow
     QTabWidget *m_measurementTabs;
     Measurement *m_currentMeasurement;
     QString m_currentFileName;
+    QString m_currentFileNameWithPath;
     QString m_langBcp47;
     PortListDialog *m_portListDialog;
+    Console *m_console;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -46,15 +49,18 @@ public:
     Measurement * GetCurrnetMeasurement();
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
-    QString &GetCurrentFileName();
+    QString &GetCurrentFileNameWithPath();
     void OpenNew();
     void RefreshHwConnection();
+    void ShowConsole(bool show);
     void TerminateBluetooth();
 
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
+    void consoleLocationChanged(Qt::DockWidgetArea area);
+    void consoleVisiblityChanged(bool visible);
 public slots:
     void openSerialPort();
 };

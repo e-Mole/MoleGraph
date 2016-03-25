@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     GlobalSettings.cpp \
     GlobalSettingsDialog.cpp \
     MyMessageBox.cpp \
-    ChannelWidget.cpp
+    ChannelWidget.cpp \
+    Console.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -82,7 +83,8 @@ HEADERS  += MainWindow.h \
     GlobalSettings.h \
     GlobalSettingsDialog.h \
     MyMessageBox.h \
-    ChannelWidget.h
+    ChannelWidget.h \
+    Console.h
 
 CONFIG += mobility
 CONFIG += c++11

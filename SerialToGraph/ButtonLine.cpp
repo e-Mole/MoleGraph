@@ -300,7 +300,7 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
     {
         case hw::HwSink::Offline:
             m_connectivityButton->setStyleSheet(
-                "QPushButton { background-color : red; color : yellow; }");
+                "QPushButton { background-color : red; color : yellow;}");
         break;
         case hw::HwSink::Connected:
             m_connectivityButton->setStyleSheet(
@@ -355,8 +355,8 @@ void ButtonLine::openFile()
 }
 void ButtonLine::saveFile()
 {
-    if (m_context.m_mainWindow.GetCurrentFileName() != "")
-        _SaveFile(m_context.m_mainWindow.GetCurrentFileName(), m_storedValues);
+    if (m_context.m_mainWindow.GetCurrentFileNameWithPath() != "")
+        _SaveFile(m_context.m_mainWindow.GetCurrentFileNameWithPath(), m_storedValues);
     else
         saveAsFile();
 }

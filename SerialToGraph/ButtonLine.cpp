@@ -109,6 +109,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_connectivityButton = new QPushButton(this);
     connect(m_connectivityButton, SIGNAL(released()), &m_context.m_mainWindow, SLOT(openSerialPort()));
     addWidget(m_connectivityButton);
+    _SetConnectivityState(m_context.m_hwSink.GetStateString(), m_context.m_hwSink.GetState());
 
     _InitializeMenu();
 }
@@ -296,20 +297,20 @@ void ButtonLine::exportAllCsv()
 
 void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
 {
+    m_connectivityButton->setAutoFillBackground(true);
+    QPalette pal(m_connectivityButton->palette());
     switch (state)
     {
         case hw::HwSink::Offline:
-            m_connectivityButton->setStyleSheet(
-                "QPushButton { background-color : red; color : yellow;}");
+            pal.setColor(QPalette::ButtonText, Qt::red);
         break;
         case hw::HwSink::Connected:
-            m_connectivityButton->setStyleSheet(
-                "QPushButton { background-color : green; color : white; }");
+            pal.setColor(QPalette::ButtonText, Qt::green);
         break;
         default:
-            m_connectivityButton->setStyleSheet(
-                "QPushButton { background-color : yellow; color : black; }");
+            pal.setColor(QPalette::ButtonText, Qt::blue);
     }
+    m_connectivityButton->setPalette(pal);
     m_connectivityButton->setText(stateString);
     repaint();
 }

@@ -308,7 +308,7 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
             pal.setColor(QPalette::ButtonText, Qt::green);
         break;
         default:
-            pal.setColor(QPalette::ButtonText, Qt::blue);
+            pal.setColor(QPalette::ButtonText, Qt::darkYellow);
     }
     m_connectivityButton->setPalette(pal);
     m_connectivityButton->setText(stateString);

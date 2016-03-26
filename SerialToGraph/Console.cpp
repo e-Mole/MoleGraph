@@ -16,7 +16,7 @@ Console::Console(QWidget *parent) :
     m_textEdit(new QTextEdit(this))
 {
     s_console = this;
-    //qInstallMessageHandler(messageOutput);
+    qInstallMessageHandler(messageOutput);
 
     setAllowedAreas(Qt::AllDockWidgetAreas);
     QPalette pal(m_textEdit->palette());

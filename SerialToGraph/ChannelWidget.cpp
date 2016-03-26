@@ -7,50 +7,23 @@
 #define PADDING 0
 #define BORDER 1
 ChannelWidget::ChannelWidget(const QString &title, bool isHwChannel, QColor const &color, QWidget *parent) :
-#if defined (MY_GROUPBOX)
     QWidget(parent),
     m_title(new QLabel(title, this)),
-#else
-    QGroupBox(title, parent),
-#endif
     m_valueLabel(new ValueLabel("", color, isHwChannel, this))
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
-
-#if defined (MY_GROUPBOX)
     layout->setMargin(1);
     layout->addWidget(m_title);
-#else
-    layout->setMargin(3);
-#endif
-
     layout->addWidget(m_valueLabel, 1);
     layout->setSpacing(1);
 }
 
 ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
-    QLabel(text, parent)
+    QLabel(text, parent),
+    m_haveBackColor(haveBackColor)
 {
     setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
     SetColor(foreColor);
-
-    QString style;
-
-    if (haveBackColor)
-        style = "QLabel { background-color : #ffffff;";
-    else
-        style = "QLabel { background-color : #e0e0e0;";
-
-#if defined (MY_GROUPBOX)
-    style +=
-        QString("border: %1px solid #e0e0e0; padding: %2px %2px %2px %2px;}").
-            arg(BORDER).
-            arg(PADDING);
-#else
-    style += "}";
-#endif
-
-    setStyleSheet(style);
 
     setMargin(1);
 
@@ -97,8 +70,30 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
 
 void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 {
+    QString style;
+    if (m_haveBackColor)
+        style = "QLabel { background-color : #ffffff;";
+    else
+        style = "QLabel { background-color : #f0f0f0;";
+
+    style += QString("border: %1px solid #c0c0c0;").
+            arg(BORDER);
+
+    /*style += QString("border: %1px solid rgb(%2, %3, %4);").
+        arg(BORDER).
+        arg(color.red()).
+        arg(color.green()).
+        arg(color.blue());
+    */
+
+    style += QString("padding: %1px %1px %1px %1px; }").
+        arg(PADDING);
+
+    setStyleSheet(style);
+
     QPalette palette = this->palette();
     palette.setColor(foregroundRole(), color);
+    palette.setColor(backgroundRole(), color);
     setPalette(palette);
 }
 
@@ -110,11 +105,7 @@ void ChannelWidget::mousePressEvent(QMouseEvent * event)
 
 void ChannelWidget::setTitle(QString const &title)
 {
-#if defined (MY_GROUPBOX)
     m_title->setText(title);
-#else
-    QGroupBox::setTitle(title);
-#endif
 }
 
 void ChannelWidget::ShowValueWithUnits(QString const&value, QString const &units)

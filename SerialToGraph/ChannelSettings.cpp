@@ -27,7 +27,8 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
     m_axisComboBox(new QComboBox(this)),
     m_style(NULL),
     m_timeUnits(NULL),
-    m_format(NULL)
+    m_format(NULL),
+    m_penStyle(new QComboBox(this))
 {
 
     if (m_channel->IsHwChannel())
@@ -46,6 +47,20 @@ ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
 
     _InitializeAxisCombo();
     _InitializeShapeCombo();
+    _InitializePenStyle();
+}
+
+void ChannelSettings::_InitializePenStyle()
+{
+    m_penStyle->addItem(tr("No Line"));
+    m_penStyle->addItem(tr("Solid Line"));
+    m_penStyle->addItem(tr("Dash Line"));
+    m_penStyle->addItem(tr("Dot Line"));
+    m_penStyle->addItem(tr("Dash Dot Line"));
+    m_penStyle->addItem(tr("Dash Dot Dot Line"));
+    m_penStyle->setCurrentIndex((int)m_channel->GetPenStyle());
+
+    m_formLayout->addRow(new QLabel(tr("Pen Style"), this), m_penStyle);
 }
 
 void ChannelSettings::_InitializeTimeFeatures()
@@ -182,6 +197,12 @@ bool ChannelSettings::BeforeAccept()
         }
 
 
+    }
+
+    if (m_penStyle->currentIndex() != (int)m_channel->GetPenStyle())
+    {
+        changed = true;
+        m_channel->_SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
     }
 
     if (changed)

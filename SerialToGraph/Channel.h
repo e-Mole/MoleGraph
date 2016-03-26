@@ -25,6 +25,9 @@ class Channel : public QObject
     Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex)
     Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
     Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
+    Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE _SetPenStyle)
+
+    Q_ENUMS(Qt::PenStyle)
 
 protected:
 
@@ -36,6 +39,8 @@ protected:
     void _SetName(QString const &name);
     void _SetShapeIndex(unsigned index) ;
     void _SetUnits(QString const &units);
+    void _SetPenStyle(Qt::PenStyle penStyle);
+
 
     Measurement * m_measurement;
     Context const & m_context;
@@ -52,6 +57,7 @@ protected:
     QCPGraph *m_graph;
     QCPGraph *m_graphPoint;
     QString m_units;
+    Qt::PenStyle m_penStyle;
 public:
     Channel(
         Measurement *measurement,
@@ -129,6 +135,7 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
     int GetLastValueIndex(double value);
+    Qt::PenStyle GetPenStyle() { return m_penStyle; }
 
 signals:
     void stateChanged();

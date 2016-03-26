@@ -272,15 +272,41 @@ void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
     pen = graph->selectedPen();
     pen.setColor(color);
     graph->setSelectedPen(pen);
+
+    QCPScatterStyle style = graph->scatterStyle();
+    pen = style.pen();
+    pen.setColor(color);
+    style.setPen(pen);
+    graph->setScatterStyle(style);
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color, unsigned shapeIndex, bool shapeVisible)
+QCPGraph *Plot::AddGraph(
+    QColor const &color, unsigned shapeIndex, bool shapeVisible, Qt::PenStyle penStyle)
 {
     QCPGraph *graph = addGraph();
     SetGraphColor(graph, color);
     SetShape(graph, shapeVisible ? shapeIndex : -1);
+    SetPenStyle(graph, penStyle);
     return graph;
+}
 
+void Plot::SetPenStyle(QCPGraph *graph, Qt::PenStyle penStyle)
+{
+    QPen pen = graph->pen();
+    pen.setStyle(penStyle);
+    pen.setWidth(1);
+    graph->setPen(pen);
+
+    pen = graph->selectedPen();
+    pen.setStyle(penStyle);
+    pen.setWidth(2);
+    graph->setSelectedPen(pen);
+
+    QCPScatterStyle style = graph->scatterStyle();
+    pen = style.pen();
+    pen.setStyle(Qt::SolidLine);
+    style.setPen(pen);
+    graph->setScatterStyle(style);
 }
 
 unsigned Plot::GetShape(QCPGraph *graph)

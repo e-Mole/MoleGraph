@@ -834,7 +834,10 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
 
     Channel * channel = _FindChannel(hwIndex);
     if (NULL == channel)
-        return; //It should not happen
+    {
+        qCritical() << "file is corrupted";
+        QException().raise();
+    }
 
     if (channel->IsHwChannel())
         m_trackedHwChannels[hwIndex] = channel;

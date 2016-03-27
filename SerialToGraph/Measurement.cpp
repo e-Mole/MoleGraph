@@ -509,7 +509,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     channel->GetColor(),
 
                     channel->GetShapeIndex(),
-
                     channel->IsVisible(),
                     channel->GetUnits()
                 )

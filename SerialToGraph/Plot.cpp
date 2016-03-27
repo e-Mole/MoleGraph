@@ -429,9 +429,16 @@ void Plot::selectionChanged()
 
     m_mouseHandled = true;
     selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
+
+    //it should be done in two steps because channels are preset on y and on x axis too
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
-            plotable->setSelected(axis == selectedAxes().first());
+            plotable->setSelected(false);
+
+    foreach (QCPAxis *axis, axisRect()->axes())
+        foreach (QCPAbstractPlottable*plotable, axis->plottables())
+            if(axis == selectedAxes().first())
+                plotable->setSelected(true);
 
     if (selectedAxes().first() == xAxis)
     {

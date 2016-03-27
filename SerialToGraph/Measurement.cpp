@@ -1,8 +1,7 @@
 #include "Measurement.h"
 #include <Axis.h>
 #include <ChannelWidget.h>
-#include <ChannelBase.h>
-#include <SampleChannel.h>
+#include <HwChannel.h>
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <MyMessageBox.h>
@@ -20,6 +19,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <SampleChannel.h>
 #include <Serializer.h>
 #include <sstream>
 
@@ -494,7 +494,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         if (channel->IsHwChannel())
         {
             m_channels.push_back(
-                new ChannelBase(
+                new HwChannel(
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
@@ -632,7 +632,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 {
     unsigned order = m_channels.size()-1;
     m_channels.push_back(
-        new ChannelBase(
+        new HwChannel(
             this,
             m_context,
             axis,
@@ -786,7 +786,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
     }
     else
     {
-        channel = new ChannelBase(
+        channel = new HwChannel(
             this,
             m_context,
             axis,

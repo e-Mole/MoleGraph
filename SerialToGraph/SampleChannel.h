@@ -44,6 +44,8 @@ public:
         mm_ss_zzz,
     };
 
+    virtual ChanelType GetType() { return ChanelType_Sample; }
+
 private:
 
     friend class ChannelSettings;

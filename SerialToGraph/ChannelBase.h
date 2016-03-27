@@ -81,6 +81,7 @@ public:
     );
 
     ~ChannelBase();
+    virtual ChanelType GetType() = 0;
 
     QColor &GetColor() { return m_color; }
     int GetHwIndex() { return m_hwIndex; }

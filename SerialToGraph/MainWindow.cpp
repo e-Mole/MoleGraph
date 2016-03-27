@@ -248,7 +248,11 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     _SetCurrentFileName(fileName);
 
     QFile file(fileName);
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        MyMessageBox::critical(this, "Selected file was not open");
+        return;
+    }
     QDataStream in(&file);
 
     try

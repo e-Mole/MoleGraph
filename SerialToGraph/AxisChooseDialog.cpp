@@ -1,8 +1,8 @@
 #include "AxisChooseDialog.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <Channel.h>
-#include <ChannelWithTime.h>
+#include <ChannelBase.h>
+#include <SampleChannel.h>
 #include <Context.h>
 #include <Measurement.h>
 #include <QLabel>
@@ -13,7 +13,7 @@
 
 
 AxisChooseDialog::AxisChooseDialog(
-    QWidget *parent, Context const &context, Channel *originalHChannel, Channel *newHChannel
+    QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel
 ) :
     QDialog(parent),
     m_context(context),
@@ -22,7 +22,7 @@ AxisChooseDialog::AxisChooseDialog(
     m_newHChannel(newHChannel),
     m_isOriginalChannelRealTime(
         originalHChannel->IsSampleChannel() &&
-        ((ChannelWithTime *)originalHChannel)->IsInRealtimeStyle()
+        ((SampleChannel *)originalHChannel)->IsInRealtimeStyle()
     )
 {
     QVBoxLayout *layout = new QVBoxLayout(this);

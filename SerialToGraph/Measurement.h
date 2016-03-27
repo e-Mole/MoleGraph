@@ -12,8 +12,8 @@
 #include <QWidget>
 
 class Axis;
-class Channel;
-class ChannelWithTime;
+class ChannelBase;
+class SampleChannel;
 class Plot;
 class QColor;
 class QCPAxis;
@@ -99,8 +99,8 @@ private:
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type) {m_type = type; }
     unsigned _GetAxisCount() { return m_axes.size(); }
-    Channel *_FindChannel(int hwIndex);
-    void _SerializeChannelValues(Channel *channel, QDataStream &out);
+    ChannelBase *_FindChannel(int hwIndex);
+    void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
     void _ReadingValuesPostProcess();
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
@@ -116,13 +116,13 @@ private:
     unsigned m_period;
     State m_state;
     bool m_anySampleMissed;
-    QMap<unsigned, Channel *> m_trackedHwChannels; //used just during measurement
+    QMap<unsigned, ChannelBase *> m_trackedHwChannels; //used just during measurement
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
-    ChannelWithTime *m_sampleChannel;
+    SampleChannel *m_sampleChannel;
     QVector<Axis*> m_axes;
-    QVector<Channel*> m_channels;
+    QVector<ChannelBase*> m_channels;
     QHBoxLayout *m_mainLayout;
     QVBoxLayout *m_plotAndSliderLayout;
     QVBoxLayout *m_displaysAndSliderLayout;
@@ -142,14 +142,14 @@ public:
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes() const;
-    QVector<Channel *> const & GetChannels() const;
+    QVector<ChannelBase *> const & GetChannels() const;
     void ReplaceDisplays(bool grid);
     Plot *GetPlot() const;
     bool IsPlotVisible() const;
     State GetState() { return m_state; }
     Axis *CreateAxis(QColor const & color);
     void RemoveAxis(Axis * axis);
-    Channel *GetChannel(unsigned index);
+    ChannelBase *GetChannel(unsigned index);
     unsigned GetChannelCount();
     int GetAxisIndex(Axis *axis);
     Axis *GetAxis(int index);
@@ -163,7 +163,7 @@ public:
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
         { m_saveLoadValues = saveLoadValues; }
 
-    ChannelWithTime *GetSampleChannel() {return m_sampleChannel; }
+    SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown() {return m_marksShown; }
 signals:

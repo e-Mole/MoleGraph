@@ -3,7 +3,7 @@
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
 #include <Context.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <Export.h>
 #include <FileDialog.h>
 #include <GlobalSettingsDialog.h>
@@ -246,7 +246,7 @@ void ButtonLine::UpdateRunButtonsState()
 
     bool horizontalPreset = false;
     bool hwChannelPresent = false;
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (channel->IsHwChannel() && channel->IsVisible())
             hwChannelPresent = true;
@@ -412,7 +412,7 @@ void ButtonLine::_CreatePanelShortcuts()
     m_graphShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this);
     connect (m_graphShortcut, SIGNAL(activated()), m_channelMenu, SLOT(graphActivated()));
 
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), this);
         connect(s, SIGNAL(activated()), this, SLOT(channelActivated()));
@@ -442,10 +442,10 @@ QString ButtonLine::GetNoChannelShortcutText()
     return m_noChannelsShortcut->key().toString();
 }
 
-QString ButtonLine::GetChannelShortcutText(Channel *channel)
+QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
 {
     //only a few channels to create inverted map
-    QMap<QShortcut*, Channel*>::iterator it =  m_shortcutChannels.begin();
+    QMap<QShortcut*, ChannelBase*>::iterator it =  m_shortcutChannels.begin();
     for (;it != m_shortcutChannels.end(); ++it)
     {
         if (it.value() == channel)
@@ -458,7 +458,7 @@ QString ButtonLine::GetChannelShortcutText(Channel *channel)
 
 void ButtonLine::channelActivated()
 {
-    Channel *channel = m_shortcutChannels[(QShortcut*)sender()];
+    ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
     m_channelMenu->ActivateChannel(channel, !channel->IsVisible());
 }
 

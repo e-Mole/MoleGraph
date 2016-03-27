@@ -2,13 +2,13 @@
 #define EXPORT_H
 #include <QVector>
 
-class Channel;
+class ChannelBase;
 class Measurement;
 class QFile;
 class QString;
 class Export
 {
-    QString _GetValueText(Channel *channel, unsigned sampleNr);
+    QString _GetValueText(ChannelBase *channel, unsigned sampleNr);
     void _WriteHeader(QFile &file, QVector<Measurement *> const &measurements);
     void _WriteData(QFile &file, QVector<Measurement *> const &measurements);
 public:

@@ -3,8 +3,8 @@
 #include <AxisChooseDialog.h>
 #include <AxisSettings.h>
 #include <ChannelWidget.h>
-#include <Channel.h>
-#include <ChannelWithTime.h>
+#include <ChannelBase.h>
+#include <SampleChannel.h>
 #include <Context.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -17,7 +17,7 @@
 #include <QSettings>
 #include <QString>
 
-ChannelSettings::ChannelSettings(Channel *channel, const Context &context) :
+ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     bases::FormDialogColor(channel->GetWidget(), tr("Channel settings")),
     m_context(context),
     m_channel(channel),
@@ -65,12 +65,12 @@ void ChannelSettings::_InitializePenStyle()
 
 void ChannelSettings::_InitializeTimeFeatures()
 {
-    ChannelWithTime * channel = (ChannelWithTime*)m_channel;
+    SampleChannel * channel = (SampleChannel*)m_channel;
 
     m_style = new QComboBox(this);
-    m_style->addItem(channel->GetStyleText(ChannelWithTime::Samples), false);
-    m_style->addItem(channel->GetStyleText(ChannelWithTime::TimeOffset), false);
-    m_style->addItem(channel->GetStyleText(ChannelWithTime::RealTime), true); //RealTime state as data
+    m_style->addItem(channel->GetStyleText(SampleChannel::Samples), false);
+    m_style->addItem(channel->GetStyleText(SampleChannel::TimeOffset), false);
+    m_style->addItem(channel->GetStyleText(SampleChannel::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
@@ -83,7 +83,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(channel->m_timeUnits);
-    m_timeUnits->setEnabled(channel->m_style == ChannelWithTime::TimeOffset);
+    m_timeUnits->setEnabled(channel->m_style == SampleChannel::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
     m_format = new QComboBox(this);
@@ -92,14 +92,14 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_format->addItem(tr("hour:minute:second"));
     m_format->addItem(tr("minute:second.milisecond"));
     m_format->setCurrentIndex(channel->m_realTimeFormat);
-    m_format->setEnabled(channel->m_style == ChannelWithTime::RealTime);
+    m_format->setEnabled(channel->m_style == SampleChannel::RealTime);
     m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
 }
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::TimeOffset);
-    m_format->setEnabled((ChannelWithTime::Style)index == ChannelWithTime::RealTime);
+    m_timeUnits->setEnabled((SampleChannel::Style)index == SampleChannel::TimeOffset);
+    m_format->setEnabled((SampleChannel::Style)index == SampleChannel::RealTime);
     _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
 
@@ -177,23 +177,23 @@ bool ChannelSettings::BeforeAccept()
     }
     else
     {
-        ChannelWithTime *channelWithTime = (ChannelWithTime *)m_channel;
+        SampleChannel *channelWithTime = (SampleChannel *)m_channel;
         if ((int)channelWithTime->m_timeUnits != m_timeUnits->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetTimeUnits((ChannelWithTime::TimeUnits)m_timeUnits->currentIndex());
+            channelWithTime->_SetTimeUnits((SampleChannel::TimeUnits)m_timeUnits->currentIndex());
         }
 
         if ((int)channelWithTime->m_realTimeFormat != m_format->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetFormat((ChannelWithTime::RealTimeFormat)m_format->currentIndex());
+            channelWithTime->_SetFormat((SampleChannel::RealTimeFormat)m_format->currentIndex());
         }
 
         if ((int)channelWithTime->m_style != m_style->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetStyle((ChannelWithTime::Style)m_style->currentIndex());
+            channelWithTime->_SetStyle((SampleChannel::Style)m_style->currentIndex());
         }
 
 
@@ -224,7 +224,7 @@ bool ChannelSettings::BeforeAccept()
 
 bool ChannelSettings::_MoveLastHorizontalToVertical()
 {
-    foreach (Channel *channel, m_channel->GetMeasurement()->GetChannels())
+    foreach (ChannelBase *channel, m_channel->GetMeasurement()->GetChannels())
     {
         //find last horizontal axis
         if (channel->m_axis->IsHorizontal())

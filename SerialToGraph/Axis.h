@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QString>
 
-class Channel;
+class ChannelBase;
 class Measurement;
 class QCPAxis;
 class QString;
@@ -71,7 +71,7 @@ public:
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();
-    bool IsEmptyExcept(Channel *except);
+    bool IsEmptyExcept(ChannelBase *except);
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
     unsigned GetAssignedChannelCount();

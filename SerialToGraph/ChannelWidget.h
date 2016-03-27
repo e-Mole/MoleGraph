@@ -10,9 +10,6 @@ class ChannelWidget : public QWidget
 {
     Q_OBJECT
 
-    //enum ChanelType
-
-
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);

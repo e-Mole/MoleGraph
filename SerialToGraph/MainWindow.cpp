@@ -3,7 +3,7 @@
 #include <Axis.h>
 #include <ButtonLine.h>
 #include <Context.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <Console.h>
 #include <Plot.h>
 #include <PortListDialog.h>
@@ -89,7 +89,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     ConfirmMeasurement(CreateNewMeasurement(true));
 
     m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
-    m_portListDialog->StartSearching();
+    m_portListDialog->startSearching();
 
     if (fileNameToOpen.length() != 0)
     {

@@ -15,7 +15,7 @@ class QCPAxis;
 class QCPGraph;
 struct Context;
 
-class Channel : public QObject
+class ChannelBase : public QObject
 {
     friend class ChannelSettings;
     Q_OBJECT
@@ -59,7 +59,14 @@ protected:
     QString m_units;
     Qt::PenStyle m_penStyle;
 public:
-    Channel(
+    enum ChanelType
+    {
+        ChanelType_Sample,
+        ChanelType_Hw,
+        ChanelType_Ghost
+    };
+
+    ChannelBase(
         Measurement *measurement,
         Context const & context,
         Axis * axis,
@@ -71,9 +78,9 @@ public:
         unsigned shapeIndex = 0,
         bool visible = true,
         const QString &units = ""
-        );
+    );
 
-    ~Channel();
+    ~ChannelBase();
 
     QColor &GetColor() { return m_color; }
     int GetHwIndex() { return m_hwIndex; }

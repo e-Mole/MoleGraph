@@ -1,7 +1,7 @@
 #include "Axis.h"
 #include <Context.h>
-#include <Channel.h>
-#include <ChannelWithTime.h>
+#include <ChannelBase.h>
+#include <SampleChannel.h>
 #include <GlobalSettings.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -39,7 +39,7 @@ void Axis::_AssignGraphAxis(QCPAxis *axis)
 {
     if (NULL != m_graphAxis)
     {
-        foreach (Channel *channel, m_measurement->GetChannels())
+        foreach (ChannelBase *channel, m_measurement->GetChannels())
         {
             if (channel->GetAxis()->GetGraphAxis() == m_graphAxis)
                 channel->AssignToGraphAxis(axis);
@@ -135,7 +135,7 @@ void Axis::UpdateGraphAxisName()
 
 void Axis::UpdateVisiblility()
 {
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (channel->IsVisible() && channel->GetAxis() == this)
         {
@@ -177,9 +177,9 @@ Measurement * Axis::GetMeasurement()
     return m_measurement;
 }
 
-bool Axis::IsEmptyExcept(Channel *except)
+bool Axis::IsEmptyExcept(ChannelBase *except)
 {
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (channel == except)
             continue;
@@ -193,12 +193,12 @@ bool Axis::IsEmptyExcept(Channel *except)
 
 bool Axis::ContainsChannelWithRealTimeStyle()
 {
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (
             channel->GetAxis() == this &&
             channel->IsSampleChannel() &&
-            ((ChannelWithTime*)channel)->IsInRealtimeStyle()
+            ((SampleChannel*)channel)->IsInRealtimeStyle()
         )
             return true;
     }
@@ -207,8 +207,8 @@ bool Axis::ContainsChannelWithRealTimeStyle()
 
 void Axis::UpdateGraphAxisStyle()
 {
-    Channel *axisChannel = NULL;
-    foreach (Channel *channel, m_measurement->GetChannels())
+    ChannelBase *axisChannel = NULL;
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
         if (channel->GetAxis() == this)
         {
             axisChannel = channel;
@@ -223,8 +223,8 @@ void Axis::UpdateGraphAxisStyle()
 
     if (axisChannel->IsSampleChannel())
     {
-        realTimeStyle = ((ChannelWithTime *)axisChannel)->GetStyle() == ChannelWithTime::RealTime;
-        formatText = ((ChannelWithTime *)axisChannel)->GetRealTimeFormatText();
+        realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannel::RealTime;
+        formatText = ((SampleChannel *)axisChannel)->GetRealTimeFormatText();
     }
 
     m_measurement->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
@@ -233,7 +233,7 @@ void Axis::UpdateGraphAxisStyle()
 unsigned Axis::GetAssignedChannelCount()
 {
     unsigned count = 0;
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
         if (channel->GetAxis() == this)
             count++;
 

@@ -1,6 +1,6 @@
 #include "Context.h"
 #include <Axis.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <GlobalSettings.h>
 #include <Plot.h>
 #include <MainWindow.h>

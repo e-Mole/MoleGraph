@@ -1,6 +1,6 @@
 #include "Export.h"
-#include <Channel.h>
-#include <ChannelWithTime.h>
+#include <ChannelBase.h>
+#include <SampleChannel.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QFile>
@@ -24,7 +24,7 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
     foreach (Measurement *m, measurements)
     {
         bool firstForMeasurement = true;
-        foreach (Channel *channel, m->GetChannels())
+        foreach (ChannelBase *channel, m->GetChannels())
         {
             if (!channel->IsVisible()) //at least sample channel will be visible
                 continue;
@@ -42,9 +42,9 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
                 firstForMeasurement = false;
                 measurementLine.append(m->GetName().toStdString());
             }
-            ChannelWithTime *sampleChannel = m->GetSampleChannel();
-            if (channel == sampleChannel && sampleChannel->GetStyle() != ChannelWithTime::Samples)
-                channelLine.append(sampleChannel->GetStyleText(ChannelWithTime::Samples).toStdString() + ";");
+            SampleChannel *sampleChannel = m->GetSampleChannel();
+            if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
+                channelLine.append(sampleChannel->GetStyleText(SampleChannel::Samples).toStdString() + ";");
 
             channelLine.append(
                 channel->GetUnits().size() > 0 ?
@@ -70,7 +70,7 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         bool first = true;
         foreach (Measurement *m, measurements)
         {
-            foreach (Channel *channel, m->GetChannels())
+            foreach (ChannelBase *channel, m->GetChannels())
             {
                 if (!channel->IsVisible())
                     continue;
@@ -85,8 +85,8 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
                 else
                     lineContent.append(";");
 
-                ChannelWithTime *sampleChannel = m->GetSampleChannel();
-                if (channel == sampleChannel && sampleChannel->GetStyle() != ChannelWithTime::Samples)
+                SampleChannel *sampleChannel = m->GetSampleChannel();
+                if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
                     lineContent.append(QString("%1;").arg(sampleNr).toStdString());
 
                 lineContent.append(_GetValueText(channel, sampleNr).toStdString());
@@ -112,12 +112,12 @@ void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measur
     file.close();
 }
 
-QString Export::_GetValueText(Channel *channel, unsigned sampleNr)
+QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
 {
     if (channel->IsSampleChannel() &&
-        ((ChannelWithTime *)channel)->GetStyle() == ChannelWithTime::RealTime
+        ((SampleChannel *)channel)->GetStyle() == SampleChannel::RealTime
     )
-        return ((ChannelWithTime *)channel)->GetValueTimestamp(sampleNr);
+        return ((SampleChannel *)channel)->GetValueTimestamp(sampleNr);
 
     return QString("%1").arg(channel->GetValue(sampleNr));
 }

@@ -1,10 +1,10 @@
 #ifndef CHANNELWITHTIME_H
 #define CHANNELWITHTIME_H
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <QVector>
 #include <QDateTime>
 class QDateTime;
-class ChannelWithTime : public Channel
+class SampleChannel : public ChannelBase
 {
     Q_OBJECT
 
@@ -17,7 +17,7 @@ class ChannelWithTime : public Channel
     Q_ENUMS(TimeUnits)
     Q_ENUMS(RealTimeFormat)
 
-    void AddValue(double value) { Channel::AddValue(value); } //values to ChannelWithTime should be added through method with time
+    void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits
     {
@@ -63,7 +63,7 @@ private:
     RealTimeFormat m_realTimeFormat;
 
 public:
-    ChannelWithTime(Measurement *measurement,
+    SampleChannel(Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,

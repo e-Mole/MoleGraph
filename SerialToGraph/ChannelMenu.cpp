@@ -1,6 +1,6 @@
 #include "ChannelMenu.h"
 #include <ButtonLine.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <bases/ClickableLabel.h>
 #include <QKeySequence>
 #include <Measurement.h>
@@ -61,13 +61,13 @@ void ChannelMenu::FillGrid()
         _GetShortcutLabel(m_buttonLine->GetGraphShortcutText()), row, 2
     );
 
-    foreach (Channel *channel, m_measurement.GetChannels())
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
         _AddChannel(channel, ++row);
 
     m_gridLayout->setColumnStretch(3, 1);
 }
 
-void ChannelMenu::_AddChannel(Channel *channel, unsigned row)
+void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
 {
     QCheckBox *cb = new QCheckBox(this);
     cb->setChecked(channel->IsVisible());
@@ -108,7 +108,7 @@ void ChannelMenu::UpdateLabels()
 }
 void ChannelMenu::edit()
 {
-    Channel *channel = m_editChannels[(QPushButton*)sender()];
+    ChannelBase *channel = m_editChannels[(QPushButton*)sender()];
     channel->editChannel();
 
     bases::ClickableLabel *label = m_channelLabels[channel];
@@ -120,7 +120,7 @@ void ChannelMenu::edit()
 
 void ChannelMenu::channelActivated()
 {
-    Channel *channel;
+    ChannelBase *channel;
     if (m_checkBoxChannels.find((QCheckBox*)sender()) == m_checkBoxChannels.end())
     {
         channel = m_labelChannels[(bases::ClickableLabel*)sender()];
@@ -132,7 +132,7 @@ void ChannelMenu::channelActivated()
     ActivateChannel(channel, !channel->IsVisible());
 }
 
-void ChannelMenu::ActivateChannel(Channel *channel, bool checked)
+void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
 {
     channel->setVisible(checked);
     m_channelCheckBoxes[channel]->setChecked(checked);
@@ -151,7 +151,7 @@ void ChannelMenu::graphActivated()
 
 void ChannelMenu::noChannelsActivated()
 {
-    foreach (Channel *channel, m_measurement.GetChannels())
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
         ActivateChannel(channel, false);
 
     m_buttonLine->UpdateRunButtonsState();
@@ -159,7 +159,7 @@ void ChannelMenu::noChannelsActivated()
 
 void ChannelMenu::allChannelsActivated()
 {
-    foreach (Channel *channel, m_measurement.GetChannels())
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
         ActivateChannel(channel, true);
 
     m_buttonLine->UpdateRunButtonsState();

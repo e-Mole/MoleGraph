@@ -5,7 +5,7 @@
 #include <QVector>
 
 class Axis;
-class Channel;
+class ChannelBase;
 class GlobalSettings;
 class MainWindow;
 class Measurement;

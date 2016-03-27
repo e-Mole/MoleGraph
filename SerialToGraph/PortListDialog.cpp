@@ -63,7 +63,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
 }
 
-void PortListDialog::StartSearching()
+void PortListDialog::startSearching()
 {
     m_hwSink.StartSearching();
 }
@@ -82,7 +82,7 @@ void PortListDialog::workDisconnected()
 void PortListDialog::refresh()
 {
     _CleanPortList();
-    StartSearching();
+    startSearching();
 }
 
 void PortListDialog::addPort(hw::PortInfo const &item)

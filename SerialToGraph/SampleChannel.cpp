@@ -1,11 +1,11 @@
-#include "ChannelWithTime.h"
+#include "SampleChannel.h"
 #include <Axis.h>
 #include <ChannelWidget.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QDateTime>
 
-ChannelWithTime::ChannelWithTime(
+SampleChannel::SampleChannel(
     Measurement *measurement,
     Context const & context,
     Axis * axis,
@@ -20,7 +20,7 @@ ChannelWithTime::ChannelWithTime(
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    Channel(measurement, context, axis,graph, graphPoint, hwIndex, "", color,  shapeIndex,  visible, units),
+    ChannelBase(measurement, context, axis,graph, graphPoint, hwIndex, "", color,  shapeIndex,  visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
@@ -29,28 +29,28 @@ ChannelWithTime::ChannelWithTime(
     _SetName(GetStyleText());
 }
 
-void ChannelWithTime::_SetStyle(Style style)
+void SampleChannel::_SetStyle(Style style)
 {
     m_style = style;
     _SetName(GetStyleText());
     _UpdateAxisAndValues();
 
 }
-void ChannelWithTime::_SetTimeUnits(TimeUnits units)
+void SampleChannel::_SetTimeUnits(TimeUnits units)
 {
     m_timeUnits = units;
 
     _UpdateAxisAndValues();
 }
 
-void ChannelWithTime::_SetFormat(RealTimeFormat format)
+void SampleChannel::_SetFormat(RealTimeFormat format)
 {
     m_realTimeFormat = format;
 
     _UpdateAxisAndValues();
 }
 
-void ChannelWithTime::_UpdateAxisAndValues()
+void SampleChannel::_UpdateAxisAndValues()
 {
     switch (m_style)
     {
@@ -101,17 +101,17 @@ void ChannelWithTime::_UpdateAxisAndValues()
     m_axis->UpdateGraphAxisStyle();
 }
 
-void  ChannelWithTime::AddValue(double value, double timeFromStart)
+void  SampleChannel::AddValue(double value, double timeFromStart)
 {
     m_timeFromStart.push_back(timeFromStart);
     AddValue(value);
 }
 
-double ChannelWithTime::GetSampleNr(unsigned index)
+double SampleChannel::GetSampleNr(unsigned index)
 {
-    return Channel::GetValue(index);
+    return ChannelBase::GetValue(index);
 }
-double ChannelWithTime::GetValue(unsigned index)
+double SampleChannel::GetValue(unsigned index)
 {
     switch (m_style)
     {
@@ -142,7 +142,7 @@ double ChannelWithTime::GetValue(unsigned index)
 }
 
 
-QString ChannelWithTime::GetRealTimeFormatText()
+QString SampleChannel::GetRealTimeFormatText()
 {
     QLocale locale(QLocale::system());
 
@@ -161,35 +161,35 @@ QString ChannelWithTime::GetRealTimeFormatText()
     }
 }
 
-QString ChannelWithTime::_GetRealTimeText(double secSinceEpoch)
+QString SampleChannel::_GetRealTimeText(double secSinceEpoch)
 {
     QDateTime dateTime;
     dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
     return dateTime.toString(GetRealTimeFormatText());
 }
 
-void ChannelWithTime::_FillLastValueText(int index)
+void SampleChannel::_FillLastValueText(int index)
 {
     if (m_style == RealTime)
         m_lastValueText = GetValueTimestamp(index);
     else
-        Channel::_FillLastValueText(index);
+        ChannelBase::_FillLastValueText(index);
 }
 
-double ChannelWithTime::GetMinValue()
+double SampleChannel::GetMinValue()
 {
     if (!IsInRealtimeStyle())
-        return Channel::GetMinValue();
+        return ChannelBase::GetMinValue();
     if (GetValueCount() > 0)
         return GetValue(0);
 
     return 0;
 }
 
-double ChannelWithTime::GetMaxValue()
+double SampleChannel::GetMaxValue()
 {
     if (!IsInRealtimeStyle())
-        return Channel::GetMaxValue();
+        return ChannelBase::GetMaxValue();
 
     if (GetValueCount() > 0)
         return GetValue(GetValueCount()-1);
@@ -197,17 +197,17 @@ double ChannelWithTime::GetMaxValue()
     return 1;
 }
 
-double ChannelWithTime::GetTimeFromStart(unsigned index)
+double SampleChannel::GetTimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
 }
 
-QString ChannelWithTime::GetValueTimestamp(unsigned index)
+QString SampleChannel::GetValueTimestamp(unsigned index)
 {
     return _GetRealTimeText(GetValue(index));
 }
 
-QString ChannelWithTime::GetStyleText(Style style)
+QString SampleChannel::GetStyleText(Style style)
 {
     switch (style)
     {

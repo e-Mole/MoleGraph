@@ -6,7 +6,7 @@
 class QColor;
 class QEvent;
 class Context;
-class Channel;
+class ChannelBase;
 class Measurement;
 class MyAxisRect : public QCPAxisRect
 {
@@ -33,7 +33,7 @@ class Plot : public QCustomPlot
     Measurement const &m_measurement;
     bool m_moveMode;
     bool m_disabled;
-    Channel *m_horizontalChannel;
+    ChannelBase *m_horizontalChannel;
     int m_graphPointsPosition;
     QPointF m_currentTouchPointPos;
     QCPItemLine *m_markerLine;
@@ -69,8 +69,8 @@ public:
     QCPAxis *AddYAxis(bool onRight);
     void RescaleAxis(QCPAxis *axis);
     void RescaleAllAxes();
-    void SetHorizontalChannel(Channel *channel);
-    Channel *GetHorizontalChannel();
+    void SetHorizontalChannel(ChannelBase *channel);
+    ChannelBase *GetHorizontalChannel();
     void PauseDrawing();
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);

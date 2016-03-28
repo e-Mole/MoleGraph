@@ -20,8 +20,7 @@ class AxisChooseDialog : public QDialog
     ChannelBase *m_newHChannel;
     bool m_isOriginalChannelRealTime;
 public:
-    AxisChooseDialog(
-        QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel);
+    AxisChooseDialog(QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel);
 
 signals:
 

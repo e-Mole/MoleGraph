@@ -197,7 +197,7 @@ bool Axis::ContainsChannelWithRealTimeStyle()
     {
         if (
             channel->GetAxis() == this &&
-            channel->IsSampleChannel() &&
+            channel->GetType() == ChannelBase::Type_Sample &&
             ((SampleChannel*)channel)->IsInRealtimeStyle()
         )
             return true;
@@ -221,7 +221,7 @@ void Axis::UpdateGraphAxisStyle()
     bool realTimeStyle = false;
     QString formatText = "";
 
-    if (axisChannel->IsSampleChannel())
+    if (axisChannel->GetType() == ChannelBase::Type_Sample)
     {
         realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannel::RealTime;
         formatText = ((SampleChannel *)axisChannel)->GetRealTimeFormatText();

@@ -1,6 +1,7 @@
 #include "HwChannel.h"
 #include <Axis.h>
 #include <Context.h>
+#include <ChannelWidget.h>
 #include <Measurement.h>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
@@ -18,7 +19,9 @@ HwChannel::HwChannel(
     unsigned shapeIndex,
     bool visible,
     const QString &units
-) : ChannelBase(measurement, context, axis, graph, graphPoint, hwIndex, name, color, shapeIndex, visible, units)
+) :
+    ChannelBase(Type_Hw, measurement, context, axis, graph, graphPoint, name, color, shapeIndex, visible, units),
+    m_hwIndex(hwIndex)
 {
-
+    _UpdateTitle();
 }

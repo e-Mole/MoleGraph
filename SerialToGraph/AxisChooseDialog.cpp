@@ -21,7 +21,7 @@ AxisChooseDialog::AxisChooseDialog(
     m_originalHChannel(originalHChannel),
     m_newHChannel(newHChannel),
     m_isOriginalChannelRealTime(
-        originalHChannel->IsSampleChannel() &&
+        originalHChannel->GetType() == ChannelBase::Type_Sample &&
         ((SampleChannel *)originalHChannel)->IsInRealtimeStyle()
     )
 {

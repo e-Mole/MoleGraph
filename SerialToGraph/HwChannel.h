@@ -12,6 +12,8 @@ struct Context;
 class HwChannel : public ChannelBase
 {
     Q_OBJECT
+
+    int m_hwIndex;
 public:
     HwChannel(
         Measurement *measurement,
@@ -27,7 +29,10 @@ public:
         const QString &units = ""
     );
 
-    virtual ChanelType GetType() { return ChanelType_Hw; }
+    virtual Type GetType() { return Type_Hw; }
+    virtual unsigned GetShortcutOrder() { return m_hwIndex + 1; }
+
+    int GetHwIndex() { return m_hwIndex; }
 
 signals:
 

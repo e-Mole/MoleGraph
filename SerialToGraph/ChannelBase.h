@@ -45,7 +45,6 @@ protected:
     Measurement * m_measurement;
     Context const & m_context;
     QString m_name;
-    int m_hwIndex;
     ChannelWidget *m_widget;
     QVector<double> m_values;
     QColor m_color;
@@ -59,20 +58,20 @@ protected:
     QString m_units;
     Qt::PenStyle m_penStyle;
 public:
-    enum ChanelType
+    enum Type
     {
-        ChanelType_Sample,
-        ChanelType_Hw,
-        ChanelType_Ghost
+        Type_Sample,
+        Type_Hw,
+        Type_Ghost
     };
 
     ChannelBase(
+        Type type,
         Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        int hwIndex,
         QString const &name = "",
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
@@ -81,10 +80,10 @@ public:
     );
 
     ~ChannelBase();
-    virtual ChanelType GetType() = 0;
+    virtual Type GetType() = 0;
+    virtual unsigned GetShortcutOrder() = 0;
 
     QColor &GetColor() { return m_color; }
-    int GetHwIndex() { return m_hwIndex; }
     QString GetName();
     QString GetUnits();
 
@@ -115,11 +114,6 @@ public:
 
     unsigned GetShapeIndex()
     { return m_shapeIndex; }
-    
-    bool IsHwChannel()
-    { return m_hwIndex != -1; }
-
-    bool IsSampleChannel() { return !IsHwChannel(); }
 
     bool IsOnHorizontalAxis();
 

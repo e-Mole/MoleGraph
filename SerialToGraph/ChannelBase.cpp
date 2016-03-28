@@ -19,24 +19,23 @@
 #include <QString>
 #include <limits>
 
-ChannelBase::ChannelBase(Measurement *measurement,
+ChannelBase::ChannelBase(
+    Type type,
+    Measurement *measurement,
     Context const & context,
     Axis * axis,
     QCPGraph *graph,
     QCPGraph *graphPoint,
-    int hwIndex,
     QString const &name,
     QColor const &color,
     unsigned shapeIndex,
     bool visible,
-    const QString &units
-) :
+    const QString &units) :
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
     m_name(name),
-    m_hwIndex(hwIndex),
-    m_widget(new ChannelWidget(name, IsHwChannel(), color, measurement->GetWidget())),
+    m_widget(new ChannelWidget(name, type == Type_Hw, color, measurement->GetWidget())),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
@@ -50,7 +49,6 @@ ChannelBase::ChannelBase(Measurement *measurement,
     AssignToAxis(axis);
 
     _DisplayNAValue();
-    _UpdateTitle();
 
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
@@ -114,8 +112,7 @@ void ChannelBase::_DisplayNAValue()
 void ChannelBase::_UpdateTitle()
 {
     m_widget->setTitle(
-        QString("(%1) ").arg(m_hwIndex + 1) +
-        /*(IsOnHorizontalAxis() ? "- " : "| ") +*/
+        QString("(%1) ").arg(GetShortcutOrder()) +
         m_name
     );
     m_axis->UpdateGraphAxisName();

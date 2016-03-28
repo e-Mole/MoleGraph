@@ -11,7 +11,6 @@ SampleChannel::SampleChannel(
     Axis * axis,
     QCPGraph *graph,
     QCPGraph *graphPoint,
-    int hwIndex,
     QColor const &color,
     unsigned shapeIndex,
     bool visible,
@@ -20,13 +19,14 @@ SampleChannel::SampleChannel(
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, context, axis,graph, graphPoint, hwIndex, "", color,  shapeIndex,  visible, units),
+    ChannelBase(Type_Sample, measurement, context, axis,graph, graphPoint, "", color,  shapeIndex,  visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
     m_realTimeFormat(realTimeFormat)
 {
     _SetName(GetStyleText());
+    _UpdateTitle();
 }
 
 void SampleChannel::_SetStyle(Style style)

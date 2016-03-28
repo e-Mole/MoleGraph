@@ -31,7 +31,7 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     m_penStyle(new QComboBox(this))
 {
 
-    if (m_channel->IsHwChannel())
+    if (m_channel->GetType() == ChannelBase::Type_Hw)
     {
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_units = new QLineEdit(channel->GetUnits(), this);
@@ -149,7 +149,7 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
     }
 
-    if (m_channel->m_name != m_name->text() && m_channel->IsHwChannel())
+    if (m_channel->m_name != m_name->text() && m_channel->GetType() == ChannelBase::Type_Hw)
     {
         changed = true;
         m_channel->_SetName(m_name->text());
@@ -167,7 +167,7 @@ bool ChannelSettings::BeforeAccept()
         m_channel->_SetShapeIndex(m_shapeComboBox->currentIndex());
     }
 
-    if (m_channel->IsHwChannel())
+    if (m_channel->GetType() == ChannelBase::Type_Hw)
     {
         if (m_channel->m_units != m_units->text())
         {
@@ -270,7 +270,7 @@ void ChannelSettings::_RefillAxisCombo()
 
         if (!valid)
         {
-            if (m_channel->IsSampleChannel() && m_style->currentData().toBool())
+            if (m_channel->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
                 valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
             else
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel

@@ -248,7 +248,7 @@ void ButtonLine::UpdateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->IsHwChannel() && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
             hwChannelPresent = true;
         if (channel->IsOnHorizontalAxis() && channel->IsVisible())
             horizontalPreset = true;
@@ -414,7 +414,7 @@ void ButtonLine::_CreatePanelShortcuts()
 
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), this);
+        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()), this);
         connect(s, SIGNAL(activated()), this, SLOT(channelActivated()));
         m_shortcutChannels[s] = channel;
     }

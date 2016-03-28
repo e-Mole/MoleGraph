@@ -114,7 +114,7 @@ void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measur
 
 QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
 {
-    if (channel->IsSampleChannel() &&
+    if (channel->GetType() == ChannelBase::Type_Sample &&
         ((SampleChannel *)channel)->GetStyle() == SampleChannel::RealTime
     )
         return ((SampleChannel *)channel)->GetValueTimestamp(sampleNr);

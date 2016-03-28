@@ -248,28 +248,39 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     _SetCurrentFileName(fileName);
 
     QFile file(fileName);
-    file.open(QIODevice::ReadOnly);
-    QDataStream in(&file);
-
-    unsigned serializerVersion;
-    in >> serializerVersion; //not used yet
-
-    if (serializerVersion != ATOG_SERIALIZER_VERSION)
+    if (!file.open(QIODevice::ReadOnly))
     {
-        MyMessageBox::critical(this, "Unsuported file version");
+        MyMessageBox::critical(this, "Selected file was not open");
         return;
     }
+    QDataStream in(&file);
 
-    int count;
-    in >> count;
-
-    RemoveAllMeasurements();
-    for (int i = 0; i < count; i++)
+    try
     {
-        Measurement *m = CreateNewMeasurement(false);
-        m->SetSaveLoadValues(values);
-        in >> m;
-        ConfirmMeasurement(m);
+        unsigned serializerVersion;
+        in >> serializerVersion; //not used yet
+
+        if (serializerVersion != ATOG_SERIALIZER_VERSION)
+        {
+            MyMessageBox::critical(this, "Unsuported file version");
+            return;
+        }
+
+        int count;
+        in >> count;
+
+        RemoveAllMeasurements();
+        for (int i = 0; i < count; i++)
+        {
+            Measurement *m = CreateNewMeasurement(false);
+            m->SetSaveLoadValues(values);
+            in >> m;
+            ConfirmMeasurement(m);
+        }
+    }
+    catch (...)
+    {
+        MyMessageBox::critical(this, QString(tr("File %1 is corrupted.")).arg(fileName));
     }
 
     file.close();

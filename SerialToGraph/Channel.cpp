@@ -15,6 +15,7 @@
 #include <QLabel>
 #include <QLocale>
 #include <QPalette>
+#include <QPen>
 #include <QString>
 #include <limits>
 
@@ -43,7 +44,8 @@ Channel::Channel(Measurement *measurement,
     m_shapeIndex(shapeIndex),
     m_graph(graph),
     m_graphPoint(graphPoint),
-    m_units(units)
+    m_units(units),
+    m_penStyle(Qt::SolidLine)
 {
     AssignToAxis(axis);
 
@@ -61,8 +63,14 @@ Channel::Channel(Measurement *measurement,
 
 Channel::~Channel()
 {
-
 }
+
+void Channel::_SetPenStyle(Qt::PenStyle penStyle)
+{
+    m_penStyle = penStyle;
+    m_measurement->GetPlot()->SetPenStyle(m_graph, penStyle);
+}
+
 
 void Channel::changeChannelVisibility(bool visible, bool signal)
 {

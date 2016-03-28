@@ -24,6 +24,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _InitializeTimeFeatures();
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
+    void _InitializePenStyle();
 
     Context const & m_context;
     Channel *m_channel;
@@ -34,6 +35,7 @@ class ChannelSettings : public bases::FormDialogColor
     QComboBox * m_style;
     QComboBox * m_timeUnits;
     QComboBox * m_format;
+    QComboBox * m_penStyle;
 public:
     ChannelSettings(Channel *channel, Context const &context);
 signals:

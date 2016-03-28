@@ -272,15 +272,41 @@ void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
     pen = graph->selectedPen();
     pen.setColor(color);
     graph->setSelectedPen(pen);
+
+    QCPScatterStyle style = graph->scatterStyle();
+    pen = style.pen();
+    pen.setColor(color);
+    style.setPen(pen);
+    graph->setScatterStyle(style);
 }
 
-QCPGraph *Plot::AddGraph(QColor const &color, unsigned shapeIndex, bool shapeVisible)
+QCPGraph *Plot::AddGraph(
+    QColor const &color, unsigned shapeIndex, bool shapeVisible, Qt::PenStyle penStyle)
 {
     QCPGraph *graph = addGraph();
     SetGraphColor(graph, color);
     SetShape(graph, shapeVisible ? shapeIndex : -1);
+    SetPenStyle(graph, penStyle);
     return graph;
+}
 
+void Plot::SetPenStyle(QCPGraph *graph, Qt::PenStyle penStyle)
+{
+    QPen pen = graph->pen();
+    pen.setStyle(penStyle);
+    pen.setWidth(1);
+    graph->setPen(pen);
+
+    pen = graph->selectedPen();
+    pen.setStyle(penStyle);
+    pen.setWidth(2);
+    graph->setSelectedPen(pen);
+
+    QCPScatterStyle style = graph->scatterStyle();
+    pen = style.pen();
+    pen.setStyle(Qt::SolidLine);
+    style.setPen(pen);
+    graph->setScatterStyle(style);
 }
 
 unsigned Plot::GetShape(QCPGraph *graph)
@@ -403,9 +429,16 @@ void Plot::selectionChanged()
 
     m_mouseHandled = true;
     selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
+
+    //it should be done in two steps because channels are preset on y and on x axis too
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
-            plotable->setSelected(axis == selectedAxes().first());
+            plotable->setSelected(false);
+
+    foreach (QCPAxis *axis, axisRect()->axes())
+        foreach (QCPAbstractPlottable*plotable, axis->plottables())
+            if(axis == selectedAxes().first())
+                plotable->setSelected(true);
 
     if (selectedAxes().first() == xAxis)
     {

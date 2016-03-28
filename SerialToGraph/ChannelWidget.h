@@ -1,28 +1,22 @@
 #ifndef CLICKABLEGROUPBOX_H
 #define CLICKABLEGROUPBOX_H
 
-#define MY_GROUPBOX
-
 #include <QLabel>
-#if defined (MY_GROUPBOX)
-#   include <QWidget>
-#else
-#   include <QGroupBox>
-#endif
+#include <QWidget>
+
 class QColor;
 class QSize;
-class ChannelWidget :
-#if defined (MY_GROUPBOX)
-    public QWidget
-#else
-    public QGroupBox
-#endif
+class ChannelWidget : public QWidget
 {
     Q_OBJECT
+
+    //enum ChanelType
+
 
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);
+        bool m_haveBackColor;
     public:
         ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent);
         void SetMimimumFontSize();
@@ -34,10 +28,7 @@ class ChannelWidget :
     virtual void mousePressEvent(QMouseEvent * event);
     virtual void resizeEvent(QResizeEvent * event);
 
-#if defined (MY_GROUPBOX)
     QLabel * m_title;
-#endif
-
     ValueLabel *m_valueLabel;
 
 public:
@@ -47,9 +38,7 @@ public:
     QSize GetMinimumSize();
     void SetColor(QColor const &color);
 signals:
-#if defined (MY_GROUPBOX)
     void clicked();
-#endif
     void sizeChanged();
 public slots:
 

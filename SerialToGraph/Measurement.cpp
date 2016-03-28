@@ -12,6 +12,7 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QDataStream>
 #include <QDebug>
+#include <QException>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <MainWindow.h>
@@ -497,14 +498,17 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(channel->GetColor(), channel->GetShapeIndex(), GetMarksShown()),
+                    m_plot->AddGraph(
+                        channel->GetColor(),
+                        channel->GetShapeIndex(),
+                        GetMarksShown(),
+                        channel->GetPenStyle()),
                     m_plot->AddPoint(channel->GetColor(),channel->GetShapeIndex() ),
                     channel->GetHwIndex(),
                     channel->GetName(),
                     channel->GetColor(),
 
                     channel->GetShapeIndex(),
-
                     channel->IsVisible(),
                     channel->GetUnits()
                 )
@@ -517,7 +521,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(channel->GetColor(), channel->GetShapeIndex(), GetMarksShown()),
+                    m_plot->AddGraph(
+                        channel->GetColor(),
+                        channel->GetShapeIndex(),
+                        GetMarksShown(),
+                        channel->GetPenStyle()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetHwIndex(),
                     channel->GetColor(),
@@ -580,7 +588,7 @@ void Measurement::_InitializeAxesAndChanels()
             this,
             m_context,
             xAxis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
             m_plot->AddPoint(Qt::black, 0),
             -1,
             Qt::black,
@@ -628,7 +636,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
             this,
             m_context,
             axis,
-            m_plot->AddGraph(color, order, GetMarksShown()),
+            m_plot->AddGraph(color, order, GetMarksShown(), Qt::SolidLine),
             m_plot->AddPoint(color, order),
             order,
             QString(tr("Channel %1")).arg(order+1),
@@ -770,7 +778,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
             this,
             m_context,
             axis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
             m_plot->AddPoint(Qt::black, 0),
             hwIndex
         );
@@ -782,7 +790,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
             this,
             m_context,
             axis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown()),
+            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
             m_plot->AddPoint(Qt::black, 0),
             hwIndex
         );
@@ -825,7 +833,10 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
 
     Channel * channel = _FindChannel(hwIndex);
     if (NULL == channel)
-        return; //It should not happen
+    {
+        qCritical() << "file is corrupted";
+        QException().raise();
+    }
 
     if (channel->IsHwChannel())
         m_trackedHwChannels[hwIndex] = channel;

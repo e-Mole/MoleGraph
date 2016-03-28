@@ -255,7 +255,7 @@
 <busses>
 </busses>
 <nets>
-<net name="N$1" class="0">
+<net name="GND" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="1"/>
 <pinref part="U$2" gate="G$1" pin="1"/>

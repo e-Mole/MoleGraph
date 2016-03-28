@@ -19,7 +19,7 @@ SampleChannel::SampleChannel(
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(Type_Sample, measurement, context, axis,graph, graphPoint, "", color,  shapeIndex,  visible, units),
+    ChannelBase(measurement, context, axis,graph, graphPoint, "", color,  shapeIndex,  visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
@@ -27,6 +27,7 @@ SampleChannel::SampleChannel(
 {
     _SetName(GetStyleText());
     _UpdateTitle();
+    m_widget->SetBackColor(Qt::transparent);//QColor(0xd0, 0xd0, 0xd0));
 }
 
 void SampleChannel::_SetStyle(Style style)

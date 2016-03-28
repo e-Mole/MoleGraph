@@ -66,7 +66,6 @@ public:
     };
 
     ChannelBase(
-        Type type,
         Measurement *measurement,
         Context const & context,
         Axis * axis,

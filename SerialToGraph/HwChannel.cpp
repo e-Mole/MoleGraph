@@ -20,8 +20,9 @@ HwChannel::HwChannel(
     bool visible,
     const QString &units
 ) :
-    ChannelBase(Type_Hw, measurement, context, axis, graph, graphPoint, name, color, shapeIndex, visible, units),
+    ChannelBase(measurement, context, axis, graph, graphPoint, name, color, shapeIndex, visible, units),
     m_hwIndex(hwIndex)
 {
     _UpdateTitle();
+    m_widget->SetBackColor(QColor(0xff, 0xff, 0xff));
 }

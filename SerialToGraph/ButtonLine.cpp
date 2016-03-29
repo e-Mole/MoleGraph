@@ -297,20 +297,35 @@ void ButtonLine::exportAllCsv()
 
 void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
 {
-    m_connectivityButton->setAutoFillBackground(true);
-    QPalette pal(m_connectivityButton->palette());
+    QColor color;
     switch (state)
     {
         case hw::HwSink::Offline:
-            pal.setColor(QPalette::ButtonText, Qt::red);
+            color = Qt::red;
         break;
         case hw::HwSink::Connected:
-            pal.setColor(QPalette::ButtonText, Qt::green);
+            color = Qt::darkGreen;
         break;
         default:
-            pal.setColor(QPalette::ButtonText, Qt::darkYellow);
+            color = QColor(255,128, 0);
     }
+
+    m_connectivityButton->setAutoFillBackground(true);
+
+//setStyleSheet doesn't work on android and pal.setColor doesnt work on linux
+#if defined(Q_OS_ANDROID)
+    QPalette pal(m_connectivityButton->palette());
+    pal.setColor(QPalette::ButtonText, Qt::red);
     m_connectivityButton->setPalette(pal);
+#else
+    m_connectivityButton->setStyleSheet(
+        QString("color: rgb(%1, %2, %3)").
+            arg(color.red()).
+            arg(color.green()).
+            arg(color.blue())
+        );
+#endif
+
     m_connectivityButton->setText(stateString);
     repaint();
 }

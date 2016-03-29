@@ -15,7 +15,7 @@ class ChannelWidget : public QWidget
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
     public:
-        ValueLabel(const QString &text, const QColor &foreColor, QWidget *parent);
+        ValueLabel(const QString &text, QWidget *parent);
         void SetMimimumFontSize();
         void SetColor(const QColor &color);
         void SetBackColor(const QColor &backColor);
@@ -30,7 +30,7 @@ class ChannelWidget : public QWidget
     ValueLabel *m_valueLabel;
 
 public:
-    ChannelWidget(const QString &title, const QColor &color, QWidget* parent);
+    ChannelWidget(const QString &title, QWidget* parent);
     void setTitle(QString const &title);
     void ShowValueWithUnits(QString const&value, const QString &units);
     QSize GetMinimumSize();

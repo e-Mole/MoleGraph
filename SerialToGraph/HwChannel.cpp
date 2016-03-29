@@ -25,4 +25,5 @@ HwChannel::HwChannel(
 {
     _UpdateTitle();
     m_widget->SetBackColor(QColor(0xff, 0xff, 0xff));
+    m_widget->SetColor(color); //change widget style with defined color and backcolor
 }

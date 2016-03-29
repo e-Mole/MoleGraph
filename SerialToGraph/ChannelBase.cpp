@@ -34,7 +34,7 @@ ChannelBase::ChannelBase(
     m_measurement(measurement),
     m_context(context),
     m_name(name),
-    m_widget(new ChannelWidget(name, color, measurement->GetWidget())),
+    m_widget(new ChannelWidget(name, measurement->GetWidget())),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),

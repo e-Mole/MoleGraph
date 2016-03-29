@@ -6,10 +6,10 @@
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(const QString &title, QColor const &color, QWidget *parent) :
+ChannelWidget::ChannelWidget(const QString &title, QWidget *parent) :
     QWidget(parent),
     m_title(new QLabel(title, this)),
-    m_valueLabel(new ValueLabel("", color, this))
+    m_valueLabel(new ValueLabel("", this))
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -18,11 +18,10 @@ ChannelWidget::ChannelWidget(const QString &title, QColor const &color, QWidget 
     layout->setSpacing(1);
 }
 
-ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, QWidget *parent):
+ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent):
     QLabel(text, parent)
 {
     setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
-    SetColor(foreColor);
 
     setMargin(1);
 

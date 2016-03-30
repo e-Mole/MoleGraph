@@ -35,7 +35,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
 
     bases::ClickableLabel *name = new bases::ClickableLabel(measurement->GetName(), rowWidget);
     name->SetColor(measurement->GetColor());
-    connect(name, SIGNAL(mousePressed()), this, SLOT(nameClicked()));
+    connect(name, SIGNAL(clicked()), this, SLOT(nameClicked()));
     m_nameToItem[name] = measurement;
 
     QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);

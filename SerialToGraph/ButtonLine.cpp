@@ -165,7 +165,7 @@ void ButtonLine::_RefreshPanelMenu()
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_channelMenu->UpdateLabels();
+    m_channelMenu->UpdateCheckBoxes();
     _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
 }
 

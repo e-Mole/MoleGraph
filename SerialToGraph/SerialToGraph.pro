@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     Console.cpp \
     ChannelBase.cpp \
     SampleChannel.cpp \
-    HwChannel.cpp
+    HwChannel.cpp \
+    ColorCheckBox.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -86,7 +87,8 @@ HEADERS  += MainWindow.h \
     Console.h \
     ChannelBase.h \
     SampleChannel.h \
-    HwChannel.h
+    HwChannel.h \
+    ColorCheckBox.h
 
 CONFIG += mobility
 CONFIG += c++11

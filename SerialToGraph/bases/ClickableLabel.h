@@ -11,7 +11,7 @@ class ClickableLabel : public QLabel
 {
     Q_OBJECT
 
-    void mousePressEvent ( QMouseEvent * event );
+    void mouseReleaseEvent ( QMouseEvent * event );
 public:
     ClickableLabel(const QString &text, QWidget *parent);
     virtual ~ClickableLabel() {}
@@ -19,7 +19,7 @@ public:
     virtual void MousePress() {}
     void SetColor(QColor const &color);
 signals:
-    void mousePressed();
+    void clicked();
 };
 } //namespace bases
 #endif // CLICKABLELABEL_H

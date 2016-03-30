@@ -5,8 +5,8 @@
 #include <QMap>
 class ChannelBase;
 class Context;
+class ColorCheckBox;
 class Measurement;
-class QCheckBox;
 class QLabel;
 class QPushButton;
 class ButtonLine;
@@ -24,18 +24,16 @@ class ChannelMenu : public bases::MenuDialogBase
 
     Measurement &m_measurement;
     ButtonLine *m_buttonLine;
-    QCheckBox *m_graphCheckBox;
-    QMap<ChannelBase*, QCheckBox*> m_channelCheckBoxes;
-    QMap<QCheckBox*, ChannelBase*> m_checkBoxChannels;
-    QMap<bases::ClickableLabel*, ChannelBase*> m_labelChannels;
-    QMap<ChannelBase*, bases::ClickableLabel*> m_channelLabels;
+    ColorCheckBox *m_graphCheckBox;
+    QMap<ChannelBase*, ColorCheckBox*> m_channelCheckBoxes;
+    QMap<ColorCheckBox*, ChannelBase*> m_checkBoxChannels;
     QMap<QPushButton*, ChannelBase*> m_editChannels;
     void _SetGraph(bool checked);
 
 public:
     explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(ChannelBase *channel, bool checked);
-    void UpdateLabels();
+    void UpdateCheckBoxes();
 signals:
 
 public slots:

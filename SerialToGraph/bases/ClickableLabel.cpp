@@ -10,11 +10,11 @@ ClickableLabel::ClickableLabel(QString const& text, QWidget *parent):
 {
 }
 
-void ClickableLabel::mousePressEvent( QMouseEvent * event)
+void ClickableLabel::mouseReleaseEvent( QMouseEvent * event)
 {
     Q_UNUSED(event);
     MousePress();
-    mousePressed();
+    clicked();
 }
 
 void ClickableLabel::SetColor(QColor const &color)

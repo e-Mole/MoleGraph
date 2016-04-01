@@ -32,10 +32,8 @@ SOURCES += main.cpp\
     ColorPickerDialog.cpp \
     Context.cpp \
     Export.cpp \
-    Channel.cpp \
     ChannelMenu.cpp \
     ChannelSettings.cpp \
-    ChannelWithTime.cpp \
     Measurement.cpp \
     MeasurementMenu.cpp \
     MeasurementSettings.cpp \
@@ -47,7 +45,11 @@ SOURCES += main.cpp\
     GlobalSettingsDialog.cpp \
     MyMessageBox.cpp \
     ChannelWidget.cpp \
-    Console.cpp
+    Console.cpp \
+    ChannelBase.cpp \
+    SampleChannel.cpp \
+    HwChannel.cpp \
+    ColorCheckBox.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -68,10 +70,8 @@ HEADERS  += MainWindow.h \
     ColorPickerDialog.h \
     Context.h \
     Export.h \
-    Channel.h \
     ChannelMenu.h \
     ChannelSettings.h \
-    ChannelWithTime.h \
     Measurement.h \
     MeasurementMenu.h \
     MeasurementSettings.h \
@@ -84,7 +84,11 @@ HEADERS  += MainWindow.h \
     GlobalSettingsDialog.h \
     MyMessageBox.h \
     ChannelWidget.h \
-    Console.h
+    Console.h \
+    ChannelBase.h \
+    SampleChannel.h \
+    HwChannel.h \
+    ColorCheckBox.h
 
 CONFIG += mobility
 CONFIG += c++11

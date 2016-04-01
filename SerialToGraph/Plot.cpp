@@ -1,6 +1,6 @@
 #include "Plot.h"
 #include <Axis.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <qmath.h>
 #include <Context.h>
 #include <Measurement.h>
@@ -389,7 +389,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
-    foreach (Channel *channel, m_measurement.GetChannels())
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
         if (channel->IsVisible() && channel->GetAxis()->GetGraphAxis() == axis)
         {
@@ -458,7 +458,7 @@ void Plot::selectionChanged()
 
 void Plot::RefillGraphs()
 {
-    foreach (Channel *channel, m_measurement.GetChannels())
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
         channel->GetGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
@@ -476,13 +476,13 @@ void Plot::RefillGraphs()
     ReplotIfNotDisabled();
 }
 
-void Plot::SetHorizontalChannel(Channel *channel)
+void Plot::SetHorizontalChannel(ChannelBase *channel)
 {
     m_horizontalChannel = channel;
     RefillGraphs();
 }
 
-Channel * Plot::GetHorizontalChannel()
+ChannelBase * Plot::GetHorizontalChannel()
 {
     return m_horizontalChannel;
 }

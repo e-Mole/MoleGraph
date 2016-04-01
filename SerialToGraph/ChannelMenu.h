@@ -3,10 +3,10 @@
 
 #include <bases/MenuDialogBase.h>
 #include <QMap>
-class Channel;
+class ChannelBase;
 class Context;
+class ColorCheckBox;
 class Measurement;
-class QCheckBox;
 class QLabel;
 class QPushButton;
 class ButtonLine;
@@ -17,25 +17,23 @@ class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
-    void _AddChannel(Channel *channel, unsigned row);
+    void _AddChannel(ChannelBase *channel, unsigned row);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void FillGrid();
 
     Measurement &m_measurement;
     ButtonLine *m_buttonLine;
-    QCheckBox *m_graphCheckBox;
-    QMap<Channel*, QCheckBox*> m_channelCheckBoxes;
-    QMap<QCheckBox*, Channel*> m_checkBoxChannels;
-    QMap<bases::ClickableLabel*, Channel*> m_labelChannels;
-    QMap<Channel*, bases::ClickableLabel*> m_channelLabels;
-    QMap<QPushButton*, Channel*> m_editChannels;
+    ColorCheckBox *m_graphCheckBox;
+    QMap<ChannelBase*, ColorCheckBox*> m_channelCheckBoxes;
+    QMap<ColorCheckBox*, ChannelBase*> m_checkBoxChannels;
+    QMap<QPushButton*, ChannelBase*> m_editChannels;
     void _SetGraph(bool checked);
 
 public:
     explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
-    void ActivateChannel(Channel *channel, bool checked);
-    void UpdateLabels();
+    void ActivateChannel(ChannelBase *channel, bool checked);
+    void UpdateCheckBoxes();
 signals:
 
 public slots:

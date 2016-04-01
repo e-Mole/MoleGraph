@@ -5,8 +5,8 @@
 #include <QColor>
 
 class Axis;
-class Channel;
-class ChannelWithTime;
+class ChannelBase;
+class SampleChannel;
 class QCheckBox;
 class QComboBox;
 class QFormLayout;
@@ -27,7 +27,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _InitializePenStyle();
 
     Context const & m_context;
-    Channel *m_channel;
+    ChannelBase *m_channel;
     QLineEdit * m_name;
 	QLineEdit * m_units;
     QComboBox * m_shapeComboBox;
@@ -37,7 +37,7 @@ class ChannelSettings : public bases::FormDialogColor
     QComboBox * m_format;
     QComboBox * m_penStyle;
 public:
-    ChannelSettings(Channel *channel, Context const &context);
+    ChannelSettings(ChannelBase *channel, Context const &context);
 signals:
 
 private slots:

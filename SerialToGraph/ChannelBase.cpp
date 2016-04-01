@@ -1,4 +1,4 @@
-#include "Channel.h"
+#include "ChannelBase.h"
 #include <ChannelSettings.h>
 #include <Axis.h>
 #include <ChannelWidget.h>
@@ -19,24 +19,22 @@
 #include <QString>
 #include <limits>
 
-Channel::Channel(Measurement *measurement,
+ChannelBase::ChannelBase(
+    Measurement *measurement,
     Context const & context,
     Axis * axis,
     QCPGraph *graph,
     QCPGraph *graphPoint,
-    int hwIndex,
     QString const &name,
     QColor const &color,
     unsigned shapeIndex,
     bool visible,
-    const QString &units
-) :
+    const QString &units) :
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
     m_name(name),
-    m_hwIndex(hwIndex),
-    m_widget(new ChannelWidget(name, IsHwChannel(), color, measurement->GetWidget())),
+    m_widget(new ChannelWidget(name, measurement->GetWidget())),
     m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max()),
@@ -50,7 +48,6 @@ Channel::Channel(Measurement *measurement,
     AssignToAxis(axis);
 
     _DisplayNAValue();
-    _UpdateTitle();
 
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
@@ -61,35 +58,35 @@ Channel::Channel(Measurement *measurement,
     connect(m_widget, SIGNAL(sizeChanged()), this, SIGNAL(widgetSizeChanged()));
 }
 
-Channel::~Channel()
+ChannelBase::~ChannelBase()
 {
 }
 
-void Channel::_SetPenStyle(Qt::PenStyle penStyle)
+void ChannelBase::_SetPenStyle(Qt::PenStyle penStyle)
 {
     m_penStyle = penStyle;
     m_measurement->GetPlot()->SetPenStyle(m_graph, penStyle);
 }
 
 
-void Channel::changeChannelVisibility(bool visible, bool signal)
+void ChannelBase::changeChannelVisibility(bool visible, bool signal)
 {
     setVisible(visible);
     if (signal)
         stateChanged();
 }
 
-QString Channel::GetName()
+QString ChannelBase::GetName()
 {
     return m_name;
 }
 
-QString Channel::GetUnits()
+QString ChannelBase::GetUnits()
 {
 	return m_units;
 }
 
-void Channel::AddValue( double value)
+void ChannelBase::AddValue( double value)
 {
     m_values.push_back(value);
 
@@ -100,35 +97,34 @@ void Channel::AddValue( double value)
         m_channelMaxValue = value;
 }
 
-bool Channel::IsOnHorizontalAxis()
+bool ChannelBase::IsOnHorizontalAxis()
 { return m_axis->IsHorizontal(); }
 
 
-void Channel::_DisplayNAValue()
+void ChannelBase::_DisplayNAValue()
 {
     //m_lastValueText = "-0.000e-00<br/>mA";
     m_lastValueText = tr("n/a");
     m_widget->ShowValueWithUnits(m_lastValueText, m_units);
 }
 
-void Channel::_UpdateTitle()
+void ChannelBase::_UpdateTitle()
 {
     m_widget->setTitle(
-        QString("(%1) ").arg(m_hwIndex + 1) +
-        /*(IsOnHorizontalAxis() ? "- " : "| ") +*/
+        QString("(%1) ").arg(GetShortcutOrder()) +
         m_name
     );
     m_axis->UpdateGraphAxisName();
 }
 
-void Channel::editChannel()
+void ChannelBase::editChannel()
 {
     ChannelSettings *settings = new ChannelSettings(this, m_context);
     settings->exec();
 }
 
 
-void Channel::_FillLastValueText(int index)
+void ChannelBase::_FillLastValueText(int index)
 {
     double value = GetValue(index);
     double absValue = std::abs(value);
@@ -145,7 +141,7 @@ void Channel::_FillLastValueText(int index)
 
     m_lastValueText = strValue;
 }
-void Channel::displayValueOnIndex(int index)
+void ChannelBase::displayValueOnIndex(int index)
 {
     if (index >= m_values.size())
     {
@@ -164,34 +160,34 @@ void Channel::displayValueOnIndex(int index)
 }
 
 
-QCPGraph *Channel::GetGraph()
+QCPGraph *ChannelBase::GetGraph()
 {
     return m_graph;
 }
 
-QCPGraph *Channel::GetGraphPoint()
+QCPGraph *ChannelBase::GetGraphPoint()
 {
     return m_graphPoint;
 }
 
-void Channel::UpdateGraph(double xValue, double yValue)
+void ChannelBase::UpdateGraph(double xValue, double yValue)
 {
     m_graph->data()->insert(xValue, QCPData(xValue, yValue));
 }
 
-void Channel::UpdateGraph(double xValue)
+void ChannelBase::UpdateGraph(double xValue)
 {
     UpdateGraph(xValue, GetLastValue());
 }
 
-void Channel::_ShowOrHideGraphAndPoin(bool shown)
+void ChannelBase::_ShowOrHideGraphAndPoin(bool shown)
 {
     m_graph->setVisible(shown);
     m_graphPoint->setVisible(shown);
     m_measurement->GetPlot()->RescaleAllAxes();
 }
 
-void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
+void ChannelBase::AssignToGraphAxis(QCPAxis *graphAxis)
 {
     if (m_axis->IsHorizontal())
         return;
@@ -202,7 +198,7 @@ void Channel::AssignToGraphAxis(QCPAxis *graphAxis)
     m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
-void Channel::AssignToAxis(Axis *axis)
+void ChannelBase::AssignToAxis(Axis *axis)
 {
     m_axis = axis;
     AssignToGraphAxis(axis->GetGraphAxis());
@@ -211,7 +207,7 @@ void Channel::AssignToAxis(Axis *axis)
     m_axis->UpdateVisiblility();
 }
 
-void Channel::setVisible(bool visible)
+void ChannelBase::setVisible(bool visible)
 {
     m_widget->setVisible(visible);
     _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
@@ -219,7 +215,7 @@ void Channel::setVisible(bool visible)
     m_axis->UpdateVisiblility();
 }
 
-void Channel::SetColor(QColor &color)
+void ChannelBase::SetColor(QColor &color)
 {
     m_color = color;
     m_widget->SetColor(color);
@@ -227,49 +223,49 @@ void Channel::SetColor(QColor &color)
     m_measurement->GetPlot()->SetGraphPointColor(m_graphPoint, color);
 }
 
-Measurement * Channel::GetMeasurement()
+Measurement * ChannelBase::GetMeasurement()
 {
     return m_measurement;
 }
 
-bool Channel::IsVisible()
+bool ChannelBase::IsVisible()
 {
     //I dont want to use is visible because it returns false when widget is not diplayed yet
     //use !isHidden() instead
     return !m_widget->isHidden();
 }
 
-ChannelWidget *Channel::GetWidget()
+ChannelWidget *ChannelBase::GetWidget()
 {
     return m_widget;
 }
 
-void Channel::_SetName(QString const &name)
+void ChannelBase::_SetName(QString const &name)
 {
     m_name = name;
     _UpdateTitle();
 }
 
-void Channel::_SetShapeIndex(unsigned index)
+void ChannelBase::_SetShapeIndex(unsigned index)
 {
     m_shapeIndex = index;
     GetMeasurement()->GetPlot()->SetShape(m_graph, m_measurement->GetMarksShown() ? m_shapeIndex : -1);
     GetMeasurement()->GetPlot()->SetShape(m_graphPoint, m_shapeIndex);
 }
 
-void Channel::_SetUnits(QString const &units)
+void ChannelBase::_SetUnits(QString const &units)
 {
     m_units = units;
     m_widget->ShowValueWithUnits(m_lastValueText, m_units);
     m_axis->UpdateGraphAxisName();
 }
 
-QSize Channel::GetMinimumSize()
+QSize ChannelBase::GetMinimumSize()
 {
     return m_widget->GetMinimumSize();
 }
 
-int Channel::GetLastValueIndex(double value)
+int ChannelBase::GetLastValueIndex(double value)
 {
     for (int i = m_values.count() -1; i >=0; --i)
     {

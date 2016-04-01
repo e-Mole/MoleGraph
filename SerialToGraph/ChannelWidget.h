@@ -10,17 +10,15 @@ class ChannelWidget : public QWidget
 {
     Q_OBJECT
 
-    //enum ChanelType
-
-
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);
-        bool m_haveBackColor;
+        QColor m_backColor;
     public:
-        ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent);
+        ValueLabel(const QString &text, QWidget *parent);
         void SetMimimumFontSize();
         void SetColor(const QColor &color);
+        void SetBackColor(const QColor &backColor);
         QSize GetSize(QString const &text);
         QSize GetLongestTextSize();
     };
@@ -32,11 +30,13 @@ class ChannelWidget : public QWidget
     ValueLabel *m_valueLabel;
 
 public:
-    ChannelWidget(const QString &title, bool isHwChannel, const QColor &color, QWidget* parent);
+    ChannelWidget(const QString &title, QWidget* parent);
     void setTitle(QString const &title);
     void ShowValueWithUnits(QString const&value, const QString &units);
     QSize GetMinimumSize();
     void SetColor(QColor const &color);
+    void SetBackColor(const QColor &backColor) {m_valueLabel->SetBackColor(backColor); }
+
 signals:
     void clicked();
     void sizeChanged();

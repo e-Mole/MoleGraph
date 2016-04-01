@@ -1,8 +1,7 @@
 #include "Measurement.h"
 #include <Axis.h>
 #include <ChannelWidget.h>
-#include <Channel.h>
-#include <ChannelWithTime.h>
+#include <HwChannel.h>
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <MyMessageBox.h>
@@ -20,6 +19,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <SampleChannel.h>
 #include <Serializer.h>
 #include <sstream>
 
@@ -183,12 +183,12 @@ bool Measurement::_ProcessValueSet()
     }
     m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
 
-    foreach (Channel *channel,  m_trackedHwChannels)
+    foreach (ChannelBase *channel,  m_trackedHwChannels)
         channel->AddValue(_DequeueFloat());
 
     //im sure I have a horizontal value and may start to draw
     m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
-    foreach (Channel *channel, m_trackedHwChannels)
+    foreach (ChannelBase *channel, m_trackedHwChannels)
         channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
 
     return true;
@@ -199,7 +199,7 @@ void Measurement::_ReadingValuesPostProcess()
     unsigned index = m_plot->GetHorizontalChannel()->GetValueCount() - 1;
     if (!m_plot->IsInMoveMode())
     {
-        foreach (Channel *channel, m_channels)
+        foreach (ChannelBase *channel, m_channels)
             channel->displayValueOnIndex(index);
 
         m_plot->RescaleAxis(m_plot->xAxis);
@@ -284,12 +284,12 @@ bool Measurement::_SetModeWithPeriod()
 void Measurement::_ProcessSelectedChannels()
 {
     unsigned selectedChannels = 0;
-    foreach (Channel *channel, m_channels)
+    foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->IsHwChannel() && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
         {
-            m_trackedHwChannels.insert(channel->GetHwIndex(), channel);
-            selectedChannels |= 1 << channel->GetHwIndex();
+            m_trackedHwChannels.insert(((HwChannel *)channel)->GetHwIndex(), channel);
+            selectedChannels |= 1 << ((HwChannel *)channel)->GetHwIndex();
         }
     }
     m_context.m_hwSink.SetSelectedChannels(selectedChannels);
@@ -364,7 +364,7 @@ void Measurement::movePlotTo(int position)
 {
     //m_plot->SetMarkerLine(position);
 
-    foreach (Channel * channel, m_channels)
+    foreach (ChannelBase * channel, m_channels)
         channel->displayValueOnIndex(position);
 
     m_plot->SetMoveMode(true);
@@ -397,7 +397,7 @@ void Measurement::ReplaceDisplays(bool grid)
     for (int i = 0; i < m_displayLayout->columnCount(); i++)
         m_displayLayout->setColumnStretch(i,0);
 
-    foreach (Channel * channel, m_channels)
+    foreach (ChannelBase * channel, m_channels)
     {
         m_displayLayout->removeWidget(channel->GetWidget());
     }
@@ -414,7 +414,7 @@ void Measurement::ReplaceDisplays(bool grid)
     if (verticalMax == 0)
         verticalMax = m_channels.count();
 
-    foreach (Channel * channel, m_channels)
+    foreach (ChannelBase * channel, m_channels)
     {
         if (!channel->IsVisible())
             continue;
@@ -489,12 +489,12 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         );
     }
 
-    foreach (Channel *channel, source->GetChannels())
+    foreach (ChannelBase *channel, source->GetChannels())
     {
-        if (channel->IsHwChannel())
+        if (channel->GetType() == ChannelBase::Type_Hw)
         {
             m_channels.push_back(
-                new Channel(
+                new HwChannel(
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
@@ -504,7 +504,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                         GetMarksShown(),
                         channel->GetPenStyle()),
                     m_plot->AddPoint(channel->GetColor(),channel->GetShapeIndex() ),
-                    channel->GetHwIndex(),
+                    channel->GetType() == ChannelBase::Type_Hw,
                     channel->GetName(),
                     channel->GetColor(),
 
@@ -517,7 +517,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         else
         {
             m_sampleChannel =
-                new ChannelWithTime(
+                new SampleChannel(
                     this,
                     m_context,
                     GetAxis(source->GetAxisIndex(channel->GetAxis())),
@@ -527,19 +527,18 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                         GetMarksShown(),
                         channel->GetPenStyle()),
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
-                    channel->GetHwIndex(),
                     channel->GetColor(),
                     channel->GetShapeIndex(),
                     channel->IsVisible(),
                     channel->GetUnits(),
-                    ((ChannelWithTime *)channel)->GetStyle(),
-                    ((ChannelWithTime *)channel)->GetTimeUnits(),
-                    ((ChannelWithTime *)channel)->GetRealTimeFormat()
+                    ((SampleChannel *)channel)->GetStyle(),
+                    ((SampleChannel *)channel)->GetTimeUnits(),
+                    ((SampleChannel *)channel)->GetRealTimeFormat()
                 );
             m_channels.push_back(m_sampleChannel);
             m_plot->SetAxisStyle(
                 m_sampleChannel->GetAxis()->GetGraphAxis(),
-                m_sampleChannel->GetStyle() == ChannelWithTime::RealTime,
+                m_sampleChannel->GetStyle() == SampleChannel::RealTime,
                 m_sampleChannel->GetRealTimeFormatText()
             );
         }
@@ -584,21 +583,19 @@ void Measurement::_InitializeAxesAndChanels()
     m_axes.push_back(yAxis);
 
     m_sampleChannel =
-        new ChannelWithTime(
+        new SampleChannel(
             this,
             m_context,
             xAxis,
             m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
             m_plot->AddPoint(Qt::black, 0),
-            -1,
             Qt::black,
             0,
-
             true,
             "",
-            ChannelWithTime::Samples,
-            ChannelWithTime::Sec,
-            ChannelWithTime::hh_mm_ss
+            SampleChannel::Samples,
+            SampleChannel::Sec,
+            SampleChannel::hh_mm_ss
         );
     connect(m_sampleChannel, SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
     m_channels.push_back(m_sampleChannel);
@@ -632,7 +629,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 {
     unsigned order = m_channels.size()-1;
     m_channels.push_back(
-        new Channel(
+        new HwChannel(
             this,
             m_context,
             axis,
@@ -672,12 +669,12 @@ QVector<Axis *> const & Measurement::GetAxes() const
     return m_axes;
 }
 
-QVector<Channel *> const & Measurement::GetChannels() const
+QVector<ChannelBase *> const & Measurement::GetChannels() const
 {
     return m_channels;
 }
 
-Channel *Measurement::GetChannel(unsigned index)
+ChannelBase *Measurement::GetChannel(unsigned index)
 {
     return m_channels[index];
 }
@@ -703,16 +700,20 @@ Axis *Measurement::GetAxis(int index)
     return m_axes[index];
 }
 
-void Measurement::_SerializeChannelValues(Channel *channel, QDataStream &out)
+void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out)
 {
-    out << channel->GetHwIndex();
+    out <<
+        (channel->GetType() == ChannelBase::Type_Hw ?
+            ((HwChannel *)channel)->GetHwIndex() : -1
+        );
+
     out << channel->GetValueCount();
     for (unsigned i = 0; i < channel->GetValueCount(); ++i)
     {
-        if (channel->IsSampleChannel())
+        if (channel->GetType() == ChannelBase::Type_Sample)
         {
-            out << ((ChannelWithTime*)channel)->GetSampleNr(i);
-            out << ((ChannelWithTime*)channel)->GetTimeFromStart(i);
+            out << ((SampleChannel*)channel)->GetSampleNr(i);
+            out << ((SampleChannel*)channel)->GetTimeFromStart(i);
         }
         else
         {
@@ -729,11 +730,14 @@ void Measurement::SerializeColections(QDataStream &out)
     {
         out << axis;
         out << axis->GetAssignedChannelCount();
-        foreach (Channel *channel, m_channels)
+        foreach (ChannelBase *channel, m_channels)
         {
             if (channel->GetAxis() == axis)
             {
-                out << channel->GetHwIndex();
+                out <<
+                    (channel->GetType() == ChannelBase::Type_Hw ?
+                        ((HwChannel *)channel)->GetHwIndex() : -1
+                    );
                 out << channel;
             }
         }
@@ -743,7 +747,7 @@ void Measurement::SerializeColections(QDataStream &out)
         _SerializeChannelValues(m_sampleChannel, out);
 
         out << m_trackedHwChannels.size();
-        foreach (Channel *channel, m_trackedHwChannels.values())
+        foreach (ChannelBase *channel, m_trackedHwChannels.values())
             _SerializeChannelValues(channel, out);
     }
 }
@@ -761,9 +765,12 @@ QCPAxis * Measurement::_GetGraphAxis(unsigned index)
     }
 }
 
-bool SortChannels(Channel *first, Channel *second)
+bool SortChannels(ChannelBase *first, ChannelBase *second)
 {
-    return first->GetHwIndex() < second->GetHwIndex();
+    return
+        (first->GetType() == second->GetType() && first->GetType() == ChannelBase::Type_Hw) ?
+            ((HwChannel *)first)->GetHwIndex() < ((HwChannel *)second)->GetHwIndex() :
+            first->GetType() < second->GetType();
 }
 
 void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
@@ -771,10 +778,10 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
     int hwIndex;
     in >> hwIndex;
 
-    Channel *channel;
+    ChannelBase *channel;
     if (hwIndex == -1)
     {
-        channel = new ChannelWithTime(
+        channel = new SampleChannel(
             this,
             m_context,
             axis,
@@ -782,11 +789,11 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
             m_plot->AddPoint(Qt::black, 0),
             hwIndex
         );
-        m_sampleChannel = (ChannelWithTime*)channel;
+        m_sampleChannel = (SampleChannel*)channel;
     }
     else
     {
-        channel = new Channel(
+        channel = new HwChannel(
             this,
             m_context,
             axis,
@@ -818,11 +825,20 @@ void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
     axis->UpdateGraphAxisName();
 }
 
-Channel *Measurement::_FindChannel(int hwIndex)
+ChannelBase *Measurement::_FindChannel(int hwIndex)
 {
-    foreach (Channel* channel, m_channels)
-        if (channel->GetHwIndex() == hwIndex)
+    if (hwIndex < 0)
+        return m_sampleChannel;
+
+    foreach (ChannelBase* channel, m_channels)
+    {
+        if
+        (
+            channel->GetType() == ChannelBase::Type_Hw &&
+            ((HwChannel *)channel)->GetHwIndex() == hwIndex
+        )
             return channel;
+    }
 
     return NULL;
 }
@@ -831,14 +847,14 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
     int hwIndex;
     in >> hwIndex;
 
-    Channel * channel = _FindChannel(hwIndex);
+    ChannelBase * channel = _FindChannel(hwIndex);
     if (NULL == channel)
     {
         qCritical() << "file is corrupted";
         QException().raise();
     }
 
-    if (channel->IsHwChannel())
+    if (channel->GetType() == ChannelBase::Type_Hw)
         m_trackedHwChannels[hwIndex] = channel;
 
     unsigned valueCount;
@@ -849,12 +865,12 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
     {
         in >> value;
 
-        if (channel->IsSampleChannel())
+        if (channel->GetType() == ChannelBase::Type_Sample)
         {
             double timeFromStart;
             in >> timeFromStart;
             if (m_saveLoadValues)
-                ((ChannelWithTime *)channel)->AddValue(value, timeFromStart);
+                ((SampleChannel *)channel)->AddValue(value, timeFromStart);
         }
         else if (m_saveLoadValues)
              channel->AddValue(value);
@@ -881,7 +897,7 @@ void Measurement::DeserializeColections(QDataStream &in)
     for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
     {
         double xValue = m_plot->GetHorizontalChannel()->GetValue(i);
-        foreach (Channel *channel, m_channels)
+        foreach (ChannelBase *channel, m_channels)
         {
             if (channel->GetValueCount() > i)
                 channel->UpdateGraph(xValue, channel->GetValue(i));
@@ -912,7 +928,7 @@ void Measurement::_SetMarksShown(bool marksShown)
 {
     m_marksShown = marksShown;
 
-    foreach (Channel *channel, m_channels)
+    foreach (ChannelBase *channel, m_channels)
     {
         m_plot->SetShape(
             channel->GetGraph(),

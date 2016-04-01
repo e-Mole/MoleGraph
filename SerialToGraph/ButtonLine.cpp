@@ -3,7 +3,7 @@
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
 #include <Context.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <Export.h>
 #include <FileDialog.h>
 #include <GlobalSettingsDialog.h>
@@ -165,7 +165,7 @@ void ButtonLine::_RefreshPanelMenu()
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_channelMenu->UpdateLabels();
+    m_channelMenu->UpdateCheckBoxes();
     _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
 }
 
@@ -246,9 +246,9 @@ void ButtonLine::UpdateRunButtonsState()
 
     bool horizontalPreset = false;
     bool hwChannelPresent = false;
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->IsHwChannel() && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
             hwChannelPresent = true;
         if (channel->IsOnHorizontalAxis() && channel->IsVisible())
             horizontalPreset = true;
@@ -297,20 +297,35 @@ void ButtonLine::exportAllCsv()
 
 void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
 {
-    m_connectivityButton->setAutoFillBackground(true);
-    QPalette pal(m_connectivityButton->palette());
+    QColor color;
     switch (state)
     {
         case hw::HwSink::Offline:
-            pal.setColor(QPalette::ButtonText, Qt::red);
+            color = Qt::red;
         break;
         case hw::HwSink::Connected:
-            pal.setColor(QPalette::ButtonText, Qt::green);
+            color = Qt::darkGreen;
         break;
         default:
-            pal.setColor(QPalette::ButtonText, Qt::darkYellow);
+            color = QColor(255,128, 0);
     }
+
+    m_connectivityButton->setAutoFillBackground(true);
+
+//setStyleSheet doesn't work on android and pal.setColor doesnt work on linux
+#if defined(Q_OS_ANDROID)
+    QPalette pal(m_connectivityButton->palette());
+    pal.setColor(QPalette::ButtonText, Qt::red);
     m_connectivityButton->setPalette(pal);
+#else
+    m_connectivityButton->setStyleSheet(
+        QString("color: rgb(%1, %2, %3)").
+            arg(color.red()).
+            arg(color.green()).
+            arg(color.blue())
+        );
+#endif
+
     m_connectivityButton->setText(stateString);
     repaint();
 }
@@ -412,9 +427,9 @@ void ButtonLine::_CreatePanelShortcuts()
     m_graphShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this);
     connect (m_graphShortcut, SIGNAL(activated()), m_channelMenu, SLOT(graphActivated()));
 
-    foreach (Channel *channel, m_measurement->GetChannels())
+    foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetHwIndex()+1), this);
+        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()), this);
         connect(s, SIGNAL(activated()), this, SLOT(channelActivated()));
         m_shortcutChannels[s] = channel;
     }
@@ -442,10 +457,10 @@ QString ButtonLine::GetNoChannelShortcutText()
     return m_noChannelsShortcut->key().toString();
 }
 
-QString ButtonLine::GetChannelShortcutText(Channel *channel)
+QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
 {
     //only a few channels to create inverted map
-    QMap<QShortcut*, Channel*>::iterator it =  m_shortcutChannels.begin();
+    QMap<QShortcut*, ChannelBase*>::iterator it =  m_shortcutChannels.begin();
     for (;it != m_shortcutChannels.end(); ++it)
     {
         if (it.value() == channel)
@@ -458,7 +473,7 @@ QString ButtonLine::GetChannelShortcutText(Channel *channel)
 
 void ButtonLine::channelActivated()
 {
-    Channel *channel = m_shortcutChannels[(QShortcut*)sender()];
+    ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
     m_channelMenu->ActivateChannel(channel, !channel->IsVisible());
 }
 

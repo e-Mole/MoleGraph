@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QMap>
 class Axis;
-class Channel;
+class ChannelBase;
 class QRadioButton;
 class QString;
 class QWidget;
@@ -16,12 +16,11 @@ class AxisChooseDialog : public QDialog
     Context const& m_context;
     QRadioButton *m_newAxis;
     QMap<QRadioButton *, Axis*> m_axes;
-    Channel *m_originalHChannel;
-    Channel *m_newHChannel;
+    ChannelBase *m_originalHChannel;
+    ChannelBase *m_newHChannel;
     bool m_isOriginalChannelRealTime;
 public:
-    AxisChooseDialog(
-        QWidget *parent, Context const &context, Channel *originalHChannel, Channel *newHChannel);
+    AxisChooseDialog(QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel);
 
 signals:
 

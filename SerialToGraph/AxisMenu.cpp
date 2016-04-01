@@ -2,7 +2,7 @@
 #include <Axis.h>
 #include <AxisSettings.h>
 #include <Context.h>
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -93,7 +93,7 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (Channel * channel, axis->GetMeasurement()->GetChannels())
+    foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
         if (axis == channel->GetAxis())
         {
@@ -113,7 +113,7 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (Channel * channel, axis->GetMeasurement()->GetChannels())
+    foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
         if (axis == channel->GetAxis())
             channel->AssignToAxis(firstVertical);

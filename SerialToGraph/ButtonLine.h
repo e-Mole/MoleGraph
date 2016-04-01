@@ -8,7 +8,7 @@
 #include <QToolBar>
 
 class Axis;
-class Channel;
+class ChannelBase;
 class ChannelMenu;
 class ConnectivityLabel;
 class GlobalSettingsDialog;
@@ -34,7 +34,7 @@ class ButtonLine : public QToolBar
     void _ExportCSV(QVector<Measurement *> const & measurements);
     void _ClearPanelShortcuts();
     void _CreatePanelShortcuts();
-    void _ActivateChannel(Channel *channel, bool checked);
+    void _ActivateChannel(ChannelBase *channel, bool checked);
     QString _GetFileNameToSave(const QString &extension);
     void _SaveFile(const QString &fileName, bool values);
     void _OpenFile(bool values);
@@ -54,7 +54,7 @@ class ButtonLine : public QToolBar
 	bool m_enabledBChannels;
 
     QAction *m_graphAction;
-    QMap<Channel *, QAction*> m_channelActions;
+    QMap<ChannelBase *, QAction*> m_channelActions;
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
@@ -62,7 +62,7 @@ class ButtonLine : public QToolBar
     Measurement *m_measurement;
 
     QShortcut *m_graphShortcut;
-    QMap<QShortcut*, Channel*> m_shortcutChannels;
+    QMap<QShortcut*, ChannelBase*> m_shortcutChannels;
     QShortcut *m_allChannelsShortcut;
     QShortcut *m_noChannelsShortcut;
     bool m_storedValues;
@@ -75,11 +75,11 @@ public:
     QString GetGraphShortcutText();
     QString GetAllChannelShortcutText();
     QString GetNoChannelShortcutText();
-    QString GetChannelShortcutText(Channel *channel);
+    QString GetChannelShortcutText(ChannelBase *channel);
 
 signals:
     void periodChanged(unsigned period);
-    void channelTriggered(Channel *channel, bool checked);
+    void channelTriggered(ChannelBase *channel, bool checked);
     void axesPressed();
     void allChannelsDisplayedOrHidden();
 

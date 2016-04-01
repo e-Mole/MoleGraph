@@ -1,10 +1,10 @@
 #ifndef CHANNELWITHTIME_H
 #define CHANNELWITHTIME_H
-#include <Channel.h>
+#include <ChannelBase.h>
 #include <QVector>
 #include <QDateTime>
 class QDateTime;
-class ChannelWithTime : public Channel
+class SampleChannel : public ChannelBase
 {
     Q_OBJECT
 
@@ -17,7 +17,7 @@ class ChannelWithTime : public Channel
     Q_ENUMS(TimeUnits)
     Q_ENUMS(RealTimeFormat)
 
-    void AddValue(double value) { Channel::AddValue(value); } //values to ChannelWithTime should be added through method with time
+    void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits
     {
@@ -43,7 +43,6 @@ public:
         hh_mm_ss,
         mm_ss_zzz,
     };
-
 private:
 
     friend class ChannelSettings;
@@ -63,12 +62,11 @@ private:
     RealTimeFormat m_realTimeFormat;
 
 public:
-    ChannelWithTime(Measurement *measurement,
+    SampleChannel(Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        int hwIndex,
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
         bool visible = true,
@@ -77,7 +75,8 @@ public:
         TimeUnits timeUnits = Sec,
         RealTimeFormat realTimeFormat = hh_mm_ss);
 
-
+    virtual Type GetType() { return Type_Sample; }
+    virtual unsigned GetShortcutOrder() { return 0; }
     Style GetStyle() {return m_style; }
     TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
@@ -90,7 +89,7 @@ public:
     virtual double GetMaxValue();
     double GetTimeFromStart(unsigned index);
     static QString GetStyleText(Style style);
-    QString GetStyleText() { return GetStyleText(m_style); }\
+    QString GetStyleText() { return GetStyleText(m_style); }
     double GetSampleNr(unsigned index);
     QString GetTimestamp(double timeInMs);
     QString GetValueTimestamp(unsigned index);

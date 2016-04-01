@@ -36,13 +36,13 @@ class PortListDialog : public bases::PlatformDialog
 public:
     PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings);
     void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
-    void StartSearching();
 
     void _CleanPortList();
 
 signals:
 public slots:
     void refresh();
+    void startSearching();
 private slots:
     void portRadioButtonReleased();
     void stateChanged(const QString &stateString, hw::HwSink::State state);

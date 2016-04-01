@@ -6,10 +6,10 @@
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(const QString &title, bool isHwChannel, QColor const &color, QWidget *parent) :
+ChannelWidget::ChannelWidget(const QString &title, QWidget *parent) :
     QWidget(parent),
     m_title(new QLabel(title, this)),
-    m_valueLabel(new ValueLabel("", color, isHwChannel, this))
+    m_valueLabel(new ValueLabel("", this))
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -18,12 +18,10 @@ ChannelWidget::ChannelWidget(const QString &title, bool isHwChannel, QColor cons
     layout->setSpacing(1);
 }
 
-ChannelWidget::ValueLabel::ValueLabel(const QString &text, const QColor &foreColor, bool haveBackColor, QWidget *parent):
-    QLabel(text, parent),
-    m_haveBackColor(haveBackColor)
+ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent):
+    QLabel(text, parent)
 {
     setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
-    SetColor(foreColor);
 
     setMargin(1);
 
@@ -71,10 +69,10 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
 void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 {
     QString style;
-    if (m_haveBackColor)
-        style = "QLabel { background-color : #ffffff;";
-    else
-        style = "QLabel { background-color : #f0f0f0;";
+    style = QString("QLabel { background-color : rgb(%1, %2, %3);").
+            arg(m_backColor.red()).
+            arg(m_backColor.green()).
+            arg(m_backColor.blue());;
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);
@@ -95,6 +93,11 @@ void ChannelWidget::ValueLabel::SetColor(const QColor &color)
     palette.setColor(foregroundRole(), color);
     palette.setColor(backgroundRole(), color);
     setPalette(palette);
+}
+
+void ChannelWidget::ValueLabel::SetBackColor(const QColor &backColor)
+{
+    m_backColor = backColor;
 }
 
 void ChannelWidget::mousePressEvent(QMouseEvent * event)

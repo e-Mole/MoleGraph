@@ -42,6 +42,9 @@ class ButtonLine : public QToolBar
 
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
+    QAction *m_sampleRequestAction;
+    QPushButton *m_pauseContinueButton;
+    QAction *m_pauseContinueAction;
     QPushButton *m_stopButton;
     QPushButton *m_connectivityButton;
     QPushButton * m_fileMenuButton;
@@ -104,6 +107,7 @@ public slots:
     void measurementStateChanged();
     void channelActivated();
     void start();
+    void pauseContinue();
     void stop();
 };
 

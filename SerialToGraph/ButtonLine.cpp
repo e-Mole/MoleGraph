@@ -10,6 +10,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
+#include <QAction>
 #include <QHBoxLayout>
 #include <QCoreApplication>
 #include <QDataStream>
@@ -40,6 +41,9 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
+    m_sampleRequestAction(NULL),
+    m_pauseContinueButton(NULL),
+    m_pauseContinueAction(NULL),
     m_stopButton(NULL),
     m_connectivityButton(NULL),
     m_fileMenuButton(NULL),
@@ -92,8 +96,14 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     m_sampleRequestButton = new QPushButton(tr("Sample"), this);
     m_sampleRequestButton->setDisabled(true);
-    addWidget(m_sampleRequestButton);
+    m_sampleRequestAction = addWidget(m_sampleRequestButton);
     connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
+
+    m_pauseContinueButton = new QPushButton(tr("Pause"), this);
+    m_pauseContinueButton->setDisabled(true);
+    m_pauseContinueAction = addWidget(m_pauseContinueButton);
+    connect(m_pauseContinueButton, SIGNAL(clicked()), this, SLOT(pauseContinue()));
+
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
@@ -113,6 +123,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     _InitializeMenu();
 }
+
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 {
@@ -224,18 +235,43 @@ void ButtonLine::UpdateRunButtonsState()
         m_startButton->setEnabled(false);
         m_stopButton->setEnabled(false);
         m_sampleRequestButton->setEnabled(false);
+        m_pauseContinueButton->setEnabled(false);
         return;
     }
 
     m_stopButton->setEnabled(
         m_connected &&
-        m_measurement->GetState() == Measurement::Running);
+        (
+            m_measurement->GetState() == Measurement::Running ||
+            m_measurement->GetState() == Measurement::Paused
+        )
+    );
+
+    m_sampleRequestAction->setVisible(
+        m_measurement->GetType() == Measurement::OnDemand);
 
     m_sampleRequestButton->setEnabled(
         m_connected &&
-        m_measurement->GetState() == Measurement::Running &&
+        m_measurement->GetState() == Measurement::Running && //no pause state in this mode
         m_measurement->GetType() == Measurement::OnDemand);
 
+    m_pauseContinueAction->setVisible(
+        m_measurement->GetType() == Measurement::Periodical);
+
+    m_pauseContinueButton->setEnabled(
+        m_connected &&
+        (
+            m_measurement->GetState() == Measurement::Running ||
+            m_measurement->GetState() == Measurement::Paused
+        ) &&
+        m_measurement->GetType() == Measurement::Periodical
+    );
+
+    m_pauseContinueButton->setText(
+        m_pauseContinueButton->isEnabled() && m_measurement->GetState() == Measurement::Paused ?
+            tr("Continue") :
+            tr("Pause")
+    );
 
     if (!m_connected || m_measurement->GetState() != Measurement::Ready)
     {
@@ -490,6 +526,14 @@ void ButtonLine::start()
 {
     if (m_startButton->isEnabled()) //when slot is called from a remote
         m_measurement->Start();
+}
+
+void ButtonLine::pauseContinue()
+{
+    if (m_measurement->GetState() == Measurement::Running)
+        m_measurement->Pause();
+    else
+        m_measurement->Continue();
 }
 
 void ButtonLine::sampleRequest()

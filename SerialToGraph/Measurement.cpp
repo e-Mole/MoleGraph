@@ -48,7 +48,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_type(source != NULL ? source->m_type : Periodical),
     m_saveLoadValues(false),
     m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/),
-    m_marksShown(source != NULL ? source->GetMarksShown() :false)
+    m_marksShown(source != NULL ? source->GetMarksShown() :false),
+    m_secondsInPause(0)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -91,7 +92,7 @@ Measurement::~Measurement()
 
 void Measurement::portConnectivityChanged(bool connected)
 {
-    if (!connected && m_state == Running)
+    if (!connected && (m_state == Running || m_state == Paused))
     {
         Stop();
         MyMessageBox::warning(
@@ -179,7 +180,8 @@ bool Measurement::_ProcessValueSet()
     {
         offset =
             (double)m_sampleChannel->GetValueCount() *
-            ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period );
+            ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period ) +
+            m_secondsInPause;
     }
     m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
 
@@ -242,7 +244,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
 {
     foreach (Measurement *m,  m_context.m_measurements)
     {
-        if (Measurement::Running != m->GetState())
+        if (Measurement::Running != m->GetState() && Measurement::Paused != m->GetState())
             continue;
 
         if (MyMessageBox::Yes ==
@@ -309,6 +311,7 @@ void Measurement::Start()
         return;
     _ProcessSelectedChannels();
 
+    m_secondsInPause = 0;
     m_startNewDraw = true;
     m_drawTimer->start(m_drawPeriod);
     if (!m_context.m_hwSink.Start())
@@ -319,6 +322,22 @@ void Measurement::Start()
 
     m_sampleChannel->SetStartTime(QDateTime::currentDateTime());
 
+    m_state = Running;
+    stateChanged();
+}
+
+void Measurement::Pause()
+{
+    m_context.m_hwSink.Stop();
+    m_state = Paused;
+    stateChanged();
+    m_pauseStartTime = QTime::currentTime();
+}
+
+void Measurement::Continue()
+{
+    m_secondsInPause += (double)m_pauseStartTime.msecsTo(QTime::currentTime()) / 1000;
+    m_context.m_hwSink.Start();
     m_state = Running;
     stateChanged();
 }
@@ -936,4 +955,10 @@ void Measurement::_SetMarksShown(bool marksShown)
         );
     }
     m_plot->ReplotIfNotDisabled();
+}
+
+void Measurement::_SetType(Type type)
+{
+    m_type = type;
+    stateChanged();
 }

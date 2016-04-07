@@ -69,7 +69,7 @@ bool MeasurementSettings::BeforeAccept()
     }
 
     m_measurement->m_period = m_period->text().toInt();
-    m_measurement->m_type = (Measurement::Type)m_type->currentIndex();
+    m_measurement->_SetType((Measurement::Type)m_type->currentIndex());
     m_measurement->_SetColor(m_color);
     m_measurement->_SetMarksShown(m_marksShown->isChecked());
     return true;

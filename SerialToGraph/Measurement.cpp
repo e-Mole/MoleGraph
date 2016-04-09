@@ -726,8 +726,9 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
             ((HwChannel *)channel)->GetHwIndex() : -1
         );
 
-    out << channel->GetValueCount();
-    for (unsigned i = 0; i < channel->GetValueCount(); ++i)
+    unsigned valueCount = ((m_saveLoadValues) ? channel->GetValueCount() : 0);
+    out << valueCount;
+    for (unsigned i = 0; i < valueCount; ++i)
     {
         if (channel->GetType() == ChannelBase::Type_Sample)
         {
@@ -761,14 +762,12 @@ void Measurement::SerializeColections(QDataStream &out)
             }
         }
     }
-    if (m_saveLoadValues)
-    {
-        _SerializeChannelValues(m_sampleChannel, out);
+
+    _SerializeChannelValues(m_sampleChannel, out);
 
         out << m_trackedHwChannels.size();
         foreach (ChannelBase *channel, m_trackedHwChannels.values())
             _SerializeChannelValues(channel, out);
-    }
 }
 
 QCPAxis * Measurement::_GetGraphAxis(unsigned index)

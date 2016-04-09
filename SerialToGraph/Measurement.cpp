@@ -247,8 +247,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
         if (Measurement::Running != m->GetState() && Measurement::Paused != m->GetState())
             continue;
 
-        if (MyMessageBox::Yes ==
-            MyMessageBox::question(
+        if (MyMessageBox::question(
                 &m_widget,
                 QString(tr("The measurement '%1' is alread in progress. Terminate it?")).arg(m->GetName()),
                 tr("Terminate")

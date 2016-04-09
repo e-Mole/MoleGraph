@@ -507,7 +507,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
             )
         );
     }
-
+    int hwIndex = -1;
     foreach (ChannelBase *channel, source->GetChannels())
     {
         if (channel->GetType() == ChannelBase::Type_Hw)
@@ -523,7 +523,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                         GetMarksShown(),
                         channel->GetPenStyle()),
                     m_plot->AddPoint(channel->GetColor(),channel->GetShapeIndex() ),
-                    channel->GetType() == ChannelBase::Type_Hw,
+                    hwIndex,
                     channel->GetName(),
                     channel->GetColor(),
 
@@ -564,6 +564,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
 
         if (channel->IsOnHorizontalAxis())
             m_plot->SetHorizontalChannel(m_channels.last());
+
+        hwIndex++;
     }
 
     foreach (Axis *axis, m_axes)

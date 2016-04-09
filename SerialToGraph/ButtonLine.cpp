@@ -10,6 +10,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
+#include <MyMessageBox.h>
 #include <QAction>
 #include <QHBoxLayout>
 #include <QCoreApplication>
@@ -293,10 +294,10 @@ void ButtonLine::UpdateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-QString ButtonLine::_GetFileNameToSave(QString const &extension)
+QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
 {
     QString fileName = FileDialog::getSaveFileName(
-        this, tr("Save as"), "./", "*." + extension);
+        this, tr(values ? "Save as" : "Save without Values As"), "./", "*." + extension);
     if (fileName.size() == 0)
         return "";
 
@@ -307,14 +308,14 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension)
 }
 void ButtonLine::exportPng()
 {
-    QString fileName = _GetFileNameToSave("png");
+    QString fileName = _GetFileNameToSave("png", true);
     if (0 != fileName.size())
         Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
-    QString fileName = _GetFileNameToSave("csv");
+    QString fileName = _GetFileNameToSave("csv", true);
     if (0 != fileName.size())
        Export().ToCsv(fileName, measurements);
 }
@@ -419,7 +420,7 @@ void ButtonLine::_SaveFile(const QString &fileName, bool values)
 
 void ButtonLine::saveAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, true);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, true);
@@ -429,13 +430,15 @@ void ButtonLine::saveAsFile()
 
 void ButtonLine::saveWithoutValuesAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, false);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, false);
         m_storedValues = false;
+        MyMessageBox::information(this, "Just template without values has been stored.");
     }
 }
+
 void ButtonLine::measurementStateChanged()
 {
     UpdateRunButtonsState();

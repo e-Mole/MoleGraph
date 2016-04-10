@@ -60,7 +60,6 @@ private slots:
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
     void consoleLocationChanged(Qt::DockWidgetArea area);
-    void consoleVisiblityChanged(bool visible);
 public slots:
     void openSerialPort();
 };

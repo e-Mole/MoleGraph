@@ -30,6 +30,8 @@ using namespace atog;
 #define TIMESTAMP_SIZE 4
 #define VERTIACAL_MAX 3
 #define CHANNEL_COUNT 8
+#define COMMAND_MASK 0x7F
+
 Measurement::Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels):
     QObject(parent),
     m_widget(parent),
@@ -38,6 +40,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_period(source != NULL ? source->GetPeriod() : 1),
     m_state(Ready),
     m_anySampleMissed(false),
+    m_anyCheckSumDoesntMatch(false),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
@@ -49,7 +52,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_saveLoadValues(false),
     m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/),
     m_marksShown(source != NULL ? source->GetMarksShown() :false),
-    m_secondsInPause(0)
+    m_secondsInPause(0),
+    m_valueSetsCount(0)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -121,27 +125,39 @@ void Measurement::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-float Measurement::_DequeueFloat()
+float Measurement::_DequeueFloat(unsigned &checkSum)
 {
     char value[4];
+
     value[0] = m_queue.dequeue();
     value[1] = m_queue.dequeue();
     value[2] = m_queue.dequeue();
     value[3] = m_queue.dequeue();
+
+    checkSum += _GetCheckSum(value[0]);
+    checkSum += _GetCheckSum(value[1]);
+    checkSum += _GetCheckSum(value[2]);
+    checkSum += _GetCheckSum(value[3]);
 
     return *((float*)value);
 }
 
 bool Measurement::_IsCompleteSetInQueue()
 {
-    if (m_queue.size() > 0)
-    {
-        if ((m_queue[0] & 0x7F) != 0) //a command present
-            return true;
-    }
+    if (m_queue.size() == 0)
+        return false;
+
+    bool conatansCheckSum = (m_queue[0] >> 6) & 1;
+
+    if ((m_queue[0] & COMMAND_MASK) != 0) //a command present
+        return conatansCheckSum ? m_queue.size() > 1 : true;
+
     unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE; //Header + tracked channels data
     if (m_type == OnDemand)
         size += TIMESTAMP_SIZE;
+
+    if (conatansCheckSum)
+        size += 1; //checkSum
     return (unsigned)m_queue.size() >= size;
 }
 
@@ -164,29 +180,66 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
+unsigned Measurement::_GetCheckSum(unsigned char input)
+{
+    unsigned char output = 0;
+    for (unsigned char i = 0; i < 8; ++i)
+    {
+      if (input & (1 << i))
+        output++;
+    }
+    return output;
+}
+
+bool Measurement::_ProcessCommand(unsigned mixture, unsigned checkSum)
+{
+    unsigned char command = mixture & COMMAND_MASK;
+
+    if (!m_context.m_hwSink.IsCommand(command))
+        return false;
+
+    if (checkSum != m_queue.dequeue())
+        MyMessageBox::critical(&m_widget, tr("Command with wrong checksum recieved."));
+    else
+        m_context.m_hwSink.ProcessCommand(command);
+
+    return true;
+}
+
 bool Measurement::_ProcessValueSet()
 {
     unsigned mixture = m_queue.dequeue();
-    unsigned char command = mixture & 0x7f;
     m_anySampleMissed |= mixture >> 7;
+    unsigned checkSum = _GetCheckSum(mixture);
 
-    if (m_context.m_hwSink.ProcessCommand(command))
+    if (_ProcessCommand(mixture, checkSum))
         return false; //message is a command
 
     double offset = 0;
     if (m_type == OnDemand)
-        offset = _DequeueFloat();
+        offset = _DequeueFloat(checkSum);
     else
-    {
         offset =
-            (double)m_sampleChannel->GetValueCount() *
+            (double)m_valueSetsCount *
             ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period ) +
             m_secondsInPause;
-    }
-    m_sampleChannel->AddValue(m_sampleChannel->GetValueCount(), offset);
 
-    foreach (ChannelBase *channel,  m_trackedHwChannels)
-        channel->AddValue(_DequeueFloat());
+    m_valueSetsCount++;
+
+    QVector<float> values;
+    for (int i = 0; i < m_trackedHwChannels.count(); ++i)
+        values.push_back(_DequeueFloat(checkSum));
+
+    if (checkSum != m_queue.dequeue())
+    {
+        m_anyCheckSumDoesntMatch = true;
+        return false;
+    }
+
+    m_sampleChannel->AddValue(m_valueSetsCount, offset);
+
+    for (int i = 0; i < m_trackedHwChannels.count(); ++i)
+        m_trackedHwChannels[i]->AddValue(values[i]);
 
     //im sure I have a horizontal value and may start to draw
     m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
@@ -357,6 +410,11 @@ void Measurement::_DrawRestData()
         MyMessageBox::warning(
             m_context.m_mainWindow.centralWidget(),
             tr("Some samples was not transfered. The sample rate is probably too high for so many channels.")
+        );
+    if (m_anyCheckSumDoesntMatch)
+        MyMessageBox::warning(
+            m_context.m_mainWindow.centralWidget(),
+            tr("Some values was wrongly transfered and has not been stored.")
         );
 }
 void Measurement::Stop()
@@ -929,6 +987,8 @@ void Measurement::DeserializeColections(QDataStream &in)
     {
         _SetState(Ready);
         m_anySampleMissed = false;
+        m_anyCheckSumDoesntMatch = false;
+        m_valueSetsCount = 0;
     }
 
     ReplaceDisplays(false);

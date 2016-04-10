@@ -90,15 +90,8 @@ namespace
           checkSum += GetCheckSum(((char *)&g_channels[i])[j]);
       }
     }
-
-    static unsigned char checkSumCount = 0;
-    if (++checkSumCount == 10)
-    {
-      checkSumCount = 0;
-      Serial.write(0);
-    }
-    else
-      Serial.write(checkSum);
+     
+    Serial.write(checkSum);
       
     g_fullWriteBufferDetected = false;
   }

@@ -95,6 +95,7 @@ private slots:
     void saveWithoutValuesAsFile();
     void sampleRequest();
     void settings();
+    void about();
 public slots:
     void exportPng();
     void exportCsv();

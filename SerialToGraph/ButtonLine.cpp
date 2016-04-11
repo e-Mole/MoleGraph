@@ -1,4 +1,5 @@
 #include "ButtonLine.h"
+#include <AboutDialog.h>
 #include <Axis.h>
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
@@ -220,6 +221,7 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SLOT(exportAllCsv()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Settings..."), this, SLOT(settings()));
+    m_fileMenu->addAction(tr("About..."), this, SLOT(about()));
 }
 
 void ButtonLine::settings()
@@ -229,6 +231,13 @@ void ButtonLine::settings()
 
     m_settingsDialog->exec();
 }
+
+void ButtonLine::about()
+{
+    AboutDialog dialog(this);
+    dialog.exec();
+}
+
 void ButtonLine::UpdateRunButtonsState()
 {
     if (NULL == m_measurement)

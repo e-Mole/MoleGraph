@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = ArduinoToGraph
 TEMPLATE = app
 
+GIT_VERSION = $$system(git describe --always --tags)
+DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
 
 SOURCES += main.cpp\
     MainWindow.cpp \
@@ -49,7 +51,8 @@ SOURCES += main.cpp\
     ChannelBase.cpp \
     SampleChannel.cpp \
     HwChannel.cpp \
-    ColorCheckBox.cpp
+    ColorCheckBox.cpp \
+    AboutDialog.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -88,7 +91,8 @@ HEADERS  += MainWindow.h \
     ChannelBase.h \
     SampleChannel.h \
     HwChannel.h \
-    ColorCheckBox.h
+    ColorCheckBox.h \
+    AboutDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

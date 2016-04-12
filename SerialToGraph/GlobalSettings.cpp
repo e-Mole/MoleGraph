@@ -1,4 +1,5 @@
 #include "GlobalSettings.h"
+#include <QSize>
 
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", "ArduinoToGraph")
@@ -26,6 +27,10 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "console";
     case Key_ConsolePosition:
         return "console_position";
+    case Key_MainWindowMaximized:
+        return "main_window_maximized";
+    case Key_MainWindowSize:
+        return "main_window_size";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -116,4 +121,22 @@ int GlobalSettings::GetConsolePosition()
 void GlobalSettings::SetConsolePosition(int position)
 {
     _Set(Key_ConsolePosition, position);
+}
+
+bool GlobalSettings::GetMainWindowMaximized()
+{
+    return _Get(Key_MainWindowMaximized, false).toBool();
+}
+void GlobalSettings::SetMainWindowMaximized(bool maximised)
+{
+    _Set(Key_MainWindowMaximized, maximised);
+}
+
+QSize GlobalSettings::GetMainWindowSize()
+{
+    return _Get(Key_MainWindowSize, QSize()).toSize();
+}
+void GlobalSettings::SetMainWindowSize(QSize const& size)
+{
+    _Set(Key_MainWindowSize, size);
 }

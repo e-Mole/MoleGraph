@@ -23,6 +23,7 @@ class MainWindow : public QMainWindow
     void _SetCurrentFileName(QString const &fileName);
     void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
+    void closeEvent(QCloseEvent *event);
 
     GlobalSettings m_settings;
     hw::HwSink m_hwSink;

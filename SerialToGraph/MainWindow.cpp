@@ -93,6 +93,11 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         qDebug() << "opening " << fileNameToOpen;
         DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
     }
+
+    if (m_settings.GetMainWindowMaximized())
+        showMaximized();
+    else
+        resize(m_settings.GetMainWindowSize());
 }
 
 void MainWindow::consoleLocationChanged(Qt::DockWidgetArea area)
@@ -318,4 +323,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
             event->accept();
         }
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    m_settings.SetMainWindowMaximized(isMaximized());
+    m_settings.SetMainWindowSize(size());
+    QMainWindow::closeEvent(event);
 }

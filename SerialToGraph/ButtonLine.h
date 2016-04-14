@@ -35,7 +35,7 @@ class ButtonLine : public QToolBar
     void _ClearPanelShortcuts();
     void _CreatePanelShortcuts();
     void _ActivateChannel(ChannelBase *channel, bool checked);
-    QString _GetFileNameToSave(const QString &extension);
+    QString _GetFileNameToSave(const QString &extension, bool values);
     void _SaveFile(const QString &fileName, bool values);
     void _OpenFile(bool values);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
@@ -95,6 +95,7 @@ private slots:
     void saveWithoutValuesAsFile();
     void sampleRequest();
     void settings();
+    void about();
 public slots:
     void exportPng();
     void exportCsv();

@@ -15,7 +15,7 @@
 #include <QQueue>
 #include <QTimer>
 #include <QWidget>
-#define PROTOCOL_ID "ATG_2"
+#define PROTOCOL_ID "ATG_3"
 
 namespace hw
 {
@@ -105,19 +105,23 @@ bool HwSink::FillQueue(QQueue<unsigned char> &queue)
     return true;
 }
 
-bool HwSink::ProcessCommand(unsigned char command)
+bool HwSink::IsCommand(unsigned char command)
+{
+    return INS_NONE != command;
+}
+void HwSink::ProcessCommand(unsigned char command)
 {
     switch (command)
     {
     case INS_NONE:
-        return false;
+    break;
     case INS_START:
         StartCommandDetected();
+    break;
     case INS_STOP:
         StopCommandDetected();
     break;
     }
-    return true;
 }
 
 void HwSink::_ChangeState(State status)

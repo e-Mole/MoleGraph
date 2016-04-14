@@ -87,7 +87,9 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
-    float _DequeueFloat();
+    float _DequeueFloat(unsigned &checkSum);
+    unsigned _GetCheckSum(unsigned char input);
+    bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
     QCPAxis *_GetGraphAxis(unsigned index);
     void _DeserializeChannel(QDataStream &in, Axis *axis);
@@ -120,6 +122,7 @@ private:
     unsigned m_period;
     State m_state;
     bool m_anySampleMissed;
+    bool m_anyCheckSumDoesntMatch;
     QMap<unsigned, ChannelBase *> m_trackedHwChannels; //used just during measurement
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
@@ -140,6 +143,7 @@ private:
     bool m_marksShown;
     double m_secondsInPause;
     QTime m_pauseStartTime;
+    unsigned m_valueSetsCount;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();

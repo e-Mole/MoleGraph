@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVariant>
 
+class QSize;
 class GlobalSettings
 {
     enum Key
@@ -17,6 +18,8 @@ class GlobalSettings
         Key_ForcedOffline,
         Key_Console,
         Key_ConsolePosition,
+        Key_MainWindowMaximized,
+        Key_MainWindowSize
     };
 
     QString _GetStringKey(Key key) const;
@@ -43,6 +46,10 @@ public:
     void SetConsole(bool visible);
     int GetConsolePosition();
     void SetConsolePosition(int position);
+    bool GetMainWindowMaximized();
+    void SetMainWindowMaximized(bool maximised);
+    QSize GetMainWindowSize();
+    void SetMainWindowSize(const QSize &size);
 };
 
 #endif // GLOBALSETTINGS_H

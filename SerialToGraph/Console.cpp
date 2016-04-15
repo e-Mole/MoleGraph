@@ -19,11 +19,14 @@ Console::Console(QWidget *parent) :
     qInstallMessageHandler(messageOutput);
 
     setAllowedAreas(Qt::AllDockWidgetAreas);
+#if defined(Q_OS_ANDROID)
+    m_textEdit->setStyleSheet("background-color:black");
+#else
     QPalette pal(m_textEdit->palette());
     pal.setColor(QPalette::Base, Qt::black);
     m_textEdit->setAutoFillBackground(true);
     m_textEdit->setPalette(pal);
-
+#endif
     setWidget(m_textEdit);
 }
 

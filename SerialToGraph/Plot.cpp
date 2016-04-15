@@ -63,7 +63,7 @@ Plot::Plot(Measurement *measurement) :
 
 bool Plot::event(QEvent *event)
 {
- /*   switch( event->type() )
+    switch( event->type() )
     {
         case QEvent::Gesture:
         {
@@ -73,17 +73,18 @@ bool Plot::event(QEvent *event)
                 QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
                 qreal scaleFactor = pinchEve->totalScaleFactor( );
                 if( scaleFactor > 1.0 )
-                    scaleFactor *= 10;
+                    scaleFactor *= 5;
                 else
-                    scaleFactor *= -10;
+                    scaleFactor = 1 / scaleFactor * -5;
 
+                qDebug() << "pinch center" << pinchEve->lastCenterPoint();
                 QWheelEvent *wheelEve = new QWheelEvent(
-                    m_currentTouchPointPos, scaleFactor, Qt::NoButton, Qt::NoModifier, Qt::Vertical );
-                wheelEvent( wheelEve );
+                    pinchEve->lastCenterPoint(), scaleFactor, Qt::NoButton, Qt::NoModifier, Qt::Vertical );
+                wheelEvent( wheelEve);
             }
             return true;
         }
-        case QEvent::TouchBegin:
+        /*case QEvent::TouchBegin:
         case QEvent::TouchUpdate:
         case QEvent::TouchEnd:
         {
@@ -104,13 +105,10 @@ bool Plot::event(QEvent *event)
                     mouseReleaseEvent( mouseEve );
             }
             return true;
-        }
+        }*/
         default:
-    {
             break;
-        }
     }
-*/
     return QCustomPlot::event(event);
 }
 
@@ -155,6 +153,7 @@ bool Plot::_GetClosestX(double in, int &out)
 
 void Plot::mousePressEvent(QMouseEvent *event)
 {
+    qDebug() << "press point:" << event->pos();
     m_mouseHandled = false;
     QCustomPlot::mousePressEvent(event);
 }

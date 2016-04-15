@@ -34,7 +34,7 @@
 #define ATOG_FILE_EXTENSION "atog"
 
 #if defined(Q_OS_ANDROID)
-#   define FONT_DPI_FACTOR 6
+#   define FONT_DPI_FACTOR 7
 #else
 #   define FONT_DPI_FACTOR 8
 #endif

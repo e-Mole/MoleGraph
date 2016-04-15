@@ -1,7 +1,7 @@
 #include "ArduinoToGraph.h"
 
 
-#define VERSION "ATG_2" //arduino to graph version
+#define VERSION "ATG_3" //arduino to graph version
 #define MESSAGE_SIZE 1 + sizeof(float)
 
 namespace
@@ -21,7 +21,6 @@ namespace
   float g_timeFromStart = 0;
   bool g_sampleRequest = false;
   bool g_measurementInProgress = false;
-  
   void (*g_updateFunction)(void);
   
   void InitTimer()
@@ -36,12 +35,25 @@ namespace
     interrupts();             // enable all interrupts
   }
 
-  void WriteHeader(unsigned char commandId)
+  unsigned char GetCheckSum(unsigned char input)
+  {
+    unsigned char output = 0;
+    for (unsigned char i = 0; i < 8; ++i)
+    {
+      if (input & (1 << i))
+        output++;
+    }
+    return output;
+  }
+  
+  /*returns true bits count*/
+  unsigned WriteHeader(unsigned char commandId)
   {
     unsigned char mixture = commandId;
     mixture |= g_fullWriteBufferDetected << 7;
     
-    Serial.write(mixture);  
+    Serial.write(mixture);
+    return GetCheckSum(mixture);  
   }
   
   void SendData(bool timestamp)
@@ -62,17 +74,26 @@ namespace
     if (bufferIsFull)
       return; //have to throw data form this sample :(
 
-    WriteHeader(0 /*INS_NONE*/);
+    unsigned char checkSum = WriteHeader(0 /*INS_NONE*/);
     
     if (timestamp)
+    {
       Serial.write((char *)&g_timeFromStart, sizeof(float));
+      checkSum += GetCheckSum(g_timeFromStart);
+    }
     for (int i = 0; i < 8; i++)
     {
       if (0 != ((g_enabledChannels >> i) & 1)) 
+      {
         Serial.write((char *)&g_channels[i], sizeof(float));
+        for (int j = 0; j < sizeof(float); j++)
+          checkSum += GetCheckSum(((char *)&g_channels[i])[j]);
+      }
     }
-  
-     g_fullWriteBufferDetected = false;
+     
+    Serial.write(checkSum);
+      
+    g_fullWriteBufferDetected = false;
   }
 
   void FillFromSerial(unsigned char &value)
@@ -116,22 +137,14 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   SendData(g_type == typeOnDemand);
 }
 
-void ArduinoToGraph::Setup(float channel1, float channel2, float channel3, float channel4, float channel5, float channel6, float channel7, float channel8)
-{
-  g_channels[0] = channel1;
-  g_channels[1] = channel2;
-  g_channels[2] = channel3;
-  g_channels[3] = channel4;
-  g_channels[4] = channel5;
-  g_channels[5] = channel6;
-  g_channels[6] = channel7;
-  g_channels[7] = channel8;
-  
+void ArduinoToGraph::Setup(void (*updateCallbackFunction)(void))
+{ 
   Serial.begin(115200);
   while (!Serial) 
   {}
 
-  InitTimer();  
+  g_updateFunction = updateCallbackFunction;
+  InitTimer();
 }
 
 void ArduinoToGraph::InLoop()
@@ -217,24 +230,25 @@ float ArduinoToGraph::GetChannelValue(int channel)
   return g_channels[channel - 1];
 }
 
-void ArduinoToGraph::SetUpdateCallbackFunction(void (*f)(void) )
-{
-  g_updateFunction = f;
-}
-
 void ArduinoToGraph::SampleRequest()
 {
   g_sampleRequest = true;
 }
 
+void SendCommand(unsigned char commandId)
+{
+  unsigned char checkSum = WriteHeader(commandId);
+  Serial.write(checkSum);
+}
+
 void ArduinoToGraph::StartMeasurement()
 {
-  WriteHeader(INS_START);
+  SendCommand(INS_START);
 }
 
 void ArduinoToGraph::StopMeasurement()
 {
-  WriteHeader(INS_STOP);
+  SendCommand(INS_STOP);
 }
 
 bool ArduinoToGraph::IsMeasurementInProgress()

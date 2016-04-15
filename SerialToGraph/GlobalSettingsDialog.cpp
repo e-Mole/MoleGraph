@@ -97,10 +97,8 @@ bool GlobalSettingsDialog::BeforeAccept()
 
     if (m_settings.GetConsole() != m_showConsole->isChecked())
     {
-        {
-            m_settings.SetConsole(m_showConsole->isChecked());
-            m_context.m_mainWindow.ShowConsole(m_showConsole->isChecked());
-        }
+        m_settings.SetConsole(m_showConsole->isChecked());
+        m_context.m_mainWindow.ShowConsole(m_showConsole->isChecked());
     }
 
     return true;

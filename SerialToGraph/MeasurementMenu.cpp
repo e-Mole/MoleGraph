@@ -117,7 +117,7 @@ void MeasurementMenu::removeButtonPressed()
     Measurement *m =
         m_removeButtonToItem.find((QPushButton*)sender()).value();
 
-    if (m->GetState() == Measurement::Running)
+    if (m->GetState() == Measurement::Running || m->GetState() == Measurement::Paused)
     {
         if (MyMessageBox::No ==
             MyMessageBox::question(

@@ -42,9 +42,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(
         m_console, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
         this, SLOT(consoleLocationChanged(Qt::DockWidgetArea)));
-    connect(
-        m_console, SIGNAL(visibilityChanged(bool)),
-        this, SLOT(consoleVisiblityChanged(bool)));
 
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -96,11 +93,11 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         qDebug() << "opening " << fileNameToOpen;
         DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
     }
-}
 
-void MainWindow::consoleVisiblityChanged(bool visible)
-{
-    m_settings.SetConsole(visible);
+    if (m_settings.GetMainWindowMaximized())
+        showMaximized();
+    else
+        resize(m_settings.GetMainWindowSize());
 }
 
 void MainWindow::consoleLocationChanged(Qt::DockWidgetArea area)
@@ -326,4 +323,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
             event->accept();
         }
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    m_settings.SetMainWindowMaximized(isMaximized());
+    m_settings.SetMainWindowSize(size());
+    QMainWindow::closeEvent(event);
 }

@@ -23,6 +23,7 @@ class MainWindow : public QMainWindow
     void _SetCurrentFileName(QString const &fileName);
     void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
+    void closeEvent(QCloseEvent *event);
 
     GlobalSettings m_settings;
     hw::HwSink m_hwSink;
@@ -60,7 +61,6 @@ private slots:
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
     void consoleLocationChanged(Qt::DockWidgetArea area);
-    void consoleVisiblityChanged(bool visible);
 public slots:
     void openSerialPort();
 };

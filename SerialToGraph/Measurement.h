@@ -8,6 +8,7 @@
 #include <QQueue>
 #include <QSize>
 #include <QString>
+#include <QTime>
 #include <QVector>
 #include <QWidget>
 
@@ -63,13 +64,15 @@ public:
     enum State{
         Ready,
         Running,
-        Finished
+        Finished,
+        Paused
     };
     enum Type
     {
         Periodical = 0,
         OnDemand
     };
+
 private:
     friend class MeasurementSettings;
 
@@ -84,7 +87,9 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
-    float _DequeueFloat();
+    float _DequeueFloat(unsigned &checkSum);
+    unsigned _GetCheckSum(unsigned char input);
+    bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
     QCPAxis *_GetGraphAxis(unsigned index);
     void _DeserializeChannel(QDataStream &in, Axis *axis);
@@ -97,14 +102,15 @@ private:
     void _SetState(State state) {m_state = state;}
     bool _IsAnySampleMissed() {return m_anySampleMissed; }
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
-    void _SetType(Type type) {m_type = type; }
+    void _SetType(Type type);
     unsigned _GetAxisCount() { return m_axes.size(); }
     ChannelBase *_FindChannel(int hwIndex);
     void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
     void _ReadingValuesPostProcess();
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
-    State _GetStateForSerialization() { return (m_state == Running) ? Finished : m_state; }
+    State _GetStateForSerialization()
+    { return (m_state == Running || m_state == Paused) ? Finished : m_state; }
     QColor _GetColorByOrder(unsigned order);
     void _SetColor(QColor const &color);
     void _SetMarksShown(bool marksShown);
@@ -116,6 +122,7 @@ private:
     unsigned m_period;
     State m_state;
     bool m_anySampleMissed;
+    bool m_anyCheckSumDoesntMatch;
     QMap<unsigned, ChannelBase *> m_trackedHwChannels; //used just during measurement
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
@@ -134,6 +141,9 @@ private:
     bool m_saveLoadValues; //for serialization and deserialization too
     QColor m_color;
     bool m_marksShown;
+    double m_secondsInPause;
+    QTime m_pauseStartTime;
+    unsigned m_valueSetsCount;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
@@ -154,6 +164,8 @@ public:
     int GetAxisIndex(Axis *axis);
     Axis *GetAxis(int index);
     void Start();
+    void Pause();
+    void Continue();
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
@@ -166,6 +178,7 @@ public:
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown() {return m_marksShown; }
+
 signals:
     void stateChanged();
     void nameChanged();

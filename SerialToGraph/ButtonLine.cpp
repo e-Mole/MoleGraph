@@ -1,4 +1,5 @@
 #include "ButtonLine.h"
+#include <AboutDialog.h>
 #include <Axis.h>
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
@@ -10,6 +11,8 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
+#include <MyMessageBox.h>
+#include <QAction>
 #include <QHBoxLayout>
 #include <QCoreApplication>
 #include <QDataStream>
@@ -40,6 +43,9 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     QToolBar(parent),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
+    m_sampleRequestAction(NULL),
+    m_pauseContinueButton(NULL),
+    m_pauseContinueAction(NULL),
     m_stopButton(NULL),
     m_connectivityButton(NULL),
     m_fileMenuButton(NULL),
@@ -92,8 +98,14 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     m_sampleRequestButton = new QPushButton(tr("Sample"), this);
     m_sampleRequestButton->setDisabled(true);
-    addWidget(m_sampleRequestButton);
+    m_sampleRequestAction = addWidget(m_sampleRequestButton);
     connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
+
+    m_pauseContinueButton = new QPushButton(tr("Pause"), this);
+    m_pauseContinueButton->setDisabled(true);
+    m_pauseContinueAction = addWidget(m_pauseContinueButton);
+    connect(m_pauseContinueButton, SIGNAL(clicked()), this, SLOT(pauseContinue()));
+
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
@@ -113,6 +125,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     _InitializeMenu();
 }
+
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 {
@@ -208,6 +221,7 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SLOT(exportAllCsv()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Settings..."), this, SLOT(settings()));
+    m_fileMenu->addAction(tr("About..."), this, SLOT(about()));
 }
 
 void ButtonLine::settings()
@@ -217,6 +231,13 @@ void ButtonLine::settings()
 
     m_settingsDialog->exec();
 }
+
+void ButtonLine::about()
+{
+    AboutDialog dialog(this);
+    dialog.exec();
+}
+
 void ButtonLine::UpdateRunButtonsState()
 {
     if (NULL == m_measurement)
@@ -224,18 +245,43 @@ void ButtonLine::UpdateRunButtonsState()
         m_startButton->setEnabled(false);
         m_stopButton->setEnabled(false);
         m_sampleRequestButton->setEnabled(false);
+        m_pauseContinueButton->setEnabled(false);
         return;
     }
 
     m_stopButton->setEnabled(
         m_connected &&
-        m_measurement->GetState() == Measurement::Running);
+        (
+            m_measurement->GetState() == Measurement::Running ||
+            m_measurement->GetState() == Measurement::Paused
+        )
+    );
+
+    m_sampleRequestAction->setVisible(
+        m_measurement->GetType() == Measurement::OnDemand);
 
     m_sampleRequestButton->setEnabled(
         m_connected &&
-        m_measurement->GetState() == Measurement::Running &&
+        m_measurement->GetState() == Measurement::Running && //no pause state in this mode
         m_measurement->GetType() == Measurement::OnDemand);
 
+    m_pauseContinueAction->setVisible(
+        m_measurement->GetType() == Measurement::Periodical);
+
+    m_pauseContinueButton->setEnabled(
+        m_connected &&
+        (
+            m_measurement->GetState() == Measurement::Running ||
+            m_measurement->GetState() == Measurement::Paused
+        ) &&
+        m_measurement->GetType() == Measurement::Periodical
+    );
+
+    m_pauseContinueButton->setText(
+        m_pauseContinueButton->isEnabled() && m_measurement->GetState() == Measurement::Paused ?
+            tr("Continue") :
+            tr("Pause")
+    );
 
     if (!m_connected || m_measurement->GetState() != Measurement::Ready)
     {
@@ -257,10 +303,10 @@ void ButtonLine::UpdateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-QString ButtonLine::_GetFileNameToSave(QString const &extension)
+QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
 {
     QString fileName = FileDialog::getSaveFileName(
-        this, tr("Save as"), "./", "*." + extension);
+        this, tr(values ? "Save as" : "Save without Values As"), "./", "*." + extension);
     if (fileName.size() == 0)
         return "";
 
@@ -271,14 +317,14 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension)
 }
 void ButtonLine::exportPng()
 {
-    QString fileName = _GetFileNameToSave("png");
+    QString fileName = _GetFileNameToSave("png", true);
     if (0 != fileName.size())
         Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
-    QString fileName = _GetFileNameToSave("csv");
+    QString fileName = _GetFileNameToSave("csv", true);
     if (0 != fileName.size())
        Export().ToCsv(fileName, measurements);
 }
@@ -383,7 +429,7 @@ void ButtonLine::_SaveFile(const QString &fileName, bool values)
 
 void ButtonLine::saveAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, true);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, true);
@@ -393,13 +439,15 @@ void ButtonLine::saveAsFile()
 
 void ButtonLine::saveWithoutValuesAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION);
+    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, false);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, false);
         m_storedValues = false;
+        MyMessageBox::information(this, "Just template without values has been stored.");
     }
 }
+
 void ButtonLine::measurementStateChanged()
 {
     UpdateRunButtonsState();
@@ -490,6 +538,14 @@ void ButtonLine::start()
 {
     if (m_startButton->isEnabled()) //when slot is called from a remote
         m_measurement->Start();
+}
+
+void ButtonLine::pauseContinue()
+{
+    if (m_measurement->GetState() == Measurement::Running)
+        m_measurement->Pause();
+    else
+        m_measurement->Continue();
 }
 
 void ButtonLine::sampleRequest()

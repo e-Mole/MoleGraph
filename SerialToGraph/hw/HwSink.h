@@ -74,7 +74,8 @@ public:
     bool IsDeviceConnected();
     void PortIssueSolver();
     bool FillQueue(QQueue<unsigned char> &queue);
-    bool ProcessCommand(unsigned char command);
+    bool IsCommand(unsigned char command);
+    void ProcessCommand(unsigned char command);
     void WorkOffline();
     void ClosePort();
     void OpenPort(const PortInfo &info);

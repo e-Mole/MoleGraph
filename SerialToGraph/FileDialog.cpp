@@ -86,6 +86,13 @@ FileDialog::FileDialog(
     m_view->setIconSize(QSize(32,32));
     m_view->setSpacing(5);
     m_view->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+
+#if defined(Q_OS_ANDROID)
+    //because of bug on Lenovo. there is not seeable selected text
+    m_view->setStyleSheet(
+        "QListView::item:selected { background: LightBlue; color: black; }"
+    );
+#endif
     QScroller::grabGesture(m_view->viewport(), QScroller::LeftMouseButtonGesture);
 
     connect(m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(viewClicked(QModelIndex)));
@@ -182,7 +189,6 @@ QString FileDialog::_ExecuteFileDialog(
         const QString &filter,
         bool open)
 {
-
     QString directory = dir;
 #if defined(Q_OS_ANDROID)
     QAndroidJniObject storageDirectory =
@@ -206,11 +212,11 @@ QString FileDialog::getOpenFileName(
     const QString &filter
 )
 {
-#if defined(Q_OS_ANDROID)
+//#if defined(Q_OS_ANDROID)
     return _ExecuteFileDialog(parent, caption, dir, filter, true);
-#else
-    return QFileDialog::getOpenFileName(parent, caption, dir, filter);
-#endif
+//#else
+//    return QFileDialog::getOpenFileName(parent, caption, dir, filter);
+//#endif
 }
 
 QString FileDialog::getSaveFileName(

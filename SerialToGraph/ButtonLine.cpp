@@ -361,7 +361,7 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
 //setStyleSheet doesn't work on android and pal.setColor doesnt work on linux
 #if defined(Q_OS_ANDROID)
     QPalette pal(m_connectivityButton->palette());
-    pal.setColor(QPalette::ButtonText, Qt::red);
+    pal.setColor(QPalette::ButtonText, color);
     m_connectivityButton->setPalette(pal);
 #else
     m_connectivityButton->setStyleSheet(

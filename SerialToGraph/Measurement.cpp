@@ -64,8 +64,48 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
 
     m_plotAndSliderLayout->addWidget(m_plot);
 
+    unsigned height = m_scrollBar->physicalDpiY() / 5;
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
+#if defined(Q_OS_ANDROID)
+    m_scrollBar->setStyleSheet(
+        QString(
+            "QScrollBar:horizontal {"
+                    "border: 1px solid white;"
+                    "height: %1px;"
+                    "margin: 0px %1px 0px %1px;"
+                "}"
+            "QScrollBar::handle:horizontal {"
+                    "min-width: %2px;"
+                    "background: Silver;"
+                "}"
+            "QScrollBar::add-line:horizontal {"
+                    "width: %2px;"
+                    "background: LightGray;"
+                    "subcontrol-position: right;"
+                    "subcontrol-origin: margin;"
+                    "border: 1px solid white;"
+                "}"
+            "QScrollBar::sub-line:horizontal {"
+                    "width: %2px;"
+                    "background: LightGray;"
+                    "subcontrol-position: left;"
+                    "subcontrol-origin: margin;"
+                    "position: absolute;"
+                    "border: 1px solid white;"
+                "}"
+            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
+                    "background: none;"
+                "}"
+            "QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal {"
+                    "border: 1px solid Silver;"
+                    "width: %3px;"
+                    "height: %3px;"
+                    "background: white;"
+                "}"
+        ).arg(height+1).arg(height).arg(height/9)
+    );
+#endif
     connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
     connect(m_plot, SIGNAL(clickedToPlot(int)), this, SLOT(moveSliderTo(int)));

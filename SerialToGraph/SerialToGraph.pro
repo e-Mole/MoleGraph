@@ -52,7 +52,9 @@ SOURCES += main.cpp\
     SampleChannel.cpp \
     HwChannel.cpp \
     ColorCheckBox.cpp \
-    AboutDialog.cpp
+    AboutDialog.cpp \
+    NativeFileDialog.cpp \
+    OwnFileDialog.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -92,7 +94,9 @@ HEADERS  += MainWindow.h \
     SampleChannel.h \
     HwChannel.h \
     ColorCheckBox.h \
-    AboutDialog.h
+    AboutDialog.h \
+    NativeFileDialog.h \
+    OwnFileDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

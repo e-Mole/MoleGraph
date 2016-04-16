@@ -17,6 +17,8 @@
 #include <QCoreApplication>
 #include <QDataStream>
 #include <QDebug>
+#include <QDir>
+#include <QDebug>
 #include <QDialog>
 #include <QFile>
 #include <QFileInfo>
@@ -306,13 +308,20 @@ void ButtonLine::UpdateRunButtonsState()
 QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
 {
     QString fileName = FileDialog::getSaveFileName(
-        this, tr(values ? "Save as" : "Save without Values As"), "./", "*." + extension);
+        this,
+        tr(values ? "Save as" : "Save without Values As"),
+        _GetRootDir(),
+        "*." + extension,
+        m_context.m_settings.GetLimitDir()
+    );
+
     if (fileName.size() == 0)
         return "";
 
     if (!fileName.contains("." + extension, Qt::CaseInsensitive))
             fileName += "." + extension;
 
+    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
     return fileName;
 }
 void ButtonLine::exportPng()
@@ -389,7 +398,17 @@ void ButtonLine::newFile()
     m_context.m_mainWindow.OpenNew();
 }
 
+QString ButtonLine::_GetRootDir()
+{
+    QString dir = m_context.m_settings.GetLastDir();
 
+    qDebug() << dir << ", " << m_context.m_settings.GetLimitDir();
+    qDebug() << dir.contains(m_context.m_settings.GetLimitDir());
+    if (!dir.contains(m_context.m_settings.GetLimitDir()))
+        return m_context.m_settings.GetLimitDir();
+
+    return dir;
+}
 void ButtonLine::_OpenFile(bool values)
 {
     QString fileName =
@@ -397,12 +416,15 @@ void ButtonLine::_OpenFile(bool values)
         (
             this,
             "Open File",
-            "./", QString("*.%1").arg(ATOG_FILE_EXTENSION)
+            _GetRootDir(),
+            QString("*.%1").arg(ATOG_FILE_EXTENSION),
+            m_context.m_settings.GetLimitDir()
         );
 
     if (fileName.size() == 0)
         return;
 
+    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
     m_context.m_mainWindow.DeserializeMeasurements(fileName, values);
 }
 

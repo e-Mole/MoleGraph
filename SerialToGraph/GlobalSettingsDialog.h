@@ -7,6 +7,8 @@ class Context;
 class GlobalSettings;
 class QCheckBox;
 class QComboBox;
+class QLineEdit;
+class QPushButton;
 class GlobalSettingsDialog : public bases::FormDialogBase
 {
     Q_OBJECT
@@ -18,6 +20,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeUnitBrackets();
     void _InitializeUseBluetooth();
     void _InitializeShowConsole();
+    void _InitializeLimitDir();
 
     Context const &m_context;
     GlobalSettings &m_settings;
@@ -25,12 +28,15 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QComboBox *m_brackets;
     QCheckBox *m_useBluetooth;
     QCheckBox *m_showConsole;
+    QLineEdit *m_limitDirLine;
+    QPushButton *m_limitDirButton;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 
 signals:
 
-public slots:
+private slots:
+    void limitDirClicked();
 };
 
 #endif // SETTINGSDIALOG_H

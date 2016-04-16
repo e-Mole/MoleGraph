@@ -39,6 +39,7 @@ class ButtonLine : public QToolBar
     void _SaveFile(const QString &fileName, bool values);
     void _OpenFile(bool values);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
+    QString _GetRootDir();
 
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
@@ -79,7 +80,6 @@ public:
     QString GetAllChannelShortcutText();
     QString GetNoChannelShortcutText();
     QString GetChannelShortcutText(ChannelBase *channel);
-
 signals:
     void periodChanged(unsigned period);
     void channelTriggered(ChannelBase *channel, bool checked);

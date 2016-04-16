@@ -1,6 +1,7 @@
 #include "GlobalSettingsDialog.h"
 #include <Axis.h>
 #include <Context.h>
+#include <FileDialog.h>
 #include <GlobalSettings.h>
 #include <hw/HwSink.h>
 #include <MainWindow.h>
@@ -9,8 +10,11 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
-#include <QLocale>
+#include <QHBoxLayout>
 #include <QFormLayout>
+#include <QLocale>
+#include <QLineEdit>
+#include <QPushButton>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
     bases::FormDialogBase(parent, tr("Settings")),
@@ -19,15 +23,42 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_languages(new QComboBox(this)),
     m_brackets(new QComboBox(this)),
     m_useBluetooth(new QCheckBox(this)),
-    m_showConsole(new QCheckBox(this))
+    m_showConsole(new QCheckBox(this)),
+    m_limitDirLine(new QLineEdit(this)),
+    m_limitDirButton(new QPushButton("...", this))
 
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
     _InitializeUseBluetooth();
     _InitializeShowConsole();
+    _InitializeLimitDir();
 }
 
+void GlobalSettingsDialog::_InitializeLimitDir()
+{
+    QHBoxLayout *layout = new QHBoxLayout();
+    m_limitDirLine->setText(m_settings.GetLimitDir());
+    m_limitDirLine->setReadOnly(true);
+    layout->addWidget(m_limitDirLine, 1);
+
+    connect(m_limitDirButton, SIGNAL(clicked()), this, SLOT(limitDirClicked()));
+    layout->addWidget(m_limitDirButton);
+    m_formLayout->addRow(tr("Limit Directory"), layout);
+}
+
+void GlobalSettingsDialog::limitDirClicked()
+{
+    QString dir = FileDialog::getExistingDirectory(
+        this, tr("Select directory"), m_limitDirLine->text(), ""
+    );
+
+    if (dir != "")
+    {
+        qDebug() << "selected limit dir:" << dir;
+        m_limitDirLine->setText(dir);
+    }
+}
 void GlobalSettingsDialog::_InitializeShowConsole()
 {
     m_showConsole->setChecked(m_settings.GetConsole());
@@ -100,6 +131,9 @@ bool GlobalSettingsDialog::BeforeAccept()
         m_settings.SetConsole(m_showConsole->isChecked());
         m_context.m_mainWindow.ShowConsole(m_showConsole->isChecked());
     }
+
+    if (m_settings.GetLimitDir() != m_limitDirLine->text())
+        m_settings.SetLimitDir(m_limitDirLine->text());
 
     return true;
 }

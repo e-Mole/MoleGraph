@@ -81,6 +81,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(centralWidget);
+
+#if defined(Q_OS_ANDROID)
+    m_measurementTabs->setStyleSheet(
+        QString("QTabBar::tab { height: %1px; } QTabBar::scroller { width: %2px; }").
+            arg(m_measurementTabs->physicalDpiX() / 4).
+            arg(m_measurementTabs->physicalDpiX() / 3)
+    );
+#endif
     centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
@@ -331,3 +339,4 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_settings.SetMainWindowSize(size());
     QMainWindow::closeEvent(event);
 }
+

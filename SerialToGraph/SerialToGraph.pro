@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     file/Export.cpp \
     file/FileDialog.cpp \
     file/NativeFileDialog.cpp \
-    file/OwnFileDialog.cpp
+    file/OwnFileDialog.cpp \
+    file/FileModel.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -96,7 +97,8 @@ HEADERS  += MainWindow.h \
     file/Export.h \
     file/FileDialog.h \
     file/NativeFileDialog.h \
-    file/OwnFileDialog.h
+    file/OwnFileDialog.h \
+    file/FileModel.h
 
 CONFIG += mobility
 CONFIG += c++11

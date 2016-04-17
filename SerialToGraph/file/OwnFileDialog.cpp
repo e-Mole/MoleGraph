@@ -1,12 +1,12 @@
 #include "OwnFileDialog.h"
 #include <bases/FormDialogBase.h>
+#include <file/FileModel.h>
 #include <MyMessageBox.h>
 #include <QCommonStyle>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QFileSystemModel>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -61,7 +61,7 @@ OwnFileDialog::OwnFileDialog(
 ):
     bases::PlatformDialog(parent, caption),
     m_fileName(new QLineEdit(this)),
-    m_model(new QFileSystemModel(this)),
+    m_model(new FileModel(this)),
     m_dir(dir),
     m_extension(new QLabel(filter.mid(filter.lastIndexOf(".")), this)),
     m_actionButton(new QPushButton(_GetActionButtonText(type), this)),
@@ -89,12 +89,11 @@ OwnFileDialog::OwnFileDialog(
     buttonLayout->addWidget(newFolderButton);
     connect(newFolderButton, SIGNAL(released()), this, SLOT(createFolder()));
 
-    m_model->setRootPath(m_dir);
-    m_model->setNameFilterDisables(false);
-    m_model->setNameFilters(QStringList(filter));
+    m_model->SetRootPath(m_dir);
+    m_model->SetNameFilters(QStringList(filter));
 
     m_view->setModel(m_model);
-    m_view->setRootIndex(m_model->index(m_dir));
+    m_view->setRootIndex(m_model->Index(m_dir));
     m_view->setResizeMode(QListView::Adjust);
     m_view->setIconSize(QSize(32,32));
     m_view->setSpacing(5);
@@ -184,7 +183,7 @@ void OwnFileDialog::createFolder()
 {
     AddDirDialog dialog(this);
     if (QDialog::Accepted == dialog.exec() && dialog.GetDirName().size() > 0)
-        m_model->mkdir(m_view->rootIndex(), dialog.GetDirName());
+        m_model->Mkdir(m_view->rootIndex(), dialog.GetDirName());
 }
 
 void OwnFileDialog::goUp()
@@ -195,18 +194,18 @@ void OwnFileDialog::goUp()
 void OwnFileDialog::_ChangeDir(const QModelIndex &index)
 {
     m_view->setRootIndex(index);
-    m_model->sort(0);
+    m_model-> sort(0);
     m_fileName->setText("");
-    m_dir = m_model->filePath(index);
+    m_dir = m_model->FilePath(index);
     _CheckUpButton();
 }
 void OwnFileDialog::viewClicked(const QModelIndex &index)
 {
-    if (m_model->isDir(index))
+    if (m_model->IsDir(index))
         _ChangeDir(index);
     else
     {
-        QString fileName = m_model->fileName(index);
+        QString fileName = m_model->FileName(index);
         m_fileName->setText(fileName.left(fileName.lastIndexOf(".")));
     }
 }

@@ -3,7 +3,6 @@
 
 #include <bases/PlatformDialog.h>
 
-class QFileSystemModel;
 class QLabel;
 class QLineEdit;
 class QListView;
@@ -14,6 +13,7 @@ class QWidget;
 namespace file
 {
 
+class FileModel;
 class OwnFileDialog : public bases::PlatformDialog
 {
     Q_OBJECT
@@ -31,7 +31,7 @@ private:
     void _ChangeDir(const QModelIndex &index);
 
     QLineEdit *m_fileName;
-    QFileSystemModel *m_model;
+    FileModel *m_model;
     QString m_dir;
     QLabel *m_extension;
     QPushButton *m_actionButton;

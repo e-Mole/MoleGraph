@@ -33,7 +33,6 @@ SOURCES += main.cpp\
     ButtonLine.cpp \
     ColorPickerDialog.cpp \
     Context.cpp \
-    Export.cpp \
     ChannelMenu.cpp \
     ChannelSettings.cpp \
     Measurement.cpp \
@@ -41,7 +40,6 @@ SOURCES += main.cpp\
     MeasurementSettings.cpp \
     Plot.cpp \
     PortListDialog.cpp \
-    FileDialog.cpp \
     hw/PortInfo.cpp \
     GlobalSettings.cpp \
     GlobalSettingsDialog.cpp \
@@ -53,8 +51,10 @@ SOURCES += main.cpp\
     HwChannel.cpp \
     ColorCheckBox.cpp \
     AboutDialog.cpp \
-    NativeFileDialog.cpp \
-    OwnFileDialog.cpp
+    file/Export.cpp \
+    file/FileDialog.cpp \
+    file/NativeFileDialog.cpp \
+    file/OwnFileDialog.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -74,7 +74,6 @@ HEADERS  += MainWindow.h \
     ButtonLine.h \
     ColorPickerDialog.h \
     Context.h \
-    Export.h \
     ChannelMenu.h \
     ChannelSettings.h \
     Measurement.h \
@@ -83,7 +82,6 @@ HEADERS  += MainWindow.h \
     Plot.h \
     PortListDialog.h \
     Serializer.h \
-    FileDialog.h \
     hw/PortInfo.h \
     GlobalSettings.h \
     GlobalSettingsDialog.h \
@@ -95,8 +93,10 @@ HEADERS  += MainWindow.h \
     HwChannel.h \
     ColorCheckBox.h \
     AboutDialog.h \
-    NativeFileDialog.h \
-    OwnFileDialog.h
+    file/Export.h \
+    file/FileDialog.h \
+    file/NativeFileDialog.h \
+    file/OwnFileDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

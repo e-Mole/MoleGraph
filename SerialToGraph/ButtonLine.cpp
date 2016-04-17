@@ -5,8 +5,8 @@
 #include <ChannelMenu.h>
 #include <Context.h>
 #include <ChannelBase.h>
-#include <Export.h>
-#include <FileDialog.h>
+#include <file/Export.h>
+#include <file/FileDialog.h>
 #include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -307,7 +307,7 @@ void ButtonLine::UpdateRunButtonsState()
 
 QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
 {
-    QString fileName = FileDialog::getSaveFileName(
+    QString fileName = file::FileDialog::getSaveFileName(
         this,
         tr(values ? "Save as" : "Save without Values As"),
         _GetRootDir(),
@@ -328,14 +328,14 @@ void ButtonLine::exportPng()
 {
     QString fileName = _GetFileNameToSave("png", true);
     if (0 != fileName.size())
-        Export().ToPng(fileName, *m_measurement);
+        file::Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
     QString fileName = _GetFileNameToSave("csv", true);
     if (0 != fileName.size())
-       Export().ToCsv(fileName, measurements);
+       file::Export().ToCsv(fileName, measurements);
 }
 
 void ButtonLine::exportCsv()
@@ -402,8 +402,6 @@ QString ButtonLine::_GetRootDir()
 {
     QString dir = m_context.m_settings.GetLastDir();
 
-    qDebug() << dir << ", " << m_context.m_settings.GetLimitDir();
-    qDebug() << dir.contains(m_context.m_settings.GetLimitDir());
     if (!dir.contains(m_context.m_settings.GetLimitDir()))
         return m_context.m_settings.GetLimitDir();
 
@@ -412,7 +410,7 @@ QString ButtonLine::_GetRootDir()
 void ButtonLine::_OpenFile(bool values)
 {
     QString fileName =
-        FileDialog::getOpenFileName
+        file::FileDialog::getOpenFileName
         (
             this,
             "Open File",

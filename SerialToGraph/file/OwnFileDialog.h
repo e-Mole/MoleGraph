@@ -10,6 +10,10 @@ class QListView;
 class QPushButton;
 class QString;
 class QWidget;
+
+namespace file
+{
+
 class OwnFileDialog : public bases::PlatformDialog
 {
     Q_OBJECT
@@ -55,5 +59,6 @@ private slots:
     void fileSelected();
 };
 
+} //namespace file
 
 #endif // OWNFILEDIALOG_H

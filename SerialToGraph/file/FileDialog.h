@@ -3,6 +3,10 @@
 
 class QString;
 class QWidget;
+
+namespace file
+{
+
 class FileDialog
 {
 public:
@@ -27,5 +31,7 @@ public:
         const QString &limit
     );
 };
+
+} //namespace file
 
 #endif // FILEDIALOG_H

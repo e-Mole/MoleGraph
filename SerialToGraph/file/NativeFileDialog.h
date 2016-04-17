@@ -4,6 +4,9 @@
 #include <QFileDialog>
 
 class QString;
+namespace file
+{
+
 class NativeFileDialog : public QFileDialog
 {
     Q_OBJECT
@@ -23,5 +26,7 @@ signals:
 private slots:
     void limitDirectory(QString const &dirName);
 };
+
+} //namespace file
 
 #endif // NATIVEFILEDIALOG_H

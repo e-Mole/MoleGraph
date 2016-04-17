@@ -1,5 +1,8 @@
 #include "NativeFileDialog.h"
 
+namespace file
+{
+
 NativeFileDialog::NativeFileDialog(
         AcceptMode mode,
         QWidget *parent,
@@ -19,3 +22,4 @@ void NativeFileDialog::limitDirectory(QString const &dirName)
     if (!dirName.contains(m_limit))
         setDirectory(m_limit);
 }
+} //namespace file

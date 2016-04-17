@@ -1,7 +1,7 @@
 #include "GlobalSettingsDialog.h"
 #include <Axis.h>
 #include <Context.h>
-#include <FileDialog.h>
+#include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <hw/HwSink.h>
 #include <MainWindow.h>
@@ -49,7 +49,7 @@ void GlobalSettingsDialog::_InitializeLimitDir()
 
 void GlobalSettingsDialog::limitDirClicked()
 {
-    QString dir = FileDialog::getExistingDirectory(
+    QString dir = file::FileDialog::getExistingDirectory(
         this, tr("Select directory"), m_limitDirLine->text(), ""
     );
 

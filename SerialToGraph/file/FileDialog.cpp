@@ -1,8 +1,11 @@
 #include "FileDialog.h"
-#include <NativeFileDialog.h>
-#include <OwnFileDialog.h>
+#include <file/NativeFileDialog.h>
+#include <file/OwnFileDialog.h>
 #include <QFileDialog>
 #include <QString>
+
+namespace file
+{
 
 #if defined Q_OS_ANDROID
 #   define OWN_FILE_DIALOG
@@ -57,3 +60,5 @@ QString FileDialog::getExistingDirectory(
     return QFileDialog::getExistingDirectory(parent, caption, dir);
 #endif
 }
+
+} //namespace file

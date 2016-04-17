@@ -25,6 +25,8 @@
 #   include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
+namespace file
+{
 
 namespace{
 class AddDirDialog : public bases::FormDialogBase
@@ -193,6 +195,7 @@ void OwnFileDialog::goUp()
 void OwnFileDialog::_ChangeDir(const QModelIndex &index)
 {
     m_view->setRootIndex(index);
+    m_model->sort(0);
     m_fileName->setText("");
     m_dir = m_model->filePath(index);
     _CheckUpButton();
@@ -230,11 +233,14 @@ QString OwnFileDialog::ExecuteFileDialog(
 {
     QString directory = dir;
 #if defined(Q_OS_ANDROID)
-    QAndroidJniObject storageDirectory =
-        QAndroidJniObject::callStaticObjectMethod(
-            "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
-        );
-    directory = storageDirectory.toString();
+    if (dir == "./")
+    {
+        QAndroidJniObject storageDirectory =
+            QAndroidJniObject::callStaticObjectMethod(
+                "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
+            );
+        directory = storageDirectory.toString();
+    }
 #endif
 
     OwnFileDialog * dialog = new OwnFileDialog(
@@ -244,3 +250,4 @@ QString OwnFileDialog::ExecuteFileDialog(
     else
         return "";
 }
+} //namespace file

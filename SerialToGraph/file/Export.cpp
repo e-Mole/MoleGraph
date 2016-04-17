@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QString>
 #include <string>
+namespace file
+{
 
 Export::Export()
 {
@@ -121,3 +123,4 @@ QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
 
     return QString("%1").arg(channel->GetValue(sampleNr));
 }
+} //namespace file

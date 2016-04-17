@@ -64,10 +64,10 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
 
     m_plotAndSliderLayout->addWidget(m_plot);
 
-    unsigned height = m_scrollBar->physicalDpiY() / 5;
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
 #if defined(Q_OS_ANDROID)
+    unsigned height = m_scrollBar->physicalDpiY() / 5;
     m_scrollBar->setStyleSheet(
         QString(
             "QScrollBar:horizontal {"

@@ -1,4 +1,4 @@
-#include "ArduinoToGraph.h"
+#include "ArduinoToSerial.h"
 
 #define THERMISTOR_PIN 3
 #define PHOTORESISTOR_PIN 1
@@ -8,43 +8,30 @@
 
 unsigned counter =  0;
 int g_distance = 0;
-ArduinoToGraph arduinoToGraph;
+ArduinoToSerial arduinoToSerial;
 
 void UpdateGraphChannels(void)
 {
-  /*
-   * TODO: replace this demo by a port values reading. 
-   * this place is suitable to transfer 10-bit values that you get from A/D converter to the value which you want to display
-   * To display a value, please, use channels in the range 1..8.  
-   */   
-    
     //TEMP (THERMISTOR) - CH1
     int raw1 = analogRead(THERMISTOR_PIN);
     float celsius = -0.1111*raw1 + 102.69;
     float test_temp = round(celsius*10);
-    arduinoToGraph.SetChannelValue(1, test_temp/10);
-    //arduinoToGraph.SetChannelValue(1, celsius);
-    //arduinoToGraph.SetChannelValue(2, test_temp/10);
-    //arduinoToGraph.SetChannelValue(8, raw);
+    arduinoToSerial.SetChannelValue(1, test_temp/10);
+    //arduinoToSerial.SetChannelValue(1, celsius);
+    //arduinoToSerial.SetChannelValue(2, test_temp/10);
+    //arduinoToSerial.SetChannelValue(8, raw);
 
     //LIGHT (PHOTORESISITOR) - CH2
     int raw2 = analogRead(PHOTORESISTOR_PIN);
-    arduinoToGraph.SetChannelValue(2, map(raw2, 70, 990, 0, 255));
+    arduinoToSerial.SetChannelValue(2, map(raw2, 70, 990, 0, 255));
     
     //DISTANCE (ULTRASOUND) - CH3
-    arduinoToGraph.SetChannelValue(3, g_distance);
-    
+    arduinoToSerial.SetChannelValue(3, g_distance); 
 }
 
 void setup() 
 {    
-  arduinoToGraph.SetUpdateCallbackFunction(&UpdateGraphChannels);
-  
-  /*
-   * TODO: replace this demo values by that you prefere
-   * 
-   */
-  arduinoToGraph.Setup(0, 0, 0, 0, 0, 0, 0, 0);
+  arduinoToSerial.Setup(&UpdateGraphChannels);
 
   //sensors settings
    // for US sensor on trigpin
@@ -53,8 +40,8 @@ void setup()
 
 void loop() 
 {
-  arduinoToGraph.InLoop();
-  if (arduinoToGraph.IsMeasurementInProgress())
+  arduinoToSerial.InLoop();
+  if (arduinoToSerial.IsMeasurementInProgress())
     g_distance = get_CM_Distance(TRIG_PIN,ECHO_PIN) ;
 }
 

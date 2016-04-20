@@ -1,4 +1,4 @@
-#include "ArduinoToGraph.h"
+#include "ArduinoToSerial.h"
 
 
 #define VERSION "ATG_3" //arduino to graph version
@@ -137,7 +137,7 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   SendData(g_type == typeOnDemand);
 }
 
-void ArduinoToGraph::Setup(void (*updateCallbackFunction)(void))
+void ArduinoToSerial::Setup(void (*updateCallbackFunction)(void))
 { 
   Serial.begin(115200);
   while (!Serial) 
@@ -147,7 +147,7 @@ void ArduinoToGraph::Setup(void (*updateCallbackFunction)(void))
   InitTimer();
 }
 
-void ArduinoToGraph::InLoop()
+void ArduinoToSerial::InLoop()
 {
   if (0 != Serial.available())
   {
@@ -212,7 +212,7 @@ void ArduinoToGraph::InLoop()
   }
 }
 
-bool ArduinoToGraph::SetChannelValue(int channel, float value)
+bool ArduinoToSerial::SetChannelValue(int channel, float value)
 {
   if (channel < 1 && channel > 8)
     return false;
@@ -222,7 +222,7 @@ bool ArduinoToGraph::SetChannelValue(int channel, float value)
   return true;
 }
 
-float ArduinoToGraph::GetChannelValue(int channel)
+float ArduinoToSerial::GetChannelValue(int channel)
 {
   if (channel < 1 && channel > 8)
     return 0;
@@ -230,7 +230,7 @@ float ArduinoToGraph::GetChannelValue(int channel)
   return g_channels[channel - 1];
 }
 
-void ArduinoToGraph::SampleRequest()
+void ArduinoToSerial::SampleRequest()
 {
   g_sampleRequest = true;
 }
@@ -241,17 +241,17 @@ void SendCommand(unsigned char commandId)
   Serial.write(checkSum);
 }
 
-void ArduinoToGraph::StartMeasurement()
+void ArduinoToSerial::StartMeasurement()
 {
   SendCommand(INS_START);
 }
 
-void ArduinoToGraph::StopMeasurement()
+void ArduinoToSerial::StopMeasurement()
 {
   SendCommand(INS_STOP);
 }
 
-bool ArduinoToGraph::IsMeasurementInProgress()
+bool ArduinoToSerial::IsMeasurementInProgress()
 {
   return g_measurementInProgress;   
 }

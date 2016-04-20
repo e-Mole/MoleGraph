@@ -35,7 +35,9 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_context(m_measurements, m_hwSink, m_settings, *this),
     m_currentMeasurement(NULL),
     m_portListDialog(NULL),
-    m_console(new Console(this))
+    m_console(new Console(this)),
+    m_savedValues(true),
+    m_savedState(true)
 {
     m_console->setVisible(m_settings.GetConsole());
     addDockWidget((Qt::DockWidgetArea)m_settings.GetConsolePosition(), m_console);
@@ -112,11 +114,21 @@ void MainWindow::consoleLocationChanged(Qt::DockWidgetArea area)
 {
     m_settings.SetConsolePosition((int)area);
 }
+
+void MainWindow::_UpdateWindowTitle()
+{
+    setWindowTitle(
+        m_currentFileName +
+        ((!m_savedState || !m_savedValues) ? "*" : "") +
+        " - " +
+        m_context.m_applicationName
+    );
+}
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
     m_currentFileName = QFileInfo(fileName).fileName();
     m_currentFileNameWithPath = fileName;
-    setWindowTitle(m_currentFileName + " - " + m_context.m_applicationName);
+    _UpdateWindowTitle();
 }
 
 QString &MainWindow::GetCurrentFileNameWithPath()
@@ -325,18 +337,51 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
 {
     if (event->key() == Qt::Key_Back) //used on android
     {
-        if (MyMessageBox::question(this, tr("Realy quit?"), tr("Quit")))
-        {
-            close();
-            event->accept();
-        }
+        close();
+        event->accept();
     }
+}
+
+bool MainWindow::_RealyExit()
+{
+    QString message;
+    if (!m_savedState && !m_savedValues)
+        message = tr("Gui neither value changes were not saved. Quit anyway?");
+    else if (!m_savedState)
+        message = tr("Gui changes were not saved. Quit anyway?");
+    else if (!m_savedValues)
+        message = tr("Value changes were not saved. Quit anyway?");
+
+#if defined(Q_OS_ANDROID)
+    if (message.isEmpty())
+        message = tr("Realy quit?");
+#endif
+
+    return (message.isEmpty() || MyMessageBox::question(this, message, tr("Quit")));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if (!_RealyExit())
+    {
+        {
+            event->ignore();
+            return;
+        }
+    }
+
     m_settings.SetMainWindowMaximized(isMaximized());
     m_settings.SetMainWindowSize(size());
     QMainWindow::closeEvent(event);
 }
 
+void MainWindow::SetSavedState(bool savedState)
+{
+    m_savedState = savedState;
+    _UpdateWindowTitle();
+}
+void MainWindow::SetSavedValues(bool savedValues)
+{
+    m_savedValues = savedValues;
+    _UpdateWindowTitle();
+}

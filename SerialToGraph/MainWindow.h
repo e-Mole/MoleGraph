@@ -24,7 +24,8 @@ class MainWindow : public QMainWindow
     void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
     void closeEvent(QCloseEvent *event);
-
+    void _UpdateWindowTitle();
+    bool _RealyExit();
     GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
@@ -37,6 +38,8 @@ class MainWindow : public QMainWindow
     QString m_langBcp47;
     PortListDialog *m_portListDialog;
     Console *m_console;
+    bool m_savedValues;
+    bool m_savedState;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -55,6 +58,9 @@ public:
     void RefreshHwConnection();
     void ShowConsole(bool show);
     void TerminateBluetooth();
+    void SetSavedState(bool savedState);
+    void SetSavedValues(bool savedValues);
+    bool GetSavedValues() { return m_savedValues; }
 
 private slots:
     void measurementNameChanged();

@@ -7,6 +7,7 @@
 #include <SampleChannel.h>
 #include <Context.h>
 #include <Measurement.h>
+#include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <QComboBox>
@@ -207,6 +208,7 @@ bool ChannelSettings::BeforeAccept()
 
     if (changed)
     {
+        m_context.m_mainWindow.SetSavedState(false);
         if (changedHorizontal)
         {
             m_channel->_UpdateTitle();

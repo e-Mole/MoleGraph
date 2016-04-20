@@ -3,6 +3,7 @@
 #include <AxisSettings.h>
 #include <Context.h>
 #include <ChannelBase.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -71,6 +72,7 @@ void AxisMenu::addButtonPressed()
     AxisSettings dialog(this, newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
+        m_context.m_mainWindow.SetSavedState(false);
         ReinitGrid();
     }
     else
@@ -119,6 +121,7 @@ void AxisMenu::removeButtonPressed()
             channel->AssignToAxis(firstVertical);
     }
     m_measurement.RemoveAxis(axis);
+    m_context.m_mainWindow.SetSavedState(false);
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();
 

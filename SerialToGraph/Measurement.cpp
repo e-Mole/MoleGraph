@@ -321,6 +321,7 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
+            m_context.m_mainWindow.SetSavedValues(false);
             if (!_ProcessValueSet())
                 goto FINISH_DRAW;
         }

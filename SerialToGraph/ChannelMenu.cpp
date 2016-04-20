@@ -1,9 +1,11 @@
 #include "ChannelMenu.h"
+#include <bases/ClickableLabel.h>
 #include <ButtonLine.h>
 #include <ChannelBase.h>
 #include <ColorCheckBox.h>
-#include <bases/ClickableLabel.h>
+#include <Context.h>
 #include <QKeySequence>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <QGridLayout>
 #include <QLabel>
@@ -12,10 +14,11 @@
 #include <QSizePolicy>
 #include <QShortcut>
 
-ChannelMenu::ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine) :
+ChannelMenu::ChannelMenu(QWidget *parent, Context const &context, Measurement &measurement, ButtonLine *buttonLine) :
     bases::MenuDialogBase(parent, tr("Panels")),
     m_measurement(measurement),
-    m_buttonLine(buttonLine)
+    m_buttonLine(buttonLine),
+    m_context(context)
 {
 }
 
@@ -119,6 +122,7 @@ void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
     m_channelCheckBoxes[channel]->SetChecked(checked);
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.replaceDisplays();
+    m_context.m_mainWindow.SetSavedState(false);
 }
 
 void ChannelMenu::graphActivated()
@@ -128,21 +132,32 @@ void ChannelMenu::graphActivated()
 
     //because of calling by shortcut
     m_graphCheckBox->SetChecked(newState);
+    m_context.m_mainWindow.SetSavedState(false);
 }
 
 void ChannelMenu::noChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
-        ActivateChannel(channel, false);
-
+    {
+        if (channel->IsVisible())
+        {
+            m_context.m_mainWindow.SetSavedState(false);
+            ActivateChannel(channel, false);
+        }
+    }
     m_buttonLine->UpdateRunButtonsState();
 }
 
 void ChannelMenu::allChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
-        ActivateChannel(channel, true);
-
+    {
+        if (!channel->IsVisible())
+        {
+            m_context.m_mainWindow.SetSavedState(false);
+            ActivateChannel(channel, true);
+        }
+    }
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.replaceDisplays();
 }

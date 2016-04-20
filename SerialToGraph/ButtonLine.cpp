@@ -172,7 +172,7 @@ void ButtonLine::_RefreshPanelMenu()
     if (m_measurement == NULL)
         return;
 
-    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
+    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement, this);
     _CreatePanelShortcuts();
     m_channelMenu->ReinitGrid();
     UpdateRunButtonsState();
@@ -445,6 +445,10 @@ void ButtonLine::saveFile()
 void ButtonLine::_SaveFile(const QString &fileName, bool values)
 {
     m_context.m_mainWindow.SerializeMeasurements(fileName, values);
+    m_context.m_mainWindow.SetSavedState(true);
+
+    if (!m_context.m_mainWindow.GetSavedValues())
+        m_context.m_mainWindow.SetSavedValues(values);
 }
 
 void ButtonLine::saveAsFile()

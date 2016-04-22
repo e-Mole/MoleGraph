@@ -3,13 +3,16 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
-
-QT       += core gui bluetooth
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
-
 TARGET = ArduinoToGraph
 TEMPLATE = app
+
+VERSION = 1
+QMAKE_TARGET_COMPANY = e-Mole
+QMAKE_TARGET_PRODUCT = $$TARGET
+QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
+
+QT       += core gui bluetooth widgets printsupport
 
 GIT_VERSION = $$system(git describe --always --tags)
 DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
@@ -118,5 +121,3 @@ QT += androidextras
 
 RESOURCES += \
     translations.qrc
-
-

@@ -24,7 +24,7 @@ class ChannelBase : public QObject
     Q_PROPERTY(QColor color READ GetColor() WRITE SetColor)
     Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex)
     Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
-    Q_PROPERTY(bool isVisible READ IsVisible WRITE setVisible)
+    Q_PROPERTY(bool isVisible READ IsActive WRITE SetActive)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE _SetPenStyle)
 
     Q_ENUMS(Qt::PenStyle)
@@ -57,6 +57,7 @@ protected:
     QCPGraph *m_graphPoint;
     QString m_units;
     Qt::PenStyle m_penStyle;
+    bool m_isActive;
 public:
     enum Type
     {
@@ -65,8 +66,7 @@ public:
         Type_Ghost
     };
 
-    ChannelBase(
-        Measurement *measurement,
+    ChannelBase(Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,
@@ -74,7 +74,7 @@ public:
         QString const &name = "",
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
-        bool visible = true,
+        bool active = true,
         const QString &units = ""
     );
 
@@ -124,12 +124,11 @@ public:
     void UpdateGraph(double xValue);
     void AssignToGraphAxis(QCPAxis *graphAxis);
     void AssignToAxis(Axis *axis);
-
-    void setVisible(bool visible);
+    bool IsActive();
+    void SetActive(bool active);
     void SetColor(QColor &color);
 
     Measurement * GetMeasurement();
-    bool IsVisible();
     ChannelWidget *GetWidget();
 
     //to be compatible with measurement and would be possible to use the same serializer
@@ -137,13 +136,14 @@ public:
     void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
     int GetLastValueIndex(double value);
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
+    void UpdateWidgetVisiblity();
 
 signals:
     void stateChanged();
     void wasSetToHorizontal();
     void widgetSizeChanged();
 public slots:
-    void changeChannelVisibility(bool visible, bool signal);
+    void changeChannelActivity(bool active, bool signal);
     void displayValueOnIndex(int index);
     void editChannel();
 };

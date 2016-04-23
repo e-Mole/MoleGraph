@@ -21,6 +21,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeUseBluetooth();
     void _InitializeShowConsole();
     void _InitializeLimitDir();
+    void _InitHideAllChannels();
 
     Context const &m_context;
     GlobalSettings &m_settings;
@@ -30,6 +31,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QCheckBox *m_showConsole;
     QLineEdit *m_limitDirLine;
     QPushButton *m_limitDirButton;
+    QCheckBox *m_hideAllChannels;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

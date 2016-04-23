@@ -25,14 +25,22 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_useBluetooth(new QCheckBox(this)),
     m_showConsole(new QCheckBox(this)),
     m_limitDirLine(new QLineEdit(this)),
-    m_limitDirButton(new QPushButton("...", this))
+    m_limitDirButton(new QPushButton("...", this)),
+    m_hideAllChannels(new QCheckBox(this))
 
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
     _InitializeUseBluetooth();
     _InitializeShowConsole();
+    _InitHideAllChannels();
     _InitializeLimitDir();
+}
+
+void GlobalSettingsDialog::_InitHideAllChannels()
+{
+    m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
+    m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
 }
 
 void GlobalSettingsDialog::_InitializeLimitDir()
@@ -130,6 +138,14 @@ bool GlobalSettingsDialog::BeforeAccept()
     {
         m_settings.SetConsole(m_showConsole->isChecked());
         m_context.m_mainWindow.ShowConsole(m_showConsole->isChecked());
+    }
+
+    if(m_settings.GetHideAllChannels() != m_hideAllChannels->isChecked())
+    {
+        m_settings.SetHideAllChannels(m_hideAllChannels->isChecked());
+
+        foreach (Measurement *m, m_context.m_measurements)
+            m->replaceDisplays();
     }
 
     if (m_settings.GetLimitDir() != m_limitDirLine->text())

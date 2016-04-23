@@ -35,6 +35,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "last_dir";
     case Key_LimitDir:
         return "limit_dir";
+    case Key_HideAllChannels:
+        return "show_channels";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -161,4 +163,13 @@ QString GlobalSettings::GetLimitDir()
 void GlobalSettings::SetLimitDir(QString const &dir)
 {
     _Set(Key_LimitDir, dir);
+}
+
+bool GlobalSettings::GetHideAllChannels()
+{
+    return _Get(Key_HideAllChannels, false).toBool();
+}
+void GlobalSettings::SetHideAllChannels(bool show)
+{
+     _Set(Key_HideAllChannels, show);
 }

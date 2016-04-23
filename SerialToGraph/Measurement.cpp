@@ -381,7 +381,7 @@ void Measurement::_ProcessSelectedChannels()
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
         {
             m_trackedHwChannels.insert(((HwChannel *)channel)->GetHwIndex(), channel);
             selectedChannels |= 1 << ((HwChannel *)channel)->GetHwIndex();
@@ -517,7 +517,11 @@ void Measurement::ReplaceDisplays(bool grid)
     foreach (ChannelBase * channel, m_channels)
     {
         m_displayLayout->removeWidget(channel->GetWidget());
+        channel->UpdateWidgetVisiblity();
     }
+
+    if (m_context.m_settings.GetHideAllChannels())
+        return;
 
     unsigned widgetHeight = m_widget.height() + m_displayLayout->spacing()*2; //have to compense spacing added to last diplay
     unsigned channelMinHeight= m_channels[0]->GetMinimumSize().height();
@@ -533,7 +537,7 @@ void Measurement::ReplaceDisplays(bool grid)
 
     foreach (ChannelBase * channel, m_channels)
     {
-        if (!channel->IsVisible())
+        if (!channel->IsActive())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -626,7 +630,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     channel->GetColor(),
 
                     channel->GetShapeIndex(),
-                    channel->IsVisible(),
+                    channel->IsActive(),
                     channel->GetUnits()
                 )
             );
@@ -646,7 +650,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetColor(),
                     channel->GetShapeIndex(),
-                    channel->IsVisible(),
+                    channel->IsActive(),
                     channel->GetUnits(),
                     ((SampleChannel *)channel)->GetStyle(),
                     ((SampleChannel *)channel)->GetTimeUnits(),

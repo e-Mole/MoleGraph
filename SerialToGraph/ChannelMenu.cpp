@@ -69,7 +69,7 @@ void ChannelMenu::FillGrid()
 void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
 {
     ColorCheckBox *cb = new ColorCheckBox(channel->GetName(), this);
-    cb->SetChecked(channel->IsVisible());
+    cb->SetChecked(channel->IsActive());
     cb->SetColor(channel->GetColor());
 
     m_channelCheckBoxes[channel] = cb;
@@ -113,12 +113,12 @@ void ChannelMenu::edit()
 void ChannelMenu::channelActivated()
 {
     ChannelBase * channel = m_checkBoxChannels[(ColorCheckBox*)sender()];
-    ActivateChannel(channel, !channel->IsVisible());
+    ActivateChannel(channel, !channel->IsActive());
 }
 
 void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
 {
-    channel->setVisible(checked);
+    channel->SetActive(checked);
     m_channelCheckBoxes[channel]->SetChecked(checked);
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.replaceDisplays();
@@ -139,7 +139,7 @@ void ChannelMenu::noChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (channel->IsVisible())
+        if (channel->IsActive())
         {
             m_context.m_mainWindow.SetSavedState(false);
             ActivateChannel(channel, false);
@@ -152,7 +152,7 @@ void ChannelMenu::allChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (!channel->IsVisible())
+        if (!channel->IsActive())
         {
             m_context.m_mainWindow.SetSavedState(false);
             ActivateChannel(channel, true);

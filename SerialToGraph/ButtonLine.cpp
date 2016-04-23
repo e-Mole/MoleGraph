@@ -296,9 +296,9 @@ void ButtonLine::UpdateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
             hwChannelPresent = true;
-        if (channel->IsOnHorizontalAxis() && channel->IsVisible())
+        if (channel->IsOnHorizontalAxis() && channel->IsActive())
             horizontalPreset = true;
     }
 
@@ -546,7 +546,7 @@ QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
 void ButtonLine::channelActivated()
 {
     ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
-    m_channelMenu->ActivateChannel(channel, !channel->IsVisible());
+    m_channelMenu->ActivateChannel(channel, !channel->IsActive());
 }
 
 

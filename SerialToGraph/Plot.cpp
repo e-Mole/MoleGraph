@@ -390,7 +390,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (channel->IsVisible() && channel->GetAxis()->GetGraphAxis() == axis)
+        if (channel->IsActive() && channel->GetAxis()->GetGraphAxis() == axis)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();

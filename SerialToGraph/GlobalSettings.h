@@ -21,7 +21,8 @@ class GlobalSettings
         Key_MainWindowMaximized,
         Key_MainWindowSize,
         Key_LastDir,
-        Key_LimitDir
+        Key_LimitDir,
+        Key_HideAllChannels,
     };
 
     QString _GetStringKey(Key key) const;
@@ -56,6 +57,8 @@ public:
     void SetLastDir(QString const &dir);
     QString GetLimitDir();
     void SetLimitDir(QString const &dir);
+    bool GetHideAllChannels();
+    void SetHideAllChannels(bool show);
 };
 
 #endif // GLOBALSETTINGS_H

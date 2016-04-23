@@ -88,17 +88,17 @@ void Axis::UpdateGraphAxisName()
 
     for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
     {
-        if ((m_measurement->GetChannel(i)->IsVisible() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
+        if ((m_measurement->GetChannel(i)->IsActive() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
             m_measurement->GetChannel(i)->GetAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != m_measurement->GetChannelCount() &&
-                    m_measurement->GetChannel(i+1)->IsVisible() &&
+                    m_measurement->GetChannel(i+1)->IsActive() &&
                     this == m_measurement->GetChannel(i+1)->GetAxis() &&
                     i != 0 &&
-                    m_measurement->GetChannel(i-1)->IsVisible() &&
+                    m_measurement->GetChannel(i-1)->IsActive() &&
                     this == m_measurement->GetChannel(i-1)->GetAxis())
                 {
                     addMiddle = true;
@@ -137,7 +137,7 @@ void Axis::UpdateVisiblility()
 {
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->IsVisible() && channel->GetAxis() == this)
+        if (channel->IsActive() && channel->GetAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_measurement->GetPlot()->ReplotIfNotDisabled();

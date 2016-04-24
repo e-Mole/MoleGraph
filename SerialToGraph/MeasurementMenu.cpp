@@ -94,6 +94,7 @@ void MeasurementMenu::addButtonPressed()
     MeasurementSettings dialog(this, m, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
+        m_context.m_mainWindow.SetSavedState(false);
         m_context.m_mainWindow.ConfirmMeasurement(m);
         ReinitGrid();
     }
@@ -108,6 +109,7 @@ void MeasurementMenu::cloneButtonPressed()
     m_context.m_mainWindow.ConfirmMeasurement(
         m_context.m_mainWindow.CloneCurrentMeasurement()
     );
+    m_context.m_mainWindow.SetSavedState(false);
     ReinitGrid();
     CloseIfPopup();
 }
@@ -146,6 +148,7 @@ void MeasurementMenu::removeButtonPressed()
     }
 
     m_context.m_mainWindow.RemoveMeasurement(m, true);
+    m_context.m_mainWindow.SetSavedState(false);
 
     ReinitGrid();
 #if !defined(Q_OS_ANDROID)

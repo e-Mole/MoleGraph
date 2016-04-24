@@ -3,13 +3,16 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
-
-QT       += core gui bluetooth
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
-
 TARGET = ArduinoToGraph
 TEMPLATE = app
+
+VERSION = 1
+QMAKE_TARGET_COMPANY = e-Mole
+QMAKE_TARGET_PRODUCT = $$TARGET
+QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
+
+QT       += core gui bluetooth widgets printsupport
 
 GIT_VERSION = $$system(git describe --always --tags)
 DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
@@ -33,7 +36,6 @@ SOURCES += main.cpp\
     ButtonLine.cpp \
     ColorPickerDialog.cpp \
     Context.cpp \
-    Export.cpp \
     ChannelMenu.cpp \
     ChannelSettings.cpp \
     Measurement.cpp \
@@ -41,7 +43,6 @@ SOURCES += main.cpp\
     MeasurementSettings.cpp \
     Plot.cpp \
     PortListDialog.cpp \
-    FileDialog.cpp \
     hw/PortInfo.cpp \
     GlobalSettings.cpp \
     GlobalSettingsDialog.cpp \
@@ -52,7 +53,12 @@ SOURCES += main.cpp\
     SampleChannel.cpp \
     HwChannel.cpp \
     ColorCheckBox.cpp \
-    AboutDialog.cpp
+    AboutDialog.cpp \
+    file/Export.cpp \
+    file/FileDialog.cpp \
+    file/NativeFileDialog.cpp \
+    file/OwnFileDialog.cpp \
+    file/FileModel.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -72,7 +78,6 @@ HEADERS  += MainWindow.h \
     ButtonLine.h \
     ColorPickerDialog.h \
     Context.h \
-    Export.h \
     ChannelMenu.h \
     ChannelSettings.h \
     Measurement.h \
@@ -81,7 +86,6 @@ HEADERS  += MainWindow.h \
     Plot.h \
     PortListDialog.h \
     Serializer.h \
-    FileDialog.h \
     hw/PortInfo.h \
     GlobalSettings.h \
     GlobalSettingsDialog.h \
@@ -92,7 +96,12 @@ HEADERS  += MainWindow.h \
     SampleChannel.h \
     HwChannel.h \
     ColorCheckBox.h \
-    AboutDialog.h
+    AboutDialog.h \
+    file/Export.h \
+    file/FileDialog.h \
+    file/NativeFileDialog.h \
+    file/OwnFileDialog.h \
+    file/FileModel.h
 
 CONFIG += mobility
 CONFIG += c++11
@@ -112,5 +121,3 @@ QT += androidextras
 
 RESOURCES += \
     translations.qrc
-
-

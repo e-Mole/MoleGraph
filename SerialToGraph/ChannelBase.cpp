@@ -1,9 +1,10 @@
 #include "ChannelBase.h"
-#include <ChannelSettings.h>
 #include <Axis.h>
+#include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <Context.h>
 #include <cmath>
+#include <GlobalSettings.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QBoxLayout>
@@ -28,7 +29,7 @@ ChannelBase::ChannelBase(
     QString const &name,
     QColor const &color,
     unsigned shapeIndex,
-    bool visible,
+    bool active,
     const QString &units) :
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
@@ -43,7 +44,8 @@ ChannelBase::ChannelBase(
     m_graph(graph),
     m_graphPoint(graphPoint),
     m_units(units),
-    m_penStyle(Qt::SolidLine)
+    m_penStyle(Qt::SolidLine),
+    m_isActive(true)
 {
     AssignToAxis(axis);
 
@@ -52,7 +54,7 @@ ChannelBase::ChannelBase(
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
 
-    changeChannelVisibility(visible, false);
+    changeChannelActivity(active, false);
 
     connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
     connect(m_widget, SIGNAL(sizeChanged()), this, SIGNAL(widgetSizeChanged()));
@@ -69,9 +71,9 @@ void ChannelBase::_SetPenStyle(Qt::PenStyle penStyle)
 }
 
 
-void ChannelBase::changeChannelVisibility(bool visible, bool signal)
+void ChannelBase::changeChannelActivity(bool active, bool signal)
 {
-    setVisible(visible);
+    SetActive(active);
     if (signal)
         stateChanged();
 }
@@ -194,7 +196,7 @@ void ChannelBase::AssignToGraphAxis(QCPAxis *graphAxis)
 
     m_graph->setValueAxis(graphAxis);
     m_graphPoint->setValueAxis(graphAxis);
-    _ShowOrHideGraphAndPoin(IsVisible());
+    _ShowOrHideGraphAndPoin(IsActive());
     m_measurement->GetPlot()->RescaleAxis(graphAxis);
 }
 
@@ -207,10 +209,15 @@ void ChannelBase::AssignToAxis(Axis *axis)
     m_axis->UpdateVisiblility();
 }
 
-void ChannelBase::setVisible(bool visible)
+void ChannelBase::UpdateWidgetVisiblity()
 {
-    m_widget->setVisible(visible);
-    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : visible);
+    m_widget->setVisible(m_isActive & !m_context.m_settings.GetHideAllChannels());
+}
+void ChannelBase::SetActive(bool active)
+{
+    m_isActive = active;
+    UpdateWidgetVisiblity();
+    _ShowOrHideGraphAndPoin(m_axis->IsHorizontal() ? false : active);
     m_axis->UpdateGraphAxisName();
     m_axis->UpdateVisiblility();
 }
@@ -228,11 +235,9 @@ Measurement * ChannelBase::GetMeasurement()
     return m_measurement;
 }
 
-bool ChannelBase::IsVisible()
+bool ChannelBase::IsActive()
 {
-    //I dont want to use is visible because it returns false when widget is not diplayed yet
-    //use !isHidden() instead
-    return !m_widget->isHidden();
+    return m_isActive;
 }
 
 ChannelWidget *ChannelBase::GetWidget()

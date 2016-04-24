@@ -31,6 +31,12 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "main_window_maximized";
     case Key_MainWindowSize:
         return "main_window_size";
+    case Key_LastDir:
+        return "last_dir";
+    case Key_LimitDir:
+        return "limit_dir";
+    case Key_HideAllChannels:
+        return "show_channels";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -139,4 +145,31 @@ QSize GlobalSettings::GetMainWindowSize()
 void GlobalSettings::SetMainWindowSize(QSize const& size)
 {
     _Set(Key_MainWindowSize, size);
+}
+
+QString GlobalSettings::GetLastDir()
+{
+    return _Get(Key_LastDir, "./").toString();
+}
+void GlobalSettings::SetLastDir(QString const &dir)
+{
+    _Set(Key_LastDir, dir);
+}
+
+QString GlobalSettings::GetLimitDir()
+{
+    return _Get(Key_LimitDir, "").toString();
+}
+void GlobalSettings::SetLimitDir(QString const &dir)
+{
+    _Set(Key_LimitDir, dir);
+}
+
+bool GlobalSettings::GetHideAllChannels()
+{
+    return _Get(Key_HideAllChannels, false).toBool();
+}
+void GlobalSettings::SetHideAllChannels(bool show)
+{
+     _Set(Key_HideAllChannels, show);
 }

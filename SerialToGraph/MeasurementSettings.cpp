@@ -1,5 +1,6 @@
 #include "MeasurementSettings.h"
 #include <Context.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <QComboBox>
@@ -56,8 +57,10 @@ void MeasurementSettings::disablePeriodAndUnits(int disabled)
 
 bool MeasurementSettings::BeforeAccept()
 {
+    bool changed = false;
     if (m_measurement->m_name != m_name->text())
     {
+        changed = true;
         m_measurement->m_name = m_name->text();
         m_measurement->nameChanged();
     }
@@ -68,9 +71,32 @@ bool MeasurementSettings::BeforeAccept()
         return false;
     }
 
-    m_measurement->m_period = m_period->text().toInt();
-    m_measurement->_SetType((Measurement::Type)m_type->currentIndex());
-    m_measurement->_SetColor(m_color);
-    m_measurement->_SetMarksShown(m_marksShown->isChecked());
+    if (m_measurement->m_period != m_period->text().toUInt())
+    {
+        changed = true;
+        m_measurement->m_period = m_period->text().toUInt();
+    }
+
+    if (m_measurement->GetType() !=  (Measurement::Type)m_type->currentIndex())
+    {
+        changed = true;
+        m_measurement->_SetType((Measurement::Type)m_type->currentIndex());
+    }
+
+    if (m_measurement->GetColor() != m_color)
+    {
+        changed = true;
+        m_measurement->_SetColor(m_color);
+    }
+
+    if (m_measurement->GetMarksShown() != m_marksShown->isChecked())
+    {
+        changed = true;
+        m_measurement->_SetMarksShown(m_marksShown->isChecked());
+    }
+
+    if (changed)
+        m_context.m_mainWindow.SetSavedState(false);
+
     return true;
 }

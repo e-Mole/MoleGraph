@@ -5,8 +5,8 @@
 #include <ChannelMenu.h>
 #include <Context.h>
 #include <ChannelBase.h>
-#include <Export.h>
-#include <FileDialog.h>
+#include <file/Export.h>
+#include <file/FileDialog.h>
 #include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -16,6 +16,8 @@
 #include <QHBoxLayout>
 #include <QCoreApplication>
 #include <QDataStream>
+#include <QDebug>
+#include <QDir>
 #include <QDebug>
 #include <QDialog>
 #include <QFile>
@@ -34,7 +36,7 @@
 #define ATOG_FILE_EXTENSION "atog"
 
 #if defined(Q_OS_ANDROID)
-#   define FONT_DPI_FACTOR 6
+#   define FONT_DPI_FACTOR 7
 #else
 #   define FONT_DPI_FACTOR 8
 #endif
@@ -170,7 +172,7 @@ void ButtonLine::_RefreshPanelMenu()
     if (m_measurement == NULL)
         return;
 
-    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), *m_measurement, this);
+    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement, this);
     _CreatePanelShortcuts();
     m_channelMenu->ReinitGrid();
     UpdateRunButtonsState();
@@ -294,9 +296,9 @@ void ButtonLine::UpdateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
             hwChannelPresent = true;
-        if (channel->IsOnHorizontalAxis() && channel->IsVisible())
+        if (channel->IsOnHorizontalAxis() && channel->IsActive())
             horizontalPreset = true;
     }
 
@@ -305,28 +307,35 @@ void ButtonLine::UpdateRunButtonsState()
 
 QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
 {
-    QString fileName = FileDialog::getSaveFileName(
-        this, tr(values ? "Save as" : "Save without Values As"), "./", "*." + extension);
+    QString fileName = file::FileDialog::getSaveFileName(
+        this,
+        tr(values ? "Save as" : "Save without Values As"),
+        _GetRootDir(),
+        "*." + extension,
+        m_context.m_settings.GetLimitDir()
+    );
+
     if (fileName.size() == 0)
         return "";
 
     if (!fileName.contains("." + extension, Qt::CaseInsensitive))
             fileName += "." + extension;
 
+    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
     return fileName;
 }
 void ButtonLine::exportPng()
 {
     QString fileName = _GetFileNameToSave("png", true);
     if (0 != fileName.size())
-        Export().ToPng(fileName, *m_measurement);
+        file::Export().ToPng(fileName, *m_measurement);
 }
 
 void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
 {
     QString fileName = _GetFileNameToSave("csv", true);
     if (0 != fileName.size())
-       Export().ToCsv(fileName, measurements);
+       file::Export().ToCsv(fileName, measurements);
 }
 
 void ButtonLine::exportCsv()
@@ -361,7 +370,7 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
 //setStyleSheet doesn't work on android and pal.setColor doesnt work on linux
 #if defined(Q_OS_ANDROID)
     QPalette pal(m_connectivityButton->palette());
-    pal.setColor(QPalette::ButtonText, Qt::red);
+    pal.setColor(QPalette::ButtonText, color);
     m_connectivityButton->setPalette(pal);
 #else
     m_connectivityButton->setStyleSheet(
@@ -389,20 +398,31 @@ void ButtonLine::newFile()
     m_context.m_mainWindow.OpenNew();
 }
 
+QString ButtonLine::_GetRootDir()
+{
+    QString dir = m_context.m_settings.GetLastDir();
 
+    if (!dir.contains(m_context.m_settings.GetLimitDir()))
+        return m_context.m_settings.GetLimitDir();
+
+    return dir;
+}
 void ButtonLine::_OpenFile(bool values)
 {
     QString fileName =
-        FileDialog::getOpenFileName
+        file::FileDialog::getOpenFileName
         (
             this,
             "Open File",
-            "./", QString("*.%1").arg(ATOG_FILE_EXTENSION)
+            _GetRootDir(),
+            QString("*.%1").arg(ATOG_FILE_EXTENSION),
+            m_context.m_settings.GetLimitDir()
         );
 
     if (fileName.size() == 0)
         return;
 
+    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
     m_context.m_mainWindow.DeserializeMeasurements(fileName, values);
 }
 
@@ -425,6 +445,10 @@ void ButtonLine::saveFile()
 void ButtonLine::_SaveFile(const QString &fileName, bool values)
 {
     m_context.m_mainWindow.SerializeMeasurements(fileName, values);
+    m_context.m_mainWindow.SetSavedState(true);
+
+    if (!m_context.m_mainWindow.GetSavedValues())
+        m_context.m_mainWindow.SetSavedValues(values);
 }
 
 void ButtonLine::saveAsFile()
@@ -522,7 +546,7 @@ QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
 void ButtonLine::channelActivated()
 {
     ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
-    m_channelMenu->ActivateChannel(channel, !channel->IsVisible());
+    m_channelMenu->ActivateChannel(channel, !channel->IsActive());
 }
 
 

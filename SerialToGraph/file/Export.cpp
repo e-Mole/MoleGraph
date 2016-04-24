@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QString>
 #include <string>
+namespace file
+{
 
 Export::Export()
 {
@@ -26,7 +28,7 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
         bool firstForMeasurement = true;
         foreach (ChannelBase *channel, m->GetChannels())
         {
-            if (!channel->IsVisible()) //at least sample channel will be visible
+            if (!channel->IsActive()) //at least sample channel will be visible
                 continue;
 
             if (firstColumn)
@@ -72,7 +74,7 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         {
             foreach (ChannelBase *channel, m->GetChannels())
             {
-                if (!channel->IsVisible())
+                if (!channel->IsActive())
                     continue;
 
                 if (channel->GetValueCount() <= sampleNr)
@@ -121,3 +123,4 @@ QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
 
     return QString("%1").arg(channel->GetValue(sampleNr));
 }
+} //namespace file

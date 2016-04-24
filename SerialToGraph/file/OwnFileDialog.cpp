@@ -1,11 +1,12 @@
-#include "FileDialog.h"
+#include "OwnFileDialog.h"
 #include <bases/FormDialogBase.h>
+#include <file/FileModel.h>
 #include <MyMessageBox.h>
 #include <QCommonStyle>
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QFileSystemModel>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -24,9 +25,10 @@
 #   include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
+namespace file
+{
 
 namespace{
-
 class AddDirDialog : public bases::FormDialogBase
 {
     QLineEdit *m_dirName;
@@ -47,67 +49,105 @@ signals:
 public slots:
 };
 
-}
-FileDialog::FileDialog(
-    QWidget *parent, bool open, QString const & caption, QString const &dir, QString const &filter):
+} //namespace
+
+OwnFileDialog::OwnFileDialog(
+    QWidget *parent,
+    Type type,
+    QString const & caption,
+    QString const &dir,
+    QString const &filter,
+    QString const &limit
+):
     bases::PlatformDialog(parent, caption),
     m_fileName(new QLineEdit(this)),
-    m_model(new QFileSystemModel(this)),
+    m_model(new FileModel(this)),
     m_dir(dir),
     m_extension(new QLabel(filter.mid(filter.lastIndexOf(".")), this)),
-    m_actionButton(new QPushButton(open ? tr("Open") : tr("Save"), this)),
+    m_actionButton(new QPushButton(_GetActionButtonText(type), this)),
     m_view(new QListView(this)),
-    m_open(open)
+    m_type(type),
+    m_upButton(NULL),
+    m_limit(limit)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
 
     QCommonStyle style;
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     layout->addLayout(buttonLayout);
-    QPushButton *upButton =
+    m_upButton =
             new QPushButton(style.standardIcon(QStyle::SP_FileDialogToParent), tr("Go Up"), this);
-    buttonLayout->addWidget(upButton);
-    connect(upButton, SIGNAL(released()), this, SLOT(goUp()));
+
+    _CheckUpButton();
+    buttonLayout->addWidget(m_upButton);
+    connect(m_upButton, SIGNAL(released()), this, SLOT(goUp()));
 
     QPushButton *newFolderButton =
             new QPushButton(style.standardIcon(QStyle::SP_FileDialogNewFolder), tr("Add Directory"), this);
-    newFolderButton->setDisabled(open);
+    newFolderButton->setDisabled(type == Type_OpenFile);
     buttonLayout->addWidget(newFolderButton);
     connect(newFolderButton, SIGNAL(released()), this, SLOT(createFolder()));
 
-    m_model->setRootPath(m_dir);
-    m_model->setNameFilterDisables(false);
-    m_model->setNameFilters(QStringList(filter));
+    m_model->SetRootPath(m_dir);
+    m_model->SetNameFilters(QStringList(filter));
 
     m_view->setModel(m_model);
-    m_view->setRootIndex(m_model->index(m_dir));
+    m_view->setRootIndex(m_model->Index(m_dir));
     m_view->setResizeMode(QListView::Adjust);
     m_view->setIconSize(QSize(32,32));
     m_view->setSpacing(5);
     m_view->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+
+#if defined(Q_OS_ANDROID)
+    //because of bug on Lenovo. there is not seeable selected text
+    m_view->setStyleSheet(
+        "QListView::item:selected { background: LightBlue; color: black; }"
+    );
+#endif
     QScroller::grabGesture(m_view->viewport(), QScroller::LeftMouseButtonGesture);
 
     connect(m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(viewClicked(QModelIndex)));
 
     layout->addWidget(m_view);
 
-    QHBoxLayout *fileOpenLayout = new QHBoxLayout(this);
+    QHBoxLayout *fileOpenLayout = new QHBoxLayout();
     layout->addLayout(fileOpenLayout);
 
-    m_fileName->setDisabled(open);
+    m_fileName->setDisabled(type == Type_OpenFile);
+    m_fileName->setHidden(type == Type_SelectDir);
     connect(m_fileName, SIGNAL(textChanged(QString)), this, SLOT(fileNameChanged(QString)));
     fileOpenLayout->addWidget(m_fileName);
+
+    m_extension->setHidden(type == Type_SelectDir);
     fileOpenLayout->addWidget(m_extension);
 
-    m_actionButton->setDisabled(true);
+    m_actionButton->setEnabled(m_type == Type_SelectDir);
     fileOpenLayout->addWidget(m_actionButton);
     connect(m_actionButton, SIGNAL(clicked()), this, SLOT(fileSelected()));
 }
 
-void FileDialog::fileSelected()
+void OwnFileDialog::_CheckUpButton()
 {
-    if (m_open)
+    m_upButton->setDisabled(m_limit == m_dir);
+}
+QString OwnFileDialog::_GetActionButtonText(Type type)
+{
+    switch (type)
+    {
+    case Type_OpenFile:
+        return tr("Open");
+    case Type_SaveFile:
+        return tr("Save");
+    case Type_SelectDir:
+        return tr("Select");
+    }
+    return "";
+}
+
+void OwnFileDialog::fileSelected()
+{
+    if (m_type == Type_OpenFile || m_type == Type_SelectDir)
     {
         accept();
         return;
@@ -134,95 +174,79 @@ void FileDialog::fileSelected()
     }
     accept();
 }
-void FileDialog::fileNameChanged(QString const &fileName)
+void OwnFileDialog::fileNameChanged(QString const &fileName)
 {
     m_actionButton->setEnabled(fileName.size() != 0);
 }
 
-void FileDialog::createFolder()
+void OwnFileDialog::createFolder()
 {
     AddDirDialog dialog(this);
     if (QDialog::Accepted == dialog.exec() && dialog.GetDirName().size() > 0)
-        m_model->mkdir(m_view->rootIndex(), dialog.GetDirName());
+        m_model->Mkdir(m_view->rootIndex(), dialog.GetDirName());
 }
 
-void FileDialog::goUp()
+void OwnFileDialog::goUp()
 {
-    m_view->setRootIndex(m_model->parent(m_view->rootIndex()));
+    _ChangeDir(m_model->parent(m_view->rootIndex()));
 }
 
-void FileDialog::viewClicked(const QModelIndex &index)
+void OwnFileDialog::_ChangeDir(const QModelIndex &index)
 {
-    if (m_model->isDir(index))
-    {
-        m_view->setRootIndex(index);
-        m_fileName->setText("");
-        m_dir = m_model->filePath(index);
-    }
+    m_view->setRootIndex(index);
+    m_model-> sort(0);
+    m_fileName->setText("");
+    m_dir = m_model->FilePath(index);
+    _CheckUpButton();
+}
+void OwnFileDialog::viewClicked(const QModelIndex &index)
+{
+    if (m_model->IsDir(index))
+        _ChangeDir(index);
     else
     {
-        QString fileName = m_model->fileName(index);
+        QString fileName = m_model->FileName(index);
         m_fileName->setText(fileName.left(fileName.lastIndexOf(".")));
     }
 }
 
-FileDialog::~FileDialog()
+OwnFileDialog::~OwnFileDialog()
 {
 }
 
-QString FileDialog::_GetFilePath()
+QString OwnFileDialog::_GetFilePath()
 {
-    return m_dir + "/" + m_fileName->text() + m_extension->text();
+    if (m_type == Type_SelectDir)
+        return m_dir;
+    else
+        return m_dir + "/" + m_fileName->text() + m_extension->text();
 }
 
-QString FileDialog::_ExecuteFileDialog(
+QString OwnFileDialog::ExecuteFileDialog(
+        Type type,
         QWidget *parent,
         const QString &caption,
         const QString &dir,
         const QString &filter,
-        bool open)
+        const QString &limit)
 {
-
     QString directory = dir;
 #if defined(Q_OS_ANDROID)
-    QAndroidJniObject storageDirectory =
-        QAndroidJniObject::callStaticObjectMethod(
-            "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
-        );
-    directory = storageDirectory.toString();
+    if (dir == "./")
+    {
+        QAndroidJniObject storageDirectory =
+            QAndroidJniObject::callStaticObjectMethod(
+                "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
+            );
+        directory = storageDirectory.toString();
+    }
 #endif
 
-    FileDialog * dialog = new FileDialog(parent, open, caption, directory, filter);
+    OwnFileDialog * dialog = new OwnFileDialog(
+        parent, type, caption, directory, filter, limit);
     if (QDialog::Accepted == dialog->exec())
         return dialog->_GetFilePath();
     else
         return "";
 }
-
-QString FileDialog::getOpenFileName(
-    QWidget *parent,
-    const QString &caption,
-    const QString &dir,
-    const QString &filter
-)
-{
-#if defined(Q_OS_ANDROID)
-    return _ExecuteFileDialog(parent, caption, dir, filter, true);
-#else
-    return QFileDialog::getOpenFileName(parent, caption, dir, filter);
-#endif
-}
-
-QString FileDialog::getSaveFileName(
-    QWidget *parent,
-    const QString &caption,
-    const QString &dir,
-    const QString &filter)
-{
-#if defined(Q_OS_ANDROID)
-    return _ExecuteFileDialog(parent, caption, dir, filter, false);
-#else
-    return QFileDialog::getSaveFileName(parent, caption, dir, filter);
-#endif
-}
-
+} //namespace file

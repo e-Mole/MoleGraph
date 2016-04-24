@@ -7,7 +7,7 @@
     #include <Arduino.h>
 #endif
 
-class ArduinoToGraph
+class ArduinoToSerial
 {
   enum Instructions
   {

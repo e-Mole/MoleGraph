@@ -6,6 +6,9 @@ class ChannelBase;
 class Measurement;
 class QFile;
 class QString;
+
+namespace file
+{
 class Export
 {
     QString _GetValueText(ChannelBase *channel, unsigned sampleNr);
@@ -17,5 +20,5 @@ public:
     void ToPng(QString const &fileName, const Measurement &measurement);
     void ToCsv(QString const &fileName, QVector<Measurement *> const &measurements);
 };
-
+} //namespace file
 #endif // EXPORT_H

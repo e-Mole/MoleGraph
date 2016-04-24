@@ -66,6 +66,46 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
 
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
+#if defined(Q_OS_ANDROID)
+    unsigned height = m_scrollBar->physicalDpiY() / 5;
+    m_scrollBar->setStyleSheet(
+        QString(
+            "QScrollBar:horizontal {"
+                    "border: 1px solid white;"
+                    "height: %1px;"
+                    "margin: 0px %1px 0px %1px;"
+                "}"
+            "QScrollBar::handle:horizontal {"
+                    "min-width: %2px;"
+                    "background: Silver;"
+                "}"
+            "QScrollBar::add-line:horizontal {"
+                    "width: %2px;"
+                    "background: LightGray;"
+                    "subcontrol-position: right;"
+                    "subcontrol-origin: margin;"
+                    "border: 1px solid white;"
+                "}"
+            "QScrollBar::sub-line:horizontal {"
+                    "width: %2px;"
+                    "background: LightGray;"
+                    "subcontrol-position: left;"
+                    "subcontrol-origin: margin;"
+                    "position: absolute;"
+                    "border: 1px solid white;"
+                "}"
+            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
+                    "background: none;"
+                "}"
+            "QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal {"
+                    "border: 1px solid Silver;"
+                    "width: %3px;"
+                    "height: %3px;"
+                    "background: white;"
+                "}"
+        ).arg(height+1).arg(height).arg(height/9)
+    );
+#endif
     connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
     connect(m_plot, SIGNAL(clickedToPlot(int)), this, SLOT(moveSliderTo(int)));
@@ -281,6 +321,7 @@ void Measurement::draw()
     {
         while (_IsCompleteSetInQueue())
         {
+            m_context.m_mainWindow.SetSavedValues(false);
             if (!_ProcessValueSet())
                 goto FINISH_DRAW;
         }
@@ -340,7 +381,7 @@ void Measurement::_ProcessSelectedChannels()
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
         {
             m_trackedHwChannels.insert(((HwChannel *)channel)->GetHwIndex(), channel);
             selectedChannels |= 1 << ((HwChannel *)channel)->GetHwIndex();
@@ -476,7 +517,11 @@ void Measurement::ReplaceDisplays(bool grid)
     foreach (ChannelBase * channel, m_channels)
     {
         m_displayLayout->removeWidget(channel->GetWidget());
+        channel->UpdateWidgetVisiblity();
     }
+
+    if (m_context.m_settings.GetHideAllChannels())
+        return;
 
     unsigned widgetHeight = m_widget.height() + m_displayLayout->spacing()*2; //have to compense spacing added to last diplay
     unsigned channelMinHeight= m_channels[0]->GetMinimumSize().height();
@@ -492,7 +537,7 @@ void Measurement::ReplaceDisplays(bool grid)
 
     foreach (ChannelBase * channel, m_channels)
     {
-        if (!channel->IsVisible())
+        if (!channel->IsActive())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -585,7 +630,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     channel->GetColor(),
 
                     channel->GetShapeIndex(),
-                    channel->IsVisible(),
+                    channel->IsActive(),
                     channel->GetUnits()
                 )
             );
@@ -605,7 +650,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
                     channel->GetColor(),
                     channel->GetShapeIndex(),
-                    channel->IsVisible(),
+                    channel->IsActive(),
                     channel->GetUnits(),
                     ((SampleChannel *)channel)->GetStyle(),
                     ((SampleChannel *)channel)->GetTimeUnits(),

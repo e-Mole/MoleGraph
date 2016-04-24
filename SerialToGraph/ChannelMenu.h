@@ -12,7 +12,7 @@ class QPushButton;
 class ButtonLine;
 
 namespace bases { class ClickableLabel; }
-
+struct Context;
 class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
@@ -29,9 +29,10 @@ class ChannelMenu : public bases::MenuDialogBase
     QMap<ColorCheckBox*, ChannelBase*> m_checkBoxChannels;
     QMap<QPushButton*, ChannelBase*> m_editChannels;
     void _SetGraph(bool checked);
+    Context const &m_context;
 
 public:
-    explicit ChannelMenu(QWidget *parent, Measurement &measurement, ButtonLine *buttonLine);
+    explicit ChannelMenu(QWidget *parent, Context const &context, Measurement &measurement, ButtonLine *buttonLine);
     void ActivateChannel(ChannelBase *channel, bool checked);
     void UpdateCheckBoxes();
 signals:

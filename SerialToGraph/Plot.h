@@ -5,6 +5,7 @@
 #include <QPointF>
 class QColor;
 class QEvent;
+class QGestureEvent;
 class Context;
 class ChannelBase;
 class Measurement;
@@ -35,7 +36,6 @@ class Plot : public QCustomPlot
     bool m_disabled;
     ChannelBase *m_horizontalChannel;
     int m_graphPointsPosition;
-    QPointF m_currentTouchPointPos;
     QCPItemLine *m_markerLine;
     bool m_mouseHandled;
 

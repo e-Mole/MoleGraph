@@ -19,7 +19,10 @@ class GlobalSettings
         Key_Console,
         Key_ConsolePosition,
         Key_MainWindowMaximized,
-        Key_MainWindowSize
+        Key_MainWindowSize,
+        Key_LastDir,
+        Key_LimitDir,
+        Key_HideAllChannels,
     };
 
     QString _GetStringKey(Key key) const;
@@ -50,6 +53,12 @@ public:
     void SetMainWindowMaximized(bool maximised);
     QSize GetMainWindowSize();
     void SetMainWindowSize(const QSize &size);
+    QString GetLastDir();
+    void SetLastDir(QString const &dir);
+    QString GetLimitDir();
+    void SetLimitDir(QString const &dir);
+    bool GetHideAllChannels();
+    void SetHideAllChannels(bool show);
 };
 
 #endif // GLOBALSETTINGS_H

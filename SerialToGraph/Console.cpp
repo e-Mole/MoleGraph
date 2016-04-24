@@ -39,9 +39,9 @@ void Console::AddMessage(QtMsgType type, QString const & message)
         case QtCriticalMsg:
             m_textEdit->setTextColor(Qt::darkRed);
         break;
-        case QtInfoMsg:
+        /*case QtInfoMsg:
             m_textEdit->setTextColor(Qt::white);
-        break;
+        break;*/
         case QtFatalMsg:
             m_textEdit->setTextColor(Qt::red);
         break;

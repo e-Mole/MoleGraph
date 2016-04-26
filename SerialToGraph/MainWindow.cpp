@@ -198,6 +198,11 @@ void MainWindow::RemoveAllMeasurements()
 {
     foreach (Measurement *m, m_measurements)
         RemoveMeasurement(m, true);
+
+    //no measurements means verything is saved
+    m_savedState = true;
+    m_savedValues = true;
+    _UpdateWindowTitle();
 }
 void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
@@ -325,8 +330,16 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
     file.close();
 }
 
+bool MainWindow::CouldBeOpen()
+{
+    QString message = _MessageIfUnsaved();
+    return message.isEmpty() || MyMessageBox::question(this, message, tr("Continue"));
+}
 void MainWindow::OpenNew()
 {
+    if (!CouldBeOpen())
+        return;
+
     m_currentFileName = "";
     m_currentFileNameWithPath = "";
     RemoveAllMeasurements();
@@ -342,22 +355,29 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
     }
 }
 
-bool MainWindow::_RealyExit()
+QString MainWindow::_MessageIfUnsaved()
 {
     QString message;
     if (!m_savedState && !m_savedValues)
-        message = tr("Gui neither value changes were not saved. Quit anyway?");
+        message = tr("Gui neither value changes were not saved.");
     else if (!m_savedState)
-        message = tr("Gui changes were not saved. Quit anyway?");
+        message = tr("Gui changes were not saved.");
     else if (!m_savedValues)
-        message = tr("Value changes were not saved. Quit anyway?");
+        message = tr("Value changes were not saved.");
+
+    return message;
+}
+
+bool MainWindow::_RealyExit()
+{
+    QString message = _MessageIfUnsaved();
 
 #if defined(Q_OS_ANDROID)
     if (message.isEmpty())
-        message = tr("Realy quit?");
+        message = tr("Realy exit?");
 #endif
 
-    return (message.isEmpty() || MyMessageBox::question(this, message, tr("Quit")));
+    return (message.isEmpty() || MyMessageBox::question(this, message, tr("Exit")));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

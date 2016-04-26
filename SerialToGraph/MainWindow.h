@@ -26,6 +26,8 @@ class MainWindow : public QMainWindow
     void closeEvent(QCloseEvent *event);
     void _UpdateWindowTitle();
     bool _RealyExit();
+    QString _MessageIfUnsaved();
+
     GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
@@ -61,6 +63,7 @@ public:
     void SetSavedState(bool savedState);
     void SetSavedValues(bool savedValues);
     bool GetSavedValues() { return m_savedValues; }
+    bool CouldBeOpen();
 
 private slots:
     void measurementNameChanged();

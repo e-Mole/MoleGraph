@@ -409,6 +409,9 @@ QString ButtonLine::_GetRootDir()
 }
 void ButtonLine::_OpenFile(bool values)
 {
+    if (!m_context.m_mainWindow.CouldBeOpen())
+        return;
+
     QString fileName =
         file::FileDialog::getOpenFileName
         (

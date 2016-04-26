@@ -484,7 +484,7 @@ void Measurement::movePlotTo(int position)
     foreach (ChannelBase * channel, m_channels)
         channel->displayValueOnIndex(position);
 
-    m_plot->SetMoveMode(true);
+    m_plot->SetMoveMode(position != m_scrollBar->maximum());
     m_plot->ReplotIfNotDisabled();
 }
 void Measurement::sliderActionTriggered(int action)

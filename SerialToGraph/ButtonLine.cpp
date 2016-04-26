@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QFont>
+#include <QGridLayout>
 #include <QKeySequence>
 #include <QLabel>
 #include <QLineEdit>
@@ -41,13 +42,12 @@
 #   define FONT_DPI_FACTOR 8
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, Context const& context):
-    QToolBar(parent),
+ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation orientation):
+    QWidget(parent),
+    m_mainLayout(new QGridLayout()),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
-    m_sampleRequestAction(NULL),
     m_pauseContinueButton(NULL),
-    m_pauseContinueAction(NULL),
     m_stopButton(NULL),
     m_connectivityButton(NULL),
     m_fileMenuButton(NULL),
@@ -68,31 +68,26 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
     m_storedValues(false),
-    m_settingsDialog(NULL)
+    m_settingsDialog(NULL),
+    m_space(new QWidget())
 {
-    //QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    //buttonLayout->setMargin(1);
-    //setLayout(buttonLayout);
+    m_mainLayout->setMargin(1);
+    setLayout(m_mainLayout);
 
     m_fileMenuButton = new QPushButton(tr("File"), this);
-    addWidget(m_fileMenuButton);
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
     m_measurementButton = new QPushButton(tr("Measurements"), this);
-    addWidget(m_measurementButton);
     connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
 
     m_panelMenuButton = new QPushButton(tr("Panels"), this);
-    addWidget(m_panelMenuButton);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
     m_axisMenuButton = new QPushButton(tr("Axes"), this);
-    addWidget(m_axisMenuButton);
     connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
 
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
-    addWidget(m_startButton);
     connect(m_startButton, SIGNAL(clicked()), this, SLOT(start()));
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
@@ -100,34 +95,57 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context):
 
     m_sampleRequestButton = new QPushButton(tr("Sample"), this);
     m_sampleRequestButton->setDisabled(true);
-    m_sampleRequestAction = addWidget(m_sampleRequestButton);
     connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
 
     m_pauseContinueButton = new QPushButton(tr("Pause"), this);
     m_pauseContinueButton->setDisabled(true);
-    m_pauseContinueAction = addWidget(m_pauseContinueButton);
     connect(m_pauseContinueButton, SIGNAL(clicked()), this, SLOT(pauseContinue()));
-
 
     m_stopButton = new QPushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
     connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
-    addWidget(m_stopButton);
 
-    QWidget* space = new QWidget();
-    space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    addWidget(space);
-
+    m_space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     m_connectivityButton = new QPushButton(this);
     connect(m_connectivityButton, SIGNAL(released()), &m_context.m_mainWindow, SLOT(openSerialPort()));
-    addWidget(m_connectivityButton);
     _SetConnectivityState(m_context.m_hwSink.GetStateString(), m_context.m_hwSink.GetState());
 
+    ReplaceButtons(orientation);
     _InitializeMenu();
 }
 
+void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
+{
+    while (m_mainLayout->count() != 0)
+    {
+        QLayoutItem *forDeletion = m_mainLayout->takeAt(0);
+        delete forDeletion;
+    }
+
+    bool v = orientation == Qt::Vertical;
+    unsigned i = 0;
+    m_mainLayout->addWidget(m_fileMenuButton, (v ? i :0) ,(v ? 0 : i));
+    i++;
+    m_mainLayout->addWidget(m_measurementButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_panelMenuButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_axisMenuButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_startButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_sampleRequestButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_pauseContinueButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_stopButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_space, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_connectivityButton, v ? i :0 ,v ? 0 : i);
+}
 
 QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
 {
@@ -259,7 +277,7 @@ void ButtonLine::UpdateRunButtonsState()
         )
     );
 
-    m_sampleRequestAction->setVisible(
+    m_sampleRequestButton->setVisible(
         m_measurement->GetType() == Measurement::OnDemand);
 
     m_sampleRequestButton->setEnabled(
@@ -267,7 +285,7 @@ void ButtonLine::UpdateRunButtonsState()
         m_measurement->GetState() == Measurement::Running && //no pause state in this mode
         m_measurement->GetType() == Measurement::OnDemand);
 
-    m_pauseContinueAction->setVisible(
+    m_pauseContinueButton->setVisible(
         m_measurement->GetType() == Measurement::Periodical);
 
     m_pauseContinueButton->setEnabled(

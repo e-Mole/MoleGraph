@@ -17,12 +17,14 @@ class GlobalSettings
         Key_UseBluetooth,
         Key_ForcedOffline,
         Key_Console,
-        Key_ConsolePosition,
         Key_MainWindowMaximized,
         Key_MainWindowSize,
         Key_LastDir,
         Key_LimitDir,
         Key_HideAllChannels,
+        Key_MenuOrientation,
+        Key_MenuOnDemand,
+        Key_MenuIsShown,
     };
 
     QString _GetStringKey(Key key) const;
@@ -47,8 +49,6 @@ public:
     void SetForcedOffline(bool offline);
     bool GetConsole();
     void SetConsole(bool visible);
-    int GetConsolePosition();
-    void SetConsolePosition(int position);
     bool GetMainWindowMaximized();
     void SetMainWindowMaximized(bool maximised);
     QSize GetMainWindowSize();
@@ -59,6 +59,12 @@ public:
     void SetLimitDir(QString const &dir);
     bool GetHideAllChannels();
     void SetHideAllChannels(bool show);
+    Qt::Orientation GetMenuOrientation();
+    void SetMenuOrientation(Qt::Orientation orientation);
+    bool GetMenuOnDemand();
+    void SetMenuOnDemand(bool onDemand);
+    bool GetMenuIsShown();
+    void SetMenuIsShown(bool isShown);
 };
 
 #endif // GLOBALSETTINGS_H

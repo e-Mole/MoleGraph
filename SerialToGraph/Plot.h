@@ -3,6 +3,7 @@
 
 #include <qcustomplot/qcustomplot.h>
 #include <QPointF>
+#include <QTime>
 class QColor;
 class QEvent;
 class QGestureEvent;
@@ -30,6 +31,7 @@ class Plot : public QCustomPlot
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
     bool _GetClosestX(double in, int &out);
+    void _ProcessDoubleClick(QPoint pos);
 
     Measurement const &m_measurement;
     bool m_moveMode;
@@ -38,9 +40,9 @@ class Plot : public QCustomPlot
     int m_graphPointsPosition;
     QCPItemLine *m_markerLine;
     bool m_mouseHandled;
+    QTime m_clickTime;
 
 protected:
-    virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);

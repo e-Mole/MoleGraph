@@ -129,6 +129,8 @@ void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
         m_mainLayout->addWidget(m_console, 2, 0);
         m_mainLayout->setColumnStretch(0, 1);
         m_mainLayout->setColumnStretch(1, 0);
+        m_mainLayout->setRowStretch(0, 0);
+        m_mainLayout->setRowStretch(1, 1);
     }
     else
     {
@@ -137,6 +139,8 @@ void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
         m_mainLayout->addWidget(m_console, 1, 1);
         m_mainLayout->setColumnStretch(0, 0);
         m_mainLayout->setColumnStretch(1, 1);
+        m_mainLayout->setRowStretch(0, 1);
+        m_mainLayout->setRowStretch(1, 0);
     }
 
     m_buttonLine->setVisible(showMenu);

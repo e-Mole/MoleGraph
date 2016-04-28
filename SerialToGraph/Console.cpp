@@ -12,42 +12,39 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 Console::Console(QWidget *parent) :
-    QDockWidget(tr("Console"), parent),
-    m_textEdit(new QTextEdit(this))
+    QTextEdit(parent)
 {
     s_console = this;
     qInstallMessageHandler(messageOutput);
 
-    setAllowedAreas(Qt::AllDockWidgetAreas);
 #if defined(Q_OS_ANDROID)
-    m_textEdit->setStyleSheet("background-color:black");
+    setStyleSheet("background-color:black");
 #else
-    QPalette pal(m_textEdit->palette());
+    QPalette pal(palette());
     pal.setColor(QPalette::Base, Qt::black);
-    m_textEdit->setAutoFillBackground(true);
-    m_textEdit->setPalette(pal);
+    setAutoFillBackground(true);
+    setPalette(pal);
 #endif
-    setWidget(m_textEdit);
 }
 
 void Console::AddMessage(QtMsgType type, QString const & message)
 {
     switch (type) {
         case QtDebugMsg:
-            m_textEdit->setTextColor(Qt::lightGray);
+            setTextColor(Qt::lightGray);
             break;
         case QtWarningMsg:
-            m_textEdit->setTextColor(Qt::yellow);
+            setTextColor(Qt::yellow);
         break;
         case QtCriticalMsg:
-            m_textEdit->setTextColor(Qt::darkRed);
+            setTextColor(Qt::darkRed);
         break;
-        /*case QtInfoMsg:
-            m_textEdit->setTextColor(Qt::white);
-        break;*/
+        case QtInfoMsg:
+            setTextColor(Qt::white);
+        break;
         case QtFatalMsg:
-            m_textEdit->setTextColor(Qt::red);
+            setTextColor(Qt::red);
         break;
         }
-        m_textEdit->append(message);
+        append(message);
 }

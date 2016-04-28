@@ -15,6 +15,7 @@ class Measurement;
 class PortListDialog;
 class QApplication;
 class QDataStream;
+class QGridLayout;
 class QTabWidget;
 class MainWindow : public QMainWindow
 {
@@ -26,6 +27,8 @@ class MainWindow : public QMainWindow
     void closeEvent(QCloseEvent *event);
     void _UpdateWindowTitle();
     bool _RealyExit();
+    QString _MessageIfUnsaved();
+
     GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
@@ -40,6 +43,9 @@ class MainWindow : public QMainWindow
     Console *m_console;
     bool m_savedValues;
     bool m_savedState;
+    QGridLayout *m_mainLayout;
+    QPushButton *m_menuButton;
+    QWidget *m_centralWidget;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -61,12 +67,14 @@ public:
     void SetSavedState(bool savedState);
     void SetSavedValues(bool savedValues);
     bool GetSavedValues() { return m_savedValues; }
-
+    void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
+    bool CouldBeOpen();
+    void ShowMenuButton(bool show);
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
-    void consoleLocationChanged(Qt::DockWidgetArea area);
+    void menuButtonClicked();
 public slots:
     void openSerialPort();
 };

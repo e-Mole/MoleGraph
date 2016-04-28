@@ -5,7 +5,7 @@
 #include <QKeySequence>
 #include <QMap>
 #include <QVector>
-#include <QToolBar>
+#include <Qwidget>
 
 class Axis;
 class ChannelBase;
@@ -13,8 +13,9 @@ class ChannelMenu;
 class ConnectivityLabel;
 class GlobalSettingsDialog;
 class Measurement;
-class QAction;
+//class QAction;
 class QDialog;
+class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QMenu;
@@ -23,7 +24,7 @@ class QPushButton;
 class QShortcut;
 struct Context;
 
-class ButtonLine : public QToolBar
+class ButtonLine : public QWidget
 {
     Q_OBJECT
 
@@ -41,11 +42,12 @@ class ButtonLine : public QToolBar
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
 
+    QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
-    QAction *m_sampleRequestAction;
+    //QAction *m_sampleRequestAction;
     QPushButton *m_pauseContinueButton;
-    QAction *m_pauseContinueAction;
+    //QAction *m_pauseContinueAction;
     QPushButton *m_stopButton;
     QPushButton *m_connectivityButton;
     QPushButton * m_fileMenuButton;
@@ -71,15 +73,18 @@ class ButtonLine : public QToolBar
     QShortcut *m_noChannelsShortcut;
     bool m_storedValues;
     GlobalSettingsDialog *m_settingsDialog;
+    QWidget* m_space;
 
 public:
     void UpdateRunButtonsState();
-    ButtonLine(QWidget *parent, const Context &context);
+    ButtonLine(QWidget *parent, const Context &context, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
     QString GetGraphShortcutText();
     QString GetAllChannelShortcutText();
     QString GetNoChannelShortcutText();
     QString GetChannelShortcutText(ChannelBase *channel);
+    void ReplaceButtons(Qt::Orientation orientation);
+
 signals:
     void periodChanged(unsigned period);
     void channelTriggered(ChannelBase *channel, bool checked);

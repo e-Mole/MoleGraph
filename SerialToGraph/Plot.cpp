@@ -160,6 +160,19 @@ void Plot::mousePressEvent(QMouseEvent *event)
 
 void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
+    QTime currentTime = QTime::currentTime();
+    int diff = m_clickTime.msecsTo(currentTime);
+    qDebug() << diff;
+    m_clickTime = currentTime;
+    if (diff != 0 && diff < 300)
+    {
+        //I dont want to catch mouseDoubleClickEvent because mouseReleaseEvent come after it and cause problems
+        _ProcessDoubleClick(event->pos());
+        event->accept();
+        return;
+    }
+
+    qDebug() << "release";
     //to deselect all of plotables when user click out of axes
     foreach (QCPAxis *axis, axisRect()->axes())
         foreach (QCPAbstractPlottable*plotable, axis->plottables())
@@ -174,10 +187,11 @@ void Plot::mouseReleaseEvent(QMouseEvent *event)
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
         clickedToPlot(xIndex);
 }
-void Plot::mouseDoubleClickEvent(QMouseEvent *event)
+void Plot::_ProcessDoubleClick(QPoint pos)
 {
+    qDebug() << "double click";
     QVariant details;
-    QCPLayerable *clickedLayerable = layerableAt(event->pos(), false, &details);
+    QCPLayerable *clickedLayerable = layerableAt(pos, false, &details);
 
     if (QCPAxis *ax = qobject_cast<QCPAxis*>(clickedLayerable))
         RescaleAxis(ax);

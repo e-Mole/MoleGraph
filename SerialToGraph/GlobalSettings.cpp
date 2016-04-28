@@ -25,8 +25,6 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "forced_offline";
     case Key_Console:
         return "console";
-    case Key_ConsolePosition:
-        return "console_position";
     case Key_MainWindowMaximized:
         return "main_window_maximized";
     case Key_MainWindowSize:
@@ -37,6 +35,12 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "limit_dir";
     case Key_HideAllChannels:
         return "show_channels";
+    case Key_MenuOrientation:
+        return "menu_orientation";
+    case Key_MenuOnDemand:
+        return "menu_on_demand";
+    case Key_MenuIsShown:
+        return "menu_is_shown";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -120,15 +124,6 @@ void GlobalSettings::SetConsole(bool visible)
     _Set(Key_Console, visible);
 }
 
-int GlobalSettings::GetConsolePosition()
-{
-    return _Get(Key_ConsolePosition, (int)Qt::BottomDockWidgetArea).toInt();
-}
-void GlobalSettings::SetConsolePosition(int position)
-{
-    _Set(Key_ConsolePosition, position);
-}
-
 bool GlobalSettings::GetMainWindowMaximized()
 {
     return _Get(Key_MainWindowMaximized, false).toBool();
@@ -172,4 +167,31 @@ bool GlobalSettings::GetHideAllChannels()
 void GlobalSettings::SetHideAllChannels(bool show)
 {
      _Set(Key_HideAllChannels, show);
+}
+
+Qt::Orientation GlobalSettings::GetMenuOrientation()
+{
+    return (Qt::Orientation)_Get(Key_MenuOrientation, Qt::Horizontal).toInt();
+}
+void GlobalSettings::SetMenuOrientation(Qt::Orientation orientation)
+{
+    _Set(Key_MenuOrientation, orientation);
+}
+
+bool GlobalSettings::GetMenuOnDemand()
+{
+    return _Get(Key_MenuOnDemand, false).toBool();
+}
+void GlobalSettings::SetMenuOnDemand(bool onDemand)
+{
+    _Set(Key_MenuOnDemand, onDemand);
+}
+
+bool GlobalSettings::GetMenuIsShown()
+{
+    return _Get(Key_MenuIsShown, true).toBool();
+}
+void GlobalSettings::SetMenuIsShown(bool isShown)
+{
+    _Set(Key_MenuIsShown, isShown);
 }

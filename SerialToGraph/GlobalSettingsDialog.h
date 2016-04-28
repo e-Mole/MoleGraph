@@ -22,6 +22,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeShowConsole();
     void _InitializeLimitDir();
     void _InitHideAllChannels();
+    void _InitializeButtonLines();
 
     Context const &m_context;
     GlobalSettings &m_settings;
@@ -32,6 +33,8 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QLineEdit *m_limitDirLine;
     QPushButton *m_limitDirButton;
     QCheckBox *m_hideAllChannels;
+    QComboBox *m_menuOrientation;
+    QCheckBox *m_menuOnDemand;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

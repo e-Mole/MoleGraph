@@ -1,16 +1,14 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <QDockWidget>
+#include <QTextEdit>
 #include <qlogging.h>
 
 class QString;
-class QTextEdit;
-class Console : public QDockWidget
+class Console : public QTextEdit
 {
     Q_OBJECT
 
-    QTextEdit *m_textEdit;
 public:
     explicit Console(QWidget *parent = 0);
 

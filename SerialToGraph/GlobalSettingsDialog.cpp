@@ -26,15 +26,28 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_showConsole(new QCheckBox(this)),
     m_limitDirLine(new QLineEdit(this)),
     m_limitDirButton(new QPushButton("...", this)),
-    m_hideAllChannels(new QCheckBox(this))
-
+    m_hideAllChannels(new QCheckBox(this)),
+    m_menuOrientation(new QComboBox(this)),
+    m_menuOnDemand(new QCheckBox(this))
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
     _InitializeUseBluetooth();
-    _InitializeShowConsole();
     _InitHideAllChannels();
     _InitializeLimitDir();
+    _InitializeButtonLines();
+    _InitializeShowConsole();
+}
+
+void GlobalSettingsDialog::_InitializeButtonLines()
+{
+    m_menuOrientation->addItem(tr("Horizontal"), Qt::Horizontal);
+    m_menuOrientation->addItem(tr("Vertical"), Qt::Vertical);
+    m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
+    m_formLayout->addRow(tr("Menu Orientation"), m_menuOrientation);
+
+    m_menuOnDemand->setChecked(m_settings.GetMenuOnDemand());
+    m_formLayout->addRow(tr("Menu on Demand"), m_menuOnDemand);
 }
 
 void GlobalSettingsDialog::_InitHideAllChannels()
@@ -70,7 +83,7 @@ void GlobalSettingsDialog::limitDirClicked()
 void GlobalSettingsDialog::_InitializeShowConsole()
 {
     m_showConsole->setChecked(m_settings.GetConsole());
-    m_formLayout->addRow(tr("Show Console"), m_showConsole);
+    m_formLayout->addRow(tr("Show Debug Window"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
@@ -150,6 +163,20 @@ bool GlobalSettingsDialog::BeforeAccept()
 
     if (m_settings.GetLimitDir() != m_limitDirLine->text())
         m_settings.SetLimitDir(m_limitDirLine->text());
+
+    if (m_settings.GetMenuOnDemand() != m_menuOnDemand->isChecked())
+    {
+        m_settings.SetMenuOnDemand(m_menuOnDemand->isChecked());
+        m_settings.SetMenuIsShown(!m_settings.GetMenuOnDemand());
+        m_context.m_mainWindow.ShowMenuButton(m_settings.GetMenuOnDemand());
+        m_context.m_mainWindow.ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    }
+
+    if ((int)m_settings.GetMenuOrientation() != m_menuOrientation->currentData())
+    {
+        m_settings.SetMenuOrientation((Qt::Orientation)m_menuOrientation->currentData().toInt());
+        m_context.m_mainWindow.ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    }
 
     return true;
 }

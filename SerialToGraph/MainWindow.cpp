@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QDataStream>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QLocale>
 #include <QMenu>
 #include <QMetaObject>
@@ -23,7 +24,6 @@
 #include <QToolBar>
 #include <QTranslator>
 #include <QTimer>
-#include <QVBoxLayout>
 #include <QWidget>
 #include <Serializer.h>
 
@@ -37,13 +37,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_portListDialog(NULL),
     m_console(new Console(this)),
     m_savedValues(true),
-    m_savedState(true)
+    m_savedState(true),
+    m_mainLayout(new QGridLayout()), //will be initialized in ReplaceWidgets
+    m_menuButton(new QPushButton(tr("Menu"), this)),
+    m_centralWidget(new QWidget(this))
 {
+    setCentralWidget(m_centralWidget);
+
     m_console->setVisible(m_settings.GetConsole());
-    addDockWidget((Qt::DockWidgetArea)m_settings.GetConsolePosition(), m_console);
-    connect(
-        m_console, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
-        this, SLOT(consoleLocationChanged(Qt::DockWidgetArea)));
 
 #if defined(Q_OS_ANDROID)
     this->showMaximized();
@@ -64,25 +65,17 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
-    QWidget *centralWidget = new QWidget(this);
-    QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
-    centralLayout->setMargin(2);
-    centralWidget->setLayout(centralLayout);
-    setCentralWidget(centralWidget);
-
-    m_buttonLine = new ButtonLine(this, m_context);
-
-#if defined(Q_OS_ANDROID)
-    addToolBar(Qt::LeftToolBarArea, m_buttonLine);
-#else
-    addToolBar(Qt::TopToolBarArea, m_buttonLine);
-#endif
+    m_buttonLine = new ButtonLine(this, m_context, Qt::Vertical);
 
     connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
-    m_measurementTabs = new QTabWidget(centralWidget);
+    m_measurementTabs = new QTabWidget(m_centralWidget);
+
+    connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonClicked()));
+    ShowMenuButton(m_settings.GetMenuOnDemand());
+    ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
 
 #if defined(Q_OS_ANDROID)
     m_measurementTabs->setStyleSheet(
@@ -91,7 +84,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
             arg(m_measurementTabs->physicalDpiX() / 3)
     );
 #endif
-    centralLayout->addWidget(m_measurementTabs);
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 
@@ -110,9 +102,45 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         resize(m_settings.GetMainWindowSize());
 }
 
-void MainWindow::consoleLocationChanged(Qt::DockWidgetArea area)
+void MainWindow::menuButtonClicked()
 {
-    m_settings.SetConsolePosition((int)area);
+    m_settings.SetMenuIsShown(!m_settings.GetMenuIsShown());
+    ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+}
+
+void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
+{
+    while (m_mainLayout->count() != 0)
+    {
+        QLayoutItem *forDeletion = m_mainLayout->takeAt(0);
+        delete forDeletion;
+    }
+    delete m_mainLayout;
+    m_mainLayout = new QGridLayout();
+    m_mainLayout->setMargin(1);
+    m_centralWidget->setLayout(m_mainLayout);
+
+    m_buttonLine->ReplaceButtons(menuOrientation);
+
+    if (menuOrientation == Qt::Horizontal)
+    {
+        m_mainLayout->addWidget(m_buttonLine, 0, 0);
+        m_mainLayout->addWidget(m_measurementTabs, 1, 0);
+        m_mainLayout->addWidget(m_console, 2, 0);
+        m_mainLayout->setColumnStretch(0, 1);
+        m_mainLayout->setColumnStretch(1, 0);
+    }
+    else
+    {
+        m_mainLayout->addWidget(m_buttonLine, 0, 0, 0, 1);
+        m_mainLayout->addWidget(m_measurementTabs, 0, 1);
+        m_mainLayout->addWidget(m_console, 1, 1);
+        m_mainLayout->setColumnStretch(0, 0);
+        m_mainLayout->setColumnStretch(1, 1);
+    }
+
+    m_buttonLine->setVisible(showMenu);
+    m_centralWidget->adjustSize();
 }
 
 void MainWindow::_UpdateWindowTitle()
@@ -198,6 +226,11 @@ void MainWindow::RemoveAllMeasurements()
 {
     foreach (Measurement *m, m_measurements)
         RemoveMeasurement(m, true);
+
+    //no measurements means verything is saved
+    m_savedState = true;
+    m_savedValues = true;
+    _UpdateWindowTitle();
 }
 void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
@@ -325,8 +358,16 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
     file.close();
 }
 
+bool MainWindow::CouldBeOpen()
+{
+    QString message = _MessageIfUnsaved();
+    return message.isEmpty() || MyMessageBox::question(this, message, tr("Continue"));
+}
 void MainWindow::OpenNew()
 {
+    if (!CouldBeOpen())
+        return;
+
     m_currentFileName = "";
     m_currentFileNameWithPath = "";
     RemoveAllMeasurements();
@@ -342,22 +383,29 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
     }
 }
 
-bool MainWindow::_RealyExit()
+QString MainWindow::_MessageIfUnsaved()
 {
     QString message;
     if (!m_savedState && !m_savedValues)
-        message = tr("Gui neither value changes were not saved. Quit anyway?");
+        message = tr("Gui neither value changes were not saved.");
     else if (!m_savedState)
-        message = tr("Gui changes were not saved. Quit anyway?");
+        message = tr("Gui changes were not saved.");
     else if (!m_savedValues)
-        message = tr("Value changes were not saved. Quit anyway?");
+        message = tr("Value changes were not saved.");
+
+    return message;
+}
+
+bool MainWindow::_RealyExit()
+{
+    QString message = _MessageIfUnsaved();
 
 #if defined(Q_OS_ANDROID)
     if (message.isEmpty())
-        message = tr("Realy quit?");
+        message = tr("Realy exit?");
 #endif
 
-    return (message.isEmpty() || MyMessageBox::question(this, message, tr("Quit")));
+    return (message.isEmpty() || MyMessageBox::question(this, message, tr("Exit")));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -384,4 +432,12 @@ void MainWindow::SetSavedValues(bool savedValues)
 {
     m_savedValues = savedValues;
     _UpdateWindowTitle();
+}
+
+void MainWindow::ShowMenuButton(bool show)
+{
+    qDebug() << show;
+    m_measurementTabs->setCornerWidget(show ? m_menuButton : NULL, Qt::TopLeftCorner);
+    m_menuButton->setVisible(show);
+    m_menuButton->repaint();
 }

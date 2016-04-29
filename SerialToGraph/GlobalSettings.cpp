@@ -171,7 +171,11 @@ void GlobalSettings::SetHideAllChannels(bool show)
 
 Qt::Orientation GlobalSettings::GetMenuOrientation()
 {
+#if defined(Q_OS_ANDROID)
+    return (Qt::Orientation)_Get(Key_MenuOrientation, Qt::Vertical).toInt();
+#else
     return (Qt::Orientation)_Get(Key_MenuOrientation, Qt::Horizontal).toInt();
+#endif
 }
 void GlobalSettings::SetMenuOrientation(Qt::Orientation orientation)
 {

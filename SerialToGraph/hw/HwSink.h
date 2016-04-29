@@ -41,6 +41,8 @@ private:
         INS_STOP = 6,
         INS_SET_TYPE = 7,
         INS_GET_SAMLPE = 8,
+        INS_PAUSE = 9,
+        INS_CONTINUE = 10,
     };
 
     bool _WriteInstruction(Instructions instruction, std::string const &data);
@@ -68,6 +70,8 @@ public:
     bool SetType(unsigned type);
     bool Start();
     bool Stop();
+    bool Pause();
+    bool Continue();
     bool SampleRequest();
     bool GetVersion();
     void SetSelectedChannels(unsigned char channels);
@@ -85,7 +89,6 @@ public:
     QString GetStateString();
     void InitializeBluetooth();
     void TerminateBluetooth();
-
 
 signals:
     void StartCommandDetected();

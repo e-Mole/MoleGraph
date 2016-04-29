@@ -45,7 +45,8 @@ class Measurement : public QObject
     Q_PROPERTY(SampleUnits sampleUnits READ GetSampleUnits() WRITE _SetSampleUnits)
     Q_PROPERTY(unsigned  period READ GetPeriod WRITE _SetPeriod)
     Q_PROPERTY(State  state READ _GetStateForSerialization WRITE _SetState)
-    Q_PROPERTY(bool anySampleMissed READ _IsAnySampleMissed() WRITE _SetAnySampleMissed)
+    Q_PROPERTY(bool anySampleMissed READ _GetAnySampleMissedForSerialization WRITE _SetAnySampleMissed)
+    Q_PROPERTY(bool anyChecksumDoesntMatch READ _GetAnyChecksumDoesntMatchForSerialization WRITE _SetAnyChecksumDoesntMatch)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
     Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
     Q_PROPERTY(bool marksShown READ GetMarksShown WRITE _SetMarksShown)
@@ -99,8 +100,9 @@ private:
     void _SetName(QString &name) { m_name = name; }
     void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
     void _SetPeriod(unsigned period) {m_period = period; }
-    void _SetState(State state) {m_state = state;}
-    bool _IsAnySampleMissed() {return m_anySampleMissed; }
+    void _SetState(State state) { m_state = state;}
+    bool _GetAnySampleMissedForSerialization() {return m_saveLoadValues ? m_anySampleMissed : false; }
+
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type);
     unsigned _GetAxisCount() { return m_axes.size(); }
@@ -109,11 +111,12 @@ private:
     void _ReadingValuesPostProcess();
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
-    State _GetStateForSerialization()
-    { return (m_state == Running || m_state == Paused) ? Finished : m_state; }
+    State _GetStateForSerialization();
     QColor _GetColorByOrder(unsigned order);
     void _SetColor(QColor const &color);
     void _SetMarksShown(bool marksShown);
+    bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
+    void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
 
     WidgetWithResizeEvent  m_widget;
     Context const &m_context;
@@ -143,7 +146,7 @@ private:
     bool m_marksShown;
     double m_secondsInPause;
     QTime m_pauseStartTime;
-    unsigned m_valueSetsCount;
+    unsigned m_valueSetCount;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();

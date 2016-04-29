@@ -5,7 +5,7 @@
 #include <QKeySequence>
 #include <QMap>
 #include <QVector>
-#include <Qwidget>
+#include <QWidget>
 
 class Axis;
 class ChannelBase;

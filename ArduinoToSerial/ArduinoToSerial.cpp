@@ -1,7 +1,7 @@
 #include "ArduinoToSerial.h"
 
 
-#define VERSION "ATG_3" //arduino to graph version
+#define VERSION "ATG_4" //arduino to graph version
 #define MESSAGE_SIZE 1 + sizeof(float)
 
 namespace
@@ -22,6 +22,10 @@ namespace
   bool g_sampleRequest = false;
   bool g_measurementInProgress = false;
   void (*g_updateFunction)(void);
+  void (*g_measurementStartedCallback)(void);
+  void (*g_measurementStoppedCallback)(void);
+  void (*g_measurementPausedCallback)(void);
+  void (*g_measurementContinuedCallback)(void);
   
   void InitTimer()
   {
@@ -113,6 +117,18 @@ namespace
     value |= Serial.read() << 8;
   }
 
+  void Start()
+  {
+    g_fullWriteBufferDetected = false;
+    TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+    g_measurementInProgress = true;
+  }
+
+  void Stop()
+  {
+    TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
+    g_measurementInProgress = false;
+  }
 } //namespace
 
 
@@ -137,79 +153,110 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   SendData(g_type == typeOnDemand);
 }
 
-void ArduinoToSerial::Setup(void (*updateCallbackFunction)(void))
+void ArduinoToSerial::Setup()
 { 
   Serial.begin(115200);
   while (!Serial) 
   {}
-
-  g_updateFunction = updateCallbackFunction;
+  
   InitTimer();
 }
-
+  
 void ArduinoToSerial::InLoop()
 {
-  if (0 != Serial.available())
+  if (0 == Serial.available())
+    return;
+  
+  unsigned char instruction = Serial.read();
+  switch (instruction) 
   {
-    unsigned char instruction = Serial.read();
-    switch (instruction) 
-    {
-    case INS_GET_VERSION:
-      Serial.write(VERSION);
-    break;
-    case INS_SET_FREQUENCY:
-    {
-      unsigned frequency;
-      FillFromSerial(frequency);
-      
-      InitTimer(); //workaround there was a 1s lag after start when there had been set 1 Hz period and user set 200 Hz period   
-      OCR1A = 62500/frequency;            // compare match register 16MHz/256/2Hz
-    }
-    break;
-    case INS_SET_TIME:
-    {
-      FillFromSerial(g_requiredTime);
-
-      InitTimer(); //workaround as in set frequenc case
-      OCR1A = 62500;            // compare match register 16MHz/256/2Hz
-    }
-    break;
-    case INS_ENABLED_CHANNELS:
-      FillFromSerial(g_enabledChannels);
-      g_channelCount = 0;
-      for (int i = 0; i < 8; i++)
-        if (0 != (g_enabledChannels & (1 << i)))
-          g_channelCount++;       
-    break;
-    case INS_START:
-      g_fullWriteBufferDetected = false;
-      TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
-      g_measurementInProgress = true;
-    break;
-    case INS_STOP:
-      TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
-      g_measurementInProgress = false;
-    break;
-    case INS_SET_TYPE:
-      unsigned char type;
-      FillFromSerial(type);
-      g_type = (Type)type;
-      if (g_type == typeOnDemand)
-      {
-        g_sampleRequest = false;
-        g_timeFromStart = 0;
-        InitTimer();
-        OCR1A = 1; //1/62500 s
-      }
-      else
-        g_currentTime = g_requiredTime - 1; //to be data send immediately
-    break;
-    case INS_GET_SAMLPE:
-      g_sampleRequest = true;
-    break;
-      
-    }
+  case INS_GET_VERSION:
+    Serial.write(VERSION);
+  break;
+  case INS_SET_FREQUENCY:
+  {
+    unsigned frequency;
+    FillFromSerial(frequency);
+    
+    InitTimer(); //workaround there was a 1s lag after start when there had been set 1 Hz period and user set 200 Hz period   
+    OCR1A = 62500/frequency;            // compare match register 16MHz/256/2Hz
   }
+  break;
+  case INS_SET_TIME:
+  {
+    FillFromSerial(g_requiredTime);
+
+    InitTimer(); //workaround as in set frequenc case
+    OCR1A = 62500;            // compare match register 16MHz/256/2Hz
+  }
+  break;
+  case INS_ENABLED_CHANNELS:
+    FillFromSerial(g_enabledChannels);
+    g_channelCount = 0;
+    for (int i = 0; i < 8; i++)
+      if (0 != (g_enabledChannels & (1 << i)))
+        g_channelCount++;       
+  break;
+  case INS_START:
+    Start();
+    g_measurementStartedCallback();
+  break;
+  case INS_STOP:
+    Stop();
+    g_measurementStoppedCallback();
+  break;
+  case INS_CONTINUE:
+    Start();
+    g_measurementContinuedCallback();
+  break;
+  case INS_PAUSE:
+    Stop();
+    g_measurementPausedCallback();
+  break;
+  case INS_SET_TYPE:
+    unsigned char type;
+    FillFromSerial(type);
+    g_type = (Type)type;
+    if (g_type == typeOnDemand)
+    {
+      g_sampleRequest = false;
+      g_timeFromStart = 0;
+      InitTimer();
+      OCR1A = 1; //1/62500 s
+    }
+    else
+      g_currentTime = g_requiredTime - 1; //to be data send immediately
+  break;
+  case INS_GET_SAMLPE:
+    g_sampleRequest = true;
+  break;
+    
+  }
+}
+
+void ArduinoToSerial::SetSendingCallback(void (*function)(void))
+{
+  g_updateFunction = function;
+}
+
+void ArduinoToSerial::SetMeasurementStartedCallback(void (*function)(void))
+{
+  g_measurementStartedCallback = function;
+}
+
+void ArduinoToSerial::SetMeasurementStoppedCallback(void (*function)(void))
+{
+  g_measurementStoppedCallback = function;
+}
+
+void ArduinoToSerial::SetMeasurementPausedCallback(void (*function)(void))
+{
+  g_measurementPausedCallback = function;
+}
+
+void ArduinoToSerial::SetMeasurementContinuedCallback(void (*function)(void))
+{
+  g_measurementContinuedCallback = function;
 }
 
 bool ArduinoToSerial::SetChannelValue(int channel, float value)

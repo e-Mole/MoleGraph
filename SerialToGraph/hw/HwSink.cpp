@@ -15,7 +15,7 @@
 #include <QQueue>
 #include <QTimer>
 #include <QWidget>
-#define PROTOCOL_ID "ATG_3"
+#define PROTOCOL_ID "ATG_4"
 
 namespace hw
 {
@@ -62,6 +62,16 @@ bool HwSink::Start()
 bool HwSink::Stop()
 {
     return _WriteInstruction(INS_STOP);
+}
+
+bool HwSink::Pause()
+{
+    return _WriteInstruction(INS_PAUSE);
+}
+
+bool HwSink::Continue()
+{
+    return _WriteInstruction(INS_CONTINUE);
 }
 
 bool HwSink::SampleRequest()

@@ -1,69 +1,56 @@
 #include "ArduinoToSerial.h"
-#include "HX711.h"
-
-#define THERMISTOR_PIN 3
-#define PHOTORESISTOR_PIN 1
-#define TRIG_PIN 6
-#define ECHO_PIN 5
-#define BUTTON_PIN 12
-
-// Attache scales
-HX711 scale(A2, A3);
-
-unsigned counter =  0;
 ArduinoToSerial arduinoToSerial;
 
-int buttonState = 0;  // variable for reading the pushbutton status
-
 void UpdateGraphChannels(void)
-{   
-    float value_scale = 0.00981*scale.get_units();
-    float test_scale = round(value_scale*100);    
-    arduinoToSerial.SetChannelValue(1, test_scale/100);
+{ 
+  //NOTE: All callback functions are called from a timer interupt so they should take as short time as possible 
+  //to they don't block another interrupts or a graph drawing. 
+  arduinoToSerial.SetChannelValue(1, arduinoToSerial.GetChannelValue(1) == 20 ? 0 : arduinoToSerial.GetChannelValue(1) + 1);
+  arduinoToSerial.SetChannelValue(2, arduinoToSerial.GetChannelValue(2) / 2);
+}
 
-    // read the state of the pushbutton value:
-    arduinoToSerial.SetChannelValue(2, buttonState);
+void MeasurementStartedCallback(void)
+{
+  digitalWrite(13, HIGH);
+}
+
+void MeasurementStoppedCallback(void)
+{
+  digitalWrite(13, LOW);
+}
+
+void MeasurementPausedCallback(void)
+{
+  digitalWrite(13, LOW);
+}
+
+void MeasurementContinuedCallback(void)
+{
+  digitalWrite(13, HIGH);
 }
 
 void setup() 
 {
-  //Serial.begin(38400);
-  //Serial.println("HX711 Demo");
+  //It must not be here if you use hardware hannels
+  for (int i = 0; i < 8; i++)
+    arduinoToSerial.SetChannelValue(i,i);
 
-  // initialize the pushbutton pin as an input:
-  pinMode(BUTTON_PIN, INPUT);
-    
-  arduinoToSerial.Setup(&UpdateGraphChannels);
+  //initialize arduinoToSerial module
+  arduinoToSerial.Setup();
 
-  scale.set_gain(128);
-  scale.set_scale(-58.35);      // TFs val: -58.5, this value is obtained by calibrating the scale with known weights; see the README for details
-  scale.tare();                // reset the scale to 0
-  
+  //Set callback functions which you will use  
+  arduinoToSerial.SetSendingCallback(&UpdateGraphChannels);
+  arduinoToSerial.SetMeasurementStartedCallback(&MeasurementStartedCallback);
+  arduinoToSerial.SetMeasurementStoppedCallback(&MeasurementStoppedCallback);
+  arduinoToSerial.SetMeasurementPausedCallback(&MeasurementPausedCallback);
+  arduinoToSerial.SetMeasurementContinuedCallback(&MeasurementContinuedCallback);
+
+  //initialize pin 13 for measurement state initialization 
+  pinMode(13, OUTPUT);
 }
 
 void loop() 
 {
+  //
   arduinoToSerial.InLoop();
-
-  tare_Button();
-  
-//  float value = scale.get_units();
-//  Serial.print("one reading:\t");
-//  Serial.println(value, 0);    
-//  delay(200);
-
 }
-
-void tare_Button() {
-  // read the state of the pushbutton value:
-  buttonState = digitalRead(BUTTON_PIN);
-
-  // check if the pushbutton is pressed.
-  // if it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {
-    // tare scale
-    scale.tare(); // reset the scale to 0
-    //buttonState = 0;
-  }  
-}
-

@@ -53,7 +53,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_color(source != NULL ? source->GetColor() : Qt::black/*_GetColorByOrder(m_context.m_measurements.size())*/),
     m_marksShown(source != NULL ? source->GetMarksShown() :false),
     m_secondsInPause(0),
-    m_valueSetsCount(0)
+    m_valueSetCount(0)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -260,11 +260,11 @@ bool Measurement::_ProcessValueSet()
         offset = _DequeueFloat(checkSum);
     else
         offset =
-            (double)m_valueSetsCount *
+            (double)m_valueSetCount *
             ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period ) +
             m_secondsInPause;
 
-    m_valueSetsCount++;
+    m_valueSetCount++;
 
     QVector<float> values;
     for (int i = 0; i < m_trackedHwChannels.count(); ++i)
@@ -276,7 +276,7 @@ bool Measurement::_ProcessValueSet()
         return false;
     }
 
-    m_sampleChannel->AddValue(m_valueSetsCount, offset);
+    m_sampleChannel->AddValue(m_valueSetCount, offset);
 
     for (int i = 0; i < m_trackedHwChannels.count(); ++i)
         m_trackedHwChannels[i]->AddValue(values[i]);
@@ -421,7 +421,7 @@ void Measurement::Start()
 
 void Measurement::Pause()
 {
-    m_context.m_hwSink.Stop();
+    m_context.m_hwSink.Pause();
     m_state = Paused;
     stateChanged();
     m_pauseStartTime = QTime::currentTime();
@@ -430,7 +430,7 @@ void Measurement::Pause()
 void Measurement::Continue()
 {
     m_secondsInPause += (double)m_pauseStartTime.msecsTo(QTime::currentTime()) / 1000;
-    m_context.m_hwSink.Start();
+    m_context.m_hwSink.Continue();
     m_state = Running;
     stateChanged();
 }
@@ -1033,10 +1033,18 @@ void Measurement::DeserializeColections(QDataStream &in)
         _SetState(Ready);
         m_anySampleMissed = false;
         m_anyCheckSumDoesntMatch = false;
-        m_valueSetsCount = 0;
+        m_valueSetCount = 0;
     }
 
     ReplaceDisplays(false);
+}
+
+Measurement::State Measurement::_GetStateForSerialization()
+{
+    if (!m_saveLoadValues)
+        return Ready;
+
+    return (m_state == Running || m_state == Paused) ? Finished : m_state;
 }
 
 void Measurement::_SetColor(QColor const &color)

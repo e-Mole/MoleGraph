@@ -20,12 +20,20 @@ class ArduinoToSerial
     INS_STOP = 6,
     INS_SET_TYPE = 7,
     INS_GET_SAMLPE = 8,
+    INS_PAUSE = 9,
+    INS_CONTINUE = 10
   };
 
   
 public:
-  void Setup(void (*updateCallbackFunction)(void));
+  void Setup();
   void InLoop();
+  void SetSendingCallback(void (*function)(void));
+  void SetMeasurementStartedCallback(void (*function)(void));
+  void SetMeasurementStoppedCallback(void (*function)(void));
+  void SetMeasurementPausedCallback(void (*function)(void));
+  void SetMeasurementContinuedCallback(void (*function)(void));
+  
   bool SetChannelValue(int channel, float value);
   float GetChannelValue(int channel);
   void SampleRequest();

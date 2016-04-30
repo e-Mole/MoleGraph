@@ -67,7 +67,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
-    m_storedValues(false),
+    m_storedValues(true),
     m_settingsDialog(NULL),
     m_space(new QWidget())
 {

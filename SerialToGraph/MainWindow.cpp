@@ -38,10 +38,11 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_console(new Console(this)),
     m_savedValues(true),
     m_savedState(true),
-    m_mainLayout(new QGridLayout()), //will be initialized in ReplaceWidgets
-    m_menuButton(new QPushButton(tr("Menu"), this)),
-    m_centralWidget(new QWidget(this))
+    m_mainLayout(NULL),
+    m_menuButton(NULL),
+    m_centralWidget(NULL)
 {
+    m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
 
     m_console->setVisible(m_settings.GetConsole());
@@ -73,8 +74,10 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     m_measurementTabs = new QTabWidget(m_centralWidget);
 
+    m_menuButton = new QPushButton(tr("Menu"), this);
     connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonClicked()));
     ShowMenuButton(m_settings.GetMenuOnDemand());
+    m_mainLayout = new QGridLayout();
     ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
 
 #if defined(Q_OS_ANDROID)

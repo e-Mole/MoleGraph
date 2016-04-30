@@ -22,16 +22,16 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     bases::FormDialogColor(channel->GetWidget(), tr("Channel settings")),
     m_context(context),
     m_channel(channel),
-    m_name(new QLineEdit(channel->GetName(), this)),
+    m_name(NULL),
     m_units(NULL),
-    m_shapeComboBox(new QComboBox(this)),
-    m_axisComboBox(new QComboBox(this)),
+    m_shapeComboBox(NULL),
+    m_axisComboBox(NULL),
     m_style(NULL),
     m_timeUnits(NULL),
     m_format(NULL),
-    m_penStyle(new QComboBox(this))
+    m_penStyle(NULL)
 {
-
+    m_name = new QLineEdit(channel->GetName(), this);
     if (m_channel->GetType() == ChannelBase::Type_Hw)
     {
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
@@ -53,6 +53,7 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
 
 void ChannelSettings::_InitializePenStyle()
 {
+    m_penStyle = new QComboBox(this);
     m_penStyle->addItem(tr("No Line"));
     m_penStyle->addItem(tr("Solid Line"));
     m_penStyle->addItem(tr("Dash Line"));
@@ -240,6 +241,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
 
 void ChannelSettings::_InitializeShapeCombo()
 {
+    m_shapeComboBox = new QComboBox(this);
     m_shapeComboBox->addItem(tr("Cross"));
     m_shapeComboBox->addItem(tr("Plus"));
     m_shapeComboBox->addItem(tr("Circle"));
@@ -287,6 +289,7 @@ void ChannelSettings::_RefillAxisCombo()
 }
 void ChannelSettings::_InitializeAxisCombo()
 {
+    m_axisComboBox = new QComboBox(this);
     _RefillAxisCombo();
 
     if (m_channel->IsOnHorizontalAxis())

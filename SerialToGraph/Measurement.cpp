@@ -422,7 +422,7 @@ void Measurement::Start()
 
 void Measurement::Pause()
 {
-    m_context.m_hwSink.Stop();
+    m_context.m_hwSink.Pause();
     m_state = Paused;
     stateChanged();
     m_pauseStartTime = QTime::currentTime();
@@ -431,7 +431,7 @@ void Measurement::Pause()
 void Measurement::Continue()
 {
     m_secondsInPause += (double)m_pauseStartTime.msecsTo(QTime::currentTime()) / 1000;
-    m_context.m_hwSink.Start();
+    m_context.m_hwSink.Continue();
     m_state = Running;
     stateChanged();
 }

@@ -7,3 +7,6 @@ SampleRequest	KEYWORD2
 StartMeasurement	KEYWORD2
 StopMeasurement	KEYWORD2
 IsMeasurementInProgress	KEYWORD2
+SetSendingCallback KEYWORD2
+SetMeasurementStartedCallback KEYWORD2
+SetMeasurementStoppedCallback KEYWORD2

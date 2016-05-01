@@ -280,12 +280,13 @@ bool Measurement::_ProcessValueSet()
 
     m_sampleChannel->AddValue(m_valueSetCount, offset);
 
-    for (int i = 0; i < m_trackedHwChannels.count(); ++i)
-        m_trackedHwChannels[i]->AddValue(values[i]);
+    unsigned i = 0;
+    foreach (ChannelBase *channel, m_trackedHwChannels.values())
+        channel->AddValue(values[i++]);
 
     //im sure I have a horizontal value and may start to draw
     m_sampleChannel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
-    foreach (ChannelBase *channel, m_trackedHwChannels)
+    foreach (ChannelBase *channel, m_trackedHwChannels.values())
         channel->UpdateGraph(m_plot->GetHorizontalChannel()->GetLastValue());
 
     return true;

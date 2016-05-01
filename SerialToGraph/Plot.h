@@ -48,6 +48,7 @@ protected:
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual bool event( QEvent *event );
+    virtual void draw(QCPPainter *painter);
 
 public:
     Plot(Measurement *measurement);

@@ -10,7 +10,9 @@
 #include <QGestureEvent>
 #include <QMessageBox>
 #include <QPinchGesture>
+#include <QTime>
 #include <QWheelEvent>
+
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
@@ -528,4 +530,13 @@ void Plot::SetMarkerLine(int position)
     m_markerLine->start->setCoords(xValue, 0);
     m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
     m_markerLine->end->setCoords(xValue, 100);
+}
+
+void Plot::draw(QCPPainter *painter)
+{
+
+    qDebug() << "drawing start";
+    QTime time = QTime::currentTime();
+    QCustomPlot::draw(painter);
+    qDebug() << "drawing end " << time.msecsTo(QTime::currentTime());
 }

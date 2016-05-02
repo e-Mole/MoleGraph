@@ -17,12 +17,12 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     bases::PlatformDialog(parent, tr("Device connecting")),
     m_hwSink(hwSink),
     m_settings(settings),
-    m_progress(new QProgressBar(this)),
-    m_progressText(new QLabel(this)),
-    m_refresh(new QPushButton(this)),
-    m_description(new QLabel(this)),
-    m_portWidget(new QWidget(this)),
-    m_portLayout(new QGridLayout(m_portWidget)),
+    m_progress(NULL),
+    m_progressText(NULL),
+    m_refresh(NULL),
+    m_description(NULL),
+    m_portWidget(NULL),
+    m_portLayout(NULL),
     m_selectedRadioButton(NULL),
     m_autoConnect(true)
 {
@@ -31,21 +31,28 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettin
     setLayout(layout);
 
     //m_description->setHidden(true);
+    m_description = new QLabel(this);
     m_description->setText(tr("Please, select a comatible device port."));
     layout->addWidget(m_description);
+
+    m_portWidget = new QWidget(this);
+    m_portLayout = new QGridLayout(m_portWidget);
     layout->addWidget(m_portWidget);
 
+    m_progress = new QProgressBar(this);
     m_progress->setMinimum(0);
     m_progress->setMaximum(0);
     m_progress->setTextVisible(false);
     layout->addWidget(m_progress);
 
+    m_progressText = new QLabel(this);
     m_progressText->setAlignment(Qt::AlignHCenter);
     layout->addWidget(m_progressText);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     layout->addLayout(buttonLayout);
 
+    m_refresh = new QPushButton(this);
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
     connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);

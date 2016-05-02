@@ -20,15 +20,15 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     bases::FormDialogBase(parent, tr("Settings")),
     m_context(context),
     m_settings(context.m_settings),
-    m_languages(new QComboBox(this)),
-    m_brackets(new QComboBox(this)),
-    m_useBluetooth(new QCheckBox(this)),
-    m_showConsole(new QCheckBox(this)),
-    m_limitDirLine(new QLineEdit(this)),
-    m_limitDirButton(new QPushButton("...", this)),
-    m_hideAllChannels(new QCheckBox(this)),
-    m_menuOrientation(new QComboBox(this)),
-    m_menuOnDemand(new QCheckBox(this))
+    m_languages(NULL),
+    m_brackets(NULL),
+    m_useBluetooth(NULL),
+    m_showConsole(NULL),
+    m_limitDirLine(NULL),
+    m_limitDirButton(NULL),
+    m_hideAllChannels(NULL),
+    m_menuOrientation(NULL),
+    m_menuOnDemand(NULL)
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
@@ -41,17 +41,20 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
 
 void GlobalSettingsDialog::_InitializeButtonLines()
 {
+    m_menuOrientation = new QComboBox(this);
     m_menuOrientation->addItem(tr("Horizontal"), Qt::Horizontal);
     m_menuOrientation->addItem(tr("Vertical"), Qt::Vertical);
     m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
     m_formLayout->addRow(tr("Menu Orientation"), m_menuOrientation);
 
+    m_menuOnDemand = new QCheckBox(this);
     m_menuOnDemand->setChecked(m_settings.GetMenuOnDemand());
     m_formLayout->addRow(tr("Menu on Demand"), m_menuOnDemand);
 }
 
 void GlobalSettingsDialog::_InitHideAllChannels()
 {
+    m_hideAllChannels = new QCheckBox(this);
     m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
     m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
 }
@@ -59,10 +62,12 @@ void GlobalSettingsDialog::_InitHideAllChannels()
 void GlobalSettingsDialog::_InitializeLimitDir()
 {
     QHBoxLayout *layout = new QHBoxLayout();
+    m_limitDirLine = new QLineEdit(this);
     m_limitDirLine->setText(m_settings.GetLimitDir());
     m_limitDirLine->setReadOnly(true);
     layout->addWidget(m_limitDirLine, 1);
 
+    m_limitDirButton = new QPushButton("...", this);
     connect(m_limitDirButton, SIGNAL(clicked()), this, SLOT(limitDirClicked()));
     layout->addWidget(m_limitDirButton);
     m_formLayout->addRow(tr("Limit Directory"), layout);
@@ -82,17 +87,20 @@ void GlobalSettingsDialog::limitDirClicked()
 }
 void GlobalSettingsDialog::_InitializeShowConsole()
 {
+    m_showConsole = new QCheckBox(this);
     m_showConsole->setChecked(m_settings.GetConsole());
     m_formLayout->addRow(tr("Show Debug Window"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
 {
+    m_useBluetooth = new QCheckBox(this);
     m_useBluetooth->setChecked(m_settings.GetUseBluetooth());
     m_formLayout->addRow(tr("Use Bluetooth"), m_useBluetooth);
 }
 void GlobalSettingsDialog::_InitializeLanguage()
 {
+    m_languages = new QComboBox(this);
     m_languages->addItem("English", "en");
     m_languages->addItem("čeština", "cs");
 
@@ -111,6 +119,7 @@ void GlobalSettingsDialog::_InitializeLanguage()
 
 void GlobalSettingsDialog::_InitializeUnitBrackets()
 {
+    m_brackets = new QComboBox(this);
     m_brackets->addItem("()");
     m_brackets->addItem("[]");
     m_brackets->setCurrentText(m_settings.GetUnitBrackets());

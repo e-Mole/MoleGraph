@@ -18,7 +18,7 @@ ColorCheckBox::ColorCheckBox(const QString &text, QWidget *parent):
     layout->setStretch(1,1);
 
     connect(m_checkBox, SIGNAL(clicked()), this, SIGNAL(clicked()));
-    connect(m_label, SIGNAL(clicked()), this, SIGNAL(clicked()));
+    connect(m_label, SIGNAL(clicked()), this, SLOT(clickedToLabel()));
 }
 
 void ColorCheckBox::SetChecked(bool checked)
@@ -36,3 +36,8 @@ void ColorCheckBox::SetText(QString const &text)
     m_label->setText(text);
 }
 
+void ColorCheckBox::clickedToLabel()
+{
+    m_checkBox->setFocus();
+    clicked();
+}

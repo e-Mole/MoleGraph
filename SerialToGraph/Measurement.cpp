@@ -44,9 +44,9 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
     m_sampleChannel(NULL),
-    m_mainLayout(new QHBoxLayout(&m_widget)),
+    m_mainLayout(NULL),
     m_plot(new Plot(this)),
-    m_scrollBar(new QScrollBar(Qt::Horizontal, &m_widget)),
+    m_scrollBar(NULL),
     m_startNewDraw(false),
     m_type(source != NULL ? source->m_type : Periodical),
     m_saveLoadValues(false),
@@ -64,6 +64,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
 
     m_plotAndSliderLayout->addWidget(m_plot);
 
+    m_scrollBar = new QScrollBar(Qt::Horizontal, &m_widget);
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
 #if defined(Q_OS_ANDROID)
@@ -150,6 +151,7 @@ void Measurement::portConnectivityChanged(bool connected)
 
 void Measurement::_InitializeLayouts()
 {
+    m_mainLayout = new QHBoxLayout(&m_widget);
     m_mainLayout->setMargin(1);
 
     m_plotAndSliderLayout = new QVBoxLayout();

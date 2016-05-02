@@ -174,8 +174,10 @@ void MeasurementMenu::nameClicked()
     Measurement *measurement = m_nameToItem[(bases::ClickableLabel*)sender()];
     for (auto it = m_radioButtonToItem.begin(); it != m_radioButtonToItem.end(); ++it)
         if (it.value() == measurement)
+        {
             it.key()->setChecked(true);
-
+            it.key()->setFocus();
+        }
     m_context.m_mainWindow.SwichCurrentMeasurement(m_nameToItem[(bases::ClickableLabel*)sender()]);
 }
 

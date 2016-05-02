@@ -17,12 +17,14 @@
 AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context) :
     bases::FormDialogColor(parent, tr("Axis Setting")),
     m_axis(axis),
-    m_name(new QLineEdit(axis->GetTitle(), this)),
+    m_name(NULL),
     m_context(context),
     m_side(NULL),
-    m_display(new QComboBox(this))
+    m_display(NULL)
 {
     m_formLayout->addRow(new QLabel(tr("Type"), this), new QLabel(axis->IsHorizontal() ? tr("Horizontal") : tr("Vertical"), this));
+
+    m_name = new QLineEdit(axis->GetTitle(), this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
     AddColorButtonRow(axis->GetColor());
@@ -35,11 +37,11 @@ AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context)
         m_formLayout->addRow(new QLabel(tr("Side"), this), m_side);
     }
 
+    m_display = new QComboBox(this);
     m_display->addItem(tr("Channels and Units"));
     m_display->addItem(tr("Axis Name"));
     m_display->setCurrentIndex((int)m_axis->m_isShownName);
     m_formLayout->addRow(new QLabel(tr("Show in Graph"), this), m_display);
-
 }
 
 bool AxisSettings::BeforeAccept()

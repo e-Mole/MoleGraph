@@ -20,6 +20,8 @@ public:
     void SetText(QString const &text);
 signals:
     void clicked();
+private slots:
+    void clickedToLabel();
 };
 
 #endif // COLORCHECKBOX_H

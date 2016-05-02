@@ -14,14 +14,16 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     bases::FormDialogColor(parent, tr("Measurement Setting")),
     m_context(context),
     m_measurement(measurement),
-    m_name(new QLineEdit(measurement->m_name, this)),
-    m_type(new QComboBox(this)),
-    m_period(new QLineEdit(QString("%1").arg(measurement->m_period), this)),
-    m_sampleUnits(new QComboBox(this)),
-    m_marksShown(new QCheckBox(this))
+    m_name(NULL),
+    m_type(NULL),
+    m_period(NULL),
+    m_sampleUnits(NULL),
+    m_marksShown(NULL)
 {
+    m_name = new QLineEdit(measurement->m_name, this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
+    m_type = new QComboBox(this);
     m_type->addItem(tr("Periodical"));
     m_type->addItem(tr("On Demand"));
     m_type->setCurrentIndex((int)m_measurement->m_type);
@@ -33,9 +35,11 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
         m_measurement->m_type == Measurement::Periodical &&
         m_measurement->m_state == Measurement::Ready;
 
+    m_period = new QLineEdit(QString("%1").arg(measurement->m_period), this);
     m_period->setEnabled(enablePeriodItems);
     m_formLayout->addRow(new QLabel(tr("Period"), this), m_period);
 
+    m_sampleUnits = new QComboBox(this);
     m_sampleUnits->addItem(tr("Hz"));
     m_sampleUnits->addItem(tr("Sec", "seconds"));
     m_sampleUnits->setCurrentIndex((unsigned)measurement->m_sampleUnits);
@@ -44,6 +48,7 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
 
     AddColorButtonRow(m_measurement->m_color);
 
+    m_marksShown = new QCheckBox(this);
     m_marksShown->setChecked(m_measurement->m_marksShown);
     m_formLayout->addRow(new QLabel(tr("Show Marks")), m_marksShown);
 

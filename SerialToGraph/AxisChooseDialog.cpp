@@ -17,7 +17,7 @@ AxisChooseDialog::AxisChooseDialog(
 ) :
     QDialog(parent),
     m_context(context),
-    m_newAxis(new QRadioButton(tr("New Axis..."), this)),
+    m_newAxis(NULL),
     m_originalHChannel(originalHChannel),
     m_newHChannel(newHChannel),
     m_isOriginalChannelRealTime(
@@ -26,7 +26,6 @@ AxisChooseDialog::AxisChooseDialog(
     )
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
-
 
     QString text;
     if (m_isOriginalChannelRealTime)
@@ -46,6 +45,7 @@ AxisChooseDialog::AxisChooseDialog(
     label->setWordWrap(true);
     layout->addWidget(label);
 
+    m_newAxis = new QRadioButton(tr("New Axis..."), this);
     connect(m_newAxis, SIGNAL(clicked()), this, SLOT(newAxisSelected()));
     layout->addWidget(m_newAxis);
 

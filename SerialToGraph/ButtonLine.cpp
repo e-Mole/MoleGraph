@@ -316,7 +316,7 @@ void ButtonLine::UpdateRunButtonsState()
     {
         if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
             hwChannelPresent = true;
-        if (channel->IsOnHorizontalAxis() && channel->IsActive())
+        if (channel->IsOnHorizontalAxis() && (channel->IsActive() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 

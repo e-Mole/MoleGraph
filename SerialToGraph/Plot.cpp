@@ -10,7 +10,9 @@
 #include <QGestureEvent>
 #include <QMessageBox>
 #include <QPinchGesture>
+#include <QTime>
 #include <QWheelEvent>
+
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
@@ -34,7 +36,9 @@ Plot::Plot(Measurement *measurement) :
     m_horizontalChannel(NULL),
     m_graphPointsPosition(0),
     m_markerLine(NULL),
-    m_mouseHandled(false)
+    m_mouseHandled(false),
+    m_mouseMoveEvent(NULL),
+    m_wheelEvent(NULL)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -61,6 +65,7 @@ Plot::Plot(Measurement *measurement) :
     grabGesture( Qt::PinchGesture );
 }
 
+//taked from http://www.qcustomplot.com/index.php/support/forum/638
 bool Plot::event(QEvent *event)
 {
     switch( event->type() )
@@ -71,47 +76,51 @@ bool Plot::event(QEvent *event)
             if( QGesture *pinch = gestureEve->gesture(Qt::PinchGesture) )
             {
                 QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
-                qreal scaleFactor = pinchEve->totalScaleFactor( );
-                if( scaleFactor > 1.0 )
-                    scaleFactor *= 5;
-                else
-                    scaleFactor = 1 / scaleFactor * -5;
-
-                qDebug() << "pinch center" << pinchEve->lastCenterPoint();
+                qreal scaleFactor = pinchEve->lastScaleFactor( );
                 QWheelEvent *wheelEve = new QWheelEvent(
-                    pinchEve->lastCenterPoint(), scaleFactor, Qt::NoButton, Qt::NoModifier, Qt::Vertical );
-                wheelEvent( wheelEve);
+                    pinchEve->lastCenterPoint(),
+                    (scaleFactor > 1.0) ? scaleFactor * 10 : -10 / scaleFactor,
+                    Qt::NoButton,
+                    Qt::NoModifier,
+                    Qt::Vertical);
+                wheelEvent(wheelEve);
+                event->accept();
+                return true;
             }
-            return true;
         }
-        /*case QEvent::TouchBegin:
+        case QEvent::TouchBegin:
         case QEvent::TouchUpdate:
         case QEvent::TouchEnd:
         {
             QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
-            QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints( );
-            if( touchPoints.count( ) == 1 )
+            if(touchEvent->touchPoints( ).count( ) == 1)
             {
-                const QTouchEvent::TouchPoint &touchPoint0 = touchPoints.first( );
-                m_currentTouchPointPos = touchPoint0.pos();
                 QMouseEvent *mouseEve = new QMouseEvent(
-                    QEvent::MouseButtonPress, m_currentTouchPointPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-
-                if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointPressed )
-                    mousePressEvent( mouseEve );
-                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointMoved )
-                    mouseMoveEvent( mouseEve );
-                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointReleased )
-                    mouseReleaseEvent( mouseEve );
+                    QEvent::MouseButtonPress,
+                    touchEvent->touchPoints().first().pos(),
+                    Qt::LeftButton,
+                    Qt::LeftButton,
+                    Qt::NoModifier);
+                switch (touchEvent->touchPointStates())
+                {
+                    case Qt::TouchPointPressed:
+                        this->mousePressEvent(mouseEve);
+                    break;
+                    case Qt::TouchPointMoved:
+                        this->mouseMoveEvent(mouseEve);
+                    break;
+                    case Qt::TouchPointReleased:
+                        this->mouseReleaseEvent(mouseEve);
+                    break;
+                }
             }
             return true;
-        }*/
+        }
         default:
             break;
     }
     return QCustomPlot::event(event);
 }
-
 
 bool Plot::_GetClosestX(double in, int &out)
 {
@@ -162,7 +171,7 @@ void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
     QTime currentTime = QTime::currentTime();
     int diff = m_clickTime.msecsTo(currentTime);
-    qDebug() << diff;
+    qDebug() << "mouse release diff:" << diff;
     m_clickTime = currentTime;
     if (diff != 0 && diff < 300)
     {
@@ -202,11 +211,11 @@ void Plot::_ProcessDoubleClick(QPoint pos)
     }
 }
 
-void Plot::wheelEvent(QWheelEvent *event)
+void Plot::processWheelEvent()
 {
-    m_moveMode = true;
-
-    QCPLayoutElement *element = layoutElementAt(event->pos());
+    if (m_wheelEvent == NULL)
+        return;
+    QCPLayoutElement *element = layoutElementAt(m_wheelEvent->pos());
     if (MyAxisRect *ar = qobject_cast<MyAxisRect*>(element))
     {
         if (0 == selectedAxes().size())
@@ -218,13 +227,48 @@ void Plot::wheelEvent(QWheelEvent *event)
                 else
                     axisRect()->setRangeZoomAxes(NULL, axis);
 
-                ar->wheelEvent(event);
+                ar->wheelEvent(m_wheelEvent);
             }
             axisRect()->setRangeZoomAxes(xAxis, yAxis);
         }
         else
-            ar->wheelEvent(event);
+            ar->wheelEvent(m_wheelEvent);
     }
+    delete m_wheelEvent;
+    m_wheelEvent = NULL;
+}
+
+void Plot::wheelEvent(QWheelEvent *event)
+{
+    m_moveMode = true;
+
+    if (m_wheelEvent == NULL)
+    {
+        m_wheelEvent = new QWheelEvent(
+            event->pos(),
+            event->globalPos(),
+            event->delta(),
+            event->buttons(),
+            event->modifiers(),
+            event->orientation()
+        );
+    }
+    else
+    {
+        *m_wheelEvent = QWheelEvent(
+            event->pos(),
+            event->globalPos(),
+            m_wheelEvent->delta() + event->delta(),
+            event->buttons(),
+            event->modifiers(),
+            event->orientation()
+        );
+    }
+
+    //wheele events and qcustom plot is in the same thread, in the case it would
+    //be called directly there would be a lot of drawings which take a lot of time
+    //there would be a serrious performance problem
+    QMetaObject::invokeMethod(this, "processWheelEvent", Qt::QueuedConnection);
 }
 
 void Plot::SetDisabled(bool disable)
@@ -244,9 +288,31 @@ void Plot::ReplotIfNotDisabled()
 
     replot(rpQueued);
 }
+void Plot::procesMouseMoveEvent()
+{
+    if (m_mouseMoveEvent == NULL)
+        return;
+    QCPRange oldRange = yAxis->range();
+    QCustomPlot::mouseMoveEvent(m_mouseMoveEvent);
+
+    //TODO:logharitmical axis
+    double percent = (yAxis->range().lower - oldRange.lower) /  (oldRange.upper - oldRange.lower);
+
+    foreach(QCPAxis *axis, axisRect()->axes())
+    {
+        if (axis == xAxis || axis == yAxis)
+            continue;
+
+        double factor = (axis->range().upper - axis->range().lower) * percent;
+        axis->setRange(axis->range().lower + factor, axis->range().upper + factor);
+    }
+    delete m_mouseMoveEvent;
+    m_mouseMoveEvent = NULL;
+}
 
 void Plot::mouseMoveEvent(QMouseEvent *event)
 {
+
     if (axisRect()->IsDragging())
     {
         m_moveMode = true;
@@ -258,22 +324,16 @@ void Plot::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    double percent = 0;
+    if (m_mouseMoveEvent != NULL)
+        *m_mouseMoveEvent = *event;
+    else
+        m_mouseMoveEvent = new QMouseEvent(event->type(), event->localPos(), event->windowPos(), event->screenPos(), event->button(), event->buttons(), event->modifiers());
 
-    QCPRange oldRange = yAxis->range();
-    QCustomPlot::mouseMoveEvent(event);
+    //mouse events and qcustom plot is in the same thread, in the case it would
+    //be called directly there would be a lot of drawings which take a lot of time
+    //there would be a serrious performance problem
+    QMetaObject::invokeMethod(this, "procesMouseMoveEvent", Qt::QueuedConnection);
 
-    //TODO:logharitmical axis
-    percent = (yAxis->range().lower - oldRange.lower) /  (oldRange.upper - oldRange.lower);
-
-    foreach(QCPAxis *axis, axisRect()->axes())
-    {
-        if (axis == xAxis || axis == yAxis)
-            continue;
-
-        double factor = (axis->range().upper - axis->range().lower) * percent;
-        axis->setRange(axis->range().lower + factor, axis->range().upper + factor);
-    }
     m_mouseHandled = true;
 }
 

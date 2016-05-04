@@ -65,6 +65,7 @@ Plot::Plot(Measurement *measurement) :
     grabGesture( Qt::PinchGesture );
 }
 
+//taked from http://www.qcustomplot.com/index.php/support/forum/638
 bool Plot::event(QEvent *event)
 {
     switch( event->type() )
@@ -75,47 +76,51 @@ bool Plot::event(QEvent *event)
             if( QGesture *pinch = gestureEve->gesture(Qt::PinchGesture) )
             {
                 QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
-                qreal scaleFactor = pinchEve->totalScaleFactor( );
-                if( scaleFactor > 1.0 )
-                    scaleFactor *= 5;
-                else
-                    scaleFactor = 1 / scaleFactor * -5;
-
-                qDebug() << "pinch center" << pinchEve->lastCenterPoint();
+                qreal scaleFactor = pinchEve->lastScaleFactor( );
                 QWheelEvent *wheelEve = new QWheelEvent(
-                    pinchEve->lastCenterPoint(), scaleFactor, Qt::NoButton, Qt::NoModifier, Qt::Vertical );
-                wheelEvent( wheelEve);
+                    pinchEve->lastCenterPoint(),
+                    (scaleFactor > 1.0) ? scaleFactor * 10 : -10 / scaleFactor,
+                    Qt::NoButton,
+                    Qt::NoModifier,
+                    Qt::Vertical);
+                wheelEvent(wheelEve);
+                event->accept();
+                return true;
             }
-            return true;
         }
-        /*case QEvent::TouchBegin:
+        case QEvent::TouchBegin:
         case QEvent::TouchUpdate:
         case QEvent::TouchEnd:
         {
             QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
-            QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints( );
-            if( touchPoints.count( ) == 1 )
+            if(touchEvent->touchPoints( ).count( ) == 1)
             {
-                const QTouchEvent::TouchPoint &touchPoint0 = touchPoints.first( );
-                m_currentTouchPointPos = touchPoint0.pos();
                 QMouseEvent *mouseEve = new QMouseEvent(
-                    QEvent::MouseButtonPress, m_currentTouchPointPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-
-                if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointPressed )
-                    mousePressEvent( mouseEve );
-                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointMoved )
-                    mouseMoveEvent( mouseEve );
-                else if( touchEvent->touchPointStates() == (Qt::TouchPointStates)Qt::TouchPointReleased )
-                    mouseReleaseEvent( mouseEve );
+                    QEvent::MouseButtonPress,
+                    touchEvent->touchPoints().first().pos(),
+                    Qt::LeftButton,
+                    Qt::LeftButton,
+                    Qt::NoModifier);
+                switch (touchEvent->touchPointStates())
+                {
+                    case Qt::TouchPointPressed:
+                        this->mousePressEvent(mouseEve);
+                    break;
+                    case Qt::TouchPointMoved:
+                        this->mouseMoveEvent(mouseEve);
+                    break;
+                    case Qt::TouchPointReleased:
+                        this->mouseReleaseEvent(mouseEve);
+                    break;
+                }
             }
             return true;
-        }*/
+        }
         default:
             break;
     }
     return QCustomPlot::event(event);
 }
-
 
 bool Plot::_GetClosestX(double in, int &out)
 {

@@ -47,10 +47,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     m_console->setVisible(m_settings.GetConsole());
 
-#if defined(Q_OS_ANDROID)
-    this->showMaximized();
-#endif
-
     QRect desktopRect = QApplication::desktop()->screenGeometry();
     if (desktopRect .width() > 600)
         setMinimumWidth(600);
@@ -156,7 +152,7 @@ void MainWindow::_UpdateWindowTitle()
         m_currentFileName +
         ((!m_savedState || !m_savedValues) ? "*" : "") +
         " - " +
-        m_context.m_applicationName
+        TARGET
     );
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)

@@ -2,7 +2,7 @@
 #include <QSize>
 
 GlobalSettings::GlobalSettings() :
-    m_settings("eMole", "ArduinoToGraph")
+    m_settings("eMole", TARGET)
 {
 
 }
@@ -126,7 +126,12 @@ void GlobalSettings::SetConsole(bool visible)
 
 bool GlobalSettings::GetMainWindowMaximized()
 {
+#if defined(Q_OS_ANDROID)
+    return _Get(Key_MainWindowMaximized, true).toBool();
+#else
     return _Get(Key_MainWindowMaximized, false).toBool();
+#endif
+
 }
 void GlobalSettings::SetMainWindowMaximized(bool maximised)
 {

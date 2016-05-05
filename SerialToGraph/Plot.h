@@ -41,6 +41,8 @@ class Plot : public QCustomPlot
     QCPItemLine *m_markerLine;
     bool m_mouseHandled;
     QTime m_clickTime;
+    QMouseEvent *m_mouseMoveEvent;
+    QWheelEvent *m_wheelEvent;
 
 protected:
     virtual void mousePressEvent(QMouseEvent *event);
@@ -86,6 +88,8 @@ public slots:
 private slots:
     void selectionChanged();
     void setGraphPointPosition(int position);
+    void procesMouseMoveEvent();
+    void processWheelEvent();
 
 };
 

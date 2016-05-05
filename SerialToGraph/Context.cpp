@@ -15,7 +15,6 @@ Context::Context(QVector<Measurement *> &measurements,
         hw::HwSink &hwSink,
         GlobalSettings &settings,
         MainWindow &mainWindow):
-    m_applicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName()),
     m_settings(settings),
     m_measurements(measurements),
     m_hwSink(hwSink),

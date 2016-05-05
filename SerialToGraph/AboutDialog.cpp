@@ -14,7 +14,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     QTextBrowser *tb = new QTextBrowser(this);
     tb->setOpenLinks(false);
-    tb->append("<html><b>ArduinoToGraph</b</html>");
+    tb->append(QString("<html><b>%1</b</html>").arg(TARGET));
     tb->append("");
     tb->append(QString(tr("Version: %1")).arg(GIT_VERSION));
     tb->append("Copiright © 2016 <html><a href='http://www.e-mole.cz'>e-Mole</a></html>");

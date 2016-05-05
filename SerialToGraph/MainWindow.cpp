@@ -152,7 +152,7 @@ void MainWindow::_UpdateWindowTitle()
         m_currentFileName +
         ((!m_savedState || !m_savedValues) ? "*" : "") +
         " - " +
-        m_context.m_applicationName
+        TARGET
     );
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)

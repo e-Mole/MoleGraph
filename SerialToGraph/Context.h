@@ -20,7 +20,6 @@ public:
         GlobalSettings &settings,
         MainWindow &mainWindow);
 
-    QString m_applicationName;
     GlobalSettings &m_settings;
     QVector<Measurement *> &m_measurements;
     hw::HwSink &m_hwSink;

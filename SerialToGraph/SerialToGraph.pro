@@ -3,7 +3,8 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
-TARGET = ArduinoToGraph
+TARGET = MoleGraph
+DEFINES += TARGET=\\\"$$TARGET\\\"
 TEMPLATE = app
 
 VERSION = 1
@@ -121,3 +122,10 @@ QT += androidextras
 
 RESOURCES += \
     translations.qrc
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/res/values/libs.xml \
+    android/build.gradle
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

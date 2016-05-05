@@ -7,8 +7,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setApplicationName("ArduinoToGraph");
-    a.setApplicationVersion("0.1");
+    a.setApplicationName(TARGET);
+    a.setApplicationVersion("1");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Test helper");

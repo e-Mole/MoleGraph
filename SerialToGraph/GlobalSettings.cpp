@@ -2,7 +2,7 @@
 #include <QSize>
 
 GlobalSettings::GlobalSettings() :
-    m_settings("eMole", "ArduinoToGraph")
+    m_settings("eMole", TARGET)
 {
 
 }

@@ -30,7 +30,7 @@ QModelIndex FileModel::Index(const QString &path) const
 
 QModelIndex FileModel::Mkdir(const QModelIndex &parent, const QString &name)
 {
-    return mapFromSource(m_model->mkdir(parent, name));
+    return mapFromSource(m_model->mkdir(mapToSource(parent), name));
 }
 
 QString FileModel::FilePath(const QModelIndex &index) const

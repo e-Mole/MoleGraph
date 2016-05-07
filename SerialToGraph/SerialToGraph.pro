@@ -120,6 +120,8 @@ android{
 QT += androidextras
 }
 
+win32:RC_ICONS += MoleGraph.ico
+
 RESOURCES += \
     translations.qrc
 

@@ -10,7 +10,7 @@ Component.prototype.createOperations = function()
 
     if (systemInfo.productType === "windows") {
         component.addOperation("CreateShortcut", "@TargetDir@/MoleGraph.exe", "@StartMenuDir@/MoleGraph.lnk",
-            "workingDirectory=@TargetDir@", "iconPath=%SystemRoot%/system32/SHELL32.dll",
-            "iconId=2");
+            "workingDirectory=@TargetDir@", "@TargetDir@/MoleGraph.exe",
+            "iconId=1");
     }
 }

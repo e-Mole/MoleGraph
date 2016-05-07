@@ -1,5 +1,6 @@
 #include "OwnFileDialog.h"
 #include <bases/FormDialogBase.h>
+#include <file/AddDirDialog.h>
 #include <file/FileModel.h>
 #include <MyMessageBox.h>
 #include <QCommonStyle>
@@ -27,29 +28,6 @@
 
 namespace file
 {
-
-namespace{
-class AddDirDialog : public bases::FormDialogBase
-{
-    QLineEdit *m_dirName;
-
-    bool BeforeAccept(){ return true; }
-
-public:
-    AddDirDialog(QWidget *parent) :
-        bases::FormDialogBase(parent, tr("Add Directory")),
-        m_dirName(new QLineEdit(this))
-    {
-        m_formLayout->addRow(tr("Directory Name"), m_dirName);
-
-    }
-    QString GetDirName() {return m_dirName->text();}
-signals:
-
-public slots:
-};
-
-} //namespace
 
 OwnFileDialog::OwnFileDialog(
     QWidget *parent,

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>languages/serialToGraph_cs.qm</file>
+        <file>MoleGraph.png</file>
     </qresource>
 </RCC>

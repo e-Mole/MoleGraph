@@ -9,6 +9,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setApplicationName(TARGET);
     a.setApplicationVersion("1");
+#ifdef __linux__
+    a.setWindowIcon(QIcon(":MoleGraph.png"));
+#endif
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Test helper");

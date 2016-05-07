@@ -11,7 +11,7 @@ rmdir %1\installer /q /s
 mkdir %1\installer
 xcopy /E Installer\* %1\installer 
 cd %1\installer
-copy ..\MoleGraph.exe packages\cz.emole\data\MoleGrap.exe
+copy ..\MoleGraph.exe packages\cz.emole\data\MoleGraph.exe
 windeployqt --no-quick-import --no-translations --no-system-d3d-compiler --no-webkit2 --no-angle --no-opengl-sw packages\cz.emole\data\
 binarycreator --offline-only -c config/config.xml -p packages MoleGraph-Installer
 cd %curdir%

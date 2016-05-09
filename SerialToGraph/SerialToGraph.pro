@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     file/FileDialog.cpp \
     file/NativeFileDialog.cpp \
     file/OwnFileDialog.cpp \
-    file/FileModel.cpp
+    file/FileModel.cpp \
+    file/AddDirDialog.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -102,7 +103,8 @@ HEADERS  += MainWindow.h \
     file/FileDialog.h \
     file/NativeFileDialog.h \
     file/OwnFileDialog.h \
-    file/FileModel.h
+    file/FileModel.h \
+    file/AddDirDialog.h
 
 CONFIG += mobility
 CONFIG += c++11
@@ -120,12 +122,18 @@ android{
 QT += androidextras
 }
 
+win32:RC_ICONS += MoleGraph.ico
+
 RESOURCES += \
     translations.qrc
 
 DISTFILES += \
     android/AndroidManifest.xml \
     android/res/values/libs.xml \
-    android/build.gradle
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

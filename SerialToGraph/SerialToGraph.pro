@@ -15,7 +15,7 @@ QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
 
 QT       += core gui bluetooth widgets printsupport
 
-GIT_VERSION = $$system(git describe --always --tags)
+GIT_VERSION = $$system(git describe --always --tags --dirty)
 DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
 
 SOURCES += main.cpp\

@@ -17,7 +17,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     tb->append(QString("<html><b>%1</b</html>").arg(TARGET));
     tb->append("");
     tb->append(QString(tr("Version: %1")).arg(GIT_VERSION));
-    tb->append("Copiright © 2016 <html><a href='http://www.e-mole.cz'>e-Mole</a></html>");
+    tb->append("Copyright © 2016 <html><a href='http://www.e-mole.cz'>e-Mole</a></html>");
     tb->append(QString(tr("Used libraries: %1, %2")).
         arg(QString("<html><a href='http://www.qt.io'>Qt %1</a></html>").arg(QT_VERSION_STR)).
         arg("<html><a href='http://www.qcustomplot.com'>QCustomPlot</a></html>")

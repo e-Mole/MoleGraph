@@ -3,11 +3,11 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
-versionTarget.target = git_version.h
+versionTarget.target = GitVersion.h
 versionTarget.depends = FORCE
 win32:versionTarget.commands = $$PWD/getGitVersion.bat
 else:versionTarget.commands = $$PWD/getGitVersion.sh $$PWD
-PRE_TARGETDEPS += git_version.h
+PRE_TARGETDEPS += GitVersion.h
 QMAKE_EXTRA_TARGETS += versionTarget
 
 TARGET = MoleGraph
@@ -108,8 +108,7 @@ HEADERS  += MainWindow.h \
     file/NativeFileDialog.h \
     file/OwnFileDialog.h \
     file/FileModel.h \
-    file/AddDirDialog.h \
-    GitVerson.h
+    file/AddDirDialog.h
 
 CONFIG += mobility
 CONFIG += c++11

@@ -3,6 +3,7 @@
 #include <QTextBrowser>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <GitVersion.h> //will be generated in build directory
 
 #define TEXT(...) #__VA_ARGS__
 

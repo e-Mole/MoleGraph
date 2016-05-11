@@ -1,4 +1,5 @@
 @echo off
+cd %1
 set filename= GitVersion.h
 echo #ifndef VERSION_H > %filename%
 echo #define VERSION_H >> %filename%

@@ -5,7 +5,7 @@
 #-------------------------------------------------
 versionTarget.target = GitVersion.h
 versionTarget.depends = FORCE
-win32:versionTarget.commands = $$PWD/getGitVersion.bat
+win32:versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
 else:versionTarget.commands = $$PWD/getGitVersion.sh $$PWD
 PRE_TARGETDEPS += GitVersion.h
 QMAKE_EXTRA_TARGETS += versionTarget

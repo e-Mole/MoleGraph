@@ -107,7 +107,8 @@ HEADERS  += MainWindow.h \
     file/NativeFileDialog.h \
     file/OwnFileDialog.h \
     file/FileModel.h \
-    file/AddDirDialog.h
+    file/AddDirDialog.h \
+    GitVerson.h
 
 CONFIG += mobility
 CONFIG += c++11

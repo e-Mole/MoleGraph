@@ -51,6 +51,5 @@ void setup()
 
 void loop() 
 {
-  //
-  arduinoToSerial.InLoop();
+  arduinoToSerial.CheckInput();
 }

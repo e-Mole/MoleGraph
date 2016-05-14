@@ -144,8 +144,32 @@ namespace
     TIMSK1 &= ~(1 << OCIE1A);  // disable timer compare interrupt
     g_measurementInProgress = false;
   }
+} //namespace
 
-  void CheckInput()
+
+ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
+{
+  //CheckInput();
+  if (g_type == typeOnDemand)
+  {
+    g_timeFromStart += 1.0/62500.0;
+    if (!g_sampleRequest)  
+      return;
+
+     g_sampleRequest = false;
+  }
+  else //type periodical
+  {
+    if (0 != g_requiredTime && (++g_currentTime) != g_requiredTime)
+      return;
+    g_currentTime = 0;
+  }
+    
+  g_updateFunction();  
+  SendData(g_type == typeOnDemand);
+}
+
+void ArduinoToSerial::CheckInput()
   {
     if (0 == Serial.available())
       return;
@@ -215,31 +239,7 @@ namespace
     break;    
     }
   }
-} //namespace
-
-
-ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
-{
-  CheckInput();
-  if (g_type == typeOnDemand)
-  {
-    g_timeFromStart += 1.0/62500.0;
-    if (!g_sampleRequest)  
-      return;
-
-     g_sampleRequest = false;
-  }
-  else //type periodical
-  {
-    if (0 != g_requiredTime && (++g_currentTime) != g_requiredTime)
-      return;
-    g_currentTime = 0;
-  }
-    
-  g_updateFunction();  
-  SendData(g_type == typeOnDemand);
-}
-
+  
 void ArduinoToSerial::Setup()
 { 
   Serial.begin(115200);

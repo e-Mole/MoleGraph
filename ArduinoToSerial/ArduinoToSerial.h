@@ -23,5 +23,6 @@ public:
   void StartMeasurement();
   void StopMeasurement();
   bool IsMeasurementInProgress();
+  void CheckInput();
 };
 #endif //_ARDUINO_TO_SERIAL_H_

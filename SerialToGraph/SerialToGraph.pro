@@ -3,6 +3,13 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
+versionTarget.target = GitVersion.h
+versionTarget.depends = FORCE
+win32:versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
+else:versionTarget.commands = $$PWD/getGitVersion.sh $$PWD
+PRE_TARGETDEPS += GitVersion.h
+QMAKE_EXTRA_TARGETS += versionTarget
+
 TARGET = MoleGraph
 DEFINES += TARGET=\\\"$$TARGET\\\"
 TEMPLATE = app
@@ -14,9 +21,6 @@ QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
 
 QT       += core gui bluetooth widgets printsupport
-
-GIT_VERSION = $$system(git describe --always --tags)
-DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
 
 SOURCES += main.cpp\
     MainWindow.cpp \

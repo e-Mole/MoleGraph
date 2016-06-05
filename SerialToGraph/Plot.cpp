@@ -156,7 +156,7 @@ bool Plot::_GetClosestX(double in, int &out)
             itLo.key() : itHi.key();
     }
 
-    out = m_horizontalChannel->GetLastValueIndex(xValue);
+    out = m_horizontalChannel->GetLastClosestValueIndex(xValue);
     return out != -1;
 }
 

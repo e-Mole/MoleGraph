@@ -270,12 +270,20 @@ QSize ChannelBase::GetMinimumSize()
     return m_widget->GetMinimumSize();
 }
 
-int ChannelBase::GetLastValueIndex(double value)
+//I can't use == because same doubles have not to be exactly the same
+int ChannelBase::GetLastClosestValueIndex(double value)
 {
+    double closestValue = 0;
+    int closestIndex = -1;
     for (int i = m_values.count() -1; i >=0; --i)
     {
-        if (GetValue(i) == value)
-            return i;
+        double valueOnIndex = GetValue(i);
+        if (fabs(valueOnIndex - value) < qFabs(valueOnIndex - closestValue))
+        {
+            closestValue = valueOnIndex;
+            closestIndex = i;
+        }
     }
-    return -1;
+
+    return closestIndex;
 }

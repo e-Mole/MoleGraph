@@ -134,7 +134,7 @@ public:
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
-    int GetLastValueIndex(double value);
+    int GetLastClosestValueIndex(double value);
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
     void UpdateWidgetVisiblity();
 

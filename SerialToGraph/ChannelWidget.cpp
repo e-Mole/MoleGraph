@@ -76,23 +76,22 @@ void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);
-
-    /*style += QString("border: %1px solid rgb(%2, %3, %4);").
-        arg(BORDER).
+#if defined(Q_OS_ANDROID)
+    style += QString("color: rgb(%1, %2, %3);").
         arg(color.red()).
         arg(color.green()).
         arg(color.blue());
-    */
+#else
+    QPalette palette = this->palette();
+    palette.setColor(foregroundRole(), color);
+    palette.setColor(backgroundRole(), color);
+    setPalette(palette);
+#endif
 
     style += QString("padding: %1px %1px %1px %1px; }").
         arg(PADDING);
 
     setStyleSheet(style);
-
-    QPalette palette = this->palette();
-    palette.setColor(foregroundRole(), color);
-    palette.setColor(backgroundRole(), color);
-    setPalette(palette);
 }
 
 void ChannelWidget::ValueLabel::SetBackColor(const QColor &backColor)

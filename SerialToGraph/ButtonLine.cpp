@@ -173,7 +173,7 @@ void ButtonLine::fileMenuButtonPressed()
     m_fileMenu->setStyleSheet(
         QString(
             "QMenu { menu-scrollable: 1; } "
-            "QMenu::scroller { height: %1px; color: red; } "
+            "QMenu::scroller { height: %1px; background-color: red;} "
         ).arg(physicalDpiY() / 4)
     );
 #if defined(Q_OS_ANDROID)

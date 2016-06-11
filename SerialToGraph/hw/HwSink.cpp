@@ -221,7 +221,7 @@ void HwSink::portOpeningFinished()
         protocolIdTimer = new QTimer(this);
         protocolIdTimer->setSingleShot(true);
         connect(protocolIdTimer, SIGNAL(timeout()), this, SLOT(readyRead()));
-        protocolIdTimer->start(1000); //it should be enough to get response
+        protocolIdTimer->start(100); //it should be enough to get response
     }
     else
     {

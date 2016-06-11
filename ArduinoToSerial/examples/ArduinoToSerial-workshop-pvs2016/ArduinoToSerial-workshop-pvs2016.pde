@@ -40,7 +40,7 @@ void setup()
 
 void loop() 
 {
-  arduinoToSerial.InLoop();
+  arduinoToSerial.CheckInput();
   if (arduinoToSerial.IsMeasurementInProgress())
     g_distance = get_CM_Distance(TRIG_PIN,ECHO_PIN) ;
 }

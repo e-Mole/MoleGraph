@@ -64,7 +64,7 @@ void setup()
 
 void loop() 
 {
-  arduinoToGraph.InLoop();
+  arduinoToGraph.CheckInput();
 
   tare_Button();
   

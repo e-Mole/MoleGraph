@@ -23,6 +23,7 @@
 #include <Serializer.h>
 #include <sstream>
 
+#include <QList>
 using namespace atog;
 
 #define INITIAL_DRAW_PERIOD 50
@@ -189,17 +190,13 @@ bool Measurement::_IsCompleteSetInQueue()
     if (m_queue.size() == 0)
         return false;
 
-    bool conatansCheckSum = (m_queue[0] >> 6) & 1;
-
     if ((m_queue[0] & COMMAND_MASK) != 0) //a command present
-        return conatansCheckSum ? m_queue.size() > 1 : true;
+        return m_queue.size() > 1;
 
-    unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE; //Header + tracked channels data
+    unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE + 1; //Header + tracked channels data + checksum
     if (m_type == OnDemand)
         size += TIMESTAMP_SIZE;
 
-    if (conatansCheckSum)
-        size += 1; //checkSum
     return (unsigned)m_queue.size() >= size;
 }
 

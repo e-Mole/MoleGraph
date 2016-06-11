@@ -11,11 +11,10 @@ class MyMessageBox : public QObject
 
     static void _Ok(QWidget *parent, QString const &message, QMessageBox::Icon icon);
 public:
-    enum StandardButton
+    enum QuestionReturnValue
     {
-        Ok                 = 0x00000400,
-        Yes                = 0x00004000,
-        No                 = 0x00010000,
+        Yes = true,
+        No = false,
     };
 
     static bool question(QWidget *parent, QString const &message, QString const &yesText);

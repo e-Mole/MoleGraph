@@ -141,7 +141,7 @@ void OwnFileDialog::fileSelected()
             return;
         }
 
-        if (MyMessageBox::StandardButton::No ==
+        if (MyMessageBox::QuestionReturnValue::No ==
             MyMessageBox::question(
                 this,
                 tr("Directory already contains file with the same name. Rewrite it?"),

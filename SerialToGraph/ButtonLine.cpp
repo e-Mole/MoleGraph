@@ -170,7 +170,12 @@ void ButtonLine::fileMenuButtonPressed()
     //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
     font.setPixelSize(fontSize < 15 ? 15 : fontSize);
     m_fileMenu->setFont(font);
-
+    m_fileMenu->setStyleSheet(
+        QString(
+            "QMenu { menu-scrollable: 1; } "
+            "QMenu::scroller { height: %1px; background-color: red;} "
+        ).arg(physicalDpiY() / 4)
+    );
 #if defined(Q_OS_ANDROID)
     //m_fileMenu->setStyleSheet(
     //    "QMenu::item { border: 8px solid transparent; }");

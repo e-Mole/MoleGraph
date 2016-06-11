@@ -9,5 +9,5 @@
     <TargetDir>@HomeDir@/e-Mole</TargetDir>
     <InstallerWindowIcon>molegraph</InstallerWindowIcon>
     <InstallerApplicationIcon>molegraph</InstallerApplicationIcon>
-    <RunProgram>@TargetDir@/MoleGraph.exe</RunProgram>
+    <RunProgram>@TargetDir@/MoleGraph</RunProgram>
 </Installer>

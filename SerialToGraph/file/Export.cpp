@@ -4,6 +4,7 @@
 #include <Measurement.h>
 #include <Plot.h>
 #include <QFile>
+#include <QLocale>
 #include <QString>
 #include <string>
 namespace file
@@ -121,6 +122,8 @@ QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
     )
         return ((SampleChannel *)channel)->GetValueTimestamp(sampleNr);
 
-    return QString("%1").arg(channel->GetValue(sampleNr));
+    QLocale locale(QLocale::system());
+    locale.setNumberOptions(QLocale::OmitGroupSeparator);
+    return locale.toString(channel->GetValue(sampleNr));
 }
 } //namespace file

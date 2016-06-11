@@ -78,15 +78,15 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
                 if (!channel->IsActive())
                     continue;
 
-                if (channel->GetValueCount() <= sampleNr)
-                    continue;
-
-                haveData = true;
-
                 if (first)
                     first = false;
                 else
                     lineContent.append(";");
+
+                if (channel->GetValueCount() <= sampleNr)
+                    continue;
+
+                haveData = true;
 
                 SampleChannel *sampleChannel = m->GetSampleChannel();
                 if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)

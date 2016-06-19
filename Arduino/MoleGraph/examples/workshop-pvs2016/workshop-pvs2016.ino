@@ -1,4 +1,4 @@
-#include "ArduinoToSerial.h"
+#include "MoleGraph.h"
 
 #define THERMISTOR_PIN 3
 #define PHOTORESISTOR_PIN 1
@@ -8,7 +8,7 @@
 
 unsigned counter =  0;
 int g_distance = 0;
-ArduinoToSerial arduinoToSerial;
+MoleGraph moleGraph;
 
 void UpdateGraphChannels(void)
 {
@@ -16,23 +16,24 @@ void UpdateGraphChannels(void)
     int raw1 = analogRead(THERMISTOR_PIN);
     float celsius = -0.1111*raw1 + 102.69;
     float test_temp = round(celsius*10);
-    arduinoToSerial.SetChannelValue(1, test_temp/10);
-    //arduinoToSerial.SetChannelValue(1, celsius);
-    //arduinoToSerial.SetChannelValue(2, test_temp/10);
-    //arduinoToSerial.SetChannelValue(8, raw);
+    moleGraph.SetChannelValue(1, test_temp/10);
+    //moleGraph.SetChannelValue(1, celsius);
+    //moleGraph.SetChannelValue(2, test_temp/10);
+    //moleGraph.SetChannelValue(8, raw);
 
     //LIGHT (PHOTORESISITOR) - CH2
     int raw2 = analogRead(PHOTORESISTOR_PIN);
-    arduinoToSerial.SetChannelValue(2, map(raw2, 70, 990, 0, 255));
+    moleGraph.SetChannelValue(2, map(raw2, 70, 990, 0, 255));
     
     //DISTANCE (ULTRASOUND) - CH3
-    arduinoToSerial.SetChannelValue(3, g_distance); 
+    moleGraph.SetChannelValue(3, g_distance); 
 }
 
 void setup() 
 {    
-  arduinoToSerial.Setup(&UpdateGraphChannels);
-
+  moleGraph.Setup();
+  moleGraph.SetSendingCallback(&UpdateGraphChannels);
+  
   //sensors settings
    // for US sensor on trigpin
    digitalWrite(TRIG_PIN, LOW );  
@@ -40,8 +41,8 @@ void setup()
 
 void loop() 
 {
-  arduinoToSerial.InLoop();
-  if (arduinoToSerial.IsMeasurementInProgress())
+  moleGraph.CheckInput();
+  if (moleGraph.IsMeasurementInProgress())
     g_distance = get_CM_Distance(TRIG_PIN,ECHO_PIN) ;
 }
 

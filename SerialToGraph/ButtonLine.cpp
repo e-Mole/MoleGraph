@@ -35,6 +35,7 @@
 #include <QWidget>
 
 #define ATOG_FILE_EXTENSION "atog"
+#define MOGR_FILE_EXTENSION "mogr"
 
 #if defined(Q_OS_ANDROID)
 #   define FONT_DPI_FACTOR 7
@@ -441,7 +442,7 @@ void ButtonLine::_OpenFile(bool values)
             this,
             "Open File",
             _GetRootDir(),
-            QString("*.%1").arg(ATOG_FILE_EXTENSION),
+            QString("*.%1; *.%2").arg(MOGR_FILE_EXTENSION).arg(ATOG_FILE_EXTENSION),
             m_context.m_settings.GetLimitDir()
         );
 
@@ -479,7 +480,7 @@ void ButtonLine::_SaveFile(const QString &fileName, bool values)
 
 void ButtonLine::saveAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, true);
+    QString fileName = _GetFileNameToSave(MOGR_FILE_EXTENSION, true);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, true);
@@ -489,7 +490,7 @@ void ButtonLine::saveAsFile()
 
 void ButtonLine::saveWithoutValuesAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, false);
+    QString fileName = _GetFileNameToSave(MOGR_FILE_EXTENSION, false);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, false);

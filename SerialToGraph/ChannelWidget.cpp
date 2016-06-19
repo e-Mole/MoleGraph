@@ -6,10 +6,10 @@
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(const QString &title, QWidget *parent) :
+ChannelWidget::ChannelWidget(const QString &title, QWidget *parent, unsigned sizeFactor) :
     QWidget(parent),
     m_title(new QLabel(title, this)),
-    m_valueLabel(new ValueLabel("", this))
+    m_valueLabel(new ValueLabel("", this, sizeFactor))
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -18,19 +18,24 @@ ChannelWidget::ChannelWidget(const QString &title, QWidget *parent) :
     layout->setSpacing(1);
 }
 
-ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent):
+ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor):
     QLabel(text, parent)
 {
     setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
 
     setMargin(1);
+    SetMinimumFontSize(sizeFactor);
+}
 
+void ChannelWidget::ValueLabel::SetMinimumFontSize(unsigned sizeFactor)
+{
+    float fSizeFactor = (float)sizeFactor / 100;
     //setFontPointF doesn't work properly on android
     QFont f = font();
-    unsigned fontSize = (float)physicalDpiY() / 8;
+    unsigned fontSize = (float)physicalDpiY() / 8 * fSizeFactor;
 
     //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
-    f.setPixelSize(fontSize < 17 ? 17 : fontSize);
+    f.setPixelSize(fontSize < 17 * fSizeFactor ? 17 * fSizeFactor : fontSize);
     setFont(f);
 
     QSize minSize = GetLongestTextSize();

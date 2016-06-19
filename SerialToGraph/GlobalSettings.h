@@ -25,6 +25,7 @@ class GlobalSettings
         Key_MenuOrientation,
         Key_MenuOnDemand,
         Key_MenuIsShown,
+        Key_ChannelSizeFactor,
     };
 
     QString _GetStringKey(Key key) const;
@@ -65,6 +66,8 @@ public:
     void SetMenuOnDemand(bool onDemand);
     bool GetMenuIsShown();
     void SetMenuIsShown(bool isShown);
+    int GetChannelSizeFactor();
+    void SetChannelSizeFactor(int multiplier);
 };
 
 #endif // GLOBALSETTINGS_H

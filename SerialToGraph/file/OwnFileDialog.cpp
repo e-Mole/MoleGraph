@@ -23,6 +23,8 @@
 #include <QWidget>
 
 #if defined(Q_OS_ANDROID)
+#   include <QtAndroid>
+#   include <QtAndroidExtras/QAndroidJniEnvironment>
 #   include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
@@ -200,6 +202,81 @@ QString OwnFileDialog::_GetFilePath()
         return m_dir + "/" + m_fileName->text() + m_extension->text();
 }
 
+static QString GetDir(QString const &lastDir)
+{
+#if defined(Q_OS_ANDROID)
+    //if (dir == "./")
+    {
+        QAndroidJniObject activity = QtAndroid::androidActivity();
+        QAndroidJniObject appContext =
+            activity.callObjectMethod(
+                "getApplicationContext",
+                "()Landroid/content/Context;"
+            );
+
+        QAndroidJniObject storageDirectories =
+            appContext.callObjectMethod(
+                "getExternalFilesDirs",
+                "(Ljava/lang/String;)[Ljava/io/File;",
+                (jobject)0
+            );
+
+        jobjectArray objectArray = storageDirectories.object<jobjectArray>();
+        QAndroidJniEnvironment qjniEnv;
+        const int n = qjniEnv->GetArrayLength(objectArray);
+        QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, n-1);
+        if (!storageDirectory.isValid())
+        {
+            QAndroidJniObject oldStyleStorageDirectory =
+                QAndroidJniObject::callStaticObjectMethod(
+                    "android/os/Environment",
+                    "getExternalStorageDirectory",
+                    "()Ljava/io/File;"
+                );
+            qDebug() << "ExternalFilesDir filled by getExternalStorageDirectory: " <<  oldStyleStorageDirectory.toString();
+
+            return oldStyleStorageDirectory.toString();
+        }
+
+        if (storageDirectory.callMethod<jboolean>("exists"))
+        {
+            qDebug() << "ExternalFilesDir: " <<  storageDirectory.toString();
+            return storageDirectory.toString();
+        }
+
+        /*usually directory is created by getExternalStorageDirectory - just for sure*/
+        if (storageDirectory.callMethod<jboolean>("mkdirs"))
+        {
+            qDebug() << "ExternalFilesDir created: " <<  storageDirectory.toString();
+            return storageDirectory.toString();
+        }
+    }
+#endif
+
+    return lastDir;
+}
+
+static void RegisterFile(QString const &path)
+{
+#if defined(Q_OS_ANDROID)
+
+        QAndroidJniObject activity = QtAndroid::androidActivity();
+        QAndroidJniEnvironment qjniEnv;
+        jobjectArray jArray =
+            (jobjectArray) qjniEnv->NewObjectArray(1, qjniEnv->FindClass("java/lang/String"), (jobject)0);
+        QAndroidJniObject jPath = QAndroidJniObject::fromString(path);
+        qjniEnv->SetObjectArrayElement(jArray, 0, jPath.object<jstring>());
+        QAndroidJniObject::callStaticMethod<void>(
+            "android/media/MediaScannerConnection",
+            "scanFile",
+            "(Landroid/content/Context;[Ljava/lang/String;[Ljava/lang/String;Landroid/media/MediaScannerConnection$OnScanCompletedListener;)V",
+            activity.object<jobject>(),
+            jArray,
+            (jobject)0,
+            (jobject)0
+        );
+#endif
+}
 QString OwnFileDialog::ExecuteFileDialog(
         Type type,
         QWidget *parent,
@@ -208,22 +285,15 @@ QString OwnFileDialog::ExecuteFileDialog(
         const QString &filter,
         const QString &limit)
 {
-    QString directory = dir;
-#if defined(Q_OS_ANDROID)
-    if (dir == "./")
-    {
-        QAndroidJniObject storageDirectory =
-            QAndroidJniObject::callStaticObjectMethod(
-                "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
-            );
-        directory = storageDirectory.toString();
-    }
-#endif
-
     OwnFileDialog * dialog = new OwnFileDialog(
-        parent, type, caption, directory, filter, limit);
+        parent, type, caption, GetDir(dir), filter, limit);
     if (QDialog::Accepted == dialog->exec())
-        return dialog->_GetFilePath();
+    {
+        QString path = dialog->_GetFilePath();
+        RegisterFile(path);
+        return path;
+    }
+
     else
         return "";
 }

@@ -12,9 +12,11 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFormLayout>
+#include <QLabel>
 #include <QLocale>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
     bases::FormDialogBase(parent, tr("Settings")),
@@ -36,9 +38,22 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     _InitHideAllChannels();
     _InitializeLimitDir();
     _InitializeButtonLines();
+    _InitializeChannelSizeMultiplier();
     _InitializeShowConsole();
 }
 
+void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
+{
+    QHBoxLayout *layout = new QHBoxLayout();
+
+    m_channelSizeFactor = new QSpinBox();
+    m_channelSizeFactor->setMinimum(50);
+    m_channelSizeFactor->setMaximum(500);
+    m_channelSizeFactor->setValue(m_settings.GetChannelSizeFactor());
+    layout->addWidget(m_channelSizeFactor,1);
+    layout->addWidget(new QLabel("\%"));
+    m_formLayout->addRow(tr("Channel size factor"), layout);
+}
 void GlobalSettingsDialog::_InitializeButtonLines()
 {
     m_menuOrientation = new QComboBox(this);
@@ -185,6 +200,12 @@ bool GlobalSettingsDialog::BeforeAccept()
     {
         m_settings.SetMenuOrientation((Qt::Orientation)m_menuOrientation->currentData().toInt());
         m_context.m_mainWindow.ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    }
+
+    if (m_settings.GetChannelSizeFactor() != m_channelSizeFactor->value())
+    {
+        m_settings.SetChannelSizeFactor(m_channelSizeFactor->value());
+        m_context.m_mainWindow.UpdateChannelSizeFactor();
     }
 
     return true;

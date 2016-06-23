@@ -41,6 +41,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "menu_on_demand";
     case Key_MenuIsShown:
         return "menu_is_shown";
+    case Key_ChannelSizeFactor:
+        return "channel_size_fctor";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -203,4 +205,13 @@ bool GlobalSettings::GetMenuIsShown()
 void GlobalSettings::SetMenuIsShown(bool isShown)
 {
     _Set(Key_MenuIsShown, isShown);
+}
+
+int GlobalSettings::GetChannelSizeFactor()
+{
+    return _Get(Key_ChannelSizeFactor, 100).toInt();
+}
+void GlobalSettings::SetChannelSizeFactor(int multiplier)
+{
+    _Set(Key_ChannelSizeFactor, multiplier);
 }

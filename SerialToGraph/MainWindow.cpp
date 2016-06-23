@@ -4,6 +4,7 @@
 #include <ButtonLine.h>
 #include <Context.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <Console.h>
 #include <Plot.h>
 #include <PortListDialog.h>
@@ -443,4 +444,11 @@ void MainWindow::ShowMenuButton(bool show)
     m_measurementTabs->setCornerWidget(show ? m_menuButton : NULL, Qt::TopLeftCorner);
     m_menuButton->setVisible(show);
     m_menuButton->repaint();
+}
+
+void MainWindow::UpdateChannelSizeFactor()
+{
+    foreach (Measurement *m, m_measurements)
+        foreach (ChannelBase *channel, m->GetChannels())
+            channel->GetWidget()->SetMinimumFontSize(m_settings.GetChannelSizeFactor());
 }

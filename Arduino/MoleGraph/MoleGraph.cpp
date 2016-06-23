@@ -1,5 +1,4 @@
-#include "ArduinoToSerial.h"
-
+#include "MoleGraph.h"
 
 #define VERSION "ATG_4" //arduino to graph version
 #define MESSAGE_SIZE 1 + sizeof(float)
@@ -169,7 +168,7 @@ ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
   SendData(g_type == typeOnDemand);
 }
 
-void ArduinoToSerial::CheckInput()
+void MoleGraph::CheckInput()
   {
     if (0 == Serial.available())
       return;
@@ -240,7 +239,7 @@ void ArduinoToSerial::CheckInput()
     }
   }
   
-void ArduinoToSerial::Setup()
+void MoleGraph::Setup()
 { 
   Serial.begin(115200);
   while (!Serial) 
@@ -249,32 +248,32 @@ void ArduinoToSerial::Setup()
   InitTimer();
 }
 
-void ArduinoToSerial::SetSendingCallback(void (*function)(void))
+void MoleGraph::SetSendingCallback(void (*function)(void))
 {
   g_updateFunction = function;
 }
 
-void ArduinoToSerial::SetMeasurementStartedCallback(void (*function)(void))
+void MoleGraph::SetMeasurementStartedCallback(void (*function)(void))
 {
   g_measurementStartedCallback = function;
 }
 
-void ArduinoToSerial::SetMeasurementStoppedCallback(void (*function)(void))
+void MoleGraph::SetMeasurementStoppedCallback(void (*function)(void))
 {
   g_measurementStoppedCallback = function;
 }
 
-void ArduinoToSerial::SetMeasurementPausedCallback(void (*function)(void))
+void MoleGraph::SetMeasurementPausedCallback(void (*function)(void))
 {
   g_measurementPausedCallback = function;
 }
 
-void ArduinoToSerial::SetMeasurementContinuedCallback(void (*function)(void))
+void MoleGraph::SetMeasurementContinuedCallback(void (*function)(void))
 {
   g_measurementContinuedCallback = function;
 }
 
-bool ArduinoToSerial::SetChannelValue(int channel, float value)
+bool MoleGraph::SetChannelValue(int channel, float value)
 {
   if (channel < 1 && channel > 8)
     return false;
@@ -284,7 +283,7 @@ bool ArduinoToSerial::SetChannelValue(int channel, float value)
   return true;
 }
 
-float ArduinoToSerial::GetChannelValue(int channel)
+float MoleGraph::GetChannelValue(int channel)
 {
   if (channel < 1 && channel > 8)
     return 0;
@@ -292,7 +291,7 @@ float ArduinoToSerial::GetChannelValue(int channel)
   return g_channels[channel - 1];
 }
 
-void ArduinoToSerial::SampleRequest()
+void MoleGraph::SampleRequest()
 {
   g_sampleRequest = true;
 }
@@ -303,17 +302,17 @@ void SendCommand(unsigned char commandId)
   Serial.write(checkSum);
 }
 
-void ArduinoToSerial::StartMeasurement()
+void MoleGraph::StartMeasurement()
 {
   SendCommand(INS_START);
 }
 
-void ArduinoToSerial::StopMeasurement()
+void MoleGraph::StopMeasurement()
 {
   SendCommand(INS_STOP);
 }
 
-bool ArduinoToSerial::IsMeasurementInProgress()
+bool MoleGraph::IsMeasurementInProgress()
 {
   return g_measurementInProgress;   
 }

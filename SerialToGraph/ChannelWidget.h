@@ -15,12 +15,13 @@ class ChannelWidget : public QWidget
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
     public:
-        ValueLabel(const QString &text, QWidget *parent);
-        void SetMimimumFontSize();
+        ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor);
+        void SetMimimumFontSize(unsigned sizeFactor);
         void SetColor(const QColor &color);
         void SetBackColor(const QColor &backColor);
         QSize GetSize(QString const &text);
         QSize GetLongestTextSize();
+        void SetMinimumFontSize(unsigned sizeFactor);
     };
 
     virtual void mousePressEvent(QMouseEvent * event);
@@ -30,13 +31,13 @@ class ChannelWidget : public QWidget
     ValueLabel *m_valueLabel;
 
 public:
-    ChannelWidget(const QString &title, QWidget* parent);
+    ChannelWidget(const QString &title, QWidget* parent, unsigned sizeFactor);
     void setTitle(QString const &title);
     void ShowValueWithUnits(QString const&value, const QString &units);
     QSize GetMinimumSize();
     void SetColor(QColor const &color);
     void SetBackColor(const QColor &backColor) {m_valueLabel->SetBackColor(backColor); }
-
+    void SetMinimumFontSize(unsigned sizeFactor) {m_valueLabel->SetMinimumFontSize(sizeFactor); }
 signals:
     void clicked();
     void sizeChanged();

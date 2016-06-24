@@ -6,7 +6,7 @@ MyMessageBox::MyMessageBox(QObject *parent) : QObject(parent)
 
 }
 
-bool MyMessageBox::question(QWidget *parent, QString const &message, QString const &yesText)
+bool MyMessageBox::question(QWidget *parent, QString const &message, QString const &yesText, QString const &noText)
 {
     QMessageBox mb(
        QMessageBox::Question, "", message, QMessageBox::Yes | QMessageBox::No, parent
@@ -15,7 +15,7 @@ bool MyMessageBox::question(QWidget *parent, QString const &message, QString con
     mb.setDefaultButton(QMessageBox::No);
     mb.setEscapeButton(QMessageBox::No);
     mb.setButtonText(QMessageBox::Yes, yesText);
-    mb.setButtonText(QMessageBox::No, tr("Cancel"));
+    mb.setButtonText(QMessageBox::No, noText.isEmpty() ? tr("Cancel") : noText);
     
     return QMessageBox::Yes == mb.exec();
 }

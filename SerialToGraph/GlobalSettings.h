@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
+#include <QStringList>
 
 class QSize;
 class GlobalSettings
@@ -26,12 +27,16 @@ class GlobalSettings
         Key_MenuOnDemand,
         Key_MenuIsShown,
         Key_ChannelSizeFactor,
+        Key_RecentFilePaths,
     };
 
     QString _GetStringKey(Key key) const;
     QVariant _Get(Key key, const QVariant &defaultValue) const;
     void _Set(Key key, const QVariant &value);
+    void _FillRecentFilePaths();
+
     QSettings m_settings;
+    QStringList m_recentPaths;
 
 public:
     GlobalSettings();
@@ -68,6 +73,9 @@ public:
     void SetMenuIsShown(bool isShown);
     int GetChannelSizeFactor();
     void SetChannelSizeFactor(int multiplier);
+    unsigned GetRecetFilePathCount();
+    QString GetRecentFilePath(unsigned index);
+    void AddRecentFilePath(QString const &path);
 };
 
 #endif // GLOBALSETTINGS_H

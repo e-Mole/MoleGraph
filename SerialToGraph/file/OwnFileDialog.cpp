@@ -202,17 +202,36 @@ QString OwnFileDialog::_GetFilePath()
         return m_dir + "/" + m_fileName->text() + m_extension->text();
 }
 
+#if defined(Q_OS_ANDROID)
+static QString GetOldStyleDirectory()
+{
+    QAndroidJniObject dir =
+        QAndroidJniObject::callStaticObjectMethod(
+            "android/os/Environment",
+            "getExternalStorageDirectory",
+            "()Ljava/io/File;"
+        );
+    qDebug() << "ExternalFilesDir filled by getExternalStorageDirectory: " <<  dir.toString();
+    return dir.toString();
+}
+#endif
+
 static QString GetDir(QString const &lastDir)
 {
 #if defined(Q_OS_ANDROID)
-    //if (dir == "./")
+    if (lastDir == "./")
     {
         QAndroidJniObject activity = QtAndroid::androidActivity();
+        if (!activity.isValid())
+            return GetOldStyleDirectory();
+
         QAndroidJniObject appContext =
             activity.callObjectMethod(
                 "getApplicationContext",
                 "()Landroid/content/Context;"
             );
+        if (!appContext.isValid())
+            return GetOldStyleDirectory();
 
         QAndroidJniObject storageDirectories =
             appContext.callObjectMethod(
@@ -220,23 +239,15 @@ static QString GetDir(QString const &lastDir)
                 "(Ljava/lang/String;)[Ljava/io/File;",
                 (jobject)0
             );
+        if (!storageDirectories.isValid())
+            return GetOldStyleDirectory();
 
         jobjectArray objectArray = storageDirectories.object<jobjectArray>();
         QAndroidJniEnvironment qjniEnv;
         const int n = qjniEnv->GetArrayLength(objectArray);
         QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, n-1);
         if (!storageDirectory.isValid())
-        {
-            QAndroidJniObject oldStyleStorageDirectory =
-                QAndroidJniObject::callStaticObjectMethod(
-                    "android/os/Environment",
-                    "getExternalStorageDirectory",
-                    "()Ljava/io/File;"
-                );
-            qDebug() << "ExternalFilesDir filled by getExternalStorageDirectory: " <<  oldStyleStorageDirectory.toString();
-
-            return oldStyleStorageDirectory.toString();
-        }
+            return GetOldStyleDirectory();
 
         if (storageDirectory.callMethod<jboolean>("exists"))
         {
@@ -275,6 +286,8 @@ static void RegisterFile(QString const &path)
             (jobject)0,
             (jobject)0
         );
+#else
+    Q_UNUSED(path);
 #endif
 }
 QString OwnFileDialog::ExecuteFileDialog(

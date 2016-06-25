@@ -45,6 +45,7 @@ class Plot : public QCustomPlot
     QMouseEvent *m_mouseMoveEvent;
     QWheelEvent *m_wheelEvent;
     QPoint m_mousePressPosition;
+    QPoint m_mousePrevionsPressPosition;
 protected:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);

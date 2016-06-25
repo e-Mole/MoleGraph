@@ -17,7 +17,9 @@
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
 #define MARKER_WIDTH 1.6
-#define MOUSE_MOVE_LIMIT_FACTOR 20
+#define MOUSE_DBCLICK_TIME_LIMIT 300 //300 ms
+#define MOUSE_MOVE_LIMIT_FACTOR 20 //about 1.3 mm
+#define MOUSE_DBCLICK_LIMIT_FACTOR 5 // about 5 mm
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -168,6 +170,7 @@ bool Plot::_GetClosestX(double in, int &out)
 
 void Plot::mousePressEvent(QMouseEvent *event)
 {
+    m_mousePrevionsPressPosition = m_mousePressPosition;
     m_mousePressPosition = event->pos();
     qDebug() << "press point:" << m_mousePressPosition;
     m_mouseHandled = false;
@@ -177,9 +180,17 @@ void Plot::mousePressEvent(QMouseEvent *event)
 void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
     QTime currentTime = QTime::currentTime();
-    int diff = m_clickTime.msecsTo(currentTime);
+    unsigned diffTime = m_clickTime.msecsTo(currentTime);
     m_clickTime = currentTime;
-    if (diff != 0 && diff < 300)
+    unsigned diffX = qAbs(m_mousePrevionsPressPosition.x() - m_mousePressPosition.x());
+    unsigned diffY = qAbs(m_mousePrevionsPressPosition.y() - m_mousePressPosition.y());
+
+    if (
+        diffTime != 0 && //sometimes release event comes twice
+        diffTime < MOUSE_DBCLICK_TIME_LIMIT &&
+        diffX < (unsigned)physicalDpiX() / MOUSE_DBCLICK_LIMIT_FACTOR &&
+        diffY < (unsigned)physicalDpiY() / MOUSE_DBCLICK_LIMIT_FACTOR
+    )
     {
         //I dont want to catch mouseDoubleClickEvent because mouseReleaseEvent come after it and cause problems
         _ProcessDoubleClick(event->pos());

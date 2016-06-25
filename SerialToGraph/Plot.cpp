@@ -17,6 +17,7 @@
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
 #define MARKER_WIDTH 1.6
+#define MOUSE_MOVE_LIMIT_FACTOR 20
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -107,7 +108,7 @@ bool Plot::event(QEvent *event)
                         this->mousePressEvent(mouseEve);
                     break;
                     case Qt::TouchPointMoved:
-                        this->mouseMoveEvent(mouseEve);
+                        this->MyMouseMoveEvent(mouseEve);
                     break;
                     case Qt::TouchPointReleased:
                         this->mouseReleaseEvent(mouseEve);
@@ -125,7 +126,10 @@ bool Plot::event(QEvent *event)
 bool Plot::_GetClosestX(double in, int &out)
 {
     if (graphCount()== 0)
+    {
+        qDebug() << "graphCount()== 0";
         return false;
+    }
 
     QCPDataMap *dataMap = NULL;
     for (int i = 0; i < graphCount(); i++)
@@ -139,8 +143,10 @@ bool Plot::_GetClosestX(double in, int &out)
     }
 
     if (dataMap == NULL)
+    {
+        qWarning() << "dataMap == NULL";
         return false;
-
+    }
     double xValue = 0;
     auto itHi = dataMap->lowerBound(in);
     if (itHi == dataMap->end())
@@ -162,7 +168,8 @@ bool Plot::_GetClosestX(double in, int &out)
 
 void Plot::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << "press point:" << event->pos();
+    m_mousePressPosition = event->pos();
+    qDebug() << "press point:" << m_mousePressPosition;
     m_mouseHandled = false;
     QCustomPlot::mousePressEvent(event);
 }
@@ -171,7 +178,6 @@ void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
     QTime currentTime = QTime::currentTime();
     int diff = m_clickTime.msecsTo(currentTime);
-    qDebug() << "mouse release diff:" << diff;
     m_clickTime = currentTime;
     if (diff != 0 && diff < 300)
     {
@@ -190,11 +196,16 @@ void Plot::mouseReleaseEvent(QMouseEvent *event)
     QCustomPlot::mouseReleaseEvent(event);
 
     if (m_mouseHandled)
+    {
+        qDebug() << "mouse handled";
         return;
-
+    }
     int xIndex;
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
+    {
+        qDebug() << "clickedToPlot calling";
         clickedToPlot(xIndex);
+    }
 }
 void Plot::_ProcessDoubleClick(QPoint pos)
 {
@@ -310,8 +321,22 @@ void Plot::procesMouseMoveEvent()
     m_mouseMoveEvent = NULL;
 }
 
-void Plot::mouseMoveEvent(QMouseEvent *event)
+void Plot::MyMouseMoveEvent(QMouseEvent *event)
 {
+    int diffX = qAbs(event->pos().x() - m_mousePressPosition.x());
+    int diffY = qAbs(event->pos().y() - m_mousePressPosition.y());
+
+    if (
+        !m_mouseHandled &&
+        diffX < physicalDpiX() / MOUSE_MOVE_LIMIT_FACTOR &&
+        diffY < physicalDpiY() / MOUSE_MOVE_LIMIT_FACTOR
+    )
+    {
+        //it happen on some Android devices
+        qDebug() << "mouseMoveEvent with small offset "<< diffX << "," << diffY << " - skipped.";
+        event->accept();
+        return;
+    }
 
     if (axisRect()->IsDragging())
     {
@@ -334,6 +359,7 @@ void Plot::mouseMoveEvent(QMouseEvent *event)
     //there would be a serrious performance problem
     QMetaObject::invokeMethod(this, "procesMouseMoveEvent", Qt::QueuedConnection);
 
+    qDebug() << "handled mouse move diffX=" << diffX << " diffY=" << diffY;
     m_mouseHandled = true;
 }
 
@@ -500,6 +526,7 @@ void Plot::selectionChanged()
         return;
     }
 
+    qDebug() << "handled selection changed";
     m_mouseHandled = true;
     selectedAxes().first()->setSelectedParts(QCPAxis::spAxis | QCPAxis::spAxisLabel | QCPAxis::spTickLabels);
 

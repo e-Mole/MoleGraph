@@ -223,15 +223,20 @@ static QString GetDir(QString const &lastDir)
     {
         QAndroidJniObject activity = QtAndroid::androidActivity();
         if (!activity.isValid())
+        {
+            qCritical() << "activity object is not valid";
             return GetOldStyleDirectory();
-
+        }
         QAndroidJniObject appContext =
             activity.callObjectMethod(
                 "getApplicationContext",
                 "()Landroid/content/Context;"
             );
         if (!appContext.isValid())
+        {
+            qCritical() << "context object is not valid";
             return GetOldStyleDirectory();
+        }
 
         QAndroidJniObject storageDirectories =
             appContext.callObjectMethod(
@@ -240,27 +245,35 @@ static QString GetDir(QString const &lastDir)
                 (jobject)0
             );
         if (!storageDirectories.isValid())
+        {
+            qCritical() << "getExternalFilesDirs object is not valid";
             return GetOldStyleDirectory();
-
+        }
         jobjectArray objectArray = storageDirectories.object<jobjectArray>();
         QAndroidJniEnvironment qjniEnv;
         const int n = qjniEnv->GetArrayLength(objectArray);
-        QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, n-1);
-        if (!storageDirectory.isValid())
-            return GetOldStyleDirectory();
-
-        if (storageDirectory.callMethod<jboolean>("exists"))
+        for (int i = n-1; i >= 0; i--)
         {
-            qDebug() << "ExternalFilesDir: " <<  storageDirectory.toString();
-            return storageDirectory.toString();
+            QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, i);
+            if (!storageDirectory.isValid())
+                continue;
+
+            if (storageDirectory.callMethod<jboolean>("exists"))
+            {
+                qDebug() << "ExternalFilesDir: " <<  storageDirectory.toString();
+                return storageDirectory.toString();
+            }
+
+            /*usually directory is created by getExternalStorageDirectory - just for sure*/
+            if (storageDirectory.callMethod<jboolean>("mkdirs"))
+            {
+                qDebug() << "ExternalFilesDir created: " <<  storageDirectory.toString();
+                return storageDirectory.toString();
+            }
         }
 
-        /*usually directory is created by getExternalStorageDirectory - just for sure*/
-        if (storageDirectory.callMethod<jboolean>("mkdirs"))
-        {
-            qDebug() << "ExternalFilesDir created: " <<  storageDirectory.toString();
-            return storageDirectory.toString();
-        }
+        qCritical() << "getExternalFilesDirs doesnt contains valid entry";
+        return GetOldStyleDirectory();
     }
 #endif
 

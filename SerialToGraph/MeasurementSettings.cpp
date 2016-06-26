@@ -11,7 +11,7 @@
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
-    bases::FormDialogColor(parent, tr("Measurement Setting")),
+    bases::FormDialogColor(parent, tr("Measurement Setting"), context.m_settings),
     m_context(context),
     m_measurement(measurement),
     m_name(NULL),

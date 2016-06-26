@@ -2,6 +2,7 @@
 #include <bases/FormDialogBase.h>
 #include <file/AddDirDialog.h>
 #include <file/FileModel.h>
+#include <GlobalSettings.h>
 #include <MyMessageBox.h>
 #include <QCommonStyle>
 #include <QDebug>
@@ -31,13 +32,12 @@
 namespace file
 {
 
-OwnFileDialog::OwnFileDialog(
-    QWidget *parent,
+OwnFileDialog::OwnFileDialog(QWidget *parent,
     Type type,
     QString const & caption,
     QString const &dir,
     QString const &filter,
-    QString const &limit
+    GlobalSettings const &settings
 ):
     bases::PlatformDialog(parent, caption),
     m_fileName(new QLineEdit(this)),
@@ -48,7 +48,7 @@ OwnFileDialog::OwnFileDialog(
     m_view(new QListView(this)),
     m_type(type),
     m_upButton(NULL),
-    m_limit(limit)
+    m_settings(settings)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
@@ -109,7 +109,7 @@ OwnFileDialog::OwnFileDialog(
 
 void OwnFileDialog::_CheckUpButton()
 {
-    m_upButton->setDisabled(m_limit == m_dir);
+    m_upButton->setDisabled(m_settings.GetLimitDir() == m_dir);
 }
 QString OwnFileDialog::_GetActionButtonText(Type type)
 {
@@ -161,7 +161,7 @@ void OwnFileDialog::fileNameChanged(QString const &fileName)
 
 void OwnFileDialog::createFolder()
 {
-    AddDirDialog dialog(this);
+    AddDirDialog dialog(this, m_settings);
     if (QDialog::Accepted == dialog.exec() && dialog.GetDirName().size() > 0)
         m_model->Mkdir(m_view->rootIndex(), dialog.GetDirName());
 }
@@ -309,10 +309,10 @@ QString OwnFileDialog::ExecuteFileDialog(
         const QString &caption,
         const QString &dir,
         const QString &filter,
-        const QString &limit)
+        GlobalSettings const &settings)
 {
     OwnFileDialog * dialog = new OwnFileDialog(
-        parent, type, caption, GetDir(dir), filter, limit);
+        parent, type, caption, GetDir(dir), filter, settings);
     if (QDialog::Accepted == dialog->exec())
     {
         QString path = dialog->_GetFilePath();

@@ -28,6 +28,7 @@ class GlobalSettings
         Key_MenuIsShown,
         Key_ChannelSizeFactor,
         Key_RecentFilePaths,
+        Key_ShowSaveCancelButtons,
     };
 
     QString _GetStringKey(Key key) const;
@@ -61,7 +62,7 @@ public:
     void SetMainWindowSize(const QSize &size);
     QString GetLastDir();
     void SetLastDir(QString const &dir);
-    QString GetLimitDir();
+    QString GetLimitDir() const;
     void SetLimitDir(QString const &dir);
     bool GetHideAllChannels();
     void SetHideAllChannels(bool show);
@@ -76,6 +77,8 @@ public:
     unsigned GetRecetFilePathCount();
     QString GetRecentFilePath(unsigned index);
     void AddRecentFilePath(QString const &path);
+    bool GetShowSaveCancelButtons() const;
+    void SetShowSaveCancelButtons(bool show);
 };
 
 #endif // GLOBALSETTINGS_H

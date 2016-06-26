@@ -19,7 +19,7 @@
 #include <QString>
 
 ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
-    bases::FormDialogColor(channel->GetWidget(), tr("Channel settings")),
+    bases::FormDialogColor(channel->GetWidget(), tr("Channel settings"), context.m_settings),
     m_context(context),
     m_channel(channel),
     m_name(NULL),

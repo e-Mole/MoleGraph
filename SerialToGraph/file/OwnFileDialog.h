@@ -2,7 +2,7 @@
 #define OWNFILEDIALOG_H
 
 #include <bases/PlatformDialog.h>
-
+class GlobalSettings;
 class QLabel;
 class QLineEdit;
 class QListView;
@@ -38,18 +38,25 @@ private:
     QListView *m_view;
     Type m_type;
     QPushButton *m_upButton;
-    QString m_limit;
+    GlobalSettings const &m_settings;
 
 public:
-    OwnFileDialog(QWidget *parent, Type type, const QString &caption, const QString &dir, const QString &extension, const QString &limit);
+    OwnFileDialog(
+        QWidget *parent,
+        Type type,
+        const QString &caption,
+        const QString &dir,
+        const QString &extension,
+        const GlobalSettings &settings
+    );
     ~OwnFileDialog();
 
-    static QString ExecuteFileDialog(
-            Type type,
+    static QString ExecuteFileDialog(Type type,
             QWidget *parent,
             const QString &caption,
             const QString &dir,
-            const QString &filter, const QString &limit);
+            const QString &filter,
+            GlobalSettings const &settings);
 
 private slots:
     void viewClicked(const QModelIndex &index);

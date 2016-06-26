@@ -49,6 +49,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "channel_size_fctor";
     case Key_RecentFilePaths:
         return "recent_file_paths";
+    case Key_ShowSaveCancelButtons:
+        return "show_save_cancel_buttons";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -164,7 +166,7 @@ void GlobalSettings::SetLastDir(QString const &dir)
     _Set(Key_LastDir, dir);
 }
 
-QString GlobalSettings::GetLimitDir()
+QString GlobalSettings::GetLimitDir() const
 {
     return _Get(Key_LimitDir, "").toString();
 }
@@ -256,4 +258,17 @@ void GlobalSettings::AddRecentFilePath(QString const &path)
         m_recentPaths.push_front(path);
     }
     _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
+}
+
+bool GlobalSettings::GetShowSaveCancelButtons() const
+{
+#if defined(Q_OS_ANDROID)
+    return _Get(Key_ShowSaveCancelButtons, false).toBool();
+#else
+    return _Get(Key_ShowSaveCancelButtons, true).toBool();
+#endif
+}
+void GlobalSettings::SetShowSaveCancelButtons(bool show)
+{
+    _Set(Key_ShowSaveCancelButtons, show);
 }

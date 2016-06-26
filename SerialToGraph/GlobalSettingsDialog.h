@@ -26,6 +26,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitHideAllChannels();
     void _InitializeButtonLines();
     void _InitializeChannelSizeMultiplier();
+    void _InitializeShowStoreCancelButton();
 
     Context const &m_context;
     GlobalSettings &m_settings;
@@ -39,6 +40,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QComboBox *m_menuOrientation;
     QCheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
+    QCheckBox *m_showStoreCancelButton;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

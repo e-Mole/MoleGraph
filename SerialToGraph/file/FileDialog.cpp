@@ -2,6 +2,7 @@
 #include <file/NativeFileDialog.h>
 #include <file/OwnFileDialog.h>
 #include <QFileDialog>
+#include <GlobalSettings.h>
 #include <QString>
 
 namespace file
@@ -16,15 +17,15 @@ QString FileDialog::getOpenFileName(
     const QString &caption,
     const QString &dir,
     const QString &filter,
-    const QString &limit
+    const GlobalSettings &settings
 )
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_OpenFile, parent, caption, dir, filter, limit);
+        OwnFileDialog::Type_OpenFile, parent, caption, dir, filter, settings);
 #else
 
-    NativeFileDialog nfd(QFileDialog::AcceptOpen, parent, caption, dir, filter, limit);
+    NativeFileDialog nfd(QFileDialog::AcceptOpen, parent, caption, dir, filter, settings.GetLimitDir());
     return 0 == nfd.exec() ? "" : nfd.selectedFiles()[0];
 #endif
 }
@@ -34,13 +35,13 @@ QString FileDialog::getSaveFileName(
     const QString &caption,
     const QString &dir,
     const QString &filter,
-    const QString &limit)
+    const GlobalSettings &settings)
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_SaveFile, parent, caption, dir, filter, limit);
+        OwnFileDialog::Type_SaveFile, parent, caption, dir, filter, settings);
 #else
-    NativeFileDialog nfd(QFileDialog::AcceptSave, parent, caption, dir, filter, limit);
+    NativeFileDialog nfd(QFileDialog::AcceptSave, parent, caption, dir, filter, settings.GetLimitDir());
     return 0 == nfd.exec() ? "" : nfd.selectedFiles()[0];
 #endif
 }
@@ -49,14 +50,14 @@ QString FileDialog::getExistingDirectory(
     QWidget *parent,
     const QString &caption,
     const QString &dir,
-    const QString &limit
+    const GlobalSettings &settings
 )
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_SelectDir, parent, caption, dir, "", limit);
+        OwnFileDialog::Type_SelectDir, parent, caption, dir, "", settings);
 #else
-    Q_UNUSED(limit); //TODO: limit is not implemeted for common file dialog
+    Q_UNUSED(settings); //TODO: limit is not implemeted for common file dialog
     return QFileDialog::getExistingDirectory(parent, caption, dir);
 #endif
 }

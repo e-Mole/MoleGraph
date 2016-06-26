@@ -3,6 +3,7 @@
 
 #include <bases/FormDialogBase.h>
 
+class GlobalSEttings;
 class QLineEdit;
 
 namespace file
@@ -17,7 +18,7 @@ class AddDirDialog : public bases::FormDialogBase
     QLineEdit *m_dirName;
 
 public:
-    AddDirDialog(QWidget *parent);
+    AddDirDialog(QWidget *parent, const GlobalSettings &settings);
     QString GetDirName();
 signals:
 

@@ -283,9 +283,8 @@ void ButtonLine::_InitializeMenu()
 
 void ButtonLine::settings()
 {
-    if (m_settingsDialog == NULL)
-         m_settingsDialog = new GlobalSettingsDialog(this, m_context);
-
+    delete m_settingsDialog; //to be alwais scrolled to up-left corner
+    m_settingsDialog = new GlobalSettingsDialog(this, m_context);
     m_settingsDialog->exec();
 }
 
@@ -367,7 +366,7 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
         tr(values ? "Save as" : "Save without Values As"),
         _GetRootDir(),
         "*." + extension,
-        m_context.m_settings.GetLimitDir()
+        m_context.m_settings
     );
 
     if (fileName.size() == 0)
@@ -485,7 +484,7 @@ void ButtonLine::_OpenFile(bool values)
             "Open File",
             _GetRootDir(),
             QString("*.%1").arg(MOGR_FILE_EXTENSION),
-            m_context.m_settings.GetLimitDir()
+            m_context.m_settings
         );
 
     _OpenFile(filePath, values);

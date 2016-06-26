@@ -107,13 +107,13 @@ bool Plot::event(QEvent *event)
                 switch (touchEvent->touchPointStates())
                 {
                     case Qt::TouchPointPressed:
-                        this->mousePressEvent(mouseEve);
+                        this->MyMousePressEvent(mouseEve);
                     break;
                     case Qt::TouchPointMoved:
                         this->MyMouseMoveEvent(mouseEve);
                     break;
                     case Qt::TouchPointReleased:
-                        this->mouseReleaseEvent(mouseEve);
+                        this->MyMouseReleaseEvent(mouseEve);
                     break;
                 }
             }
@@ -168,7 +168,7 @@ bool Plot::_GetClosestX(double in, int &out)
     return out != -1;
 }
 
-void Plot::mousePressEvent(QMouseEvent *event)
+void Plot::MyMousePressEvent(QMouseEvent *event)
 {
     m_mousePrevionsPressPosition = m_mousePressPosition;
     m_mousePressPosition = event->pos();
@@ -177,7 +177,7 @@ void Plot::mousePressEvent(QMouseEvent *event)
     QCustomPlot::mousePressEvent(event);
 }
 
-void Plot::mouseReleaseEvent(QMouseEvent *event)
+void Plot::MyMouseReleaseEvent(QMouseEvent *event)
 {
     QTime currentTime = QTime::currentTime();
     unsigned diffTime = m_clickTime.msecsTo(currentTime);
@@ -231,6 +231,8 @@ void Plot::_ProcessDoubleClick(QPoint pos)
         m_moveMode = false;
         RescaleAllAxes();
     }
+
+    ReplotIfNotDisabled();
 }
 
 void Plot::processWheelEvent()

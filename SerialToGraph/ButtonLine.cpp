@@ -174,7 +174,7 @@ void ButtonLine::_SetMenuStyle(QMenu *menu)
     menu->setFont(font);
     menu->setStyleSheet(
         QString(
-            "QMenu { menu-scrollable: 1; } "
+            "QMenu { menu-scrollable: 1; selection-background-color: LightBlue; selection-color: black;} "
             "QMenu::scroller { height: %1px; background-color: red;} "
         ).arg(physicalDpiY() / 4)
     );

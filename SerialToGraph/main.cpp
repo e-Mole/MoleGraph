@@ -26,9 +26,15 @@ int main(int argc, char *argv[])
                 QCoreApplication::translate("main", "Modifier for opening file without values (just measurement template)."));
     parser.addOption(withoutValuesOption);
 
+    parser.addPositionalArgument("file", "file to open");
+
     parser.process(a);
 
-    MainWindow w(a, parser.value(openOption), parser.isSet(withoutValuesOption));
+    QString fileName = parser.value(openOption);
+    const QStringList arguments = parser.positionalArguments();
+    if (arguments.size() > 0)
+        fileName = arguments[0];
+    MainWindow w(a, fileName, parser.isSet(withoutValuesOption));
     w.show();
 
 	return a.exec();

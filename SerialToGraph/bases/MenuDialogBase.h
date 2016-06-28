@@ -24,7 +24,6 @@ public:
     void ReinitGrid();
     MenuDialogBase(QWidget *parent, const QString &title);
     ~MenuDialogBase();
-
 };
 
 } //namespace bases

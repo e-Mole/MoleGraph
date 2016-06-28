@@ -12,12 +12,14 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFormLayout>
+#include <QLabel>
 #include <QLocale>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
-    bases::FormDialogBase(parent, tr("Settings")),
+    bases::FormDialogBase(parent, tr("Settings"), context.m_settings),
     m_context(context),
     m_settings(context.m_settings),
     m_languages(NULL),
@@ -36,9 +38,29 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     _InitHideAllChannels();
     _InitializeLimitDir();
     _InitializeButtonLines();
+    _InitializeChannelSizeMultiplier();
+    _InitializeShowStoreCancelButton();
     _InitializeShowConsole();
 }
 
+void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
+{
+    m_showStoreCancelButton = new QCheckBox(this);
+    m_showStoreCancelButton->setChecked(m_settings.GetShowSaveCancelButtons());
+    m_formLayout->addRow(tr("Show Store/Cancel buttons"), m_showStoreCancelButton);
+}
+void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
+{
+    QHBoxLayout *layout = new QHBoxLayout();
+
+    m_channelSizeFactor = new QSpinBox();
+    m_channelSizeFactor->setMinimum(50);
+    m_channelSizeFactor->setMaximum(500);
+    m_channelSizeFactor->setValue(m_settings.GetChannelSizeFactor());
+    layout->addWidget(m_channelSizeFactor,1);
+    layout->addWidget(new QLabel("\%"));
+    m_formLayout->addRow(tr("Channel size factor"), layout);
+}
 void GlobalSettingsDialog::_InitializeButtonLines()
 {
     m_menuOrientation = new QComboBox(this);
@@ -76,7 +98,7 @@ void GlobalSettingsDialog::_InitializeLimitDir()
 void GlobalSettingsDialog::limitDirClicked()
 {
     QString dir = file::FileDialog::getExistingDirectory(
-        this, tr("Select directory"), m_limitDirLine->text(), ""
+        this, tr("Select directory"), m_limitDirLine->text(), m_settings
     );
 
     if (dir != "")
@@ -185,6 +207,17 @@ bool GlobalSettingsDialog::BeforeAccept()
     {
         m_settings.SetMenuOrientation((Qt::Orientation)m_menuOrientation->currentData().toInt());
         m_context.m_mainWindow.ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    }
+
+    if (m_settings.GetChannelSizeFactor() != m_channelSizeFactor->value())
+    {
+        m_settings.SetChannelSizeFactor(m_channelSizeFactor->value());
+        m_context.m_mainWindow.UpdateChannelSizeFactor();
+    }
+
+    if (m_settings.GetShowSaveCancelButtons() != m_showStoreCancelButton->isChecked())
+    {
+        m_settings.SetShowSaveCancelButtons(m_showStoreCancelButton->isChecked());
     }
 
     return true;

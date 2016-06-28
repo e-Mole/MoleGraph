@@ -34,12 +34,13 @@
 #include <QShortcut>
 #include <QWidget>
 
-#define ATOG_FILE_EXTENSION "atog"
-
+#define MOGR_FILE_EXTENSION "mogr"
 #if defined(Q_OS_ANDROID)
 #   define FONT_DPI_FACTOR 7
+#   define RECENT_FILE_TEXT_MAX_LENGTH 30
 #else
 #   define FONT_DPI_FACTOR 8
+#   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
 ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation orientation):
@@ -55,6 +56,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
     m_axisMenuButton(NULL),
     m_measurementButton(NULL),
     m_fileMenu(NULL),
+    m_recentFilesMenu(NULL),
     m_channelMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
@@ -161,24 +163,27 @@ void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
     dialog.exec();
 }
 
-void ButtonLine::fileMenuButtonPressed()
+void ButtonLine::_SetMenuStyle(QMenu *menu)
 {
     //setFontPointF doesn't work properly on android
     //as same as logicalDPI one one device qos phisical 254 and logical 108
-    QFont font = m_fileMenu->font();
+    QFont font = menu->font();
     unsigned fontSize = physicalDpiY() / FONT_DPI_FACTOR;
     //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
     font.setPixelSize(fontSize < 15 ? 15 : fontSize);
-    m_fileMenu->setFont(font);
-    m_fileMenu->setStyleSheet(
+    menu->setFont(font);
+    menu->setStyleSheet(
         QString(
-            "QMenu { menu-scrollable: 1; } "
+            "QMenu { menu-scrollable: 1; selection-background-color: LightBlue; selection-color: black;} "
             "QMenu::scroller { height: %1px; background-color: red;} "
         ).arg(physicalDpiY() / 4)
     );
+}
+void ButtonLine::fileMenuButtonPressed()
+{
+    _SetMenuStyle(m_fileMenu);
+    _FillRecentFileMenu();
 #if defined(Q_OS_ANDROID)
-    //m_fileMenu->setStyleSheet(
-    //    "QMenu::item { border: 8px solid transparent; }");
     m_fileMenu->showMaximized();
 #endif
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
@@ -219,6 +224,33 @@ void ButtonLine::measurementMenuButtonPressed()
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
+void ButtonLine::_FillRecentFileMenu()
+{
+    m_recentFilesMenu->clear();
+    m_recentFileActions.clear();
+
+    unsigned count = m_context.m_settings.GetRecetFilePathCount();
+    m_recentFilesMenu->setDisabled(0 == count);
+    for (unsigned i = 0; i < count; i++)
+    {
+        QString text = m_context.m_settings.GetRecentFilePath(i);
+        while (text.length() > RECENT_FILE_TEXT_MAX_LENGTH)
+        {
+            int index = text.indexOf(QRegExp("[\\/]"));
+            if (index == -1)
+                break;
+            text = text.mid(index+1);
+            text = "..." + text;
+        }
+
+        QAction *action =
+            m_recentFilesMenu->addAction(text, this, SLOT(openRecentFile()));
+        m_recentFileActions[action] = m_context.m_settings.GetRecentFilePath(i);
+    }
+
+    _SetMenuStyle(m_recentFilesMenu);
+}
+
 void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
@@ -231,8 +263,8 @@ void ButtonLine::_InitializeMenu()
     QShortcut *openShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this);
     connect (openShortcut, SIGNAL(activated()), this, SLOT(openFile()));
     m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()), openShortcut->key());
-
     m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openWithoutValues()));
+    m_recentFilesMenu = m_fileMenu->addMenu(tr("Recently Used Files"));
 
     QShortcut *saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
     connect (saveShortcut, SIGNAL(activated()), this, SLOT(saveFile()));
@@ -251,9 +283,8 @@ void ButtonLine::_InitializeMenu()
 
 void ButtonLine::settings()
 {
-    if (m_settingsDialog == NULL)
-         m_settingsDialog = new GlobalSettingsDialog(this, m_context);
-
+    delete m_settingsDialog; //to be alwais scrolled to up-left corner
+    m_settingsDialog = new GlobalSettingsDialog(this, m_context);
     m_settingsDialog->exec();
 }
 
@@ -335,7 +366,7 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
         tr(values ? "Save as" : "Save without Values As"),
         _GetRootDir(),
         "*." + extension,
-        m_context.m_settings.GetLimitDir()
+        m_context.m_settings
     );
 
     if (fileName.size() == 0)
@@ -430,26 +461,33 @@ QString ButtonLine::_GetRootDir()
 
     return dir;
 }
+
+void ButtonLine::_OpenFile(QString const &filePath, bool values)
+{
+    if (filePath.size() == 0)
+        return;
+
+    m_context.m_settings.AddRecentFilePath(filePath);
+    m_context.m_settings.SetLastDir(QFileInfo(filePath).path());
+    m_context.m_mainWindow.DeserializeMeasurements(filePath, values);
+}
+
 void ButtonLine::_OpenFile(bool values)
 {
     if (!m_context.m_mainWindow.CouldBeOpen())
         return;
 
-    QString fileName =
+    QString filePath =
         file::FileDialog::getOpenFileName
         (
             this,
             "Open File",
             _GetRootDir(),
-            QString("*.%1").arg(ATOG_FILE_EXTENSION),
-            m_context.m_settings.GetLimitDir()
+            QString("*.%1").arg(MOGR_FILE_EXTENSION),
+            m_context.m_settings
         );
 
-    if (fileName.size() == 0)
-        return;
-
-    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
-    m_context.m_mainWindow.DeserializeMeasurements(fileName, values);
+    _OpenFile(filePath, values);
 }
 
 void ButtonLine::openWithoutValues()
@@ -460,6 +498,14 @@ void ButtonLine::openWithoutValues()
 void ButtonLine::openFile()
 {
     _OpenFile(true);
+}
+
+void ButtonLine::openRecentFile()
+{
+   _OpenFile(
+        m_recentFileActions[(QAction*)sender()],
+        MyMessageBox::Yes == MyMessageBox::question(this, tr("Open with values?"), tr("Yes"), tr("No"))
+    );
 }
 void ButtonLine::saveFile()
 {
@@ -479,22 +525,23 @@ void ButtonLine::_SaveFile(const QString &fileName, bool values)
 
 void ButtonLine::saveAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, true);
-    if (0 != fileName.size())
+    QString filePath = _GetFileNameToSave(MOGR_FILE_EXTENSION, true);
+    if (0 != filePath.size())
     {
-        _SaveFile(fileName, true);
+        _SaveFile(filePath, true);
         m_storedValues = true;
+        m_context.m_settings.AddRecentFilePath(filePath);
     }
 }
 
 void ButtonLine::saveWithoutValuesAsFile()
 {
-    QString fileName = _GetFileNameToSave(ATOG_FILE_EXTENSION, false);
+    QString fileName = _GetFileNameToSave(MOGR_FILE_EXTENSION, false);
     if (0 != fileName.size())
     {
         _SaveFile(fileName, false);
         m_storedValues = false;
-        MyMessageBox::information(this, "Just template without values has been stored.");
+        MyMessageBox::information(this, tr("Just template without values has been stored."));
     }
 }
 

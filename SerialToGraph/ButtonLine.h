@@ -38,9 +38,12 @@ class ButtonLine : public QWidget
     void _ActivateChannel(ChannelBase *channel, bool checked);
     QString _GetFileNameToSave(const QString &extension, bool values);
     void _SaveFile(const QString &fileName, bool values);
+    void _OpenFile(QString const &filePath, bool values);
     void _OpenFile(bool values);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
+    void _FillRecentFileMenu();
+    void _SetMenuStyle(QMenu *menu);
 
     QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
@@ -55,6 +58,7 @@ class ButtonLine : public QWidget
     QPushButton * m_axisMenuButton;
     QPushButton * m_measurementButton;
     QMenu *m_fileMenu;
+    QMenu *m_recentFilesMenu;
     ChannelMenu *m_channelMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
@@ -74,6 +78,7 @@ class ButtonLine : public QWidget
     bool m_storedValues;
     GlobalSettingsDialog *m_settingsDialog;
     QWidget* m_space;
+    QMap<QAction*, QString> m_recentFileActions;
 
 public:
     void UpdateRunButtonsState();
@@ -95,6 +100,7 @@ private slots:
     void newFile();
     void openWithoutValues();
     void openFile();
+    void openRecentFile();
     void saveFile();
     void saveAsFile();
     void saveWithoutValuesAsFile();

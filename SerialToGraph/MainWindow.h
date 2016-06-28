@@ -70,6 +70,8 @@ public:
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
     bool CouldBeOpen();
     void ShowMenuButton(bool show);
+    void UpdateChannelSizeFactor();
+
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);

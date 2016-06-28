@@ -17,7 +17,7 @@ public:
         No = false,
     };
 
-    static bool question(QWidget *parent, QString const &message, QString const &yesText);
+    static bool question(QWidget *parent, QString const &message, QString const &yesText, const QString &noText = "");
     static void critical(QWidget *parent, QString const &message);
     static void information(QWidget *parent, QString const &message);
     static void warning(QWidget *parent, QString const &message);

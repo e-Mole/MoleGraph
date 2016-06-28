@@ -4,6 +4,7 @@
 #include <bases/FormDialogBase.h>
 #include <QColor>
 
+class GlobalSettings;
 class QString;
 class QWidget;
 
@@ -21,7 +22,7 @@ protected:
 
     QColor m_color;
 public:
-    FormDialogColor(QWidget *parent, const QString &title);
+    FormDialogColor(QWidget *parent, const QString &title, const GlobalSettings &settings);
 
 signals:
 private slots:

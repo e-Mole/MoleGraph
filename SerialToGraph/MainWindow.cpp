@@ -4,6 +4,7 @@
 #include <ButtonLine.h>
 #include <Context.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <Console.h>
 #include <Plot.h>
 #include <PortListDialog.h>
@@ -303,7 +304,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly))
     {
-        MyMessageBox::critical(this, "Selected file was not open");
+        MyMessageBox::critical(this, tr("Selected file is not possible to open."));
         return;
     }
     QDataStream in(&file);
@@ -315,7 +316,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
 
         if (serializerVersion != ATOG_SERIALIZER_VERSION)
         {
-            MyMessageBox::critical(this, "Unsuported file version");
+            MyMessageBox::critical(this, tr("Unsuported file version"));
             return;
         }
 
@@ -443,4 +444,11 @@ void MainWindow::ShowMenuButton(bool show)
     m_measurementTabs->setCornerWidget(show ? m_menuButton : NULL, Qt::TopLeftCorner);
     m_menuButton->setVisible(show);
     m_menuButton->repaint();
+}
+
+void MainWindow::UpdateChannelSizeFactor()
+{
+    foreach (Measurement *m, m_measurements)
+        foreach (ChannelBase *channel, m->GetChannels())
+            channel->GetWidget()->SetMinimumFontSize(m_settings.GetChannelSizeFactor());
 }

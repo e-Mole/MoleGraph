@@ -9,6 +9,8 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 class QPushButton;
+class QSpinBox;
+
 class GlobalSettingsDialog : public bases::FormDialogBase
 {
     Q_OBJECT
@@ -23,6 +25,8 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeLimitDir();
     void _InitHideAllChannels();
     void _InitializeButtonLines();
+    void _InitializeChannelSizeMultiplier();
+    void _InitializeShowStoreCancelButton();
 
     Context const &m_context;
     GlobalSettings &m_settings;
@@ -35,6 +39,8 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QCheckBox *m_hideAllChannels;
     QComboBox *m_menuOrientation;
     QCheckBox *m_menuOnDemand;
+    QSpinBox *m_channelSizeFactor;
+    QCheckBox *m_showStoreCancelButton;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

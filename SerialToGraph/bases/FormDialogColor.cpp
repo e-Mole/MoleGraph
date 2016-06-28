@@ -1,4 +1,6 @@
 #include "FormDialogColor.h"
+
+#include <GlobalSettings.h>
 #include <QColor>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -11,8 +13,8 @@
 namespace bases
 {
 
-FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title) :
-    FormDialogBase(parent, title),
+FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title, GlobalSettings const &settings) :
+    FormDialogBase(parent, title, settings),
     m_colorButtonWidget(NULL),
     m_color(Qt::black)
 {

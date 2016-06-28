@@ -15,7 +15,7 @@
 #include <QWidget>
 
 AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context) :
-    bases::FormDialogColor(parent, tr("Axis Setting")),
+    bases::FormDialogColor(parent, tr("Axis Setting"), context.m_settings),
     m_axis(axis),
     m_name(NULL),
     m_context(context),

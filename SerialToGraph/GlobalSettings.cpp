@@ -1,5 +1,9 @@
 #include "GlobalSettings.h"
+#include <QDebug>
 #include <QSize>
+
+#define MAX_RECENT_FILE_COUNT 10
+#define RECENT_FILE_SEPARATOR '\n'
 
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", TARGET)
@@ -41,6 +45,12 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "menu_on_demand";
     case Key_MenuIsShown:
         return "menu_is_shown";
+    case Key_ChannelSizeFactor:
+        return "channel_size_fctor";
+    case Key_RecentFilePaths:
+        return "recent_file_paths";
+    case Key_ShowSaveCancelButtons:
+        return "show_save_cancel_buttons";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -156,7 +166,7 @@ void GlobalSettings::SetLastDir(QString const &dir)
     _Set(Key_LastDir, dir);
 }
 
-QString GlobalSettings::GetLimitDir()
+QString GlobalSettings::GetLimitDir() const
 {
     return _Get(Key_LimitDir, "").toString();
 }
@@ -203,4 +213,62 @@ bool GlobalSettings::GetMenuIsShown()
 void GlobalSettings::SetMenuIsShown(bool isShown)
 {
     _Set(Key_MenuIsShown, isShown);
+}
+
+int GlobalSettings::GetChannelSizeFactor()
+{
+    return _Get(Key_ChannelSizeFactor, 100).toInt();
+}
+void GlobalSettings::SetChannelSizeFactor(int multiplier)
+{
+    _Set(Key_ChannelSizeFactor, multiplier);
+}
+
+void GlobalSettings::_FillRecentFilePaths()
+{
+    if (m_recentPaths.size() == 0)
+        m_recentPaths = _Get(Key_RecentFilePaths, "").toString().split(RECENT_FILE_SEPARATOR, QString::SkipEmptyParts);
+
+}
+unsigned GlobalSettings::GetRecetFilePathCount()
+{
+    _FillRecentFilePaths();
+    return m_recentPaths.count();
+}
+QString GlobalSettings::GetRecentFilePath(unsigned index)
+{
+    if (index >= GetRecetFilePathCount()) //there is called _FillRecentFilePaths too
+    {
+        qCritical() << "recent file index out of range";
+        return "";
+    }
+    return m_recentPaths[index];
+}
+
+void GlobalSettings::AddRecentFilePath(QString const &path)
+{
+    int lastIndex = m_recentPaths.indexOf(path);
+    if (-1 != lastIndex)
+        m_recentPaths.move(lastIndex, 0);
+    else
+    {
+        if (GetRecetFilePathCount() >= MAX_RECENT_FILE_COUNT)
+            m_recentPaths.pop_back();
+
+        m_recentPaths.push_front(path);
+    }
+    _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
+}
+
+bool GlobalSettings::GetShowSaveCancelButtons() const
+{
+#if defined(Q_OS_ANDROID)
+    return _Get(Key_ShowSaveCancelButtons, false).toBool();
+#else
+    return _Get(Key_ShowSaveCancelButtons, true).toBool();
+#endif
+}
+void GlobalSettings::SetShowSaveCancelButtons(bool show)
+{
+    _Set(Key_ShowSaveCancelButtons, show);
 }

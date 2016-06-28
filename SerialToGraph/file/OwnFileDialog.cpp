@@ -2,6 +2,7 @@
 #include <bases/FormDialogBase.h>
 #include <file/AddDirDialog.h>
 #include <file/FileModel.h>
+#include <GlobalSettings.h>
 #include <MyMessageBox.h>
 #include <QCommonStyle>
 #include <QDebug>
@@ -23,19 +24,20 @@
 #include <QWidget>
 
 #if defined(Q_OS_ANDROID)
+#   include <QtAndroid>
+#   include <QtAndroidExtras/QAndroidJniEnvironment>
 #   include <QtAndroidExtras/QAndroidJniObject>
 #endif
 
 namespace file
 {
 
-OwnFileDialog::OwnFileDialog(
-    QWidget *parent,
+OwnFileDialog::OwnFileDialog(QWidget *parent,
     Type type,
     QString const & caption,
     QString const &dir,
     QString const &filter,
-    QString const &limit
+    GlobalSettings const &settings
 ):
     bases::PlatformDialog(parent, caption),
     m_fileName(new QLineEdit(this)),
@@ -46,7 +48,7 @@ OwnFileDialog::OwnFileDialog(
     m_view(new QListView(this)),
     m_type(type),
     m_upButton(NULL),
-    m_limit(limit)
+    m_settings(settings)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
@@ -107,7 +109,7 @@ OwnFileDialog::OwnFileDialog(
 
 void OwnFileDialog::_CheckUpButton()
 {
-    m_upButton->setDisabled(m_limit == m_dir);
+    m_upButton->setDisabled(m_settings.GetLimitDir() == m_dir);
 }
 QString OwnFileDialog::_GetActionButtonText(Type type)
 {
@@ -159,7 +161,7 @@ void OwnFileDialog::fileNameChanged(QString const &fileName)
 
 void OwnFileDialog::createFolder()
 {
-    AddDirDialog dialog(this);
+    AddDirDialog dialog(this, m_settings);
     if (QDialog::Accepted == dialog.exec() && dialog.GetDirName().size() > 0)
         m_model->Mkdir(m_view->rootIndex(), dialog.GetDirName());
 }
@@ -200,30 +202,124 @@ QString OwnFileDialog::_GetFilePath()
         return m_dir + "/" + m_fileName->text() + m_extension->text();
 }
 
+#if defined(Q_OS_ANDROID)
+static QString GetOldStyleDirectory()
+{
+    QAndroidJniObject dir =
+        QAndroidJniObject::callStaticObjectMethod(
+            "android/os/Environment",
+            "getExternalStorageDirectory",
+            "()Ljava/io/File;"
+        );
+    qDebug() << "ExternalFilesDir filled by getExternalStorageDirectory: " <<  dir.toString();
+    return dir.toString();
+}
+#endif
+
+static QString GetDir(QString const &lastDir)
+{
+#if defined(Q_OS_ANDROID)
+    if (lastDir == "./")
+    {
+        QAndroidJniObject activity = QtAndroid::androidActivity();
+        if (!activity.isValid())
+        {
+            qCritical() << "activity object is not valid";
+            return GetOldStyleDirectory();
+        }
+        QAndroidJniObject appContext =
+            activity.callObjectMethod(
+                "getApplicationContext",
+                "()Landroid/content/Context;"
+            );
+        if (!appContext.isValid())
+        {
+            qCritical() << "context object is not valid";
+            return GetOldStyleDirectory();
+        }
+
+        QAndroidJniObject storageDirectories =
+            appContext.callObjectMethod(
+                "getExternalFilesDirs",
+                "(Ljava/lang/String;)[Ljava/io/File;",
+                (jobject)0
+            );
+        if (!storageDirectories.isValid())
+        {
+            qCritical() << "getExternalFilesDirs object is not valid";
+            return GetOldStyleDirectory();
+        }
+        jobjectArray objectArray = storageDirectories.object<jobjectArray>();
+        QAndroidJniEnvironment qjniEnv;
+        const int n = qjniEnv->GetArrayLength(objectArray);
+        for (int i = n-1; i >= 0; i--)
+        {
+            QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, i);
+            if (!storageDirectory.isValid())
+                continue;
+
+            if (storageDirectory.callMethod<jboolean>("exists"))
+            {
+                qDebug() << "ExternalFilesDir: " <<  storageDirectory.toString();
+                return storageDirectory.toString();
+            }
+
+            /*usually directory is created by getExternalStorageDirectory - just for sure*/
+            if (storageDirectory.callMethod<jboolean>("mkdirs"))
+            {
+                qDebug() << "ExternalFilesDir created: " <<  storageDirectory.toString();
+                return storageDirectory.toString();
+            }
+        }
+
+        qCritical() << "getExternalFilesDirs doesnt contains valid entry";
+        return GetOldStyleDirectory();
+    }
+#endif
+
+    return lastDir;
+}
+
+static void RegisterFile(QString const &path)
+{
+#if defined(Q_OS_ANDROID)
+
+        QAndroidJniObject activity = QtAndroid::androidActivity();
+        QAndroidJniEnvironment qjniEnv;
+        jobjectArray jArray =
+            (jobjectArray) qjniEnv->NewObjectArray(1, qjniEnv->FindClass("java/lang/String"), (jobject)0);
+        QAndroidJniObject jPath = QAndroidJniObject::fromString(path);
+        qjniEnv->SetObjectArrayElement(jArray, 0, jPath.object<jstring>());
+        QAndroidJniObject::callStaticMethod<void>(
+            "android/media/MediaScannerConnection",
+            "scanFile",
+            "(Landroid/content/Context;[Ljava/lang/String;[Ljava/lang/String;Landroid/media/MediaScannerConnection$OnScanCompletedListener;)V",
+            activity.object<jobject>(),
+            jArray,
+            (jobject)0,
+            (jobject)0
+        );
+#else
+    Q_UNUSED(path);
+#endif
+}
 QString OwnFileDialog::ExecuteFileDialog(
         Type type,
         QWidget *parent,
         const QString &caption,
         const QString &dir,
         const QString &filter,
-        const QString &limit)
+        GlobalSettings const &settings)
 {
-    QString directory = dir;
-#if defined(Q_OS_ANDROID)
-    if (dir == "./")
-    {
-        QAndroidJniObject storageDirectory =
-            QAndroidJniObject::callStaticObjectMethod(
-                "android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;"
-            );
-        directory = storageDirectory.toString();
-    }
-#endif
-
     OwnFileDialog * dialog = new OwnFileDialog(
-        parent, type, caption, directory, filter, limit);
+        parent, type, caption, GetDir(dir), filter, settings);
     if (QDialog::Accepted == dialog->exec())
-        return dialog->_GetFilePath();
+    {
+        QString path = dialog->_GetFilePath();
+        RegisterFile(path);
+        return path;
+    }
+
     else
         return "";
 }

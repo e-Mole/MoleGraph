@@ -4,6 +4,7 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QPointF>
 #include <QTime>
+#include <QPoint>
 class QColor;
 class QEvent;
 class QGestureEvent;
@@ -43,13 +44,17 @@ class Plot : public QCustomPlot
     QTime m_clickTime;
     QMouseEvent *m_mouseMoveEvent;
     QWheelEvent *m_wheelEvent;
-
+    QPoint m_mousePressPosition;
+    QPoint m_mousePrevionsPressPosition;
 protected:
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
-    virtual void mouseMoveEvent(QMouseEvent *event);
     virtual bool event( QEvent *event );
+
+    //I don't want to use virtual one, I want to decide alone in evane handling
+    void MyMousePressEvent(QMouseEvent *event);
+    void MyMouseReleaseEvent(QMouseEvent *event);
+    void MyMouseMoveEvent(QMouseEvent *event);
+
 
 public:
     Plot(Measurement *measurement);

@@ -17,9 +17,9 @@
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
 #define MARKER_WIDTH 1.6
-#define MOUSE_DBCLICK_TIME_LIMIT 300 //300 ms
-#define MOUSE_MOVE_LIMIT_FACTOR 20 //about 1.3 mm
-#define MOUSE_DBCLICK_LIMIT_FACTOR 5 // about 5 mm
+#define MOUSE_DBCLICK_TIME_LIMIT 300 /*300 ms*/
+#define MOUSE_MOVE_LIMIT_FACTOR 20 /*about 1.3 mm*/
+#define MOUSE_DBCLICK_LIMIT_FACTOR 5 /*about 5 mm*/
 
 void MyAxisRect::wheelEvent(QWheelEvent *event)
 {
@@ -68,6 +68,7 @@ Plot::Plot(Measurement *measurement) :
     grabGesture( Qt::PinchGesture );
 }
 
+
 //taked from http://www.qcustomplot.com/index.php/support/forum/638
 bool Plot::event(QEvent *event)
 {
@@ -98,7 +99,8 @@ bool Plot::event(QEvent *event)
             QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
             if(touchEvent->touchPoints( ).count( ) == 1)
             {
-                QMouseEvent *mouseEve = new QMouseEvent(
+                QMouseEvent mouseEve(
+                    //FIXME type
                     QEvent::MouseButtonPress,
                     touchEvent->touchPoints().first().pos(),
                     Qt::LeftButton,
@@ -107,13 +109,13 @@ bool Plot::event(QEvent *event)
                 switch (touchEvent->touchPointStates())
                 {
                     case Qt::TouchPointPressed:
-                        this->MyMousePressEvent(mouseEve);
+                        this->MyMousePressEvent(&mouseEve);
                     break;
                     case Qt::TouchPointMoved:
-                        this->MyMouseMoveEvent(mouseEve);
+                        this->MyMouseMoveEvent(&mouseEve);
                     break;
                     case Qt::TouchPointReleased:
-                        this->MyMouseReleaseEvent(mouseEve);
+                        this->MyMouseReleaseEvent(&mouseEve);
                     break;
                 }
             }
@@ -170,7 +172,6 @@ bool Plot::_GetClosestX(double in, int &out)
 
 void Plot::MyMousePressEvent(QMouseEvent *event)
 {
-    m_mousePrevionsPressPosition = m_mousePressPosition;
     m_mousePressPosition = event->pos();
     qDebug() << "press point:" << m_mousePressPosition;
     m_mouseHandled = false;
@@ -182,9 +183,9 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     QTime currentTime = QTime::currentTime();
     unsigned diffTime = m_clickTime.msecsTo(currentTime);
     m_clickTime = currentTime;
-    unsigned diffX = qAbs(m_mousePrevionsPressPosition.x() - m_mousePressPosition.x());
-    unsigned diffY = qAbs(m_mousePrevionsPressPosition.y() - m_mousePressPosition.y());
-
+    unsigned diffX = qAbs(m_mouseReleasePosition.x() - event->pos().x());
+    unsigned diffY = qAbs(m_mouseReleasePosition.y() - event->pos().y());
+    m_mouseReleasePosition = event->pos();
     if (
         diffTime != 0 && //sometimes release event comes twice
         diffTime < MOUSE_DBCLICK_TIME_LIMIT &&
@@ -295,6 +296,28 @@ void Plot::wheelEvent(QWheelEvent *event)
     QMetaObject::invokeMethod(this, "processWheelEvent", Qt::QueuedConnection);
 }
 
+void Plot::mousePressEvent(QMouseEvent *event)
+{
+//because there are not emmited touchEvent on desktop
+//FIXME: i dont know how it is on touch displays
+#if not defined(Q_OS_ANDROID)
+    MyMousePressEvent(event);
+#endif
+}
+
+void Plot::mouseReleaseEvent(QMouseEvent *event)
+{
+#if not defined(Q_OS_ANDROID)
+    MyMouseReleaseEvent(event);
+#endif
+}
+void Plot::mouseMoveEvent(QMouseEvent *event)
+{
+#if not defined(Q_OS_ANDROID)
+    MyMouseMoveEvent(event);
+#endif
+}
+
 void Plot::SetDisabled(bool disable)
 {
     if (m_disabled != disable)
@@ -343,10 +366,9 @@ void Plot::MyMouseMoveEvent(QMouseEvent *event)
         !m_mouseHandled &&
         diffX < physicalDpiX() / MOUSE_MOVE_LIMIT_FACTOR &&
         diffY < physicalDpiY() / MOUSE_MOVE_LIMIT_FACTOR
-    )
+    ) //it happens on some Android devices
     {
-        //it happen on some Android devices
-        qDebug() << "mouseMoveEvent with small offset "<< diffX << "," << diffY << " - skipped.";
+        //qDebug() << "mouseMoveEvent with small offset "<< diffX << "," << diffY << " - skipped.";
         event->accept();
         return;
     }
@@ -372,7 +394,7 @@ void Plot::MyMouseMoveEvent(QMouseEvent *event)
     //there would be a serrious performance problem
     QMetaObject::invokeMethod(this, "procesMouseMoveEvent", Qt::QueuedConnection);
 
-    qDebug() << "handled mouse move diffX=" << diffX << " diffY=" << diffY;
+    //qDebug() << "handled mouse move diffX=" << diffX << " diffY=" << diffY;
     m_mouseHandled = true;
 }
 

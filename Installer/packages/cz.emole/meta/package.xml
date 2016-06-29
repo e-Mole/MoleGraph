@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <Package>
     <DisplayName>MoleGraph</DisplayName>
     <Description>MoleGraph, accessible through a start menu entry.</Description>
@@ -7,4 +6,7 @@
     <ReleaseDate>2016-05-05</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
+    <UserInterfaces>
+        <UserInterface>registerfilecheckboxform.ui</UserInterface>
+    </UserInterfaces>
 </Package>

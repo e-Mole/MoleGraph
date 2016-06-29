@@ -79,12 +79,12 @@
     <message>
         <location filename="../AxisChooseDialog.cpp" line="34"/>
         <source>There might be just one channel on a horizontal axis. Values of a hannel &apos;%1&apos; are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.</source>
-        <translation>Na horizontální ose smí být pouze jeden kanál. Hodnoty kanálu &apos;%1&apos; jsou zobrazeny v časovém formatu a musí být přiřazen prázdné ose. Prosím vyberte ji.</translation>
+        <translation>Na horizontální ose smí být pouze jeden kanál. Hodnoty kanálu &apos;%1&apos; jsou zobrazeny v časovém formatu a musí být přiřazen prázdné ose. Prosím vyberte prázdnou osu.</translation>
     </message>
     <message>
         <location filename="../AxisChooseDialog.cpp" line="40"/>
         <source>There might be just one channel on a horizontal axis. Please, chose a different one for a channel &apos;%1&apos;.</source>
-        <translation>Na horizontální ose smí být pouze jeden kanál. Prosím, vyberte jinou pro kanál &apos;%1&apos;.</translation>
+        <translation>Na horizontální ose smí být pouze jeden kanál. Prosím, vyberte jinou osu pro kanál &apos;%1&apos;.</translation>
     </message>
 </context>
 <context>
@@ -159,12 +159,12 @@
     <message>
         <location filename="../AxisMenu.cpp" line="105"/>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
+        <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny k ose &apos;%2&apos;.</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="107"/>
         <source>Remove anyway</source>
-        <translation>I tak odstranit</translation>
+        <translation>Přesto odstranit</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -314,12 +314,12 @@
     <message>
         <location filename="../ButtonLine.cpp" line="277"/>
         <source>Export Current Measurement to CSV...</source>
-        <translation>Exportovat aktuální měření do CSV...</translation>
+        <translation>Exportovat aktuální měření do formátu CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="278"/>
         <source>Export All Measurements to CSV...</source>
-        <translation>Exportovat všechna měření do CSV...</translation>
+        <translation>Exportovat všechna měření do formátu CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="280"/>
@@ -339,7 +339,7 @@
     <message>
         <location filename="../ButtonLine.cpp" line="507"/>
         <source>Open with values?</source>
-        <translation>Otevřít s hodnotami?</translation>
+        <translation>Otevřít s naměřenými hodnotami?</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="507"/>
@@ -354,7 +354,7 @@
     <message>
         <location filename="../ButtonLine.cpp" line="544"/>
         <source>Just template without values has been stored.</source>
-        <translation>Byla uložena pouze šablona bez hodnot.</translation>
+        <translation>Byla uložena pouze šablona bez naměřených hodnot.</translation>
     </message>
     <message>
         <source>Save as</source>
@@ -655,7 +655,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="117"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
-        <translation>Kanás s časovým formátem musí být umístěm na samostatnou osu.Prosím, vyberte jednu.</translation>
+        <translation>Kanál s časovým formátem musí být umístěm na samostatnou osu.Prosím, vyberte jednu z dostupných.</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="246"/>
@@ -700,22 +700,22 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="254"/>
         <source>Cross and Square</source>
-        <translation>Kříž a Čtverec</translation>
+        <translation>Kříž a čtverec</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="255"/>
         <source>Plus and Square</source>
-        <translation>Plus a Čtverec</translation>
+        <translation>Plus a čtverec</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="256"/>
         <source>Cross and Circle</source>
-        <translation>Kříž a Kruh</translation>
+        <translation>Kříž a kruh</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="257"/>
         <source>Plus and Circle</source>
-        <translation>Plus a Kruh</translation>
+        <translation>Plus a kruh</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="258"/>
@@ -875,7 +875,7 @@
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="50"/>
         <source>Show Store/Cancel buttons</source>
-        <translation> Ukaž tlačítla Uloož/Zruš</translation>
+        <translation>Zobraz tlačítka Uložit/Zrušit</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="62"/>
@@ -910,7 +910,7 @@
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="95"/>
         <source>Limit Directory</source>
-        <translation>Mezní adresář</translation>
+        <translation>Preferovaný adresář</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="101"/>
@@ -1039,6 +1039,10 @@
         <translation>Změny v hodnotách nebyly uloženy. Přesto odejít?</translation>
     </message>
     <message>
+        <source></source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Gui and value changes were not saved.</source>
         <translation>Změny v prostředí ani hodnoty nebyly uloženy.</translation>
     </message>
@@ -1053,12 +1057,12 @@
     <message>
         <location filename="../MainWindow.cpp" line="409"/>
         <source>Realy exit?</source>
-        <translation>Skutečně skončit?</translation>
+        <translation>Opravdu ukončit?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="412"/>
         <source>Exit</source>
-        <translation>Skončit</translation>
+        <translation>Ukončit</translation>
     </message>
     <message>
         <source>Gui neither value changes were not saved. Quit anyway?</source>
@@ -1101,12 +1105,12 @@
     <message>
         <location filename="../Measurement.cpp" line="346"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
-        <translation>Měření &apos;%1&apos; právě probíhá. Ukončit ho?</translation>
+        <translation>Měření &apos;%1&apos; právě probíhá. Ukončit toto měření?</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="347"/>
         <source>Terminate</source>
-        <translation>Ukonči</translation>
+        <translation>Ukončit</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1254,7 +1258,7 @@
     <message>
         <location filename="../MyMessageBox.cpp" line="18"/>
         <source>Cancel</source>
-        <translation>Zruš</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -1299,7 +1303,7 @@
     <message>
         <location filename="../PortListDialog.cpp" line="35"/>
         <source>Please, select a comatible device port.</source>
-        <translation>Vyberte kompatibilní port pro zařízení. </translation>
+        <translation>Vyberte kompatibilní port zařízení. </translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="64"/>
@@ -1339,7 +1343,7 @@
     <message>
         <location filename="../hw/PortInfo.cpp" line="44"/>
         <source>Recognized</source>
-        <translation>Rozpoznamý</translation>
+        <translation>Rozpoznaný</translation>
     </message>
     <message>
         <source>Last time used</source>
@@ -1357,7 +1361,7 @@
     <message>
         <location filename="../hw/PortInfo.cpp" line="46"/>
         <source>Last</source>
-        <translation>Minulý</translation>
+        <translation>Poslední</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="60"/>
@@ -1410,12 +1414,12 @@
     <message>
         <location filename="../SampleChannel.cpp" line="219"/>
         <source>Time Offset</source>
-        <translation>Časový rozdíl</translation>
+        <translation>Čas od startu</translation>
     </message>
     <message>
         <location filename="../SampleChannel.cpp" line="221"/>
         <source>Real Time</source>
-        <translation>Reálný čas</translation>
+        <translation>Skutečný čas</translation>
     </message>
 </context>
 <context>
@@ -1430,12 +1434,12 @@
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="25"/>
         <source>Store</source>
-        <translation>Ulož</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="29"/>
         <source>Cancel</source>
-        <translation>Zruš</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -1504,7 +1508,7 @@
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="150"/>
         <source>Rewrite</source>
-        <translation>Přepiš</translation>
+        <translation>Přepsat</translation>
     </message>
 </context>
 <context>
@@ -1526,7 +1530,7 @@
     <message>
         <location filename="../hw/HwSink.cpp" line="259"/>
         <source>Selected port doesn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte páva pro čtení a zápis.</translation>
+        <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte oprávnění přístupu k portu  pro čtení a zápis.</translation>
     </message>
     <message>
         <location filename="../hw/HwSink.cpp" line="368"/>
@@ -1569,7 +1573,7 @@
     <message>
         <location filename="../main.cpp" line="26"/>
         <source>Modifier for opening file without values (just measurement template).</source>
-        <translation>Modifikátor pro otevření souboru bez hodnot (pouze šablona pro měření).</translation>
+        <translation>Modifikátor pro otevření souboru bez hodnot (pouze jako šablona pro měření).</translation>
     </message>
 </context>
 </TS>

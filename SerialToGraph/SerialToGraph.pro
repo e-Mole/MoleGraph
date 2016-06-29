@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     file/NativeFileDialog.cpp \
     file/OwnFileDialog.cpp \
     file/FileModel.cpp \
-    file/AddDirDialog.cpp
+    file/AddDirDialog.cpp \
+    bases/ComboBox.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -107,7 +108,8 @@ HEADERS  += MainWindow.h \
     file/NativeFileDialog.h \
     file/OwnFileDialog.h \
     file/FileModel.h \
-    file/AddDirDialog.h
+    file/AddDirDialog.h \
+    bases/ComboBox.h
 
 CONFIG += mobility
 CONFIG += c++11

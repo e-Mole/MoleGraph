@@ -4,7 +4,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <Plot.h>
-#include <QComboBox>
+#include <bases/ComboBox.h>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -30,14 +30,14 @@ AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context)
     AddColorButtonRow(axis->GetColor());
     if (!axis->m_isHorizontal)
     {
-        m_side = new QComboBox(this);
+        m_side = new bases::ComboBox(this);
         m_side->addItem(tr("Left"));
         m_side->addItem(tr("Right"));
         m_side->setCurrentIndex((int)m_axis->m_isOnRight);
         m_formLayout->addRow(new QLabel(tr("Side"), this), m_side);
     }
 
-    m_display = new QComboBox(this);
+    m_display = new bases::ComboBox(this);
     m_display->addItem(tr("Channels and Units"));
     m_display->addItem(tr("Axis Name"));
     m_display->setCurrentIndex((int)m_axis->m_isShownName);

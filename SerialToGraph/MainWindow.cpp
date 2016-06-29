@@ -391,11 +391,11 @@ QString MainWindow::_MessageIfUnsaved()
 {
     QString message;
     if (!m_savedState && !m_savedValues)
-        message = tr("Gui and value changes were not saved.");
+        message = tr("Gui and value changes were not saved. Realy exit?");
     else if (!m_savedState)
-        message = tr("Gui changes were not saved.");
+        message = tr("Gui changes were not saved. Realy exit?");
     else if (!m_savedValues)
-        message = tr("Value changes were not saved.");
+        message = tr("Value changes were not saved. Realy exit?");
 
     return message;
 }

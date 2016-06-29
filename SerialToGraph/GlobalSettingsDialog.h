@@ -3,10 +3,11 @@
 
 #include <bases/FormDialogBase.h>
 
+namespace bases { class ComboBox;}
+
 class Context;
 class GlobalSettings;
 class QCheckBox;
-class QComboBox;
 class QLineEdit;
 class QPushButton;
 class QSpinBox;
@@ -30,14 +31,14 @@ class GlobalSettingsDialog : public bases::FormDialogBase
 
     Context const &m_context;
     GlobalSettings &m_settings;
-    QComboBox *m_languages;
-    QComboBox *m_brackets;
+    bases::ComboBox *m_languages;
+    bases::ComboBox *m_brackets;
     QCheckBox *m_useBluetooth;
     QCheckBox *m_showConsole;
     QLineEdit *m_limitDirLine;
     QPushButton *m_limitDirButton;
     QCheckBox *m_hideAllChannels;
-    QComboBox *m_menuOrientation;
+    bases::ComboBox *m_menuOrientation;
     QCheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
     QCheckBox *m_showStoreCancelButton;

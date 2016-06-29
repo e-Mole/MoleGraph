@@ -81,22 +81,27 @@ void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);
+
+//on the android, there doesnt work color setting through a palete
 #if defined(Q_OS_ANDROID)
     style += QString("color: rgb(%1, %2, %3);").
         arg(color.red()).
         arg(color.green()).
         arg(color.blue());
-#else
+#endif
+    style += QString("padding: %1px %1px %1px %1px; }").
+        arg(PADDING);
+
+    setStyleSheet(style);
+
+//palete have to be set after styleshhet is called to have effect it is here because linux because there doesnt work color setting by stylesheet
+#if not defined(Q_OS_ANDROID)
     QPalette palette = this->palette();
     palette.setColor(foregroundRole(), color);
     palette.setColor(backgroundRole(), color);
     setPalette(palette);
 #endif
-
-    style += QString("padding: %1px %1px %1px %1px; }").
-        arg(PADDING);
-
-    setStyleSheet(style);
+    repaint();
 }
 
 void ChannelWidget::ValueLabel::SetBackColor(const QColor &backColor)

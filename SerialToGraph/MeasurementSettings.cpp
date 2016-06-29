@@ -3,7 +3,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
-#include <QComboBox>
+#include <bases/ComboBox.h>
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QLabel>
@@ -23,7 +23,7 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     m_name = new QLineEdit(measurement->m_name, this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
-    m_type = new QComboBox(this);
+    m_type = new bases::ComboBox(this);
     m_type->addItem(tr("Periodical"));
     m_type->addItem(tr("On Demand"));
     m_type->setCurrentIndex((int)m_measurement->m_type);
@@ -39,7 +39,7 @@ MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measureme
     m_period->setEnabled(enablePeriodItems);
     m_formLayout->addRow(new QLabel(tr("Period"), this), m_period);
 
-    m_sampleUnits = new QComboBox(this);
+    m_sampleUnits = new bases::ComboBox(this);
     m_sampleUnits->addItem(tr("Hz"));
     m_sampleUnits->addItem(tr("Sec", "seconds"));
     m_sampleUnits->setCurrentIndex((unsigned)measurement->m_sampleUnits);

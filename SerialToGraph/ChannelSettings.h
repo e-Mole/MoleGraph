@@ -4,11 +4,11 @@
 #include <bases/FormDialogColor.h>
 #include <QColor>
 
+namespace bases { class ComboBox;}
 class Axis;
 class ChannelBase;
 class SampleChannel;
 class QCheckBox;
-class QComboBox;
 class QFormLayout;
 class QLineEdit;
 class QString;
@@ -30,12 +30,12 @@ class ChannelSettings : public bases::FormDialogColor
     ChannelBase *m_channel;
     QLineEdit * m_name;
 	QLineEdit * m_units;
-    QComboBox * m_shapeComboBox;
-    QComboBox * m_axisComboBox;
-    QComboBox * m_style;
-    QComboBox * m_timeUnits;
-    QComboBox * m_format;
-    QComboBox * m_penStyle;
+    bases::ComboBox * m_shapeComboBox;
+    bases::ComboBox * m_axisComboBox;
+    bases::ComboBox * m_style;
+    bases::ComboBox * m_timeUnits;
+    bases::ComboBox * m_format;
+    bases::ComboBox * m_penStyle;
 public:
     ChannelSettings(ChannelBase *channel, Context const &context);
 signals:

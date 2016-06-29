@@ -4,10 +4,10 @@
 #include <Axis.h>
 #include <bases/FormDialogColor.h>
 
+namespace bases{ class ComboBox; }
 class AxisCopy;
 class Context;
 class QColor;
-class QComboBox;
 class QLineEdit;
 class QMouseQMouseEvent;
 class QString;
@@ -20,8 +20,8 @@ class AxisSettings : public bases::FormDialogColor
     Axis * m_axis;
     QLineEdit* m_name;
     Context const & m_context;
-    QComboBox *m_side;
-    QComboBox *m_display;
+    bases::ComboBox *m_side;
+    bases::ComboBox *m_display;
 
 public:
     AxisSettings(QWidget *parent, Axis *axis, const Context &context);

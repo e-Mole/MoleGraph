@@ -1,5 +1,6 @@
 #include "GlobalSettingsDialog.h"
 #include <Axis.h>
+#include <bases/ComboBox.h>
 #include <Context.h>
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
@@ -8,7 +9,6 @@
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <QCheckBox>
-#include <QComboBox>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QFormLayout>
@@ -63,7 +63,7 @@ void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
 }
 void GlobalSettingsDialog::_InitializeButtonLines()
 {
-    m_menuOrientation = new QComboBox(this);
+    m_menuOrientation = new bases::ComboBox(this);
     m_menuOrientation->addItem(tr("Horizontal"), Qt::Horizontal);
     m_menuOrientation->addItem(tr("Vertical"), Qt::Vertical);
     m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
@@ -122,7 +122,7 @@ void GlobalSettingsDialog::_InitializeUseBluetooth()
 }
 void GlobalSettingsDialog::_InitializeLanguage()
 {
-    m_languages = new QComboBox(this);
+    m_languages = new bases::ComboBox(this);
     m_languages->addItem("English", "en");
     m_languages->addItem("čeština", "cs");
 
@@ -141,7 +141,7 @@ void GlobalSettingsDialog::_InitializeLanguage()
 
 void GlobalSettingsDialog::_InitializeUnitBrackets()
 {
-    m_brackets = new QComboBox(this);
+    m_brackets = new bases::ComboBox(this);
     m_brackets->addItem("()");
     m_brackets->addItem("[]");
     m_brackets->setCurrentText(m_settings.GetUnitBrackets());

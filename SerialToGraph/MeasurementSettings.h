@@ -2,9 +2,11 @@
 #define MEASUREMENTSETTINGS_H
 
 #include <bases/FormDialogColor.h>
+
+namespace bases { class ComboBox; }
 class Measurement;
 class QCheckBox;
-class QComboBox;
+
 class QLineEdit;
 class QWidget;
 struct Context;
@@ -15,9 +17,9 @@ class MeasurementSettings  : public bases::FormDialogColor
     Context const &m_context;
     Measurement * m_measurement;
     QLineEdit *m_name;
-    QComboBox *m_type;
+    bases::ComboBox *m_type;
     QLineEdit *m_period;
-    QComboBox *m_sampleUnits;
+    bases::ComboBox *m_sampleUnits;
     QCheckBox *m_marksShown;
 
     bool BeforeAccept();

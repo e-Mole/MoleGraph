@@ -23,6 +23,10 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
     scrollArea->setWidget(m_viewport);
     scrollArea->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     QScroller::grabGesture(scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+
+    QFont f = this->font();
+    f.setPixelSize(physicalDpiY() / 9);
+    setFont(f);
 #else
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle(title);

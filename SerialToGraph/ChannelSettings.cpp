@@ -10,7 +10,7 @@
 #include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
-#include <QComboBox>
+#include <bases/ComboBox.h>
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QLabel>
@@ -53,7 +53,7 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
 
 void ChannelSettings::_InitializePenStyle()
 {
-    m_penStyle = new QComboBox(this);
+    m_penStyle = new bases::ComboBox(this);
     m_penStyle->addItem(tr("No Line"));
     m_penStyle->addItem(tr("Solid Line"));
     m_penStyle->addItem(tr("Dash Line"));
@@ -69,7 +69,7 @@ void ChannelSettings::_InitializeTimeFeatures()
 {
     SampleChannel * channel = (SampleChannel*)m_channel;
 
-    m_style = new QComboBox(this);
+    m_style = new bases::ComboBox(this);
     m_style->addItem(channel->GetStyleText(SampleChannel::Samples), false);
     m_style->addItem(channel->GetStyleText(SampleChannel::TimeOffset), false);
     m_style->addItem(channel->GetStyleText(SampleChannel::RealTime), true); //RealTime state as data
@@ -77,7 +77,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
 
-    m_timeUnits = new QComboBox(this);
+    m_timeUnits = new bases::ComboBox(this);
     m_timeUnits->addItem(tr("Microseconds"));
     m_timeUnits->addItem(tr("Miliseconds"));
     m_timeUnits->addItem(tr("Seconds"));
@@ -88,7 +88,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->setEnabled(channel->m_style == SampleChannel::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
-    m_format = new QComboBox(this);
+    m_format = new bases::ComboBox(this);
     m_format->addItem(tr("day.month.year"));
     m_format->addItem(tr("day.month.hour:minute"));
     m_format->addItem(tr("hour:minute:second"));
@@ -241,7 +241,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
 
 void ChannelSettings::_InitializeShapeCombo()
 {
-    m_shapeComboBox = new QComboBox(this);
+    m_shapeComboBox = new bases::ComboBox(this);
     m_shapeComboBox->addItem(tr("Cross"));
     m_shapeComboBox->addItem(tr("Plus"));
     m_shapeComboBox->addItem(tr("Circle"));
@@ -289,7 +289,7 @@ void ChannelSettings::_RefillAxisCombo()
 }
 void ChannelSettings::_InitializeAxisCombo()
 {
-    m_axisComboBox = new QComboBox(this);
+    m_axisComboBox = new bases::ComboBox(this);
     _RefillAxisCombo();
 
     if (m_channel->IsOnHorizontalAxis())

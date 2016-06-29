@@ -45,11 +45,15 @@ class Plot : public QCustomPlot
     QMouseEvent *m_mouseMoveEvent;
     QWheelEvent *m_wheelEvent;
     QPoint m_mousePressPosition;
-    QPoint m_mousePrevionsPressPosition;
-protected:
-    virtual void wheelEvent(QWheelEvent *event);
-    virtual bool event( QEvent *event );
+    QPoint m_mouseReleasePosition;
 
+    virtual void wheelEvent(QWheelEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+
+    bool event( QEvent *event );
+protected:
     //I don't want to use virtual one, I want to decide alone in evane handling
     void MyMousePressEvent(QMouseEvent *event);
     void MyMouseReleaseEvent(QMouseEvent *event);

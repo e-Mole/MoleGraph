@@ -20,6 +20,7 @@ class ChannelMenu : public bases::MenuDialogBase
     void _AddChannel(ChannelBase *channel, unsigned row);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
+    void _AddShortcut(unsigned row, QString const &shortcut);
     void FillGrid();
 
     Measurement &m_measurement;

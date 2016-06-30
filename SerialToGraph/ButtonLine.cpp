@@ -28,6 +28,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMetaMethod>
 #include <QMenu>
 #include <QPoint>
 #include <QPushButton>
@@ -251,24 +252,41 @@ void ButtonLine::_FillRecentFileMenu()
     _SetMenuStyle(m_recentFilesMenu);
 }
 
+QShortcut * ButtonLine::_CreateShortcut(
+    QKeySequence const &sequence, const QObject *receiver, const char *slot)
+{
+#if defined(Q_OS_ANDROID)
+    //Android doesn't supprt keyboard shortcuts
+    Q_UNUSED(sequence);
+    Q_UNUSED(slot);
+    return NULL;
+#else
+    QShortcut *shortcut = new QShortcut(sequence, this);
+    connect (shortcut, SIGNAL(activated()), receiver, slot);
+    return shortcut;
+#endif
+}
+
+QKeySequence ButtonLine::_GetKey(QShortcut * shortcut)
+{
+    return (shortcut == NULL ? QKeySequence() : shortcut->key());
+}
+
 void ButtonLine::_InitializeMenu()
 {
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
 
-    QShortcut *newShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this);
-    connect (newShortcut, SIGNAL(activated()), this, SLOT(newFile()));
-    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()), newShortcut->key());
+    QShortcut *newShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(newFile()));
+    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()), _GetKey(newShortcut));
 
-    QShortcut *openShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this);
-    connect (openShortcut, SIGNAL(activated()), this, SLOT(openFile()));
-    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()), openShortcut->key());
+    QShortcut *openShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openFile()));
+    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()), _GetKey(openShortcut));
     m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openWithoutValues()));
     m_recentFilesMenu = m_fileMenu->addMenu(tr("Recently Used Files"));
 
-    QShortcut *saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
-    connect (saveShortcut, SIGNAL(activated()), this, SLOT(saveFile()));
-    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()), saveShortcut->key());
+    QShortcut *saveShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveFile()));
+    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()), _GetKey(saveShortcut));
 
     m_fileMenu->addAction(tr("Save As..."), this, SLOT(saveAsFile()));
     m_fileMenu->addAction(tr("Save without Values As..."), this, SLOT(saveWithoutValuesAsFile()));
@@ -569,37 +587,41 @@ void ButtonLine::_ClearPanelShortcuts()
 
 void ButtonLine::_CreatePanelShortcuts()
 {
-    m_graphShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this);
-    connect (m_graphShortcut, SIGNAL(activated()), m_channelMenu, SLOT(graphActivated()));
+    m_graphShortcut = _CreateShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_G), m_channelMenu, SLOT(graphActivated()));
 
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        QShortcut *s = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()), this);
-        connect(s, SIGNAL(activated()), this, SLOT(channelActivated()));
-        m_shortcutChannels[s] = channel;
+        QShortcut *s = _CreateShortcut(
+            QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()),
+            this,
+            SLOT(channelActivated())
+        );
+        if (s != NULL)
+            m_shortcutChannels[s] = channel;
     }
 
-    m_allChannelsShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_A), this);
-    connect(m_allChannelsShortcut, SIGNAL(activated()), m_channelMenu, SLOT(allChannelsActivated()));
+    m_allChannelsShortcut = _CreateShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_A), m_channelMenu, SLOT(allChannelsActivated()));
 
-    m_noChannelsShortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_N), this);
-    connect(m_noChannelsShortcut, SIGNAL(activated()), m_channelMenu, SLOT(noChannelsActivated()));
+    m_noChannelsShortcut = _CreateShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_N), m_channelMenu, SLOT(noChannelsActivated()));
 }
 
 
 QString ButtonLine::GetGraphShortcutText()
 {
-    return m_graphShortcut->key().toString();
+    return (m_graphShortcut == NULL ? "" : m_graphShortcut->key().toString());
 }
 
 QString ButtonLine::GetAllChannelShortcutText()
 {
-    return m_allChannelsShortcut->key().toString();
+    return (m_allChannelsShortcut == NULL ? "" : m_allChannelsShortcut->key().toString());
 }
 
 QString ButtonLine::GetNoChannelShortcutText()
 {
-    return m_noChannelsShortcut->key().toString();
+    return (m_noChannelsShortcut == NULL ? "" : m_noChannelsShortcut->key().toString());
 }
 
 QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
@@ -612,7 +634,7 @@ QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
             return it.key()->key().toString();
     }
 
-    //should not be reached;
+    //wiil be reached on Android;
     return "";
 }
 

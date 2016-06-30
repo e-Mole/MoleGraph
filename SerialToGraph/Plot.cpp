@@ -302,6 +302,8 @@ void Plot::mousePressEvent(QMouseEvent *event)
 //FIXME: i dont know how it is on touch displays
 #if not defined(Q_OS_ANDROID)
     MyMousePressEvent(event);
+#else
+    Q_UNUSED(event);
 #endif
 }
 
@@ -309,12 +311,16 @@ void Plot::mouseReleaseEvent(QMouseEvent *event)
 {
 #if not defined(Q_OS_ANDROID)
     MyMouseReleaseEvent(event);
+#else
+    Q_UNUSED(event);
 #endif
 }
 void Plot::mouseMoveEvent(QMouseEvent *event)
 {
 #if not defined(Q_OS_ANDROID)
     MyMouseMoveEvent(event);
+#else
+    Q_UNUSED(event);
 #endif
 }
 

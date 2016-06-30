@@ -36,25 +36,19 @@ void ChannelMenu::FillGrid()
     connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
     m_gridLayout->addWidget(m_graphCheckBox, row, 0);
 
-    m_gridLayout->addWidget(
-        _GetShortcutLabel(m_buttonLine->GetGraphShortcutText()), row, 1
-    );
+    _AddShortcut(row, m_buttonLine->GetGraphShortcutText());
 
     ++row;
     QPushButton *m_showAllButton = new QPushButton(tr("All Channels"), this);
     connect(m_showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
     m_gridLayout->addWidget(m_showAllButton, row, 0);
-    m_gridLayout->addWidget(
-        _GetShortcutLabel(m_buttonLine->GetAllChannelShortcutText()), row, 1
-    );
+    _AddShortcut(row, m_buttonLine->GetAllChannelShortcutText());
 
     ++row;
     QPushButton *m_showNoneButton = new QPushButton(tr("No Channels"), this);
     connect(m_showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
     m_gridLayout->addWidget(m_showNoneButton, row, 0);
-    m_gridLayout->addWidget(
-        _GetShortcutLabel(m_buttonLine->GetNoChannelShortcutText()), row, 1
-    );
+    _AddShortcut(row, m_buttonLine->GetNoChannelShortcutText());
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(m_showAllButton->sizeHint().height());
@@ -66,6 +60,11 @@ void ChannelMenu::FillGrid()
     m_gridLayout->setColumnStretch(2, 1);
 }
 
+void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
+{
+    if (!shortcut.isEmpty())
+        m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
+}
 void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
 {
     ColorCheckBox *cb = new ColorCheckBox(channel->GetName(), this);
@@ -77,9 +76,7 @@ void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivated()));
     m_gridLayout->addWidget(cb, row, 0);
 
-    m_gridLayout->addWidget(
-        _GetShortcutLabel(m_buttonLine->GetChannelShortcutText(channel)), row, 1
-    );
+    _AddShortcut(row, m_buttonLine->GetChannelShortcutText(channel));
 
     QPushButton *pb = new QPushButton(tr("Edit"), this);
     m_editChannels[pb] = channel;

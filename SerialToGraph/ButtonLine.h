@@ -16,6 +16,7 @@ class Measurement;
 //class QAction;
 class QDialog;
 class QGridLayout;
+class QKeySequence;
 class QLabel;
 class QLineEdit;
 class QMenu;
@@ -44,7 +45,8 @@ class ButtonLine : public QWidget
     QString _GetRootDir();
     void _FillRecentFileMenu();
     void _SetMenuStyle(QMenu *menu);
-
+    QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
+    QKeySequence _GetKey(QShortcut *shortcut);
     QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;

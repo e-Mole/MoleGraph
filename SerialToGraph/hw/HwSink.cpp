@@ -28,7 +28,7 @@ HwSink::HwSink(GlobalSettings &settings, QWidget *parent) :
     m_settings(settings),
     m_state(Offline),
     parentWidget(parent),
-    protocolIdTimer(NULL)
+    m_protocolIdTimer(NULL)
 {
 
 }
@@ -77,6 +77,19 @@ bool HwSink::Continue()
 bool HwSink::SampleRequest()
 {
     return _WriteInstruction(INS_GET_SAMLPE);
+}
+
+bool HwSink::Initialize()
+{
+    bool retValue = _WriteInstruction(INS_INITIALIZE);
+
+    qDebug() << "initialization";
+    m_initializeTimer = new QTimer(this);
+    m_initializeTimer->setSingleShot(true);
+    connect(m_initializeTimer, SIGNAL(timeout()), this, SLOT(initialized()));
+    m_initializeTimer->start(100); //it should be enough to get response
+
+    return retValue;
 }
 
 bool HwSink::GetVersion()
@@ -207,21 +220,31 @@ void HwSink::OpenPort(PortInfo const &info)
     m_port->OpenPort(info.m_id);
 }
 
+void HwSink::initialized()
+{
+    delete m_initializeTimer;
+    m_initializeTimer = 0;
+    ClearCache();
+
+    //I have to check if it is device with supported protocol
+    GetVersion();
+
+    m_protocolIdTimer = new QTimer(this);
+    m_protocolIdTimer->setSingleShot(true);
+    connect(m_protocolIdTimer, SIGNAL(timeout()), this, SLOT(readyRead()));
+    m_protocolIdTimer->start(100); //it should be enough to get response
+}
+
 void HwSink::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
         _ChangeState(Verification);
 
-        //I have to check if it is device with supported protocol
         //It must be done asynchronously because of bloetooth. Waitng to data doesnt work
         //Reaction is checked in readyRead slot
-        GetVersion();
-
-        protocolIdTimer = new QTimer(this);
-        protocolIdTimer->setSingleShot(true);
-        connect(protocolIdTimer, SIGNAL(timeout()), this, SLOT(readyRead()));
-        protocolIdTimer->start(100); //it should be enough to get response
+        qDebug() << "port opened.";
+        Initialize();
     }
     else
     {
@@ -246,8 +269,8 @@ void HwSink::readyRead()
     if (m_state != Verification)
         return;
 
-    delete protocolIdTimer;
-    protocolIdTimer = NULL;
+    delete m_protocolIdTimer;
+    m_protocolIdTimer = NULL;
 
     QByteArray array;
     m_port->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge

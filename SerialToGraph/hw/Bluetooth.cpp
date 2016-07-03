@@ -71,7 +71,6 @@ bool Bluetooth::OpenPort(QString id)
     connect(m_socket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
     connect(m_socket, SIGNAL(connected()), this, SLOT(connected()));
     m_socket->connectToService(m_serviceInfos[id]);
-    //m_socket->connectToService(m_serviceInfos[id].device().address(), m_serviceInfos[id].serverChannel());
     m_timeout->start(5000);
     return true;
 }

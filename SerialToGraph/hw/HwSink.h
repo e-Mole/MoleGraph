@@ -43,6 +43,7 @@ private:
         INS_GET_SAMLPE = 8,
         INS_PAUSE = 9,
         INS_CONTINUE = 10,
+        INS_INITIALIZE = 11
     };
 
     bool _WriteInstruction(Instructions instruction, std::string const &data);
@@ -60,7 +61,8 @@ private:
     State m_state;
     QWidget *parentWidget;
     PortInfo m_openedPortInfo;
-    QTimer *protocolIdTimer;
+    QTimer *m_protocolIdTimer;
+    QTimer *m_initializeTimer;
 public:
     HwSink(GlobalSettings &settings, QWidget *parent);
     ~HwSink();
@@ -73,6 +75,7 @@ public:
     bool Pause();
     bool Continue();
     bool SampleRequest();
+    bool Initialize();
     bool GetVersion();
     void SetSelectedChannels(unsigned char channels);
     bool IsDeviceConnected();
@@ -101,6 +104,7 @@ public slots:
     void portOpeningFinished();
 private slots:
     void readyRead();
+    void initialized();
 
 };
 } //namespace hw

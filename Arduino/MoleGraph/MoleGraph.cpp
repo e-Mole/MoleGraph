@@ -17,7 +17,8 @@ namespace
     INS_SET_TYPE = 7,
     INS_GET_SAMLPE = 8,
     INS_PAUSE = 9,
-    INS_CONTINUE = 10
+    INS_CONTINUE = 10,
+    INS_INITIALIZE = 11
   };
   
   enum Type
@@ -236,6 +237,9 @@ void MoleGraph::CheckInput()
     case INS_GET_SAMLPE:
       g_sampleRequest = true;
     break;    
+    case INS_INITIALIZE: //when desktop application crash, this stay in sending data
+      Stop();
+    break;
     }
   }
   

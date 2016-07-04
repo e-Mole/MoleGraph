@@ -45,9 +45,9 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
 
 void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
 {
-    m_showStoreCancelButton = new QCheckBox(this);
-    m_showStoreCancelButton->setChecked(m_settings.GetShowSaveCancelButtons());
-    m_formLayout->addRow(tr("Show Store/Cancel buttons"), m_showStoreCancelButton);
+    m_acceptChangesByDialogClosing = new QCheckBox(this);
+    m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
+    m_formLayout->addRow(tr("Accept Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
 void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
 {
@@ -215,9 +215,9 @@ bool GlobalSettingsDialog::BeforeAccept()
         m_context.m_mainWindow.UpdateChannelSizeFactor();
     }
 
-    if (m_settings.GetShowSaveCancelButtons() != m_showStoreCancelButton->isChecked())
+    if (m_settings.GetAcceptChangesByDialogClosing() != m_acceptChangesByDialogClosing->isChecked())
     {
-        m_settings.SetShowSaveCancelButtons(m_showStoreCancelButton->isChecked());
+        m_settings.SetAcceptChangesByDialogClosing(m_acceptChangesByDialogClosing->isChecked());
     }
 
     return true;

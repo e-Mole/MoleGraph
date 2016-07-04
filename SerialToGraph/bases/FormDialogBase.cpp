@@ -17,19 +17,17 @@ FormDialogBase::FormDialogBase(QWidget *parent, const QString &title, GlobalSett
     m_formLayout = new QFormLayout();
     mainLayout->addLayout(m_formLayout);
 
-    if (m_settings.GetShowSaveCancelButtons())
-    {
-        QHBoxLayout *buttonLayout = new QHBoxLayout();
-        mainLayout->addLayout(buttonLayout);
 
-        QPushButton *store = new QPushButton(tr("Store"), this);
-        buttonLayout->addWidget(store);
-        connect(store, SIGNAL(clicked(bool)), this, SLOT(storeAndAccept()));
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    mainLayout->addLayout(buttonLayout);
 
-        QPushButton *cancel = new QPushButton(tr("Cancel"), this);
-        buttonLayout->addWidget(cancel);
-        connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
-    }
+    QPushButton *store = new QPushButton(tr("Store"), this);
+    buttonLayout->addWidget(store);
+    connect(store, SIGNAL(clicked(bool)), this, SLOT(storeAndAccept()));
+
+    QPushButton *cancel = new QPushButton(tr("Cancel"), this);
+    buttonLayout->addWidget(cancel);
+    connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
 }
 
 void FormDialogBase::storeAndAccept()
@@ -40,7 +38,7 @@ void FormDialogBase::storeAndAccept()
 
 void FormDialogBase::closeEvent(QCloseEvent * e)
 {
-    if (!m_settings.GetShowSaveCancelButtons())
+    if (m_settings.GetAcceptChangesByDialogClosing())
         storeAndAccept();
 
     PlatformDialog::closeEvent(e);

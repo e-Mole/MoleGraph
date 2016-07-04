@@ -41,7 +41,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     bases::ComboBox *m_menuOrientation;
     QCheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
-    QCheckBox *m_showStoreCancelButton;
+    QCheckBox *m_acceptChangesByDialogClosing;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context);
 

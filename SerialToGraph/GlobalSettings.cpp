@@ -49,8 +49,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "channel_size_fctor";
     case Key_RecentFilePaths:
         return "recent_file_paths";
-    case Key_ShowSaveCancelButtons:
-        return "show_save_cancel_buttons";
+    case Key_AcceptChangesByDialogClosing:
+        return "accept_changes_by_dialog_closing";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -260,15 +260,15 @@ void GlobalSettings::AddRecentFilePath(QString const &path)
     _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
 }
 
-bool GlobalSettings::GetShowSaveCancelButtons() const
+bool GlobalSettings::GetAcceptChangesByDialogClosing() const
 {
 #if defined(Q_OS_ANDROID)
-    return _Get(Key_ShowSaveCancelButtons, false).toBool();
-#else
     return _Get(Key_ShowSaveCancelButtons, true).toBool();
+#else
+    return _Get(Key_AcceptChangesByDialogClosing, false).toBool();
 #endif
 }
-void GlobalSettings::SetShowSaveCancelButtons(bool show)
+void GlobalSettings::SetAcceptChangesByDialogClosing(bool show)
 {
-    _Set(Key_ShowSaveCancelButtons, show);
+    _Set(Key_AcceptChangesByDialogClosing, show);
 }

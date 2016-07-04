@@ -28,7 +28,7 @@ class GlobalSettings
         Key_MenuIsShown,
         Key_ChannelSizeFactor,
         Key_RecentFilePaths,
-        Key_ShowSaveCancelButtons,
+        Key_AcceptChangesByDialogClosing,
     };
 
     QString _GetStringKey(Key key) const;
@@ -77,8 +77,8 @@ public:
     unsigned GetRecetFilePathCount();
     QString GetRecentFilePath(unsigned index);
     void AddRecentFilePath(QString const &path);
-    bool GetShowSaveCancelButtons() const;
-    void SetShowSaveCancelButtons(bool show);
+    bool GetAcceptChangesByDialogClosing() const;
+    void SetAcceptChangesByDialogClosing(bool show);
 };
 
 #endif // GLOBALSETTINGS_H

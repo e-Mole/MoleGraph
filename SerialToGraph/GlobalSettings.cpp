@@ -263,7 +263,7 @@ void GlobalSettings::AddRecentFilePath(QString const &path)
 bool GlobalSettings::GetAcceptChangesByDialogClosing() const
 {
 #if defined(Q_OS_ANDROID)
-    return _Get(Key_ShowSaveCancelButtons, true).toBool();
+    return _Get(Key_AcceptChangesByDialogClosing, true).toBool();
 #else
     return _Get(Key_AcceptChangesByDialogClosing, false).toBool();
 #endif

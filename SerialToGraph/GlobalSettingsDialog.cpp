@@ -47,7 +47,7 @@ void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
 {
     m_acceptChangesByDialogClosing = new QCheckBox(this);
     m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
-    m_formLayout->addRow(tr("Accept Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
+    m_formLayout->addRow(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
 void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
 {

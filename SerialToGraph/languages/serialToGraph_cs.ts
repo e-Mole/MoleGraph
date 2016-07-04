@@ -256,103 +256,103 @@
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="91"/>
+        <location filename="../ButtonLine.cpp" line="92"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="98"/>
+        <location filename="../ButtonLine.cpp" line="99"/>
         <source>Sample</source>
         <translation>Vzorek</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="102"/>
-        <location filename="../ButtonLine.cpp" line="339"/>
+        <location filename="../ButtonLine.cpp" line="103"/>
+        <location filename="../ButtonLine.cpp" line="357"/>
         <source>Pause</source>
         <translation>Pauza</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="106"/>
+        <location filename="../ButtonLine.cpp" line="107"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="261"/>
+        <location filename="../ButtonLine.cpp" line="281"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="265"/>
+        <location filename="../ButtonLine.cpp" line="284"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="266"/>
+        <location filename="../ButtonLine.cpp" line="285"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="267"/>
+        <location filename="../ButtonLine.cpp" line="286"/>
         <source>Recently Used Files</source>
         <translation>Nedávno použité soubory</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="273"/>
+        <location filename="../ButtonLine.cpp" line="291"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="274"/>
+        <location filename="../ButtonLine.cpp" line="292"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="276"/>
+        <location filename="../ButtonLine.cpp" line="294"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="277"/>
+        <location filename="../ButtonLine.cpp" line="295"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do formátu CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="278"/>
+        <location filename="../ButtonLine.cpp" line="296"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do formátu CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="280"/>
+        <location filename="../ButtonLine.cpp" line="298"/>
         <source>Settings...</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="281"/>
+        <location filename="../ButtonLine.cpp" line="299"/>
         <source>About...</source>
         <translation>O programu...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="338"/>
+        <location filename="../ButtonLine.cpp" line="356"/>
         <source>Continue</source>
         <translation>Pokračovat</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="507"/>
+        <location filename="../ButtonLine.cpp" line="525"/>
         <source>Open with values?</source>
         <translation>Otevřít s naměřenými hodnotami?</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="507"/>
+        <location filename="../ButtonLine.cpp" line="525"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="507"/>
+        <location filename="../ButtonLine.cpp" line="525"/>
         <source>No</source>
         <translation>Ne</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="544"/>
+        <location filename="../ButtonLine.cpp" line="562"/>
         <source>Just template without values has been stored.</source>
         <translation>Byla uložena pouze šablona bez naměřených hodnot.</translation>
     </message>
@@ -365,7 +365,7 @@
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="271"/>
+        <location filename="../ButtonLine.cpp" line="289"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -390,22 +390,22 @@
         <translation>Exportovat do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="85"/>
+        <location filename="../ButtonLine.cpp" line="86"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="79"/>
+        <location filename="../ButtonLine.cpp" line="80"/>
         <source>File</source>
         <translation>Soubor</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="82"/>
+        <location filename="../ButtonLine.cpp" line="83"/>
         <source>Measurements</source>
         <translation>Měření</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="88"/>
+        <location filename="../ButtonLine.cpp" line="89"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
@@ -466,17 +466,17 @@
         <translation>Graf</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="44"/>
+        <location filename="../ChannelMenu.cpp" line="42"/>
         <source>All Channels</source>
         <translation>Všechny kanály</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="52"/>
+        <location filename="../ChannelMenu.cpp" line="48"/>
         <source>No Channels</source>
         <translation>Žádné kanály</translation>
     </message>
     <message>
-        <location filename="../ChannelMenu.cpp" line="84"/>
+        <location filename="../ChannelMenu.cpp" line="81"/>
         <source>Edit</source>
         <translation>Editovat</translation>
     </message>
@@ -873,9 +873,13 @@
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="50"/>
         <source>Show Store/Cancel buttons</source>
         <translation>Zobraz tlačítka Uložit/Zrušit</translation>
+    </message>
+    <message>
+        <location filename="../GlobalSettingsDialog.cpp" line="50"/>
+        <source>Apply Changes by a Dialog Closing</source>
+        <translation>Aplikovat změny při zavření dialogu</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="62"/>
@@ -1432,12 +1436,12 @@
 <context>
     <name>bases::FormDialogBase</name>
     <message>
-        <location filename="../bases/FormDialogBase.cpp" line="25"/>
+        <location filename="../bases/FormDialogBase.cpp" line="24"/>
         <source>Store</source>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../bases/FormDialogBase.cpp" line="29"/>
+        <location filename="../bases/FormDialogBase.cpp" line="28"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -1514,7 +1518,7 @@
 <context>
     <name>hw::HwSink</name>
     <message>
-        <location filename="../hw/HwSink.cpp" line="169"/>
+        <location filename="../hw/HwSink.cpp" line="182"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
     </message>
@@ -1523,37 +1527,37 @@
         <translation>Vybraný port je zaneprázdněný. Je pravděpodobně otevřený jiným procesem.</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="230"/>
+        <location filename="../hw/HwSink.cpp" line="253"/>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
         <translation>Vybraný port nemůže být otevřen. Je používán jiným procesem nebo je zařízení odpojeno.</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="259"/>
+        <location filename="../hw/HwSink.cpp" line="282"/>
         <source>Selected port doesn&apos;t responding as expected. Please, check port read/write permitions.</source>
         <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte oprávnění přístupu k portu  pro čtení a zápis.</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="368"/>
+        <location filename="../hw/HwSink.cpp" line="391"/>
         <source>Offline</source>
         <translation>Odpojeno</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="370"/>
+        <location filename="../hw/HwSink.cpp" line="393"/>
         <source>Scanning</source>
         <translation>Skenování</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="372"/>
+        <location filename="../hw/HwSink.cpp" line="395"/>
         <source>Opening</source>
         <translation>Otevírání</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="374"/>
+        <location filename="../hw/HwSink.cpp" line="397"/>
         <source>Verification</source>
         <translation>Verifikace</translation>
     </message>
     <message>
-        <location filename="../hw/HwSink.cpp" line="376"/>
+        <location filename="../hw/HwSink.cpp" line="399"/>
         <source>Connected</source>
         <translation>Připojeno</translation>
     </message>

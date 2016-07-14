@@ -6,7 +6,6 @@
 #define ECHO_PIN 5
 #define BUTTON_PIN 12
 
-unsigned counter =  0;
 int g_distance = 0;
 MoleGraph moleGraph;
 
@@ -14,12 +13,9 @@ void UpdateGraphChannels(void)
 {
     //TEMP (THERMISTOR) - CH1
     int raw1 = analogRead(THERMISTOR_PIN);
-    float celsius = -0.1111*raw1 + 102.69;
+    float celsius = -0.1111*raw1 + 102.69;  //this is from thermistor calibration
     float test_temp = round(celsius*10);
     moleGraph.SetChannelValue(1, test_temp/10);
-    //moleGraph.SetChannelValue(1, celsius);
-    //moleGraph.SetChannelValue(2, test_temp/10);
-    //moleGraph.SetChannelValue(8, raw);
 
     //LIGHT (PHOTORESISITOR) - CH2
     int raw2 = analogRead(PHOTORESISTOR_PIN);
@@ -35,8 +31,8 @@ void setup()
   moleGraph.SetSendingCallback(&UpdateGraphChannels);
   
   //sensors settings
-   // for US sensor on trigpin
-   digitalWrite(TRIG_PIN, LOW );  
+  // for US sensor on trigpin
+  digitalWrite(TRIG_PIN, LOW );  
 }
 
 void loop() 

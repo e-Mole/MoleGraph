@@ -92,7 +92,7 @@ void GlobalSettingsDialog::_InitializeLimitDir()
     m_limitDirButton = new QPushButton("...", this);
     connect(m_limitDirButton, SIGNAL(clicked()), this, SLOT(limitDirClicked()));
     layout->addWidget(m_limitDirButton);
-    m_formLayout->addRow(tr("Limit Directory"), layout);
+    m_formLayout->addRow(tr("Preferred Directory"), layout);
 }
 
 void GlobalSettingsDialog::limitDirClicked()

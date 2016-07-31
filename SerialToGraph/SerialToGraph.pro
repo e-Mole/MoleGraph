@@ -128,6 +128,7 @@ QT += androidextras
 }
 
 win32:RC_ICONS += MoleGraph.ico
+ICON = MoleGraph.icns # icons for Mac OS X
 
 RESOURCES += \
     translations.qrc

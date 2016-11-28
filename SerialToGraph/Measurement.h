@@ -88,8 +88,8 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessSelectedChannels();
-    float _DequeueFloat(unsigned &checkSum);
-    unsigned _GetCheckSum(unsigned char input);
+    float _DequeueFloat(unsigned char &checkSum);
+    unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
     QCPAxis *_GetGraphAxis(unsigned index);

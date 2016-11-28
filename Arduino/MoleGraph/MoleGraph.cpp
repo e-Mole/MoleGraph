@@ -53,8 +53,8 @@ namespace
     TCCR1B |= (1 << CS12);    // 256 prescaler 
     interrupts();             // enable all interrupts
   }
-
-  unsigned char GetCheckSum(unsigned char input)
+  
+  unsigned char GetCheckSumC(unsigned char input)
   {
     unsigned char output = 0;
     for (unsigned char i = 0; i < 8; ++i)
@@ -62,6 +62,15 @@ namespace
       if (input & (1 << i))
         output++;
     }
+    return output;
+  }
+
+  unsigned char GetCheckSumF(float input)
+  {
+    unsigned char output = 0;
+    for (int i = 0; i < sizeof(float); i++)
+      output += GetCheckSumC(((unsigned char *)&input)[i]);
+
     return output;
   }
   
@@ -72,7 +81,7 @@ namespace
     mixture |= g_fullWriteBufferDetected << 7;
     
     Serial.write(mixture);
-    return GetCheckSum(mixture);  
+    return GetCheckSumC(mixture);  
   }
   
   void SendData(bool timestamp)
@@ -98,15 +107,14 @@ namespace
     if (timestamp)
     {
       Serial.write((char *)&g_timeFromStart, sizeof(float));
-      checkSum += GetCheckSum(g_timeFromStart);
+      checkSum += GetCheckSumF(g_timeFromStart);
     }
     for (int i = 0; i < 8; i++)
     {
       if (0 != ((g_enabledChannels >> i) & 1)) 
       {
         Serial.write((char *)&g_channels[i], sizeof(float));
-        for (int j = 0; j < sizeof(float); j++)
-          checkSum += GetCheckSum(((char *)&g_channels[i])[j]);
+        checkSum += GetCheckSumF(g_channels[i]);
       }
     }
      

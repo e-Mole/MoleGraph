@@ -168,7 +168,7 @@ void Measurement::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-float Measurement::_DequeueFloat(unsigned &checkSum)
+float Measurement::_DequeueFloat(unsigned char &checkSum)
 {
     char value[4];
 
@@ -219,7 +219,7 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
-unsigned Measurement::_GetCheckSum(unsigned char input)
+unsigned char Measurement::_GetCheckSum(unsigned char input)
 {
     unsigned char output = 0;
     for (unsigned char i = 0; i < 8; ++i)
@@ -249,7 +249,7 @@ bool Measurement::_ProcessValueSet()
 {
     unsigned mixture = m_queue.dequeue();
     m_anySampleMissed |= mixture >> 7;
-    unsigned checkSum = _GetCheckSum(mixture);
+    unsigned char checkSum = _GetCheckSum(mixture);
 
     if (_ProcessCommand(mixture, checkSum))
         return false; //message is a command
@@ -269,8 +269,10 @@ bool Measurement::_ProcessValueSet()
     for (int i = 0; i < m_trackedHwChannels.count(); ++i)
         values.push_back(_DequeueFloat(checkSum));
 
-    if (checkSum != m_queue.dequeue())
+    unsigned char expectedChecksum = m_queue.dequeue();
+    if (checkSum != expectedChecksum)
     {
+        qDebug() << "checksum doesnt match:" << checkSum << ", " << expectedChecksum;
         m_anyCheckSumDoesntMatch = true;
         return false;
     }

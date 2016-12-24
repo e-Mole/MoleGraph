@@ -181,6 +181,7 @@ void ChannelWidget::_SetBackColor(ChannelBase::ValueType type)
     break;
     case ChannelBase::ValueTypeUnknown:
     case ChannelBase::ValueTypeOriginal:
+    case ChannelBase::ValueTypeRangeValue:
         m_valueLabel->SetBackColor(QColor(0xff, 0xff, 0xff));
     break;
     default:

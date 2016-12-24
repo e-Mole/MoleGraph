@@ -256,103 +256,103 @@
         <translation type="vanished">Hz</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="92"/>
+        <location filename="../ButtonLine.cpp" line="98"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="99"/>
+        <location filename="../ButtonLine.cpp" line="105"/>
         <source>Sample</source>
         <translation>Vzorek</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="103"/>
-        <location filename="../ButtonLine.cpp" line="357"/>
+        <location filename="../ButtonLine.cpp" line="109"/>
+        <location filename="../ButtonLine.cpp" line="375"/>
         <source>Pause</source>
         <translation>Pauza</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="107"/>
+        <location filename="../ButtonLine.cpp" line="113"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="281"/>
+        <location filename="../ButtonLine.cpp" line="299"/>
         <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="284"/>
+        <location filename="../ButtonLine.cpp" line="302"/>
         <source>Open...</source>
         <translation>Otevřít...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="285"/>
+        <location filename="../ButtonLine.cpp" line="303"/>
         <source>Open without Values...</source>
         <translation>Otevřít bez hodnot...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="286"/>
+        <location filename="../ButtonLine.cpp" line="304"/>
         <source>Recently Used Files</source>
         <translation>Nedávno použité soubory</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="291"/>
+        <location filename="../ButtonLine.cpp" line="309"/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="292"/>
+        <location filename="../ButtonLine.cpp" line="310"/>
         <source>Save without Values As...</source>
         <translation>Uložit bez hodnot jako...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="294"/>
+        <location filename="../ButtonLine.cpp" line="312"/>
         <source>Export to PNG...</source>
         <translation>Exportovat do PNG...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="295"/>
+        <location filename="../ButtonLine.cpp" line="313"/>
         <source>Export Current Measurement to CSV...</source>
         <translation>Exportovat aktuální měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="296"/>
+        <location filename="../ButtonLine.cpp" line="314"/>
         <source>Export All Measurements to CSV...</source>
         <translation>Exportovat všechna měření do CSV...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="298"/>
+        <location filename="../ButtonLine.cpp" line="316"/>
         <source>Settings...</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="299"/>
+        <location filename="../ButtonLine.cpp" line="317"/>
         <source>About...</source>
         <translation>O programu...</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="356"/>
+        <location filename="../ButtonLine.cpp" line="374"/>
         <source>Continue</source>
         <translation>Pokračovat</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="525"/>
+        <location filename="../ButtonLine.cpp" line="543"/>
         <source>Open with values?</source>
         <translation>Otevřít s naměřenými hodnotami?</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="525"/>
+        <location filename="../ButtonLine.cpp" line="543"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="525"/>
+        <location filename="../ButtonLine.cpp" line="543"/>
         <source>No</source>
         <translation>Ne</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="562"/>
+        <location filename="../ButtonLine.cpp" line="580"/>
         <source>Just template without values has been stored.</source>
         <translation>Byla uložena pouze šablona bez naměřených hodnot.</translation>
     </message>
@@ -365,7 +365,7 @@
         <translation type="vanished">Otevřít</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="289"/>
+        <location filename="../ButtonLine.cpp" line="307"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
@@ -390,22 +390,27 @@
         <translation type="vanished">Exportovat do CSV</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="86"/>
+        <location filename="../ButtonLine.cpp" line="92"/>
         <source>Panels</source>
         <translation>Panely</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="80"/>
+        <location filename="../ButtonLine.cpp" line="83"/>
         <source>File</source>
         <translation>Soubor</translation>
     </message>
     <message>
-        <location filename="../ButtonLine.cpp" line="83"/>
+        <location filename="../ButtonLine.cpp" line="86"/>
         <source>Measurements</source>
         <translation>Měření</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="89"/>
+        <source>View</source>
+        <translation>Zobrazení</translation>
+    </message>
+    <message>
+        <location filename="../ButtonLine.cpp" line="95"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
@@ -913,8 +918,12 @@
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="95"/>
+        <source>Preferred Directory</source>
+        <translation>Preferovaná složka</translation>
+    </message>
+    <message>
         <source>Limit Directory</source>
-        <translation>Preferovaný adresář</translation>
+        <translation type="vanished">Preferovaný adresář</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="101"/>
@@ -1092,27 +1101,27 @@
 <context>
     <name>Measurement</name>
     <message>
-        <location filename="../Measurement.cpp" line="59"/>
+        <location filename="../Measurement.cpp" line="61"/>
         <source>Measurement %1</source>
         <translation>Měření %1</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="147"/>
+        <location filename="../Measurement.cpp" line="154"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
         <translation>Měření &apos;%1&apos; bylo ukončeno kvůli problému se spojením.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="241"/>
+        <location filename="../Measurement.cpp" line="248"/>
         <source>Command with wrong checksum recieved.</source>
         <translation>Přijat příkaz s chybným kontrolním součtem.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="346"/>
+        <location filename="../Measurement.cpp" line="355"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Ukončit toto měření?</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="347"/>
+        <location filename="../Measurement.cpp" line="356"/>
         <source>Terminate</source>
         <translation>Ukončit</translation>
     </message>
@@ -1121,22 +1130,22 @@
         <translation type="vanished">Zruš</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="453"/>
+        <location filename="../Measurement.cpp" line="462"/>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
         <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="458"/>
+        <location filename="../Measurement.cpp" line="467"/>
         <source>Some values was wrongly transfered and has not been stored.</source>
         <translation>Některé hodnoty byly špatně přeneseny a nebyly uloženy.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="691"/>
+        <location filename="../Measurement.cpp" line="693"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="701"/>
+        <location filename="../Measurement.cpp" line="703"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
@@ -1145,7 +1154,7 @@
         <translation type="vanished">Vzorky</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="762"/>
+        <location filename="../Measurement.cpp" line="764"/>
         <source>Channel %1</source>
         <translation>Kanál %1</translation>
     </message>
@@ -1270,6 +1279,87 @@
     <message>
         <source>Axis %1</source>
         <translation type="vanished">Osa %1</translation>
+    </message>
+</context>
+<context>
+    <name>PlotContextMenu</name>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="35"/>
+        <source>Zoom in</source>
+        <translation>Přiblížit</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="36"/>
+        <source>Zoom out</source>
+        <translation>Oddálit</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="37"/>
+        <source>Zoom to fit</source>
+        <translation>Přizpůsobit</translation>
+    </message>
+    <message>
+        <source>Sample Value</source>
+        <translation type="vanished">Hodnota vzorku</translation>
+    </message>
+    <message>
+        <source>Auto Range Border</source>
+        <translation type="obsolete">Automatický </translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="40"/>
+        <source>Sample</source>
+        <translation>Vzorek</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="44"/>
+        <source>Auto Selection Border</source>
+        <translation>Automatická hranice výběru</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="48"/>
+        <source>Left Selection Border</source>
+        <translation>Levá hranice výběru</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="52"/>
+        <source>Right Selection Border</source>
+        <translation>Pravá hranice výběru</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="58"/>
+        <source>Maximum</source>
+        <translation>Maximum</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="59"/>
+        <source>Minimum</source>
+        <translation>Minimum</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="60"/>
+        <source>Mean</source>
+        <translation type="unfinished">Průměr</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="61"/>
+        <source>Median</source>
+        <translation>Medián</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="62"/>
+        <source>Variance</source>
+        <translation>Rozptyl</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="63"/>
+        <source>Standard Deviation</source>
+        <translation>Směrodatná odchylka</translation>
+    </message>
+    <message>
+        <location filename="../PlotContextMenu.cpp" line="64"/>
+        <source>Sum</source>
+        <translation>Suma</translation>
     </message>
 </context>
 <context>

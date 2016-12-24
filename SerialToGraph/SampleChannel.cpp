@@ -169,12 +169,12 @@ QString SampleChannel::_GetRealTimeText(double secSinceEpoch)
     return dateTime.toString(GetRealTimeFormatText());
 }
 
-void SampleChannel::_FillLastValueText(int index)
+void SampleChannel::_FillLastValueTextFromIndex(int index)
 {
     if (m_style == RealTime)
         m_lastValueText = GetValueTimestamp(index);
     else
-        ChannelBase::_FillLastValueText(index);
+        ChannelBase::_FillLastValueTextFromIndex(index);
 }
 
 double SampleChannel::GetMinValue()

@@ -1,6 +1,7 @@
 #include "Measurement.h"
 #include <Axis.h>
 #include <ChannelWidget.h>
+#include <PlotContextMenu.h>
 #include <HwChannel.h>
 #include <Context.h>
 #include <hw/HwSink.h>
@@ -14,6 +15,8 @@
 #include <QException>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QList>
+#include <QMenu>
 #include <MainWindow.h>
 #include <QScrollBar>
 #include <QString>
@@ -23,7 +26,6 @@
 #include <Serializer.h>
 #include <sstream>
 
-#include <QList>
 using namespace atog;
 
 #define INITIAL_DRAW_PERIOD 50
@@ -62,6 +64,11 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 
     _InitializeLayouts();
+
+    m_plot->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    PlotContextMenu *contextMenu = new PlotContextMenu(GetPlot(), this);
+    connect(m_plot, SIGNAL(customContextMenuRequested(QPoint)), contextMenu, SLOT(contextMenuRequestRelativePos(QPoint)));
 
     m_plotAndSliderLayout->addWidget(m_plot);
 
@@ -108,9 +115,9 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
         ).arg(height+1).arg(height).arg(height/9)
     );
 #endif
-    connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
+    //connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
     connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
-    connect(m_plot, SIGNAL(clickedToPlot(int)), this, SLOT(moveSliderTo(int)));
+    connect(m_plot, SIGNAL(markerLinePositionChanged(int)), this, SLOT(markerLinePositionChanged(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
     if (initializeAxiesAndChannels)
@@ -297,8 +304,10 @@ void Measurement::_ReadingValuesPostProcess()
     if (!m_plot->IsInMoveMode())
     {
         foreach (ChannelBase *channel, m_channels)
-            channel->displayValueOnIndex(index);
-
+        {
+            m_plot->DisplayChannelValue(channel);
+            //channel->displayValueOnIndex(index);
+        }
         m_plot->RescaleAxis(m_plot->xAxis);
     }
 
@@ -475,35 +484,28 @@ void Measurement::Stop()
     stateChanged();
 }
 
-void Measurement::moveSliderTo(int position)
+void Measurement::RedrawChannelValues()
+{
+    foreach (ChannelBase * channel, m_channels)
+    {
+        m_plot->DisplayChannelValue(channel);
+    }
+}
+
+void Measurement::markerLinePositionChanged(int position)
 {
     m_scrollBar->setSliderPosition(position);
+    RedrawChannelValues();
 }
-void Measurement::movePlotTo(int position)
-{
-    //m_plot->SetMarkerLine(position);
 
-    foreach (ChannelBase * channel, m_channels)
-        channel->displayValueOnIndex(position);
-
-    m_plot->SetMoveMode(position != m_scrollBar->maximum());
-    m_plot->ReplotIfNotDisabled();
-}
 void Measurement::sliderActionTriggered(int action)
 {
     Q_UNUSED(action);
-    movePlotTo(m_scrollBar->sliderPosition());
-}
 
-/*QVector<Axis *> const & Measurement::GetAxes()
-{
-    return m_axes;
+    m_plot->SetMoveMode(
+        m_scrollBar->sliderPosition() != m_scrollBar->maximum());
+    m_plot->ReplotIfNotDisabled();
 }
-
-QVector<Channel *> const & Measurement::GetChannels()
-{
-    return m_channels;
-}*/
 
 void Measurement::replaceDisplays()
 {
@@ -1097,4 +1099,9 @@ int Measurement::GetSliderPos()
 ChannelBase *Measurement::GetHorizontalChannel()
 {
     return GetPlot()->GetHorizontalChannel();
+}
+
+bool Measurement::IsPlotInRangeMode()
+{
+    return GetPlot()->IsInRangeMode();
 }

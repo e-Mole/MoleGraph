@@ -14,6 +14,7 @@ class ConnectivityLabel;
 class GlobalSettingsDialog;
 class Measurement;
 //class QAction;
+class PlotContextMenu;
 class QDialog;
 class QGridLayout;
 class QKeySequence;
@@ -59,7 +60,9 @@ class ButtonLine : public QWidget
     QPushButton * m_panelMenuButton;
     QPushButton * m_axisMenuButton;
     QPushButton * m_measurementButton;
+    QPushButton * m_viewButton;
     QMenu *m_fileMenu;
+    PlotContextMenu *m_viewMenu;
     QMenu *m_recentFilesMenu;
     ChannelMenu *m_channelMenu;
 	bool m_connected;
@@ -118,6 +121,7 @@ public slots:
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();
     void measurementMenuButtonPressed();
+    void viewMenuButtonPressed();
     void measurementStateChanged();
     void channelActivated();
     void start();

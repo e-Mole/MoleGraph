@@ -50,7 +50,7 @@ void HwChannel::_RecalculateExtremes()
 void HwChannel::ChangeValue(int index, double newValue)
 {
     m_values[index] = newValue;
-    _FillLastValueText(index);
+    _FillLastValueTextFromIndex(index);
     _ShowLastValueWithUnits(index);
     _RecalculateExtremes();
     ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();
@@ -62,6 +62,9 @@ ChannelBase::ValueType HwChannel::_GetValueType(unsigned index)
 {
     if (index >= GetValueCount())
         return ValueTypeUnknown;
+
+    if (m_measurement->IsPlotInRangeMode())
+        return ValueTypeRangeValue;
 
     return GetValue(index) == GetOriginalValue(index) ?
         ValueTypeOriginal : ValueTypeChanged;

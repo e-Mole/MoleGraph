@@ -182,8 +182,10 @@ public:
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown() {return m_marksShown; }
-    GetSliderPos();
+    void RedrawChannelValues();
+    int GetSliderPos();
     ChannelBase *GetHorizontalChannel();
+    bool IsPlotInRangeMode();
 signals:
     void stateChanged();
     void nameChanged();
@@ -195,8 +197,7 @@ public slots:
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
-    void moveSliderTo(int position);
-    void movePlotTo(int position);
+    void markerLinePositionChanged(int position);
 };
 
 #endif // MEASUREMENT_H

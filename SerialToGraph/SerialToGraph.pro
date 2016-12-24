@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     file/OwnFileDialog.cpp \
     file/FileModel.cpp \
     file/AddDirDialog.cpp \
-    bases/ComboBox.cpp
+    bases/ComboBox.cpp \
+    PlotContextMenu.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -109,7 +110,8 @@ HEADERS  += MainWindow.h \
     file/OwnFileDialog.h \
     file/FileModel.h \
     file/AddDirDialog.h \
-    bases/ComboBox.h
+    bases/ComboBox.h \
+    PlotContextMenu.h
 
 CONFIG += mobility
 CONFIG += c++11

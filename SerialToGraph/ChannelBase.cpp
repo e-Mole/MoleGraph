@@ -151,10 +151,8 @@ void ChannelBase::editChannel()
     settings->exec();
 }
 
-
-void ChannelBase::_FillLastValueText(int index)
+void ChannelBase::_FillLastValueTextByValue(double value)
 {
-    double value = GetValue(index);
     if (value == GetNaValue())
     {
         m_lastValueText = _GetNAValueString();
@@ -175,15 +173,132 @@ void ChannelBase::_FillLastValueText(int index)
 
     m_lastValueText = strValue;
 }
+void ChannelBase::_FillLastValueTextFromIndex(int index)
+{
+    _FillLastValueTextByValue(GetValue(index));
+}
+
+double ChannelBase::_GetMaxInRange(int left, int right)
+{
+    double max = GetValue(left);
+    for (int i = left+1; i <= right; i++)
+        if (max < GetValue(i))
+            max = GetValue(i);
+
+    return max;
+}
+
+double ChannelBase::_GetMinInRange(int left, int right)
+{
+    double min = GetValue(left);
+    for (int i = left+1; i <= right; i++)
+        if (min > GetValue(i))
+            min = GetValue(i);
+
+    return min;
+}
+
+double ChannelBase::_CalculateSum(int left, int right)
+{
+    double sum = 0;
+    for (int i = left; i <= right; i++)
+        sum += GetValue(i);
+    return sum;
+}
+
+double ChannelBase::_GetSumInRange(int left, int right)
+{
+    return _CalculateSum(left, right);
+}
+
+double ChannelBase::_GetMeanInRange(int left, int right)
+{
+    return _CalculateSum(left, right) / (double)(right - left + 1);
+}
+
+double ChannelBase::_GetMedianInRange(int left, int right)
+{
+    QVector<double> tmp;
+    for (int i = left; i <= right; i++)
+        tmp.push_back(GetValue(i));
+
+    std::sort(tmp.begin(), tmp.end());
+    if (0 == tmp.size() %2)
+        return (tmp[tmp.size()/2-1] + tmp[tmp.size()/2]) / 2;
+    else
+        return tmp[tmp.size() / 2];
+}
+
+double ChannelBase::_GetVarianceInRange(int left, int right)
+{
+    double mean = _GetMeanInRange(left, right);
+
+    double sum = 0;
+    for (int i = left; i <= right; i++)
+        sum += pow(GetValue(i) - mean, 2);
+
+    return sum / (right - left + 1);
+}
+
+double ChannelBase::_GetStandardDeviation(int left, int right)
+{
+    return sqrt(_GetVarianceInRange(left, right));
+}
+
+void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayValue)
+{
+    if (0 == m_values.size())
+    {
+        //try to display hidden channel
+        return; //probably setRange in start method
+    }
+
+    double value = 0;
+    switch (displayValue)
+    {
+    case DVMax:
+        value = _GetMaxInRange(left, right);
+        break;
+    case DVMin:
+        value = _GetMinInRange(left, right);
+        break;
+    case DVAverage:
+        value =  _GetMeanInRange(left, right);
+        break;
+    case DVMedian:
+        value =  _GetMedianInRange(left, right);
+        break;
+    case DVVariance:
+        value = _GetVarianceInRange(left, right);
+        break;
+    case DVStandDeviation:
+        value = _GetStandardDeviation(left, right);
+        break;
+    case DVSum:
+        value = _GetSumInRange(left, right);
+        break;
+    default:
+        qDebug() << "unknown diplay value";
+    }
+
+    _FillLastValueTextByValue(value);
+    m_widget->ShowValueWithUnits(m_lastValueText, "");
+
+    if (!m_axis->IsHorizontal())
+    {
+        //no pointer in a range mode
+        m_graphPoint->clearData();
+    }
+}
 void ChannelBase::displayValueOnIndex(int index)
 {
     if (index >= m_values.size())
     {
         qDebug() << "index is out of range and can't be displayed";
-        return; //probably setRange in start method
+        return; //probably setRange in start method or try to display hiden channel
     }
 
-    _FillLastValueText(index);
+    _FillLastValueTextFromIndex(index);
     _ShowLastValueWithUnits(index);
 
     ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();

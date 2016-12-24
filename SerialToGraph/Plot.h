@@ -1,16 +1,20 @@
 #ifndef PLOT_H
 #define PLOT_H
 
+#include <ChannelBase.h>
+#include <QColor>
 #include <qcustomplot/qcustomplot.h>
 #include <QPointF>
 #include <QTime>
 #include <QPoint>
+#include <QPair>
+
 class QColor;
 class QEvent;
 class QGestureEvent;
 class Context;
-class ChannelBase;
 class Measurement;
+
 class MyAxisRect : public QCPAxisRect
 {
     Q_OBJECT
@@ -29,23 +33,50 @@ class Plot : public QCustomPlot
 {
     Q_OBJECT
 
+    friend class PlotContextMenu;
+public:
+    enum DisplayMode
+    {
+        SampleValue,
+        DeltaValue,
+        MaxValue,
+        MinValue
+    };
+
+private:
+
+    enum MarkerTypeSelection{
+      MTSSample,
+      MTSRangeAutoBorder,
+      MTSRangeLeftBorder,
+      MTSRangeRightBorder
+    };
+
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
     bool _GetClosestX(double in, int &out);
-    void _ProcessDoubleClick(QPoint pos);
+    QCPItemLine *_AddMarkerLine(QCPItemLine *markerLine, int position, const QColor color);
+    int _MinMaxCorection(int xIndex);
+    QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
+    QCPItemRect *_DrawOutRect(bool isLeft, int position);
 
     Measurement const &m_measurement;
     bool m_moveMode;
     bool m_disabled;
     ChannelBase *m_horizontalChannel;
-    int m_graphPointsPosition;
-    QCPItemLine *m_markerLine;
+    QPair<int, int> m_markerPositions;
+    QPair<QCPItemLine *, QCPItemLine *> m_markerLines;
+    QCPItemLine *m_selectedLine;
+    QPair<QCPItemRect *, QCPItemRect *> m_outRect;
     bool m_mouseHandled;
     QTime m_clickTime;
     QMouseEvent *m_mouseMoveEvent;
     QWheelEvent *m_wheelEvent;
     QPoint m_mousePressPosition;
     QPoint m_mouseReleasePosition;
+    DisplayMode m_displayMode;
+    MarkerTypeSelection m_markerTypeSelection;
+    ChannelBase::DisplayValue m_markerRangeValue;
 
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
@@ -91,8 +122,14 @@ public:
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
+    void Zoom(const QPointF &pos, int delta);
+    void ZoomToFit(QPoint pos);
+    DisplayMode GetDisplayMode() { return m_displayMode; }
+    void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
+    void DisplayChannelValue(ChannelBase *channel);
+    bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
 signals:
-    void clickedToPlot(int xIndex);
+    void markerLinePositionChanged(int xIndex);
 public slots:
 private slots:
     void selectionChanged();

@@ -12,6 +12,7 @@
 #include <Measurement.h>
 #include <MeasurementMenu.h>
 #include <MyMessageBox.h>
+#include <PlotContextMenu.h>
 #include <QAction>
 #include <QHBoxLayout>
 #include <QCoreApplication>
@@ -56,7 +57,9 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
     m_panelMenuButton(NULL),
     m_axisMenuButton(NULL),
     m_measurementButton(NULL),
+    m_viewButton(NULL),
     m_fileMenu(NULL),
+    m_viewMenu(NULL),
     m_recentFilesMenu(NULL),
     m_channelMenu(NULL),
     m_connected(false),
@@ -82,6 +85,9 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
 
     m_measurementButton = new QPushButton(tr("Measurements"), this);
     connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
+
+    m_viewButton = new QPushButton(tr("View"), this);
+    connect(m_viewButton, SIGNAL(clicked()), this, SLOT(viewMenuButtonPressed()));
 
     m_panelMenuButton = new QPushButton(tr("Panels"), this);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
@@ -133,6 +139,8 @@ void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
     i++;
     m_mainLayout->addWidget(m_measurementButton, v ? i :0 ,v ? 0 : i);
     i++;
+    m_mainLayout->addWidget(m_viewButton, v ? i :0 ,v ? 0 : i);
+    i++;
     m_mainLayout->addWidget(m_panelMenuButton, v ? i :0 ,v ? 0 : i);
     i++;
     m_mainLayout->addWidget(m_axisMenuButton, v ? i :0 ,v ? 0 : i);
@@ -180,6 +188,7 @@ void ButtonLine::_SetMenuStyle(QMenu *menu)
         ).arg(physicalDpiY() / 4)
     );
 }
+
 void ButtonLine::fileMenuButtonPressed()
 {
     _SetMenuStyle(m_fileMenu);
@@ -195,6 +204,7 @@ void ButtonLine::_RefreshPanelMenu()
     delete m_channelMenu;
     m_channelMenu = NULL;
 
+    m_viewButton->setEnabled(m_measurement != NULL);
     m_panelMenuButton->setEnabled(m_measurement != NULL);
     m_axisMenuButton->setEnabled(m_measurement != NULL);
 
@@ -225,6 +235,15 @@ void ButtonLine::measurementMenuButtonPressed()
     _OpenMenuDialog(m_measurementButton, measurementMenu);
 }
 
+void ButtonLine::viewMenuButtonPressed()
+{
+    qDebug() << "View menu button pressed";
+    _SetMenuStyle(m_viewMenu);
+#if defined(Q_OS_ANDROID)
+    m_viwMenu->showMaximized();
+#endif
+    m_viewMenu->contextMenuRequestGlobalPos(_GetGlobalMenuPosition(m_viewButton));
+}
 void ButtonLine::_FillRecentFileMenu()
 {
     m_recentFilesMenu->clear();
@@ -651,6 +670,10 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     _ClearPanelShortcuts();
     _RefreshPanelMenu();
     UpdateRunButtonsState();
+
+    delete m_viewMenu;
+    m_viewMenu = new PlotContextMenu(this, m_measurement);
+    m_viewMenu->setTitle("View");
 }
 
 void ButtonLine::start()

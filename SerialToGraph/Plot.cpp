@@ -8,11 +8,11 @@
 #include <QEvent>
 #include <QGesture>
 #include <QGestureEvent>
+#include <limits>
 #include <QMessageBox>
 #include <QPinchGesture>
 #include <QTime>
 #include <QWheelEvent>
-
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
@@ -37,11 +37,16 @@ Plot::Plot(Measurement *measurement) :
     m_moveMode(false),
     m_disabled(false),
     m_horizontalChannel(NULL),
-    m_graphPointsPosition(0),
-    m_markerLine(NULL),
+    m_markerPositions(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
+    m_markerLines(NULL, NULL),
+    m_selectedLine(NULL),
+    m_outRect(NULL, NULL),
     m_mouseHandled(false),
     m_mouseMoveEvent(NULL),
-    m_wheelEvent(NULL)
+    m_wheelEvent(NULL),
+    m_displayMode(SampleValue),
+    m_markerTypeSelection(MTSSample),
+    m_markerRangeValue(ChannelBase::DVMax)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -69,6 +74,17 @@ Plot::Plot(Measurement *measurement) :
 }
 
 
+void Plot::Zoom(QPointF const &pos, int delta)
+{
+    QWheelEvent *wheelEve = new QWheelEvent(
+        pos,
+        delta,
+        Qt::NoButton,
+        Qt::NoModifier,
+        Qt::Vertical);
+    wheelEvent(wheelEve);
+}
+
 //taked from http://www.qcustomplot.com/index.php/support/forum/638
 bool Plot::event(QEvent *event)
 {
@@ -81,13 +97,7 @@ bool Plot::event(QEvent *event)
             {
                 QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
                 qreal scaleFactor = pinchEve->lastScaleFactor( );
-                QWheelEvent *wheelEve = new QWheelEvent(
-                    pinchEve->lastCenterPoint(),
-                    (scaleFactor > 1.0) ? scaleFactor * 10 : -10 / scaleFactor,
-                    Qt::NoButton,
-                    Qt::NoModifier,
-                    Qt::Vertical);
-                wheelEvent(wheelEve);
+                Zoom(pinchEve->lastCenterPoint(), (scaleFactor > 1.0) ? scaleFactor * 10 : -10 / scaleFactor);
                 event->accept();
                 return true;
             }
@@ -180,6 +190,11 @@ void Plot::MyMousePressEvent(QMouseEvent *event)
 
 void Plot::MyMouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::RightButton)
+    {
+        QCustomPlot::mouseReleaseEvent(event);
+        return;
+    }
     QTime currentTime = QTime::currentTime();
     unsigned diffTime = m_clickTime.msecsTo(currentTime);
     m_clickTime = currentTime;
@@ -194,7 +209,7 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     )
     {
         //I dont want to catch mouseDoubleClickEvent because mouseReleaseEvent come after it and cause problems
-        _ProcessDoubleClick(event->pos());
+        ZoomToFit(event->pos());
         event->accept();
         return;
     }
@@ -216,12 +231,31 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
     {
         qDebug() << "clickedToPlot calling";
-        clickedToPlot(xIndex);
+        xIndex = _MinMaxCorection(xIndex);
+        SetMarkerLine(xIndex);
     }
 }
-void Plot::_ProcessDoubleClick(QPoint pos)
+
+int Plot::_MinMaxCorection(int xIndex)
 {
-    qDebug() << "double click";
+    switch (m_markerTypeSelection)
+    {
+    case MTSSample:
+    case MTSRangeAutoBorder:
+        return xIndex;
+    case MTSRangeLeftBorder:
+        return qMin(m_markerPositions.second, xIndex);
+    case MTSRangeRightBorder:
+        return qMax(m_markerPositions.first, xIndex);
+    default:
+        qDebug() << "unknown marker type";
+        return xIndex;
+    }
+}
+
+void Plot::ZoomToFit(QPoint pos)
+{
+    qDebug() << "zoom to fit";
     QVariant details;
     QCPLayerable *clickedLayerable = layerableAt(pos, false, &details);
 
@@ -597,6 +631,20 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
+void Plot::DisplayChannelValue(ChannelBase *channel)
+{
+    if (m_markerTypeSelection == MTSSample)
+    {
+        if (m_markerPositions.first != std::numeric_limits<int>::min())
+            channel->displayValueOnIndex(m_markerPositions.first);
+    }
+    else
+    {
+        channel->DisplayValueInRange(
+            m_markerPositions.first, m_markerPositions.second, m_markerRangeValue);
+    }
+}
+
 void Plot::RefillGraphs()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
@@ -614,7 +662,7 @@ void Plot::RefillGraphs()
         }
 
         channel->GetGraphPoint()->clearData();
-        channel->displayValueOnIndex(m_graphPointsPosition);
+        DisplayChannelValue(channel);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
@@ -635,7 +683,6 @@ void Plot::setGraphPointPosition(int position)
 {
     SetMarkerLine(position);
     ReplotIfNotDisabled();
-    m_graphPointsPosition = position;
 }
 
 void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
@@ -644,19 +691,139 @@ void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
     axis->setDateTimeFormat(format);
 }
 
-void Plot::SetMarkerLine(int position)
+QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor const color)
 {
-    Q_UNUSED(position)
-    if (NULL != m_markerLine)
-        removeItem(m_markerLine); //removeItem delete the object too
+    if (NULL != markerLine)
+        removeItem(markerLine); //removeItem delete the object too
 
-    m_markerLine = new QCPItemLine(this);
-    addItem(m_markerLine);
-    m_markerLine->setPen(QPen(QBrush(Qt::black), MARKER_WIDTH, Qt::DotLine));
-    m_markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
+    markerLine = new QCPItemLine(this);
+    addItem(markerLine);
+    markerLine->setPen(QPen(QBrush(color), MARKER_WIDTH, Qt::DotLine));
+    markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
 
     double xValue = m_horizontalChannel->GetValue(position);
-    m_markerLine->start->setCoords(xValue, 0);
-    m_markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
-    m_markerLine->end->setCoords(xValue, 100);
+    markerLine->start->setCoords(xValue, 0);
+    markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
+    markerLine->end->setCoords(xValue, 100);
+
+    return markerLine;
+}
+
+QCPItemRect *Plot::_DrawOutRect(bool isLeft, int position)
+{
+    double horizontalValue = GetHorizontalChannel()->GetValue(position);
+    QCPItemRect *rect = new QCPItemRect(this);
+    rect->setLayer("background"); //to be axes clicable
+    rect->topLeft->setTypeY(QCPItemPosition::ptViewportRatio);
+    rect->bottomRight->setTypeY(QCPItemPosition::ptViewportRatio);
+    if (isLeft)
+    {
+        rect->topLeft->setTypeX(QCPItemPosition::ptViewportRatio);
+        rect->topLeft->setCoords(0, 100);
+        rect->bottomRight->setCoords(horizontalValue, 0);
+    }
+    else
+    {
+        rect->bottomRight->setTypeX(QCPItemPosition::ptViewportRatio);
+        rect->topLeft->setCoords(horizontalValue, 100);
+        rect->bottomRight->setCoords(100, 0);
+    }
+    rect->setPen(QPen(Qt::NoPen));
+    rect->setBrush(QColor(0, 0, 0, 20));
+    addItem(rect);
+
+    return rect;
+}
+void Plot::SetMarkerLine(int position)
+{   
+    switch (m_markerTypeSelection)
+    {
+    case MTSSample:
+        m_markerPositions.first = position;
+        m_markerPositions.second = position;
+        break;
+    case MTSRangeAutoBorder:
+    {
+        double middle = (double)(m_markerPositions.first + m_markerPositions.second) /2.0;
+        if (
+            (middle == (double)position && m_selectedLine == m_markerLines.first) ||
+            middle > (double)position
+        )
+            m_markerPositions.first = position;
+        else
+            m_markerPositions.second = position;
+    }
+        break;
+    case MTSRangeLeftBorder:
+        if (position > m_markerPositions.second)
+        {
+            //probably from slider
+            position = m_markerPositions.second;
+        }
+        else
+            m_markerPositions.first = position;
+        break;
+    case MTSRangeRightBorder:
+        if (position < m_markerPositions.first)
+        {
+            //probably from slider
+            position = m_markerPositions.first;
+        }
+        else
+            m_markerPositions.second = position;
+        break;
+    default:
+        qDebug() << "unknown marker type";
+        break;
+    }
+
+
+    m_markerLines.first = _AddMarkerLine(
+        m_markerLines.first,
+        m_markerPositions.first,
+        _SetMarkerLineColor(
+            m_markerPositions.first == m_markerPositions.second,
+            m_markerPositions.first == position
+        )
+    );
+
+    m_markerLines.second = _AddMarkerLine(
+        m_markerLines.second,
+        m_markerPositions.second,
+        _SetMarkerLineColor(
+            m_markerPositions.first == m_markerPositions.second,
+            m_markerPositions.second == position
+        )
+    );
+
+    m_selectedLine = (m_markerPositions.first == position) ?
+        m_markerLines.first : m_markerLines.second;
+
+    if (m_outRect.first != NULL)
+    {
+        removeItem(m_outRect.first);
+        m_outRect.first = NULL;
+    }
+    if (m_outRect.second != NULL)
+    {
+        removeItem(m_outRect.second);
+        m_outRect.second = NULL;
+    }
+
+    if (m_markerTypeSelection != MTSSample)
+    {
+        m_outRect.first = _DrawOutRect(true, m_markerPositions.first);
+        m_outRect.second = _DrawOutRect(false, m_markerPositions.second);
+    }
+
+    markerLinePositionChanged(position); //I send a new position for slider
+}
+QColor Plot::_SetMarkerLineColor(bool isSame, bool isCurrent)
+{
+    if (isSame)
+        return Qt::black;
+    if (isCurrent)
+        return Qt::black;
+    else
+        return Qt::lightGray;
 }

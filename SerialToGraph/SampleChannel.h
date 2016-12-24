@@ -52,7 +52,7 @@ private:
     void _SetTimeUnits(TimeUnits units);
     void _SetFormat(RealTimeFormat format);
     void _UpdateAxisAndValues();
-    void _FillLastValueText(int index);
+    void _FillLastValueTextFromIndex(int index);
     QDateTime _GetStartDateTime() { return m_startDateTime; }
     QString _GetRealTimeText(double secSinceEpoch);
 

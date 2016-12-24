@@ -35,7 +35,8 @@ public:
         ValueTypeUnknown,
         ValueTypeSample,
         ValueTypeOriginal,
-        ValueTypeChanged
+        ValueTypeChanged,
+        ValueTypeRangeValue
     };
 private:
     virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
@@ -45,7 +46,16 @@ protected:
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
-    virtual void _FillLastValueText(int index);
+    void _FillLastValueTextByValue(double value);
+    virtual void _FillLastValueTextFromIndex(int index);
+    double _GetMaxInRange(int left, int right);
+    double _GetMinInRange(int left, int right);
+    double _GetMeanInRange(int left, int right);
+    double _GetMedianInRange(int left, int right);
+    double _GetVarianceInRange(int left, int right);
+    double _GetStandardDeviation(int left, int right);
+    double _CalculateSum(int left, int right);
+    double _GetSumInRange(int left, int right);
     void _SetName(QString const &name);
     void _SetShapeIndex(unsigned index) ;
     void _SetUnits(QString const &units);
@@ -77,6 +87,16 @@ public:
         Type_Sample,
         Type_Hw,
         Type_Ghost
+    };
+
+    enum DisplayValue{
+        DVMax,
+        DVMin,
+        DVAverage,
+        DVMedian,
+        DVVariance,
+        DVStandDeviation,
+        DVSum
     };
 
     ChannelBase(Measurement *measurement,
@@ -150,6 +170,7 @@ public:
     int GetLastClosestValueIndex(double value);
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
     void UpdateWidgetVisiblity();
+    void DisplayValueInRange(int left, int right, DisplayValue displayValue);
     bool IsValueNA(int index)
     { return GetValue(index) == GetNaValue(); }
     static double GetNaValue();

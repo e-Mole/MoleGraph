@@ -27,7 +27,6 @@ SampleChannel::SampleChannel(
 {
     _SetName(GetStyleText());
     _UpdateTitle();
-    m_widget->SetBackColor(QColor(0xd0, 0xd0, 0xd0));
     m_widget->SetColor(color); //change widget style with defined color and backcolor
 }
 

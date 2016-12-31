@@ -26,6 +26,7 @@
 #include <QTranslator>
 #include <QTimer>
 #include <QWidget>
+#include <SampleChannel.h>
 #include <Serializer.h>
 
 using namespace atog;
@@ -314,7 +315,8 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         unsigned serializerVersion;
         in >> serializerVersion; //not used yet
 
-        if (serializerVersion != ATOG_SERIALIZER_VERSION)
+        if (serializerVersion < ATOG_LOWEST_VERSION ||
+            serializerVersion > ATOG_SERIALIZER_VERSION)
         {
             MyMessageBox::critical(this, tr("Unsuported file version"));
             return;
@@ -330,6 +332,28 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             m->SetSaveLoadValues(values);
             in >> m;
             ConfirmMeasurement(m);
+        }
+
+        unsigned sampleCount = 0;
+        if (serializerVersion == 2)
+        {
+            foreach (Measurement *m, m_measurements)
+            {
+                sampleCount = m->GetSampleChannel()->GetValueCount();
+                if (sampleCount == 0)
+                    continue;
+
+                unsigned channelCount = m->GetChannelCount();
+                for (unsigned i = 0; i < channelCount; i++)
+                {
+                    ChannelBase *channel = m->GetChannel(i);
+                    if (channel->GetValueCount() > 0)
+                        continue;
+
+                    for (unsigned j = 0; j < sampleCount; j++)
+                        channel->AddValue(channel->GetNaValue());
+                }
+            }
         }
     }
     catch (...)

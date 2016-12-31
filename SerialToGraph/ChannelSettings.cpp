@@ -6,6 +6,7 @@
 #include <ChannelBase.h>
 #include <SampleChannel.h>
 #include <Context.h>
+#include <HwChannel.h>
 #include <Measurement.h>
 #include <MainWindow.h>
 #include <MyMessageBox.h>
@@ -13,8 +14,10 @@
 #include <bases/ComboBox.h>
 #include <QCheckBox>
 #include <QFormLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QSettings>
 #include <QString>
 
@@ -22,6 +25,7 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     bases::FormDialogColor(channel->GetWidget(), tr("Channel settings"), context.m_settings),
     m_context(context),
     m_channel(channel),
+    m_currentValueControl(NULL),
     m_name(NULL),
     m_units(NULL),
     m_shapeComboBox(NULL),
@@ -29,11 +33,41 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     m_style(NULL),
     m_timeUnits(NULL),
     m_format(NULL),
-    m_penStyle(NULL)
+    m_penStyle(NULL),
+    m_currentValueChanged(false),
+    m_currentValue(m_channel->GetNaValue())
 {
     m_name = new QLineEdit(channel->GetName(), this);
     if (m_channel->GetType() == ChannelBase::Type_Hw)
     {
+        QHBoxLayout *curValLayout = new QHBoxLayout();
+        m_currentValueControl = new QLineEdit(this);
+        connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
+        curValLayout->addWidget(m_currentValueControl);
+
+        QPushButton *originlValue = new QPushButton(tr("Original"), this);
+        connect(originlValue, SIGNAL(clicked(bool)), this, SLOT(setOriginalValue(bool)));
+        curValLayout->addWidget(originlValue);
+
+        QPushButton *naValue = new QPushButton(tr("n/a"), this);
+        connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
+        curValLayout->addWidget(naValue);
+
+        int currentPos = _GetCurrentPos();
+        if (currentPos < channel->GetValueCount())
+        {
+            QString currentValueStr = (channel->IsValueNA(currentPos)) ?
+                channel->_GetNAValueString() : QString::number(channel->GetValue(currentPos));
+            m_currentValueControl->setText(currentValueStr);
+        }
+        else
+        {
+            m_currentValueControl->setDisabled(true);
+            originlValue->setDisabled(true);
+            naValue->setDisabled(true);
+        }
+
+        m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_units = new QLineEdit(channel->GetUnits(), this);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
@@ -49,6 +83,35 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     _InitializeAxisCombo();
     _InitializeShapeCombo();
     _InitializePenStyle();
+}
+
+void ChannelSettings::setOriginalValue(bool checked)
+{
+    double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(_GetCurrentPos());
+    m_currentValueControl->setText(
+        (currentValue == m_channel->GetNaValue()) ?
+            m_channel->_GetNAValueString() :
+            QString::number(currentValue)
+    );
+
+    //was changed in currentValueChanged
+    m_currentValue = currentValue;
+}
+
+void ChannelSettings::setNaValue(bool)
+{
+    m_currentValueControl->setText(m_channel->_GetNAValueString());
+    m_currentValue = m_channel->GetNaValue();
+}
+
+void ChannelSettings::currentValueChanged(QString const &content)
+{
+    m_currentValue = content.toDouble();
+    m_currentValueChanged = true;
+}
+int ChannelSettings::_GetCurrentPos()
+{
+    return m_channel->GetMeasurement()->GetSliderPos();
 }
 
 void ChannelSettings::_InitializePenStyle()
@@ -151,6 +214,18 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
     }
 
+    if (m_channel->GetType() == ChannelBase::Type_Hw && m_currentValueChanged)
+    {
+        char *endptr;
+        strtof(m_currentValueControl->text().toStdString().c_str(),&endptr);
+        if (endptr[0] != '\0')
+        {
+            MyMessageBox::information(this, tr("Current value is not a number."));
+            return false;
+        }
+        changed = true;
+        ((HwChannel *)m_channel)->ChangeValue(_GetCurrentPos(), m_currentValue);
+    }
     if (m_channel->m_name != m_name->text() && m_channel->GetType() == ChannelBase::Type_Hw)
     {
         changed = true;

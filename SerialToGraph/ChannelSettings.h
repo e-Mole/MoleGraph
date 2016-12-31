@@ -25,9 +25,11 @@ class ChannelSettings : public bases::FormDialogColor
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle();
+    int _GetCurrentPos();
 
     Context const & m_context;
     ChannelBase *m_channel;
+    QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;
     bases::ComboBox * m_shapeComboBox;
@@ -36,6 +38,8 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_timeUnits;
     bases::ComboBox * m_format;
     bases::ComboBox * m_penStyle;
+    bool m_currentValueChanged;
+    double m_currentValue;
 public:
     ChannelSettings(ChannelBase *channel, Context const &context);
 signals:
@@ -43,6 +47,9 @@ signals:
 private slots:
     void axisChanged(int index);
     void styleChanged(int index);
+    void currentValueChanged(QString const &content);
+    void setOriginalValue(bool checked);
+    void setNaValue(bool);
 };
 
 #endif // CHANNELSETTINGS_H

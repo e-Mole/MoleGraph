@@ -78,7 +78,7 @@ public:
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
-    void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
+    void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 };
 
 #endif // AXIS_H

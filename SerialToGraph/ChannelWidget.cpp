@@ -73,6 +73,7 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
 
 void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 {
+    m_foreColor = color;
     QString style;
     style = QString("QLabel { background-color : rgb(%1, %2, %3);").
             arg(m_backColor.red()).
@@ -106,7 +107,11 @@ void ChannelWidget::ValueLabel::SetColor(const QColor &color)
 
 void ChannelWidget::ValueLabel::SetBackColor(const QColor &backColor)
 {
+    if (m_backColor == backColor)
+        return;
+
     m_backColor = backColor;
+    SetColor(m_foreColor); //to be filled complete style
 }
 
 void ChannelWidget::mousePressEvent(QMouseEvent * event)
@@ -120,12 +125,19 @@ void ChannelWidget::setTitle(QString const &title)
     m_title->setText(title);
 }
 
-void ChannelWidget::ShowValueWithUnits(QString const&value, QString const &units)
+void ChannelWidget::ShowValueWithUnits(
+    QString const&value, QString const &units, ChannelBase::ValueType valueType)
+{
+    ShowValueWithUnits(value, units);
+    _SetBackColor(valueType);
+}
+
+void ChannelWidget::ShowValueWithUnits(
+    QString const&value, QString const &units)
 {
     QString textWithSpace = value + " " + units;
     unsigned widthMax = m_valueLabel->GetLongestTextSize().width();
     unsigned widthSpace = m_valueLabel->GetSize(textWithSpace).width();
-
 
     m_valueLabel->setText(
         (widthMax >= widthSpace) ? textWithSpace : value + "<br/>" + units);
@@ -155,4 +167,23 @@ void ChannelWidget::resizeEvent(QResizeEvent * event)
 {
     Q_UNUSED(event);
     sizeChanged();
+}
+
+void ChannelWidget::_SetBackColor(ChannelBase::ValueType type)
+{
+    switch (type)
+    {
+    case ChannelBase::ValueTypeSample:
+        m_valueLabel->SetBackColor(QColor(0xd0, 0xd0, 0xd0));
+    break;
+    case ChannelBase::ValueTypeChanged:
+        m_valueLabel->SetBackColor(QColor(0xff, 0xd0, 0xd0));
+    break;
+    case ChannelBase::ValueTypeUnknown:
+    case ChannelBase::ValueTypeOriginal:
+        m_valueLabel->SetBackColor(QColor(0xff, 0xff, 0xff));
+    break;
+    default:
+        qDebug() << "wrong ValueType";
+    }
 }

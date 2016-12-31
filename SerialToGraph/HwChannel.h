@@ -2,6 +2,7 @@
 #define HWCHANNEL_H
 
 #include <ChannelBase.h>
+#include <QVector>
 
 class Axis;
 class Measurement;
@@ -13,7 +14,10 @@ class HwChannel : public ChannelBase
 {
     Q_OBJECT
 
+    virtual ChannelBase::ValueType _GetValueType(unsigned index);
+    void _RecalculateExtremes();
     int m_hwIndex;
+    QVector<double> m_originalValues;
 public:
     HwChannel(
         Measurement *measurement,
@@ -31,9 +35,11 @@ public:
 
     virtual Type GetType() { return Type_Hw; }
     virtual unsigned GetShortcutOrder() { return m_hwIndex + 1; }
+    virtual void AddValue(double value);
 
     int GetHwIndex() { return m_hwIndex; }
-
+    double GetOriginalValue(int index);
+    void ChangeValue(int index, double newValue);
 signals:
 
 public slots:

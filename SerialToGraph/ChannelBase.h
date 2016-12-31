@@ -29,9 +29,19 @@ class ChannelBase : public QObject
 
     Q_ENUMS(Qt::PenStyle)
 
+public:
+    enum ValueType
+    {
+        ValueTypeUnknown,
+        ValueTypeSample,
+        ValueTypeOriginal,
+        ValueTypeChanged
+    };
+private:
+    virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 protected:
-
-    void _DisplayNAValue();
+    QString _GetNAValueString();
+    void _DisplayNAValue(unsigned index);
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
     void _ShowOrHideGraphAndPoin(bool shown);
@@ -40,7 +50,10 @@ protected:
     void _SetShapeIndex(unsigned index) ;
     void _SetUnits(QString const &units);
     void _SetPenStyle(Qt::PenStyle penStyle);
-
+    void _ShowLastValueWithUnits();
+    void _ShowLastValueWithUnits(unsigned index);
+    void _UpdateExtremes(double value);
+    void _RedrawGraphPoint(unsigned index, ChannelBase *horizontalChannel);
 
     Measurement * m_measurement;
     Context const & m_context;
@@ -95,7 +108,7 @@ public:
     double GetLastValue()
     { return GetValue(m_values.count()-1); } //GetValue is virtual
 
-    void AddValue( double value);
+    virtual void AddValue( double value);
 
     Axis * GetAxis()
     { return m_axis; }
@@ -120,7 +133,7 @@ public:
 
     QCPGraph *GetGraph();
     QCPGraph *GetGraphPoint();
-    void UpdateGraph(double xValue, double yValue);
+    void UpdateGraph(double xValue, double yValue, bool replot);
     void UpdateGraph(double xValue);
     void AssignToGraphAxis(QCPAxis *graphAxis);
     void AssignToAxis(Axis *axis);
@@ -133,11 +146,13 @@ public:
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
-    void DeserializeColections(QDataStream &in) {Q_UNUSED(in);}
+    void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
     int GetLastClosestValueIndex(double value);
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
     void UpdateWidgetVisiblity();
-
+    bool IsValueNA(int index)
+    { return GetValue(index) == GetNaValue(); }
+    static double GetNaValue();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

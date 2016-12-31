@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QWidget>
+#include <ChannelBase.h>
 
 class QColor;
 class QSize;
@@ -14,6 +15,7 @@ class ChannelWidget : public QWidget
     {
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
+        QColor m_foreColor;
     public:
         ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor);
         void SetMimimumFontSize(unsigned sizeFactor);
@@ -23,7 +25,7 @@ class ChannelWidget : public QWidget
         QSize GetLongestTextSize();
         void SetMinimumFontSize(unsigned sizeFactor);
     };
-
+    void _SetBackColor(ChannelBase::ValueType type);
     virtual void mousePressEvent(QMouseEvent * event);
     virtual void resizeEvent(QResizeEvent * event);
 
@@ -34,9 +36,10 @@ public:
     ChannelWidget(const QString &title, QWidget* parent, unsigned sizeFactor);
     void setTitle(QString const &title);
     void ShowValueWithUnits(QString const&value, const QString &units);
+    void ShowValueWithUnits(
+        QString const&value, QString const &units, ChannelBase::ValueType valueType);
     QSize GetMinimumSize();
     void SetColor(QColor const &color);
-    void SetBackColor(const QColor &backColor) {m_valueLabel->SetBackColor(backColor); }
     void SetMinimumFontSize(unsigned sizeFactor) {m_valueLabel->SetMinimumFontSize(sizeFactor); }
 signals:
     void clicked();

@@ -844,6 +844,7 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
         else
         {
             out << channel->GetValue(i);
+            out << ((HwChannel*)channel)->GetOriginalValue(i);
         }
     }
 }
@@ -870,9 +871,9 @@ void Measurement::SerializeColections(QDataStream &out)
     }
 
     _SerializeChannelValues(m_sampleChannel, out);
-
-        out << m_trackedHwChannels.size();
-        foreach (ChannelBase *channel, m_trackedHwChannels.values())
+    out << m_channels.size()-1;
+    foreach (ChannelBase *channel, m_channels)
+        if (channel->GetType() == ChannelBase::Type_Hw)
             _SerializeChannelValues(channel, out);
 }
 
@@ -966,7 +967,7 @@ ChannelBase *Measurement::_FindChannel(int hwIndex)
 
     return NULL;
 }
-void Measurement::_DeserializeChannelData(QDataStream &in)
+void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
 {
     int hwIndex;
     in >> hwIndex;
@@ -997,11 +998,21 @@ void Measurement::_DeserializeChannelData(QDataStream &in)
                 ((SampleChannel *)channel)->AddValue(value, timeFromStart);
         }
         else if (m_saveLoadValues)
-             channel->AddValue(value);
+        {
+             if (version == 2)
+                channel->AddValue(value);
+             else
+             {
+                 double originalValue;
+                 in >> originalValue;
+                 channel->AddValue(originalValue);
+                 ((HwChannel*)channel)->ChangeValue(channel->GetValueCount()-1, value);
+             }
+        }
     }
 }
 
-void Measurement::DeserializeColections(QDataStream &in)
+void Measurement::DeserializeColections(QDataStream &in, unsigned version)
 {
     unsigned axisCount;
     in >> axisCount;
@@ -1011,12 +1022,12 @@ void Measurement::DeserializeColections(QDataStream &in)
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
     //samples
-    _DeserializeChannelData(in);
+    _DeserializeChannelData(in, version);
 
     unsigned trackedHwChannelCount;
     in >> trackedHwChannelCount;
     for (unsigned i = 0; i < trackedHwChannelCount; ++i)
-        _DeserializeChannelData(in);
+        _DeserializeChannelData(in, version);
 
     for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
     {
@@ -1024,7 +1035,7 @@ void Measurement::DeserializeColections(QDataStream &in)
         foreach (ChannelBase *channel, m_channels)
         {
             if (channel->GetValueCount() > i)
-                channel->UpdateGraph(xValue, channel->GetValue(i));
+                channel->UpdateGraph(xValue, channel->GetValue(i), false);
         }
     }
     if (m_sampleChannel->GetValueCount() != 0)
@@ -1076,4 +1087,14 @@ void Measurement::_SetType(Type type)
 {
     m_type = type;
     stateChanged();
+}
+
+int Measurement::GetSliderPos()
+{
+    return m_scrollBar->value();
+}
+
+ChannelBase *Measurement::GetHorizontalChannel()
+{
+    return GetPlot()->GetHorizontalChannel();
 }

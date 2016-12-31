@@ -55,7 +55,7 @@ ChannelBase::ChannelBase(
 {
     AssignToAxis(axis);
 
-    _DisplayNAValue();
+    _DisplayNAValue(0); //will be displayed ValueUnknown
 
     if (m_axis->IsHorizontal())
         _ShowOrHideGraphAndPoin(false);
@@ -91,29 +91,49 @@ QString ChannelBase::GetName()
 
 QString ChannelBase::GetUnits()
 {
-	return m_units;
+    return m_units;
 }
 
-void ChannelBase::AddValue( double value)
+void ChannelBase::_UpdateExtremes(double value)
 {
-    m_values.push_back(value);
-
     if (value < m_channelMinValue)
         m_channelMinValue = value;
 
     if (value > m_channelMaxValue)
         m_channelMaxValue = value;
 }
+void ChannelBase::AddValue( double value)
+{
+    m_values.push_back(value);
+
+    if (value == GetNaValue())
+        return;
+
+    _UpdateExtremes(value);
+}
 
 bool ChannelBase::IsOnHorizontalAxis()
 { return m_axis->IsHorizontal(); }
 
-
-void ChannelBase::_DisplayNAValue()
+QString ChannelBase::_GetNAValueString()
+{
+    return tr("n/a");
+}
+void ChannelBase::_DisplayNAValue(unsigned index)
 {
     //m_lastValueText = "-0.000e-00<br/>mA";
-    m_lastValueText = tr("n/a");
+    m_lastValueText = _GetNAValueString();
+    _ShowLastValueWithUnits(index);
+}
+
+void ChannelBase::_ShowLastValueWithUnits()
+{
     m_widget->ShowValueWithUnits(m_lastValueText, m_units);
+}
+
+void ChannelBase::_ShowLastValueWithUnits(unsigned index)
+{
+    m_widget->ShowValueWithUnits(m_lastValueText, m_units, _GetValueType(index));
 }
 
 void ChannelBase::_UpdateTitle()
@@ -135,6 +155,12 @@ void ChannelBase::editChannel()
 void ChannelBase::_FillLastValueText(int index)
 {
     double value = GetValue(index);
+    if (value == GetNaValue())
+    {
+        m_lastValueText = _GetNAValueString();
+        return;
+    }
+
     double absValue = std::abs(value);
 
     QLocale locale(QLocale::system());
@@ -153,21 +179,28 @@ void ChannelBase::displayValueOnIndex(int index)
 {
     if (index >= m_values.size())
     {
-        _DisplayNAValue();
+        qDebug() << "index is out of range and can't be displayed";
         return; //probably setRange in start method
     }
 
     _FillLastValueText(index);
-    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
+    _ShowLastValueWithUnits(index);
 
-    if (!m_axis->IsHorizontal())
-    {
-        m_graphPoint->clearData();
-        m_graphPoint->addData(m_measurement->GetPlot()->GetHorizontalChannel()->GetValue(index), GetValue(index));
-    }
+    ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();
+    if (m_axis->IsHorizontal() || horizontalChannel->IsValueNA(index))
+        return;
+
+    _RedrawGraphPoint(index, horizontalChannel);
 }
 
+void ChannelBase::_RedrawGraphPoint(unsigned index, ChannelBase *horizontalChannel)
+{
+    //FIXME: encapsulation
+    m_graphPoint->clearData();
+    if (!IsValueNA(index))
+        m_graphPoint->addData(horizontalChannel->GetValue(index), GetValue(index));
 
+}
 QCPGraph *ChannelBase::GetGraph()
 {
     return m_graph;
@@ -178,14 +211,23 @@ QCPGraph *ChannelBase::GetGraphPoint()
     return m_graphPoint;
 }
 
-void ChannelBase::UpdateGraph(double xValue, double yValue)
+void ChannelBase::UpdateGraph(double xValue, double yValue, bool replot)
 {
-    m_graph->data()->insert(xValue, QCPData(xValue, yValue));
+    if (yValue == GetNaValue())
+        m_graph->data()->remove(xValue);
+    else
+        m_graph->data()->insert(xValue, QCPData(xValue, yValue));
+    if (replot)
+    {
+        m_measurement->GetPlot()->ReplotIfNotDisabled();
+        //m_measurement->GetPlot()->setGraphPointPosition(xValue);
+    }
+
 }
 
 void ChannelBase::UpdateGraph(double xValue)
 {
-    UpdateGraph(xValue, GetLastValue());
+    UpdateGraph(xValue, GetLastValue(), false);
 }
 
 void ChannelBase::_ShowOrHideGraphAndPoin(bool shown)
@@ -267,7 +309,7 @@ void ChannelBase::_SetShapeIndex(unsigned index)
 void ChannelBase::_SetUnits(QString const &units)
 {
     m_units = units;
-    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
+    _ShowLastValueWithUnits();
     m_axis->UpdateGraphAxisName();
 }
 
@@ -283,6 +325,9 @@ int ChannelBase::GetLastClosestValueIndex(double value)
     int closestIndex = -1;
     for (int i = m_values.count() -1; i >=0; --i)
     {
+        if (IsValueNA(i))
+            continue;
+
         double valueOnIndex = GetValue(i);
         if (fabs(valueOnIndex - value) < qFabs(valueOnIndex - closestValue))
         {
@@ -292,4 +337,9 @@ int ChannelBase::GetLastClosestValueIndex(double value)
     }
 
     return closestIndex;
+}
+
+double ChannelBase::GetNaValue()
+{
+    return std::numeric_limits<double>::infinity();
 }

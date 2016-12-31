@@ -604,6 +604,9 @@ void Plot::RefillGraphs()
         channel->GetGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
+            if (channel->IsValueNA(i) || m_horizontalChannel->IsValueNA(i))
+                continue;
+
             channel->GetGraph()->data()->insert(
                 m_horizontalChannel->GetValue(i),
                 QCPData(m_horizontalChannel->GetValue(i), channel->GetValue(i))

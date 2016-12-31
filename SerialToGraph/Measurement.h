@@ -52,7 +52,8 @@ class Measurement : public QObject
     Q_PROPERTY(bool marksShown READ GetMarksShown WRITE _SetMarksShown)
 
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
-    Q_PROPERTY(bool colections READ _PhonyGetcollections WRITE _PhonySetColections)
+    //version 3 contains original values in HwChannel coolections
+    Q_PROPERTY(bool colections_for_version3 READ _PhonyGetcollections WRITE _PhonySetColections)
 
     Q_ENUMS(SampleUnits)
     Q_ENUMS(State)
@@ -95,7 +96,7 @@ private:
     QCPAxis *_GetGraphAxis(unsigned index);
     void _DeserializeChannel(QDataStream &in, Axis *axis);
     void _DeserializeAxis(QDataStream &in, unsigned index);
-    void _DeserializeChannelData(QDataStream &in);
+    void _DeserializeChannelData(QDataStream &in, unsigned version);
 
     void _SetName(QString &name) { m_name = name; }
     void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
@@ -174,14 +175,15 @@ public:
     Type GetType() { return m_type; }
     QWidget *GetWidget() { return &m_widget; }
     void SerializeColections(QDataStream &out);
-    void DeserializeColections(QDataStream &in);
+    void DeserializeColections(QDataStream &in, unsigned version);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
         { m_saveLoadValues = saveLoadValues; }
 
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown() {return m_marksShown; }
-
+    GetSliderPos();
+    ChannelBase *GetHorizontalChannel();
 signals:
     void stateChanged();
     void nameChanged();

@@ -999,17 +999,24 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
             if (m_saveLoadValues)
                 ((SampleChannel *)channel)->AddValue(value, timeFromStart);
         }
-        else if (m_saveLoadValues)
+        else
         {
-             if (version == 2)
+            if (version == 2)
+            {
+               if (m_saveLoadValues)
                 channel->AddValue(value);
-             else
-             {
-                 double originalValue;
-                 in >> originalValue;
-                 channel->AddValue(originalValue);
-                 ((HwChannel*)channel)->ChangeValue(channel->GetValueCount()-1, value);
-             }
+            }
+            else
+            {
+                double originalValue;
+                in >> originalValue;
+
+                if (m_saveLoadValues)
+                {
+                    channel->AddValue(originalValue);
+                    ((HwChannel*)channel)->ChangeValue(channel->GetValueCount()-1, value);
+                }
+            }
         }
     }
 }

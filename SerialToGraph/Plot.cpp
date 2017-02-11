@@ -46,7 +46,7 @@ Plot::Plot(Measurement *measurement) :
     m_wheelEvent(NULL),
     m_displayMode(SampleValue),
     m_markerTypeSelection(MTSSample),
-    m_markerRangeValue(ChannelBase::DVMax)
+    m_markerRangeValue(ChannelBase::DVDelta)
 {
      //remove originally created axis rect
     plotLayout()->clear();

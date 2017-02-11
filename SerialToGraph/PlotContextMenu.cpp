@@ -49,6 +49,7 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
 
     menu->addSeparator();
 
+    m_deltaValue = InitMarkerRangeValue(menu, tr("Delta"), ChannelBase::DVDelta);
     m_maxValue = InitMarkerRangeValue(menu, tr("Maximum"), ChannelBase::DVMax);
     m_minValue = InitMarkerRangeValue(menu, tr("Minimum"), ChannelBase::DVMin);
     m_averageValue = InitMarkerRangeValue(menu, tr("Mean"), ChannelBase::DVAverage);
@@ -126,7 +127,9 @@ void PlotContextMenu::valueSelectionSended()
 {
     Plot *plot = m_measurement->GetPlot();
     QAction *action = (QAction*)sender();
-    if (action == m_maxValue)
+    if (action == m_deltaValue)
+        plot->m_markerRangeValue = ChannelBase::DVDelta;
+    else if (action == m_maxValue)
         plot->m_markerRangeValue = ChannelBase::DVMax;
     else if (action == m_minValue)
         plot->m_markerRangeValue = ChannelBase::DVMin;

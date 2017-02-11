@@ -178,6 +178,11 @@ void ChannelBase::_FillLastValueTextFromIndex(int index)
     _FillLastValueTextByValue(GetValue(index));
 }
 
+double ChannelBase::_GetDelta(int left, int right)
+{
+    return GetValue(right) - GetValue(left);
+}
+
 double ChannelBase::_GetMaxInRange(int left, int right)
 {
     double max = GetValue(left);
@@ -256,6 +261,9 @@ void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayV
     double value = 0;
     switch (displayValue)
     {
+    case DVDelta:
+        value = _GetDelta(left, right);
+        break;
     case DVMax:
         value = _GetMaxInRange(left, right);
         break;

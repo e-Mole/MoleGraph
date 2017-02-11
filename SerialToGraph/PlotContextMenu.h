@@ -26,6 +26,7 @@ class PlotContextMenu : public QMenu
     QAction *m_rangeRightBorder;
 
 
+    QAction *m_deltaValue;
     QAction *m_maxValue;
     QAction *m_minValue;
     QAction *m_averageValue;

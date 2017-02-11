@@ -48,6 +48,7 @@ protected:
     void _ShowOrHideGraphAndPoin(bool shown);
     void _FillLastValueTextByValue(double value);
     virtual void _FillLastValueTextFromIndex(int index);
+    double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
     double _GetMinInRange(int left, int right);
     double _GetMeanInRange(int left, int right);
@@ -90,6 +91,7 @@ public:
     };
 
     enum DisplayValue{
+        DVDelta,
         DVMax,
         DVMin,
         DVAverage,

@@ -290,7 +290,7 @@ void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayV
     }
 
     _FillLastValueTextByValue(value);
-    m_widget->ShowValueWithUnits(m_lastValueText, "");
+    _ShowLastValueWithUnits();
 
     if (!m_axis->IsHorizontal())
     {

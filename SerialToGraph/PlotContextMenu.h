@@ -17,6 +17,8 @@ class PlotContextMenu : public QMenu
     QAction * InitMarkerRangeValue(
         QMenu *menu, QString const &label, ChannelBase::DisplayValue markerRangeValue);
 
+    void _SetMarkerType(QAction * action);
+
     QPoint clickPosition;
     Measurement *m_measurement;
 
@@ -45,6 +47,7 @@ private slots:
     void zoomInSelected();
     void zoomOutSelected();
     void zoomToFitSelected();
+    void FollowMode();
     void markerTypeSelected();
     void valueSelectionSended();
 };

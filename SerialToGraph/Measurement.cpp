@@ -507,6 +507,12 @@ void Measurement::sliderActionTriggered(int action)
     m_plot->ReplotIfNotDisabled();
 }
 
+void Measurement::SetFollowMode()
+{
+    m_scrollBar->setSliderPosition(m_sampleChannel->GetValueCount());
+    m_plot->ReplotIfNotDisabled();
+}
+
 void Measurement::replaceDisplays()
 {
     ReplaceDisplays(!IsPlotVisible());

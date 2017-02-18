@@ -186,6 +186,7 @@ public:
     int GetSliderPos();
     ChannelBase *GetHorizontalChannel();
     bool IsPlotInRangeMode();
+    void SetFollowMode();
 signals:
     void stateChanged();
     void nameChanged();

@@ -37,6 +37,8 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
     menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->
         setEnabled(m_measurement->GetSampleChannel()->GetValueCount() > 0);
     menu->addSeparator();
+    menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
+    menu->addSeparator();
 
     m_sampleValue = InitMarkerTypeSelection(
         menu, tr("Sample"), Plot::MTSSample);
@@ -97,19 +99,24 @@ void PlotContextMenu::zoomToFitSelected()
     m_measurement->GetPlot()->ZoomToFit(clickPosition);
 }
 
-void PlotContextMenu::markerTypeSelected()
+void PlotContextMenu::FollowMode()
+{
+    _SetMarkerType(m_sampleValue);
+    m_measurement->SetFollowMode();
+}
+
+void PlotContextMenu::_SetMarkerType(QAction * action)
 {
     Plot *plot = m_measurement->GetPlot();
-
     Plot::MarkerTypeSelection lastSelection = plot->m_markerTypeSelection;
 
-    if ((QAction*)sender() == m_sampleValue)
+    if (action == m_sampleValue)
         plot->m_markerTypeSelection = Plot::MTSSample;
-    else if ((QAction*)sender() == m_rangeAutoBorder)
+    else if (action == m_rangeAutoBorder)
         plot->m_markerTypeSelection = Plot::MTSRangeAutoBorder;
-    else if ((QAction*)sender() == m_rangeLeftBorder)
+    else if (action == m_rangeLeftBorder)
         plot->m_markerTypeSelection = Plot::MTSRangeLeftBorder;
-    else if ((QAction*)sender() == m_rangeRightBorder)
+    else if (action == m_rangeRightBorder)
         plot->m_markerTypeSelection = Plot::MTSRangeRightBorder;
 
     if (
@@ -121,6 +128,10 @@ void PlotContextMenu::markerTypeSelected()
         plot->SetMarkerLine(m_measurement->GetSliderPos());
         plot->ReplotIfNotDisabled();
     }
+}
+void PlotContextMenu::markerTypeSelected()
+{
+    _SetMarkerType((QAction*)sender());
 }
 
 void PlotContextMenu::valueSelectionSended()

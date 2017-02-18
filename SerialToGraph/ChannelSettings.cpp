@@ -42,7 +42,6 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     {
         QHBoxLayout *curValLayout = new QHBoxLayout();
         m_currentValueControl = new QLineEdit(this);
-        connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
         curValLayout->addWidget(m_currentValueControl);
 
         QPushButton *originlValue = new QPushButton(tr("Original"), this);
@@ -66,6 +65,9 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
             originlValue->setDisabled(true);
             naValue->setDisabled(true);
         }
+        //must be defined after setTest
+        connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
+
 
         m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);

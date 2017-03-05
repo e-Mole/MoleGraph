@@ -4,9 +4,11 @@
 #include <ChannelBase.h>
 #include <ColorCheckBox.h>
 #include <Context.h>
+#include <GhostChannel.h>
 #include <QKeySequence>
 #include <MainWindow.h>
 #include <Measurement.h>
+#include <Plot.h>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPalette>
@@ -39,24 +41,29 @@ void ChannelMenu::FillGrid()
     _AddShortcut(row, m_buttonLine->GetGraphShortcutText());
 
     ++row;
-    QPushButton *m_showAllButton = new QPushButton(tr("All Channels"), this);
-    connect(m_showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
-    m_gridLayout->addWidget(m_showAllButton, row, 0);
+    QPushButton *showAllButton = new QPushButton(tr("All Channels"), this);
+    connect(showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
+    m_gridLayout->addWidget(showAllButton, row, 0);
     _AddShortcut(row, m_buttonLine->GetAllChannelShortcutText());
 
     ++row;
-    QPushButton *m_showNoneButton = new QPushButton(tr("No Channels"), this);
-    connect(m_showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
-    m_gridLayout->addWidget(m_showNoneButton, row, 0);
+    QPushButton *showNoneButton = new QPushButton(tr("No Channels"), this);
+    connect(showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
+    m_gridLayout->addWidget(showNoneButton, row, 0);
     _AddShortcut(row, m_buttonLine->GetNoChannelShortcutText());
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
-    m_graphCheckBox->setMaximumHeight(m_showAllButton->sizeHint().height());
+    m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height());
 
 
     foreach (ChannelBase *channel, m_measurement.GetChannels())
         _AddChannel(channel, ++row);
 
+    ++row;
+    QPushButton *addGhost = new QPushButton(tr("Add Ghost"), this);
+    connect(addGhost, SIGNAL(clicked()), this, SLOT(addGhostgActivated()));
+    m_gridLayout->addWidget(addGhost, row, 0);
+    addGhost->setEnabled(m_context.m_measurements.count() > 1);
     m_gridLayout->setColumnStretch(2, 1);
 }
 
@@ -143,6 +150,43 @@ void ChannelMenu::noChannelsActivated()
         }
     }
     m_buttonLine->UpdateRunButtonsState();
+}
+
+ChannelBase * ChannelMenu::_GetFirstGhostableChannel()
+{
+    foreach (Measurement * m, m_context.m_measurements)
+    {
+        if (m != &m_measurement)
+            foreach (ChannelBase * channel, m->GetChannels())
+            {
+                if (channel->GetType() == ChannelBase::Type_Hw)
+                    return channel;
+            }
+    }
+    qCritical() << "no HW channel found";
+    return NULL;
+}
+void ChannelMenu::addGhostgActivated()
+{
+    ChannelBase *ghostable = _GetFirstGhostableChannel();
+    GhostChannel *newGhost = new GhostChannel(
+        &m_measurement,
+        m_context,
+        m_measurement.GetFirstVerticalAxis(),
+        m_measurement.GetPlot()->AddGraph(
+            ghostable->GetColor(),
+            ghostable->GetShapeIndex(),
+            m_measurement.GetMarksShown(),
+            Qt::DotLine),
+        m_measurement.GetPlot()->AddPoint(ghostable->GetColor(),ghostable->GetShapeIndex()),
+            ghostable->GetName(),
+            ghostable->GetColor(),
+            ghostable->GetShapeIndex(),
+            true,
+            ghostable->GetUnits(),
+            Qt::DotLine
+            );
+    newGhost->editChannel();
 }
 
 void ChannelMenu::allChannelsActivated()

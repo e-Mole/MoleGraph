@@ -14,13 +14,12 @@ class FormDialogColor : public FormDialogBase
 {
     Q_OBJECT
 
-    void _SetColorButtonColor();
-
-    QWidget *m_colorButtonWidget;
 protected:
     void AddColorButtonRow(QColor const &color);
+    void SetColorButtonColor(const QColor &color);
 
     QColor m_color;
+    QWidget *m_colorButtonWidget;
 public:
     FormDialogColor(QWidget *parent, const QString &title, const GlobalSettings &settings);
 

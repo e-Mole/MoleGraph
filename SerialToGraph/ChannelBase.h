@@ -41,7 +41,6 @@ public:
 private:
     virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 protected:
-    QString _GetNAValueString();
     void _DisplayNAValue(unsigned index);
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
@@ -110,8 +109,8 @@ public:
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
         bool active = true,
-        const QString &units = ""
-    );
+        const QString &units = "",
+        Qt::PenStyle penStyle = Qt::SolidLine);
 
     ~ChannelBase();
     virtual Type GetType() = 0;
@@ -176,6 +175,7 @@ public:
     bool IsValueNA(int index)
     { return GetValue(index) == GetNaValue(); }
     static double GetNaValue();
+    static QString GetNAValueString();
 signals:
     void stateChanged();
     void wasSetToHorizontal();

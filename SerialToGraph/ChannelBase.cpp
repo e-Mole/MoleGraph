@@ -30,7 +30,8 @@ ChannelBase::ChannelBase(
     QColor const &color,
     unsigned shapeIndex,
     bool active,
-    const QString &units) :
+    const QString &units,
+    Qt::PenStyle penStyle) :
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
@@ -50,7 +51,7 @@ ChannelBase::ChannelBase(
     m_graph(graph),
     m_graphPoint(graphPoint),
     m_units(units),
-    m_penStyle(Qt::SolidLine),
+    m_penStyle(penStyle),
     m_isActive(true)
 {
     AssignToAxis(axis);
@@ -115,14 +116,15 @@ void ChannelBase::AddValue( double value)
 bool ChannelBase::IsOnHorizontalAxis()
 { return m_axis->IsHorizontal(); }
 
-QString ChannelBase::_GetNAValueString()
+QString ChannelBase::GetNAValueString()
 {
     return tr("n/a");
 }
+
 void ChannelBase::_DisplayNAValue(unsigned index)
 {
     //m_lastValueText = "-0.000e-00<br/>mA";
-    m_lastValueText = _GetNAValueString();
+    m_lastValueText = GetNAValueString();
     _ShowLastValueWithUnits(index);
 }
 
@@ -155,7 +157,7 @@ void ChannelBase::_FillLastValueTextByValue(double value)
 {
     if (value == GetNaValue())
     {
-        m_lastValueText = _GetNAValueString();
+        m_lastValueText = GetNAValueString();
         return;
     }
 

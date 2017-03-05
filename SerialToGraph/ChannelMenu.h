@@ -22,6 +22,7 @@ class ChannelMenu : public bases::MenuDialogBase
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(unsigned row, QString const &shortcut);
     void FillGrid();
+    ChannelBase * _GetFirstGhostableChannel();
 
     Measurement &m_measurement;
     ButtonLine *m_buttonLine;
@@ -44,6 +45,7 @@ public slots:
     void noChannelsActivated();
     void allChannelsActivated();
     void edit();
+    void addGhostgActivated();
 
 };
 

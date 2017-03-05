@@ -17,15 +17,18 @@ class ChannelSettings : public bases::FormDialogColor
 {
     Q_OBJECT
 
-    void _InitializeShapeCombo();
-    void _InitializeAxisCombo();
+    void _InitializeShapeCombo(ChannelBase *channel);
+    void _InitializeAxisCombo(bool enable);
     bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
     void _InitializeTimeFeatures();
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
-    void _InitializePenStyle();
+    void _InitializePenStyle(Qt::PenStyle selected);
     int _GetCurrentPos();
+    void _InitializeGhostLines();
+    void _InitializeValueLine(ChannelBase *channel);
+    ChannelBase * _GetPropertiesChannel();
 
     Context const & m_context;
     ChannelBase *m_channel;
@@ -38,6 +41,8 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_timeUnits;
     bases::ComboBox * m_format;
     bases::ComboBox * m_penStyle;
+    bases::ComboBox * m_sourceMeasurements;
+    bases::ComboBox * m_sourceChannels;
     bool m_currentValueChanged;
     double m_currentValue;
 public:
@@ -50,6 +55,8 @@ private slots:
     void currentValueChanged(QString const &content);
     void setOriginalValue(bool checked);
     void setNaValue(bool);
+    void fillSourceChannels(int index);
+    void updateChannelProperties(int index);
 };
 
 #endif // CHANNELSETTINGS_H

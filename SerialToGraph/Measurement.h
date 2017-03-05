@@ -187,6 +187,8 @@ public:
     ChannelBase *GetHorizontalChannel();
     bool IsPlotInRangeMode();
     void SetFollowMode();
+    Axis *GetFirstVerticalAxis();
+
 signals:
     void stateChanged();
     void nameChanged();

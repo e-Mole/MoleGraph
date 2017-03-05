@@ -3,11 +3,12 @@
 # Project created by QtCreator 2016-02-07T12:21:04
 #
 #-------------------------------------------------
-versionTarget.target = GitVersion.h
-versionTarget.depends = FORCE
-versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
-PRE_TARGETDEPS += GitVersion.h
-QMAKE_EXTRA_TARGETS += versionTarget
+
+#versionTarget.target = GitVersion.h
+#versionTarget.depends = FORCE
+#versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
+#PRE_TARGETDEPS += GitVersion.h
+#QMAKE_EXTRA_TARGETS += versionTarget
 
 TARGET = MoleGraph
 DEFINES += TARGET=\\\"$$TARGET\\\"
@@ -65,7 +66,8 @@ SOURCES += main.cpp\
     file/FileModel.cpp \
     file/AddDirDialog.cpp \
     bases/ComboBox.cpp \
-    PlotContextMenu.cpp
+    PlotContextMenu.cpp \
+    GhostChannel.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -111,7 +113,8 @@ HEADERS  += MainWindow.h \
     file/FileModel.h \
     file/AddDirDialog.h \
     bases/ComboBox.h \
-    PlotContextMenu.h
+    PlotContextMenu.h \
+    GhostChannel.h
 
 CONFIG += mobility
 CONFIG += c++11

@@ -22,12 +22,11 @@ FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title, GlobalS
 
 void FormDialogColor::AddColorButtonRow(const QColor &color)
 {
-    m_color = color;
     QPushButton * colorButton = new QPushButton("", this);
     QHBoxLayout *layout = new QHBoxLayout(colorButton);
     layout->setMargin(colorButton->physicalDpiY() / 12);
     m_colorButtonWidget = new QWidget(colorButton);
-    _SetColorButtonColor();
+    SetColorButtonColor(color);
     layout->addWidget(m_colorButtonWidget);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(colorButtonClicked()));
 
@@ -39,13 +38,14 @@ void FormDialogColor::colorButtonClicked()
     ColorPickerDialog colorPicker(this, tr("Color Picker"));
     if (QDialog::Accepted ==  colorPicker.exec())
     {
-        m_color = colorPicker.GetSelectedColor();
-        _SetColorButtonColor();
+        SetColorButtonColor(colorPicker.GetSelectedColor());
     }
 }
 
-void FormDialogColor::_SetColorButtonColor()
+void FormDialogColor::SetColorButtonColor(const QColor &color)
 {
+    m_color = color;
+
     QString style = "background-color: rgb(%1, %2, %3);";
     m_colorButtonWidget->setStyleSheet(style.arg(m_color.red()).arg(m_color.green()).arg(m_color.blue()));
 }

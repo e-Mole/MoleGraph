@@ -503,7 +503,7 @@ void Measurement::sliderActionTriggered(int action)
     Q_UNUSED(action);
 
     m_plot->SetMoveMode(
-        m_scrollBar->sliderPosition() != m_scrollBar->maximum());
+        m_scrollBar->sliderPosition() != (int)m_sampleChannel->GetValueCount());
     m_plot->ReplotIfNotDisabled();
 }
 
@@ -511,6 +511,15 @@ void Measurement::SetFollowMode()
 {
     m_scrollBar->setSliderPosition(m_sampleChannel->GetValueCount());
     m_plot->ReplotIfNotDisabled();
+}
+
+Axis * Measurement::GetFirstVerticalAxis()
+{
+    foreach (Axis *axis, m_axes)
+        if (! axis->IsHorizontal())
+            return axis;
+
+    return NULL;
 }
 
 void Measurement::replaceDisplays()

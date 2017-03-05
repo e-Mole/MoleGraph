@@ -33,7 +33,10 @@ int main(int argc, char *argv[])
     QString fileName = parser.value(openOption);
     const QStringList arguments = parser.positionalArguments();
     if (arguments.size() > 0)
-        fileName = arguments[0];
+    {
+        if (!arguments[0].contains(".exe")) //quick workaround for running from windows shortcut (it looks there is as first parameter used name of the .exe file)
+            fileName = arguments[0];
+    }
     MainWindow w(a, fileName, parser.isSet(withoutValuesOption));
     w.show();
 

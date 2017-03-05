@@ -240,7 +240,7 @@ void ButtonLine::viewMenuButtonPressed()
     qDebug() << "View menu button pressed";
     _SetMenuStyle(m_viewMenu);
 #if defined(Q_OS_ANDROID)
-    m_viwMenu->showMaximized();
+    m_viewMenu->showMaximized();
 #endif
     m_viewMenu->contextMenuRequestGlobalPos(_GetGlobalMenuPosition(m_viewButton));
 }

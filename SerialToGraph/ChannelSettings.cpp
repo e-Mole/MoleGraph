@@ -220,7 +220,7 @@ bool ChannelSettings::BeforeAccept()
     {
         char *endptr;
         strtof(m_currentValueControl->text().toStdString().c_str(),&endptr);
-        if (endptr[0] != '\0')
+        if (m_currentValue != m_channel->GetNaValue() && endptr[0] != '\0')
         {
             MyMessageBox::information(this, tr("Current value is not a number."));
             return false;

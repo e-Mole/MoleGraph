@@ -12,6 +12,7 @@ class GhostChannel : public ChannelBase
     ChannelBase *m_sourceChannel;
 public:
     GhostChannel(
+        ChannelBase * sourceChannel,
         Measurement *measurement,
         Context const & context,
         Axis * axis,
@@ -26,6 +27,7 @@ public:
 
     virtual Type GetType() { return Type_Ghost; }
     virtual unsigned GetShortcutOrder() { return ~0; }
+    ChannelBase *GetSourceChannel() {return m_sourceChannel; }
 signals:
 
 public slots:

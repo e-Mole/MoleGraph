@@ -767,10 +767,29 @@ QColor Measurement::_GetColorByOrder(unsigned order)
     default: return Qt::black; //also for 0
     }
 }
+
+void Measurement::AddYChannel(ChannelBase *channel)
+{
+    m_channels.push_back(channel);
+    connect(m_channels.last(), SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
+}
+
+void Measurement::RemoveChannel(ChannelBase *channeltoRemove)
+{
+    for (int i = 0; i < m_channels.count(); i++)
+    {
+        if (m_channels[i] == channeltoRemove)
+        {
+            m_channels.remove(i);
+            break;
+        }
+    }
+}
+
 void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 {
     unsigned order = m_channels.size()-1;
-    m_channels.push_back(
+    AddYChannel(
         new HwChannel(
             this,
             m_context,
@@ -785,10 +804,6 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
             ""
         )
     );
-
-    connect(m_channels.last(), SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
-
-    order++;
 }
 
 Axis * Measurement::CreateAxis(QColor const & color)

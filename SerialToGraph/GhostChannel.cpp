@@ -1,6 +1,7 @@
 #include "GhostChannel.h"
 
 GhostChannel::GhostChannel(
+    ChannelBase *sourceChannel,
     Measurement *measurement,
     Context const & context,
     Axis * axis,
@@ -13,7 +14,7 @@ GhostChannel::GhostChannel(
     const QString &units, Qt::PenStyle penStyle
 ) :
     ChannelBase(measurement, context, axis, graph, graphPoint, name, color, shapeIndex, active, units, penStyle),
-    m_sourceChannel(NULL)
+    m_sourceChannel(sourceChannel)
 {
 
 }

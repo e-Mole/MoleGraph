@@ -188,7 +188,8 @@ public:
     bool IsPlotInRangeMode();
     void SetFollowMode();
     Axis *GetFirstVerticalAxis();
-
+    void AddYChannel(ChannelBase *channel);
+    void RemoveChannel(ChannelBase *channeltoRemove);
 signals:
     void stateChanged();
     void nameChanged();

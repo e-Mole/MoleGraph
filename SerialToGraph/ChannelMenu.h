@@ -3,13 +3,13 @@
 
 #include <bases/MenuDialogBase.h>
 #include <QMap>
+class ButtonLine;
 class ChannelBase;
 class Context;
 class ColorCheckBox;
 class Measurement;
 class QLabel;
 class QPushButton;
-class ButtonLine;
 
 namespace bases { class ClickableLabel; }
 struct Context;
@@ -17,7 +17,7 @@ class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
-    void _AddChannel(ChannelBase *channel, unsigned row);
+    void _AddChannel(ChannelBase *channel, bool removable);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(unsigned row, QString const &shortcut);
@@ -30,6 +30,7 @@ class ChannelMenu : public bases::MenuDialogBase
     QMap<ChannelBase*, ColorCheckBox*> m_channelCheckBoxes;
     QMap<ColorCheckBox*, ChannelBase*> m_checkBoxChannels;
     QMap<QPushButton*, ChannelBase*> m_editChannels;
+    QMap<QPushButton*, ChannelBase *> m_removeButtonToChannel;
     void _SetGraph(bool checked);
     Context const &m_context;
 
@@ -45,6 +46,7 @@ public slots:
     void noChannelsActivated();
     void allChannelsActivated();
     void edit();
+    void remove();
     void addGhostgActivated();
 
 };

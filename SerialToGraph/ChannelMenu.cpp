@@ -56,15 +56,15 @@ void ChannelMenu::FillGrid()
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height());
 
 
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
-        _AddChannel(channel, ++row);
-
     ++row;
     QPushButton *addGhost = new QPushButton(tr("Add Ghost"), this);
     connect(addGhost, SIGNAL(clicked()), this, SLOT(addGhostgActivated()));
     m_gridLayout->addWidget(addGhost, row, 0);
     addGhost->setEnabled(m_context.m_measurements.count() > 1);
     m_gridLayout->setColumnStretch(2, 1);
+
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
+        _AddChannel(channel, channel->GetType() == ChannelBase::Type_Ghost);
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -72,8 +72,9 @@ void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
     if (!shortcut.isEmpty())
         m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
 }
-void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
+void ChannelMenu::_AddChannel(ChannelBase *channel, bool removable)
 {
+    unsigned rowNr = m_gridLayout->rowCount();
     ColorCheckBox *cb = new ColorCheckBox(channel->GetName(), this);
     cb->SetChecked(channel->IsActive());
     cb->SetColor(channel->GetColor());
@@ -81,17 +82,26 @@ void ChannelMenu::_AddChannel(ChannelBase *channel, unsigned row)
     m_channelCheckBoxes[channel] = cb;
     m_checkBoxChannels[cb] = channel;
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivated()));
-    m_gridLayout->addWidget(cb, row, 0);
+    m_gridLayout->addWidget(cb, rowNr, 0);
 
-    _AddShortcut(row, m_buttonLine->GetChannelShortcutText(channel));
+    _AddShortcut(rowNr, m_buttonLine->GetChannelShortcutText(channel));
 
-    QPushButton *pb = new QPushButton(tr("Edit"), this);
-    m_editChannels[pb] = channel;
-    connect(pb, SIGNAL(clicked()), this, SLOT(edit()));
-    m_gridLayout->addWidget(pb, row, 2);
+    QPushButton *editButton = new QPushButton(tr("Edit"), this);
+    m_editChannels[editButton] = channel;
+    connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
+    m_gridLayout->addWidget(editButton, rowNr, 2);
+
+    if (removable)
+    {
+        QPushButton *removeButton = new QPushButton(tr("Remove"), this);
+        m_editChannels[removeButton] = channel;
+        connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+        m_gridLayout->addWidget(removeButton, rowNr, 3);
+        m_removeButtonToChannel.insert(removeButton, channel);
+    }
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
-    cb->setMaximumHeight(pb->sizeHint().height());
+    cb->setMaximumHeight(editButton->sizeHint().height());
 }
 
 void ChannelMenu::UpdateCheckBoxes()
@@ -112,6 +122,25 @@ void ChannelMenu::edit()
     cb->SetColor(channel->GetColor());
 
     m_buttonLine->UpdateRunButtonsState();
+}
+
+void ChannelMenu::remove()
+{
+    ChannelBase * channel = m_removeButtonToChannel[(QPushButton*)sender()];
+    m_channelCheckBoxes.remove(channel);
+    m_measurement.RemoveChannel(channel);
+    for (int row = 0; row < m_gridLayout->rowCount(); row++)
+    {
+        for (int col = 0; col < m_gridLayout->columnCount(); col++)
+        {
+            QLayoutItem *item = m_gridLayout->itemAtPosition(row, col);
+            m_gridLayout->removeItem(item);
+            if (item != nullptr)
+                delete item->widget();
+            delete item;
+        }
+    }
+    FillGrid();
 }
 
 void ChannelMenu::channelActivated()
@@ -170,6 +199,7 @@ void ChannelMenu::addGhostgActivated()
 {
     ChannelBase *ghostable = _GetFirstGhostableChannel();
     GhostChannel *newGhost = new GhostChannel(
+        ghostable,
         &m_measurement,
         m_context,
         m_measurement.GetFirstVerticalAxis(),
@@ -187,6 +217,8 @@ void ChannelMenu::addGhostgActivated()
             Qt::DotLine
             );
     newGhost->editChannel();
+    _AddChannel(newGhost, true);
+    m_measurement.AddYChannel(newGhost);
 }
 
 void ChannelMenu::allChannelsActivated()

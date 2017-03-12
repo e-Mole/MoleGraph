@@ -59,11 +59,9 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
     }
 
-    ChannelBase * propertiesChannel = _GetPropertiesChannel();
-    AddColorButtonRow(propertiesChannel->m_color);
-
-    _InitializeAxisCombo(m_channel == propertiesChannel);
-    _InitializeShapeCombo(propertiesChannel);
+    AddColorButtonRow(m_channel->m_color);
+    _InitializeAxisCombo(m_channel == _GetPropertiesChannel());
+    _InitializeShapeCombo(m_channel);
     _InitializePenStyle(m_channel->GetPenStyle());
 }
 
@@ -85,19 +83,26 @@ void ChannelSettings::_InitializeGhostLines()
     foreach(Measurement *m, m_context.m_measurements)
     {
         if (m != m_context.m_mainWindow.GetCurrnetMeasurement())
+        {
             m_sourceMeasurements->addItem(m->GetName(), (qlonglong)m);
+            if (m == ((GhostChannel*)m_channel)->GetSourceChannel()->GetMeasurement())
+                m_sourceMeasurements->setCurrentIndex(m_sourceMeasurements->count()-1);
+        }
     }
+
     m_formLayout->addRow(new QLabel(tr("Source Measurement"), this), m_sourceMeasurements);
-    connect(m_sourceMeasurements, SIGNAL(currentIndexChanged(int)), this, SLOT(fillSourceChannels(int)));
 
     m_sourceChannels = new bases::ComboBox(this);
     m_formLayout->addRow(new QLabel(tr("Source Channel"), this), m_sourceChannels);
-    connect(m_sourceChannels, SIGNAL(currentIndexChanged(int)), this, SLOT(updateChannelProperties(int)));
 
     if (m_sourceMeasurements->count() == 0)
         m_sourceMeasurements->setDisabled(true);
     else
-        fillSourceChannels(0);
+        fillSourceChannels(m_sourceMeasurements->currentIndex());
+
+    connect(m_sourceMeasurements, SIGNAL(currentIndexChanged(int)), this, SLOT(fillSourceChannels(int)));
+    connect(m_sourceChannels, SIGNAL(currentIndexChanged(int)), this, SLOT(updateChannelProperties(int)));
+
 }
 
 void ChannelSettings::fillSourceChannels(int index)
@@ -108,6 +113,9 @@ void ChannelSettings::fillSourceChannels(int index)
     {
        if (channel->GetType() == ChannelBase::Type_Hw)
            m_sourceChannels->addItem(channel->GetName(), (qlonglong)channel);
+
+       if (channel == ((GhostChannel *)m_channel)->GetSourceChannel())
+           m_sourceChannels->setCurrentIndex(m_sourceChannels->count()-1);
     }
 }
 
@@ -301,7 +309,7 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
         ((HwChannel *)m_channel)->ChangeValue(_GetCurrentPos(), m_currentValue);
     }
-    if (m_channel->m_name != m_name->text() && m_channel->GetType() == ChannelBase::Type_Hw)
+    if (m_channel->m_name != m_name->text() && m_channel->GetType() != ChannelBase::Type_Sample)
     {
         changed = true;
         m_channel->_SetName(m_name->text());

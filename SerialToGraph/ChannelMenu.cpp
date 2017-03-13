@@ -209,16 +209,20 @@ void ChannelMenu::addGhostgActivated()
             m_measurement.GetMarksShown(),
             Qt::DotLine),
         m_measurement.GetPlot()->AddPoint(ghostable->GetColor(),ghostable->GetShapeIndex()),
-            ghostable->GetName(),
             ghostable->GetColor(),
             ghostable->GetShapeIndex(),
             true,
             ghostable->GetUnits(),
             Qt::DotLine
             );
-    newGhost->editChannel();
+    if (!newGhost->editChannel())
+    {
+        delete newGhost;
+        return;
+    }
     _AddChannel(newGhost, true);
     m_measurement.AddYChannel(newGhost);
+    ActivateChannel(newGhost, true);
 }
 
 void ChannelMenu::allChannelsActivated()

@@ -183,7 +183,7 @@ signals:
 public slots:
     void changeChannelActivity(bool active, bool signal);
     void displayValueOnIndex(int index);
-    void editChannel();
+    bool editChannel();
 };
 
 #endif // CHANNEL_H

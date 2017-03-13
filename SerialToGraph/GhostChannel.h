@@ -10,15 +10,15 @@ class GhostChannel : public ChannelBase
     friend class ChannelSettings;
 
     ChannelBase *m_sourceChannel;
+
+    virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 public:
-    GhostChannel(
-        ChannelBase * sourceChannel,
+    GhostChannel(ChannelBase * sourceChannel,
         Measurement *measurement,
         Context const & context,
         Axis * axis,
         QCPGraph *graph,
         QCPGraph *graphPoint,
-        QString const &name = "",
         QColor const &color = Qt::black,
         unsigned shapeIndex = 0,
         bool active = true,
@@ -28,6 +28,7 @@ public:
     virtual Type GetType() { return Type_Ghost; }
     virtual unsigned GetShortcutOrder() { return ~0; }
     ChannelBase *GetSourceChannel() {return m_sourceChannel; }
+    QString GenerateName(ChannelBase *sourceChannel);
 signals:
 
 public slots:

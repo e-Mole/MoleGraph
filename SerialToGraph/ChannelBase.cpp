@@ -40,7 +40,9 @@ ChannelBase::ChannelBase(
         new ChannelWidget(
             name,
             measurement->GetWidget(),
-            m_context.m_settings.GetChannelSizeFactor()
+            m_context.m_settings.GetChannelSizeFactor(),
+            _GetValueType(~0),
+            color
         )
     ),
     m_color(color),
@@ -69,6 +71,7 @@ ChannelBase::ChannelBase(
 
 ChannelBase::~ChannelBase()
 {
+    delete m_widget;
 }
 
 void ChannelBase::_SetPenStyle(Qt::PenStyle penStyle)
@@ -141,16 +144,17 @@ void ChannelBase::_ShowLastValueWithUnits(unsigned index)
 void ChannelBase::_UpdateTitle()
 {
     m_widget->setTitle(
-        QString("(%1) ").arg(GetShortcutOrder()) +
-        m_name
+        (~0 == GetShortcutOrder()) ?
+            m_name :
+            QString("(%1) ").arg(GetShortcutOrder()) + m_name
     );
     m_axis->UpdateGraphAxisName();
 }
 
-void ChannelBase::editChannel()
+bool ChannelBase::editChannel()
 {
     ChannelSettings *settings = new ChannelSettings(this, m_context);
-    settings->exec();
+    return QDialog::Accepted == settings->exec();
 }
 
 void ChannelBase::_FillLastValueTextByValue(double value)

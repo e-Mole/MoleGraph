@@ -568,7 +568,7 @@ void Measurement::ReplaceDisplays(bool grid)
         m_displayLayout->setColumnStretch(column, 1);
     }
 
-    m_displayLayout->setRowStretch(9, grid ? 0 : 1);
+    m_displayLayout->setRowStretch(100, grid ? 0 : 1); //100 - just a huge number
 }
 
 void Measurement::showGraph(bool show)
@@ -778,9 +778,11 @@ void Measurement::RemoveChannel(ChannelBase *channeltoRemove)
 {
     for (int i = 0; i < m_channels.count(); i++)
     {
+        ChannelBase *channel = m_channels[i];
         if (m_channels[i] == channeltoRemove)
         {
             m_channels.remove(i);
+            delete channel;
             break;
         }
     }

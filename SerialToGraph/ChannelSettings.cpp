@@ -125,7 +125,7 @@ void ChannelSettings::updateChannelProperties(int index)
         return;
 
     ChannelBase *channel = (ChannelBase *)qvariant_cast<qlonglong>(m_sourceChannels->itemData(index));
-    m_name->setText(channel->GetName());
+    m_name->setText(((GhostChannel*)m_channel)->GenerateName(channel));
     m_units->setText(channel->GetUnits());
     if (NULL != m_shapeComboBox)
         m_shapeComboBox->setCurrentIndex(channel->m_shapeIndex);

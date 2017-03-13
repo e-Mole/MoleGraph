@@ -1,15 +1,22 @@
 #include "ChannelWidget.h"
 #include <QColor>
+#include <QDebug>
+#include <QGraphicsOpacityEffect>
 #include <QSize>
 #include <QVBoxLayout>
-#include <QDebug>
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(const QString &title, QWidget *parent, unsigned sizeFactor) :
+ChannelWidget::ChannelWidget(
+    const QString &title,
+    QWidget *parent,
+    unsigned sizeFactor,
+    ChannelBase::ValueType valueType,
+    const QColor &foreColor
+) :
     QWidget(parent),
     m_title(new QLabel(title, this)),
-    m_valueLabel(new ValueLabel("", this, sizeFactor))
+    m_valueLabel(new ValueLabel("", this, sizeFactor, _GetBackColorFromType(valueType), foreColor))
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -18,13 +25,24 @@ ChannelWidget::ChannelWidget(const QString &title, QWidget *parent, unsigned siz
     layout->setSpacing(1);
 }
 
-ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor):
-    QLabel(text, parent)
+void ChannelWidget::SetTransparent(bool transparent)
+{
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);
+    effect->setOpacity(transparent ? 0.6 : 1);
+    setGraphicsEffect(effect);
+}
+
+ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, const QColor &backColor, const QColor &foreColor
+):
+    QLabel(text, parent),
+    m_backColor(backColor),
+    m_foreColor(foreColor)
 {
     setAlignment(Qt::AlignHCenter| Qt::AlignVCenter);
 
     setMargin(1);
     SetMinimumFontSize(sizeFactor);
+    SetColor(foreColor);
 }
 
 void ChannelWidget::ValueLabel::SetMinimumFontSize(unsigned sizeFactor)
@@ -169,22 +187,25 @@ void ChannelWidget::resizeEvent(QResizeEvent * event)
     sizeChanged();
 }
 
-void ChannelWidget::_SetBackColor(ChannelBase::ValueType type)
+QColor ChannelWidget::_GetBackColorFromType(ChannelBase::ValueType type)
 {
     switch (type)
     {
     case ChannelBase::ValueTypeSample:
-        m_valueLabel->SetBackColor(QColor(0xd0, 0xd0, 0xd0));
-    break;
+        return QColor(0xd0, 0xd0, 0xd0);
     case ChannelBase::ValueTypeChanged:
-        m_valueLabel->SetBackColor(QColor(0xff, 0xd0, 0xd0));
-    break;
+        return QColor(0xff, 0xd0, 0xd0);
     case ChannelBase::ValueTypeUnknown:
     case ChannelBase::ValueTypeOriginal:
     case ChannelBase::ValueTypeRangeValue:
-        m_valueLabel->SetBackColor(QColor(0xff, 0xff, 0xff));
-    break;
+        return QColor(0xff, 0xff, 0xff);
     default:
         qDebug() << "wrong ValueType";
+        return QColor();
     }
+}
+
+void ChannelWidget::_SetBackColor(ChannelBase::ValueType type)
+{
+    m_valueLabel->SetBackColor(_GetBackColorFromType(type));
 }

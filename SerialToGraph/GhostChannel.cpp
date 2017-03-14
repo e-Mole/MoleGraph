@@ -20,6 +20,12 @@ GhostChannel::GhostChannel(
     m_widget->SetTransparent(true); //it can't be done in channel base constructor because there is not defined type of chanel yet
 }
 
+void GhostChannel::FillGraph()
+{
+    for (int i = 0; i < GetValueCount(); i++)
+        UpdateGraph(i, GetValue(i), i == GetValueCount() -1);
+}
+
 QString GhostChannel::GenerateName(ChannelBase *sourceChannel)
 {
     return sourceChannel->GetMeasurement()->GetName() + "-" + sourceChannel->GetName();

@@ -29,6 +29,23 @@ public:
     virtual unsigned GetShortcutOrder() { return ~0; }
     ChannelBase *GetSourceChannel() {return m_sourceChannel; }
     QString GenerateName(ChannelBase *sourceChannel);
+
+    virtual unsigned GetValueCount()
+    { return m_sourceChannel->GetValueCount();}
+
+    virtual double GetValue(unsigned index)
+    { return m_sourceChannel->GetValue(index); }
+
+    virtual double GetLastValue()
+    { return m_sourceChannel->GetLastValue(); }
+
+    virtual double GetMinValue()
+    { return m_sourceChannel->GetMinValue(); }
+
+    virtual double GetMaxValue()
+    { return m_sourceChannel->GetMaxValue(); }
+
+    void FillGraph();
 signals:
 
 public slots:

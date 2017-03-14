@@ -645,6 +645,11 @@ void Plot::DisplayChannelValue(ChannelBase *channel)
     }
 }
 
+void Plot::RemoveGraph(QCPGraph *graph)
+{
+    removeGraph(graph);
+}
+
 void Plot::RefillGraphs()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())

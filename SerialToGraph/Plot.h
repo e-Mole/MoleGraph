@@ -119,6 +119,7 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
+    void RemoveGraph(QCPGraph *graph);
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);

@@ -258,7 +258,7 @@ double ChannelBase::_GetStandardDeviation(int left, int right)
 
 void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayValue)
 {
-    if (0 == m_values.size())
+    if (0 == GetValueCount())
     {
         //try to display hidden channel
         return; //probably setRange in start method
@@ -306,7 +306,7 @@ void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayV
 }
 void ChannelBase::displayValueOnIndex(int index)
 {
-    if (index >= m_values.size())
+    if (index >= GetValueCount())
     {
         qDebug() << "index is out of range and can't be displayed";
         return; //probably setRange in start method or try to display hiden channel
@@ -351,7 +351,6 @@ void ChannelBase::UpdateGraph(double xValue, double yValue, bool replot)
         m_measurement->GetPlot()->ReplotIfNotDisabled();
         //m_measurement->GetPlot()->setGraphPointPosition(xValue);
     }
-
 }
 
 void ChannelBase::UpdateGraph(double xValue)

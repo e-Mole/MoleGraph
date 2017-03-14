@@ -779,13 +779,21 @@ void Measurement::RemoveChannel(ChannelBase *channeltoRemove)
     for (int i = 0; i < m_channels.count(); i++)
     {
         ChannelBase *channel = m_channels[i];
-        if (m_channels[i] == channeltoRemove)
+        if (channel == channeltoRemove)
         {
+            if (!m_plot->removeGraph(channel->GetGraph()))
+                qDebug() << "graph was not deleed";
+            if (!m_plot->removeGraph(channel->GetGraphPoint()))
+                qDebug() << "graph point was not deleed";
+            m_plot->rescaleAxes(channel->GetAxis());
+            m_plot->ReplotIfNotDisabled();
+
             m_channels.remove(i);
             delete channel;
-            break;
+            return;
         }
     }
+    qDebug() << "channel was not found and can not be deleted";
 }
 
 void Measurement::_AddYChannel(QColor const &color, Axis *axis)

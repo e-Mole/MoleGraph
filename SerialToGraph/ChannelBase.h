@@ -120,13 +120,13 @@ public:
     QString GetName();
     QString GetUnits();
 
-    unsigned GetValueCount()
+    virtual unsigned GetValueCount()
     { return m_values.size();}
 
     virtual double GetValue(unsigned index)
     { return m_values[index]; }
 
-    double GetLastValue()
+    virtual double GetLastValue()
     { return GetValue(m_values.count()-1); } //GetValue is virtual
 
     virtual void AddValue( double value);

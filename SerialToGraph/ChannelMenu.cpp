@@ -215,14 +215,18 @@ void ChannelMenu::addGhostgActivated()
             ghostable->GetUnits(),
             Qt::DotLine
             );
+
     if (!newGhost->editChannel())
     {
         delete newGhost;
         return;
     }
+
     _AddChannel(newGhost, true);
     m_measurement.AddYChannel(newGhost);
     ActivateChannel(newGhost, true);
+    newGhost->FillGraph();
+    m_measurement.GetPlot()->ReplotIfNotDisabled();
 }
 
 void ChannelMenu::allChannelsActivated()

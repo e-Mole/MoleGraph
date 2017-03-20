@@ -223,6 +223,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
 
+    m_units->setVisible(false); //there will be diplayed timeUnits combo box instead units
     m_timeUnits = new bases::ComboBox(this);
     m_timeUnits->addItem(tr("Microseconds"));
     m_timeUnits->addItem(tr("Miliseconds"));

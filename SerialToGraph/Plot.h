@@ -60,10 +60,8 @@ private:
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
     QCPItemRect *_DrawOutRect(bool isLeft, int position);
 
-    Measurement const &m_measurement;
-    bool m_moveMode;
+    Measurement &m_measurement;
     bool m_disabled;
-    ChannelBase *m_horizontalChannel;
     QPair<int, int> m_markerPositions;
     QPair<QCPItemLine *, QCPItemLine *> m_markerLines;
     QCPItemLine *m_selectedLine;
@@ -97,8 +95,6 @@ public:
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
 
-    bool IsInMoveMode() { return m_moveMode; }
-    void SetMoveMode(bool active) { m_moveMode = active; }
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
     void SetGraphColor(QCPGraph *graph, const QColor &color);
@@ -113,8 +109,6 @@ public:
     QCPAxis *AddYAxis(bool onRight);
     void RescaleAxis(QCPAxis *axis);
     void RescaleAllAxes();
-    void SetHorizontalChannel(ChannelBase *channel);
-    ChannelBase *GetHorizontalChannel();
     void PauseDrawing();
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
@@ -124,7 +118,7 @@ public:
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
     void Zoom(const QPointF &pos, int delta);
-    void ZoomToFit(QPoint pos);
+    void ZoomToFit();
     DisplayMode GetDisplayMode() { return m_displayMode; }
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     void DisplayChannelValue(ChannelBase *channel);

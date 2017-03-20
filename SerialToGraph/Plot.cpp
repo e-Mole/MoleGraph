@@ -34,9 +34,7 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
 Plot::Plot(Measurement *measurement) :
     QCustomPlot(measurement->GetWidget()),
     m_measurement(*measurement),
-    m_moveMode(false),
     m_disabled(false),
-    m_horizontalChannel(NULL),
     m_markerPositions(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
     m_markerLines(NULL, NULL),
     m_selectedLine(NULL),
@@ -176,7 +174,7 @@ bool Plot::_GetClosestX(double in, int &out)
             itLo.key() : itHi.key();
     }
 
-    out = m_horizontalChannel->GetLastClosestValueIndex(xValue);
+    out = m_measurement.GetLastClosestHorizontalValueIndex(xValue);
     return out != -1;
 }
 
@@ -209,7 +207,7 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     )
     {
         //I dont want to catch mouseDoubleClickEvent because mouseReleaseEvent come after it and cause problems
-        ZoomToFit(event->pos());
+        ZoomToFit();
         event->accept();
         return;
     }
@@ -230,6 +228,7 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     int xIndex;
     if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
     {
+
         qDebug() << "clickedToPlot calling";
         xIndex = _MinMaxCorection(xIndex);
         SetMarkerLine(xIndex);
@@ -253,17 +252,17 @@ int Plot::_MinMaxCorection(int xIndex)
     }
 }
 
-void Plot::ZoomToFit(QPoint pos)
+void Plot::ZoomToFit()
 {
     qDebug() << "zoom to fit";
     QVariant details;
-    QCPLayerable *clickedLayerable = layerableAt(pos, false, &details);
+    QCPLayerable *clickedLayerable = layerableAt(QPointF(), false, &details);
 
     if (QCPAxis *ax = qobject_cast<QCPAxis*>(clickedLayerable))
         RescaleAxis(ax);
     else
     {
-        m_moveMode = false;
+        m_measurement.SetFollowMode(true);
         RescaleAllAxes();
     }
 
@@ -299,7 +298,7 @@ void Plot::processWheelEvent()
 
 void Plot::wheelEvent(QWheelEvent *event)
 {
-    m_moveMode = true;
+    m_measurement.SetFollowMode(false);
 
     if (m_wheelEvent == NULL)
     {
@@ -415,7 +414,7 @@ void Plot::MyMouseMoveEvent(QMouseEvent *event)
 
     if (axisRect()->IsDragging())
     {
-        m_moveMode = true;
+        m_measurement.SetFollowMode(false);
     }
 
     if (!axisRect()->IsDragging() || 0 != selectedAxes().size())
@@ -657,12 +656,13 @@ void Plot::RefillGraphs()
         channel->GetGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
-            if (channel->IsValueNA(i) || m_horizontalChannel->IsValueNA(i))
+            ChannelBase * horizontalChannel = m_measurement.GetHorizontalChannel();
+            if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
                 continue;
 
             channel->GetGraph()->data()->insert(
-                m_horizontalChannel->GetValue(i),
-                QCPData(m_horizontalChannel->GetValue(i), channel->GetValue(i))
+                horizontalChannel->GetValue(i),
+                QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
             );
         }
 
@@ -671,17 +671,6 @@ void Plot::RefillGraphs()
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
-}
-
-void Plot::SetHorizontalChannel(ChannelBase *channel)
-{
-    m_horizontalChannel = channel;
-    RefillGraphs();
-}
-
-ChannelBase * Plot::GetHorizontalChannel()
-{
-    return m_horizontalChannel;
 }
 
 void Plot::setGraphPointPosition(int position)
@@ -706,7 +695,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
     markerLine->setPen(QPen(QBrush(color), MARKER_WIDTH, Qt::DotLine));
     markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
 
-    double xValue = m_horizontalChannel->GetValue(position);
+    double xValue = m_measurement.GetHorizontalValue(position);
     markerLine->start->setCoords(xValue, 0);
     markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
     markerLine->end->setCoords(xValue, 100);
@@ -716,7 +705,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
 
 QCPItemRect *Plot::_DrawOutRect(bool isLeft, int position)
 {
-    double horizontalValue = GetHorizontalChannel()->GetValue(position);
+    double horizontalValue = m_measurement.GetHorizontalValue(position);
     QCPItemRect *rect = new QCPItemRect(this);
     rect->setLayer("background"); //to be axes clicable
     rect->topLeft->setTypeY(QCPItemPosition::ptViewportRatio);

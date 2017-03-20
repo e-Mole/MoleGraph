@@ -96,13 +96,13 @@ void PlotContextMenu::zoomOutSelected()
 
 void PlotContextMenu::zoomToFitSelected()
 {
-    m_measurement->GetPlot()->ZoomToFit(clickPosition);
+    m_measurement->GetPlot()->ZoomToFit();
 }
 
 void PlotContextMenu::FollowMode()
 {
     _SetMarkerType(m_sampleValue);
-    m_measurement->SetFollowMode();
+    m_measurement->SetFollowMode(true);
 }
 
 void PlotContextMenu::_SetMarkerType(QAction * action)

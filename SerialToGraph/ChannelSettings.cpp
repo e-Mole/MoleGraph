@@ -284,7 +284,7 @@ bool ChannelSettings::BeforeAccept()
 
             changedHorizontal = true;
             m_channel->_ShowOrHideGraphAndPoin(false);
-            m_channel->GetMeasurement()->GetPlot()->SetHorizontalChannel(m_channel);
+            m_channel->GetMeasurement()->SetHorizontalChannel(m_channel);
         }
 
         Axis *lastAxis = m_channel->m_axis;

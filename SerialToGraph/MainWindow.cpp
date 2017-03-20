@@ -331,6 +331,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             Measurement *m = CreateNewMeasurement(false);
             m->SetSaveLoadValues(values);
             in >> m;
+            m->RecalculateSliderMaximum();
             ConfirmMeasurement(m);
         }
 

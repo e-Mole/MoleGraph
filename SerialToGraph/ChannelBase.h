@@ -172,8 +172,8 @@ public:
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
     void UpdateWidgetVisiblity();
     void DisplayValueInRange(int left, int right, DisplayValue displayValue);
-    bool IsValueNA(int index)
-    { return GetValue(index) == GetNaValue(); }
+    bool IsValueNA(int index) const
+    { return index >= GetValueCount() || GetValue(index) == GetNaValue(); }
     static double GetNaValue();
     static QString GetNAValueString();
 signals:

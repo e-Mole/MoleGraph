@@ -11,6 +11,7 @@
 #include <QTime>
 #include <QVector>
 #include <QWidget>
+#include <set>
 
 class Axis;
 class ChannelBase;
@@ -109,7 +110,7 @@ private:
     unsigned _GetAxisCount() { return m_axes.size(); }
     ChannelBase *_FindChannel(int hwIndex);
     void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
-    void _ReadingValuesPostProcess();
+    void _ReadingValuesPostProcess(double lastHorizontalValue);
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
     State _GetStateForSerialization();
@@ -118,6 +119,10 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
+    void _AddChannelToHorizontalValueSet(ChannelBase * horizontalChannel);
+    void _RefillHorizontalSet();
+    void _AddHorizontalValue(double value);
+    void _FollowLastMeasuredValue();
 
     WidgetWithResizeEvent  m_widget;
     Context const &m_context;
@@ -148,6 +153,9 @@ private:
     double m_secondsInPause;
     QTime m_pauseStartTime;
     unsigned m_valueSetCount;
+    ChannelBase *m_horizontalChannel;
+    std::set<double> m_horizontalValues;
+    bool m_followMode;
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
@@ -184,12 +192,17 @@ public:
     bool GetMarksShown() {return m_marksShown; }
     void RedrawChannelValues();
     int GetSliderPos();
-    ChannelBase *GetHorizontalChannel();
+    void SetHorizontalChannel(ChannelBase *channel);
+    ChannelBase *GetHorizontalChannel() const;
     bool IsPlotInRangeMode();
-    void SetFollowMode();
+    void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel);
     void RemoveChannel(ChannelBase *channeltoRemove);
+    void RecalculateSliderMaximum();
+    void IncreaseSliderMaximum(unsigned maximum);
+    int GetLastClosestHorizontalValueIndex(double xValue) const;
+    double GetHorizontalValue(unsigned position) const;
 signals:
     void stateChanged();
     void nameChanged();

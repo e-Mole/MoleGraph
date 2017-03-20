@@ -141,6 +141,9 @@ void ChannelMenu::remove()
         }
     }
     FillGrid();
+
+    m_measurement.RecalculateSliderMaximum();
+
 }
 
 void ChannelMenu::channelActivated()
@@ -226,7 +229,8 @@ void ChannelMenu::addGhostgActivated()
     m_measurement.AddYChannel(newGhost);
     ActivateChannel(newGhost, true);
     newGhost->FillGraph();
-    m_measurement.GetPlot()->ReplotIfNotDisabled();
+    m_measurement.GetPlot()->ZoomToFit();
+    m_measurement.RecalculateSliderMaximum();
 }
 
 void ChannelMenu::allChannelsActivated()

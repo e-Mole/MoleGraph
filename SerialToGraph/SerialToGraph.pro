@@ -138,6 +138,8 @@ ICON = MoleGraph.icns # icons for Mac OS X
 RESOURCES += \
     translations.qrc
 
+
+android{
 DISTFILES += \
     android/AndroidManifest.xml \
     android/res/values/libs.xml \
@@ -148,3 +150,4 @@ DISTFILES += \
     android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+}

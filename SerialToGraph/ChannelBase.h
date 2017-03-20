@@ -120,10 +120,10 @@ public:
     QString GetName();
     QString GetUnits();
 
-    virtual unsigned GetValueCount()
+    virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    virtual double GetValue(unsigned index)
+    virtual double GetValue(unsigned index) const
     { return m_values[index]; }
 
     virtual double GetLastValue()
@@ -168,7 +168,7 @@ public:
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
-    int GetLastClosestValueIndex(double value);
+    int GetLastClosestValueIndex(double value) const;
     Qt::PenStyle GetPenStyle() { return m_penStyle; }
     void UpdateWidgetVisiblity();
     void DisplayValueInRange(int left, int right, DisplayValue displayValue);

@@ -30,10 +30,10 @@ public:
     ChannelBase *GetSourceChannel() {return m_sourceChannel; }
     QString GenerateName(ChannelBase *sourceChannel);
 
-    virtual unsigned GetValueCount()
+    virtual unsigned GetValueCount() const
     { return m_sourceChannel->GetValueCount();}
 
-    virtual double GetValue(unsigned index)
+    virtual double GetValue(unsigned index) const
     { return m_sourceChannel->GetValue(index); }
 
     virtual double GetLastValue()

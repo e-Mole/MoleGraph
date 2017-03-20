@@ -108,11 +108,11 @@ void  SampleChannel::AddValue(double value, double timeFromStart)
     AddValue(value);
 }
 
-double SampleChannel::GetSampleNr(unsigned index)
+double SampleChannel::GetSampleNr(unsigned index) const
 {
     return ChannelBase::GetValue(index);
 }
-double SampleChannel::GetValue(unsigned index)
+double SampleChannel::GetValue(unsigned index) const
 {
     switch (m_style)
     {

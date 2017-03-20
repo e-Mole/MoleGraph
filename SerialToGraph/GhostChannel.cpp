@@ -22,7 +22,7 @@ GhostChannel::GhostChannel(
 
 void GhostChannel::FillGraph()
 {
-    for (int i = 0; i < GetValueCount(); i++)
+    for (unsigned i = 0; i < GetValueCount(); i++)
         UpdateGraph(i, GetValue(i), i == GetValueCount() -1);
 }
 

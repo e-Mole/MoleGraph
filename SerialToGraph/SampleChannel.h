@@ -82,7 +82,7 @@ public:
     TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
     void AddValue(double value, double timeFromStart);
-    virtual double GetValue(unsigned index);
+    virtual double GetValue(unsigned index) const;
     QString GetRealTimeFormatText();
     RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
     bool IsInRealtimeStyle() { return m_style == RealTime; }
@@ -91,7 +91,7 @@ public:
     double GetTimeFromStart(unsigned index);
     static QString GetStyleText(Style style);
     QString GetStyleText() { return GetStyleText(m_style); }
-    double GetSampleNr(unsigned index);
+    double GetSampleNr(unsigned index) const;
     QString GetTimestamp(double timeInMs);
     QString GetValueTimestamp(unsigned index);
 signals:

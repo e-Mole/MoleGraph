@@ -306,7 +306,7 @@ void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayV
 }
 void ChannelBase::displayValueOnIndex(int index)
 {
-    if (index >= GetValueCount())
+    if (index >= (signed)GetValueCount())
     {
         qDebug() << "index is out of range and can't be displayed";
         return; //probably setRange in start method or try to display hiden channel
@@ -447,7 +447,7 @@ QSize ChannelBase::GetMinimumSize()
 }
 
 //I can't use == because same doubles have not to be exactly the same
-int ChannelBase::GetLastClosestValueIndex(double value)
+int ChannelBase::GetLastClosestValueIndex(double value) const
 {
     double closestValue = 0;
     int closestIndex = -1;

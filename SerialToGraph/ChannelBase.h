@@ -123,8 +123,7 @@ public:
     virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    virtual double GetValue(unsigned index) const
-    { return m_values[index]; }
+    virtual double GetValue(unsigned index) const;
 
     virtual double GetLastValue()
     { return GetValue(m_values.count()-1); } //GetValue is virtual

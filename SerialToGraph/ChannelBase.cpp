@@ -471,3 +471,13 @@ double ChannelBase::GetNaValue()
 {
     return std::numeric_limits<double>::infinity();
 }
+
+double ChannelBase::GetValue(unsigned index) const
+{
+    if (index >= m_values.count())
+    {
+        qCritical() << "value is out of range";
+        return 0;
+    }
+    return m_values[index];
+}

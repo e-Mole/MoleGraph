@@ -8,11 +8,11 @@
 #include <QObject>
 
 class Axis;
+class ChannelGraph;
 class ChannelWidget;
 class Measurement;
 class QString;
 class QCPAxis;
-class QCPGraph;
 struct Context;
 
 class ChannelBase : public QObject
@@ -22,7 +22,7 @@ class ChannelBase : public QObject
 
     Q_PROPERTY(QString name READ GetName() WRITE _SetName)
     Q_PROPERTY(QColor color READ GetColor() WRITE SetColor)
-    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex() WRITE _SetShapeIndex)
+    Q_PROPERTY(unsigned shapeIndex READ _GetShapeIndex() WRITE _SetShapeIndex)
     Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
     Q_PROPERTY(bool isVisible READ IsActive WRITE SetActive)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE _SetPenStyle)
@@ -44,7 +44,7 @@ protected:
     void _DisplayNAValue(unsigned index);
     void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
-    void _ShowOrHideGraphAndPoin(bool shown);
+    void _ShowOrHideGraph(bool shown);
     void _FillLastValueTextByValue(double value);
     virtual void _FillLastValueTextFromIndex(int index);
     double _GetDelta(int left, int right);
@@ -64,6 +64,7 @@ protected:
     void _ShowLastValueWithUnits(unsigned index);
     void _UpdateExtremes(double value);
     void _RedrawGraphPoint(unsigned index, ChannelBase *horizontalChannel);
+    unsigned _GetShapeIndex();
 
     Measurement * m_measurement;
     Context const & m_context;
@@ -73,14 +74,12 @@ protected:
     QColor m_color;
     double m_channelMinValue;
     double m_channelMaxValue;
-    Axis *m_axis;
-    unsigned m_shapeIndex;
     QString m_lastValueText;
-    QCPGraph *m_graph;
-    QCPGraph *m_graphPoint;
+    ChannelGraph *m_channelGraph;
     QString m_units;
     Qt::PenStyle m_penStyle;
     bool m_isActive;
+
 public:
     enum Type
     {
@@ -102,12 +101,9 @@ public:
 
     ChannelBase(Measurement *measurement,
         Context const & context,
-        Axis * axis,
-        QCPGraph *graph,
-        QCPGraph *graphPoint,
+        ChannelGraph *channelGraph,
         QString const &name = "",
         QColor const &color = Qt::black,
-        unsigned shapeIndex = 0,
         bool active = true,
         const QString &units = "",
         Qt::PenStyle penStyle = Qt::SolidLine);
@@ -130,12 +126,6 @@ public:
 
     virtual void AddValue( double value);
 
-    Axis * GetAxis()
-    { return m_axis; }
-
-    void SetAxis(Axis * axis)
-    { m_axis = axis; }
-
     virtual double GetMinValue()
     { return m_channelMinValue; }
 
@@ -144,19 +134,13 @@ public:
 
     void SetAxisValueRange(double min, double max);
 
-    unsigned GetShapeIndex()
-    { return m_shapeIndex; }
-
     bool IsOnHorizontalAxis();
 
     QSize GetMinimumSize();
 
-    QCPGraph *GetGraph();
-    QCPGraph *GetGraphPoint();
+    ChannelGraph *GetChannelGraph();
     void UpdateGraph(double xValue, double yValue, bool replot);
     void UpdateGraph(double xValue);
-    void AssignToGraphAxis(QCPAxis *graphAxis);
-    void AssignToAxis(Axis *axis);
     bool IsActive();
     void SetActive(bool active);
     void SetColor(QColor &color);

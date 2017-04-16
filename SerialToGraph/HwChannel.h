@@ -19,16 +19,12 @@ class HwChannel : public ChannelBase
     int m_hwIndex;
     QVector<double> m_originalValues;
 public:
-    HwChannel(
-        Measurement *measurement,
+    HwChannel(Measurement *measurement,
         Context const & context,
-        Axis * axis,
-        QCPGraph *graph,
-        QCPGraph *graphPoint,
+        ChannelGraph *graph,
         int hwIndex,
         QString const &name = "",
         QColor const &color = Qt::black,
-        unsigned shapeIndex = 0,
         bool visible = true,
         const QString &units = ""
     );

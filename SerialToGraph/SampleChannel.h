@@ -65,11 +65,8 @@ private:
 public:
     SampleChannel(Measurement *measurement,
         Context const & context,
-        Axis * axis,
-        QCPGraph *graph,
-        QCPGraph *graphPoint,
+        ChannelGraph *graph,
         QColor const &color = Qt::black,
-        unsigned shapeIndex = 0,
         bool visible = true,
         const QString &units = "",
         Style format = Samples,

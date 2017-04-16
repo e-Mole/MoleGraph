@@ -125,7 +125,7 @@ void PlotContextMenu::_SetMarkerType(QAction * action)
     )
     {
         //marker line count changed. have to be redrawn
-        plot->SetMarkerLine(m_measurement->GetSliderPos());
+        plot->SetMarkerLine(m_measurement->GetCurrentIndex());
         plot->ReplotIfNotDisabled();
     }
 }

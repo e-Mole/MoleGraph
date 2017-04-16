@@ -97,7 +97,7 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
-        if (axis == channel->GetAxis())
+        if (axis == channel->GetChannelGraph()->GetValuleAxis())
         {
             if (MyMessageBox::No ==
                 MyMessageBox::question(
@@ -117,8 +117,8 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
-        if (axis == channel->GetAxis())
-            channel->AssignToAxis(firstVertical);
+        if (axis == channel->GetChannelGraph()->GetValuleAxis())
+            channel->GetChannelGraph()->AssignToAxis(firstVertical);
     }
     m_measurement.RemoveAxis(axis);
     m_context.m_mainWindow.SetSavedState(false);

@@ -2,18 +2,21 @@
 #define PLOT_H
 
 #include <ChannelBase.h>
+#include <ChannelGraph.h>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
 #include <QPointF>
 #include <QTime>
 #include <QPoint>
 #include <QPair>
+#include <QMap>
 
 class QColor;
 class QEvent;
 class QGestureEvent;
 class Context;
 class Measurement;
+class Axis;
 
 class MyAxisRect : public QCPAxisRect
 {
@@ -75,6 +78,7 @@ private:
     DisplayMode m_displayMode;
     MarkerTypeSelection m_markerTypeSelection;
     ChannelBase::DisplayValue m_markerRangeValue;
+    QList<ChannelGraph *> m_channelGraphs;
 
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
@@ -97,14 +101,9 @@ public:
 
     void SetDisabled(bool disable);
     void ReplotIfNotDisabled();
-    void SetGraphColor(QCPGraph *graph, const QColor &color);
-    QCPGraph *AddGraph(
-        const QColor &color, unsigned shapeIndex, bool shapeVisible, Qt::PenStyle penStyle);
-    void SetPenStyle(QCPGraph *graph, Qt::PenStyle penStyle);
-    unsigned GetShape(QCPGraph *graph);
-    void SetShape(QCPGraph *graph, int shapeIndex);
-    void SetGraphPointColor(QCPGraph *graphPoint, QColor const &color);
-    QCPGraph *AddPoint(const QColor &color, unsigned shapeIndex);
+    void SetGraphColor(ChannelGraph *graph, const QColor &color);
+    void SetPenStyle(ChannelGraph *graph, Qt::PenStyle penStyle);
+    unsigned GetShape(ChannelGraph *graph);
     void RemoveAxis(QCPAxis *axis);
     QCPAxis *AddYAxis(bool onRight);
     void RescaleAxis(QCPAxis *axis);
@@ -113,7 +112,7 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
-    void RemoveGraph(QCPGraph *graph);
+    void RemoveGraph(ChannelGraph *graph);
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
@@ -123,6 +122,11 @@ public:
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     void DisplayChannelValue(ChannelBase *channel);
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
+
+    ChannelGraph *AddChannelGraph(QCPAxis *keyAxis, Axis *valueAxis, const QColor &color,
+        unsigned shapeIndex,
+        bool shapeVisible,
+        Qt::PenStyle lineStyle);
 signals:
     void markerLinePositionChanged(int xIndex);
 public slots:

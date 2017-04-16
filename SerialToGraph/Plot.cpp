@@ -438,81 +438,40 @@ void Plot::MyMouseMoveEvent(QMouseEvent *event)
     m_mouseHandled = true;
 }
 
-void Plot::SetGraphColor(QCPGraph *graph, QColor const &color)
+void Plot::SetGraphColor(ChannelGraph *graph, QColor const &color)
 {
-    QPen pen = graph->pen();
-    pen.setColor(color);
-    graph->setPen(pen);
-    pen = graph->selectedPen();
-    pen.setColor(color);
-    graph->setSelectedPen(pen);
-
-    QCPScatterStyle style = graph->scatterStyle();
-    pen = style.pen();
-    pen.setColor(color);
-    style.setPen(pen);
-    graph->setScatterStyle(style);
+    graph->SetColor(color);
 }
 
-QCPGraph *Plot::AddGraph(
-    QColor const &color, unsigned shapeIndex, bool shapeVisible, Qt::PenStyle penStyle)
-{
-    QCPGraph *graph = addGraph();
-    SetGraphColor(graph, color);
-    SetShape(graph, shapeVisible ? shapeIndex : -1);
-    SetPenStyle(graph, penStyle);
-    return graph;
+ChannelGraph *Plot::AddChannelGraph(
+    QCPAxis *keyAxis,
+    Axis *valueAxis,
+    QColor const &color,
+    unsigned shapeIndex,
+    bool shapeVisible,
+    Qt::PenStyle penStyle)
+{     
+    ChannelGraph *newGraph = new ChannelGraph(keyAxis, valueAxis, color, shapeIndex, shapeVisible, penStyle);
+    if (!addPlottable(newGraph))
+    {
+        delete newGraph;
+        qDebug() << "Graph has not been created";
+        return nullptr;
+    }
+
+    newGraph->setName(QLatin1String("Graph ")+QString::number(mGraphs.size()));
+    return newGraph;
 }
 
-void Plot::SetPenStyle(QCPGraph *graph, Qt::PenStyle penStyle)
+void Plot::SetPenStyle(ChannelGraph *graph, Qt::PenStyle penStyle)
 {
-    QPen pen = graph->pen();
-    pen.setStyle(penStyle);
-    pen.setWidth(1);
-    graph->setPen(pen);
-
-    pen = graph->selectedPen();
-    pen.setStyle(penStyle);
-    pen.setWidth(2);
-    graph->setSelectedPen(pen);
-
-    QCPScatterStyle style = graph->scatterStyle();
-    pen = style.pen();
-    pen.setStyle(Qt::SolidLine);
-    style.setPen(pen);
-    graph->setScatterStyle(style);
+    graph->SetPenStyle(penStyle);
 }
 
-unsigned Plot::GetShape(QCPGraph *graph)
+unsigned Plot::GetShape(ChannelGraph *graph)
 {
-    return
-        (graph->scatterStyle().shape() == QCPScatterStyle::ssNone) ?
-            -1:
-            ((unsigned)graph->scatterStyle().shape()) -2;
+    return graph->GetShapeIndex();
 }
-
-void Plot::SetShape(QCPGraph *graph, int shapeIndex)
-{
-    QCPScatterStyle style = graph->scatterStyle();
-    style.setShape((QCPScatterStyle::ScatterShape)((shapeIndex == -1) ? 0 : shapeIndex + 2)); //skip none and dot
-    style.setSize(8);
-    graph->setScatterStyle(style);
-}
-
-void Plot::SetGraphPointColor(QCPGraph *graphPoint, QColor const &color)
-{
-    graphPoint->setPen(QPen(QBrush(color), MARKER_WIDTH));
-}
-
-QCPGraph *Plot::AddPoint(QColor const &color, unsigned shapeIndex)
-{
-    QCPGraph *graphPoint = addGraph();
-    SetGraphPointColor(graphPoint, color);
-    graphPoint->setLineStyle(QCPGraph::lsNone);
-    SetShape(graphPoint, shapeIndex);
-    return graphPoint;
-}
-
 
 void Plot::RemoveAxis(QCPAxis *axis)
 {
@@ -565,7 +524,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (channel->IsActive() && channel->GetAxis()->GetGraphAxis() == axis)
+        if (channel->IsActive() && channel->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
@@ -645,7 +604,7 @@ void Plot::DisplayChannelValue(ChannelBase *channel)
     }
 }
 
-void Plot::RemoveGraph(QCPGraph *graph)
+void Plot::RemoveGraph(ChannelGraph *graph)
 {
     removeGraph(graph);
 }
@@ -654,20 +613,19 @@ void Plot::RefillGraphs()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        channel->GetGraph()->clearData();
+        channel->GetChannelGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
             ChannelBase * horizontalChannel = m_measurement.GetHorizontalChannel();
             if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
                 continue;
 
-            channel->GetGraph()->data()->insert(
+            channel->GetChannelGraph()->data()->insert(
                 horizontalChannel->GetValue(i),
                 QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
             );
         }
 
-        channel->GetGraphPoint()->clearData();
         DisplayChannelValue(channel);
     }
     RescaleAllAxes();

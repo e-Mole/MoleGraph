@@ -2,6 +2,7 @@
 #include <bases/ClickableLabel.h>
 #include <ButtonLine.h>
 #include <ChannelBase.h>
+#include <ChannelGraph.h>
 #include <ColorCheckBox.h>
 #include <Context.h>
 #include <GhostChannel.h>
@@ -201,23 +202,21 @@ ChannelBase * ChannelMenu::_GetFirstGhostableChannel()
 void ChannelMenu::addGhostgActivated()
 {
     ChannelBase *ghostable = _GetFirstGhostableChannel();
+
+    //FIXME:it should be created after confirmation
+    ChannelGraph* channelGraph = m_measurement.AddGhostChannelGraph(
+        ghostable->GetColor(), ghostable->GetChannelGraph()->GetShapeIndex(), ghostable->GetChannelGraph()->GetValuleAxis());
+
     GhostChannel *newGhost = new GhostChannel(
         ghostable,
         &m_measurement,
         m_context,
-        m_measurement.GetFirstVerticalAxis(),
-        m_measurement.GetPlot()->AddGraph(
-            ghostable->GetColor(),
-            ghostable->GetShapeIndex(),
-            m_measurement.GetMarksShown(),
-            Qt::DotLine),
-        m_measurement.GetPlot()->AddPoint(ghostable->GetColor(),ghostable->GetShapeIndex()),
-            ghostable->GetColor(),
-            ghostable->GetShapeIndex(),
-            true,
-            ghostable->GetUnits(),
-            Qt::DotLine
-            );
+        channelGraph,
+        ghostable->GetColor(),
+        true,
+        ghostable->GetUnits(),
+        Qt::DotLine
+        );
 
     if (!newGhost->editChannel())
     {
@@ -226,7 +225,7 @@ void ChannelMenu::addGhostgActivated()
     }
 
     _AddChannel(newGhost, true);
-    m_measurement.AddYChannel(newGhost);
+    m_measurement.AddYChannel(newGhost, channelGraph);
     ActivateChannel(newGhost, true);
     newGhost->FillGraph();
     m_measurement.GetPlot()->ZoomToFit();

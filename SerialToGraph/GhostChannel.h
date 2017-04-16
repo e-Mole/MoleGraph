@@ -16,11 +16,8 @@ public:
     GhostChannel(ChannelBase * sourceChannel,
         Measurement *measurement,
         Context const & context,
-        Axis * axis,
-        QCPGraph *graph,
-        QCPGraph *graphPoint,
+        ChannelGraph *graph,
         QColor const &color = Qt::black,
-        unsigned shapeIndex = 0,
         bool active = true,
         const QString &units = "",
         Qt::PenStyle penStyle = Qt::SolidLine);

@@ -5,21 +5,17 @@
 #include <Plot.h>
 #include <QDateTime>
 
-SampleChannel::SampleChannel(
-    Measurement *measurement,
+SampleChannel::SampleChannel(Measurement *measurement,
     Context const & context,
-    Axis * axis,
-    QCPGraph *graph,
-    QCPGraph *graphPoint,
+    ChannelGraph *graph,
     QColor const &color,
-    unsigned shapeIndex,
     bool visible,
     QString const & units,
     Style format,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, context, axis,graph, graphPoint, "", color,  shapeIndex,  visible, units),
+    ChannelBase(measurement, context,graph, "", color, visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
@@ -97,9 +93,9 @@ void SampleChannel::_UpdateAxisAndValues()
     }
 
     m_widget->ShowValueWithUnits(m_lastValueText, m_units);
-    m_axis->UpdateGraphAxisName();
+    m_channelGraph->GetValuleAxis()->UpdateGraphAxisName();
     m_measurement->GetPlot()->RefillGraphs();
-    m_axis->UpdateGraphAxisStyle();
+    m_channelGraph->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
 void  SampleChannel::AddValue(double value, double timeFromStart)

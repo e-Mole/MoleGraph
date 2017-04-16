@@ -43,7 +43,7 @@ class Axis : public QObject
 
     void _SetName(QString const &name) { m_title = name; }
     void _SetColor(QColor const & color);
-    void _AssignGraphAxis(QCPAxis *axis);
+    void _ReassignGraphAxis(QCPAxis *axis);
 
 public:
     Axis(Measurement *measurement,
@@ -79,6 +79,7 @@ public:
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
+    void Rescale();
 };
 
 #endif // AXIS_H

@@ -128,7 +128,7 @@ void ChannelSettings::updateChannelProperties(int index)
     m_name->setText(((GhostChannel*)m_channel)->GenerateName(source_channel));
     m_units->setText(source_channel->GetUnits());
     if (NULL != m_shapeComboBox)
-        m_shapeComboBox->setCurrentIndex(source_channel->m_shapeIndex);
+        m_shapeComboBox->setCurrentIndex(source_channel->GetChannelGraph()->GetShapeIndex());
     if (NULL != m_colorButtonWidget)
         SetColorButtonColor(source_channel->GetColor());
 }
@@ -275,7 +275,7 @@ bool ChannelSettings::BeforeAccept()
     bool changed = false;
     bool changedHorizontal = false;
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
-    if (m_channel->m_axis != axis)
+    if (m_channel->GetChannelGraph()->GetValuleAxis() != axis)
     {
         if (axis->IsHorizontal())
         {
@@ -283,12 +283,12 @@ bool ChannelSettings::BeforeAccept()
                 return false; //no axis has been selected
 
             changedHorizontal = true;
-            m_channel->_ShowOrHideGraphAndPoin(false);
+            m_channel->_ShowOrHideGraph(false);
             m_channel->GetMeasurement()->SetHorizontalChannel(m_channel);
         }
 
-        Axis *lastAxis = m_channel->m_axis;
-        m_channel->AssignToAxis(axis);
+        Axis *lastAxis = m_channel->GetChannelGraph()->GetValuleAxis();
+        m_channel->GetChannelGraph()->AssignToAxis(axis);
         lastAxis->UpdateGraphAxisName();
         lastAxis->UpdateGraphAxisStyle();
         lastAxis->UpdateVisiblility();
@@ -323,7 +323,7 @@ bool ChannelSettings::BeforeAccept()
         m_channel->SetColor(m_color);
     }
 
-    if (m_channel->m_shapeIndex != (unsigned)m_shapeComboBox->currentIndex())
+    if (m_channel->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentIndex())
     {
         changed = true;
         m_channel->_SetShapeIndex(m_shapeComboBox->currentIndex());
@@ -395,7 +395,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
     foreach (ChannelBase *channel, m_channel->GetMeasurement()->GetChannels())
     {
         //find last horizontal axis
-        if (channel->m_axis->IsHorizontal())
+        if (channel->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
         {
             AxisChooseDialog dialog(this, m_context, channel, m_channel);
             return (QDialog::Rejected != dialog.exec());
@@ -421,7 +421,7 @@ void ChannelSettings::_InitializeShapeCombo(ChannelBase *channel)
     m_shapeComboBox->addItem(tr("Cross and Circle"));
     m_shapeComboBox->addItem(tr("Plus and Circle"));
     m_shapeComboBox->addItem(tr("Peace"));
-    m_shapeComboBox->setCurrentIndex(channel->m_shapeIndex);
+    m_shapeComboBox->setCurrentIndex(channel->GetChannelGraph()->GetShapeIndex());
     m_shapeComboBox->setEnabled(!channel->IsOnHorizontalAxis());
     m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
 }
@@ -434,7 +434,7 @@ void ChannelSettings::_RefillAxisCombo()
     foreach (Axis *axis, m_channel->GetMeasurement()->GetAxes())
     {
         bool valid =
-                m_channel->GetAxis() == axis || //I should be able to switch back to original axis
+                m_channel->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
                 axis->IsHorizontal(); //as same as to horizontal
 
         if (!valid)
@@ -449,7 +449,8 @@ void ChannelSettings::_RefillAxisCombo()
             m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
     }
 
-    m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(m_channel->m_axis)));
+    m_axisComboBox->setCurrentIndex(
+        m_axisComboBox->findData((qlonglong)(m_channel->GetChannelGraph()->GetValuleAxis())));
     connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
 }
 void ChannelSettings::_InitializeAxisCombo(bool enable)

@@ -15,7 +15,7 @@
 
 class Axis;
 class ChannelBase;
-class SampleChannel;
+class ChannelGraph;
 class Plot;
 class QColor;
 class QCPAxis;
@@ -25,6 +25,7 @@ class QGridLayout;
 class QScrollBar;
 class QTimer;
 class QVBoxLayout;
+class SampleChannel;
 struct Context;
 
 class WidgetWithResizeEvent : public QWidget
@@ -95,7 +96,7 @@ private:
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
     QCPAxis *_GetGraphAxis(unsigned index);
-    void _DeserializeChannel(QDataStream &in, Axis *axis);
+    void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
     void _DeserializeAxis(QDataStream &in, unsigned index);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
@@ -156,6 +157,8 @@ private:
     ChannelBase *m_horizontalChannel;
     std::set<double> m_horizontalValues;
     bool m_followMode;
+    unsigned m_currentIndex;
+    QMap<ChannelBase*, ChannelGraph*> m_channelToGraph; //this colection will be used for searching in both directions so QMap is not the best one but there will be just a few elements so who cares
 public:
     Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
     ~Measurement();
@@ -197,12 +200,16 @@ public:
     bool IsPlotInRangeMode();
     void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
-    void AddYChannel(ChannelBase *channel);
+    void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph);
     void RemoveChannel(ChannelBase *channeltoRemove);
     void RecalculateSliderMaximum();
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
     double GetHorizontalValue(unsigned position) const;
+    int GetCurrentIndex()
+    { return m_currentIndex; }
+
+    ChannelGraph * AddGhostChannelGraph(QColor const &color, unsigned shapeIndex, Axis *valueAxis);
 signals:
     void stateChanged();
     void nameChanged();

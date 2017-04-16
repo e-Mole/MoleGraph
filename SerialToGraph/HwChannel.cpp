@@ -8,20 +8,16 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-HwChannel::HwChannel(
-    Measurement *measurement,
+HwChannel::HwChannel(Measurement *measurement,
     Context const & context,
-    Axis * axis,
-    QCPGraph *graph,
-    QCPGraph *graphPoint,
+    ChannelGraph *graph,
     int hwIndex,
     QString const &name,
     QColor const &color,
-    unsigned shapeIndex,
     bool visible,
     const QString &units
 ) :
-    ChannelBase(measurement, context, axis, graph, graphPoint, name, color, shapeIndex, visible, units),
+    ChannelBase(measurement, context, graph, name, color, visible, units),
     m_hwIndex(hwIndex)
 {
     _UpdateTitle();

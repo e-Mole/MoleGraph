@@ -32,17 +32,17 @@ Axis::Axis(Measurement *measurement,
     if (title == "")
         m_title =  QString(tr("Axis %1")).arg(measurement->GetAxes().count() + 1);
 
-    _AssignGraphAxis(graphAxis);
+    _ReassignGraphAxis(graphAxis);
 }
 
-void Axis::_AssignGraphAxis(QCPAxis *axis)
+void Axis::_ReassignGraphAxis(QCPAxis *axis)
 {
     if (NULL != m_graphAxis)
     {
         foreach (ChannelBase *channel, m_measurement->GetChannels())
         {
-            if (channel->GetAxis()->GetGraphAxis() == m_graphAxis)
-                channel->AssignToGraphAxis(axis);
+            if (channel->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
+                channel->GetChannelGraph()-> AssignToGraphAxis(axis);
         }
 
         m_measurement->GetPlot()->RemoveAxis(m_graphAxis);
@@ -89,17 +89,17 @@ void Axis::UpdateGraphAxisName()
     for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
     {
         if ((m_measurement->GetChannel(i)->IsActive() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
-            m_measurement->GetChannel(i)->GetAxis() == this)
+            m_measurement->GetChannel(i)->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != m_measurement->GetChannelCount() &&
                     m_measurement->GetChannel(i+1)->IsActive() &&
-                    this == m_measurement->GetChannel(i+1)->GetAxis() &&
+                    this == m_measurement->GetChannel(i+1)->GetChannelGraph()->GetValuleAxis() &&
                     i != 0 &&
                     m_measurement->GetChannel(i-1)->IsActive() &&
-                    this == m_measurement->GetChannel(i-1)->GetAxis())
+                    this == m_measurement->GetChannel(i-1)->GetChannelGraph()->GetValuleAxis())
                 {
                     addMiddle = true;
                     continue;
@@ -137,7 +137,7 @@ void Axis::UpdateVisiblility()
 {
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->IsActive() && channel->GetAxis() == this)
+        if (channel->IsActive() && channel->GetChannelGraph()->GetValuleAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_measurement->GetPlot()->ReplotIfNotDisabled();
@@ -184,7 +184,7 @@ bool Axis::IsEmptyExcept(ChannelBase *except)
         if (channel == except)
             continue;
 
-        if (channel->GetAxis() == this)
+        if (channel->GetChannelGraph()->GetValuleAxis() == this)
             return false;
     }
 
@@ -196,7 +196,7 @@ bool Axis::ContainsChannelWithRealTimeStyle()
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (
-            channel->GetAxis() == this &&
+            channel->GetChannelGraph()->GetValuleAxis() == this &&
             channel->GetType() == ChannelBase::Type_Sample &&
             ((SampleChannel*)channel)->IsInRealtimeStyle()
         )
@@ -209,7 +209,7 @@ void Axis::UpdateGraphAxisStyle()
 {
     ChannelBase *axisChannel = NULL;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetAxis() == this)
+        if (channel->GetChannelGraph()->GetValuleAxis() == this)
         {
             axisChannel = channel;
             break; //I know, that real time channel is on oun axis
@@ -234,7 +234,7 @@ unsigned Axis::GetAssignedChannelCount()
 {
     unsigned count = 0;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetAxis() == this)
+        if (channel->GetChannelGraph()->GetValuleAxis() == this)
             count++;
 
     return count;
@@ -244,7 +244,7 @@ void Axis::_SetIsOnRight(bool isOnRight)
 {
     m_isOnRight = isOnRight;
     if (!IsHorizontal())
-        _AssignGraphAxis(m_measurement->GetPlot()->AddYAxis(isOnRight));
+        _ReassignGraphAxis(m_measurement->GetPlot()->AddYAxis(isOnRight));
 }
 
 void Axis::_SetIsShownName(bool isShownName)
@@ -257,4 +257,9 @@ void Axis::_SetTitle(QString const& title)
 {
     m_title = title;
     UpdateGraphAxisName();
+}
+
+void Axis::Rescale()
+{
+    m_measurement->GetPlot()->RescaleAxis(m_graphAxis);
 }

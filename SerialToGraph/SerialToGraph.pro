@@ -67,7 +67,8 @@ SOURCES += main.cpp\
     file/AddDirDialog.cpp \
     bases/ComboBox.cpp \
     PlotContextMenu.cpp \
-    GhostChannel.cpp
+    GhostChannel.cpp \
+    ChannelGraph.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -114,7 +115,8 @@ HEADERS  += MainWindow.h \
     file/AddDirDialog.h \
     bases/ComboBox.h \
     PlotContextMenu.h \
-    GhostChannel.h
+    GhostChannel.h \
+    ChannelGraph.h
 
 CONFIG += mobility
 CONFIG += c++11

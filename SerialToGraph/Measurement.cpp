@@ -1,6 +1,7 @@
 #include "Measurement.h"
 #include <Axis.h>
 #include <Context.h>
+#include <ChannelGraph.h>
 #include <ChannelWidget.h>
 #include <GhostChannel.h>
 #include <HwChannel.h>
@@ -59,7 +60,8 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
     m_secondsInPause(0),
     m_valueSetCount(0),
     m_horizontalChannel(NULL),
-    m_followMode(true)
+    m_followMode(true),
+    m_currentIndex(-1)
 {
     m_name = tr("Measurement %1").arg(context.m_measurements.size() + 1);
 
@@ -542,6 +544,7 @@ void Measurement::RedrawChannelValues()
 
 void Measurement::markerLinePositionChanged(int position)
 {
+    m_currentIndex = position;
     m_scrollBar->setSliderPosition(position);
     RedrawChannelValues();
 }
@@ -550,6 +553,7 @@ void Measurement::sliderActionTriggered(int action)
 {
     Q_UNUSED(action);
     SetFollowMode(m_scrollBar->sliderPosition() == (int)m_sampleChannel->GetValueCount());
+    m_currentIndex = m_scrollBar->sliderPosition();
 }
 
 void Measurement::_FollowLastMeasuredValue()
@@ -632,6 +636,7 @@ void Measurement::ReplaceDisplays(bool grid)
 
 void Measurement::showGraph(bool show)
 {
+
     if (show)
         m_plotAndSliderLayout->insertWidget(1, m_scrollBar, 0);
     else
@@ -690,28 +695,30 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
     int hwIndex = -1;
     foreach (ChannelBase *channel, source->GetChannels())
     {
+        ChannelGraph *channelGraph = m_plot->AddChannelGraph(
+            m_plot->xAxis,
+            GetAxis(source->GetAxisIndex(channel->GetChannelGraph()->GetValuleAxis())),
+            channel->GetColor(),
+            channel->GetChannelGraph()->GetShapeIndex(),
+            GetMarksShown(),
+            channel->GetPenStyle()
+        );
+
         if (channel->GetType() == ChannelBase::Type_Hw)
-        {
+        { 
             m_channels.push_back(
                 new HwChannel(
                     this,
                     m_context,
-                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(
-                        channel->GetColor(),
-                        channel->GetShapeIndex(),
-                        GetMarksShown(),
-                        channel->GetPenStyle()),
-                    m_plot->AddPoint(channel->GetColor(),channel->GetShapeIndex() ),
+                    channelGraph,
                     hwIndex,
                     channel->GetName(),
                     channel->GetColor(),
-
-                    channel->GetShapeIndex(),
                     channel->IsActive(),
                     channel->GetUnits()
                 )
             );
+            m_channelToGraph[m_channels.last()] = channelGraph;
         }
         else
         {
@@ -719,15 +726,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                 new SampleChannel(
                     this,
                     m_context,
-                    GetAxis(source->GetAxisIndex(channel->GetAxis())),
-                    m_plot->AddGraph(
-                        channel->GetColor(),
-                        channel->GetShapeIndex(),
-                        GetMarksShown(),
-                        channel->GetPenStyle()),
-                    m_plot->AddPoint(channel->GetColor(), channel->GetShapeIndex()),
+                    channelGraph,
                     channel->GetColor(),
-                    channel->GetShapeIndex(),
                     channel->IsActive(),
                     channel->GetUnits(),
                     ((SampleChannel *)channel)->GetStyle(),
@@ -736,7 +736,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                 );
             m_channels.push_back(m_sampleChannel);
             m_plot->SetAxisStyle(
-                m_sampleChannel->GetAxis()->GetGraphAxis(),
+                m_sampleChannel->GetChannelGraph()->GetValuleAxis()->GetGraphAxis(),
                 m_sampleChannel->GetStyle() == SampleChannel::RealTime,
                 m_sampleChannel->GetRealTimeFormatText()
             );
@@ -783,21 +783,23 @@ void Measurement::_InitializeAxesAndChanels()
     m_axes.push_back(xAxis);
     m_axes.push_back(yAxis);
 
+    ChannelGraph *channelGraph = m_plot->AddChannelGraph(
+        m_plot->xAxis , yAxis, Qt::black, 0, GetMarksShown(), Qt::SolidLine);
+
     m_sampleChannel =
         new SampleChannel(
             this,
             m_context,
-            xAxis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
-            m_plot->AddPoint(Qt::black, 0),
+            channelGraph,
             Qt::black,
-            0,
             true,
             "",
             SampleChannel::Samples,
             SampleChannel::Sec,
             SampleChannel::hh_mm_ss
         );
+    m_channelToGraph[m_sampleChannel] = channelGraph;
+
     connect(m_sampleChannel, SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
     m_channels.push_back(m_sampleChannel);
     SetHorizontalChannel(m_sampleChannel);
@@ -827,8 +829,10 @@ QColor Measurement::_GetColorByOrder(unsigned order)
     }
 }
 
-void Measurement::AddYChannel(ChannelBase *channel)
+void Measurement::AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph)
 {
+    m_channelToGraph[channel] = channelGraph;
+    //FIXME here should be creation of graph and adding to a channelGraph map
     m_channels.push_back(channel);
     connect(m_channels.last(), SIGNAL(widgetSizeChanged()), this, SLOT(replaceDisplays()));
 }
@@ -840,11 +844,9 @@ void Measurement::RemoveChannel(ChannelBase *channeltoRemove)
         ChannelBase *channel = m_channels[i];
         if (channel == channeltoRemove)
         {
-            if (!m_plot->removeGraph(channel->GetGraph()))
+            if (!m_plot->removeGraph(channel->GetChannelGraph()))
                 qDebug() << "graph was not deleed";
-            if (!m_plot->removeGraph(channel->GetGraphPoint()))
-                qDebug() << "graph point was not deleed";
-            m_plot->rescaleAxes(channel->GetAxis());
+            m_plot->rescaleAxes(channel->GetChannelGraph()->GetValuleAxis());
             m_plot->ReplotIfNotDisabled();
 
             m_channels.remove(i);
@@ -858,21 +860,19 @@ void Measurement::RemoveChannel(ChannelBase *channeltoRemove)
 void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 {
     unsigned order = m_channels.size()-1;
-    AddYChannel(
-        new HwChannel(
-            this,
-            m_context,
-            axis,
-            m_plot->AddGraph(color, order, GetMarksShown(), Qt::SolidLine),
-            m_plot->AddPoint(color, order),
-            order,
-            QString(tr("Channel %1")).arg(order+1),
-            color,
-            order,
-            true,
-            ""
-        )
+    ChannelGraph *channelGraph = m_plot->AddChannelGraph(
+        m_plot->xAxis, axis, color, order, GetMarksShown(), Qt::SolidLine);
+    HwChannel * newChannel = new HwChannel(
+        this,
+        m_context,
+        channelGraph,
+        order,
+        QString(tr("Channel %1")).arg(order+1),
+        color,
+        true,
+        ""
     );
+    AddYChannel(newChannel, channelGraph);
 }
 
 Axis * Measurement::CreateAxis(QColor const & color)
@@ -960,7 +960,7 @@ void Measurement::SerializeColections(QDataStream &out)
         out << axis->GetAssignedChannelCount();
         foreach (ChannelBase *channel, m_channels)
         {
-            if (channel->GetAxis() == axis)
+            if (channel->GetChannelGraph()->GetValuleAxis() == axis)
             {
                 out <<
                     (channel->GetType() == ChannelBase::Type_Hw ?
@@ -999,10 +999,15 @@ bool SortChannels(ChannelBase *first, ChannelBase *second)
             first->GetType() < second->GetType();
 }
 
-void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 {
     int hwIndex;
     in >> hwIndex;
+
+    QCPAxis *keyAxis = (valueAxis->GetGraphAxis() == m_plot->xAxis) ?
+        m_plot->yAxis : m_plot->xAxis;
+    ChannelGraph * channelGraph = m_plot->AddChannelGraph(
+        keyAxis, valueAxis, Qt::black, 0, GetMarksShown(), Qt::SolidLine);
 
     ChannelBase *channel;
     if (hwIndex == -1)
@@ -1010,9 +1015,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
         channel = new SampleChannel(
             this,
             m_context,
-            axis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
-            m_plot->AddPoint(Qt::black, 0),
+            channelGraph,
             hwIndex
         );
         m_sampleChannel = (SampleChannel*)channel;
@@ -1022,12 +1025,12 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *axis)
         channel = new HwChannel(
             this,
             m_context,
-            axis,
-            m_plot->AddGraph(Qt::black, 0, GetMarksShown(), Qt::SolidLine),
-            m_plot->AddPoint(Qt::black, 0),
+            channelGraph,
             hwIndex
         );
     }
+    m_channelToGraph[channel] = channelGraph;
+
     in >> channel;
     m_channels.push_back(channel);
     if (channel->IsOnHorizontalAxis())
@@ -1112,6 +1115,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
 
                 if (m_saveLoadValues)
                 {
+                    int size = m_horizontalValues.size();
                     channel->AddValue(originalValue);
                     ((HwChannel*)channel)->ChangeValue(channel->GetValueCount()-1, value);
                 }
@@ -1183,10 +1187,7 @@ void Measurement::_SetMarksShown(bool marksShown)
 
     foreach (ChannelBase *channel, m_channels)
     {
-        m_plot->SetShape(
-            channel->GetGraph(),
-            marksShown ? m_plot->GetShape(channel->GetGraphPoint()) : -1
-        );
+        channel->GetChannelGraph()->ShowAllMarks(m_marksShown);
     }
     m_plot->ReplotIfNotDisabled();
 }
@@ -1234,4 +1235,9 @@ double Measurement::GetHorizontalValue(unsigned position) const
     }
     qCritical() << "no horizontal value found";
     return 0;
+}
+
+ChannelGraph *Measurement::AddGhostChannelGraph(QColor const &color, unsigned shapeIndex, Axis *valueAxis)
+{
+    return m_plot->AddChannelGraph(m_plot->yAxis, valueAxis, color, shapeIndex, GetMarksShown(), Qt::DotLine);
 }

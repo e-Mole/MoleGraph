@@ -4,6 +4,7 @@
 #include <ChannelBase.h>
 #include <SampleChannel.h>
 #include <Context.h>
+#include <ChannelGraph.h>
 #include <Measurement.h>
 #include <QLabel>
 #include <QRadioButton>
@@ -51,7 +52,7 @@ AxisChooseDialog::AxisChooseDialog(
 
     foreach (Axis *axis, originalHChannel->GetMeasurement()->GetAxes())
     {
-        if (axis == originalHChannel->GetAxis())
+        if (axis == originalHChannel->GetChannelGraph()->GetValuleAxis())
             continue;
 
         if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHChannel))
@@ -72,7 +73,7 @@ void AxisChooseDialog::newAxisSelected()
     AxisSettings dialog(this, newAxis, m_context);
     if (QDialog::Accepted == dialog.exec())
     {
-        m_originalHChannel->AssignToAxis(newAxis);
+        m_originalHChannel->GetChannelGraph()->AssignToAxis(newAxis);
         accept();
     }
     else
@@ -85,7 +86,7 @@ void AxisChooseDialog::axisSelected()
     {
         if (it.key() == (QRadioButton *)sender())
         {
-            m_originalHChannel->AssignToAxis(it.value());
+            m_originalHChannel->GetChannelGraph()->AssignToAxis(it.value());
             break;
         }
     }

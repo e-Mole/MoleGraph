@@ -69,6 +69,7 @@ Plot::Plot(Measurement *measurement) :
 
     setAttribute( Qt::WA_AcceptTouchEvents );
     grabGesture( Qt::PinchGesture );
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 

@@ -68,8 +68,6 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
 
     _InitializeLayouts();
 
-    m_plot->setContextMenuPolicy(Qt::CustomContextMenu);
-
     PlotContextMenu *contextMenu = new PlotContextMenu(GetPlot(), this);
     connect(m_plot, SIGNAL(customContextMenuRequested(QPoint)), contextMenu, SLOT(contextMenuRequestRelativePos(QPoint)));
 

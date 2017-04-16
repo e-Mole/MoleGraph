@@ -147,11 +147,11 @@ void ChannelSettings::_InitializeValueLine(ChannelBase *channel)
     connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
     curValLayout->addWidget(naValue);
 
-    int currentPos = _GetCurrentPos();
-    if (currentPos < (int)channel->GetValueCount())
+    int currentIndex = m_channel->GetMeasurement()->GetCurrentIndex();
+    if (currentIndex < (int)channel->GetValueCount())
     {
-        QString currentValueStr = (channel->IsValueNA(currentPos)) ?
-            channel->GetNAValueString() : QString::number(channel->GetValue(currentPos));
+        QString currentValueStr = (channel->IsValueNA(currentIndex)) ?
+            channel->GetNAValueString() : QString::number(channel->GetValue(currentIndex));
         m_currentValueControl->setText(currentValueStr);
     }
     else
@@ -170,7 +170,10 @@ void ChannelSettings::_InitializeValueLine(ChannelBase *channel)
 void ChannelSettings::setOriginalValue(bool checked)
 {
     Q_UNUSED(checked);
-    double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(_GetCurrentPos());
+    //this method is called just in a case the original value box is  enabled and
+    //it is just in the case index is in range of this channel
+    double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(
+        m_channel->GetMeasurement()->GetCurrentIndex());
     m_currentValueControl->setText(
         (currentValue == HwChannel::GetNaValue()) ?
             HwChannel::GetNAValueString() :
@@ -191,10 +194,6 @@ void ChannelSettings::currentValueChanged(QString const &content)
 {
     m_currentValue = content.toDouble();
     m_currentValueChanged = true;
-}
-int ChannelSettings::_GetCurrentPos()
-{
-    return m_channel->GetMeasurement()->GetSliderPos();
 }
 
 void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
@@ -308,7 +307,9 @@ bool ChannelSettings::BeforeAccept()
             return false;
         }
         changed = true;
-        ((HwChannel *)m_channel)->ChangeValue(_GetCurrentPos(), m_currentValue);
+        ((HwChannel *)m_channel)->ChangeValue(
+            m_channel->GetMeasurement()->GetCurrentIndex(),
+            m_currentValue);
     }
     if (m_channel->m_name != m_name->text() && m_channel->GetType() != ChannelBase::Type_Sample)
     {

@@ -25,7 +25,6 @@ class ChannelSettings : public bases::FormDialogColor
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
-    int _GetCurrentPos();
     void _InitializeGhostLines();
     void _InitializeValueLine(ChannelBase *channel);
     ChannelBase * _GetPropertiesChannel();

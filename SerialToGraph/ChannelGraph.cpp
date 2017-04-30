@@ -26,7 +26,7 @@ ChannelGraph::ChannelGraph(
     m_selectedMarkStyle.setPen(QPen(color, MARKER_WIDTH));
     m_selectedMarkStyle.setSize(MARKER_SIZE);
 
-    //SetMarkShape(shapeIndex, showAllMarks);
+    SetMarkShape(shapeIndex, showAllMarks);
 }
 
 void ChannelGraph::SetColor(const QColor& color)

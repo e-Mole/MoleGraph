@@ -205,7 +205,9 @@ void ChannelMenu::addGhostgActivated()
 
     //FIXME:it should be created after confirmation
     ChannelGraph* channelGraph = m_measurement.AddGhostChannelGraph(
-        ghostable->GetColor(), ghostable->GetChannelGraph()->GetShapeIndex(), ghostable->GetChannelGraph()->GetValuleAxis());
+        ghostable->GetColor(),
+        ghostable->GetChannelGraph()->GetShapeIndex()
+    );
 
     GhostChannel *newGhost = new GhostChannel(
         ghostable,

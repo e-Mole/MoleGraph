@@ -305,7 +305,7 @@ void Measurement::_AddHorizontalValue(double value)
 {
     m_horizontalValues.insert(value);
 
-    m_scrollBar->setRange(0, m_horizontalValues.size());
+    m_scrollBar->setRange(0, m_horizontalValues.size()-1);
     if (m_followMode)
         _FollowLastMeasuredValue();
 }
@@ -538,6 +538,8 @@ void Measurement::RedrawChannelValues()
 {
     foreach (ChannelBase * channel, m_channels)
     {
+        if (!channel->IsActive())
+            continue;
         m_plot->DisplayChannelValue(channel);
     }
 }
@@ -1116,8 +1118,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
                 if (m_saveLoadValues)
                 {
                     int size = m_horizontalValues.size();
-                    channel->AddValue(originalValue);
-                    ((HwChannel*)channel)->ChangeValue(channel->GetValueCount()-1, value);
+                    ((HwChannel*)channel)->AddValue(originalValue, value);
                 }
             }
         }
@@ -1237,7 +1238,14 @@ double Measurement::GetHorizontalValue(unsigned position) const
     return 0;
 }
 
-ChannelGraph *Measurement::AddGhostChannelGraph(QColor const &color, unsigned shapeIndex, Axis *valueAxis)
+ChannelGraph *Measurement::AddGhostChannelGraph(QColor const &color, unsigned shapeIndex)
 {
-    return m_plot->AddChannelGraph(m_plot->yAxis, valueAxis, color, shapeIndex, GetMarksShown(), Qt::DotLine);
+    return m_plot->AddChannelGraph(
+        m_plot->xAxis,
+        GetFirstVerticalAxis(),
+        color,
+        shapeIndex,
+        GetMarksShown(),
+        Qt::DotLine
+    );
 }

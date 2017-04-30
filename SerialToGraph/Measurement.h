@@ -209,7 +209,7 @@ public:
     int GetCurrentIndex()
     { return m_currentIndex; }
 
-    ChannelGraph * AddGhostChannelGraph(QColor const &color, unsigned shapeIndex, Axis *valueAxis);
+    ChannelGraph * AddGhostChannelGraph(QColor const &color, unsigned shapeIndex);
 signals:
     void stateChanged();
     void nameChanged();

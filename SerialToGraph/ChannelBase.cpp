@@ -300,21 +300,8 @@ void ChannelBase::displayValueOnIndex(int index)
 
     _FillLastValueTextFromIndex(index);
     _ShowLastValueWithUnits(index);
-
-    ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();
-    if (m_channelGraph->GetValuleAxis()->IsHorizontal() || horizontalChannel->IsValueNA(index))
-        return;
-
-    _RedrawGraphPoint(index, horizontalChannel);
 }
 
-void ChannelBase::_RedrawGraphPoint(unsigned index, ChannelBase *horizontalChannel)
-{
-    //FIXME: encapsulation
-    if (!IsValueNA(index))
-        m_channelGraph->ChangeSelectedMarkIndex(horizontalChannel->GetValue(index));
-
-}
 ChannelGraph *ChannelBase::GetChannelGraph()
 {
     return m_channelGraph;

@@ -63,7 +63,6 @@ protected:
     void _ShowLastValueWithUnits();
     void _ShowLastValueWithUnits(unsigned index);
     void _UpdateExtremes(double value);
-    void _RedrawGraphPoint(unsigned index, ChannelBase *horizontalChannel);
     unsigned _GetShapeIndex();
 
     Measurement * m_measurement;

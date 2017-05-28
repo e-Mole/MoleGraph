@@ -147,7 +147,7 @@ void ChannelSettings::_InitializeValueLine(ChannelBase *channel)
     connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
     curValLayout->addWidget(naValue);
 
-    int currentIndex = m_channel->GetMeasurement()->GetCurrentIndex();
+    int currentIndex = m_channel->GetMeasurement()->GetCurrentHorizontalChannelIndex();
     if (currentIndex < (int)channel->GetValueCount())
     {
         QString currentValueStr = (channel->IsValueNA(currentIndex)) ?

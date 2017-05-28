@@ -57,7 +57,8 @@ private:
 
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
-    bool _GetClosestX(double in, int &out);
+    double _GetClosestXValue(double in);
+    bool _GetClosestXIndex(double in, int &out);
     QCPItemLine *_AddMarkerLine(QCPItemLine *markerLine, int position, const QColor color);
     int _MinMaxCorection(int xIndex);
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
@@ -132,7 +133,6 @@ signals:
 public slots:
 private slots:
     void selectionChanged();
-    void setGraphPointPosition(int position);
     void procesMouseMoveEvent();
     void processWheelEvent();
 

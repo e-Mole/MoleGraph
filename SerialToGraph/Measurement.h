@@ -124,6 +124,7 @@ private:
     void _RefillHorizontalSet();
     void _AddHorizontalValue(double value);
     void _FollowLastMeasuredValue();
+    void _RedrawChannelMarks(int position);
 
     WidgetWithResizeEvent  m_widget;
     Context const &m_context;
@@ -205,7 +206,10 @@ public:
     void RecalculateSliderMaximum();
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
-    double GetHorizontalValue(unsigned position) const;
+    unsigned GetPositionByHorizontalValue(double value) const;
+    double GetHorizontalValueBySliderPos(unsigned position) const;
+    unsigned GetCurrentHorizontalChannelIndex() const;
+    unsigned GetHorizontalValueLastInex(double value) const;
     int GetCurrentIndex()
     { return m_currentIndex; }
 
@@ -215,7 +219,7 @@ signals:
     void nameChanged();
     void colorChanged();
 public slots:
-    void sliderActionTriggered(int action);
+    void sliderValueChanged(int value);
     void showGraph(bool show);
     void replaceDisplays();
 private slots:

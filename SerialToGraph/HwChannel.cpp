@@ -56,7 +56,7 @@ void HwChannel::ChangeValue(int index, double newValue)
     _ShowLastValueWithUnits(index);
     _RecalculateExtremes();
     ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();
-    _RedrawGraphPoint(index, horizontalChannel);
+    //_RedrawGraphPoint(index, horizontalChannel);
     UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
 }
 

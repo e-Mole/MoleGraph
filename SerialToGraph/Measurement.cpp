@@ -118,8 +118,7 @@ Measurement::Measurement(QWidget *parent, Context &context, Measurement *source,
         ).arg(height+1).arg(height).arg(height/9)
     );
 #endif
-    //connect(m_scrollBar, SIGNAL(actionTriggered(int)), this, SLOT(sliderActionTriggered(int)));
-    connect(m_scrollBar, SIGNAL(valueChanged(int)), m_plot, SLOT(setGraphPointPosition(int)));
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
     connect(m_plot, SIGNAL(markerLinePositionChanged(int)), this, SLOT(markerLinePositionChanged(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
 
@@ -547,15 +546,30 @@ void Measurement::RedrawChannelValues()
 void Measurement::markerLinePositionChanged(int position)
 {
     m_currentIndex = position;
+
+    //i will move by slider but dont want to raise sliderValueChanged because I would get to this place again and again
+    disconnect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
     m_scrollBar->setSliderPosition(position);
+    connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
+
     RedrawChannelValues();
+    _RedrawChannelMarks(position);
 }
 
-void Measurement::sliderActionTriggered(int action)
+void Measurement::_RedrawChannelMarks(int position)
 {
-    Q_UNUSED(action);
-    SetFollowMode(m_scrollBar->sliderPosition() == (int)m_sampleChannel->GetValueCount());
-    m_currentIndex = m_scrollBar->sliderPosition();
+    foreach (ChannelGraph * channelGraph, m_channelToGraph.values())
+        channelGraph->ChangeSelectedMarkIndex(position);
+}
+
+void Measurement::sliderValueChanged(int value)
+{
+    qDebug() << "slider value" << value;
+    m_plot->SetMarkerLine(value);
+    m_plot->ReplotIfNotDisabled();
+    //Q_UNUSED(action);
+    //SetFollowMode(m_scrollBar->sliderPosition() == (int)m_sampleChannel->GetValueCount());
+    //m_currentIndex = m_scrollBar->sliderPosition();
 }
 
 void Measurement::_FollowLastMeasuredValue()
@@ -1225,8 +1239,24 @@ int Measurement::GetLastClosestHorizontalValueIndex(double xValue) const
     return m_horizontalChannel->GetLastClosestValueIndex(xValue);
 }
 
-double Measurement::GetHorizontalValue(unsigned position) const
+unsigned Measurement::GetPositionByHorizontalValue(double value) const
 {
+    std::set<double>::iterator it = m_horizontalValues.begin();
+    int i = 0;
+    for (; it != m_horizontalValues.end(); ++it)
+    {
+        if (value == *it)
+            return i;
+        i++;
+    }
+
+    qCritical() << "horizontal value not found";
+    return 0;
+}
+
+double Measurement::GetHorizontalValueBySliderPos(unsigned position) const
+{
+    //FIXME: not really efective when there will be a lot of values and will be called often
     std::set<double>::iterator it = m_horizontalValues.begin();
     int i = 0;
     for (; it != m_horizontalValues.end(); ++it)
@@ -1234,9 +1264,26 @@ double Measurement::GetHorizontalValue(unsigned position) const
         if (position == i++)
             return (*it);
     }
-    qCritical() << "no horizontal value found";
+    qCritical() << "horizontal value position is out of range";
     return 0;
 }
+
+unsigned Measurement::GetCurrentHorizontalChannelIndex() const
+{
+    return GetHorizontalValueLastInex(GetHorizontalValueBySliderPos(m_currentIndex));
+}
+unsigned Measurement::GetHorizontalValueLastInex(double value) const
+{
+    ChannelBase *horizontal = GetHorizontalChannel();
+    for (int i = horizontal->GetValueCount()-1; i >= 0; i--)
+        if (horizontal->GetValue(i) == value)
+            return i;
+
+    qCritical() << "required value was not found in horizontal channel";
+    return 0;
+}
+
+
 
 ChannelGraph *Measurement::AddGhostChannelGraph(QColor const &color, unsigned shapeIndex)
 {

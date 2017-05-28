@@ -136,7 +136,7 @@ bool Plot::event(QEvent *event)
     return QCustomPlot::event(event);
 }
 
-bool Plot::_GetClosestX(double in, int &out)
+double Plot::_GetClosestXValue(double in)
 {
     if (graphCount()== 0)
     {
@@ -175,6 +175,12 @@ bool Plot::_GetClosestX(double in, int &out)
             itLo.key() : itHi.key();
     }
 
+    return xValue;
+}
+
+bool Plot::_GetClosestXIndex(double in, int &out)
+{
+    double xValue = _GetClosestXValue(in);
     out = m_measurement.GetLastClosestHorizontalValueIndex(xValue);
     return out != -1;
 }
@@ -227,17 +233,20 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
         return;
     }
     int xIndex;
-    if (_GetClosestX(xAxis->pixelToCoord(event->pos().x()), xIndex))
+    if (_GetClosestXIndex(xAxis->pixelToCoord(event->pos().x()), xIndex))
     {
-
         qDebug() << "clickedToPlot calling";
         xIndex = _MinMaxCorection(xIndex);
-        SetMarkerLine(xIndex);
+        double xValue = m_measurement.GetHorizontalChannel()->GetValue(xIndex);
+        SetMarkerLine(m_measurement.GetPositionByHorizontalValue(xValue));
     }
+
+    ReplotIfNotDisabled();
 }
 
 int Plot::_MinMaxCorection(int xIndex)
 {
+    //FIXME: it is probably wrong it must be related to slider
     switch (m_markerTypeSelection)
     {
     case MTSSample:
@@ -591,16 +600,27 @@ void Plot::selectionChanged()
 }
 
 void Plot::DisplayChannelValue(ChannelBase *channel)
-{
+{ 
+    int firstIndex =
+        m_measurement.GetHorizontalValueLastInex(
+            m_measurement.GetHorizontalValueBySliderPos(
+                m_markerPositions.first
+            )
+        );
     if (m_markerTypeSelection == MTSSample)
     {
         if (m_markerPositions.first != std::numeric_limits<int>::min())
-            channel->displayValueOnIndex(m_markerPositions.first);
+            channel->displayValueOnIndex(firstIndex);
     }
     else
     {
-        channel->DisplayValueInRange(
-            m_markerPositions.first, m_markerPositions.second, m_markerRangeValue);
+        int secondIndex =
+            m_measurement.GetHorizontalValueLastInex(
+                m_measurement.GetHorizontalValueBySliderPos(
+                    m_markerPositions.second
+                )
+            );
+        channel->DisplayValueInRange(firstIndex, secondIndex, m_markerRangeValue);
     }
 }
 
@@ -632,12 +652,6 @@ void Plot::RefillGraphs()
     ReplotIfNotDisabled();
 }
 
-void Plot::setGraphPointPosition(int position)
-{
-    SetMarkerLine(position);
-    ReplotIfNotDisabled();
-}
-
 void Plot::SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format)
 {
     axis->setTickLabelType(dateTime ?  QCPAxis::ltDateTime : QCPAxis::ltNumber);
@@ -654,7 +668,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
     markerLine->setPen(QPen(QBrush(color), MARKER_WIDTH, Qt::DotLine));
     markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
 
-    double xValue = m_measurement.GetHorizontalValue(position);
+    double xValue = m_measurement.GetHorizontalValueBySliderPos(position);
     markerLine->start->setCoords(xValue, 0);
     markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
     markerLine->end->setCoords(xValue, 100);
@@ -664,7 +678,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
 
 QCPItemRect *Plot::_DrawOutRect(bool isLeft, int position)
 {
-    double horizontalValue = m_measurement.GetHorizontalValue(position);
+    double horizontalValue = m_measurement.GetHorizontalValueBySliderPos(position);
     QCPItemRect *rect = new QCPItemRect(this);
     rect->setLayer("background"); //to be axes clicable
     rect->topLeft->setTypeY(QCPItemPosition::ptViewportRatio);

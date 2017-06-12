@@ -1002,11 +1002,9 @@ transparency=0</panel_attributes>
       <h>54</h>
     </coordinates>
     <panel_attributes>GlobalSettings
-?
 valign=center
 halign=center
 bg=white
-fg=red
 transparency=0</panel_attributes>
     <additional_attributes/>
   </element>

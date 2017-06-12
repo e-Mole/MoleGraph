@@ -6,8 +6,8 @@
 namespace file
 {
 
-AddDirDialog::AddDirDialog(QWidget *parent, GlobalSettings const &settings) :
-    bases::FormDialogBase(parent, tr("Add Directory"), settings),
+AddDirDialog::AddDirDialog(QWidget *parent, bool acceptChangesByDialogClosing) :
+    bases::FormDialogBase(parent, tr("Add Directory"), acceptChangesByDialogClosing),
     m_dirName(new QLineEdit(this))
 {
     m_formLayout->addRow(tr("Directory Name"), m_dirName);

@@ -7,9 +7,10 @@
 namespace bases
 {
 
-FormDialogBase::FormDialogBase(QWidget *parent, const QString &title, GlobalSettings const &settings) :
+FormDialogBase::FormDialogBase(QWidget *parent, const QString &title, bool acceptChangesByDialogClosing) :
     PlatformDialog(parent, title),
-    m_settings(settings)
+    m_acceptChangesByDialogClosing(acceptChangesByDialogClosing),
+    m_changed(false)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -38,7 +39,7 @@ void FormDialogBase::storeAndAccept()
 
 void FormDialogBase::closeEvent(QCloseEvent * e)
 {
-    if (m_settings.GetAcceptChangesByDialogClosing())
+    if (m_acceptChangesByDialogClosing)
         storeAndAccept();
 
     PlatformDialog::closeEvent(e);

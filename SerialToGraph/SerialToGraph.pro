@@ -68,7 +68,9 @@ SOURCES += main.cpp\
     bases/ComboBox.cpp \
     PlotContextMenu.cpp \
     GhostChannel.cpp \
-    ChannelGraph.cpp
+    ChannelGraph.cpp \
+    MeasurementGraphicsWrapper.cpp \
+    GraphicsContainer.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -116,7 +118,9 @@ HEADERS  += MainWindow.h \
     bases/ComboBox.h \
     PlotContextMenu.h \
     GhostChannel.h \
-    ChannelGraph.h
+    ChannelGraph.h \
+    MeasurementGraphicsWrapper.h \
+    GraphicsContainer.h
 
 CONFIG += mobility
 CONFIG += c++11

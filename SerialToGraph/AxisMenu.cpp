@@ -69,7 +69,7 @@ void AxisMenu::FillGrid()
 void AxisMenu::addButtonPressed()
 {
     Axis *newAxis = m_measurement.CreateAxis(Qt::black);
-    AxisSettings dialog(this, newAxis, m_context);
+    AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);
@@ -135,10 +135,14 @@ void AxisMenu::removeButtonPressed()
 void AxisMenu::editButtonPressed()
 {
     Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
-    AxisSettings dialog(this, axis, m_context);
+    AxisSettings dialog(this, axis, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
-        ReinitGrid();
+        if (dialog.IsChanged())
+        {
+            m_context.m_mainWindow.SetSavedState(false);
+            ReinitGrid();
+        }
     }
 
     CloseIfPopup();

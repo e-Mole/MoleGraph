@@ -11,6 +11,7 @@
 
 class CentralWidget;
 class Console;
+class GraphicsContainer;
 class Measurement;
 class PortListDialog;
 class QApplication;
@@ -50,7 +51,7 @@ public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
 
-    Measurement *CreateNewMeasurement(bool initializeAxesandChannels);
+    Measurement *CreateNewGraphicContainer(bool initializeAxesAndChannels);
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void SwichCurrentMeasurement(Measurement *m);

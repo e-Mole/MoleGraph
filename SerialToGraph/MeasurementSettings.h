@@ -9,12 +9,10 @@ class QCheckBox;
 
 class QLineEdit;
 class QWidget;
-struct Context;
 class MeasurementSettings  : public bases::FormDialogColor
 {
     Q_OBJECT
 
-    Context const &m_context;
     Measurement * m_measurement;
     QLineEdit *m_name;
     bases::ComboBox *m_type;
@@ -24,7 +22,7 @@ class MeasurementSettings  : public bases::FormDialogColor
 
     bool BeforeAccept();
 public:
-    MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context);
+    MeasurementSettings(QWidget *parent, Measurement *measurement, bool acceptChangesByDialogClosing);
 private slots:
     void disablePeriodAndUnits(int disabled);
 };

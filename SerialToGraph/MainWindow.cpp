@@ -6,6 +6,7 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <Console.h>
+#include <GraphicsContainer.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -86,7 +87,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     );
 #endif
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
-    ConfirmMeasurement(CreateNewMeasurement(true));
+    ConfirmMeasurement(CreateNewGraphicContainer(true));
 
     m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
     m_portListDialog->startSearching();
@@ -194,9 +195,9 @@ void MainWindow::ShowConsole(bool show)
     m_console->setVisible(show);
 }
 
-Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesandChannels)
+Measurement *MainWindow::CreateNewGraphicContainer(bool initializeAxesAndChannels)
 {
-    return new Measurement(this, m_context, NULL, initializeAxesandChannels);
+    return new Measurement(this, m_context, NULL, initializeAxesAndChannels);
 }
 
 Measurement *MainWindow::CloneCurrentMeasurement()
@@ -328,7 +329,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         RemoveAllMeasurements();
         for (int i = 0; i < count; i++)
         {
-            Measurement *m = CreateNewMeasurement(false);
+            Measurement *m = CreateNewGraphicContainer(false);
             m->SetSaveLoadValues(values);
             in >> m;
             m->RecalculateSliderMaximum();
@@ -400,7 +401,7 @@ void MainWindow::OpenNew()
     m_currentFileName = "";
     m_currentFileNameWithPath = "";
     RemoveAllMeasurements();
-    ConfirmMeasurement(CreateNewMeasurement(true));
+    ConfirmMeasurement(CreateNewGraphicContainer(true));
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent * event)

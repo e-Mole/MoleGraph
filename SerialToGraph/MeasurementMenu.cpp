@@ -89,9 +89,9 @@ void MeasurementMenu::FillGrid()
 
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *m = m_context.m_mainWindow.CreateNewMeasurement(true);
+    Measurement *m = m_context.m_mainWindow.CreateNewGraphicContainer(true);
 
-    MeasurementSettings dialog(this, m, m_context);
+    MeasurementSettings dialog(this, m, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);
@@ -160,10 +160,14 @@ void MeasurementMenu::removeButtonPressed()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(this, measurement, m_context);
+    MeasurementSettings dialog(this, measurement, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
-        ReinitGrid();
+        if (dialog.IsChanged())
+        {
+            m_context.m_mainWindow.SetSavedState(false);
+            ReinitGrid();
+        }
     }
 
     CloseIfPopup();

@@ -16,10 +16,13 @@ protected:
     virtual bool BeforeAccept() = 0;
     virtual void closeEvent(QCloseEvent * e);
     QFormLayout *m_formLayout;
-    GlobalSettings const &m_settings;
+    bool m_acceptChangesByDialogClosing;
+    bool m_changed;
 public:
-    FormDialogBase(QWidget *parent, const QString &title, GlobalSettings const &settings);
+    FormDialogBase(QWidget *parent, const QString &title, bool acceptChangesByDialogClosing);
 
+    bool IsChanged()
+    {   return m_changed; }
 signals:
 
 private slots:

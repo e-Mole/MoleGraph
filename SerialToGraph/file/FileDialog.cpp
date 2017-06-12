@@ -17,15 +17,16 @@ QString FileDialog::getOpenFileName(
     const QString &caption,
     const QString &dir,
     const QString &filter,
-    const GlobalSettings &settings
+    bool acceptChangesByDialogClosing,
+    const QString &limitDir
 )
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_OpenFile, parent, caption, dir, filter, settings);
+        OwnFileDialog::Type_OpenFile, parent, caption, dir, filter, acceptChangesByDialogClosing, limitDir);
 #else
-
-    NativeFileDialog nfd(QFileDialog::AcceptOpen, parent, caption, dir, filter, settings.GetLimitDir());
+    Q_UNUSED(acceptChangesByDialogClosing);
+    NativeFileDialog nfd(QFileDialog::AcceptOpen, parent, caption, dir, filter, limitDir);
     return 0 == nfd.exec() ? "" : nfd.selectedFiles()[0];
 #endif
 }

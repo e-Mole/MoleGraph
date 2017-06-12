@@ -19,7 +19,7 @@
 #include <QSpinBox>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
-    bases::FormDialogBase(parent, tr("Settings"), context.m_settings),
+    bases::FormDialogBase(parent, tr("Settings"), context.m_settings.GetAcceptChangesByDialogClosing()),
     m_context(context),
     m_settings(context.m_settings),
     m_languages(NULL),

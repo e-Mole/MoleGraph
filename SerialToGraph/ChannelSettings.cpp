@@ -23,7 +23,7 @@
 #include <SampleChannel.h>
 
 ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
-    bases::FormDialogColor(channel->GetWidget(), tr("Channel settings"), context.m_settings),
+    bases::FormDialogColor(channel->GetWidget(), tr("Channel settings"), context.m_settings.GetAcceptChangesByDialogClosing()),
     m_context(context),
     m_channel(channel),
     m_currentValueControl(NULL),
@@ -471,9 +471,10 @@ void ChannelSettings::axisChanged(int index)
     {
         Axis*newAxis = m_channel->GetMeasurement()->CreateAxis(m_channel->GetColor());
 
-        AxisSettings dialog(this, newAxis, m_context);
+        AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
         if (QDialog::Accepted == dialog.exec())
         {
+            m_context.m_mainWindow.SetSavedState(false);
             m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
             m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
             m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one

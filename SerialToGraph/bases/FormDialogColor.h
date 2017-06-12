@@ -21,7 +21,7 @@ protected:
     QColor m_color;
     QWidget *m_colorButtonWidget;
 public:
-    FormDialogColor(QWidget *parent, const QString &title, const GlobalSettings &settings);
+    FormDialogColor(QWidget *parent, const QString &title, bool acceptChangesByDialogClosing);
 
 signals:
 private slots:

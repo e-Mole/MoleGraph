@@ -37,7 +37,8 @@ OwnFileDialog::OwnFileDialog(QWidget *parent,
     QString const & caption,
     QString const &dir,
     QString const &filter,
-    GlobalSettings const &settings
+    bool acceptChangesByDialogClosing,
+    QString const &limitDir
 ):
     bases::PlatformDialog(parent, caption),
     m_fileName(new QLineEdit(this)),
@@ -48,7 +49,8 @@ OwnFileDialog::OwnFileDialog(QWidget *parent,
     m_view(new QListView(this)),
     m_type(type),
     m_upButton(NULL),
-    m_settings(settings)
+    m_acceptChangesByDialogClosing(acceptChangesByDialogClosing),
+    m_limitDir(limitDir)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
@@ -109,7 +111,7 @@ OwnFileDialog::OwnFileDialog(QWidget *parent,
 
 void OwnFileDialog::_CheckUpButton()
 {
-    m_upButton->setDisabled(m_settings.GetLimitDir() == m_dir);
+    m_upButton->setDisabled(m_limitDir == m_dir);
 }
 QString OwnFileDialog::_GetActionButtonText(Type type)
 {
@@ -161,7 +163,7 @@ void OwnFileDialog::fileNameChanged(QString const &fileName)
 
 void OwnFileDialog::createFolder()
 {
-    AddDirDialog dialog(this, m_settings);
+    AddDirDialog dialog(this, m_acceptChangesByDialogClosing);
     if (QDialog::Accepted == dialog.exec() && dialog.GetDirName().size() > 0)
         m_model->Mkdir(m_view->rootIndex(), dialog.GetDirName());
 }
@@ -309,10 +311,11 @@ QString OwnFileDialog::ExecuteFileDialog(
         const QString &caption,
         const QString &dir,
         const QString &filter,
-        GlobalSettings const &settings)
+        bool acceptChangesByDialogClosing,
+        const QString &limitDir)
 {
     OwnFileDialog * dialog = new OwnFileDialog(
-        parent, type, caption, GetDir(dir), filter, settings);
+        parent, type, caption, GetDir(dir), filter, acceptChangesByDialogClosing, limitDir);
     if (QDialog::Accepted == dialog->exec())
     {
         QString path = dialog->_GetFilePath();

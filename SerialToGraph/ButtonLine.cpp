@@ -521,7 +521,8 @@ void ButtonLine::_OpenFile(bool values)
             "Open File",
             _GetRootDir(),
             QString("*.%1").arg(MOGR_FILE_EXTENSION),
-            m_context.m_settings
+            m_context.m_settings.GetAcceptChangesByDialogClosing(),
+            m_context.m_settings.GetLimitDir()
         );
 
     _OpenFile(filePath, values);

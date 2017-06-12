@@ -38,16 +38,17 @@ private:
     QListView *m_view;
     Type m_type;
     QPushButton *m_upButton;
-    GlobalSettings const &m_settings;
+    bool m_acceptChangesByDialogClosing;
+    QString const &m_limitDir;
 
 public:
-    OwnFileDialog(
-        QWidget *parent,
+    OwnFileDialog(QWidget *parent,
         Type type,
         const QString &caption,
         const QString &dir,
         const QString &extension,
-        const GlobalSettings &settings
+        bool acceptChangesByDialogClosing,
+        const QString &limitDir
     );
     ~OwnFileDialog();
 
@@ -56,7 +57,7 @@ public:
             const QString &caption,
             const QString &dir,
             const QString &filter,
-            GlobalSettings const &settings);
+            bool acceptChangesByDialogClosing, const QString &limitDir);
 
 private slots:
     void viewClicked(const QModelIndex &index);

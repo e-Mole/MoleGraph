@@ -13,8 +13,8 @@
 namespace bases
 {
 
-FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title, GlobalSettings const &settings) :
-    FormDialogBase(parent, title, settings),
+FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title, bool acceptChangesByDialogClosing) :
+    FormDialogBase(parent, title, acceptChangesByDialogClosing),
     m_color(Qt::black),
     m_colorButtonWidget(NULL)
 {

@@ -11,13 +11,12 @@ namespace file
 class FileDialog
 {
 public:
-    static QString getOpenFileName(
-        QWidget *parent,
+    static QString getOpenFileName(QWidget *parent,
         const QString &caption,
         const QString &dir,
         const QString &filter,
-        const GlobalSettings &settings
-    );
+        bool acceptChangesByDialogClosing,
+        const QString &limitDir);
 
     static QString getSaveFileName(
         QWidget *parent,

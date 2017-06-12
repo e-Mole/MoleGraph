@@ -10,9 +10,9 @@
 #include <QLineEdit>
 #include <QWidget>
 
-MeasurementSettings::MeasurementSettings(QWidget *parent, Measurement *measurement, Context const& context):
-    bases::FormDialogColor(parent, tr("Measurement Setting"), context.m_settings),
-    m_context(context),
+MeasurementSettings::MeasurementSettings(
+    QWidget *parent, Measurement *measurement, bool acceptChangesByDialogClosing):
+    bases::FormDialogColor(parent, tr("Measurement Setting"), acceptChangesByDialogClosing),
     m_measurement(measurement),
     m_name(NULL),
     m_type(NULL),
@@ -100,8 +100,6 @@ bool MeasurementSettings::BeforeAccept()
         m_measurement->_SetMarksShown(m_marksShown->isChecked());
     }
 
-    if (changed)
-        m_context.m_mainWindow.SetSavedState(false);
-
+    m_changed = changed;
     return true;
 }

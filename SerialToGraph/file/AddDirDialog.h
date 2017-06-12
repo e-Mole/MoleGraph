@@ -18,7 +18,7 @@ class AddDirDialog : public bases::FormDialogBase
     QLineEdit *m_dirName;
 
 public:
-    AddDirDialog(QWidget *parent, const GlobalSettings &settings);
+    AddDirDialog(QWidget *parent, bool acceptChangesByDialogClosing);
     QString GetDirName();
 signals:
 

@@ -2,9 +2,11 @@
 #include <Axis.h>
 #include <AxisSettings.h>
 #include <ChannelBase.h>
+#include <GlobalSettings.h>
 #include <SampleChannel.h>
 #include <Context.h>
 #include <ChannelGraph.h>
+#include <MainWindow.h>
 #include <Measurement.h>
 #include <QLabel>
 #include <QRadioButton>
@@ -70,9 +72,10 @@ void AxisChooseDialog::newAxisSelected()
 {
     Axis*newAxis = m_originalHChannel->GetMeasurement()->CreateAxis(m_originalHChannel->GetColor());
 
-    AxisSettings dialog(this, newAxis, m_context);
+    AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
+        m_context.m_mainWindow.SetSavedState(false);
         m_originalHChannel->GetChannelGraph()->AssignToAxis(newAxis);
         accept();
     }

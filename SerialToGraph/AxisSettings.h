@@ -6,7 +6,6 @@
 
 namespace bases{ class ComboBox; }
 class AxisCopy;
-class Context;
 class QColor;
 class QLineEdit;
 class QMouseQMouseEvent;
@@ -19,12 +18,11 @@ class AxisSettings : public bases::FormDialogColor
     virtual bool BeforeAccept();
     Axis * m_axis;
     QLineEdit* m_name;
-    Context const & m_context;
     bases::ComboBox *m_side;
     bases::ComboBox *m_display;
 
 public:
-    AxisSettings(QWidget *parent, Axis *axis, const Context &context);
+    AxisSettings(QWidget *parent, Axis *axis, bool acceptChangesByDialogClosing);
 };
 
 #endif // AXIS_SETTINGS_H

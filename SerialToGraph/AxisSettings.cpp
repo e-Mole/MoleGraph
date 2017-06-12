@@ -14,11 +14,10 @@
 #include <QVector>
 #include <QWidget>
 
-AxisSettings::AxisSettings(QWidget *parent, Axis *axis, Context const & context) :
-    bases::FormDialogColor(parent, tr("Axis Setting"), context.m_settings),
+AxisSettings::AxisSettings(QWidget *parent, Axis *axis, bool acceptChangesByDialogClosing) :
+    bases::FormDialogColor(parent, tr("Axis Setting"), acceptChangesByDialogClosing),
     m_axis(axis),
     m_name(NULL),
-    m_context(context),
     m_side(NULL),
     m_display(NULL)
 {
@@ -73,10 +72,9 @@ bool AxisSettings::BeforeAccept()
         m_axis->_SetColor(m_color);
     }
 
-    if (changed)
-        m_context.m_mainWindow.SetSavedState(false);
-
     m_axis->m_measurement->GetPlot()->ReplotIfNotDisabled();
+
+    m_changed = changed;
     return true;
 }
 

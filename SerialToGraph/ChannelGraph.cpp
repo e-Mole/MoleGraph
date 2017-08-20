@@ -96,11 +96,11 @@ void ChannelGraph::drawScatterPlot(QCPPainter *painter, QVector<QCPData> *scatte
       if (qIsNaN(scatterData->at(i).value))
         continue;
 
-      if (!m_showAllMarks && i != m_selectedMarkIndex)
+      if (!m_showAllMarks && scatterData->at(i).key != m_selectedMarkIndex)
           continue;
 
       QCPScatterStyle current;
-      if (i == m_selectedMarkIndex)
+      if (scatterData->at(i).key == m_selectedMarkIndex)
       {
           m_selectedMarkStyle.applyTo(painter, mPen);
           current = m_selectedMarkStyle;

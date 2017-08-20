@@ -57,12 +57,14 @@ void ChannelMenu::FillGrid()
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height());
 
 
-    ++row;
+    //TODO: ghost will be enabled after refactoring again
+    /*++row;
     QPushButton *addGhost = new QPushButton(tr("Add Ghost"), this);
     connect(addGhost, SIGNAL(clicked()), this, SLOT(addGhostgActivated()));
     m_gridLayout->addWidget(addGhost, row, 0);
     addGhost->setEnabled(m_context.m_measurements.count() > 1);
     m_gridLayout->setColumnStretch(2, 1);
+    */
 
     foreach (ChannelBase *channel, m_measurement.GetChannels())
         _AddChannel(channel, channel->GetType() == ChannelBase::Type_Ghost);

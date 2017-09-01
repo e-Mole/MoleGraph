@@ -5,8 +5,7 @@
 #define MARKER_WIDTH 2 //1.6
 #define SELECTED_PEN_WIDTH 2.5
 #define MARKER_SIZE 8
-ChannelGraph::ChannelGraph(
-    QCPAxis *keyAxis,
+ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
     Axis *valueAxis,
     QColor const &color,
     unsigned shapeIndex,
@@ -26,7 +25,7 @@ ChannelGraph::ChannelGraph(
     m_selectedMarkStyle.setPen(QPen(color, MARKER_WIDTH));
     m_selectedMarkStyle.setSize(MARKER_SIZE);
 
-    SetMarkShape(shapeIndex, showAllMarks);
+    SetMarkShape(shapeIndex);
 }
 
 void ChannelGraph::SetColor(const QColor& color)
@@ -55,10 +54,8 @@ void ChannelGraph::SetPenStyle(Qt::PenStyle penStyle)
     setPen(p);
 }
 
-void ChannelGraph::SetMarkShape(unsigned shapeIndex, bool showAllMarks)
+void ChannelGraph::SetMarkShape(unsigned shapeIndex)
 {
-    m_showAllMarks = showAllMarks;
-
     QCPScatterStyle::ScatterShape shape = (QCPScatterStyle::ScatterShape)(shapeIndex + 2);
     m_selectedMarkStyle.setShape(shape);
 

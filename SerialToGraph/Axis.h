@@ -6,10 +6,10 @@
 #include <QString>
 
 class ChannelBase;
+class GlobalSettings;
 class Measurement;
 class QCPAxis;
 class QString;
-struct Context;
 class Axis : public QObject
 {
     Q_OBJECT
@@ -32,7 +32,7 @@ class Axis : public QObject
     friend class AxisSettings;
 
     Measurement * m_measurement;
-    Context const &m_context;
+    GlobalSettings &m_settings;
     QString m_title;
     bool m_isRemovable;
     QColor m_color;
@@ -47,7 +47,7 @@ class Axis : public QObject
 
 public:
     Axis(Measurement *measurement,
-        Context const &context,
+        GlobalSettings &settings,
         QColor const & color,
         QCPAxis *graphAxis = NULL,
         QString title = "",

@@ -7,8 +7,10 @@
 #include <QStringList>
 
 class QSize;
-class GlobalSettings
+class GlobalSettings : public QObject
 {
+    Q_OBJECT
+
     enum Key
     {
         Key_LastSerialPortId,
@@ -65,7 +67,7 @@ public:
     QString GetLimitDir() const;
     void SetLimitDir(QString const &dir);
     bool GetHideAllChannels();
-    void SetHideAllChannels(bool show);
+    void SetHideAllChannels(bool hide);
     Qt::Orientation GetMenuOrientation();
     void SetMenuOrientation(Qt::Orientation orientation);
     bool GetMenuOnDemand();
@@ -79,6 +81,9 @@ public:
     void AddRecentFilePath(QString const &path);
     bool GetAcceptChangesByDialogClosing() const;
     void SetAcceptChangesByDialogClosing(bool show);
+
+signals:
+    void hideAllCHannelsChanged(bool hideAllChannels);
 };
 
 #endif // GLOBALSETTINGS_H

@@ -18,9 +18,10 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context):
+GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink):
     bases::FormDialogBase(parent, tr("Settings"), context.m_settings.GetAcceptChangesByDialogClosing()),
     m_context(context),
+    m_hwSink(hwSink),
     m_settings(context.m_settings),
     m_languages(NULL),
     m_brackets(NULL),
@@ -165,7 +166,7 @@ bool GlobalSettingsDialog::BeforeAccept()
 
     if (m_settings.GetUseBluetooth() != m_useBluetooth->isChecked())
     {
-        if (m_context.m_hwSink.GetState() != hw::HwSink::Connected ||
+        if (m_hwSink.GetState() != hw::HwSink::Connected ||
             MyMessageBox::Yes == MyMessageBox::question(
                 this,
                 tr("Estbilished connection will be lost. Continue?"),

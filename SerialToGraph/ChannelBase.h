@@ -20,13 +20,6 @@ class ChannelBase : public QObject
     friend class ChannelSettings;
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ GetName() WRITE _SetName)
-    Q_PROPERTY(QColor color READ GetColor() WRITE SetColor)
-    Q_PROPERTY(unsigned shapeIndex READ _GetShapeIndex() WRITE _SetShapeIndex)
-    Q_PROPERTY(QString units READ GetUnits() WRITE _SetUnits)
-    Q_PROPERTY(bool isVisible READ IsActive WRITE SetActive)
-    Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE _SetPenStyle)
-
     Q_ENUMS(Qt::PenStyle)
 
 public:
@@ -39,14 +32,11 @@ public:
         ValueTypeRangeValue
     };
 private:
-    virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
+    void _SetName(QString name);
+    QString _GetName();
 protected:
-    void _DisplayNAValue(unsigned index);
-    void _UpdateTitle();
     void mousePressEvent(QMouseEvent * event);
-    void _ShowOrHideGraph(bool shown);
-    void _FillLastValueTextByValue(double value);
-    virtual void _FillLastValueTextFromIndex(int index);
+    void _FillLastValueText(double value);
     double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
     double _GetMinInRange(int left, int right);
@@ -56,28 +46,14 @@ protected:
     double _GetStandardDeviation(int left, int right);
     double _CalculateSum(int left, int right);
     double _GetSumInRange(int left, int right);
-    void _SetName(QString const &name);
-    void _SetShapeIndex(unsigned index) ;
-    void _SetUnits(QString const &units);
-    void _SetPenStyle(Qt::PenStyle penStyle);
-    void _ShowLastValueWithUnits();
-    void _ShowLastValueWithUnits(unsigned index);
     void _UpdateExtremes(double value);
-    unsigned _GetShapeIndex();
 
     Measurement * m_measurement;
     Context const & m_context;
-    QString m_name;
     ChannelWidget *m_widget;
     QVector<double> m_values;
-    QColor m_color;
     double m_channelMinValue;
     double m_channelMaxValue;
-    QString m_lastValueText;
-    ChannelGraph *m_channelGraph;
-    QString m_units;
-    Qt::PenStyle m_penStyle;
-    bool m_isActive;
 
 public:
     enum Type
@@ -101,6 +77,7 @@ public:
     ChannelBase(Measurement *measurement,
         Context const & context,
         ChannelGraph *channelGraph,
+        unsigned shortcutOrder,
         QString const &name = "",
         QColor const &color = Qt::black,
         bool active = true,
@@ -110,10 +87,6 @@ public:
     ~ChannelBase();
     virtual Type GetType() = 0;
     virtual unsigned GetShortcutOrder() = 0;
-
-    QColor &GetColor() { return m_color; }
-    QString GetName();
-    QString GetUnits();
 
     virtual unsigned GetValueCount() const
     { return m_values.size();}
@@ -131,40 +104,20 @@ public:
     virtual double GetMaxValue()
     { return m_channelMaxValue; }
 
-    void SetAxisValueRange(double min, double max);
-
-    bool IsOnHorizontalAxis();
-
-    QSize GetMinimumSize();
-
-    ChannelGraph *GetChannelGraph();
-    void UpdateGraph(double xValue, double yValue, bool replot);
-    void UpdateGraph(double xValue);
-    bool IsActive();
-    void SetActive(bool active);
-    void SetColor(QColor &color);
-
     Measurement * GetMeasurement();
     ChannelWidget *GetWidget();
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
+
     int GetLastClosestValueIndex(double value) const;
-    Qt::PenStyle GetPenStyle() { return m_penStyle; }
-    void UpdateWidgetVisiblity();
-    void DisplayValueInRange(int left, int right, DisplayValue displayValue);
-    bool IsValueNA(int index) const
-    { return index >= GetValueCount() || GetValue(index) == GetNaValue(); }
-    static double GetNaValue();
-    static QString GetNAValueString();
+    bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
+    bool IsValueNA(int index) const;
+    virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 signals:
-    void stateChanged();
-    void wasSetToHorizontal();
-    void widgetSizeChanged();
+
 public slots:
-    void changeChannelActivity(bool active, bool signal);
-    void displayValueOnIndex(int index);
     bool editChannel();
 };
 

@@ -18,7 +18,6 @@ class SampleChannel : public ChannelBase
     Q_ENUMS(RealTimeFormat)
 
     void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
-    virtual ChannelBase::ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeSample; }
 public:
     enum TimeUnits
     {
@@ -91,6 +90,8 @@ public:
     double GetSampleNr(unsigned index) const;
     QString GetTimestamp(double timeInMs);
     QString GetValueTimestamp(unsigned index);
+    virtual ChannelBase::ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeSample; }
+
 signals:
 
 public slots:

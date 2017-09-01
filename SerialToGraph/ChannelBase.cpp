@@ -24,70 +24,51 @@
 ChannelBase::ChannelBase(Measurement *measurement,
     Context const & context,
     ChannelGraph *channelGraph,
+    unsigned shortcutOrder,
     QString const &name,
     QColor const &color,
     bool active,
     const QString &units,
-    Qt::PenStyle penStyle) :
+    Qt::PenStyle penStyle
+):
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
     m_context(context),
-    m_name(name),
     m_widget(
         new ChannelWidget(
             name,
             measurement->GetWidget(),
             m_context.m_settings.GetChannelSizeFactor(),
-            _GetValueType(~0),
-            color
+            GetValueType(~0),
+            color,
+            shortcutOrder,
+            channelGraph,
+            measurement->GetPlot(),
+            penStyle,
+            units,
+            m_context.m_settings.GetHideAllChannels()
         )
     ),
-    m_color(color),
     m_channelMinValue(std::numeric_limits<double>::max()),
-    m_channelMaxValue(-std::numeric_limits<double>::max()),
-    m_channelGraph(channelGraph),
-    m_units(units),
-    m_penStyle(penStyle),
-    m_isActive(true)
+    m_channelMaxValue(-std::numeric_limits<double>::max())
 {
-    _DisplayNAValue(0); //will be displayed ValueUnknown
+    connect(
+        &m_context.m_settings, SIGNAL(hideAllCHannelsChanged(bool)),
+        m_widget, SLOT(hideAllCHannelsChanged(bool))
+    );
+    m_widget->DisplayNAValue(GetValueType(0)); //will be displayed ValueUnknown
 
-    if (m_channelGraph->GetValuleAxis()->IsHorizontal())
-        _ShowOrHideGraph(false);
+    if (channelGraph->GetValuleAxis()->IsHorizontal())
+        m_widget->ShowOrHideGraph(false);
 
-    changeChannelActivity(active, false);
+    m_widget->SetActive(active);
 
     connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
-    connect(m_widget, SIGNAL(sizeChanged()), this, SIGNAL(widgetSizeChanged()));
 }
 
 ChannelBase::~ChannelBase()
 {
     delete m_widget;
-}
-
-void ChannelBase::_SetPenStyle(Qt::PenStyle penStyle)
-{
-    m_penStyle = penStyle;
-    m_measurement->GetPlot()->SetPenStyle(m_channelGraph, penStyle);
-}
-
-
-void ChannelBase::changeChannelActivity(bool active, bool signal)
-{
-    SetActive(active);
-    if (signal)
-        stateChanged();
-}
-
-QString ChannelBase::GetName()
-{
-    return m_name;
-}
-
-QString ChannelBase::GetUnits()
-{
-    return m_units;
 }
 
 void ChannelBase::_UpdateExtremes(double value)
@@ -98,49 +79,15 @@ void ChannelBase::_UpdateExtremes(double value)
     if (value > m_channelMaxValue)
         m_channelMaxValue = value;
 }
+
 void ChannelBase::AddValue( double value)
 {
     m_values.push_back(value);
 
-    if (value == GetNaValue())
+    if (value == ChannelWidget::GetNaValue())
         return;
 
     _UpdateExtremes(value);
-}
-
-bool ChannelBase::IsOnHorizontalAxis()
-{ return m_channelGraph->GetValuleAxis()->IsHorizontal(); }
-
-QString ChannelBase::GetNAValueString()
-{
-    return tr("n/a");
-}
-
-void ChannelBase::_DisplayNAValue(unsigned index)
-{
-    //m_lastValueText = "-0.000e-00<br/>mA";
-    m_lastValueText = GetNAValueString();
-    _ShowLastValueWithUnits(index);
-}
-
-void ChannelBase::_ShowLastValueWithUnits()
-{
-    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
-}
-
-void ChannelBase::_ShowLastValueWithUnits(unsigned index)
-{
-    m_widget->ShowValueWithUnits(m_lastValueText, m_units, _GetValueType(index));
-}
-
-void ChannelBase::_UpdateTitle()
-{
-    m_widget->setTitle(
-        (~0 == GetShortcutOrder()) ?
-            m_name :
-            QString("(%1) ").arg(GetShortcutOrder()) + m_name
-    );
-    m_channelGraph->GetValuleAxis()->UpdateGraphAxisName();
 }
 
 bool ChannelBase::editChannel()
@@ -149,33 +96,7 @@ bool ChannelBase::editChannel()
     return QDialog::Accepted == settings->exec();
 }
 
-void ChannelBase::_FillLastValueTextByValue(double value)
-{
-    if (value == GetNaValue())
-    {
-        m_lastValueText = GetNAValueString();
-        return;
-    }
-
-    double absValue = std::abs(value);
-
-    QLocale locale(QLocale::system());
-
-    QString strValue;
-    if (absValue < 0.0001 && absValue != 0)
-        strValue = locale.toString(value, 'e', 3); //QString::number(value, 'e', 3);
-    else if (absValue < 1)
-        strValue = locale.toString(value, 'g', 4);
-    else
-        strValue = locale.toString(value, 'g', 6);
-
-    m_lastValueText = strValue;
-}
-void ChannelBase::_FillLastValueTextFromIndex(int index)
-{
-    _FillLastValueTextByValue(GetValue(index));
-}
-
+//FIXME: this methods could be in separated class (Statistics?)
 double ChannelBase::_GetDelta(int left, int right)
 {
     return GetValue(right) - GetValue(left);
@@ -248,107 +169,46 @@ double ChannelBase::_GetStandardDeviation(int left, int right)
     return sqrt(_GetVarianceInRange(left, right));
 }
 
-void ChannelBase::DisplayValueInRange(int left, int right, DisplayValue displayValue)
+bool ChannelBase::FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue)
 {
     if (0 == GetValueCount())
     {
         //try to display hidden channel
-        return; //probably setRange in start method
+        return false; //probably setRange in start method
     }
 
-    double value = 0;
     switch (displayValue)
     {
     case DVDelta:
-        value = _GetDelta(left, right);
+        rangeValue = _GetDelta(left, right);
         break;
     case DVMax:
-        value = _GetMaxInRange(left, right);
+        rangeValue = _GetMaxInRange(left, right);
         break;
     case DVMin:
-        value = _GetMinInRange(left, right);
+        rangeValue = _GetMinInRange(left, right);
         break;
     case DVAverage:
-        value =  _GetMeanInRange(left, right);
+        rangeValue =  _GetMeanInRange(left, right);
         break;
     case DVMedian:
-        value =  _GetMedianInRange(left, right);
+        rangeValue =  _GetMedianInRange(left, right);
         break;
     case DVVariance:
-        value = _GetVarianceInRange(left, right);
+        rangeValue = _GetVarianceInRange(left, right);
         break;
     case DVStandDeviation:
-        value = _GetStandardDeviation(left, right);
+        rangeValue = _GetStandardDeviation(left, right);
         break;
     case DVSum:
-        value = _GetSumInRange(left, right);
+        rangeValue = _GetSumInRange(left, right);
         break;
     default:
         qDebug() << "unknown diplay value";
+        return false;
     }
 
-    _FillLastValueTextByValue(value);
-    _ShowLastValueWithUnits();
-}
-void ChannelBase::displayValueOnIndex(int index)
-{
-    if (index >= (signed)GetValueCount())
-    {
-        qDebug() << "index is out of range and can't be displayed";
-        return; //probably setRange in start method or try to display hiden channel
-    }
-
-    _FillLastValueTextFromIndex(index);
-    _ShowLastValueWithUnits(index);
-}
-
-ChannelGraph *ChannelBase::GetChannelGraph()
-{
-    return m_channelGraph;
-}
-
-void ChannelBase::UpdateGraph(double xValue, double yValue, bool replot)
-{
-    if (yValue == GetNaValue())
-        m_channelGraph->data()->remove(xValue);
-    else
-        m_channelGraph->data()->insert(xValue, QCPData(xValue, yValue));
-    if (replot)
-    {
-        m_measurement->GetPlot()->ReplotIfNotDisabled();
-        //m_measurement->GetPlot()->setGraphPointPosition(xValue);
-    }
-}
-
-void ChannelBase::UpdateGraph(double xValue)
-{
-    UpdateGraph(xValue, GetLastValue(), false);
-}
-
-//FIXME: it should not be here
-void ChannelBase::_ShowOrHideGraph(bool shown)
-{
-    m_channelGraph->setVisible(shown);
-    m_measurement->GetPlot()->RescaleAllAxes();
-}
-
-void ChannelBase::UpdateWidgetVisiblity()
-{
-    m_widget->setVisible(m_isActive & !m_context.m_settings.GetHideAllChannels());
-}
-void ChannelBase::SetActive(bool active)
-{
-    m_isActive = active;
-    UpdateWidgetVisiblity();
-
-    m_channelGraph->SetActive(active);
-}
-
-void ChannelBase::SetColor(QColor &color)
-{
-    m_color = color;
-    m_widget->SetColor(color);
-    m_measurement->GetPlot()->SetGraphColor(m_channelGraph, color);
+    return true;
 }
 
 Measurement * ChannelBase::GetMeasurement()
@@ -356,37 +216,9 @@ Measurement * ChannelBase::GetMeasurement()
     return m_measurement;
 }
 
-bool ChannelBase::IsActive()
-{
-    return m_isActive;
-}
-
 ChannelWidget *ChannelBase::GetWidget()
 {
     return m_widget;
-}
-
-void ChannelBase::_SetName(QString const &name)
-{
-    m_name = name;
-    _UpdateTitle();
-}
-
-void ChannelBase::_SetShapeIndex(unsigned index)
-{
-    m_channelGraph->SetMarkShape(index, m_measurement->GetMarksShown());
-}
-
-void ChannelBase::_SetUnits(QString const &units)
-{
-    m_units = units;
-    _ShowLastValueWithUnits();
-    m_channelGraph->GetValuleAxis()->UpdateGraphAxisName();
-}
-
-QSize ChannelBase::GetMinimumSize()
-{
-    return m_widget->GetMinimumSize();
 }
 
 //I can't use == because same doubles have not to be exactly the same
@@ -410,11 +242,6 @@ int ChannelBase::GetLastClosestValueIndex(double value) const
     return closestIndex;
 }
 
-double ChannelBase::GetNaValue()
-{
-    return std::numeric_limits<double>::infinity();
-}
-
 double ChannelBase::GetValue(unsigned index) const
 {
     if (index >= m_values.count())
@@ -425,7 +252,7 @@ double ChannelBase::GetValue(unsigned index) const
     return m_values[index];
 }
 
-unsigned ChannelBase::_GetShapeIndex()
+bool ChannelBase::IsValueNA(int index) const
 {
-    return m_channelGraph->GetShapeIndex();
+    return index >= GetValueCount() || GetValue(index) == ChannelWidget::GetNaValue();
 }

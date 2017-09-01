@@ -3,6 +3,7 @@
 #include <AxisSettings.h>
 #include <Context.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -97,7 +98,7 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
-        if (axis == channel->GetChannelGraph()->GetValuleAxis())
+        if (axis == channel->GetWidget()->GetChannelGraph()->GetValuleAxis())
         {
             if (MyMessageBox::No ==
                 MyMessageBox::question(
@@ -117,8 +118,8 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
     {
-        if (axis == channel->GetChannelGraph()->GetValuleAxis())
-            channel->GetChannelGraph()->AssignToAxis(firstVertical);
+        if (axis == channel->GetWidget()->GetChannelGraph()->GetValuleAxis())
+            channel->GetWidget()->GetChannelGraph()->AssignToAxis(firstVertical);
     }
     m_measurement.RemoveAxis(axis);
     m_context.m_mainWindow.SetSavedState(false);

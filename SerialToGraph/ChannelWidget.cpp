@@ -1,4 +1,7 @@
+#include "Axis.h"
 #include "ChannelWidget.h"
+#include <ChannelGraph.h>
+#include <Plot.h>
 #include <QColor>
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
@@ -7,16 +10,29 @@
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(
-    const QString &title,
+ChannelWidget::ChannelWidget(const QString &name,
     QWidget *parent,
     unsigned sizeFactor,
     ChannelBase::ValueType valueType,
-    const QColor &foreColor
+    const QColor &foreColor,
+    unsigned shortcutOrder,
+    ChannelGraph *channelGraph,
+    Plot * plot,
+    Qt::PenStyle penStyle,
+    QString units,
+    bool hideAllChannels
 ) :
     QWidget(parent),
-    m_title(new QLabel(title, this)),
-    m_valueLabel(new ValueLabel("", this, sizeFactor, _GetBackColorFromType(valueType), foreColor))
+    m_name(name),
+    m_title(new QLabel(name, this)),
+    m_valueLabel(new ValueLabel("", this, sizeFactor, _GetBackColorFromType(valueType), foreColor)),
+    m_shortcutOrder(shortcutOrder),
+    m_channelGraph(channelGraph),
+    m_plot(plot),
+    m_penStyle(penStyle),
+    m_units(units),
+    m_isActive(true),
+    m_hideAllChannels(hideAllChannels)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -42,7 +58,7 @@ ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsi
 
     setMargin(1);
     SetMinimumFontSize(sizeFactor);
-    SetColor(foreColor);
+    SetForeColor(foreColor);
 }
 
 void ChannelWidget::ValueLabel::SetMinimumFontSize(unsigned sizeFactor)
@@ -89,7 +105,7 @@ void ChannelWidget::ValueLabel::resizeEvent(QResizeEvent * event)
     setFont(f);
 }
 
-void ChannelWidget::ValueLabel::SetColor(const QColor &color)
+void ChannelWidget::ValueLabel::SetForeColor(const QColor &color)
 {
     m_foreColor = color;
     QString style;
@@ -129,7 +145,7 @@ void ChannelWidget::ValueLabel::SetBackColor(const QColor &backColor)
         return;
 
     m_backColor = backColor;
-    SetColor(m_foreColor); //to be filled complete style
+    SetForeColor(m_foreColor); //to be filled complete style
 }
 
 void ChannelWidget::mousePressEvent(QMouseEvent * event)
@@ -143,22 +159,20 @@ void ChannelWidget::setTitle(QString const &title)
     m_title->setText(title);
 }
 
-void ChannelWidget::ShowValueWithUnits(
-    QString const&value, QString const &units, ChannelBase::ValueType valueType)
+void ChannelWidget::ShowLastValueWithUnits(ChannelBase::ValueType valueType)
 {
-    ShowValueWithUnits(value, units);
+    ShowLastValueWithUnits();
     _SetBackColor(valueType);
 }
 
-void ChannelWidget::ShowValueWithUnits(
-    QString const&value, QString const &units)
+void ChannelWidget::ShowLastValueWithUnits()
 {
-    QString textWithSpace = value + " " + units;
+    QString textWithSpace = m_lastValueText + " " + m_units;
     unsigned widthMax = m_valueLabel->GetLongestTextSize().width();
     unsigned widthSpace = m_valueLabel->GetSize(textWithSpace).width();
 
     m_valueLabel->setText(
-        (widthMax >= widthSpace) ? textWithSpace : value + "<br/>" + units);
+        (widthMax >= widthSpace) ? textWithSpace : m_lastValueText + "<br/>" + m_units);
     //m_valueLabel->setText("-0.000e-00<br/>0");
 }
 
@@ -175,9 +189,10 @@ QSize ChannelWidget::GetMinimumSize()
     return mSize;
 }
 
-void ChannelWidget::SetColor(const QColor &color)
+void ChannelWidget::SetForeColor(const QColor &color)
 {
-    m_valueLabel->SetColor(color);
+    m_valueLabel->SetForeColor(color);
+    m_plot->SetGraphColor(m_channelGraph, color);
 }
 
 
@@ -208,4 +223,160 @@ QColor ChannelWidget::_GetBackColorFromType(ChannelBase::ValueType type)
 void ChannelWidget::_SetBackColor(ChannelBase::ValueType type)
 {
     m_valueLabel->SetBackColor(_GetBackColorFromType(type));
+}
+
+QString ChannelWidget::GetName()
+{
+    return m_name;
+}
+
+void ChannelWidget::SetName(QString const &name)
+{
+    m_name = name;
+    UpdateTitle();
+}
+
+void ChannelWidget::UpdateTitle()
+{
+    setTitle(
+        (~0 == m_shortcutOrder) ?
+            m_name :
+            QString("(%1) ").arg(m_shortcutOrder) + m_name
+    );
+    m_channelGraph->GetValuleAxis()->UpdateGraphAxisName();
+}
+
+QString ChannelWidget::GetNAValueString()
+{
+    return tr("n/a");
+}
+
+void ChannelWidget::DisplayNAValue(ChannelBase::ValueType type)
+{
+    //m_lastValueText = "-0.000e-00<br/>mA";
+    m_lastValueText = GetNAValueString();
+    ShowLastValueWithUnits(type);
+}
+
+double ChannelWidget::GetNaValue()
+{
+    return std::numeric_limits<double>::infinity();
+}
+
+void ChannelWidget::FillLastValueText(QString text)
+{
+    m_lastValueText = text;
+}
+void ChannelWidget::FillLastValueText(double value)
+{
+    if (value == GetNaValue())
+    {
+        m_lastValueText = GetNAValueString();
+        return;
+    }
+
+    double absValue = std::abs(value);
+
+    QLocale locale(QLocale::system());
+
+    QString strValue;
+    if (absValue < 0.0001 && absValue != 0)
+        strValue = locale.toString(value, 'e', 3); //QString::number(value, 'e', 3);
+    else if (absValue < 1)
+        strValue = locale.toString(value, 'g', 4);
+    else
+        strValue = locale.toString(value, 'g', 6);
+
+    m_lastValueText = strValue;
+}
+
+Qt::PenStyle ChannelWidget::GetPenStyle()
+{
+    return m_penStyle;
+}
+
+void ChannelWidget::SetPenStyle(Qt::PenStyle penStyle)
+{
+    m_penStyle = penStyle;
+    m_plot->SetPenStyle(m_channelGraph, penStyle);
+}
+
+unsigned ChannelWidget::GetShapeIndex()
+{
+    return m_channelGraph->GetShapeIndex();
+}
+
+void ChannelWidget::SetShapeIndex(unsigned index)
+{
+    m_channelGraph->SetMarkShape(index);
+}
+
+void ChannelWidget::ShowOrHideGraph(bool shown)
+{
+    m_channelGraph->setVisible(shown);
+    m_plot->RescaleAllAxes();
+}
+
+void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
+{
+    if (yValue == GetNaValue())
+        m_channelGraph->data()->remove(xValue);
+    else
+        m_channelGraph->data()->insert(xValue, QCPData(xValue, yValue));
+
+    if (replot)
+    {
+        m_plot->ReplotIfNotDisabled();
+    }
+}
+
+ChannelGraph *ChannelWidget::GetChannelGraph()
+{
+    return m_channelGraph;
+}
+
+bool ChannelWidget::IsOnHorizontalAxis()
+{
+    return m_channelGraph->GetValuleAxis()->IsHorizontal();
+}
+
+QString ChannelWidget::GetUnits()
+{
+    return m_units;
+}
+
+void ChannelWidget::SetUnits(QString const &units)
+{
+    m_units = units;
+    ShowLastValueWithUnits();
+    GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
+}
+
+void ChannelWidget::UpdateWidgetVisiblity()
+{
+    setVisible(m_isActive && !m_hideAllChannels);
+}
+
+bool ChannelWidget::IsActive()
+{
+    return m_isActive;
+}
+
+void ChannelWidget::SetActive(bool active)
+{
+    m_isActive = active;
+    UpdateWidgetVisiblity();
+
+    m_channelGraph->SetActive(active);
+}
+
+void ChannelWidget::hideAllCHannelsChanged(bool hideAllChannels)
+{
+    m_hideAllChannels = hideAllChannels;
+    UpdateWidgetVisiblity();
+}
+
+Plot* ChannelWidget::GetPlot()
+{
+    return m_plot;
 }

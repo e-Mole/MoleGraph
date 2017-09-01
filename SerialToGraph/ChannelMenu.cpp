@@ -3,6 +3,7 @@
 #include <ButtonLine.h>
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
+#include <ChannelWidget.h>
 #include <ColorCheckBox.h>
 #include <Context.h>
 #include <GhostChannel.h>
@@ -78,9 +79,9 @@ void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
 void ChannelMenu::_AddChannel(ChannelBase *channel, bool removable)
 {
     unsigned rowNr = m_gridLayout->rowCount();
-    ColorCheckBox *cb = new ColorCheckBox(channel->GetName(), this);
-    cb->SetChecked(channel->IsActive());
-    cb->SetColor(channel->GetColor());
+    ColorCheckBox *cb = new ColorCheckBox(channel->GetWidget()->GetName(), this);
+    cb->SetChecked(channel->GetWidget()->IsActive());
+    cb->SetColor(channel->GetWidget()->GetForeColor());
 
     m_channelCheckBoxes[channel] = cb;
     m_checkBoxChannels[cb] = channel;
@@ -111,8 +112,8 @@ void ChannelMenu::UpdateCheckBoxes()
 {
     for (auto it =  m_channelCheckBoxes.begin(); it != m_channelCheckBoxes.end(); ++it)
     {
-        it.value()->SetText(it.key()->GetName());
-        it.value()->SetColor(it.key()->GetColor());
+        it.value()->SetText(it.key()->GetWidget()->GetName());
+        it.value()->SetColor(it.key()->GetWidget()->GetForeColor());
     }
 }
 void ChannelMenu::edit()
@@ -121,8 +122,8 @@ void ChannelMenu::edit()
     channel->editChannel();
 
     ColorCheckBox *cb = m_channelCheckBoxes[channel];
-    cb->SetText(channel->GetName());
-    cb->SetColor(channel->GetColor());
+    cb->SetText(channel->GetWidget()->GetName());
+    cb->SetColor(channel->GetWidget()->GetForeColor());
 
     m_buttonLine->UpdateRunButtonsState();
 }
@@ -152,12 +153,12 @@ void ChannelMenu::remove()
 void ChannelMenu::channelActivated()
 {
     ChannelBase * channel = m_checkBoxChannels[(ColorCheckBox*)sender()];
-    ActivateChannel(channel, !channel->IsActive());
+    ActivateChannel(channel, !channel->GetWidget()->IsActive());
 }
 
 void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
 {
-    channel->SetActive(checked);
+    channel->GetWidget()->SetActive(checked);
     m_channelCheckBoxes[channel]->SetChecked(checked);
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.replaceDisplays();
@@ -178,7 +179,7 @@ void ChannelMenu::noChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (channel->IsActive())
+        if (channel->GetWidget()->IsActive())
         {
             m_context.m_mainWindow.SetSavedState(false);
             ActivateChannel(channel, false);
@@ -207,8 +208,8 @@ void ChannelMenu::addGhostgActivated()
 
     //FIXME:it should be created after confirmation
     ChannelGraph* channelGraph = m_measurement.AddGhostChannelGraph(
-        ghostable->GetColor(),
-        ghostable->GetChannelGraph()->GetShapeIndex()
+        ghostable->GetWidget()->GetForeColor(),
+        ghostable->GetWidget()->GetChannelGraph()->GetShapeIndex()
     );
 
     GhostChannel *newGhost = new GhostChannel(
@@ -216,9 +217,9 @@ void ChannelMenu::addGhostgActivated()
         &m_measurement,
         m_context,
         channelGraph,
-        ghostable->GetColor(),
+        ghostable->GetWidget()->GetForeColor(),
         true,
-        ghostable->GetUnits(),
+        ghostable->GetWidget()->GetUnits(),
         Qt::DotLine
         );
 
@@ -240,7 +241,7 @@ void ChannelMenu::allChannelsActivated()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (!channel->IsActive())
+        if (!channel->GetWidget()->IsActive())
         {
             m_context.m_mainWindow.SetSavedState(false);
             ActivateChannel(channel, true);

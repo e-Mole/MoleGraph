@@ -14,7 +14,6 @@ class HwChannel : public ChannelBase
 {
     Q_OBJECT
 
-    virtual ChannelBase::ValueType _GetValueType(unsigned index);
     void _RecalculateExtremes();
     int m_hwIndex;
     QVector<double> m_originalValues;
@@ -37,6 +36,8 @@ public:
     int GetHwIndex() { return m_hwIndex; }
     double GetOriginalValue(int index);
     void ChangeValue(int index, double newValue);
+    virtual ChannelBase::ValueType GetValueType(unsigned index);
+
 signals:
 
 public slots:

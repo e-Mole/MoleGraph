@@ -28,6 +28,8 @@ class QVBoxLayout;
 class SampleChannel;
 struct Context;
 
+namespace hw { class HwSink;}
+
 class WidgetWithResizeEvent : public QWidget
 {
     Q_OBJECT
@@ -128,6 +130,7 @@ private:
 
     WidgetWithResizeEvent  m_widget;
     Context const &m_context;
+    hw::HwSink &m_hwSink;
     QString m_name;
     SampleUnits m_sampleUnits;
     unsigned m_period;
@@ -161,7 +164,13 @@ private:
     unsigned m_currentIndex;
     QMap<ChannelBase*, ChannelGraph*> m_channelToGraph; //this colection will be used for searching in both directions so QMap is not the best one but there will be just a few elements so who cares
 public:
-    Measurement(QWidget *parent, Context &context, Measurement *source, bool initializeAxiesAndChannels);
+    Measurement(
+        QWidget *parent,
+        Context &context,
+        hw::HwSink &hwSink,
+        Measurement *source,
+        bool initializeAxiesAndChannels
+);
     ~Measurement();
 
     QString &GetName() { return m_name; }

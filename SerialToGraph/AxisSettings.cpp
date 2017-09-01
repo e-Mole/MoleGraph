@@ -1,6 +1,5 @@
 #include "AxisSettings.h"
 #include <Axis.h>
-#include <Context.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <Plot.h>

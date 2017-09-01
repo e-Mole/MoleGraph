@@ -1,6 +1,7 @@
 #include "Plot.h"
 #include <Axis.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <qmath.h>
 #include <Context.h>
 #include <Measurement.h>
@@ -533,7 +534,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        if (channel->IsActive() && channel->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
+        if (channel->GetWidget()->IsActive() && channel->GetWidget()->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
         {
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
@@ -610,7 +611,8 @@ void Plot::DisplayChannelValue(ChannelBase *channel)
     if (m_markerTypeSelection == MTSSample)
     {
         if (m_markerPositions.first != std::numeric_limits<int>::min())
-            channel->displayValueOnIndex(firstIndex);
+            channel->GetWidget()->FillLastValueText(channel->GetValue(firstIndex));
+            channel->GetWidget()->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
     }
     else
     {
@@ -620,7 +622,14 @@ void Plot::DisplayChannelValue(ChannelBase *channel)
                     m_markerPositions.second
                 )
             );
-        channel->DisplayValueInRange(firstIndex, secondIndex, m_markerRangeValue);
+
+        double rangeValue = 0;
+        if (channel->FillRangeValue(firstIndex, secondIndex, m_markerRangeValue, rangeValue))
+        {
+            //FIXME: stange
+            channel->GetWidget()->FillLastValueText(rangeValue);
+            channel->GetWidget()->ShowLastValueWithUnits();
+        }
     }
 }
 
@@ -633,14 +642,14 @@ void Plot::RefillGraphs()
 {
     foreach (ChannelBase *channel, m_measurement.GetChannels())
     {
-        channel->GetChannelGraph()->clearData();
+        channel->GetWidget()->GetChannelGraph()->clearData();
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
             ChannelBase * horizontalChannel = m_measurement.GetHorizontalChannel();
             if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
                 continue;
 
-            channel->GetChannelGraph()->data()->insert(
+            channel->GetWidget()->GetChannelGraph()->data()->insert(
                 horizontalChannel->GetValue(i),
                 QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
             );

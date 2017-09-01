@@ -179,9 +179,10 @@ bool GlobalSettings::GetHideAllChannels()
 {
     return _Get(Key_HideAllChannels, false).toBool();
 }
-void GlobalSettings::SetHideAllChannels(bool show)
+void GlobalSettings::SetHideAllChannels(bool hide)
 {
-     _Set(Key_HideAllChannels, show);
+     _Set(Key_HideAllChannels, hide);
+     hideAllCHannelsChanged(hide);
 }
 
 Qt::Orientation GlobalSettings::GetMenuOrientation()

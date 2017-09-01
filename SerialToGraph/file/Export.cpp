@@ -1,5 +1,6 @@
 #include "Export.h"
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <SampleChannel.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -29,7 +30,7 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
         bool firstForMeasurement = true;
         foreach (ChannelBase *channel, m->GetChannels())
         {
-            if (!channel->IsActive()) //at least sample channel will be visible
+            if (!channel->GetWidget()->IsActive()) //at least sample channel will be visible
                 continue;
 
             if (firstColumn)
@@ -50,9 +51,9 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
                 channelLine.append(sampleChannel->GetStyleText(SampleChannel::Samples).toStdString() + ";");
 
             channelLine.append(
-                channel->GetUnits().size() > 0 ?
-                    QString("%1 [%2]").arg(channel->GetName()).arg(channel->GetUnits()).toStdString().c_str() :
-                    channel->GetName().toStdString().c_str()
+                channel->GetWidget()->GetUnits().size() > 0 ?
+                    QString("%1 [%2]").arg(channel->GetWidget()->GetName()).arg(channel->GetWidget()->GetUnits()).toStdString().c_str() :
+                    channel->GetWidget()->GetName().toStdString().c_str()
             );
         }
     }
@@ -75,7 +76,7 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         {
             foreach (ChannelBase *channel, m->GetChannels())
             {
-                if (!channel->IsActive())
+                if (!channel->GetWidget()->IsActive())
                     continue;
 
                 if (first)

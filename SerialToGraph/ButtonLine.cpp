@@ -5,6 +5,7 @@
 #include <ChannelMenu.h>
 #include <Context.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <file/Export.h>
 #include <file/FileDialog.h>
 #include <GlobalSettingsDialog.h>
@@ -45,7 +46,7 @@
 #   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation orientation):
+ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSink, Qt::Orientation orientation):
     QWidget(parent),
     m_mainLayout(new QGridLayout()),
     m_startButton(NULL),
@@ -69,6 +70,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
     m_noneAction(NULL),
     m_afterLastChannelSeparator(NULL),
     m_context(context),
+    m_hwSink(hwSink),
     m_measurement(NULL),
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
@@ -84,7 +86,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
     m_measurementButton = new QPushButton(tr("Measurements"), this);
-    connect(m_measurementButton, SIGNAL(clicked()), this, SLOT(measurementMenuButtonPressed()));
+    connect(m_measurementButton, SIGNAL(clicked()), this, SIGNAL(measurementMenuButtonPressed()));
 
     m_viewButton = new QPushButton(tr("View"), this);
     connect(m_viewButton, SIGNAL(clicked()), this, SLOT(viewMenuButtonPressed()));
@@ -119,7 +121,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, Qt::Orientation 
 
     m_connectivityButton = new QPushButton(this);
     connect(m_connectivityButton, SIGNAL(released()), &m_context.m_mainWindow, SLOT(openSerialPort()));
-    _SetConnectivityState(m_context.m_hwSink.GetStateString(), m_context.m_hwSink.GetState());
+    _SetConnectivityState(m_hwSink.GetStateString(), m_hwSink.GetState());
 
     ReplaceButtons(orientation);
     _InitializeMenu();
@@ -166,9 +168,8 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
         );
 }
 
-void ButtonLine::_OpenMenuDialog(QPushButton *button, QDialog &dialog)
+void ButtonLine::_OpenMenuDialog(QDialog &dialog)
 {
-    Q_UNUSED(button);
     dialog.exec();
 }
 
@@ -220,19 +221,13 @@ void ButtonLine::_RefreshPanelMenu()
 void ButtonLine::panelMenuButtonPressed()
 {
     m_channelMenu->UpdateCheckBoxes();
-    _OpenMenuDialog(m_panelMenuButton, *m_channelMenu);
+    _OpenMenuDialog(*m_channelMenu);
 }
 
 void ButtonLine::axisMenuButtonPressed()
 {
     AxisMenu axisMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement);
-    _OpenMenuDialog(m_axisMenuButton, axisMenu);
-}
-
-void ButtonLine::measurementMenuButtonPressed()
-{
-    MeasurementMenu measurementMenu(m_context.m_mainWindow.centralWidget(), m_context);
-    _OpenMenuDialog(m_measurementButton, measurementMenu);
+    _OpenMenuDialog(axisMenu);
 }
 
 void ButtonLine::viewMenuButtonPressed()
@@ -321,7 +316,7 @@ void ButtonLine::_InitializeMenu()
 void ButtonLine::settings()
 {
     delete m_settingsDialog; //to be alwais scrolled to up-left corner
-    m_settingsDialog = new GlobalSettingsDialog(this, m_context);
+    m_settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
     m_settingsDialog->exec();
 }
 
@@ -387,9 +382,9 @@ void ButtonLine::UpdateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->IsActive())
+        if (channel->GetType() == ChannelBase::Type_Hw && channel->GetWidget()->IsActive())
             hwChannelPresent = true;
-        if (channel->IsOnHorizontalAxis() && (channel->IsActive() || channel->GetType() == ChannelBase::Type_Sample))
+        if (channel->GetWidget()->IsOnHorizontalAxis() && (channel->GetWidget()->IsActive() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 
@@ -661,7 +656,7 @@ QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
 void ButtonLine::channelActivated()
 {
     ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
-    m_channelMenu->ActivateChannel(channel, !channel->IsActive());
+    m_channelMenu->ActivateChannel(channel, !channel->GetWidget()->IsActive());
 }
 
 

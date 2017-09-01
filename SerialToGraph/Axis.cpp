@@ -1,6 +1,6 @@
 #include "Axis.h"
-#include <Context.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <SampleChannel.h>
 #include <GlobalSettings.h>
 #include <Measurement.h>
@@ -9,7 +9,7 @@
 #include <QString>
 
 Axis::Axis(Measurement *measurement,
-    Context const &context,
+    GlobalSettings &settings,
     QColor const & color,
     QCPAxis *graphAxis,
     QString title,
@@ -20,7 +20,7 @@ Axis::Axis(Measurement *measurement,
 ) :
     QObject(NULL),
     m_measurement(measurement),
-    m_context(context),
+    m_settings(settings),
     m_title(title),
     m_isRemovable(isRemovable),
     m_color(color),
@@ -41,8 +41,8 @@ void Axis::_ReassignGraphAxis(QCPAxis *axis)
     {
         foreach (ChannelBase *channel, m_measurement->GetChannels())
         {
-            if (channel->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
-                channel->GetChannelGraph()-> AssignToGraphAxis(axis);
+            if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
+                channel->GetWidget()->GetChannelGraph()-> AssignToGraphAxis(axis);
         }
 
         m_measurement->GetPlot()->RemoveAxis(m_graphAxis);
@@ -88,18 +88,19 @@ void Axis::UpdateGraphAxisName()
 
     for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
     {
-        if ((m_measurement->GetChannel(i)->IsActive() || m_measurement->GetChannel(i)->IsOnHorizontalAxis()) &&
-            m_measurement->GetChannel(i)->GetChannelGraph()->GetValuleAxis() == this)
+        ChannelWidget *channelWidget = m_measurement->GetChannel(i)->GetWidget();
+        if ((channelWidget->IsActive() || channelWidget->IsOnHorizontalAxis()) &&
+            channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != m_measurement->GetChannelCount() &&
-                    m_measurement->GetChannel(i+1)->IsActive() &&
-                    this == m_measurement->GetChannel(i+1)->GetChannelGraph()->GetValuleAxis() &&
+                    m_measurement->GetChannel(i+1)->GetWidget()->IsActive() &&
+                    this == m_measurement->GetChannel(i+1)->GetWidget()->GetChannelGraph()->GetValuleAxis() &&
                     i != 0 &&
-                    m_measurement->GetChannel(i-1)->IsActive() &&
-                    this == m_measurement->GetChannel(i-1)->GetChannelGraph()->GetValuleAxis())
+                    m_measurement->GetChannel(i-1)->GetWidget()->IsActive() &&
+                    this == m_measurement->GetChannel(i-1)->GetWidget()->GetChannelGraph()->GetValuleAxis())
                 {
                     addMiddle = true;
                     continue;
@@ -115,16 +116,16 @@ void Axis::UpdateGraphAxisName()
                 addMiddle = false;
             }
 
-            channels += m_measurement->GetChannel(i)->GetName();
+            channels += channelWidget->GetName();
 
             if (0 == units.size())
-                units = m_measurement->GetChannel(i)->GetUnits();
-            else if (units != m_measurement->GetChannel(i)->GetUnits())
+                units = channelWidget->GetUnits();
+            else if (units != channelWidget->GetUnits())
                 units = "/n"; //escape sequence for no units
         }
     }
 
-    bool round = m_context.m_settings.GetUnitBrackets() == "()";
+    bool round = m_settings.GetUnitBrackets() == "()";
     QString unitString =
         (0 == units.size() || "/n" == units) ?
             "" :
@@ -137,7 +138,7 @@ void Axis::UpdateVisiblility()
 {
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        if (channel->IsActive() && channel->GetChannelGraph()->GetValuleAxis() == this)
+        if (channel->GetWidget()->IsActive() && channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_measurement->GetPlot()->ReplotIfNotDisabled();
@@ -184,7 +185,7 @@ bool Axis::IsEmptyExcept(ChannelBase *except)
         if (channel == except)
             continue;
 
-        if (channel->GetChannelGraph()->GetValuleAxis() == this)
+        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
             return false;
     }
 
@@ -196,7 +197,7 @@ bool Axis::ContainsChannelWithRealTimeStyle()
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
         if (
-            channel->GetChannelGraph()->GetValuleAxis() == this &&
+            channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this &&
             channel->GetType() == ChannelBase::Type_Sample &&
             ((SampleChannel*)channel)->IsInRealtimeStyle()
         )
@@ -209,7 +210,7 @@ void Axis::UpdateGraphAxisStyle()
 {
     ChannelBase *axisChannel = NULL;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetChannelGraph()->GetValuleAxis() == this)
+        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
         {
             axisChannel = channel;
             break; //I know, that real time channel is on oun axis
@@ -234,7 +235,7 @@ unsigned Axis::GetAssignedChannelCount()
 {
     unsigned count = 0;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetChannelGraph()->GetValuleAxis() == this)
+        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
             count++;
 
     return count;

@@ -26,13 +26,15 @@ class QPushButton;
 class QShortcut;
 struct Context;
 
+namespace hw { class HwSink; }
+
 class ButtonLine : public QWidget
 {
     Q_OBJECT
 
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
-    void _OpenMenuDialog(QPushButton *button, QDialog &dialog);
+    void _OpenMenuDialog(QDialog &dialog);
     void _RefreshPanelMenu();
     void _ExportCSV(QVector<Measurement *> const & measurements);
     void _ClearPanelShortcuts();
@@ -74,6 +76,7 @@ class ButtonLine : public QWidget
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
     Context const &m_context;
+    hw::HwSink &m_hwSink;
     Measurement *m_measurement;
 
     QShortcut *m_graphShortcut;
@@ -87,7 +90,7 @@ class ButtonLine : public QWidget
 
 public:
     void UpdateRunButtonsState();
-    ButtonLine(QWidget *parent, const Context &context, Qt::Orientation orientation);
+    ButtonLine(QWidget *parent, const Context &context, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
     QString GetGraphShortcutText();
     QString GetAllChannelShortcutText();
@@ -100,6 +103,7 @@ signals:
     void channelTriggered(ChannelBase *channel, bool checked);
     void axesPressed();
     void allChannelsDisplayedOrHidden();
+    void measurementMenuButtonPressed();
 
 private slots:
     void newFile();
@@ -120,7 +124,6 @@ public slots:
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
     void axisMenuButtonPressed();
-    void measurementMenuButtonPressed();
     void viewMenuButtonPressed();
     void measurementStateChanged();
     void channelActivated();

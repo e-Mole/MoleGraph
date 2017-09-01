@@ -51,7 +51,7 @@ public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
 
-    Measurement *CreateNewGraphicContainer(bool initializeAxesAndChannels);
+    Measurement *CreateNewMeasurement(bool initializeAxesAndChannels);
     Measurement *CloneCurrentMeasurement();
     void ConfirmMeasurement(Measurement *m);
     void SwichCurrentMeasurement(Measurement *m);
@@ -78,6 +78,7 @@ private slots:
     void currentMeasurementChanged(int index);
     void measurementColorChanged();
     void menuButtonClicked();
+    void measurementMenuButtonPressed();
 public slots:
     void openSerialPort();
 };

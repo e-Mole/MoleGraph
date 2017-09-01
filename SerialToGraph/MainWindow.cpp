@@ -35,7 +35,7 @@ using namespace atog;
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
     m_hwSink(m_settings, this),
-    m_context(m_measurements, m_hwSink, m_settings, *this),
+    m_context(m_measurements, m_settings, *this),
     m_currentMeasurement(NULL),
     m_portListDialog(NULL),
     m_console(new Console(this)),
@@ -65,8 +65,9 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
-    m_buttonLine = new ButtonLine(this, m_context, Qt::Vertical);
+    m_buttonLine = new ButtonLine(this, m_context, m_hwSink, Qt::Vertical);
 
+    connect (m_buttonLine, SIGNAL(measurementMenuButtonPressed()), this, SLOT(measurementMenuButtonPressed()));
     connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
@@ -87,7 +88,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     );
 #endif
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
-    ConfirmMeasurement(CreateNewGraphicContainer(true));
+    ConfirmMeasurement(CreateNewMeasurement(true));
 
     m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
     m_portListDialog->startSearching();
@@ -195,14 +196,14 @@ void MainWindow::ShowConsole(bool show)
     m_console->setVisible(show);
 }
 
-Measurement *MainWindow::CreateNewGraphicContainer(bool initializeAxesAndChannels)
+Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 {
-    return new Measurement(this, m_context, NULL, initializeAxesAndChannels);
+    return new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels);
 }
 
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
-    return new Measurement(this, m_context, GetCurrnetMeasurement(), true);
+    return new Measurement(this, m_context, m_hwSink, GetCurrnetMeasurement(), true);
 }
 
 void MainWindow::ConfirmMeasurement(Measurement *m)
@@ -329,7 +330,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         RemoveAllMeasurements();
         for (int i = 0; i < count; i++)
         {
-            Measurement *m = CreateNewGraphicContainer(false);
+            Measurement *m = CreateNewMeasurement(false);
             m->SetSaveLoadValues(values);
             in >> m;
             m->RecalculateSliderMaximum();
@@ -353,7 +354,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
                         continue;
 
                     for (unsigned j = 0; j < sampleCount; j++)
-                        channel->AddValue(channel->GetNaValue());
+                        channel->AddValue(ChannelWidget::GetNaValue());
                 }
             }
         }
@@ -401,7 +402,7 @@ void MainWindow::OpenNew()
     m_currentFileName = "";
     m_currentFileNameWithPath = "";
     RemoveAllMeasurements();
-    ConfirmMeasurement(CreateNewGraphicContainer(true));
+    ConfirmMeasurement(CreateNewMeasurement(true));
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent * event)
@@ -477,4 +478,10 @@ void MainWindow::UpdateChannelSizeFactor()
     foreach (Measurement *m, m_measurements)
         foreach (ChannelBase *channel, m->GetChannels())
             channel->GetWidget()->SetMinimumFontSize(m_settings.GetChannelSizeFactor());
+}
+
+void MainWindow::measurementMenuButtonPressed()
+{
+    MeasurementMenu measurementMenu(centralWidget(), m_context);
+    measurementMenu.exec();
 }

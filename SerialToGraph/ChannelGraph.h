@@ -11,6 +11,7 @@ class ChannelGraph : public QCPGraph
     QCPScatterStyle m_selectedMarkStyle;
     Axis *m_valueAxis;
     bool m_active;
+
     void drawScatterPlot(QCPPainter *painter, QVector<QCPData> *scatterData) const;
 
     //to be hidden
@@ -20,8 +21,16 @@ class ChannelGraph : public QCPGraph
     { return QCPGraph::scatterStyle(); }
 
 public:
-    ChannelGraph(QCPAxis *keyAxis, Axis *valueAxis, QColor const &color, unsigned shapeIndex, bool showAllMarks, Qt::PenStyle penStyle);
-    void SetMarkShape(unsigned shapeIndex, bool showAllMarks);
+    ChannelGraph(
+        QCPAxis *keyAxis,
+        Axis *valueAxis,
+        QColor const &color,
+        unsigned shapeIndex,
+        bool showAllMarks,
+        Qt::PenStyle penStyle
+    );
+
+    void SetMarkShape(unsigned shapeIndex);
     void ChangeSelectedMarkIndex(int index);
     void ShowAllMarks(bool showAllMarks);
     void SetColor(const QColor& color);

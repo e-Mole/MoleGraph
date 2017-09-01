@@ -10,7 +10,7 @@ GhostChannel::GhostChannel(ChannelBase *sourceChannel,
     bool active,
     const QString &units, Qt::PenStyle penStyle
 ) :
-    ChannelBase(measurement, context, graph, GenerateName(sourceChannel), color, active, units, penStyle),
+    ChannelBase(measurement, context, graph, 0, GenerateName(sourceChannel), color, active, units, penStyle),
     m_sourceChannel(sourceChannel)
 {
     m_widget->SetTransparent(true); //it can't be done in channel base constructor because there is not defined type of chanel yet
@@ -19,10 +19,10 @@ GhostChannel::GhostChannel(ChannelBase *sourceChannel,
 void GhostChannel::FillGraph()
 {
     for (unsigned i = 0; i < GetValueCount(); i++)
-        UpdateGraph(i, GetValue(i), i == GetValueCount() -1);
+        GetWidget()->UpdateGraph(i, GetValue(i), i == GetValueCount() -1);
 }
 
 QString GhostChannel::GenerateName(ChannelBase *sourceChannel)
 {
-    return sourceChannel->GetMeasurement()->GetName() + "-" + sourceChannel->GetName();
+    return sourceChannel->GetMeasurement()->GetName() + "-" + sourceChannel->GetWidget()->GetName();
 }

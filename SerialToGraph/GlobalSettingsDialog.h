@@ -12,6 +12,8 @@ class QLineEdit;
 class QPushButton;
 class QSpinBox;
 
+namespace hw { class HwSink; }
+
 class GlobalSettingsDialog : public bases::FormDialogBase
 {
     Q_OBJECT
@@ -30,6 +32,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeShowStoreCancelButton();
 
     Context const &m_context;
+    hw::HwSink &m_hwSink;
     GlobalSettings &m_settings;
     bases::ComboBox *m_languages;
     bases::ComboBox *m_brackets;
@@ -43,7 +46,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QSpinBox *m_channelSizeFactor;
     QCheckBox *m_acceptChangesByDialogClosing;
 public:
-    GlobalSettingsDialog(QWidget *parent, Context const &context);
+    GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 
 signals:
 

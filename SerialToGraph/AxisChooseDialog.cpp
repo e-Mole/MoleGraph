@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <AxisSettings.h>
 #include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <SampleChannel.h>
 #include <Context.h>
@@ -35,13 +36,13 @@ AxisChooseDialog::AxisChooseDialog(
     {
         text =
             QString(tr("There might be just one channel on a horizontal axis. Values of a hannel '%1' are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.")).
-                arg(originalHChannel->GetName());
+                arg(originalHChannel->GetWidget()->GetName());
     }
     else
     {
         text =
             QString(tr("There might be just one channel on a horizontal axis. Please, chose a different one for a channel '%1'.")).
-                arg(originalHChannel->GetName());
+                arg(originalHChannel->GetWidget()->GetName());
     }
 
     QLabel *label = new QLabel(text, this);
@@ -54,7 +55,7 @@ AxisChooseDialog::AxisChooseDialog(
 
     foreach (Axis *axis, originalHChannel->GetMeasurement()->GetAxes())
     {
-        if (axis == originalHChannel->GetChannelGraph()->GetValuleAxis())
+        if (axis == originalHChannel->GetWidget()->GetChannelGraph()->GetValuleAxis())
             continue;
 
         if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHChannel))
@@ -70,13 +71,13 @@ AxisChooseDialog::AxisChooseDialog(
 
 void AxisChooseDialog::newAxisSelected()
 {
-    Axis*newAxis = m_originalHChannel->GetMeasurement()->CreateAxis(m_originalHChannel->GetColor());
+    Axis*newAxis = m_originalHChannel->GetMeasurement()->CreateAxis(m_originalHChannel->GetWidget()->GetForeColor());
 
     AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);
-        m_originalHChannel->GetChannelGraph()->AssignToAxis(newAxis);
+        m_originalHChannel->GetWidget()->GetChannelGraph()->AssignToAxis(newAxis);
         accept();
     }
     else
@@ -89,7 +90,7 @@ void AxisChooseDialog::axisSelected()
     {
         if (it.key() == (QRadioButton *)sender())
         {
-            m_originalHChannel->GetChannelGraph()->AssignToAxis(it.value());
+            m_originalHChannel->GetWidget()->GetChannelGraph()->AssignToAxis(it.value());
             break;
         }
     }

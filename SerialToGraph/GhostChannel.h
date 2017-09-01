@@ -11,7 +11,6 @@ class GhostChannel : public ChannelBase
 
     ChannelBase *m_sourceChannel;
 
-    virtual ValueType _GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 public:
     GhostChannel(ChannelBase * sourceChannel,
         Measurement *measurement,
@@ -43,6 +42,7 @@ public:
     { return m_sourceChannel->GetMaxValue(); }
 
     void FillGraph();
+    virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 signals:
 
 public slots:

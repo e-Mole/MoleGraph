@@ -70,7 +70,8 @@ SOURCES += main.cpp\
     GhostChannel.cpp \
     ChannelGraph.cpp \
     MeasurementGraphicsWrapper.cpp \
-    GraphicsContainer.cpp
+    GraphicsContainer.cpp \
+    data/measurementManager.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -120,7 +121,8 @@ HEADERS  += MainWindow.h \
     GhostChannel.h \
     ChannelGraph.h \
     MeasurementGraphicsWrapper.h \
-    GraphicsContainer.h
+    GraphicsContainer.h \
+    data/measurementManager.h
 
 CONFIG += mobility
 CONFIG += c++11

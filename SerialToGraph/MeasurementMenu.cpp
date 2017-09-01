@@ -89,7 +89,7 @@ void MeasurementMenu::FillGrid()
 
 void MeasurementMenu::addButtonPressed()
 {
-    Measurement *m = m_context.m_mainWindow.CreateNewGraphicContainer(true);
+    Measurement *m = m_context.m_mainWindow.CreateNewMeasurement(true);
 
     MeasurementSettings dialog(this, m, m_context.m_settings.GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())

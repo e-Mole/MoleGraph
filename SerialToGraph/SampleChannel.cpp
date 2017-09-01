@@ -15,21 +15,21 @@ SampleChannel::SampleChannel(Measurement *measurement,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, context,graph, "", color, visible, units),
+    ChannelBase(measurement, context,graph, 0, "", color, visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
     m_realTimeFormat(realTimeFormat)
 {
-    _SetName(GetStyleText());
-    _UpdateTitle();
-    m_widget->SetColor(color); //change widget style with defined color and backcolor
+    GetWidget()->SetName(GetStyleText());
+    GetWidget()->UpdateTitle();
+    m_widget->SetForeColor(color); //change widget style with defined color and backcolor
 }
 
 void SampleChannel::_SetStyle(Style style)
 {
     m_style = style;
-    _SetName(GetStyleText());
+    GetWidget()->SetName(GetStyleText());
     _UpdateAxisAndValues();
 
 }
@@ -55,30 +55,30 @@ void SampleChannel::_UpdateAxisAndValues()
         switch (m_timeUnits)
         {
         case Us:
-            m_units = tr("μs");
+            m_widget->SetUnits(tr("μs"));
             break;
         case Ms:
-            m_units = tr("ms");
+            m_widget->SetUnits(tr("ms"));
             break;
         case Sec:
-            m_units = tr("s");
+            m_widget->SetUnits(tr("s"));
             break;
         case Min:
-            m_units = tr("minutes");
+            m_widget->SetUnits(tr("minutes"));
             break;
         case Hours:
-            m_units = tr("hours");
+            m_widget->SetUnits(tr("hours"));
             break;
         case Days:
-            m_units = tr("days");
+            m_widget->SetUnits(tr("days"));
             break;
         }
     break;
     case RealTime:
-        m_units = GetRealTimeFormatText();
+        m_widget->SetUnits(GetRealTimeFormatText());
     break;
     default:
-        m_units = "";
+        m_widget->SetUnits("");
     }
 
     m_channelMinValue = std::numeric_limits<double>::max();
@@ -92,10 +92,10 @@ void SampleChannel::_UpdateAxisAndValues()
             m_channelMaxValue = value;
     }
 
-    m_widget->ShowValueWithUnits(m_lastValueText, m_units);
-    m_channelGraph->GetValuleAxis()->UpdateGraphAxisName();
+    m_widget->ShowLastValueWithUnits();
+    m_widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
     m_measurement->GetPlot()->RefillGraphs();
-    m_channelGraph->GetValuleAxis()->UpdateGraphAxisStyle();
+    m_widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
 void  SampleChannel::AddValue(double value, double timeFromStart)
@@ -168,9 +168,9 @@ QString SampleChannel::_GetRealTimeText(double secSinceEpoch)
 void SampleChannel::_FillLastValueTextFromIndex(int index)
 {
     if (m_style == RealTime)
-        m_lastValueText = GetValueTimestamp(index);
+        m_widget->FillLastValueText(GetValueTimestamp(index));
     else
-        ChannelBase::_FillLastValueTextFromIndex(index);
+        m_widget->FillLastValueText(GetValue(index));
 }
 
 double SampleChannel::GetMinValue()

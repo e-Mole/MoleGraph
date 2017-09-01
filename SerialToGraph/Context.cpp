@@ -9,15 +9,12 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QFileInfo>
 #include <QSettings>
-#include <hw/HwSink.h>
 
 Context::Context(QVector<Measurement *> &measurements,
-        hw::HwSink &hwSink,
         GlobalSettings &settings,
         MainWindow &mainWindow):
     m_settings(settings),
     m_measurements(measurements),
-    m_hwSink(hwSink),
     m_mainWindow(mainWindow)
 {
 }

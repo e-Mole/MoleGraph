@@ -3,7 +3,6 @@
 #include <ChannelGraph.h>
 #include <ChannelSettings.h>
 #include <ChannelWidget.h>
-#include <Context.h>
 #include <cmath>
 #include <GlobalSettings.h>
 #include <Measurement.h>
@@ -22,7 +21,6 @@
 #include <limits>
 
 ChannelBase::ChannelBase(Measurement *measurement,
-    Context const & context,
     ChannelGraph *channelGraph,
     unsigned shortcutOrder,
     QString const &name,
@@ -33,7 +31,6 @@ ChannelBase::ChannelBase(Measurement *measurement,
 ):
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
-    m_context(context),
     m_widget(
         new ChannelWidget(
             name,
@@ -80,7 +77,7 @@ void ChannelBase::AddValue( double value)
 
 bool ChannelBase::editChannel()
 {
-    ChannelSettings *settings = new ChannelSettings(this, m_context);
+    ChannelSettings *settings = new ChannelSettings(this);
     return QDialog::Accepted == settings->exec();
 }
 

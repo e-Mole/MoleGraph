@@ -47,7 +47,6 @@ public slots:
     void allChannelsActivated();
     void edit();
     void remove();
-    void addGhostgActivated();
 
 };
 

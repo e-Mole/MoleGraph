@@ -3,7 +3,6 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <qmath.h>
-#include <Context.h>
 #include <Measurement.h>
 #include <QColor>
 #include <QEvent>

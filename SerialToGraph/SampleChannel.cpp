@@ -6,7 +6,6 @@
 #include <QDateTime>
 
 SampleChannel::SampleChannel(Measurement *measurement,
-    Context const & context,
     ChannelGraph *graph,
     QColor const &color,
     bool visible,
@@ -15,7 +14,7 @@ SampleChannel::SampleChannel(Measurement *measurement,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, context,graph, 0, "", color, visible, units),
+    ChannelBase(measurement,graph, 0, "", color, visible, units),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),

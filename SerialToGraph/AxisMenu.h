@@ -9,7 +9,6 @@ class Measurement;
 class Plot;
 class QPushButton;
 class QWidget;
-struct Context;
 class AxisMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
@@ -17,12 +16,11 @@ class AxisMenu : public bases::MenuDialogBase
     void FillGrid();
     void _AddRowWithEditAndRemove(Axis *axis);
 
-    Context const &m_context;
     Measurement &m_measurement;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
 public:
-    AxisMenu(QWidget *parent, Context const &context, Measurement &measurement);
+    AxisMenu(QWidget *parent, Measurement &measurement);
 
 signals:
 

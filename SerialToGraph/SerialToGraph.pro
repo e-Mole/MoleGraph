@@ -67,7 +67,6 @@ SOURCES += main.cpp\
     file/AddDirDialog.cpp \
     bases/ComboBox.cpp \
     PlotContextMenu.cpp \
-    GhostChannel.cpp \
     ChannelGraph.cpp \
     MeasurementGraphicsWrapper.cpp \
     GraphicsContainer.cpp \
@@ -118,7 +117,6 @@ HEADERS  += MainWindow.h \
     file/AddDirDialog.h \
     bases/ComboBox.h \
     PlotContextMenu.h \
-    GhostChannel.h \
     ChannelGraph.h \
     MeasurementGraphicsWrapper.h \
     GraphicsContainer.h \

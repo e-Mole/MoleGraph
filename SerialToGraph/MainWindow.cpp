@@ -2,7 +2,6 @@
 #include <AxisMenu.h>
 #include <Axis.h>
 #include <ButtonLine.h>
-#include <Context.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <Console.h>

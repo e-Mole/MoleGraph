@@ -14,7 +14,6 @@
 class QColor;
 class QEvent;
 class QGestureEvent;
-class Context;
 class Measurement;
 class Axis;
 

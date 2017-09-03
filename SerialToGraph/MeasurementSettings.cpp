@@ -1,5 +1,4 @@
 #include "MeasurementSettings.h"
-#include <Context.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>

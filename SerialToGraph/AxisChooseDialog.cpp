@@ -5,7 +5,6 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <SampleChannel.h>
-#include <Context.h>
 #include <ChannelGraph.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -17,10 +16,9 @@
 
 
 AxisChooseDialog::AxisChooseDialog(
-    QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel
+    QWidget *parent, ChannelBase *originalHChannel, ChannelBase *newHChannel
 ) :
     QDialog(parent),
-    m_context(context),
     m_newAxis(NULL),
     m_originalHChannel(originalHChannel),
     m_newHChannel(newHChannel),

@@ -4,9 +4,7 @@
 #include <AxisSettings.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <GhostChannel.h>
 #include <GlobalSettings.h>
-#include <Context.h>
 #include <HwChannel.h>
 #include <Measurement.h>
 #include <MainWindow.h>
@@ -23,9 +21,8 @@
 #include <QString>
 #include <SampleChannel.h>
 
-ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
+ChannelSettings::ChannelSettings(ChannelBase *channel) :
     bases::FormDialogColor(channel->GetWidget(), tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
-    m_context(context),
     m_channel(channel),
     m_channelWidget(channel->GetWidget()),
     m_currentValueControl(NULL),
@@ -54,8 +51,6 @@ ChannelSettings::ChannelSettings(ChannelBase *channel, const Context &context) :
     {
         if (m_channel->GetType() == ChannelBase::Type_Hw)
             _InitializeValueLine(channel);
-        else //ghost
-            _InitializeGhostLines();
 
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
@@ -79,34 +74,6 @@ ChannelBase * ChannelSettings::_GetPropertiesChannel()
     return (ChannelBase *)qvariant_cast<qlonglong>(m_sourceChannels->currentData());
 }
 
-void ChannelSettings::_InitializeGhostLines()
-{
-    m_sourceMeasurements = new bases::ComboBox(this);
-    foreach(Measurement *m, m_context.m_measurements)
-    {
-        if (m != m_context.m_mainWindow.GetCurrnetMeasurement())
-        {
-            m_sourceMeasurements->addItem(m->GetName(), (qlonglong)m);
-            if (m == ((GhostChannel*)m_channel)->GetSourceChannel()->GetMeasurement())
-                m_sourceMeasurements->setCurrentIndex(m_sourceMeasurements->count()-1);
-        }
-    }
-
-    m_formLayout->addRow(new QLabel(tr("Source Measurement"), this), m_sourceMeasurements);
-
-    m_sourceChannels = new bases::ComboBox(this);
-    m_formLayout->addRow(new QLabel(tr("Source Channel"), this), m_sourceChannels);
-
-    if (m_sourceMeasurements->count() == 0)
-        m_sourceMeasurements->setDisabled(true);
-    else
-        fillSourceChannels(m_sourceMeasurements->currentIndex());
-
-    connect(m_sourceMeasurements, SIGNAL(currentIndexChanged(int)), this, SLOT(fillSourceChannels(int)));
-    connect(m_sourceChannels, SIGNAL(currentIndexChanged(int)), this, SLOT(updateChannelProperties(int)));
-
-}
-
 void ChannelSettings::fillSourceChannels(int index)
 {
     m_sourceChannels->clear();
@@ -115,9 +82,6 @@ void ChannelSettings::fillSourceChannels(int index)
     {
        if (channel->GetType() == ChannelBase::Type_Hw)
            m_sourceChannels->addItem(channel->GetWidget()->GetName(), (qlonglong)channel);
-
-       if (channel == ((GhostChannel *)m_channel)->GetSourceChannel())
-           m_sourceChannels->setCurrentIndex(m_sourceChannels->count()-1);
     }
 }
 
@@ -127,7 +91,6 @@ void ChannelSettings::updateChannelProperties(int index)
         return;
 
     ChannelBase *source_channel = (ChannelBase *)qvariant_cast<qlonglong>(m_sourceChannels->itemData(index));
-    m_name->setText(((GhostChannel*)m_channel)->GenerateName(source_channel));
     m_units->setText(source_channel->GetWidget()->GetUnits());
     if (NULL != m_shapeComboBox)
         m_shapeComboBox->setCurrentIndex(source_channel->GetWidget()->GetChannelGraph()->GetShapeIndex());
@@ -354,13 +317,6 @@ bool ChannelSettings::BeforeAccept()
     }
     else
     {
-        if (m_channel->GetType() == ChannelBase::Type_Ghost)
-        {
-            changed = true;
-            GhostChannel *ghost = (GhostChannel *)m_channel;
-            ghost->m_sourceChannel = _GetPropertiesChannel();
-        }
-
         if (m_channelWidget->GetUnits() != m_units->text())
         {
             changed = true;
@@ -396,7 +352,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
         //find last horizontal axis
         if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
         {
-            AxisChooseDialog dialog(this, m_context, channel, m_channel);
+            AxisChooseDialog dialog(this, channel, m_channel);
             return (QDialog::Rejected != dialog.exec());
         }
     }

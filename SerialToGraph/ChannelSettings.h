@@ -13,7 +13,6 @@ class QCheckBox;
 class QFormLayout;
 class QLineEdit;
 class QString;
-struct Context;
 class ChannelSettings : public bases::FormDialogColor
 {
     Q_OBJECT
@@ -26,11 +25,9 @@ class ChannelSettings : public bases::FormDialogColor
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
-    void _InitializeGhostLines();
     void _InitializeValueLine(ChannelBase *channel);
     ChannelBase * _GetPropertiesChannel();
 
-    Context const & m_context;
     ChannelBase *m_channel;
     ChannelWidget *m_channelWidget;
     QLineEdit *m_currentValueControl;
@@ -47,7 +44,7 @@ class ChannelSettings : public bases::FormDialogColor
     bool m_currentValueChanged;
     double m_currentValue;
 public:
-    ChannelSettings(ChannelBase *channel, Context const &context);
+    ChannelSettings(ChannelBase *channel);
 signals:
 
 private slots:

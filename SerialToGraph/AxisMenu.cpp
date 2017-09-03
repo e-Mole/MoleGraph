@@ -1,7 +1,6 @@
 #include "AxisMenu.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <Context.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
@@ -19,9 +18,8 @@
 #include <QString>
 #include <QWidget>
 
-AxisMenu::AxisMenu(QWidget *parent, const Context &context,  Measurement &measurement) :
+AxisMenu::AxisMenu(QWidget *parent,  Measurement &measurement) :
     bases::MenuDialogBase(parent, tr("Axes")),
-    m_context(context),
     m_measurement(measurement)
 {
     ReinitGrid();

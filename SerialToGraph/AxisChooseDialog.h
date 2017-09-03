@@ -8,19 +8,17 @@ class ChannelBase;
 class QRadioButton;
 class QString;
 class QWidget;
-struct Context;
 class AxisChooseDialog : public QDialog
 {
     Q_OBJECT
 
-    Context const& m_context;
     QRadioButton *m_newAxis;
     QMap<QRadioButton *, Axis*> m_axes;
     ChannelBase *m_originalHChannel;
     ChannelBase *m_newHChannel;
     bool m_isOriginalChannelRealTime;
 public:
-    AxisChooseDialog(QWidget *parent, Context const &context, ChannelBase *originalHChannel, ChannelBase *newHChannel);
+    AxisChooseDialog(QWidget *parent, ChannelBase *originalHChannel, ChannelBase *newHChannel);
 
 signals:
 

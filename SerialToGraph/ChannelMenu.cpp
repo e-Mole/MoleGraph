@@ -7,7 +7,6 @@
 #include <ColorCheckBox.h>
 #include <Context.h>
 #include <GlobalSettings.h>
-#include <GhostChannel.h>
 #include <QKeySequence>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -56,20 +55,7 @@ void ChannelMenu::FillGrid()
     _AddShortcut(row, m_buttonLine->GetNoChannelShortcutText());
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
-    m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height());
-
-
-    //TODO: ghost will be enabled after refactoring again
-    /*++row;
-    QPushButton *addGhost = new QPushButton(tr("Add Ghost"), this);
-    connect(addGhost, SIGNAL(clicked()), this, SLOT(addGhostgActivated()));
-    m_gridLayout->addWidget(addGhost, row, 0);
-    addGhost->setEnabled(m_context.m_measurements.count() > 1);
-    m_gridLayout->setColumnStretch(2, 1);
-    */
-
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
-        _AddChannel(channel, channel->GetType() == ChannelBase::Type_Ghost);
+    m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -202,40 +188,6 @@ ChannelBase * ChannelMenu::_GetFirstGhostableChannel()
     }
     qCritical() << "no HW channel found";
     return NULL;
-}
-void ChannelMenu::addGhostgActivated()
-{
-    ChannelBase *ghostable = _GetFirstGhostableChannel();
-
-    //FIXME:it should be created after confirmation
-    ChannelGraph* channelGraph = m_measurement.AddGhostChannelGraph(
-        ghostable->GetWidget()->GetForeColor(),
-        ghostable->GetWidget()->GetChannelGraph()->GetShapeIndex()
-    );
-
-    GhostChannel *newGhost = new GhostChannel(
-        ghostable,
-        &m_measurement,
-        m_context,
-        channelGraph,
-        ghostable->GetWidget()->GetForeColor(),
-        true,
-        ghostable->GetWidget()->GetUnits(),
-        Qt::DotLine
-        );
-
-    if (!newGhost->editChannel())
-    {
-        delete newGhost;
-        return;
-    }
-
-    _AddChannel(newGhost, true);
-    m_measurement.AddYChannel(newGhost, channelGraph);
-    ActivateChannel(newGhost, true);
-    newGhost->FillGraph();
-    m_measurement.GetPlot()->ZoomToFit();
-    m_measurement.RecalculateSliderMaximum();
 }
 
 void ChannelMenu::allChannelsActivated()

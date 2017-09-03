@@ -1,6 +1,5 @@
 #include "HwChannel.h"
 #include <Axis.h>
-#include <Context.h>
 #include <ChannelWidget.h>
 #include <limits>
 #include <Measurement.h>
@@ -9,7 +8,6 @@
 #include <QString>
 
 HwChannel::HwChannel(Measurement *measurement,
-    Context const & context,
     ChannelGraph *graph,
     int hwIndex,
     QString const &name,
@@ -17,7 +15,7 @@ HwChannel::HwChannel(Measurement *measurement,
     bool visible,
     const QString &units
 ) :
-    ChannelBase(measurement, context, graph, hwIndex, name, color, visible, units),
+    ChannelBase(measurement, graph, hwIndex, name, color, visible, units),
     m_hwIndex(hwIndex)
 {
     GetWidget()->UpdateTitle();

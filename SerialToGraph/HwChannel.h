@@ -19,7 +19,6 @@ class HwChannel : public ChannelBase
     QVector<double> m_originalValues;
 public:
     HwChannel(Measurement *measurement,
-        Context const & context,
         ChannelGraph *graph,
         int hwIndex,
         QString const &name = "",

@@ -5,7 +5,6 @@
 #include <ChannelGraph.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
-#include <GhostChannel.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <MainWindow.h>
@@ -329,15 +328,6 @@ void Measurement::_RefillHorizontalSet()
     m_horizontalValues.clear();
 
     _AddChannelToHorizontalValueSet(GetHorizontalChannel());
-
-    for (unsigned i = 0; i < GetChannelCount(); i++)
-    {
-        if (GetChannel(i)->GetType() == ChannelBase::Type_Ghost)
-        {
-            _AddChannelToHorizontalValueSet(
-                ((GhostChannel*)GetChannel(i))->GetSourceChannel()->GetMeasurement()->GetHorizontalChannel());
-        }
-    }
 }
 
 void Measurement::RecalculateSliderMaximum()
@@ -732,7 +722,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
             m_channels.push_back(
                 new HwChannel(
                     this,
-                    m_context,
                     channelGraph,
                     hwIndex,
                     channel->GetWidget()->GetName(),
@@ -748,7 +737,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
             m_sampleChannel =
                 new SampleChannel(
                     this,
-                    m_context,
                     channelGraph,
                     channel->GetWidget()->GetForeColor(),
                     channel->GetWidget()->IsActive(),
@@ -810,7 +798,6 @@ void Measurement::_InitializeAxesAndChanels()
     m_sampleChannel =
         new SampleChannel(
             this,
-            m_context,
             channelGraph,
             Qt::black,
             true,
@@ -882,7 +869,6 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
         m_plot->xAxis, axis, color, order, GetMarksShown(), Qt::SolidLine);
     HwChannel * newChannel = new HwChannel(
         this,
-        m_context,
         channelGraph,
         order,
         QString(tr("Channel %1")).arg(order+1),
@@ -1032,7 +1018,6 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     {
         channel = new SampleChannel(
             this,
-            m_context,
             channelGraph,
             hwIndex
         );
@@ -1042,7 +1027,6 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     {
         channel = new HwChannel(
             this,
-            m_context,
             channelGraph,
             hwIndex
         );

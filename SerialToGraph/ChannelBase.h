@@ -13,7 +13,6 @@ class ChannelWidget;
 class Measurement;
 class QString;
 class QCPAxis;
-struct Context;
 
 class ChannelBase : public QObject
 {
@@ -49,7 +48,6 @@ protected:
     void _UpdateExtremes(double value);
 
     Measurement * m_measurement;
-    Context const & m_context;
     ChannelWidget *m_widget;
     QVector<double> m_values;
     double m_channelMinValue;
@@ -59,8 +57,7 @@ public:
     enum Type
     {
         Type_Sample,
-        Type_Hw,
-        Type_Ghost
+        Type_Hw
     };
 
     enum DisplayValue{
@@ -75,7 +72,6 @@ public:
     };
 
     ChannelBase(Measurement *measurement,
-        Context const & context,
         ChannelGraph *channelGraph,
         unsigned shortcutOrder,
         QString const &name = "",

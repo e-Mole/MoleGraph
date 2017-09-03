@@ -63,7 +63,6 @@ private:
 
 public:
     SampleChannel(Measurement *measurement,
-        Context const & context,
         ChannelGraph *graph,
         QColor const &color = Qt::black,
         bool visible = true,

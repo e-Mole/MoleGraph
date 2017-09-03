@@ -227,7 +227,7 @@ void ButtonLine::panelMenuButtonPressed()
 
 void ButtonLine::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement);
+    AxisMenu axisMenu(m_context.m_mainWindow.centralWidget(), *m_measurement);
     _OpenMenuDialog(axisMenu);
 }
 

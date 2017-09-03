@@ -35,14 +35,13 @@ QString FileDialog::getSaveFileName(
     QWidget *parent,
     const QString &caption,
     const QString &dir,
-    const QString &filter,
-    const GlobalSettings &settings)
+    const QString &filter)
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
         OwnFileDialog::Type_SaveFile, parent, caption, dir, filter, settings);
 #else
-    NativeFileDialog nfd(QFileDialog::AcceptSave, parent, caption, dir, filter, settings.GetLimitDir());
+    NativeFileDialog nfd(QFileDialog::AcceptSave, parent, caption, dir, filter, GlobalSettings::GetInstance().GetLimitDir());
     return 0 == nfd.exec() ? "" : nfd.selectedFiles()[0];
 #endif
 }

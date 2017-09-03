@@ -6,9 +6,16 @@
 #define RECENT_FILE_SEPARATOR '\n'
 
 GlobalSettings::GlobalSettings() :
-    m_settings("eMole", TARGET)
+    m_settings("eMole", TARGET),
+    m_savedState(true),
+    m_savedValues(true)
 {
+}
 
+GlobalSettings& GlobalSettings::GetInstance()
+{
+    static GlobalSettings instance;
+    return instance;
 }
 
 QString GlobalSettings::_GetStringKey(Key key) const
@@ -272,4 +279,32 @@ bool GlobalSettings::GetAcceptChangesByDialogClosing() const
 void GlobalSettings::SetAcceptChangesByDialogClosing(bool show)
 {
     _Set(Key_AcceptChangesByDialogClosing, show);
+}
+
+bool GlobalSettings::IsSavedState()
+{
+    return m_savedState;
+}
+
+void GlobalSettings::SetSavedState(bool savedState)
+{
+    if (m_savedState != savedState)
+    {
+        m_savedState = savedState;
+        savedStateOrVeluesChanged();
+    }
+}
+
+bool GlobalSettings::AreSavedValues()
+{
+    return m_savedState;
+}
+
+void GlobalSettings::SetSavedValues(bool savedValues)
+{
+    if (m_savedValues != savedValues)
+    {
+        m_savedValues = savedValues;
+        savedStateOrVeluesChanged();
+    }
 }

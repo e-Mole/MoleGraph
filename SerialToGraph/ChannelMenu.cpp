@@ -6,6 +6,7 @@
 #include <ChannelWidget.h>
 #include <ColorCheckBox.h>
 #include <Context.h>
+#include <GlobalSettings.h>
 #include <GhostChannel.h>
 #include <QKeySequence>
 #include <MainWindow.h>
@@ -162,7 +163,7 @@ void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
     m_channelCheckBoxes[channel]->SetChecked(checked);
     m_buttonLine->UpdateRunButtonsState();
     m_measurement.replaceDisplays();
-    m_context.m_mainWindow.SetSavedState(false);
+    GlobalSettings::GetInstance().SetSavedState(false);
 }
 
 void ChannelMenu::graphActivated()
@@ -172,7 +173,7 @@ void ChannelMenu::graphActivated()
 
     //because of calling by shortcut
     m_graphCheckBox->SetChecked(newState);
-    m_context.m_mainWindow.SetSavedState(false);
+    GlobalSettings::GetInstance().SetSavedState(false);
 }
 
 void ChannelMenu::noChannelsActivated()
@@ -181,7 +182,7 @@ void ChannelMenu::noChannelsActivated()
     {
         if (channel->GetWidget()->IsActive())
         {
-            m_context.m_mainWindow.SetSavedState(false);
+            GlobalSettings::GetInstance().SetSavedState(false);
             ActivateChannel(channel, false);
         }
     }
@@ -243,7 +244,7 @@ void ChannelMenu::allChannelsActivated()
     {
         if (!channel->GetWidget()->IsActive())
         {
-            m_context.m_mainWindow.SetSavedState(false);
+            GlobalSettings::GetInstance().SetSavedState(false);
             ActivateChannel(channel, true);
         }
     }

@@ -13,9 +13,8 @@
 namespace hw
 {
 
-SerialPort::SerialPort(GlobalSettings &settings, HwSink *hwSink) :
+SerialPort::SerialPort(HwSink *hwSink) :
     PortBase(hwSink),
-    m_settings(settings),
     m_hwSink(hwSink)
 {
     connect(&m_serialPort, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
@@ -75,14 +74,8 @@ void SerialPort::FillPorts(QList<PortInfo> &portInfos)
         else if (!info.manufacturer().isEmpty())
             id += " (" + info.manufacturer() + ")";
 
-        portInfos.push_back(
-            PortInfo(
-                PortInfo::pt_serialPort,
-                id,
-                info.manufacturer() == "wch.cn",
-                m_settings
-            )
-        );
+        //FIXME!!!: is this costruction OK? I don't think so.
+        portInfos.push_back(PortInfo(PortInfo::pt_serialPort, id, info.manufacturer() == "wch.cn"));
 
         m_idToInfo[id] = info;
     }

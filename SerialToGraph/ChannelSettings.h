@@ -7,6 +7,7 @@
 namespace bases { class ComboBox;}
 class Axis;
 class ChannelBase;
+class ChannelWidget;
 class SampleChannel;
 class QCheckBox;
 class QFormLayout;
@@ -31,6 +32,7 @@ class ChannelSettings : public bases::FormDialogColor
 
     Context const & m_context;
     ChannelBase *m_channel;
+    ChannelWidget *m_channelWidget;
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;

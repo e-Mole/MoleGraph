@@ -13,10 +13,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings) :
+PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
     bases::PlatformDialog(parent, tr("Device connecting")),
     m_hwSink(hwSink),
-    m_settings(settings),
     m_progress(NULL),
     m_progressText(NULL),
     m_refresh(NULL),
@@ -83,7 +82,7 @@ void PortListDialog::workDisconnected()
 
     m_hwSink.WorkOffline();
 
-    m_settings.SetForcedOffline(true);
+    GlobalSettings::GetInstance().SetForcedOffline(true);
 }
 
 void PortListDialog::refresh()
@@ -106,7 +105,7 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     m_portLayout->addWidget(new QLabel(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
 
     if (m_autoConnect &&
-        !m_settings.GetForcedOffline() &&
+        !GlobalSettings::GetInstance().GetForcedOffline() &&
         (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
     )
        m_hwSink.OpenPort(item);
@@ -129,7 +128,7 @@ void PortListDialog::portRadioButtonReleased()
     m_selectedRadioButton = (QRadioButton*)sender();
     hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
     m_hwSink.OpenPort(portInfo);
-    m_settings.SetForcedOffline(false);
+    GlobalSettings::GetInstance().SetForcedOffline(false);
 }
 
 void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State state)
@@ -140,7 +139,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
     {
         case  hw::HwSink::Connected:
         {
-            QString connectedId = m_settings.GetLastSerialPortId();
+            QString connectedId = GlobalSettings::GetInstance().GetLastSerialPortId();
             foreach (QRadioButton *rb, m_radioToInfo.keys())
                 if (rb->text() == connectedId)
                     rb->setChecked(true);

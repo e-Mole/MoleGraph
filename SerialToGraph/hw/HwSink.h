@@ -6,7 +6,6 @@
 #include <QList>
 #include <QString>
 
-class GlobalSettings;
 class QWidget;
 class QTimer;
 namespace hw
@@ -57,14 +56,13 @@ private:
     Bluetooth * m_bluetooth;
     SerialPort * m_serialPort;
     bool m_knownIssue;
-    GlobalSettings &m_settings;
     State m_state;
     QWidget *parentWidget;
     PortInfo m_openedPortInfo;
     QTimer *m_protocolIdTimer;
     QTimer *m_initializeTimer;
 public:
-    HwSink(GlobalSettings &settings, QWidget *parent);
+    HwSink(QWidget *parent);
     ~HwSink();
 
     bool SetFrequency(unsigned frequency);

@@ -9,7 +9,6 @@
 #include <QString>
 
 Axis::Axis(Measurement *measurement,
-    GlobalSettings &settings,
     QColor const & color,
     QCPAxis *graphAxis,
     QString title,
@@ -20,7 +19,6 @@ Axis::Axis(Measurement *measurement,
 ) :
     QObject(NULL),
     m_measurement(measurement),
-    m_settings(settings),
     m_title(title),
     m_isRemovable(isRemovable),
     m_color(color),
@@ -125,7 +123,7 @@ void Axis::UpdateGraphAxisName()
         }
     }
 
-    bool round = m_settings.GetUnitBrackets() == "()";
+    bool round = GlobalSettings::GetInstance().GetUnitBrackets() == "()";
     QString unitString =
         (0 == units.size() || "/n" == units) ?
             "" :

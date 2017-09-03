@@ -6,6 +6,7 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <Console.h>
+#include <GlobalSettings.h>
 #include <GraphicsContainer.h>
 #include <Plot.h>
 #include <PortListDialog.h>
@@ -34,13 +35,12 @@ using namespace atog;
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
-    m_hwSink(m_settings, this),
-    m_context(m_measurements, m_settings, *this),
+    m_hwSink(this),
+    m_context(m_measurements, *this),
     m_currentMeasurement(NULL),
     m_portListDialog(NULL),
     m_console(new Console(this)),
     m_savedValues(true),
-    m_savedState(true),
     m_mainLayout(NULL),
     m_menuButton(NULL),
     m_centralWidget(NULL)
@@ -48,7 +48,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
 
-    m_console->setVisible(m_settings.GetConsole());
+    m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
     QRect desktopRect = QApplication::desktop()->screenGeometry();
     if (desktopRect .width() > 600)
@@ -56,7 +56,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (desktopRect .height() >300)
         setMinimumHeight(300);
 
-    m_langBcp47 = m_settings.GetLanguage(QLocale().bcp47Name());
+    m_langBcp47 = GlobalSettings::GetInstance().GetLanguage(QLocale().bcp47Name());
     QString translationFileName =
         QString("serialToGraph_%1.qm").arg(m_langBcp47);
 
@@ -72,13 +72,15 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
+    connect(&GlobalSettings::GetInstance(), SIGNAL(savedStateOrVeluesChanged()), this, SLOT(updateWindowTitle()));
+
     m_measurementTabs = new QTabWidget(m_centralWidget);
 
     m_menuButton = new QPushButton(tr("Menu"), this);
     connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonClicked()));
-    ShowMenuButton(m_settings.GetMenuOnDemand());
+    ShowMenuButton(GlobalSettings::GetInstance().GetMenuOnDemand());
     m_mainLayout = new QGridLayout();
-    ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    ReplaceWidgets(GlobalSettings::GetInstance().GetMenuOrientation(), GlobalSettings::GetInstance().GetMenuIsShown());
 
 #if defined(Q_OS_ANDROID)
     m_measurementTabs->setStyleSheet(
@@ -90,7 +92,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 
-    m_portListDialog = new PortListDialog(this, m_hwSink, m_settings);
+    m_portListDialog = new PortListDialog(this, m_hwSink);
     m_portListDialog->startSearching();
 
     if (fileNameToOpen.length() != 0)
@@ -99,16 +101,16 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         DeserializeMeasurements(fileNameToOpen, !openWithoutValues);
     }
 
-    if (m_settings.GetMainWindowMaximized())
+    if (GlobalSettings::GetInstance().GetMainWindowMaximized())
         showMaximized();
     else
-        resize(m_settings.GetMainWindowSize());
+        resize(GlobalSettings::GetInstance().GetMainWindowSize());
 }
 
 void MainWindow::menuButtonClicked()
 {
-    m_settings.SetMenuIsShown(!m_settings.GetMenuIsShown());
-    ReplaceWidgets(m_settings.GetMenuOrientation(), m_settings.GetMenuIsShown());
+    GlobalSettings::GetInstance().SetMenuIsShown(!GlobalSettings::GetInstance().GetMenuIsShown());
+    ReplaceWidgets(GlobalSettings::GetInstance().GetMenuOrientation(), GlobalSettings::GetInstance().GetMenuIsShown());
 }
 
 void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
@@ -150,11 +152,11 @@ void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
     m_centralWidget->adjustSize();
 }
 
-void MainWindow::_UpdateWindowTitle()
+void MainWindow::updateWindowTitle()
 {
     setWindowTitle(
         m_currentFileName +
-        ((!m_savedState || !m_savedValues) ? "*" : "") +
+        ((!GlobalSettings::GetInstance().IsSavedState() || !GlobalSettings::GetInstance().AreSavedValues()) ? "*" : "") +
         " - " +
         TARGET
     );
@@ -163,7 +165,7 @@ void MainWindow::_SetCurrentFileName(QString const &fileName)
 {
     m_currentFileName = QFileInfo(fileName).fileName();
     m_currentFileNameWithPath = fileName;
-    _UpdateWindowTitle();
+    updateWindowTitle();
 }
 
 QString &MainWindow::GetCurrentFileNameWithPath()
@@ -235,9 +237,9 @@ void MainWindow::RemoveAllMeasurements()
         RemoveMeasurement(m, true);
 
     //no measurements means verything is saved
-    m_savedState = true;
-    m_savedValues = true;
-    _UpdateWindowTitle();
+    GlobalSettings::GetInstance().SetSavedState(true);
+    GlobalSettings::GetInstance().SetSavedValues(true);
+    updateWindowTitle();
 }
 void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
@@ -417,11 +419,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent * event)
 QString MainWindow::_MessageIfUnsaved()
 {
     QString message;
-    if (!m_savedState && !m_savedValues)
+    if (!GlobalSettings::GetInstance().IsSavedState() && !GlobalSettings::GetInstance().AreSavedValues())
         message = tr("Gui and value changes were not saved. Realy exit?");
-    else if (!m_savedState)
+    else if (!GlobalSettings::GetInstance().IsSavedState())
         message = tr("Gui changes were not saved. Realy exit?");
-    else if (!m_savedValues)
+    else if (!GlobalSettings::GetInstance().AreSavedValues())
         message = tr("Value changes were not saved. Realy exit?");
 
     return message;
@@ -449,20 +451,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         }
     }
 
-    m_settings.SetMainWindowMaximized(isMaximized());
-    m_settings.SetMainWindowSize(size());
+    GlobalSettings::GetInstance().SetMainWindowMaximized(isMaximized());
+    GlobalSettings::GetInstance().SetMainWindowSize(size());
     QMainWindow::closeEvent(event);
-}
-
-void MainWindow::SetSavedState(bool savedState)
-{
-    m_savedState = savedState;
-    _UpdateWindowTitle();
-}
-void MainWindow::SetSavedValues(bool savedValues)
-{
-    m_savedValues = savedValues;
-    _UpdateWindowTitle();
 }
 
 void MainWindow::ShowMenuButton(bool show)
@@ -477,7 +468,7 @@ void MainWindow::UpdateChannelSizeFactor()
 {
     foreach (Measurement *m, m_measurements)
         foreach (ChannelBase *channel, m->GetChannels())
-            channel->GetWidget()->SetMinimumFontSize(m_settings.GetChannelSizeFactor());
+            channel->GetWidget()->SetMinimumFontSize(GlobalSettings::GetInstance().GetChannelSizeFactor());
 }
 
 void MainWindow::measurementMenuButtonPressed()

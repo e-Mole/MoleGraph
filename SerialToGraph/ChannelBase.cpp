@@ -38,7 +38,6 @@ ChannelBase::ChannelBase(Measurement *measurement,
         new ChannelWidget(
             name,
             measurement->GetWidget(),
-            m_context.m_settings.GetChannelSizeFactor(),
             GetValueType(~0),
             color,
             shortcutOrder,
@@ -46,23 +45,12 @@ ChannelBase::ChannelBase(Measurement *measurement,
             measurement->GetPlot(),
             penStyle,
             units,
-            m_context.m_settings.GetHideAllChannels()
+            active
         )
     ),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max())
 {
-    connect(
-        &m_context.m_settings, SIGNAL(hideAllCHannelsChanged(bool)),
-        m_widget, SLOT(hideAllCHannelsChanged(bool))
-    );
-    m_widget->DisplayNAValue(GetValueType(0)); //will be displayed ValueUnknown
-
-    if (channelGraph->GetValuleAxis()->IsHorizontal())
-        m_widget->ShowOrHideGraph(false);
-
-    m_widget->SetActive(active);
-
     connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 }
 

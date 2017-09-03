@@ -5,7 +5,6 @@
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <QMainWindow>
-#include <GlobalSettings.h>
 #include <QString>
 #include <QVector>
 
@@ -26,11 +25,9 @@ class MainWindow : public QMainWindow
     void _WriteUnsupportedFileVersion();
     void keyReleaseEvent(QKeyEvent * event);
     void closeEvent(QCloseEvent *event);
-    void _UpdateWindowTitle();
     bool _RealyExit();
     QString _MessageIfUnsaved();
 
-    GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
@@ -43,7 +40,6 @@ class MainWindow : public QMainWindow
     PortListDialog *m_portListDialog;
     Console *m_console;
     bool m_savedValues;
-    bool m_savedState;
     QGridLayout *m_mainLayout;
     QPushButton *m_menuButton;
     QWidget *m_centralWidget;
@@ -65,8 +61,6 @@ public:
     void RefreshHwConnection();
     void ShowConsole(bool show);
     void TerminateBluetooth();
-    void SetSavedState(bool savedState);
-    void SetSavedValues(bool savedValues);
     bool GetSavedValues() { return m_savedValues; }
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
     bool CouldBeOpen();
@@ -79,6 +73,7 @@ private slots:
     void measurementColorChanged();
     void menuButtonClicked();
     void measurementMenuButtonPressed();
+    void updateWindowTitle();
 public slots:
     void openSerialPort();
 };

@@ -6,7 +6,6 @@
 #include <QMap>
 #include <QString>
 
-class GlobalSettings;
 class QBluetoothSocket;
 class QBluetoothServiceDiscoveryAgent;
 class QTimer;
@@ -17,13 +16,12 @@ class Bluetooth : public PortBase
 {
     Q_OBJECT
 
-    GlobalSettings &m_settings;
     QBluetoothSocket *m_socket;
     QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
     QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 
 public:
-    Bluetooth(GlobalSettings &settings, QObject *parent);
+    Bluetooth(QObject *parent);
     ~Bluetooth();
     void StartPortSearching();
     void StopPortSearching();

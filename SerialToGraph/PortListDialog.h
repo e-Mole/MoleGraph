@@ -23,7 +23,6 @@ class PortListDialog : public bases::PlatformDialog
     void _UncheckRadioButton(QRadioButton *rb);
 
     hw::HwSink &m_hwSink;
-    GlobalSettings &m_settings;
     QProgressBar *m_progress;
     QLabel *m_progressText;
     QPushButton *m_refresh;
@@ -34,7 +33,7 @@ class PortListDialog : public bases::PlatformDialog
     QRadioButton * m_selectedRadioButton;
     bool m_autoConnect;
 public:
-    PortListDialog(QWidget *parent, hw::HwSink &hwSink, GlobalSettings &settings);
+    PortListDialog(QWidget *parent, hw::HwSink &hwSink);
     void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
 
     void _CleanPortList();

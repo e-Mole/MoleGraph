@@ -33,6 +33,8 @@ class GlobalSettings : public QObject
         Key_AcceptChangesByDialogClosing,
     };
 
+    GlobalSettings(); //it is private because it is called as a sigleton
+
     QString _GetStringKey(Key key) const;
     QVariant _Get(Key key, const QVariant &defaultValue) const;
     void _Set(Key key, const QVariant &value);
@@ -40,9 +42,11 @@ class GlobalSettings : public QObject
 
     QSettings m_settings;
     QStringList m_recentPaths;
+    bool m_savedState;
+    bool m_savedValues;
 
 public:
-    GlobalSettings();
+    static GlobalSettings& GetInstance();
 
     QVariant GetLastSerialPortType() const;
     void SetLastSerialPortType(const QVariant &portType);
@@ -81,9 +85,14 @@ public:
     void AddRecentFilePath(QString const &path);
     bool GetAcceptChangesByDialogClosing() const;
     void SetAcceptChangesByDialogClosing(bool show);
+    bool IsSavedState();
+    void SetSavedState(bool savedState);
+    bool AreSavedValues();
+    void SetSavedValues(bool savedValues);
 
 signals:
     void hideAllCHannelsChanged(bool hideAllChannels);
+    void savedStateOrVeluesChanged();
 };
 
 #endif // GLOBALSETTINGS_H

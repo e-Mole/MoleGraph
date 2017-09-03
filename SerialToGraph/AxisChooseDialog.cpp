@@ -73,7 +73,7 @@ void AxisChooseDialog::newAxisSelected()
 {
     Axis*newAxis = m_originalHChannel->GetMeasurement()->CreateAxis(m_originalHChannel->GetWidget()->GetForeColor());
 
-    AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
+    AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);

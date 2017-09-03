@@ -50,17 +50,15 @@ class ChannelWidget : public QWidget
     Qt::PenStyle m_penStyle;
     QString m_units;
     bool m_isActive;
-    bool m_hideAllChannels;
 public:
     ChannelWidget(const QString &name,
         QWidget* parent,
-        unsigned sizeFactor,
         ChannelBase::ValueType valueType,
         QColor const &foreColor,
         unsigned shortcutOrder,
         ChannelGraph *channelGraph,
         Plot *plot,
-        Qt::PenStyle penStyle, QString units, bool hideAllChannels);
+        Qt::PenStyle penStyle, QString units, bool isActive);
 
     void setTitle(QString const &title);
     void ShowLastValueWithUnits();

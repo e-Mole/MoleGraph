@@ -1,6 +1,7 @@
 #include "Axis.h"
 #include "ChannelWidget.h"
 #include <ChannelGraph.h>
+#include <GlobalSettings.h>
 #include <Plot.h>
 #include <QColor>
 #include <QDebug>
@@ -12,7 +13,6 @@
 #define BORDER 1
 ChannelWidget::ChannelWidget(const QString &name,
     QWidget *parent,
-    unsigned sizeFactor,
     ChannelBase::ValueType valueType,
     const QColor &foreColor,
     unsigned shortcutOrder,
@@ -20,25 +20,43 @@ ChannelWidget::ChannelWidget(const QString &name,
     Plot * plot,
     Qt::PenStyle penStyle,
     QString units,
-    bool hideAllChannels
+    bool isActive
 ) :
     QWidget(parent),
     m_name(name),
     m_title(new QLabel(name, this)),
-    m_valueLabel(new ValueLabel("", this, sizeFactor, _GetBackColorFromType(valueType), foreColor)),
+    m_valueLabel(
+        new ValueLabel(
+            "",
+            this,
+            GlobalSettings::GetInstance().GetChannelSizeFactor(),
+            _GetBackColorFromType(valueType),
+            foreColor
+         )
+    ),
     m_shortcutOrder(shortcutOrder),
     m_channelGraph(channelGraph),
     m_plot(plot),
     m_penStyle(penStyle),
     m_units(units),
-    m_isActive(true),
-    m_hideAllChannels(hideAllChannels)
+    m_isActive(isActive)
 {
+    connect(
+        &GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)),
+        this, SLOT(hideAllCHannelsChanged(bool))
+    );
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
     layout->addWidget(m_title);
     layout->addWidget(m_valueLabel, 1);
     layout->setSpacing(1);
+
+    if (m_channelGraph->GetValuleAxis()->IsHorizontal())
+        ShowOrHideGraph(false);
+
+    SetActive(m_isActive);
+    DisplayNAValue(ChannelBase::ValueTypeUnknown);
 }
 
 void ChannelWidget::SetTransparent(bool transparent)
@@ -354,7 +372,7 @@ void ChannelWidget::SetUnits(QString const &units)
 
 void ChannelWidget::UpdateWidgetVisiblity()
 {
-    setVisible(m_isActive && !m_hideAllChannels);
+    setVisible(m_isActive && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
 bool ChannelWidget::IsActive()
@@ -372,7 +390,7 @@ void ChannelWidget::SetActive(bool active)
 
 void ChannelWidget::hideAllCHannelsChanged(bool hideAllChannels)
 {
-    m_hideAllChannels = hideAllChannels;
+    Q_UNUSED(hideAllChannels)
     UpdateWidgetVisiblity();
 }
 

@@ -1,6 +1,7 @@
 #include "MeasurementMenu.h"
 #include <bases/ClickableLabel.h>
 #include <Context.h>
+#include <GlobalSettings.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementSettings.h>
@@ -91,7 +92,7 @@ void MeasurementMenu::addButtonPressed()
 {
     Measurement *m = m_context.m_mainWindow.CreateNewMeasurement(true);
 
-    MeasurementSettings dialog(this, m, m_context.m_settings.GetAcceptChangesByDialogClosing());
+    MeasurementSettings dialog(this, m, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);
@@ -160,7 +161,7 @@ void MeasurementMenu::removeButtonPressed()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(this, measurement, m_context.m_settings.GetAcceptChangesByDialogClosing());
+    MeasurementSettings dialog(this, measurement, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         if (dialog.IsChanged())

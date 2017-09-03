@@ -19,10 +19,10 @@
 #include <QSpinBox>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink):
-    bases::FormDialogBase(parent, tr("Settings"), context.m_settings.GetAcceptChangesByDialogClosing()),
+    bases::FormDialogBase(parent, tr("Settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
     m_context(context),
     m_hwSink(hwSink),
-    m_settings(context.m_settings),
+    m_settings(GlobalSettings::GetInstance()),
     m_languages(NULL),
     m_brackets(NULL),
     m_useBluetooth(NULL),

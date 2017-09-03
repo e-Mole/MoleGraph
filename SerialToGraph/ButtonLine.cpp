@@ -8,6 +8,7 @@
 #include <ChannelWidget.h>
 #include <file/Export.h>
 #include <file/FileDialog.h>
+#include <GlobalSettings.h>
 #include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -244,11 +245,11 @@ void ButtonLine::_FillRecentFileMenu()
     m_recentFilesMenu->clear();
     m_recentFileActions.clear();
 
-    unsigned count = m_context.m_settings.GetRecetFilePathCount();
+    unsigned count = GlobalSettings::GetInstance().GetRecetFilePathCount();
     m_recentFilesMenu->setDisabled(0 == count);
     for (unsigned i = 0; i < count; i++)
     {
-        QString text = m_context.m_settings.GetRecentFilePath(i);
+        QString text = GlobalSettings::GetInstance().GetRecentFilePath(i);
         while (text.length() > RECENT_FILE_TEXT_MAX_LENGTH)
         {
             int index = text.indexOf(QRegExp("[\\/]"));
@@ -260,7 +261,7 @@ void ButtonLine::_FillRecentFileMenu()
 
         QAction *action =
             m_recentFilesMenu->addAction(text, this, SLOT(openRecentFile()));
-        m_recentFileActions[action] = m_context.m_settings.GetRecentFilePath(i);
+        m_recentFileActions[action] = GlobalSettings::GetInstance().GetRecentFilePath(i);
     }
 
     _SetMenuStyle(m_recentFilesMenu);
@@ -397,8 +398,7 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
         this,
         tr(values ? "Save as" : "Save without Values As"),
         _GetRootDir(),
-        "*." + extension,
-        m_context.m_settings
+        "*." + extension
     );
 
     if (fileName.size() == 0)
@@ -407,7 +407,7 @@ QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
     if (!fileName.contains("." + extension, Qt::CaseInsensitive))
             fileName += "." + extension;
 
-    m_context.m_settings.SetLastDir(QFileInfo(fileName).path());
+    GlobalSettings::GetInstance().SetLastDir(QFileInfo(fileName).path());
     return fileName;
 }
 void ButtonLine::exportPng()
@@ -486,10 +486,10 @@ void ButtonLine::newFile()
 
 QString ButtonLine::_GetRootDir()
 {
-    QString dir = m_context.m_settings.GetLastDir();
+    QString dir = GlobalSettings::GetInstance().GetLastDir();
 
-    if (!dir.contains(m_context.m_settings.GetLimitDir()))
-        return m_context.m_settings.GetLimitDir();
+    if (!dir.contains(GlobalSettings::GetInstance().GetLimitDir()))
+        return GlobalSettings::GetInstance().GetLimitDir();
 
     return dir;
 }
@@ -499,8 +499,8 @@ void ButtonLine::_OpenFile(QString const &filePath, bool values)
     if (filePath.size() == 0)
         return;
 
-    m_context.m_settings.AddRecentFilePath(filePath);
-    m_context.m_settings.SetLastDir(QFileInfo(filePath).path());
+    GlobalSettings::GetInstance().AddRecentFilePath(filePath);
+    GlobalSettings::GetInstance().SetLastDir(QFileInfo(filePath).path());
     m_context.m_mainWindow.DeserializeMeasurements(filePath, values);
 }
 
@@ -516,8 +516,8 @@ void ButtonLine::_OpenFile(bool values)
             "Open File",
             _GetRootDir(),
             QString("*.%1").arg(MOGR_FILE_EXTENSION),
-            m_context.m_settings.GetAcceptChangesByDialogClosing(),
-            m_context.m_settings.GetLimitDir()
+            GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing(),
+            GlobalSettings::GetInstance().GetLimitDir()
         );
 
     _OpenFile(filePath, values);
@@ -563,7 +563,7 @@ void ButtonLine::saveAsFile()
     {
         _SaveFile(filePath, true);
         m_storedValues = true;
-        m_context.m_settings.AddRecentFilePath(filePath);
+        GlobalSettings::GetInstance().AddRecentFilePath(filePath);
     }
 }
 

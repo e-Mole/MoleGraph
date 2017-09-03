@@ -2,7 +2,6 @@
 #define PORTINFO_H
 #include <QString>
 
-class GlobalSettings;
 class QString;
 namespace hw
 {
@@ -27,7 +26,7 @@ public:
     QString m_id;
 
     PortInfo();
-    PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSettings const &settings);
+    PortInfo(PortType portType, QString const &id, bool hwHint);
     PortInfo(PortInfo const &second);
     QString GetStatusText() const;
     QString GetTypeText() const;

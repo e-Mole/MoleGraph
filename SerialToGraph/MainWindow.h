@@ -5,7 +5,6 @@
 #include <Context.h>
 #include <hw/HwSink.h>
 #include <QMainWindow>
-#include <GlobalSettings.h>
 #include <QString>
 #include <QVector>
 
@@ -30,7 +29,6 @@ class MainWindow : public QMainWindow
     bool _RealyExit();
     QString _MessageIfUnsaved();
 
-    GlobalSettings m_settings;
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;

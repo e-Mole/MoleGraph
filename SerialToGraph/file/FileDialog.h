@@ -18,13 +18,10 @@ public:
         bool acceptChangesByDialogClosing,
         const QString &limitDir);
 
-    static QString getSaveFileName(
-        QWidget *parent,
+    static QString getSaveFileName(QWidget *parent,
         const QString &caption,
         const QString &dir,
-        const QString &filter,
-        const GlobalSettings &settings
-    );
+        const QString &filter);
 
     static QString getExistingDirectory(QWidget *parent,
         const QString &caption,

@@ -4,6 +4,7 @@
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
 #include <ChannelWidget.h>
+#include <GlobalSettings.h>
 #include <GhostChannel.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
@@ -625,7 +626,7 @@ void Measurement::ReplaceDisplays(bool grid)
         channel->GetWidget()->UpdateWidgetVisiblity();
     }
 
-    if (m_context.m_settings.GetHideAllChannels())
+    if (GlobalSettings::GetInstance().GetHideAllChannels())
         return;
 
     unsigned widgetHeight = m_widget.height() + m_displayLayout->spacing()*2; //have to compense spacing added to last diplay
@@ -704,7 +705,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
         m_axes.push_back(
             new Axis(
                 this,
-                m_context.m_settings,
                 axis->GetColor(),
                 graphAxis,
                 axis->GetTitle(),
@@ -786,7 +786,6 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * xAxis =
         new Axis(
             this,
-            m_context.m_settings,
             Qt::black,
             m_plot->xAxis,
             tr("Horizontal"),
@@ -796,7 +795,6 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * yAxis =
         new Axis(
             this,
-            m_context.m_settings,
             Qt::black,
             m_plot->yAxis,
             tr("Vertical"),
@@ -897,7 +895,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
 
 Axis * Measurement::CreateAxis(QColor const & color)
 {
-    Axis *newAxis = new Axis(this, m_context.m_settings, color, m_plot->AddYAxis(false));
+    Axis *newAxis = new Axis(this, color, m_plot->AddYAxis(false));
     m_axes.push_back(newAxis);
 
     return newAxis;
@@ -1065,7 +1063,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
 {
     QCPAxis *graphAxis = _GetGraphAxis(index);
-    Axis *axis = new Axis(this, m_context.m_settings,Qt::black, graphAxis);
+    Axis *axis = new Axis(this, Qt::black, graphAxis);
     m_axes.push_back(axis);
     in >> axis;
     int channelCount;

@@ -12,9 +12,8 @@
 namespace hw
 {
 
-Bluetooth::Bluetooth(GlobalSettings &settings, QObject *parent) :
+Bluetooth::Bluetooth(QObject *parent) :
     PortBase(parent),
-    m_settings(settings),
     m_socket(NULL),
     m_discoveryAgent(
         new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this)),
@@ -57,8 +56,7 @@ void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
     PortInfo item(
         PortInfo::pt_bluetooth,
         info.device().name() + " (" + info.serviceName() + ", " +  info.device().address().toString() + ")",
-        false,
-        m_settings
+        false
     );
 
     m_serviceInfos[item.m_id] = info;

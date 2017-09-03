@@ -19,13 +19,12 @@
 
 namespace hw
 {
-HwSink::HwSink(GlobalSettings &settings, QWidget *parent) :
+HwSink::HwSink(QWidget *parent) :
     QObject((QObject*)parent),
     m_port(NULL),
     m_bluetooth(NULL),
     m_serialPort(NULL),
     m_knownIssue(false),
-    m_settings(settings),
     m_state(Offline),
     parentWidget(parent),
     m_protocolIdTimer(NULL)
@@ -288,8 +287,8 @@ void HwSink::readyRead()
 
     m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.
 
-    m_settings.SetLastSerialPortType(m_openedPortInfo.m_portType);
-    m_settings.SetLastSerialPortId(m_openedPortInfo.m_id);
+    GlobalSettings::GetInstance().SetLastSerialPortType(m_openedPortInfo.m_portType);
+    GlobalSettings::GetInstance().SetLastSerialPortId(m_openedPortInfo.m_id);
 
     _StopSearching();
     _ChangeState(Connected);
@@ -298,11 +297,11 @@ void HwSink::readyRead()
 
 void HwSink::InitializeBluetooth()
 {
-    if (!m_settings.GetUseBluetooth())
+    if (!GlobalSettings::GetInstance().GetUseBluetooth())
         return;
 
     delete m_bluetooth;
-    m_bluetooth = new Bluetooth(m_settings, this);
+    m_bluetooth = new Bluetooth(this);
     connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
     connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
 
@@ -329,7 +328,7 @@ void HwSink::StartSearching()
 #if not defined(Q_OS_ANDROID)
     _ChangeState(Scanning);
     delete m_serialPort;
-    m_serialPort = new SerialPort(m_settings, this);
+    m_serialPort = new SerialPort(this);
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
     
     QList<PortInfo> portInfos;

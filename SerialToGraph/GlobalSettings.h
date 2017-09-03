@@ -33,6 +33,8 @@ class GlobalSettings : public QObject
         Key_AcceptChangesByDialogClosing,
     };
 
+    GlobalSettings(); //it is private because it is called as a sigleton
+
     QString _GetStringKey(Key key) const;
     QVariant _Get(Key key, const QVariant &defaultValue) const;
     void _Set(Key key, const QVariant &value);
@@ -42,7 +44,7 @@ class GlobalSettings : public QObject
     QStringList m_recentPaths;
 
 public:
-    GlobalSettings();
+    static GlobalSettings& GetInstance();
 
     QVariant GetLastSerialPortType() const;
     void SetLastSerialPortType(const QVariant &portType);

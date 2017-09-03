@@ -12,12 +12,12 @@ m_id()
 {
 }
 
-PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint, GlobalSettings const &settings) :
+PortInfo::PortInfo(PortType portType, QString const &id, bool hwHint) :
     m_status(st_ordinary),
     m_portType(portType),
     m_id(id)
 {
-   if (portType == settings.GetLastSerialPortType().toInt() &&  id == settings.GetLastSerialPortId())
+   if (portType == GlobalSettings::GetInstance().GetLastSerialPortType().toInt() && id == GlobalSettings::GetInstance().GetLastSerialPortId())
         m_status = st_lastTimeUsed;
 
     if (hwHint)

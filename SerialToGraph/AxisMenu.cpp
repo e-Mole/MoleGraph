@@ -4,6 +4,7 @@
 #include <Context.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
+#include <GlobalSettings.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -70,7 +71,7 @@ void AxisMenu::FillGrid()
 void AxisMenu::addButtonPressed()
 {
     Axis *newAxis = m_measurement.CreateAxis(Qt::black);
-    AxisSettings dialog(this, newAxis, m_context.m_settings.GetAcceptChangesByDialogClosing());
+    AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         m_context.m_mainWindow.SetSavedState(false);
@@ -136,7 +137,7 @@ void AxisMenu::removeButtonPressed()
 void AxisMenu::editButtonPressed()
 {
     Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
-    AxisSettings dialog(this, axis, m_context.m_settings.GetAcceptChangesByDialogClosing());
+    AxisSettings dialog(this, axis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         if (dialog.IsChanged())

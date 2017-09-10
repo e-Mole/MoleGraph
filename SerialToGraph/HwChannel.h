@@ -9,7 +9,6 @@ class Measurement;
 class QColor;
 class QCustomplot;
 class QString;
-struct Context;
 class HwChannel : public ChannelBase
 {
     Q_OBJECT

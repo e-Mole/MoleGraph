@@ -3,7 +3,6 @@
 #include <Axis.h>
 #include <AxisMenu.h>
 #include <ChannelMenu.h>
-#include <Context.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <file/Export.h>

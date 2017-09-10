@@ -22,7 +22,6 @@ SampleChannel::SampleChannel(Measurement *measurement,
 {
     GetWidget()->SetName(GetStyleText());
     GetWidget()->UpdateTitle();
-    m_widget->SetForeColor(color); //change widget style with defined color and backcolor
 }
 
 void SampleChannel::_SetStyle(Style style)
@@ -162,14 +161,6 @@ QString SampleChannel::_GetRealTimeText(double secSinceEpoch)
     QDateTime dateTime;
     dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
     return dateTime.toString(GetRealTimeFormatText());
-}
-
-void SampleChannel::_FillLastValueTextFromIndex(int index)
-{
-    if (m_style == RealTime)
-        m_widget->FillLastValueText(GetValueTimestamp(index));
-    else
-        m_widget->FillLastValueText(GetValue(index));
 }
 
 double SampleChannel::GetMinValue()

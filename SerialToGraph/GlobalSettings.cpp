@@ -18,6 +18,12 @@ GlobalSettings& GlobalSettings::GetInstance()
     return instance;
 }
 
+GlobalSettings& GlobalSettings::GetInstance()
+{
+    static GlobalSettings instance;
+    return instance;
+}
+
 QString GlobalSettings::_GetStringKey(Key key) const
 {
     switch(key)

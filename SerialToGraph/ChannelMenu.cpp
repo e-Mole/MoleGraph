@@ -56,6 +56,9 @@ void ChannelMenu::FillGrid()
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
+
+    foreach (ChannelBase *channel, m_measurement.GetChannels())
+        _AddChannel(channel, false);
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)

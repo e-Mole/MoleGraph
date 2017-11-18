@@ -5,8 +5,6 @@
 #include <ChannelMenu.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <file/Export.h>
-#include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
@@ -37,7 +35,6 @@
 #include <QShortcut>
 #include <QWidget>
 
-#define MOGR_FILE_EXTENSION "mogr"
 #if defined(Q_OS_ANDROID)
 #   define FONT_DPI_FACTOR 7
 #   define RECENT_FILE_TEXT_MAX_LENGTH 30
@@ -75,7 +72,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
-    m_storedValues(true),
     m_settingsDialog(NULL),
     m_space(new QWidget())
 {
@@ -120,7 +116,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     m_space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     m_connectivityButton = new QPushButton(this);
-    connect(m_connectivityButton, SIGNAL(released()), &m_context.m_mainWindow, SLOT(openSerialPort()));
+    connect(m_connectivityButton, SIGNAL(released()), this, SIGNAL(connectivityButtonReleased()));
     _SetConnectivityState(m_hwSink.GetStateString(), m_hwSink.GetState());
 
     ReplaceButtons(orientation);
@@ -259,7 +255,7 @@ void ButtonLine::_FillRecentFileMenu()
         }
 
         QAction *action =
-            m_recentFilesMenu->addAction(text, this, SLOT(openRecentFile()));
+            m_recentFilesMenu->addAction(text, this, SLOT(openRecentFileSlot()));
         m_recentFileActions[action] = GlobalSettings::GetInstance().GetRecentFilePath(i);
     }
 
@@ -291,23 +287,23 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu = new QMenu(this);
     m_fileMenu->setTitle("File");
 
-    QShortcut *newShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(newFile()));
-    m_fileMenu->addAction(tr("New"), this, SLOT(newFile()), _GetKey(newShortcut));
+    QShortcut *newShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SIGNAL(openNewFile()));
+    m_fileMenu->addAction(tr("New"), this, SIGNAL(openNewFile()), _GetKey(newShortcut));
 
-    QShortcut *openShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openFile()));
-    m_fileMenu->addAction(tr("Open..."), this, SLOT(openFile()), _GetKey(openShortcut));
-    m_fileMenu->addAction(tr("Open without Values..."), this, SLOT(openWithoutValues()));
+    QShortcut *openShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SIGNAL(openFileValues()));
+    m_fileMenu->addAction(tr("Open..."), this, SIGNAL(openFileValues()), _GetKey(openShortcut));
+    m_fileMenu->addAction(tr("Open without Values..."), this, SIGNAL(openFileNoValues()));
     m_recentFilesMenu = m_fileMenu->addMenu(tr("Recently Used Files"));
 
-    QShortcut *saveShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveFile()));
-    m_fileMenu->addAction(tr("Save"), this, SLOT(saveFile()), _GetKey(saveShortcut));
+    QShortcut *saveShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SIGNAL(saveFile()));
+    m_fileMenu->addAction(tr("Save"), this, SIGNAL(saveFile()), _GetKey(saveShortcut));
 
-    m_fileMenu->addAction(tr("Save As..."), this, SLOT(saveAsFile()));
-    m_fileMenu->addAction(tr("Save without Values As..."), this, SLOT(saveWithoutValuesAsFile()));
+    m_fileMenu->addAction(tr("Save As..."), this, SIGNAL(saveAsFile()));
+    m_fileMenu->addAction(tr("Save without Values As..."), this, SIGNAL(saveWithoutValuesAsFile()));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Export to PNG..."), this, SLOT(exportPng()));
-    m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SLOT(exportCsv()));
-    m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SLOT(exportAllCsv()));
+    m_fileMenu->addAction(tr("Export to PNG..."), this, SIGNAL(exportPng()));
+    m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SIGNAL(exportCsv()));
+    m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SIGNAL(exportAllCsv()));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(tr("Settings..."), this, SLOT(settings()));
     m_fileMenu->addAction(tr("About..."), this, SLOT(about()));
@@ -391,50 +387,6 @@ void ButtonLine::UpdateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-QString ButtonLine::_GetFileNameToSave(QString const &extension, bool values)
-{
-    QString fileName = file::FileDialog::getSaveFileName(
-        this,
-        tr(values ? "Save as" : "Save without Values As"),
-        _GetRootDir(),
-        "*." + extension
-    );
-
-    if (fileName.size() == 0)
-        return "";
-
-    if (!fileName.contains("." + extension, Qt::CaseInsensitive))
-            fileName += "." + extension;
-
-    GlobalSettings::GetInstance().SetLastDir(QFileInfo(fileName).path());
-    return fileName;
-}
-void ButtonLine::exportPng()
-{
-    QString fileName = _GetFileNameToSave("png", true);
-    if (0 != fileName.size())
-        file::Export().ToPng(fileName, *m_measurement);
-}
-
-void ButtonLine::_ExportCSV(QVector<Measurement *> const & measurements)
-{
-    QString fileName = _GetFileNameToSave("csv", true);
-    if (0 != fileName.size())
-       file::Export().ToCsv(fileName, measurements);
-}
-
-void ButtonLine::exportCsv()
-{
-    QVector<Measurement *> measurements;
-    measurements.push_back(m_measurement);
-    _ExportCSV(measurements);
-}
-
-void ButtonLine::exportAllCsv()
-{
-    _ExportCSV(m_context.m_measurements);
-}
-
 void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
 {
     QColor color;
@@ -476,105 +428,6 @@ void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::
     _SetConnectivityState(stateText, state);
 
     UpdateRunButtonsState();
-}
-
-void ButtonLine::newFile()
-{
-    m_context.m_mainWindow.OpenNew();
-}
-
-QString ButtonLine::_GetRootDir()
-{
-    QString dir = GlobalSettings::GetInstance().GetLastDir();
-
-    if (!dir.contains(GlobalSettings::GetInstance().GetLimitDir()))
-        return GlobalSettings::GetInstance().GetLimitDir();
-
-    return dir;
-}
-
-void ButtonLine::_OpenFile(QString const &filePath, bool values)
-{
-    if (filePath.size() == 0)
-        return;
-
-    GlobalSettings::GetInstance().AddRecentFilePath(filePath);
-    GlobalSettings::GetInstance().SetLastDir(QFileInfo(filePath).path());
-    m_context.m_mainWindow.DeserializeMeasurements(filePath, values);
-}
-
-void ButtonLine::_OpenFile(bool values)
-{
-    if (!m_context.m_mainWindow.CouldBeOpen())
-        return;
-
-    QString filePath =
-        file::FileDialog::getOpenFileName
-        (
-            this,
-            "Open File",
-            _GetRootDir(),
-            QString("*.%1").arg(MOGR_FILE_EXTENSION),
-            GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing(),
-            GlobalSettings::GetInstance().GetLimitDir()
-        );
-
-    _OpenFile(filePath, values);
-}
-
-void ButtonLine::openWithoutValues()
-{
-    _OpenFile(false);
-}
-
-void ButtonLine::openFile()
-{
-    _OpenFile(true);
-}
-
-void ButtonLine::openRecentFile()
-{
-   _OpenFile(
-        m_recentFileActions[(QAction*)sender()],
-        MyMessageBox::Yes == MyMessageBox::question(this, tr("Open with values?"), tr("Yes"), tr("No"))
-    );
-}
-void ButtonLine::saveFile()
-{
-    if (m_context.m_mainWindow.GetCurrentFileNameWithPath() != "")
-        _SaveFile(m_context.m_mainWindow.GetCurrentFileNameWithPath(), m_storedValues);
-    else
-        saveAsFile();
-}
-void ButtonLine::_SaveFile(const QString &fileName, bool values)
-{
-    m_context.m_mainWindow.SerializeMeasurements(fileName, values);
-    GlobalSettings::GetInstance().SetSavedState(true);
-
-    if (!GlobalSettings::GetInstance().AreSavedValues())
-        GlobalSettings::GetInstance().SetSavedValues(values);
-}
-
-void ButtonLine::saveAsFile()
-{
-    QString filePath = _GetFileNameToSave(MOGR_FILE_EXTENSION, true);
-    if (0 != filePath.size())
-    {
-        _SaveFile(filePath, true);
-        m_storedValues = true;
-        GlobalSettings::GetInstance().AddRecentFilePath(filePath);
-    }
-}
-
-void ButtonLine::saveWithoutValuesAsFile()
-{
-    QString fileName = _GetFileNameToSave(MOGR_FILE_EXTENSION, false);
-    if (0 != fileName.size())
-    {
-        _SaveFile(fileName, false);
-        m_storedValues = false;
-        MyMessageBox::information(this, tr("Just template without values has been stored."));
-    }
 }
 
 void ButtonLine::measurementStateChanged()
@@ -694,4 +547,9 @@ void ButtonLine::stop()
 {
     if (m_stopButton->isEnabled()) //when slot is called from a remote
         m_measurement->Stop();
+}
+
+void ButtonLine::openRecentFileSlot()
+{
+    openRecentFile(m_recentFileActions[(QAction*)sender()]);
 }

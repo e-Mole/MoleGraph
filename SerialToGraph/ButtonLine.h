@@ -36,14 +36,9 @@ class ButtonLine : public QWidget
     QPoint _GetGlobalMenuPosition(QPushButton *button);
     void _OpenMenuDialog(QDialog &dialog);
     void _RefreshPanelMenu();
-    void _ExportCSV(QVector<Measurement *> const & measurements);
     void _ClearPanelShortcuts();
     void _CreatePanelShortcuts();
     void _ActivateChannel(ChannelBase *channel, bool checked);
-    QString _GetFileNameToSave(const QString &extension, bool values);
-    void _SaveFile(const QString &fileName, bool values);
-    void _OpenFile(QString const &filePath, bool values);
-    void _OpenFile(bool values);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
     void _FillRecentFileMenu();
@@ -83,7 +78,6 @@ class ButtonLine : public QWidget
     QMap<QShortcut*, ChannelBase*> m_shortcutChannels;
     QShortcut *m_allChannelsShortcut;
     QShortcut *m_noChannelsShortcut;
-    bool m_storedValues;
     GlobalSettingsDialog *m_settingsDialog;
     QWidget* m_space;
     QMap<QAction*, QString> m_recentFileActions;
@@ -104,22 +98,24 @@ signals:
     void axesPressed();
     void allChannelsDisplayedOrHidden();
     void measurementMenuButtonPressed();
-
-private slots:
-    void newFile();
-    void openWithoutValues();
-    void openFile();
-    void openRecentFile();
+    void openFileValues();
+    void openFileNoValues();
+    void openNewFile();
+    void openRecentFile(QString const fileName);
+    void connectivityButtonReleased();
     void saveFile();
     void saveAsFile();
     void saveWithoutValuesAsFile();
-    void sampleRequest();
-    void settings();
-    void about();
-public slots:
     void exportPng();
     void exportCsv();
     void exportAllCsv();
+
+private slots:
+    void sampleRequest();
+    void settings();
+    void about();
+    void openRecentFileSlot();
+public slots:
     void connectivityStateChanged(QString const & stateText, hw::HwSink::State state);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();

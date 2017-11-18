@@ -27,6 +27,13 @@ class MainWindow : public QMainWindow
     void closeEvent(QCloseEvent *event);
     bool _RealyExit();
     QString _MessageIfUnsaved();
+    QString _GetRootDir();
+    void _SaveFile(const QString &fileName, bool values);
+    void _OpenFile(bool values);
+    void _OpenFile(QString const &filePath, bool values);
+    bool _CouldBeOpen();
+    QString _GetFileNameToSave(const QString &extension, bool values);
+    void _ExportCSV(QVector<Measurement *> const & measurements);
 
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
@@ -43,6 +50,7 @@ class MainWindow : public QMainWindow
     QGridLayout *m_mainLayout;
     QPushButton *m_menuButton;
     QWidget *m_centralWidget;
+    bool m_storedValues;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -57,13 +65,11 @@ public:
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileNameWithPath();
-    void OpenNew();
     void RefreshHwConnection();
     void ShowConsole(bool show);
     void TerminateBluetooth();
     bool GetSavedValues() { return m_savedValues; }
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
-    bool CouldBeOpen();
     void ShowMenuButton(bool show);
     void UpdateChannelSizeFactor();
 
@@ -74,6 +80,17 @@ private slots:
     void menuButtonClicked();
     void measurementMenuButtonPressed();
     void updateWindowTitle();
+    void openNewFile();
+    void openFileValues();
+    void openFileNoValues();
+    void openRecentFile(QString const fileName);
+    void saveFile();
+    void saveAsFile();
+    void saveWithoutValuesAsFile();
+    void exportPng();
+    void exportCsv();
+    void exportAllCsv();
+
 public slots:
     void openSerialPort();
 };

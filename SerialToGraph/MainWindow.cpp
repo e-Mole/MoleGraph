@@ -82,7 +82,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(exportAllCsv()), this, SLOT(exportAllCsv()));
     connect(m_buttonLine, SIGNAL(exportCsv()), this, SLOT(exportCsv()));
     connect(m_buttonLine, SIGNAL(exportPng()), this, SLOT(exportPng()));
-
+    connect(m_buttonLine, SIGNAL(axisMenuButtonPressed()), this, SLOT(axisMenuButtonPressed()));
     connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
@@ -632,4 +632,10 @@ void MainWindow::measurementMenuButtonPressed()
 {
     MeasurementMenu measurementMenu(centralWidget(), m_context);
     measurementMenu.exec();
+}
+
+void MainWindow::axisMenuButtonPressed()
+{
+    AxisMenu axisMenu(centralWidget(), *m_currentMeasurement);
+    axisMenu.exec();
 }

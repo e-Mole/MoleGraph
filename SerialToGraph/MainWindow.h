@@ -90,6 +90,7 @@ private slots:
     void exportPng();
     void exportCsv();
     void exportAllCsv();
+    void axisMenuButtonPressed();
 
 public slots:
     void openSerialPort();

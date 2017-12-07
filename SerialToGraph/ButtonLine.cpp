@@ -1,7 +1,6 @@
 #include "ButtonLine.h"
 #include <AboutDialog.h>
 #include <Axis.h>
-#include <AxisMenu.h>
 #include <ChannelMenu.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
@@ -69,9 +68,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     m_context(context),
     m_hwSink(hwSink),
     m_measurement(NULL),
-    m_graphShortcut(NULL),
-    m_allChannelsShortcut(NULL),
-    m_noChannelsShortcut(NULL),
     m_settingsDialog(NULL),
     m_space(new QWidget())
 {
@@ -91,7 +87,7 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
     m_axisMenuButton = new QPushButton(tr("Axes"), this);
-    connect(m_axisMenuButton, SIGNAL(clicked()), this, SLOT(axisMenuButtonPressed()));
+    connect(m_axisMenuButton, SIGNAL(clicked()), this, SIGNAL(axisMenuButtonPressed()));
 
     m_startButton = new QPushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
@@ -164,11 +160,6 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
         );
 }
 
-void ButtonLine::_OpenMenuDialog(QDialog &dialog)
-{
-    dialog.exec();
-}
-
 void ButtonLine::_SetMenuStyle(QMenu *menu)
 {
     //setFontPointF doesn't work properly on android
@@ -196,34 +187,11 @@ void ButtonLine::fileMenuButtonPressed()
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 
-void ButtonLine::_RefreshPanelMenu()
-{
-    delete m_channelMenu;
-    m_channelMenu = NULL;
-
-    m_viewButton->setEnabled(m_measurement != NULL);
-    m_panelMenuButton->setEnabled(m_measurement != NULL);
-    m_axisMenuButton->setEnabled(m_measurement != NULL);
-
-    if (m_measurement == NULL)
-        return;
-
-    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement, this);
-    _CreatePanelShortcuts();
-    m_channelMenu->ReinitGrid();
-    UpdateRunButtonsState();
-}
 
 void ButtonLine::panelMenuButtonPressed()
 {
     m_channelMenu->UpdateCheckBoxes();
-    _OpenMenuDialog(*m_channelMenu);
-}
-
-void ButtonLine::axisMenuButtonPressed()
-{
-    AxisMenu axisMenu(m_context.m_mainWindow.centralWidget(), *m_measurement);
-    _OpenMenuDialog(axisMenu);
+    m_channelMenu->exec();
 }
 
 void ButtonLine::viewMenuButtonPressed()
@@ -322,7 +290,7 @@ void ButtonLine::about()
     dialog.exec();
 }
 
-void ButtonLine::UpdateRunButtonsState()
+void ButtonLine::updateRunButtonsState()
 {
     if (NULL == m_measurement)
     {
@@ -427,97 +395,41 @@ void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::
     m_connected = (state == hw::HwSink::Connected);
     _SetConnectivityState(stateText, state);
 
-    UpdateRunButtonsState();
+    updateRunButtonsState();
 }
 
 void ButtonLine::measurementStateChanged()
 {
-    UpdateRunButtonsState();
+    updateRunButtonsState();
 }
 
-void ButtonLine::_ClearPanelShortcuts()
+void ButtonLine::RefreshPanelMenu()
 {
-    delete m_graphShortcut;
-    m_graphShortcut = NULL;
+    if (m_channelMenu != NULL)
+        m_channelMenu->ClearPanelShortcuts();
 
-    foreach (QShortcut *shortcut, m_shortcutChannels.keys())
-        delete shortcut;
-    m_shortcutChannels.clear();
+    delete m_channelMenu;
+    m_channelMenu = NULL;
 
-    delete m_allChannelsShortcut;
-    m_allChannelsShortcut = NULL;
 
-    delete m_noChannelsShortcut;
-    m_noChannelsShortcut = NULL;
+    m_viewButton->setEnabled(m_measurement != NULL);
+    m_panelMenuButton->setEnabled(m_measurement != NULL);
+    m_axisMenuButton->setEnabled(m_measurement != NULL);
 
+    if (m_measurement == NULL)
+        return;
+
+    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement);
+    connect(m_channelMenu, SIGNAL(stateChanged()), this, SLOT(updateRunButtonsState()));
+    m_channelMenu->ReinitGrid();
+    updateRunButtonsState();
 }
-
-void ButtonLine::_CreatePanelShortcuts()
-{
-    m_graphShortcut = _CreateShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_G), m_channelMenu, SLOT(graphActivated()));
-
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
-    {
-        QShortcut *s = _CreateShortcut(
-            QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()),
-            this,
-            SLOT(channelActivated())
-        );
-        if (s != NULL)
-            m_shortcutChannels[s] = channel;
-    }
-
-    m_allChannelsShortcut = _CreateShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_A), m_channelMenu, SLOT(allChannelsActivated()));
-
-    m_noChannelsShortcut = _CreateShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_N), m_channelMenu, SLOT(noChannelsActivated()));
-}
-
-
-QString ButtonLine::GetGraphShortcutText()
-{
-    return (m_graphShortcut == NULL ? "" : m_graphShortcut->key().toString());
-}
-
-QString ButtonLine::GetAllChannelShortcutText()
-{
-    return (m_allChannelsShortcut == NULL ? "" : m_allChannelsShortcut->key().toString());
-}
-
-QString ButtonLine::GetNoChannelShortcutText()
-{
-    return (m_noChannelsShortcut == NULL ? "" : m_noChannelsShortcut->key().toString());
-}
-
-QString ButtonLine::GetChannelShortcutText(ChannelBase *channel)
-{
-    //only a few channels to create inverted map
-    QMap<QShortcut*, ChannelBase*>::iterator it =  m_shortcutChannels.begin();
-    for (;it != m_shortcutChannels.end(); ++it)
-    {
-        if (it.value() == channel)
-            return it.key()->key().toString();
-    }
-
-    //wiil be reached on Android;
-    return "";
-}
-
-void ButtonLine::channelActivated()
-{
-    ChannelBase *channel = m_shortcutChannels[(QShortcut*)sender()];
-    m_channelMenu->ActivateChannel(channel, !channel->GetWidget()->IsActive());
-}
-
 
 void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
-    _ClearPanelShortcuts();
-    _RefreshPanelMenu();
-    UpdateRunButtonsState();
+    RefreshPanelMenu();
+    updateRunButtonsState();
 
     delete m_viewMenu;
     m_viewMenu = new PlotContextMenu(this, m_measurement);

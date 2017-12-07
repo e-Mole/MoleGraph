@@ -34,10 +34,6 @@ class ButtonLine : public QWidget
 
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
-    void _OpenMenuDialog(QDialog &dialog);
-    void _RefreshPanelMenu();
-    void _ClearPanelShortcuts();
-    void _CreatePanelShortcuts();
     void _ActivateChannel(ChannelBase *channel, bool checked);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
@@ -45,6 +41,8 @@ class ButtonLine : public QWidget
     void _SetMenuStyle(QMenu *menu);
     QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
     QKeySequence _GetKey(QShortcut *shortcut);
+    void RefreshPanelMenu();
+
     QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
@@ -74,22 +72,13 @@ class ButtonLine : public QWidget
     hw::HwSink &m_hwSink;
     Measurement *m_measurement;
 
-    QShortcut *m_graphShortcut;
-    QMap<QShortcut*, ChannelBase*> m_shortcutChannels;
-    QShortcut *m_allChannelsShortcut;
-    QShortcut *m_noChannelsShortcut;
     GlobalSettingsDialog *m_settingsDialog;
     QWidget* m_space;
     QMap<QAction*, QString> m_recentFileActions;
 
 public:
-    void UpdateRunButtonsState();
     ButtonLine(QWidget *parent, const Context &context, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
-    QString GetGraphShortcutText();
-    QString GetAllChannelShortcutText();
-    QString GetNoChannelShortcutText();
-    QString GetChannelShortcutText(ChannelBase *channel);
     void ReplaceButtons(Qt::Orientation orientation);
 
 signals:
@@ -109,20 +98,20 @@ signals:
     void exportPng();
     void exportCsv();
     void exportAllCsv();
+    void axisMenuButtonPressed();
 
 private slots:
     void sampleRequest();
     void settings();
     void about();
     void openRecentFileSlot();
+    void updateRunButtonsState();
 public slots:
     void connectivityStateChanged(QString const & stateText, hw::HwSink::State state);
     void fileMenuButtonPressed();
     void panelMenuButtonPressed();
-    void axisMenuButtonPressed();
     void viewMenuButtonPressed();
     void measurementStateChanged();
-    void channelActivated();
     void start();
     void pauseContinue();
     void stop();

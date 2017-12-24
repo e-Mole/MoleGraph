@@ -1,10 +1,10 @@
 #include "ChannelBase.h"
-#include <Axis.h>
 #include <ChannelGraph.h>
 #include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <cmath>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainer.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QBoxLayout>

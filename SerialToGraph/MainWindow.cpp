@@ -8,7 +8,7 @@
 #include <file/Export.h>
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
-#include <GraphicsContainer.h>
+#include <graphics/GraphicsContainer.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -226,8 +226,9 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
+    GraphicsContainer *graphicsContainer = m->GetWidget();
 
-    int index = m_measurementTabs->addTab(m->GetWidget(), m->GetName());
+    int index = m_measurementTabs->addTab(graphicsContainer, graphicsContainer->GetName());
     m_measurementTabs->setCurrentIndex(index);
     m_measurementTabs->tabBar()->setTabTextColor(index, m->GetColor());
     connect(m, SIGNAL(colorChanged()), this, SLOT(measurementColorChanged()));
@@ -636,6 +637,6 @@ void MainWindow::measurementMenuButtonPressed()
 
 void MainWindow::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(centralWidget(), *m_currentMeasurement);
+    AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetWidget());
     axisMenu.exec();
 }

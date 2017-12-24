@@ -1,5 +1,6 @@
 #include "AxisSettings.h"
 #include <Axis.h>
+#include <graphics/GraphicsContainer.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -71,7 +72,7 @@ bool AxisSettings::BeforeAccept()
         m_axis->_SetColor(m_color);
     }
 
-    m_axis->m_measurement->GetPlot()->ReplotIfNotDisabled();
+    m_axis->m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
 
     m_changed = changed;
     return true;

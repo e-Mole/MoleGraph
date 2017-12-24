@@ -56,7 +56,7 @@ AxisChooseDialog::AxisChooseDialog(
         if (axis == originalHChannel->GetWidget()->GetChannelGraph()->GetValuleAxis())
             continue;
 
-        if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHChannel))
+        if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHChannel->GetWidget()))
             continue;
 
         QRadioButton *rb = new QRadioButton(axis->GetTitle(), this);

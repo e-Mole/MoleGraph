@@ -4,9 +4,10 @@
 #include <QColor>
 #include <QObject>
 #include <QString>
+#include <QMetaProperty>
 
-class ChannelBase;
-class Measurement;
+class ChannelWidget;
+class GraphicsContainer;
 class QCPAxis;
 class QString;
 class Axis : public QObject
@@ -30,7 +31,7 @@ class Axis : public QObject
     friend class AxesDialog;
     friend class AxisSettings;
 
-    Measurement * m_measurement;
+    GraphicsContainer * m_graphicsContainer;
     QString m_title;
     bool m_isRemovable;
     QColor m_color;
@@ -44,10 +45,10 @@ class Axis : public QObject
     void _ReassignGraphAxis(QCPAxis *axis);
 
 public:
-    Axis(Measurement *measurement,
+    Axis(GraphicsContainer *graphicsContainer,
         QColor const & color,
-        QCPAxis *graphAxis = NULL,
-        QString title = "",
+        QCPAxis *graphAxis,
+        QString title,
         bool isRemovable = true,
         bool isHorizontal = false,
         bool isOnRight = false,
@@ -64,11 +65,11 @@ public:
     bool IsShownName() { return m_isShownName; }
     QCPAxis *GetGraphAxis(){ return m_graphAxis; }
 
-    Measurement * GetMeasurement();
+    GraphicsContainer * GetGraphicsContainer();
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();
-    bool IsEmptyExcept(ChannelBase *except);
+    bool IsEmptyExcept(ChannelWidget *except);
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
     unsigned GetAssignedChannelCount();

@@ -5,7 +5,7 @@
 #include <QMap>
 
 class Axis;
-class Measurement;
+class GraphicsContainer;
 class Plot;
 class QPushButton;
 class QWidget;
@@ -16,11 +16,11 @@ class AxisMenu : public bases::MenuDialogBase
     void FillGrid();
     void _AddRowWithEditAndRemove(Axis *axis);
 
-    Measurement &m_measurement;
+    GraphicsContainer * m_graphicsContainer;
     QMap<QPushButton*, Axis*> m_removeButtontoAxis;
     QMap<QPushButton*, Axis*> m_editButtontoAxis;
 public:
-    AxisMenu(QWidget *parent, Measurement &measurement);
+    AxisMenu(QWidget *parent, GraphicsContainer *graphicsContainer);
 
 signals:
 

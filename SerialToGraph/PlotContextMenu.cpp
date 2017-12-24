@@ -6,9 +6,9 @@
 #include <QWidget>
 #include <SampleChannel.h>
 
-PlotContextMenu::PlotContextMenu(QWidget *parent,  Measurement *measurement):
+PlotContextMenu::PlotContextMenu(QWidget *parent,  GraphicsContainer *graphicsContainer):
     QMenu(parent),
-    m_measurement(measurement),
+    m_graphicsContainer(graphicsContainer),
     m_sampleValue(NULL),
     m_rangeAutoBorder(NULL),
     m_rangeLeftBorder(NULL),
@@ -25,17 +25,17 @@ PlotContextMenu::PlotContextMenu(QWidget *parent,  Measurement *measurement):
 
 void PlotContextMenu::contextMenuRequestRelativePos(QPoint pos)
 {
-    contextMenuRequestGlobalPos(m_measurement->GetPlot()->mapToGlobal(pos));
+    contextMenuRequestGlobalPos(m_graphicsContainer->GetPlot()->mapToGlobal(pos));
 }
 void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
 {
     clickPosition = pos;
-    QMenu *menu = new QMenu(m_measurement->GetPlot());
+    QMenu *menu = new QMenu(m_graphicsContainer->GetPlot());
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->addAction(tr("Zoom in"), this, SLOT(zoomInSelected()));
     menu->addAction(tr("Zoom out"), this, SLOT(zoomOutSelected()));
     menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->
-        setEnabled(m_measurement->GetSampleChannel()->GetValueCount() > 0);
+        setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
     menu->addSeparator();
     menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
     menu->addSeparator();
@@ -68,15 +68,15 @@ QAction * PlotContextMenu::InitMarkerTypeSelection(
     QAction *action = menu->addAction(label, this, SLOT(markerTypeSelected()));
     action->setCheckable(true);
     action->setChecked(
-        m_measurement->GetPlot()->m_markerTypeSelection == markerTypeSelection);
-    action->setEnabled(m_measurement->GetSampleChannel()->GetValueCount() > 0);
+        m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection);
+    action->setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
     return action;
 }
 
 QAction * PlotContextMenu::InitMarkerRangeValue(
     QMenu *menu, QString const &label, ChannelBase::DisplayValue markerRangeValue)
 {
-    Plot *plot = m_measurement->GetPlot();
+    Plot *plot = m_graphicsContainer->GetPlot();
     QAction *action = menu->addAction(label, this, SLOT(valueSelectionSended()));
     action->setCheckable(true);
     action->setChecked(plot->m_markerRangeValue == markerRangeValue);
@@ -86,28 +86,28 @@ QAction * PlotContextMenu::InitMarkerRangeValue(
 
 void PlotContextMenu::zoomInSelected()
 {
-    m_measurement->GetPlot()->Zoom(clickPosition, 100);
+    m_graphicsContainer->GetPlot()->Zoom(clickPosition, 100);
 }
 
 void PlotContextMenu::zoomOutSelected()
 {
-    m_measurement->GetPlot()->Zoom(clickPosition, -100);
+    m_graphicsContainer->GetPlot()->Zoom(clickPosition, -100);
 }
 
 void PlotContextMenu::zoomToFitSelected()
 {
-    m_measurement->GetPlot()->ZoomToFit();
+    m_graphicsContainer->GetPlot()->ZoomToFit();
 }
 
 void PlotContextMenu::FollowMode()
 {
     _SetMarkerType(m_sampleValue);
-    m_measurement->SetFollowMode(true);
+    m_graphicsContainer->SetFollowMode(true);
 }
 
 void PlotContextMenu::_SetMarkerType(QAction * action)
 {
-    Plot *plot = m_measurement->GetPlot();
+    Plot *plot = m_graphicsContainer->GetPlot();
     Plot::MarkerTypeSelection lastSelection = plot->m_markerTypeSelection;
 
     if (action == m_sampleValue)
@@ -125,7 +125,7 @@ void PlotContextMenu::_SetMarkerType(QAction * action)
     )
     {
         //marker line count changed. have to be redrawn
-        plot->SetMarkerLine(m_measurement->GetCurrentIndex());
+        plot->SetMarkerLine(m_graphicsContainer->GetCurrentIndex());
         plot->ReplotIfNotDisabled();
     }
 }
@@ -136,7 +136,7 @@ void PlotContextMenu::markerTypeSelected()
 
 void PlotContextMenu::valueSelectionSended()
 {
-    Plot *plot = m_measurement->GetPlot();
+    Plot *plot = m_graphicsContainer->GetPlot();
     QAction *action = (QAction*)sender();
     if (action == m_deltaValue)
         plot->m_markerRangeValue = ChannelBase::DVDelta;
@@ -155,5 +155,5 @@ void PlotContextMenu::valueSelectionSended()
     else if (action == m_sumValue)
         plot->m_markerRangeValue = ChannelBase::DVSum;
 
-    m_measurement->RedrawChannelValues();
+    m_graphicsContainer->RedrawChannelValues();
 }

@@ -11,10 +11,11 @@
 #include <QPair>
 #include <QMap>
 
+class ChannelWidget;
+class GraphicsContainer;
 class QColor;
 class QEvent;
 class QGestureEvent;
-class Measurement;
 class Axis;
 
 class MyAxisRect : public QCPAxisRect
@@ -63,7 +64,7 @@ private:
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
     QCPItemRect *_DrawOutRect(bool isLeft, int position);
 
-    Measurement &m_measurement;
+    GraphicsContainer *m_graphicsContainer;
     bool m_disabled;
     QPair<int, int> m_markerPositions;
     QPair<QCPItemLine *, QCPItemLine *> m_markerLines;
@@ -94,7 +95,7 @@ protected:
 
 
 public:
-    Plot(Measurement *measurement);
+    Plot(GraphicsContainer *graphicsContainer);
 
     MyAxisRect *axisRect()
     { return (MyAxisRect*)QCustomPlot::axisRect(); }
@@ -120,8 +121,9 @@ public:
     void ZoomToFit();
     DisplayMode GetDisplayMode() { return m_displayMode; }
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
-    void DisplayChannelValue(ChannelBase *channel);
+    void DisplayChannelValue(ChannelWidget *channelWidget);
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
+    void RedrawChannelMarks(int position);
 
     ChannelGraph *AddChannelGraph(QCPAxis *keyAxis, Axis *valueAxis, const QColor &color,
         unsigned shapeIndex,

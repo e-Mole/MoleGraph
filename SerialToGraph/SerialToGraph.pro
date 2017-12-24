@@ -69,9 +69,10 @@ SOURCES += main.cpp\
     PlotContextMenu.cpp \
     ChannelGraph.cpp \
     MeasurementGraphicsWrapper.cpp \
-    GraphicsContainer.cpp \
     data/measurementManager.cpp \
-    KeyShortcut.cpp
+    KeyShortcut.cpp \
+    graphics/GraphicsContainerManager.cpp \
+    graphics/GraphicsContainer.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -120,9 +121,10 @@ HEADERS  += MainWindow.h \
     PlotContextMenu.h \
     ChannelGraph.h \
     MeasurementGraphicsWrapper.h \
-    GraphicsContainer.h \
     data/measurementManager.h \
-    KeyShortcut.h
+    KeyShortcut.h \
+    graphics/GraphicsContainerManager.h \
+    graphics/GraphicsContainer.h
 
 CONFIG += mobility
 CONFIG += c++11

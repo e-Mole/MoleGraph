@@ -10,7 +10,6 @@
 
 class CentralWidget;
 class Console;
-class GraphicsContainer;
 class Measurement;
 class PortListDialog;
 class QApplication;

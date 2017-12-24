@@ -1,11 +1,10 @@
 #include "AxisMenu.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainer.h>
 #include <MainWindow.h>
-#include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <QFormLayout>
@@ -18,9 +17,9 @@
 #include <QString>
 #include <QWidget>
 
-AxisMenu::AxisMenu(QWidget *parent,  Measurement &measurement) :
+AxisMenu::AxisMenu(QWidget *parent,  GraphicsContainer *graphicsContainer) :
     bases::MenuDialogBase(parent, tr("Axes")),
-    m_measurement(measurement)
+    m_graphicsContainer(graphicsContainer)
 {
     ReinitGrid();
 }
@@ -54,7 +53,7 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
 
 void AxisMenu::FillGrid()
 {
-    foreach (Axis *axis, m_measurement.GetAxes())
+    foreach (Axis *axis, m_graphicsContainer->GetAxes())
         _AddRowWithEditAndRemove(axis);
 
     QPushButton * addbutton = new QPushButton(tr("Add New"), this);
@@ -68,7 +67,7 @@ void AxisMenu::FillGrid()
 
 void AxisMenu::addButtonPressed()
 {
-    Axis *newAxis = m_measurement.CreateAxis(Qt::black);
+    Axis *newAxis = m_graphicsContainer->CreateYAxis(Qt::black);
     AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
@@ -76,7 +75,7 @@ void AxisMenu::addButtonPressed()
         ReinitGrid();
     }
     else
-        m_measurement.RemoveAxis(newAxis);
+        m_graphicsContainer->RemoveAxis(newAxis);
 
     CloseIfPopup();
 }
@@ -85,7 +84,7 @@ void AxisMenu::removeButtonPressed()
 {
     Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
     Axis *firstVertical = NULL;
-    foreach (Axis * axis, m_measurement.GetAxes())
+    foreach (Axis * axis, m_graphicsContainer->GetAxes())
     {
         //first vertical is not possible to delete as same as horizontal
         if (!axis->IsHorizontal())
@@ -95,9 +94,9 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
+    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (axis == channel->GetWidget()->GetChannelGraph()->GetValuleAxis())
+        if (axis == channelWidget->GetChannelGraph()->GetValuleAxis())
         {
             if (MyMessageBox::No ==
                 MyMessageBox::question(
@@ -115,12 +114,12 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (ChannelBase * channel, axis->GetMeasurement()->GetChannels())
+    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (axis == channel->GetWidget()->GetChannelGraph()->GetValuleAxis())
-            channel->GetWidget()->GetChannelGraph()->AssignToAxis(firstVertical);
+        if (axis == channelWidget->GetChannelGraph()->GetValuleAxis())
+            channelWidget->GetChannelGraph()->AssignToAxis(firstVertical);
     }
-    m_measurement.RemoveAxis(axis);
+    m_graphicsContainer->RemoveAxis(axis);
     GlobalSettings::GetInstance().SetSavedState(false);
     firstVertical->UpdateGraphAxisName();
     firstVertical->UpdateVisiblility();

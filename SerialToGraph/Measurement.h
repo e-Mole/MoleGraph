@@ -16,30 +16,16 @@
 class Axis;
 class ChannelBase;
 class ChannelGraph;
+class GraphicsContainer;
 class Plot;
 class QColor;
 class QCPAxis;
 class QDataStream;
-class QHBoxLayout;
-class QGridLayout;
-class QScrollBar;
 class QTimer;
-class QVBoxLayout;
 class SampleChannel;
 struct Context;
 
 namespace hw { class HwSink;}
-
-class WidgetWithResizeEvent : public QWidget
-{
-    Q_OBJECT
-    virtual void resizeEvent(QResizeEvent *){ resized(); }
-    virtual QSize sizeHint() const { return QSize(800,700); }
-public:
-    WidgetWithResizeEvent(QWidget *parent) : QWidget(parent) {}
-signals:
-    void resized();
-};
 
 class Measurement : public QObject
 {
@@ -82,10 +68,8 @@ public:
 private:
     friend class MeasurementSettings;
 
-    void _InitializeLayouts();
     bool _FillQueue();
     bool _IsCompleteSetInQueue();
-    void _DrawRestData();
     void _AdjustDrawPeriod(unsigned drawDelay);
     void _InitializeAxesAndChanels(Measurement *source);
     void _InitializeAxesAndChanels();
@@ -97,12 +81,10 @@ private:
     unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
-    QCPAxis *_GetGraphAxis(unsigned index);
     void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
-    void _DeserializeAxis(QDataStream &in, unsigned index);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
-    void _SetName(QString &name) { m_name = name; }
+    void _SetName(QString &name);
     void _SetSampleUnits(SampleUnits sampleUnits) {m_sampleUnits = sampleUnits; }
     void _SetPeriod(unsigned period) {m_period = period; }
     void _SetState(State state) { m_state = state;}
@@ -110,10 +92,9 @@ private:
 
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type);
-    unsigned _GetAxisCount() { return m_axes.size(); }
+    unsigned _GetAxisCount();
     ChannelBase *_FindChannel(int hwIndex);
     void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
-    void _ReadingValuesPostProcess(double lastHorizontalValue);
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
     State _GetStateForSerialization();
@@ -124,14 +105,11 @@ private:
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _AddChannelToHorizontalValueSet(ChannelBase * horizontalChannel);
     void _RefillHorizontalSet();
-    void _AddHorizontalValue(double value);
-    void _FollowLastMeasuredValue();
-    void _RedrawChannelMarks(int position);
+    void _DeserializeAxis(QDataStream &in, unsigned index);
 
-    WidgetWithResizeEvent  m_widget;
+    GraphicsContainer *m_widget;
     Context const &m_context;
     hw::HwSink &m_hwSink;
-    QString m_name;
     SampleUnits m_sampleUnits;
     unsigned m_period;
     State m_state;
@@ -142,26 +120,14 @@ private:
     QTimer *m_drawTimer;
     QQueue<unsigned char> m_queue;
     SampleChannel *m_sampleChannel;
-    QVector<Axis*> m_axes;
     QVector<ChannelBase*> m_channels;
-    QHBoxLayout *m_mainLayout;
-    QVBoxLayout *m_plotAndSliderLayout;
-    QVBoxLayout *m_displaysAndSliderLayout;
-    QGridLayout *m_displayLayout;
-    Plot *m_plot;
-    QScrollBar *m_scrollBar;
     bool m_startNewDraw;
     Type m_type;
     bool m_saveLoadValues; //for serialization and deserialization too
     QColor m_color;
-    bool m_marksShown;
     double m_secondsInPause;
     QTime m_pauseStartTime;
     unsigned m_valueSetCount;
-    ChannelBase *m_horizontalChannel;
-    std::set<double> m_horizontalValues;
-    bool m_followMode;
-    unsigned m_currentIndex;
     QMap<ChannelBase*, ChannelGraph*> m_channelToGraph; //this colection will be used for searching in both directions so QMap is not the best one but there will be just a few elements so who cares
 public:
     Measurement(
@@ -173,12 +139,11 @@ public:
 );
     ~Measurement();
 
-    QString &GetName() { return m_name; }
+    QString &GetName();
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes() const;
     QVector<ChannelBase *> const & GetChannels() const;
-    void ReplaceDisplays(bool grid);
     Plot *GetPlot() const;
     bool IsPlotVisible() const;
     State GetState() { return m_state; }
@@ -194,7 +159,7 @@ public:
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
-    QWidget *GetWidget() { return &m_widget; }
+    GraphicsContainer *GetWidget();
     void SerializeColections(QDataStream &out);
     void DeserializeColections(QDataStream &in, unsigned version);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
@@ -202,8 +167,7 @@ public:
 
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
-    bool GetMarksShown() {return m_marksShown; }
-    void RedrawChannelValues();
+    bool GetMarksShown();
     int GetSliderPos();
     void SetHorizontalChannel(ChannelBase *channel);
     ChannelBase *GetHorizontalChannel() const;
@@ -211,7 +175,7 @@ public:
     void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph);
-    void RemoveChannel(ChannelBase *channeltoRemove);
+    void RemoveChannel(ChannelBase *channelToRemove);
     void RecalculateSliderMaximum();
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
@@ -219,22 +183,18 @@ public:
     double GetHorizontalValueBySliderPos(unsigned position) const;
     unsigned GetCurrentHorizontalChannelIndex() const;
     unsigned GetHorizontalValueLastInex(double value) const;
-    int GetCurrentIndex()
-    { return m_currentIndex; }
-
-    ChannelGraph * AddGhostChannelGraph(QColor const &color, unsigned shapeIndex);
+    int GetCurrentIndex();
+    void DrawRestData();
 signals:
     void stateChanged();
     void nameChanged();
     void colorChanged();
 public slots:
-    void sliderValueChanged(int value);
     void showGraph(bool show);
     void replaceDisplays();
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
-    void markerLinePositionChanged(int position);
 };
 
 #endif // MEASUREMENT_H

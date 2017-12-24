@@ -7,12 +7,10 @@
 #include <QLabel>
 #include <QObject>
 
-class Axis;
 class ChannelGraph;
 class ChannelWidget;
 class Measurement;
 class QString;
-class QCPAxis;
 
 class ChannelBase : public QObject
 {

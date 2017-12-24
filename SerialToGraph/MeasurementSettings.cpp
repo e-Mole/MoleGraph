@@ -1,4 +1,5 @@
 #include "MeasurementSettings.h"
+#include <graphics/GraphicsContainer.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -10,16 +11,17 @@
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(
-    QWidget *parent, Measurement *measurement, bool acceptChangesByDialogClosing):
+    QWidget *parent, Measurement *measurement, GraphicsContainer *graphicsContainer, bool acceptChangesByDialogClosing):
     bases::FormDialogColor(parent, tr("Measurement Setting"), acceptChangesByDialogClosing),
     m_measurement(measurement),
+    m_graphicsContainer(graphicsContainer),
     m_name(NULL),
     m_type(NULL),
     m_period(NULL),
     m_sampleUnits(NULL),
     m_marksShown(NULL)
 {
-    m_name = new QLineEdit(measurement->m_name, this);
+    m_name = new QLineEdit(graphicsContainer->GetName(), this);
     m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
 
     m_type = new bases::ComboBox(this);
@@ -48,7 +50,7 @@ MeasurementSettings::MeasurementSettings(
     AddColorButtonRow(m_measurement->m_color);
 
     m_marksShown = new QCheckBox(this);
-    m_marksShown->setChecked(m_measurement->m_marksShown);
+    m_marksShown->setChecked(m_graphicsContainer->GetMarksShown());
     m_formLayout->addRow(new QLabel(tr("Show Marks")), m_marksShown);
 
 }
@@ -62,10 +64,10 @@ void MeasurementSettings::disablePeriodAndUnits(int disabled)
 bool MeasurementSettings::BeforeAccept()
 {
     bool changed = false;
-    if (m_measurement->m_name != m_name->text())
+    if (m_graphicsContainer->GetName() != m_name->text())
     {
         changed = true;
-        m_measurement->m_name = m_name->text();
+        m_graphicsContainer->SetName(m_name->text());
         m_measurement->nameChanged();
     }
     m_measurement->m_sampleUnits = (Measurement::SampleUnits)m_sampleUnits->currentIndex();

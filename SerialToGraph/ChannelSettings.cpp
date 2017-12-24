@@ -221,7 +221,7 @@ bool ChannelSettings::_AxisCheckForRealTimeMode()
     if (m_style != NULL && m_style->currentData().toBool()) //channel with realtime style
     {
         Axis *axis = ((Axis *)m_axisComboBox->currentData().toLongLong());
-        if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channel))
+        if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channel->GetWidget()))
         {
             MyMessageBox::critical(
                 this,

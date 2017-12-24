@@ -432,7 +432,7 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     updateRunButtonsState();
 
     delete m_viewMenu;
-    m_viewMenu = new PlotContextMenu(this, m_measurement);
+    m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetWidget());
     m_viewMenu->setTitle("View");
 }
 

@@ -1,9 +1,9 @@
 #include "Plot.h"
 #include <Axis.h>
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
+#include <ChannelWidget.h>
+#include <graphics/GraphicsContainer.h>
 #include <qmath.h>
-#include <Measurement.h>
 #include <QColor>
 #include <QEvent>
 #include <QGesture>
@@ -13,6 +13,7 @@
 #include <QPinchGesture>
 #include <QTime>
 #include <QWheelEvent>
+#include <QWidget>
 
 #define AXES_LABEL_PADDING 1
 #define RESCALE_MARGIN_RATIO 50
@@ -31,9 +32,9 @@ void MyAxisRect::mouseMoveEvent(QMouseEvent *event)
     QCPAxisRect::mouseMoveEvent(event);
 }
 
-Plot::Plot(Measurement *measurement) :
-    QCustomPlot(measurement->GetWidget()),
-    m_measurement(*measurement),
+Plot::Plot(GraphicsContainer *graphicsContainer) :
+    QCustomPlot((QWidget*) graphicsContainer),
+    m_graphicsContainer(graphicsContainer),
     m_disabled(false),
     m_markerPositions(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
     m_markerLines(NULL, NULL),
@@ -181,7 +182,7 @@ double Plot::_GetClosestXValue(double in)
 bool Plot::_GetClosestXIndex(double in, int &out)
 {
     double xValue = _GetClosestXValue(in);
-    out = m_measurement.GetLastClosestHorizontalValueIndex(xValue);
+    out = m_graphicsContainer->GetLastClosestHorizontalValueIndex(xValue);
     return out != -1;
 }
 
@@ -237,8 +238,8 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     {
         qDebug() << "clickedToPlot calling";
         xIndex = _MinMaxCorection(xIndex);
-        double xValue = m_measurement.GetHorizontalChannel()->GetValue(xIndex);
-        SetMarkerLine(m_measurement.GetPositionByHorizontalValue(xValue));
+        double xValue = m_graphicsContainer->GetHorizontalChannel()->GetValue(xIndex);
+        SetMarkerLine(m_graphicsContainer->GetPositionByHorizontalValue(xValue));
     }
 
     ReplotIfNotDisabled();
@@ -272,7 +273,7 @@ void Plot::ZoomToFit()
         RescaleAxis(ax);
     else
     {
-        m_measurement.SetFollowMode(true);
+        m_graphicsContainer->SetFollowMode(true);
         RescaleAllAxes();
     }
 
@@ -308,7 +309,7 @@ void Plot::processWheelEvent()
 
 void Plot::wheelEvent(QWheelEvent *event)
 {
-    m_measurement.SetFollowMode(false);
+    m_graphicsContainer->SetFollowMode(false);
 
     if (m_wheelEvent == NULL)
     {
@@ -424,7 +425,7 @@ void Plot::MyMouseMoveEvent(QMouseEvent *event)
 
     if (axisRect()->IsDragging())
     {
-        m_measurement.SetFollowMode(false);
+        m_graphicsContainer->SetFollowMode(false);
     }
 
     if (!axisRect()->IsDragging() || 0 != selectedAxes().size())
@@ -497,7 +498,7 @@ void Plot::RemoveAxis(QCPAxis *axis)
 
 bool Plot::_IsGraphAxisEmpty(QCPAxis *graphAxis)
 {
-    foreach (Axis *axis, m_measurement.GetAxes())
+    foreach (Axis *axis, m_graphicsContainer->GetAxes())
         if (axis->GetGraphAxis() == graphAxis)
             return false;
     return true;
@@ -531,10 +532,11 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channel->GetWidget()->IsActive() && channel->GetWidget()->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
+        if (channelWidget->IsActive() && channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
         {
+            ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
             if (channel->GetMinValue() < lower)
                 lower = channel->GetMinValue();
             if (channel->GetMaxValue() > upper)
@@ -599,35 +601,39 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Plot::DisplayChannelValue(ChannelBase *channel)
+void Plot::DisplayChannelValue(ChannelWidget *channelWidget)
 { 
     int firstIndex =
-        m_measurement.GetHorizontalValueLastInex(
-            m_measurement.GetHorizontalValueBySliderPos(
+        m_graphicsContainer->GetHorizontalValueLastInex(
+            m_graphicsContainer->GetHorizontalValueBySliderPos(
                 m_markerPositions.first
             )
         );
     if (m_markerTypeSelection == MTSSample)
     {
         if (m_markerPositions.first != std::numeric_limits<int>::min())
-            channel->GetWidget()->FillLastValueText(channel->GetValue(firstIndex));
-            channel->GetWidget()->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
+        {
+            ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
+            channelWidget->FillLastValueText(channel->GetValue(firstIndex));
+            channelWidget->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
+        }
     }
     else
     {
         int secondIndex =
-            m_measurement.GetHorizontalValueLastInex(
-                m_measurement.GetHorizontalValueBySliderPos(
+            m_graphicsContainer->GetHorizontalValueLastInex(
+                m_graphicsContainer->GetHorizontalValueBySliderPos(
                     m_markerPositions.second
                 )
             );
 
         double rangeValue = 0;
+        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
         if (channel->FillRangeValue(firstIndex, secondIndex, m_markerRangeValue, rangeValue))
         {
             //FIXME: stange
-            channel->GetWidget()->FillLastValueText(rangeValue);
-            channel->GetWidget()->ShowLastValueWithUnits();
+            channelWidget->FillLastValueText(rangeValue);
+            channelWidget->ShowLastValueWithUnits();
         }
     }
 }
@@ -639,22 +645,23 @@ void Plot::RemoveGraph(ChannelGraph *graph)
 
 void Plot::RefillGraphs()
 {
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        channel->GetWidget()->GetChannelGraph()->clearData();
+        channelWidget->GetChannelGraph()->clearData();
+        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
-            ChannelBase * horizontalChannel = m_measurement.GetHorizontalChannel();
+            ChannelBase * horizontalChannel = m_graphicsContainer->GetHorizontalChannel();
             if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
                 continue;
 
-            channel->GetWidget()->GetChannelGraph()->data()->insert(
+            channelWidget->GetChannelGraph()->data()->insert(
                 horizontalChannel->GetValue(i),
                 QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
             );
         }
 
-        DisplayChannelValue(channel);
+        DisplayChannelValue(channelWidget);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
@@ -676,7 +683,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
     markerLine->setPen(QPen(QBrush(color), MARKER_WIDTH, Qt::DotLine));
     markerLine->start->setTypeY(QCPItemPosition::ptViewportRatio);
 
-    double xValue = m_measurement.GetHorizontalValueBySliderPos(position);
+    double xValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     markerLine->start->setCoords(xValue, 0);
     markerLine->end->setTypeY(QCPItemPosition::ptViewportRatio);
     markerLine->end->setCoords(xValue, 100);
@@ -686,7 +693,7 @@ QCPItemLine * Plot::_AddMarkerLine(QCPItemLine *markerLine, int position, QColor
 
 QCPItemRect *Plot::_DrawOutRect(bool isLeft, int position)
 {
-    double horizontalValue = m_measurement.GetHorizontalValueBySliderPos(position);
+    double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     QCPItemRect *rect = new QCPItemRect(this);
     rect->setLayer("background"); //to be axes clicable
     rect->topLeft->setTypeY(QCPItemPosition::ptViewportRatio);
@@ -801,4 +808,11 @@ QColor Plot::_SetMarkerLineColor(bool isSame, bool isCurrent)
         return Qt::black;
     else
         return Qt::lightGray;
+}
+
+
+void Plot::RedrawChannelMarks(int position)
+{
+    foreach (ChannelGraph * channelGraph, m_channelGraphs)
+        channelGraph->ChangeSelectedMarkIndex(position);
 }

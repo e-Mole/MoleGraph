@@ -3,12 +3,13 @@
 #include <ChannelWidget.h>
 #include <SampleChannel.h>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainer.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-Axis::Axis(Measurement *measurement,
+Axis::Axis(GraphicsContainer *graphicsContainer,
     QColor const & color,
     QCPAxis *graphAxis,
     QString title,
@@ -18,7 +19,7 @@ Axis::Axis(Measurement *measurement,
     bool isShownName
 ) :
     QObject(NULL),
-    m_measurement(measurement),
+    m_graphicsContainer(graphicsContainer),
     m_title(title),
     m_isRemovable(isRemovable),
     m_color(color),
@@ -27,9 +28,6 @@ Axis::Axis(Measurement *measurement,
     m_graphAxis(NULL),
     m_isShownName(isShownName)
 {
-    if (title == "")
-        m_title =  QString(tr("Axis %1")).arg(measurement->GetAxes().count() + 1);
-
     _ReassignGraphAxis(graphAxis);
 }
 
@@ -37,13 +35,13 @@ void Axis::_ReassignGraphAxis(QCPAxis *axis)
 {
     if (NULL != m_graphAxis)
     {
-        foreach (ChannelBase *channel, m_measurement->GetChannels())
+        foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
         {
-            if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
-                channel->GetWidget()->GetChannelGraph()-> AssignToGraphAxis(axis);
+            if (channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
+                channelWidget->GetChannelGraph()-> AssignToGraphAxis(axis);
         }
 
-        m_measurement->GetPlot()->RemoveAxis(m_graphAxis);
+        m_graphicsContainer->GetPlot()->RemoveAxis(m_graphAxis);
     }
 
     m_graphAxis = axis;
@@ -52,7 +50,7 @@ void Axis::_ReassignGraphAxis(QCPAxis *axis)
         _SetColor(m_color);
         UpdateGraphAxisName();
         UpdateVisiblility();
-        m_measurement->GetPlot()->RescaleAxis(axis);
+        m_graphicsContainer->GetPlot()->RescaleAxis(axis);
 
     }
 }
@@ -74,7 +72,7 @@ void Axis::UpdateGraphAxisName()
     if (m_isShownName)
     {
         m_graphAxis->setLabel(m_title);
-        m_measurement->GetPlot()->ReplotIfNotDisabled();
+        m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
         return;
     }
 
@@ -84,21 +82,21 @@ void Axis::UpdateGraphAxisName()
     bool addMiddle = false;
     QString units;
 
-    for (unsigned i = 0; i < m_measurement->GetChannelCount(); i++)
+    for (unsigned i = 0; i < m_graphicsContainer->GetChannelWidgetCount(); i++)
     {
-        ChannelWidget *channelWidget = m_measurement->GetChannel(i)->GetWidget();
+        ChannelWidget *channelWidget = m_graphicsContainer->GetChannelWidget(i);
         if ((channelWidget->IsActive() || channelWidget->IsOnHorizontalAxis()) &&
             channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
             if (!first)
             {
-                if (i+1 != m_measurement->GetChannelCount() &&
-                    m_measurement->GetChannel(i+1)->GetWidget()->IsActive() &&
-                    this == m_measurement->GetChannel(i+1)->GetWidget()->GetChannelGraph()->GetValuleAxis() &&
+                if (i+1 != m_graphicsContainer->GetChannelWidgetCount() &&
+                    m_graphicsContainer->GetChannelWidget(i+1)->IsActive() &&
+                    this == m_graphicsContainer->GetChannelWidget(i+1)->GetChannelGraph()->GetValuleAxis() &&
                     i != 0 &&
-                    m_measurement->GetChannel(i-1)->GetWidget()->IsActive() &&
-                    this == m_measurement->GetChannel(i-1)->GetWidget()->GetChannelGraph()->GetValuleAxis())
+                    m_graphicsContainer->GetChannelWidget(i-1)->IsActive() &&
+                    this == m_graphicsContainer->GetChannelWidget(i-1)->GetChannelGraph()->GetValuleAxis())
                 {
                     addMiddle = true;
                     continue;
@@ -129,22 +127,22 @@ void Axis::UpdateGraphAxisName()
             "" :
             (round ? " (" : " [") + units + (round ? ")" : "]");
     m_graphAxis->setLabel(channels + unitString);
-    m_measurement->GetPlot()->ReplotIfNotDisabled();
+    m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
 }
 
 void Axis::UpdateVisiblility()
 {
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channel->GetWidget()->IsActive() && channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
+        if (channelWidget->IsActive() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             m_graphAxis->setVisible(true);
-            m_measurement->GetPlot()->ReplotIfNotDisabled();
+            m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
             return;
         }
     }
     m_graphAxis->setVisible(IsHorizontal());
-    m_measurement->GetPlot()->ReplotIfNotDisabled();
+    m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
 
 }
 
@@ -171,19 +169,19 @@ void Axis::_SetColor(QColor const & color)
     m_graphAxis->setSelectedSubTickPen(pen);
 }
 
-Measurement * Axis::GetMeasurement()
+GraphicsContainer * Axis::GetGraphicsContainer()
 {
-    return m_measurement;
+    return m_graphicsContainer;
 }
 
-bool Axis::IsEmptyExcept(ChannelBase *except)
+bool Axis::IsEmptyExcept(ChannelWidget *except)
 {
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channel == except)
+        if (channelWidget == except)
             continue;
 
-        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
+        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
             return false;
     }
 
@@ -192,13 +190,13 @@ bool Axis::IsEmptyExcept(ChannelBase *except)
 
 bool Axis::ContainsChannelWithRealTimeStyle()
 {
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (
-            channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this &&
-            channel->GetType() == ChannelBase::Type_Sample &&
-            ((SampleChannel*)channel)->IsInRealtimeStyle()
-        )
+        if (channelWidget->GetChannelGraph()->GetValuleAxis() != this)
+            continue;
+
+        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
+        if (channel->GetType() == ChannelBase::Type_Sample && ((SampleChannel*)channel)->IsInRealtimeStyle())
             return true;
     }
     return false;
@@ -207,10 +205,10 @@ bool Axis::ContainsChannelWithRealTimeStyle()
 void Axis::UpdateGraphAxisStyle()
 {
     ChannelBase *axisChannel = NULL;
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
-            axisChannel = channel;
+            axisChannel = m_graphicsContainer->GetChannel(channelWidget);
             break; //I know, that real time channel is on oun axis
         }
 
@@ -226,14 +224,14 @@ void Axis::UpdateGraphAxisStyle()
         formatText = ((SampleChannel *)axisChannel)->GetRealTimeFormatText();
     }
 
-    m_measurement->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
+    m_graphicsContainer->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
 }
 
 unsigned Axis::GetAssignedChannelCount()
 {
     unsigned count = 0;
-    foreach (ChannelBase *channel, m_measurement->GetChannels())
-        if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
             count++;
 
     return count;
@@ -243,7 +241,7 @@ void Axis::_SetIsOnRight(bool isOnRight)
 {
     m_isOnRight = isOnRight;
     if (!IsHorizontal())
-        _ReassignGraphAxis(m_measurement->GetPlot()->AddYAxis(isOnRight));
+        _ReassignGraphAxis(m_graphicsContainer->GetPlot()->AddYAxis(isOnRight));
 }
 
 void Axis::_SetIsShownName(bool isShownName)
@@ -260,5 +258,5 @@ void Axis::_SetTitle(QString const& title)
 
 void Axis::Rescale()
 {
-    m_measurement->GetPlot()->RescaleAxis(m_graphAxis);
+    m_graphicsContainer->GetPlot()->RescaleAxis(m_graphAxis);
 }

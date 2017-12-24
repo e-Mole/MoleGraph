@@ -1,7 +1,7 @@
 #ifndef CONTEXTMENU_H
 #define CONTEXTMENU_H
 
-#include <Measurement.h>
+#include <graphics/GraphicsContainer.h>
 #include <Plot.h>
 #include <QMenu>
 #include <QPoint>
@@ -20,7 +20,7 @@ class PlotContextMenu : public QMenu
     void _SetMarkerType(QAction * action);
 
     QPoint clickPosition;
-    Measurement *m_measurement;
+    GraphicsContainer *m_graphicsContainer;
 
     QAction *m_sampleValue;
     QAction *m_rangeAutoBorder;
@@ -38,7 +38,7 @@ class PlotContextMenu : public QMenu
     QAction *m_sumValue;
 
 public:
-    PlotContextMenu(QWidget *parent, Measurement *measurement);
+    PlotContextMenu(QWidget *parent, GraphicsContainer *graphicsContainer);
 
 public slots:
     void contextMenuRequestRelativePos(QPoint pos);

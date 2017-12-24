@@ -5,6 +5,7 @@
 
 namespace bases { class ComboBox; }
 class Measurement;
+class GraphicsContainer;
 class QCheckBox;
 
 class QLineEdit;
@@ -14,6 +15,7 @@ class MeasurementSettings  : public bases::FormDialogColor
     Q_OBJECT
 
     Measurement * m_measurement;
+    GraphicsContainer * m_graphicsContainer;
     QLineEdit *m_name;
     bases::ComboBox *m_type;
     QLineEdit *m_period;
@@ -22,7 +24,7 @@ class MeasurementSettings  : public bases::FormDialogColor
 
     bool BeforeAccept();
 public:
-    MeasurementSettings(QWidget *parent, Measurement *measurement, bool acceptChangesByDialogClosing);
+    MeasurementSettings(QWidget *parent, Measurement *measurement, GraphicsContainer *graphicsContainer, bool acceptChangesByDialogClosing);
 private slots:
     void disablePeriodAndUnits(int disabled);
 };

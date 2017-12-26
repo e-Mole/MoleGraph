@@ -9,6 +9,7 @@
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/GraphicsContainerManager.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -47,10 +48,13 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_mainLayout(NULL),
     m_menuButton(NULL),
     m_centralWidget(NULL),
-    m_storedValues(true)
+    m_storedValues(true),
+    m_graphicsContainerManager(NULL)
 {
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
+
+    m_graphicsContainerManager = new GraphicsContainerManager(m_centralWidget);
 
     m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
@@ -227,6 +231,7 @@ void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
     GraphicsContainer *graphicsContainer = m->GetWidget();
+    m_graphicsContainerManager->AddMeasurement(m);
 
     int index = m_measurementTabs->addTab(graphicsContainer, graphicsContainer->GetName());
     m_measurementTabs->setCurrentIndex(index);
@@ -261,6 +266,7 @@ void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
 {
     if (confirmed)
     {
+        m_graphicsContainerManager->RemoveMeasurement(m);
         m_measurements.removeOne(m);
         m_currentMeasurement = NULL;
         m_measurementTabs->removeTab(m_measurements.indexOf(m));

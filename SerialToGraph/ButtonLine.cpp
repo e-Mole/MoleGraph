@@ -432,8 +432,12 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     updateRunButtonsState();
 
     delete m_viewMenu;
-    m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetWidget());
-    m_viewMenu->setTitle("View");
+    m_viewMenu = NULL;
+    if (NULL != measurement)
+    {
+        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetWidget());
+        m_viewMenu->setTitle("View");
+    }
 }
 
 void ButtonLine::start()

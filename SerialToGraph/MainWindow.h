@@ -10,6 +10,7 @@
 
 class CentralWidget;
 class Console;
+class GraphicsContainerManager;
 class Measurement;
 class PortListDialog;
 class QApplication;
@@ -50,6 +51,7 @@ class MainWindow : public QMainWindow
     QPushButton *m_menuButton;
     QWidget *m_centralWidget;
     bool m_storedValues;
+    GraphicsContainerManager *m_graphicsContainerManager;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();

@@ -665,7 +665,7 @@ void Measurement::SerializeColections(QDataStream &out)
                     (channel->GetType() == ChannelBase::Type_Hw ?
                         ((HwChannel *)channel)->GetHwIndex() : -1
                     );
-                out << channel;
+                out << channel->GetWidget();
             }
         }
     }
@@ -949,4 +949,10 @@ int Measurement::GetCurrentIndex()
 unsigned Measurement::_GetAxisCount()
 {
     return m_widget->GetAxisCount();
+}
+
+void Measurement::RemoveWidget()
+{
+    delete m_widget;
+    m_widget = NULL;
 }

@@ -185,6 +185,7 @@ public:
     unsigned GetHorizontalValueLastInex(double value) const;
     int GetCurrentIndex();
     void DrawRestData();
+    void RemoveWidget();
 signals:
     void stateChanged();
     void nameChanged();

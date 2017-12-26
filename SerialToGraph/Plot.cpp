@@ -813,6 +813,6 @@ QColor Plot::_SetMarkerLineColor(bool isSame, bool isCurrent)
 
 void Plot::RedrawChannelMarks(int position)
 {
-    foreach (ChannelGraph * channelGraph, m_channelGraphs)
-        channelGraph->ChangeSelectedMarkIndex(position);
+    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
+        channelWidget->GetChannelGraph()->ChangeSelectedMarkIndex(position);
 }

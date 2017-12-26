@@ -79,6 +79,7 @@ private:
     DisplayMode m_displayMode;
     MarkerTypeSelection m_markerTypeSelection;
     ChannelBase::DisplayValue m_markerRangeValue;
+    //FIXME: currently unused but should be
     QList<ChannelGraph *> m_channelGraphs;
 
     virtual void wheelEvent(QWheelEvent *event);

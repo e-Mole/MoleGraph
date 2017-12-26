@@ -16,6 +16,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocale>
 #include <QPushButton>
 #include <QSettings>
 #include <QString>
@@ -115,8 +116,10 @@ void ChannelSettings::_InitializeValueLine(ChannelBase *channel)
     int currentIndex = m_channel->GetMeasurement()->GetCurrentHorizontalChannelIndex();
     if (currentIndex < (int)channel->GetValueCount())
     {
+        QLocale locale(QLocale::system());
         QString currentValueStr = (channel->IsValueNA(currentIndex)) ?
-            channel->GetWidget()->GetNAValueString() : QString::number(channel->GetValue(currentIndex));
+            channel->GetWidget()->GetNAValueString() : locale.toString(channel->GetValue(currentIndex));
+
         m_currentValueControl->setText(currentValueStr);
     }
     else
@@ -137,12 +140,13 @@ void ChannelSettings::setOriginalValue(bool checked)
     Q_UNUSED(checked);
     //this method is called just in a case the original value box is  enabled and
     //it is just in the case index is in range of this channel
+    QLocale locale(QLocale::system());
     double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(
         m_channel->GetMeasurement()->GetCurrentIndex());
     m_currentValueControl->setText(
         (currentValue == ChannelWidget::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
-            QString::number(currentValue)
+            locale.toString(currentValue)
     );
 
     //was changed in currentValueChanged
@@ -157,7 +161,8 @@ void ChannelSettings::setNaValue(bool)
 
 void ChannelSettings::currentValueChanged(QString const &content)
 {
-    m_currentValue = content.toDouble();
+    QLocale locale(QLocale::system());
+    m_currentValue = locale.toDouble(m_currentValueControl->text());
     m_currentValueChanged = true;
 }
 
@@ -264,9 +269,10 @@ bool ChannelSettings::BeforeAccept()
 
     if (m_channel->GetType() == ChannelBase::Type_Hw && m_currentValueChanged)
     {
-        char *endptr;
-        strtof(m_currentValueControl->text().toStdString().c_str(),&endptr);
-        if (endptr[0] != '\0')
+        QLocale locale(QLocale::system());
+        bool ok;
+        locale.toDouble(m_currentValueControl->text(), &ok);
+        if (m_currentValue != m_channel->GetWidget()->GetNaValue() && !ok)
         {
             MyMessageBox::information(this, tr("Current value is not a number."));
             return false;

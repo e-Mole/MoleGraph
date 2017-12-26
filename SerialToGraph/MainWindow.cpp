@@ -344,7 +344,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         if (serializerVersion < ATOG_LOWEST_VERSION ||
             serializerVersion > ATOG_SERIALIZER_VERSION)
         {
-            MyMessageBox::critical(this, tr("Unsuported file version"));
+            MyMessageBox::critical(this, QString(tr("Unsuported file version (%1)")).arg(fileName));
             return;
         }
 

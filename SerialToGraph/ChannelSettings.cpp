@@ -421,9 +421,9 @@ void ChannelSettings::_InitializeAxisCombo(bool enable)
 
     if (m_channelWidget->IsOnHorizontalAxis())
         m_axisComboBox->setEnabled(false);
+    else
+        m_axisComboBox->setEnabled(enable);
     m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
-
-    m_axisComboBox->setEnabled(enable);
 }
 
 void ChannelSettings::axisChanged(int index)

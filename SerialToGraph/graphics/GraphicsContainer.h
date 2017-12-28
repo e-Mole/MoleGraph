@@ -105,6 +105,7 @@ public:
     ChannelWidget *GetChannelWidget(unsigned index);
     ChannelBase * GetChannel(ChannelWidget * widget);
     SampleChannel *GetSampleChannel();
+    bool IsHorizontalValueSetEmpty();
 signals:
     void resized();
 public slots:

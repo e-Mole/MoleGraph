@@ -661,7 +661,8 @@ void Plot::RefillGraphs()
             );
         }
 
-        DisplayChannelValue(channelWidget);
+        if (!m_graphicsContainer->IsHorizontalValueSetEmpty())
+            DisplayChannelValue(channelWidget);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
@@ -763,19 +764,13 @@ void Plot::SetMarkerLine(int position)
     m_markerLines.first = _AddMarkerLine(
         m_markerLines.first,
         m_markerPositions.first,
-        _SetMarkerLineColor(
-            m_markerPositions.first == m_markerPositions.second,
-            m_markerPositions.first == position
-        )
+        _SetMarkerLineColor(m_markerPositions.first == m_markerPositions.second, m_markerPositions.first == position)
     );
 
     m_markerLines.second = _AddMarkerLine(
         m_markerLines.second,
         m_markerPositions.second,
-        _SetMarkerLineColor(
-            m_markerPositions.first == m_markerPositions.second,
-            m_markerPositions.second == position
-        )
+        _SetMarkerLineColor(m_markerPositions.first == m_markerPositions.second, m_markerPositions.second == position)
     );
 
     m_selectedLine = (m_markerPositions.first == position) ?

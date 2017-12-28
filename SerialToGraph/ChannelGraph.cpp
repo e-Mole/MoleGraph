@@ -93,11 +93,11 @@ void ChannelGraph::drawScatterPlot(QCPPainter *painter, QVector<QCPData> *scatte
       if (qIsNaN(scatterData->at(i).value))
         continue;
 
-      if (!m_showAllMarks && scatterData->at(i).key != m_selectedMarkIndex)
+      if (!m_showAllMarks && i != m_selectedMarkIndex)
           continue;
 
       QCPScatterStyle current;
-      if (scatterData->at(i).key == m_selectedMarkIndex)
+      if (i == m_selectedMarkIndex)
       {
           m_selectedMarkStyle.applyTo(painter, mPen);
           current = m_selectedMarkStyle;
@@ -133,6 +133,9 @@ int ChannelGraph::GetShapeIndex()
 
 void ChannelGraph::AssignToAxis(Axis *axis)
 {
+    if (m_valueAxis->IsHorizontal() || axis->IsHorizontal())
+        setKeyAxis(m_valueAxis->GetGraphAxis()); //to would be possible to switch axis later
+
     m_valueAxis = axis;
     AssignToGraphAxis(axis->GetGraphAxis());
     m_valueAxis->UpdateGraphAxisName();

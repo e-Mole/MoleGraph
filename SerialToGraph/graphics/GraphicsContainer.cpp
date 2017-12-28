@@ -276,7 +276,8 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
     {
         foreach (ChannelWidget *channelWidget, m_channelWidgets)
         {
-            m_plot->DisplayChannelValue(channelWidget);
+            if (!IsHorizontalValueSetEmpty())
+                m_plot->DisplayChannelValue(channelWidget);
         }
         m_plot->RescaleAxis(m_plot->xAxis);
     }
@@ -382,6 +383,12 @@ int GraphicsContainer::GetSliderPos()
 void GraphicsContainer::SetHorizontalChannel(ChannelBase *channel)
 {
     m_horizontalChannel = channel;
+    m_horizontalValueSet.clear();
+    for (unsigned index = 0; index < channel->GetValueCount(); index++)
+        m_horizontalValueSet.insert(channel->GetValue(index));
+
+    m_scrollBar->setRange(0, m_horizontalValueSet.size()-1);
+    m_scrollBar->setValue(m_horizontalValueSet.size()-1); //move to last (mark lines and maprks will be moved too)
     m_plot->RefillGraphs();
 }
 
@@ -518,8 +525,7 @@ ChannelGraph * GraphicsContainer::AddBlackChannelGraph(Axis * valueAxis)
 ChannelGraph * GraphicsContainer::AddChannelGraph(
     Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle)
 {
-    return m_plot->AddChannelGraph(
-                m_plot->xAxis, valueAxis, color, shapeIndex, GetMarksShown(), penStyle);
+    return m_plot->AddChannelGraph(m_plot->xAxis, valueAxis, color, shapeIndex, GetMarksShown(), penStyle);
 }
 
 
@@ -614,4 +620,9 @@ SampleChannel *GraphicsContainer::GetSampleChannel()
         if(sc != NULL)
             return sc;
     }
+}
+
+bool GraphicsContainer::IsHorizontalValueSetEmpty()
+{
+    return m_horizontalValueSet.empty();
 }

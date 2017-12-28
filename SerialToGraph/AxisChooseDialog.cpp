@@ -88,7 +88,8 @@ void AxisChooseDialog::axisSelected()
     {
         if (it.key() == (QRadioButton *)sender())
         {
-            m_originalHChannel->GetWidget()->GetChannelGraph()->AssignToAxis(it.value());
+            ChannelGraph *channelGraph = m_originalHChannel->GetWidget()->GetChannelGraph();
+            channelGraph->AssignToAxis(it.value());
             break;
         }
     }

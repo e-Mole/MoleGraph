@@ -5,7 +5,6 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
-#include <GlobalSettingsDialog.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
@@ -68,7 +67,6 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     m_context(context),
     m_hwSink(hwSink),
     m_measurement(NULL),
-    m_settingsDialog(NULL),
     m_space(new QWidget())
 {
     m_mainLayout->setMargin(1);
@@ -273,15 +271,8 @@ void ButtonLine::_InitializeMenu()
     m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SIGNAL(exportCsv()));
     m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SIGNAL(exportAllCsv()));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Settings..."), this, SLOT(settings()));
+    m_fileMenu->addAction(tr("Settings..."), this, SIGNAL(settings()));
     m_fileMenu->addAction(tr("About..."), this, SLOT(about()));
-}
-
-void ButtonLine::settings()
-{
-    delete m_settingsDialog; //to be alwais scrolled to up-left corner
-    m_settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
-    m_settingsDialog->exec();
 }
 
 void ButtonLine::about()

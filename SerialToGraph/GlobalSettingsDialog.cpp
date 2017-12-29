@@ -213,7 +213,7 @@ bool GlobalSettingsDialog::BeforeAccept()
     if (m_settings.GetChannelSizeFactor() != m_channelSizeFactor->value())
     {
         m_settings.SetChannelSizeFactor(m_channelSizeFactor->value());
-        m_context.m_mainWindow.UpdateChannelSizeFactor();
+        updateChannelSizeFactor(m_channelSizeFactor->value());
     }
 
     if (m_settings.GetAcceptChangesByDialogClosing() != m_acceptChangesByDialogClosing->isChecked())

@@ -8,6 +8,7 @@
 #include <file/Export.h>
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
+#include <GlobalSettingsDialog.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
 #include <Plot.h>
@@ -87,6 +88,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(exportCsv()), this, SLOT(exportCsv()));
     connect(m_buttonLine, SIGNAL(exportPng()), this, SLOT(exportPng()));
     connect(m_buttonLine, SIGNAL(axisMenuButtonPressed()), this, SLOT(axisMenuButtonPressed()));
+    connect(m_buttonLine, SIGNAL(settings()), this, SLOT(settings()));
     connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
@@ -628,13 +630,6 @@ void MainWindow::ShowMenuButton(bool show)
     m_menuButton->repaint();
 }
 
-void MainWindow::UpdateChannelSizeFactor()
-{
-    foreach (Measurement *m, m_measurements)
-        foreach (ChannelBase *channel, m->GetChannels())
-            channel->GetWidget()->SetMinimumFontSize(GlobalSettings::GetInstance().GetChannelSizeFactor());
-}
-
 void MainWindow::measurementMenuButtonPressed()
 {
     MeasurementMenu measurementMenu(centralWidget(), m_context);
@@ -645,4 +640,12 @@ void MainWindow::axisMenuButtonPressed()
 {
     AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetWidget());
     axisMenu.exec();
+}
+
+void MainWindow::settings()
+{
+     //to be alwais scrolled to up-left corner
+    GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
+    settingsDialog->connect(settingsDialog, SIGNAL(updateChannelSizeFactor(int)), m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int)));
+    settingsDialog->exec();
 }

@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <map>
+#include <vector>
 
 class Measurement;
 class GraphicsContainer;
 
 class GraphicsContainerManager : public QObject
 {
+    std::vector<GraphicsContainer *> m_graphicsContainers;
     std::map<Measurement *, GraphicsContainer *> m_mapping;
     Q_OBJECT
 public:
@@ -18,6 +20,7 @@ public:
 signals:
 
 public slots:
+    void updateChannelSizeFactor(int factor);
 };
 
 #endif // GRAPHICSCONTAINERMANAGER_H

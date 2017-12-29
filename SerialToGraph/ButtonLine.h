@@ -11,7 +11,6 @@ class Axis;
 class ChannelBase;
 class ChannelMenu;
 class ConnectivityLabel;
-class GlobalSettingsDialog;
 class Measurement;
 //class QAction;
 class PlotContextMenu;
@@ -71,8 +70,6 @@ class ButtonLine : public QWidget
     Context const &m_context;
     hw::HwSink &m_hwSink;
     Measurement *m_measurement;
-
-    GlobalSettingsDialog *m_settingsDialog;
     QWidget* m_space;
     QMap<QAction*, QString> m_recentFileActions;
 
@@ -99,10 +96,10 @@ signals:
     void exportCsv();
     void exportAllCsv();
     void axisMenuButtonPressed();
+    void settings();
 
 private slots:
     void sampleRequest();
-    void settings();
     void about();
     void openRecentFileSlot();
     void updateRunButtonsState();

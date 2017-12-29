@@ -49,7 +49,7 @@ public:
     GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 
 signals:
-
+    void updateChannelSizeFactor(int factor);
 private slots:
     void limitDirClicked();
 };

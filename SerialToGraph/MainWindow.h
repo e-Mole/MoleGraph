@@ -72,7 +72,6 @@ public:
     bool GetSavedValues() { return m_savedValues; }
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
     void ShowMenuButton(bool show);
-    void UpdateChannelSizeFactor();
 
 private slots:
     void measurementNameChanged();
@@ -92,7 +91,7 @@ private slots:
     void exportCsv();
     void exportAllCsv();
     void axisMenuButtonPressed();
-
+    void settings();
 public slots:
     void openSerialPort();
 };

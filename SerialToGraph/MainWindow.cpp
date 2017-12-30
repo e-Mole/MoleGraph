@@ -221,12 +221,16 @@ void MainWindow::ShowConsole(bool show)
 
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 {
-    return new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels);
+    Measurement *m = new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels);
+    connect(m, SIGNAL(editChannel(ChannelWidget*)), m->GetWidget(), SLOT(editChannel(ChannelWidget*)));
+    return m;
 }
 
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
-    return new Measurement(this, m_context, m_hwSink, GetCurrnetMeasurement(), true);
+    Measurement *m = new Measurement(this, m_context, m_hwSink, GetCurrnetMeasurement(), true);
+    connect(m, SIGNAL(editChannel(ChannelWidget*)), m->GetWidget(), SLOT(editChannel(ChannelWidget*)));
+    return m;
 }
 
 void MainWindow::ConfirmMeasurement(Measurement *m)

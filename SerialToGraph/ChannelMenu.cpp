@@ -112,7 +112,7 @@ void ChannelMenu::UpdateCheckBoxes()
 void ChannelMenu::edit()
 {
     ChannelBase *channel = m_editChannels[(QPushButton*)sender()];
-    channel->editChannel();
+    channel->GetWidget()->clicked();
 
     ColorCheckBox *cb = m_channelCheckBoxes[channel];
     cb->SetText(channel->GetWidget()->GetName());

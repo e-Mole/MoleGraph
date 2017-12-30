@@ -16,6 +16,7 @@
 class Axis;
 class ChannelBase;
 class ChannelGraph;
+class ChannelWidget;
 class GraphicsContainer;
 class Plot;
 class QColor;
@@ -190,12 +191,14 @@ signals:
     void stateChanged();
     void nameChanged();
     void colorChanged();
+    void editChannel(ChannelWidget *channel);
 public slots:
     void showGraph(bool show);
     void replaceDisplays();
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
+    bool editChannel();
 };
 
 #endif // MEASUREMENT_H

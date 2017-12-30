@@ -4,6 +4,7 @@
 #include <GlobalSettings.h>
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
+#include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -575,14 +576,14 @@ void GraphicsContainer::SetAxisStyle(Axis *axis, bool dateTime, QString const &f
     m_plot->SetAxisStyle(axis->GetGraphAxis(), dateTime, format);
 }
 
-bool GraphicsContainer::RemoveGraph(ChannelBase *channel)
+bool GraphicsContainer::RemoveGraph(ChannelWidget *channelWidget)
 {
-    return m_plot->removeGraph(channel->GetWidget()->GetChannelGraph());
+    return m_plot->removeGraph(channelWidget->GetChannelGraph());
 }
 
-void GraphicsContainer::RescaleAxes(ChannelBase *channel)
+void GraphicsContainer::RescaleAxes(ChannelWidget *channelWidget)
 {
-    m_plot->rescaleAxes(channel->GetWidget()->GetChannelGraph()->GetValuleAxis());
+    m_plot->rescaleAxes(channelWidget->GetChannelGraph()->GetValuleAxis());
     m_plot->ReplotIfNotDisabled();
 }
 
@@ -625,4 +626,10 @@ SampleChannel *GraphicsContainer::GetSampleChannel()
 bool GraphicsContainer::IsHorizontalValueSetEmpty()
 {
     return m_horizontalValueSet.empty();
+}
+
+void GraphicsContainer::editChannel(ChannelWidget *channelWidget)
+{
+    ChannelSettings *settings = new ChannelSettings(this, channelWidget);
+    settings->exec();
 }

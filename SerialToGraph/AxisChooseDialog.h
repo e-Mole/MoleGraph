@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QMap>
 class Axis;
-class ChannelBase;
+class ChannelWidget;
+class GraphicsContainer;
 class QRadioButton;
 class QString;
 class QWidget;
@@ -12,13 +13,16 @@ class AxisChooseDialog : public QDialog
 {
     Q_OBJECT
 
+    GraphicsContainer *m_graphicsContainer;
+    ChannelWidget *m_originalHChannelWidget;
+    ChannelWidget *m_newHChannelWidget;
+    bool m_isOriginalChannelRealTime;
     QRadioButton *m_newAxis;
     QMap<QRadioButton *, Axis*> m_axes;
-    ChannelBase *m_originalHChannel;
-    ChannelBase *m_newHChannel;
-    bool m_isOriginalChannelRealTime;
+
+
 public:
-    AxisChooseDialog(QWidget *parent, ChannelBase *originalHChannel, ChannelBase *newHChannel);
+    AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsContainer, ChannelWidget *originalHChannelWidget, ChannelWidget *newHChannelWidget);
 
 signals:
 

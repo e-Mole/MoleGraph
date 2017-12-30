@@ -459,6 +459,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     channel->GetWidget()->IsActive(),
                     channel->GetWidget()->GetUnits()
                 );
+            connect(hwChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
             m_channels.push_back(hwChannel);
             m_widget->AddChannel(hwChannel, false);
             m_channelToGraph[hwChannel] = channelGraph;
@@ -476,6 +477,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
                     ((SampleChannel *)channel)->GetTimeUnits(),
                     ((SampleChannel *)channel)->GetRealTimeFormat()
                 );
+            connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
             m_channels.push_back(m_sampleChannel);
             m_widget->AddChannel(m_sampleChannel, false);
             m_widget->SetAxisStyle(
@@ -493,6 +495,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
 
     m_widget->UpdateAxes();
     m_widget->ReplaceDisplays();//false
+}
+
+bool Measurement::editChannel()
+{
+    editChannel((ChannelWidget*)sender());
 }
 
 void Measurement::_InitializeAxesAndChanels()
@@ -513,6 +520,7 @@ void Measurement::_InitializeAxesAndChanels()
             SampleChannel::Sec,
             SampleChannel::hh_mm_ss
         );
+    connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     m_channelToGraph[m_sampleChannel] = channelGraph;
     m_channels.push_back(m_sampleChannel);
     m_widget->AddChannel(m_sampleChannel, false);
@@ -556,9 +564,9 @@ void Measurement::RemoveChannel(ChannelBase *channelToRemove)
         ChannelBase *channel = m_channels[i];
         if (channel == channelToRemove)
         {
-            if (!m_widget->RemoveGraph(channel))
+            if (!m_widget->RemoveGraph(channel->GetWidget()))
                 qDebug() << "graph was not deleed";
-            m_widget->RescaleAxes(channel);
+            m_widget->RescaleAxes(channel->GetWidget());
 
             m_channels.remove(i);
             m_widget->RemoveChannel(i, false);
@@ -582,6 +590,7 @@ void Measurement::_AddYChannel(QColor const &color, Axis *axis)
         true,
         ""
     );
+    connect(newChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     AddYChannel(newChannel, channelGraph);
 }
 
@@ -700,6 +709,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
             hwIndex
         );
         m_sampleChannel = (SampleChannel*)channel;
+        connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     }
     else
     {
@@ -708,6 +718,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
             channelGraph,
             hwIndex
         );
+        connect(channel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     }
     m_channelToGraph[channel] = channelGraph;
 

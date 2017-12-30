@@ -49,7 +49,6 @@ class GraphicsContainer : public QWidget
     void _FollowLastMeasuredValue();
     QCPAxis * _GetGraphAxis(unsigned index);
     Axis * _CreateAxis(QColor const & color, QCPAxis *graphAxis);
-
 public:
     GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
     ~GraphicsContainer();
@@ -97,8 +96,8 @@ public:
     ChannelGraph * AddBlackChannelGraph(Axis *valueAxis);
     ChannelGraph * AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle);
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
-    bool RemoveGraph(ChannelBase *channel);
-    void RescaleAxes(ChannelBase *channel);
+    bool RemoveGraph(ChannelWidget *channelWidget);
+    void RescaleAxes(ChannelWidget *channelWidget);
     ChannelBase *GetHorizontalChannel() const;
     std::vector<ChannelWidget *> &GetChannelWidgets();
     unsigned GetChannelWidgetCount();
@@ -106,10 +105,12 @@ public:
     ChannelBase * GetChannel(ChannelWidget * widget);
     SampleChannel *GetSampleChannel();
     bool IsHorizontalValueSetEmpty();
+
 signals:
     void resized();
 public slots:
     void sliderValueChanged(int value);
+    void editChannel(ChannelWidget *channelWidget);
 private slots:
     void markerLinePositionChanged(int position);
 };

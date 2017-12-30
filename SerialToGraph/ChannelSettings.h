@@ -8,6 +8,7 @@ namespace bases { class ComboBox;}
 class Axis;
 class ChannelBase;
 class ChannelWidget;
+class GraphicsContainer;
 class SampleChannel;
 class QCheckBox;
 class QFormLayout;
@@ -17,19 +18,19 @@ class ChannelSettings : public bases::FormDialogColor
 {
     Q_OBJECT
 
-    void _InitializeShapeCombo(ChannelBase *channel);
-    void _InitializeAxisCombo(bool enable);
+    void _InitializeShapeCombo(ChannelWidget *channelWidget);
+    void _InitializeAxisCombo();
     bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
     void _InitializeTimeFeatures();
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
-    void _InitializeValueLine(ChannelBase *channel);
-    ChannelBase * _GetPropertiesChannel();
+    void _InitializeValueLine(ChannelWidget *channelWidget);
 
-    ChannelBase *m_channel;
+    GraphicsContainer *m_graphicsContainer;
     ChannelWidget *m_channelWidget;
+    ChannelBase *m_channel;
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;
@@ -39,12 +40,10 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_timeUnits;
     bases::ComboBox * m_format;
     bases::ComboBox * m_penStyle;
-    bases::ComboBox * m_sourceMeasurements;
-    bases::ComboBox * m_sourceChannels;
     bool m_currentValueChanged;
     double m_currentValue;
 public:
-    ChannelSettings(ChannelBase *channel);
+    ChannelSettings(GraphicsContainer *graphicsContainer, ChannelWidget *channelWidget);
 signals:
 
 private slots:
@@ -53,8 +52,6 @@ private slots:
     void currentValueChanged(QString const &content);
     void setOriginalValue(bool checked);
     void setNaValue(bool);
-    void fillSourceChannels(int index);
-    void updateChannelProperties(int index);
 };
 
 #endif // CHANNELSETTINGS_H

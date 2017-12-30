@@ -9,6 +9,7 @@
 #include <QVector>
 
 class CentralWidget;
+class ChannelWidget;
 class Console;
 class GraphicsContainerManager;
 class Measurement;

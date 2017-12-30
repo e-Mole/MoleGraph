@@ -1,6 +1,5 @@
 #include "ChannelBase.h"
 #include <ChannelGraph.h>
-#include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <cmath>
 #include <GlobalSettings.h>
@@ -48,7 +47,6 @@ ChannelBase::ChannelBase(Measurement *measurement,
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max())
 {
-    connect(m_widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 }
 
 ChannelBase::~ChannelBase()
@@ -73,12 +71,6 @@ void ChannelBase::AddValue( double value)
         return;
 
     _UpdateExtremes(value);
-}
-
-bool ChannelBase::editChannel()
-{
-    ChannelSettings *settings = new ChannelSettings(this);
-    return QDialog::Accepted == settings->exec();
 }
 
 //FIXME: this methods could be in separated class (Statistics?)

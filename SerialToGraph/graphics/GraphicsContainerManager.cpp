@@ -33,3 +33,8 @@ void GraphicsContainerManager::updateChannelSizeFactor(int factor)
         foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
             channelWidget->SetMinimumFontSize(factor);
 }
+
+GraphicsContainer *GraphicsContainerManager::GetGraphicsContainer(Measurement *m)
+{
+    return m_mapping[m];
+}

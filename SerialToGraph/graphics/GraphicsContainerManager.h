@@ -17,6 +17,7 @@ public:
     explicit GraphicsContainerManager(QObject *parent = nullptr);
     void AddMeasurement(Measurement *m);
     void RemoveMeasurement(Measurement *m);
+    GraphicsContainer *GetGraphicsContainer(Measurement *m);
 signals:
 
 public slots:

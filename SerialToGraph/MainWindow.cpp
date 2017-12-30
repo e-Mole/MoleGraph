@@ -74,7 +74,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
-    m_buttonLine = new ButtonLine(this, m_context, m_hwSink, Qt::Vertical);
+    m_buttonLine = new ButtonLine(this, m_graphicsContainerManager, m_hwSink, Qt::Vertical);
     connect(m_buttonLine, SIGNAL(connectivityButtonReleased()), this, SLOT(openSerialPort()));
     connect(m_buttonLine, SIGNAL(openNewFile()), this, SLOT(openNewFile()));
     connect(m_buttonLine, SIGNAL(openFileValues()), this, SLOT(openFileValues()));
@@ -363,7 +363,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             Measurement *m = CreateNewMeasurement(false);
             m->SetSaveLoadValues(values);
             in >> m;
-            m->RecalculateSliderMaximum();
+            m->GetWidget()->RecalculateSliderMaximum();
             ConfirmMeasurement(m);
         }
 

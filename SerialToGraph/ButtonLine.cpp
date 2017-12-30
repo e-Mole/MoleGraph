@@ -5,6 +5,7 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainerManager.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MeasurementMenu.h>
@@ -41,8 +42,9 @@
 #   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSink, Qt::Orientation orientation):
+ButtonLine::ButtonLine(QWidget *parent, GraphicsContainerManager *graphicsContainerManager,  hw::HwSink &hwSink, Qt::Orientation orientation):
     QWidget(parent),
+    m_graphicsContainerManager(graphicsContainerManager),
     m_mainLayout(new QGridLayout()),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
@@ -50,21 +52,18 @@ ButtonLine::ButtonLine(QWidget *parent, Context const& context, hw::HwSink &hwSi
     m_stopButton(NULL),
     m_connectivityButton(NULL),
     m_fileMenuButton(NULL),
-    m_panelMenuButton(NULL),
     m_axisMenuButton(NULL),
     m_measurementButton(NULL),
     m_viewButton(NULL),
     m_fileMenu(NULL),
     m_viewMenu(NULL),
     m_recentFilesMenu(NULL),
-    m_channelMenu(NULL),
     m_connected(false),
     m_enabledBChannels(false),
     m_graphAction(NULL),
     m_allAction(NULL),
     m_noneAction(NULL),
     m_afterLastChannelSeparator(NULL),
-    m_context(context),
     m_hwSink(hwSink),
     m_measurement(NULL),
     m_space(new QWidget())
@@ -188,8 +187,19 @@ void ButtonLine::fileMenuButtonPressed()
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    m_channelMenu->UpdateCheckBoxes();
-    m_channelMenu->exec();
+    if (m_measurement == NULL)
+    {
+        qWarning() << "measurement is not set";
+        return;
+    }
+
+    ChannelMenu *channelMenu = new ChannelMenu(m_graphicsContainerManager->GetGraphicsContainer(m_measurement));
+    connect(channelMenu, SIGNAL(stateChanged()), this, SLOT(updateRunButtonsState()));
+    channelMenu->ReinitGrid();
+    updateRunButtonsState();
+
+    channelMenu->UpdateCheckBoxes();
+    channelMenu->exec();
 }
 
 void ButtonLine::viewMenuButtonPressed()
@@ -394,32 +404,12 @@ void ButtonLine::measurementStateChanged()
     updateRunButtonsState();
 }
 
-void ButtonLine::RefreshPanelMenu()
-{
-    if (m_channelMenu != NULL)
-        m_channelMenu->ClearPanelShortcuts();
-
-    delete m_channelMenu;
-    m_channelMenu = NULL;
-
-
-    m_viewButton->setEnabled(m_measurement != NULL);
-    m_panelMenuButton->setEnabled(m_measurement != NULL);
-    m_axisMenuButton->setEnabled(m_measurement != NULL);
-
-    if (m_measurement == NULL)
-        return;
-
-    m_channelMenu = new ChannelMenu(m_context.m_mainWindow.centralWidget(), m_context, *m_measurement);
-    connect(m_channelMenu, SIGNAL(stateChanged()), this, SLOT(updateRunButtonsState()));
-    m_channelMenu->ReinitGrid();
-    updateRunButtonsState();
-}
-
 void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
-    RefreshPanelMenu();
+    m_viewButton->setEnabled(m_measurement != NULL);
+    m_panelMenuButton->setEnabled(m_measurement != NULL);
+    m_axisMenuButton->setEnabled(m_measurement != NULL);
     updateRunButtonsState();
 
     delete m_viewMenu;

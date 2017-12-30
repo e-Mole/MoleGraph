@@ -225,23 +225,6 @@ bool Measurement::_ProcessValueSet()
     return true;
 }
 
-void Measurement::_AddChannelToHorizontalValueSet(ChannelBase * horizontalChannel)
-{
-    for (unsigned i = 0; i < horizontalChannel->GetValueCount(); i++)
-        m_widget->AddHorizontalValue(horizontalChannel->GetValue(i));
-}
-
-void Measurement::_RefillHorizontalSet()
-{
-    m_widget->ClearHorizontalValueSet();
-    _AddChannelToHorizontalValueSet(GetHorizontalChannel());
-}
-
-void Measurement::RecalculateSliderMaximum()
-{
-    _RefillHorizontalSet();
-}
-
 void Measurement::IncreaseSliderMaximum(unsigned maximum)
 {
     m_widget->AddHorizontalValue(maximum);

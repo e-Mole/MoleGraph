@@ -104,8 +104,6 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
-    void _AddChannelToHorizontalValueSet(ChannelBase * horizontalChannel);
-    void _RefillHorizontalSet();
     void _DeserializeAxis(QDataStream &in, unsigned index);
 
     GraphicsContainer *m_widget;
@@ -177,7 +175,6 @@ public:
     Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph);
     void RemoveChannel(ChannelBase *channelToRemove);
-    void RecalculateSliderMaximum();
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
     unsigned GetPositionByHorizontalValue(double value) const;

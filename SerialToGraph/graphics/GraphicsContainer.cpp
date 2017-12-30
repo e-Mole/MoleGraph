@@ -633,3 +633,11 @@ void GraphicsContainer::editChannel(ChannelWidget *channelWidget)
     ChannelSettings *settings = new ChannelSettings(this, channelWidget);
     settings->exec();
 }
+
+void GraphicsContainer::RecalculateSliderMaximum()
+{
+    ClearHorizontalValueSet();
+    ChannelBase *horizontalChannel = GetHorizontalChannel();
+    for (unsigned i = 0; i < horizontalChannel->GetValueCount(); i++)
+        AddHorizontalValue(horizontalChannel->GetValue(i));
+}

@@ -5,9 +5,9 @@
 #include <QMap>
 class ButtonLine;
 class ChannelBase;
-class Context;
+class ChannelWidget;
 class ColorCheckBox;
-class Measurement;
+class GraphicsContainer;
 class QLabel;
 class QPushButton;
 class KeyShortcut;
@@ -18,31 +18,29 @@ class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
-    void _AddChannel(ChannelBase *channel, bool removable);
+    void _AddChannel(ChannelWidget *channelWidget, bool removable);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(unsigned row, QString const &shortcut);
     void FillGrid();
-    ChannelBase * _GetFirstGhostableChannel();
-    QString _GetChannelShortcutText(ChannelBase *channel);
+    QString _GetChannelShortcutText(ChannelWidget *channelWidget);
 
-    Measurement &m_measurement;
+    GraphicsContainer *m_graphicsContainer;
     ButtonLine *m_buttonLine;
     ColorCheckBox *m_graphCheckBox;
-    QMap<ChannelBase*, ColorCheckBox*> m_channelCheckBoxes;
-    QMap<ColorCheckBox*, ChannelBase*> m_checkBoxChannels;
-    QMap<QPushButton*, ChannelBase*> m_editChannels;
-    QMap<QPushButton*, ChannelBase *> m_removeButtonToChannel;
+    QMap<ChannelWidget*, ColorCheckBox*> m_channelCheckBoxes;
+    QMap<ColorCheckBox*, ChannelWidget*> m_checkBoxChannels;
+    QMap<QPushButton*, ChannelWidget*> m_editChannels;
+    QMap<QPushButton*, ChannelWidget *> m_removeButtonToChannel;
     void _SetGraph(bool checked);
-    Context const &m_context;
     KeyShortcut *m_graphShortcut;
-    QMap<KeyShortcut*, ChannelBase*> m_shortcutChannels;
+    QMap<KeyShortcut*, ChannelWidget*> m_shortcutChannels;
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
 
 public:
-    explicit ChannelMenu(QWidget *parent, Context const &context, Measurement &measurement);
-    void ActivateChannel(ChannelBase *channel, bool checked);
+    explicit ChannelMenu(GraphicsContainer *graphicsContainer);
+    void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void UpdateCheckBoxes();
     void CreatePanelShortcuts();
     void ClearPanelShortcuts();

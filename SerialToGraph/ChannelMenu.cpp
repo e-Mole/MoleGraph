@@ -4,8 +4,8 @@
 #include <ChannelGraph.h>
 #include <ChannelWidget.h>
 #include <ColorCheckBox.h>
-#include <Context.h>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainer.h>
 #include <KeyShortcut.h>
 #include <QKeySequence>
 #include <MainWindow.h>
@@ -18,10 +18,9 @@
 #include <QSizePolicy>
 #include <QShortcut>
 
-ChannelMenu::ChannelMenu(QWidget *parent, Context const &context, Measurement &measurement) :
-    bases::MenuDialogBase(parent, tr("Panels")),
-    m_measurement(measurement),
-    m_context(context),
+ChannelMenu::ChannelMenu(GraphicsContainer *graphicsContainer) :
+    bases::MenuDialogBase(graphicsContainer, tr("Panels")),
+    m_graphicsContainer(graphicsContainer),
     m_graphShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL)
@@ -39,7 +38,7 @@ void ChannelMenu::FillGrid()
     unsigned row = 0;
 
     m_graphCheckBox = new ColorCheckBox(tr("Graph"), this);
-    m_graphCheckBox->SetChecked(m_measurement.IsPlotVisible());
+    m_graphCheckBox->SetChecked(m_graphicsContainer->IsPlotVisible());
     connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
     m_gridLayout->addWidget(m_graphCheckBox, row, 0);
 
@@ -60,8 +59,8 @@ void ChannelMenu::FillGrid()
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
-        _AddChannel(channel, false);
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+        _AddChannel(channelWidget, false);
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -69,32 +68,32 @@ void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
     if (!shortcut.isEmpty())
         m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
 }
-void ChannelMenu::_AddChannel(ChannelBase *channel, bool removable)
+void ChannelMenu::_AddChannel(ChannelWidget *channelWidget, bool removable)
 {
     unsigned rowNr = m_gridLayout->rowCount();
-    ColorCheckBox *cb = new ColorCheckBox(channel->GetWidget()->GetName(), this);
-    cb->SetChecked(channel->GetWidget()->IsActive());
-    cb->SetColor(channel->GetWidget()->GetForeColor());
+    ColorCheckBox *cb = new ColorCheckBox(channelWidget->GetName(), this);
+    cb->SetChecked(channelWidget->IsActive());
+    cb->SetColor(channelWidget->GetForeColor());
 
-    m_channelCheckBoxes[channel] = cb;
-    m_checkBoxChannels[cb] = channel;
+    m_channelCheckBoxes[channelWidget] = cb;
+    m_checkBoxChannels[cb] = channelWidget;
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivatedCheckBox()));
     m_gridLayout->addWidget(cb, rowNr, 0);
 
-    _AddShortcut(rowNr, _GetChannelShortcutText(channel));
+    _AddShortcut(rowNr, _GetChannelShortcutText(channelWidget));
 
     QPushButton *editButton = new QPushButton(tr("Edit"), this);
-    m_editChannels[editButton] = channel;
+    m_editChannels[editButton] = channelWidget;
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(editButton, rowNr, 2);
 
     if (removable)
     {
         QPushButton *removeButton = new QPushButton(tr("Remove"), this);
-        m_editChannels[removeButton] = channel;
+        m_editChannels[removeButton] = channelWidget;
         connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
         m_gridLayout->addWidget(removeButton, rowNr, 3);
-        m_removeButtonToChannel.insert(removeButton, channel);
+        m_removeButtonToChannel.insert(removeButton, channelWidget);
     }
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
@@ -105,27 +104,28 @@ void ChannelMenu::UpdateCheckBoxes()
 {
     for (auto it =  m_channelCheckBoxes.begin(); it != m_channelCheckBoxes.end(); ++it)
     {
-        it.value()->SetText(it.key()->GetWidget()->GetName());
-        it.value()->SetColor(it.key()->GetWidget()->GetForeColor());
+        it.value()->SetText(it.key()->GetName());
+        it.value()->SetColor(it.key()->GetForeColor());
     }
 }
 void ChannelMenu::edit()
 {
-    ChannelBase *channel = m_editChannels[(QPushButton*)sender()];
-    channel->GetWidget()->clicked();
+    ChannelWidget *channelWidget = m_editChannels[(QPushButton*)sender()];
+    channelWidget->clicked();
 
-    ColorCheckBox *cb = m_channelCheckBoxes[channel];
-    cb->SetText(channel->GetWidget()->GetName());
-    cb->SetColor(channel->GetWidget()->GetForeColor());
+    ColorCheckBox *cb = m_channelCheckBoxes[channelWidget];
+    cb->SetText(channelWidget->GetName());
+    cb->SetColor(channelWidget->GetForeColor());
 
     stateChanged();
 }
 
 void ChannelMenu::remove()
 {
-    ChannelBase * channel = m_removeButtonToChannel[(QPushButton*)sender()];
-    m_channelCheckBoxes.remove(channel);
-    m_measurement.RemoveChannel(channel);
+    ChannelWidget * channelWidget = m_removeButtonToChannel[(QPushButton*)sender()];
+    Measurement *m = m_graphicsContainer->GetChannel(channelWidget)->GetMeasurement();
+    m_channelCheckBoxes.remove(channelWidget);
+    m->RemoveChannel(m_graphicsContainer->GetChannel(channelWidget));
     for (int row = 0; row < m_gridLayout->rowCount(); row++)
     {
         for (int col = 0; col < m_gridLayout->columnCount(); col++)
@@ -139,23 +139,23 @@ void ChannelMenu::remove()
     }
     FillGrid();
 
-    m_measurement.RecalculateSliderMaximum();
+    m_graphicsContainer->RecalculateSliderMaximum();
 
 }
 
-void ChannelMenu::ActivateChannel(ChannelBase *channel, bool checked)
+void ChannelMenu::ActivateChannel(ChannelWidget *channelWidget, bool checked)
 {
-    channel->GetWidget()->SetActive(checked);
-    m_channelCheckBoxes[channel]->SetChecked(checked);
+    channelWidget->SetActive(checked);
+    m_channelCheckBoxes[channelWidget]->SetChecked(checked);
     stateChanged();
-    m_measurement.replaceDisplays();
+    m_graphicsContainer->ReplaceDisplays();
     GlobalSettings::GetInstance().SetSavedState(false);
 }
 
 void ChannelMenu::graphActivated()
 {
-    bool newState = !m_measurement.IsPlotVisible();
-    m_measurement.showGraph(newState);
+    bool newState = !m_graphicsContainer->IsPlotVisible();
+    m_graphicsContainer->ShowGraph(newState);
 
     //because of calling by shortcut
     m_graphCheckBox->SetChecked(newState);
@@ -164,54 +164,38 @@ void ChannelMenu::graphActivated()
 
 void ChannelMenu::noChannelsActivated()
 {
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channel->GetWidget()->IsActive())
+        if (channelWidget->IsActive())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channel, false);
+            ActivateChannel(channelWidget, false);
         }
     }
     stateChanged();
-}
-
-ChannelBase * ChannelMenu::_GetFirstGhostableChannel()
-{
-    foreach (Measurement * m, m_context.m_measurements)
-    {
-        if (m != &m_measurement)
-            foreach (ChannelBase * channel, m->GetChannels())
-            {
-                if (channel->GetType() == ChannelBase::Type_Hw)
-                    return channel;
-            }
-    }
-    qCritical() << "no HW channel found";
-    return NULL;
 }
 
 void ChannelMenu::allChannelsActivated()
 {
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (!channel->GetWidget()->IsActive())
+        if (!channelWidget->IsActive())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channel, true);
+            ActivateChannel(channelWidget, true);
         }
     }
     stateChanged();
-    m_measurement.replaceDisplays();
+    m_graphicsContainer->ReplaceDisplays();
 }
 
 
-QString ChannelMenu::_GetChannelShortcutText(ChannelBase *channel)
+QString ChannelMenu::_GetChannelShortcutText(ChannelWidget *channelWidget)
 {
     //only a few channels to create inverted map
-    QMap<KeyShortcut*, ChannelBase*>::iterator it =  m_shortcutChannels.begin();
-    for (;it != m_shortcutChannels.end(); ++it)
+    for (auto it =  m_shortcutChannels.begin(); it != m_shortcutChannels.end(); ++it)
     {
-        if (it.value() == channel)
+        if (it.value() == channelWidget)
             return it.key()->GetText();
     }
 
@@ -240,15 +224,15 @@ void ChannelMenu::CreatePanelShortcuts()
     m_graphShortcut = new KeyShortcut(
         QKeySequence(Qt::ALT + Qt::Key_G), this, SLOT(graphActivated()));
 
-    foreach (ChannelBase *channel, m_measurement.GetChannels())
+    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
         KeyShortcut *s = new KeyShortcut(
-            QKeySequence(Qt::ALT + Qt::Key_0 + channel->GetShortcutOrder()),
+            QKeySequence(Qt::ALT + Qt::Key_0 + m_graphicsContainer->GetChannel(channelWidget)->GetShortcutOrder()),
             this,
             SLOT(channelActivatedShortcut())
         );
         if (s != NULL)
-            m_shortcutChannels[s] = channel;
+            m_shortcutChannels[s] = channelWidget;
     }
 
     m_allChannelsShortcut = new KeyShortcut(
@@ -260,11 +244,11 @@ void ChannelMenu::CreatePanelShortcuts()
 
 void ChannelMenu::channelActivatedCheckBox()
 {
-    ChannelBase * channel = m_checkBoxChannels[(ColorCheckBox*)sender()];
-    ActivateChannel(channel, !channel->GetWidget()->IsActive());
+    ChannelWidget * channelWidget = m_checkBoxChannels[(ColorCheckBox*)sender()];
+    ActivateChannel(channelWidget, !channelWidget->IsActive());
 }
 void ChannelMenu::channelActivatedShortcut()
 {
-    ChannelBase *channel = m_shortcutChannels[(KeyShortcut*)sender()];
-    ActivateChannel(channel, !channel->GetWidget()->IsActive());
+    ChannelWidget *channelWidget = m_shortcutChannels[(KeyShortcut*)sender()];
+    ActivateChannel(channelWidget, !channelWidget->IsActive());
 }

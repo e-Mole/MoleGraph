@@ -105,6 +105,7 @@ public:
     ChannelBase * GetChannel(ChannelWidget * widget);
     SampleChannel *GetSampleChannel();
     bool IsHorizontalValueSetEmpty();
+    void RecalculateSliderMaximum();
 
 signals:
     void resized();

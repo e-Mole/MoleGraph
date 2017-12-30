@@ -9,8 +9,8 @@
 
 class Axis;
 class ChannelBase;
-class ChannelMenu;
 class ConnectivityLabel;
+class GraphicsContainerManager;
 class Measurement;
 //class QAction;
 class PlotContextMenu;
@@ -23,7 +23,6 @@ class QMenu;
 class QPoint;
 class QPushButton;
 class QShortcut;
-struct Context;
 
 namespace hw { class HwSink; }
 
@@ -40,8 +39,8 @@ class ButtonLine : public QWidget
     void _SetMenuStyle(QMenu *menu);
     QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
     QKeySequence _GetKey(QShortcut *shortcut);
-    void RefreshPanelMenu();
 
+    GraphicsContainerManager *m_graphicsContainerManager;
     QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
@@ -58,7 +57,6 @@ class ButtonLine : public QWidget
     QMenu *m_fileMenu;
     PlotContextMenu *m_viewMenu;
     QMenu *m_recentFilesMenu;
-    ChannelMenu *m_channelMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 
@@ -67,14 +65,13 @@ class ButtonLine : public QWidget
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
-    Context const &m_context;
     hw::HwSink &m_hwSink;
     Measurement *m_measurement;
     QWidget* m_space;
     QMap<QAction*, QString> m_recentFileActions;
 
 public:
-    ButtonLine(QWidget *parent, const Context &context, hw::HwSink &hwSink, Qt::Orientation orientation);
+    ButtonLine(QWidget *parent, GraphicsContainerManager *graphicsContainerManager, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
     void ReplaceButtons(Qt::Orientation orientation);
 

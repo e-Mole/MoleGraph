@@ -490,7 +490,7 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * xAxis = m_widget->InitializeHorizontalAxis();
     Axis * yAxis = m_widget->InitializeVerticalAxis();
 
-    ChannelGraph *channelGraph = m_widget->AddChannelGraph(yAxis, Qt::black, 0, Qt::SolidLine);
+    ChannelGraph *channelGraph = m_widget->AddChannelGraph(xAxis, Qt::black, 0, Qt::SolidLine);
 
     m_sampleChannel =
         new SampleChannel(

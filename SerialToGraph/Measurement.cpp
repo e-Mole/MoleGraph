@@ -419,12 +419,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
     int hwIndex = -1;
     foreach (ChannelBase *channel, source->GetChannels())
     {
-        ChannelGraph *channelGraph = m_widget->AddChannelGraph(
-            GetAxis(source->GetAxisIndex(channel->GetWidget()->GetChannelGraph()->GetValuleAxis())),
-            channel->GetWidget()->GetForeColor(),
-            channel->GetWidget()->GetChannelGraph()->GetShapeIndex(),
-            channel->GetWidget()->GetPenStyle()
-        );
+       ChannelGraph *channelGraph = m_widget->CloneChannelGraph(source->GetWidget(), channel->GetWidget());
 
         if (channel->GetType() == ChannelBase::Type_Hw)
         { 

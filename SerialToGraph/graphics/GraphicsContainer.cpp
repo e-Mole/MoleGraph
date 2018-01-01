@@ -666,3 +666,13 @@ void GraphicsContainer::addNewValueSet()
     }
     AddHorizontalValue(horizontalChannel->GetLastValue());
 }
+
+ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
+{
+    return  AddChannelGraph(
+        GetAxis(sourceContainer->GetAxisIndex(sourceChannelWidget->GetChannelGraph()->GetValuleAxis())),
+        sourceChannelWidget->GetForeColor(),
+        sourceChannelWidget->GetChannelGraph()->GetShapeIndex(),
+        sourceChannelWidget->GetPenStyle()
+    );
+}

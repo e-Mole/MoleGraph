@@ -110,6 +110,7 @@ public:
     SampleChannel *GetSampleChannel();
     bool IsHorizontalValueSetEmpty();
     void RecalculateSliderMaximum();
+    ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
 signals:
     void resized();
 public slots:

@@ -69,6 +69,8 @@ QAction * PlotContextMenu::InitMarkerTypeSelection(
     action->setCheckable(true);
     action->setChecked(
         m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection);
+
+    //FIXME: will not work with ghosts
     action->setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
     return action;
 }

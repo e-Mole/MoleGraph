@@ -11,6 +11,7 @@ class Axis;
 class ChannelBase;
 class ChannelGraph;
 class ChannelWidget;
+class Measurement;
 class Plot;
 class QColor;
 class QCPAxis;
@@ -35,12 +36,15 @@ class GraphicsContainer : public QWidget
     unsigned m_currentIndex;
     bool m_followMode;
     std::vector<ChannelWidget *> m_channelWidgets;
-    std::map<ChannelWidget *, ChannelBase *> m_channelMapping;
+    std::map<ChannelWidget *, ChannelBase *> m_widgetToChannelMapping;
+    std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
     std::set<double> m_horizontalValueSet;
     ChannelBase *m_horizontalChannel;
     QVector<Axis*> m_axes;
 
     bool m_marksShown;
+    ChannelWidget *m_sampleChannelWidget;
+    SampleChannel *m_sampleChannel;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
     virtual QSize sizeHint() const { return QSize(800,700); }
@@ -54,8 +58,8 @@ public:
     ~GraphicsContainer();
     bool SetGrid(bool grid);
     void ReplaceDisplays();
-    void AddChannel(ChannelBase *channel, bool replaceDisplays);
-    void RemoveChannel(unsigned index, bool replaceDisplays);
+    void AddChannel(ChannelBase *channel, bool replaceDisplays, bool isSampleChannel);
+    void RemoveChannel(ChannelBase *channel, bool replaceDisplays);
     QString &GetName() {return m_name; }
     void SetName(QString const &name) {m_name = name; } //TODO:signal?
     Plot *GetPlot() const;
@@ -106,12 +110,12 @@ public:
     SampleChannel *GetSampleChannel();
     bool IsHorizontalValueSetEmpty();
     void RecalculateSliderMaximum();
-
 signals:
     void resized();
 public slots:
     void sliderValueChanged(int value);
     void editChannel(ChannelWidget *channelWidget);
+    void addNewValueSet();
 private slots:
     void markerLinePositionChanged(int position);
 };

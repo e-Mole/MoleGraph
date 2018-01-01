@@ -173,7 +173,7 @@ public:
     bool IsPlotInRangeMode();
     void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
-    void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph);
+    void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph, bool isSampleChannel);
     void RemoveChannel(ChannelBase *channelToRemove);
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
@@ -184,11 +184,13 @@ public:
     int GetCurrentIndex();
     void DrawRestData();
     void RemoveWidget();
+    QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
 signals:
     void stateChanged();
     void nameChanged();
     void colorChanged();
     void editChannel(ChannelWidget *channel);
+    void valueSetMeasured();
 public slots:
     void showGraph(bool show);
     void replaceDisplays();

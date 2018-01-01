@@ -6,6 +6,7 @@
 #include <ChannelGraph.h>
 #include <ChannelSettings.h>
 #include <ChannelWidget.h>
+#include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <PlotContextMenu.h>
@@ -38,7 +39,9 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, const QString &name, bool 
     m_currentIndex(-1),
     m_followMode(true),
     m_horizontalChannel(NULL),
-    m_marksShown(markShown)
+    m_marksShown(markShown),
+    m_sampleChannelWidget(NULL),
+    m_sampleChannel(NULL)
 {
     _InitializeLayouts();
 
@@ -127,24 +130,37 @@ void GraphicsContainer::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-void GraphicsContainer::AddChannel(ChannelBase *channel, bool replaceDisplays)
+void GraphicsContainer::AddChannel(ChannelBase *channel, bool replaceDisplays, bool isSampleChannel)
 {
-    m_channelWidgets.push_back(channel->GetWidget());
-    m_channelMapping[channel->GetWidget()] = channel;
+    ChannelWidget *widget = channel->GetWidget();
+    m_channelWidgets.push_back(widget);
+    m_widgetToChannelMapping[channel->GetWidget()] = channel;
+    m_channelToWidgetMapping[channel] = channel->GetWidget();
+
     if (replaceDisplays)
     {
         ReplaceDisplays();
     }
+
+    if (isSampleChannel)
+    {
+        m_sampleChannel = dynamic_cast<SampleChannel*>(channel);
+        m_sampleChannelWidget = widget;
+    }
 }
 
-void GraphicsContainer::RemoveChannel(unsigned index, bool replaceDisplays)
+void GraphicsContainer::RemoveChannel(ChannelBase *channel, bool replaceDisplays)
 {
-    for (auto iterator = m_channelWidgets.begin(); iterator != m_channelWidgets.end(); ++iterator)
-        if (iterator - m_channelWidgets.begin() == index)
+    ChannelWidget *widget = m_channelToWidgetMapping[channel];
+    m_widgetToChannelMapping.erase(widget);
+
+    for (auto it = m_channelWidgets.begin(); it != m_channelWidgets.end(); ++it)
+    {
+        if (*it == widget)
         {
-            m_channelMapping.erase(*iterator);
-            m_channelWidgets.erase(iterator);
+            m_channelWidgets.erase(it);
         }
+    }
 
     if (replaceDisplays)
         ReplaceDisplays();
@@ -227,9 +243,6 @@ void GraphicsContainer::sliderValueChanged(int value)
     qDebug() << "slider value" << value;
     m_plot->SetMarkerLine(value);
     m_plot->ReplotIfNotDisabled();
-    //Q_UNUSED(action);
-    //SetFollowMode(m_scrollBar->sliderPosition() == (int)m_sampleChannel->GetValueCount());
-    //m_currentIndex = m_scrollBar->sliderPosition();
 }
 
 void GraphicsContainer::_FollowLastMeasuredValue()
@@ -610,17 +623,12 @@ ChannelWidget *GraphicsContainer::GetChannelWidget(unsigned index)
 
 ChannelBase * GraphicsContainer::GetChannel(ChannelWidget * widget)
 {
-    return m_channelMapping[widget];
+    return m_widgetToChannelMapping[widget];
 }
 
 SampleChannel *GraphicsContainer::GetSampleChannel()
 {
-    for (const auto& item : m_channelMapping)
-    {
-        SampleChannel *sc = dynamic_cast<SampleChannel *>(item.second);
-        if(sc != NULL)
-            return sc;
-    }
+    return m_sampleChannel;
 }
 
 bool GraphicsContainer::IsHorizontalValueSetEmpty()
@@ -640,4 +648,21 @@ void GraphicsContainer::RecalculateSliderMaximum()
     ChannelBase *horizontalChannel = GetHorizontalChannel();
     for (unsigned i = 0; i < horizontalChannel->GetValueCount(); i++)
         AddHorizontalValue(horizontalChannel->GetValue(i));
+}
+
+
+void GraphicsContainer::addNewValueSet()
+{
+    Measurement *m = (Measurement*)sender();
+    //TODO: WILL be refactored to could contain samples from more measurements
+    //TODO:m_horizontalChannel will not be defined -> should be used
+    ChannelBase * horizontalChannel = m->GetHorizontalChannel();
+    SampleChannel * sampleChannel = m->GetSampleChannel();
+    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValue(), sampleChannel->GetLastValue(), false);
+
+    for (ChannelBase *channel : m->GetTrackedHwChannels().values())
+    {
+        m_channelToWidgetMapping[channel]->UpdateGraph(horizontalChannel->GetLastValue(), channel->GetLastValue(), false);
+    }
+    AddHorizontalValue(horizontalChannel->GetLastValue());
 }

@@ -77,7 +77,7 @@ private:
     void _AddYChannel(const QColor &color, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
-    void _ProcessSelectedChannels();
+    void _ProcessActiveChannels();
     float _DequeueFloat(unsigned char &checkSum);
     unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
@@ -127,8 +127,7 @@ private:
     double m_secondsInPause;
     QTime m_pauseStartTime;
     unsigned m_valueSetCount;
-    QMap<ChannelBase*, ChannelGraph*> m_channelToGraph; //this colection will be used for searching in both directions so QMap is not the best one but there will be just a few elements so who cares
-public:
+ public:
     Measurement(
         QWidget *parent,
         Context &context,

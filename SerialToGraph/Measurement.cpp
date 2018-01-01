@@ -308,7 +308,7 @@ bool Measurement::_SetModeWithPeriod()
     return true;
 }
 
-void Measurement::_ProcessSelectedChannels()
+void Measurement::_ProcessActiveChannels()
 {
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
@@ -334,7 +334,7 @@ void Measurement::Start()
     m_hwSink.ClearCache(); //throw buffered data avay. I want to start to listen now
     if(!_SetModeWithPeriod())
         return;
-    _ProcessSelectedChannels();
+    _ProcessActiveChannels();
 
     m_widget->SetFollowMode(true);
     m_secondsInPause = 0;
@@ -441,7 +441,6 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
             connect(hwChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
             m_channels.push_back(hwChannel);
             m_widget->AddChannel(hwChannel, false, false);
-            m_channelToGraph[hwChannel] = channelGraph;
         }
         else
         {
@@ -500,7 +499,6 @@ void Measurement::_InitializeAxesAndChanels()
             SampleChannel::hh_mm_ss
         );
     connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
-    m_channelToGraph[m_sampleChannel] = channelGraph;
     m_channels.push_back(m_sampleChannel);
     m_widget->AddChannel(m_sampleChannel, false, true);
     SetHorizontalChannel(m_sampleChannel);
@@ -530,7 +528,6 @@ QColor Measurement::_GetColorByOrder(unsigned order)
 
 void Measurement::AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph, bool isSampleChannel)
 {
-    m_channelToGraph[channel] = channelGraph;
     //FIXME here should be creation of graph and adding to a channelGraph map
     m_channels.push_back(channel);
     m_widget->AddChannel(channel, false, isSampleChannel);
@@ -701,7 +698,6 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
         );
         connect(channel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     }
-    m_channelToGraph[channel] = channelGraph;
 
     //Workaround functionality has been splited
     in.startTransaction();

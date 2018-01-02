@@ -7,19 +7,12 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-HwChannel::HwChannel(Measurement *measurement,
-    ChannelGraph *graph,
-    int hwIndex,
-    QString const &name,
-    QColor const &color,
-    bool visible,
-    const QString &units
-) :
-    ChannelBase(measurement, graph, hwIndex, name, color, visible, units),
+HwChannel::HwChannel(Measurement *measurement, ChannelWidget *widget, int hwIndex) :
+    ChannelBase(measurement, widget),
     m_hwIndex(hwIndex)
 {
-    GetWidget()->UpdateTitle();
-    m_widget->SetForeColor(color); //change widget style with defined color and backcolor
+    //GetWidget()->UpdateTitle();
+    //m_widget->SetForeColor(color); //change widget style with defined color and backcolor
 }
 
 void HwChannel::AddValue(double value)

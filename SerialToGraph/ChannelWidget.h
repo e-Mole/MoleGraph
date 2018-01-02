@@ -51,14 +51,18 @@ class ChannelWidget : public QWidget
     QString m_units;
     bool m_isActive;
 public:
-    ChannelWidget(const QString &name,
+    ChannelWidget(
         QWidget* parent,
-        ChannelBase::ValueType valueType,
-        QColor const &foreColor,
-        unsigned shortcutOrder,
         ChannelGraph *channelGraph,
-        Plot *plot,
-        Qt::PenStyle penStyle, QString units, bool isActive);
+        unsigned shortcutOrder,
+        const QString &name,
+        QColor const &foreColor,
+        bool isActive,
+        QString units,
+        Qt::PenStyle penStyle,
+        ChannelBase::ValueType valueType,
+        Plot *plot
+    );
 
     void setTitle(QString const &title);
     void ShowLastValueWithUnits();

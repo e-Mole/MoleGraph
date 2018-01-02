@@ -69,16 +69,8 @@ public:
         DVSum
     };
 
-    ChannelBase(Measurement *measurement,
-        ChannelGraph *channelGraph,
-        unsigned shortcutOrder,
-        QString const &name = "",
-        QColor const &color = Qt::black,
-        bool active = true,
-        const QString &units = "",
-        Qt::PenStyle penStyle = Qt::SolidLine);
+    ChannelBase(Measurement *measurement, ChannelWidget *channelWidget);
 
-    ~ChannelBase();
     virtual Type GetType() = 0;
     virtual unsigned GetShortcutOrder() = 0;
 

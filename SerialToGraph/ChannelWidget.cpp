@@ -11,16 +11,17 @@
 
 #define PADDING 0
 #define BORDER 1
-ChannelWidget::ChannelWidget(const QString &name,
-    QWidget *parent,
-    ChannelBase::ValueType valueType,
-    const QColor &foreColor,
-    unsigned shortcutOrder,
+ChannelWidget::ChannelWidget(
+    QWidget* parent,
     ChannelGraph *channelGraph,
-    Plot * plot,
-    Qt::PenStyle penStyle,
+    unsigned shortcutOrder,
+    const QString &name,
+    QColor const &foreColor,
+    bool isActive,
     QString units,
-    bool isActive
+    Qt::PenStyle penStyle,
+    ChannelBase::ValueType valueType,
+    Plot *plot
 ) :
     QWidget(parent),
     m_name(name),

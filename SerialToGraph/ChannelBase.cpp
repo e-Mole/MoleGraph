@@ -19,39 +19,13 @@
 #include <QString>
 #include <limits>
 
-ChannelBase::ChannelBase(Measurement *measurement,
-    ChannelGraph *channelGraph,
-    unsigned shortcutOrder,
-    QString const &name,
-    QColor const &color,
-    bool active,
-    const QString &units,
-    Qt::PenStyle penStyle
-):
+ChannelBase::ChannelBase(Measurement *measurement, ChannelWidget *channelWidget):
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
-    m_widget(
-        new ChannelWidget(
-            name,
-            measurement->GetWidget(),
-            GetValueType(~0),
-            color,
-            shortcutOrder,
-            channelGraph,
-            measurement->GetPlot(),
-            penStyle,
-            units,
-            active
-        )
-    ),
+    m_widget(channelWidget),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max())
 {
-}
-
-ChannelBase::~ChannelBase()
-{
-    delete m_widget;
 }
 
 void ChannelBase::_UpdateExtremes(double value)

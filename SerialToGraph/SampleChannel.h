@@ -63,10 +63,7 @@ private:
 
 public:
     SampleChannel(Measurement *measurement,
-        ChannelGraph *graph,
-        QColor const &color = Qt::black,
-        bool visible = true,
-        const QString &units = "",
+        ChannelWidget *widget,
         Style format = Samples,
         TimeUnits timeUnits = Sec,
         RealTimeFormat realTimeFormat = hh_mm_ss);

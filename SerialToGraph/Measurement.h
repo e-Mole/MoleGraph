@@ -1,6 +1,7 @@
 #ifndef MEASUREMENT_H
 #define MEASUREMENT_H
 
+#include <ChannelBase.h>
 #include <QMap>
 #include <QMetaProperty>
 #include <QColor>
@@ -14,7 +15,6 @@
 #include <set>
 
 class Axis;
-class ChannelBase;
 class ChannelGraph;
 class ChannelWidget;
 class GraphicsContainer;
@@ -105,6 +105,30 @@ private:
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _DeserializeAxis(QDataStream &in, unsigned index);
+    ChannelWidget *_CreateChannelWidget(
+        GraphicsContainer *graphicsContainer,
+        ChannelGraph *graph,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units,
+        ChannelBase::ValueType valueType
+    );
+    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer,
+        ChannelGraph *graph,
+        QColor const &color,
+        bool visible,
+        QString const & units
+    );
+    ChannelWidget *_CreateHwChannelWidget(GraphicsContainer *graphicsContainer,
+        ChannelGraph *graph,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units
+    );
 
     GraphicsContainer *m_widget;
     Context const &m_context;

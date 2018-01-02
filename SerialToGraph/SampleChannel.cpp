@@ -5,16 +5,14 @@
 #include <Plot.h>
 #include <QDateTime>
 
-SampleChannel::SampleChannel(Measurement *measurement,
-    ChannelGraph *graph,
-    QColor const &color,
-    bool visible,
-    QString const & units,
+SampleChannel::SampleChannel(
+    Measurement *measurement,
+    ChannelWidget *widget,
     Style format,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement,graph, 0, "", color, visible, units),
+    ChannelBase(measurement, widget/*graph, 0, "", color, visible, units, Qt::SolidLine*/),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),

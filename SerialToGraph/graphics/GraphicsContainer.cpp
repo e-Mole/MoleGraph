@@ -104,6 +104,10 @@ GraphicsContainer::~GraphicsContainer()
     {
         delete axis;
     }
+    foreach (ChannelWidget *channelWidget, m_channelWidgets)
+    {
+        delete channelWidget;
+    }
 }
 
 bool GraphicsContainer::SetGrid(bool grid)

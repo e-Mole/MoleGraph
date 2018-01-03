@@ -462,7 +462,7 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * xAxis = m_widget->InitializeHorizontalAxis();
     Axis * yAxis = m_widget->InitializeVerticalAxis();
 
-    ChannelWidget *widget =  m_widget->_CreateSampleChannelWidget(GetWidget(), xAxis, Qt::black, true, "");
+    ChannelWidget *widget =  m_widget->_CreateSampleChannelWidget(GetWidget(), xAxis);
     m_sampleChannel =
         new SampleChannel(
             this,
@@ -608,7 +608,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     ChannelWidget *channelWidget = NULL;
     if (hwIndex == -1)
     {
-        channelWidget =  m_widget->_CreateSampleChannelWidget(GetWidget(), valueAxis, Qt::black, true, "");
+        channelWidget =  m_widget->_CreateSampleChannelWidget(GetWidget(), valueAxis);
 
         channel = new SampleChannel(this, channelWidget);
         m_sampleChannel = (SampleChannel*)channel;

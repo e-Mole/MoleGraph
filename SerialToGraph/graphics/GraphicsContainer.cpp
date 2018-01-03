@@ -730,11 +730,10 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(GraphicsContainer *graphi
     return widget;
 }
 
-ChannelWidget *GraphicsContainer::_CreateSampleChannelWidget(
-    GraphicsContainer *graphicsContainer, Axis *valueAxis, QColor const &color, bool visible, QString const & units)
-{
-    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
-    return _CreateChannelWidget(graphicsContainer, channelGraph, 0, "", color, visible, units, true);
+ChannelWidget *GraphicsContainer::_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer, Axis *valueAxis)
+{   
+    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
+    return _CreateChannelWidget(graphicsContainer, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
 }
 
 ChannelWidget *GraphicsContainer::_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
@@ -744,7 +743,7 @@ ChannelWidget *GraphicsContainer::_CloneSampleChannelWidget(GraphicsContainer *s
         sourceGraphicsContainer,
         channelGraph,
         0,
-        "",
+        sourceChannelWidget->GetName(),
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->IsActive(),
         sourceChannelWidget->GetUnits(),

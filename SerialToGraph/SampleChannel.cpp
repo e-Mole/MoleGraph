@@ -12,14 +12,12 @@ SampleChannel::SampleChannel(
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, widget/*graph, 0, "", color, visible, units, Qt::SolidLine*/),
+    ChannelBase(measurement, widget),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),
     m_realTimeFormat(realTimeFormat)
 {
-    GetWidget()->SetName(GetStyleText());
-    GetWidget()->UpdateTitle();
 }
 
 void SampleChannel::_SetStyle(Style style)

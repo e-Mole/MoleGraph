@@ -122,12 +122,7 @@ public:
         QString const & units,
         bool isSampleChannel
     );
-    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer,
-        Axis *valueAxis,
-        QColor const &color,
-        bool visible,
-        QString const & units
-    );
+    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer, Axis *valueAxis);
     ChannelWidget *_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
 
     ChannelWidget *_CreateHwChannelWidget(GraphicsContainer *graphicsContainer,

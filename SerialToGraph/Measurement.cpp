@@ -410,57 +410,44 @@ Plot *Measurement::GetPlot() const
 
 bool Measurement::IsPlotVisible() const
 {
-    m_widget->IsPlotVisible();
+    return m_widget->IsPlotVisible();
 }
 
-void Measurement::_InitializeAxesAndChanels(Measurement *source)
+void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 {
-    m_widget->InitializeAxes(source->GetAxes());
+    m_widget->InitializeAxes(sourceMeasurement->GetAxes());
     int hwIndex = -1;
-    foreach (ChannelBase *channel, source->GetChannels())
+    foreach (ChannelBase *sourceChannel, sourceMeasurement->GetChannels())
     {
-       ChannelGraph *channelGraph = m_widget->CloneChannelGraph(source->GetWidget(), channel->GetWidget());
-
-        if (channel->GetType() == ChannelBase::Type_Hw)
+        if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
-            ChannelWidget *channelWidget = _CreateHwChannelWidget(
-                GetWidget(),
-                channelGraph,
-                hwIndex,
-                channel->GetWidget()->GetName(),
-                channel->GetWidget()->GetForeColor(),
-                channel->GetWidget()->IsActive(),
-                channel->GetWidget()->GetUnits());
+            ChannelWidget *channelWidget = m_widget->_CloneHwChannelWidget(GetWidget(), sourceChannel->GetWidget(), hwIndex);
 
             HwChannel *hwChannel = new HwChannel(this, channelWidget, hwIndex);
-            connect(hwChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
             m_channels.push_back(hwChannel);
             m_widget->AddChannel(hwChannel, false, false);
         }
         else
         {
-            ChannelWidget *widget = _CreateSampleChannelWidget(
-                GetWidget(), channelGraph, channel->GetWidget()->GetForeColor(), channel->GetWidget()->IsActive(), channel->GetWidget()->GetUnits()
-            );
+            ChannelWidget *channelWidget =  m_widget->_CloneSampleChannelWidget(GetWidget(), sourceChannel->GetWidget());
             m_sampleChannel =
                 new SampleChannel(
                     this,
-                    widget,
-                    ((SampleChannel *)channel)->GetStyle(),
-                    ((SampleChannel *)channel)->GetTimeUnits(),
-                    ((SampleChannel *)channel)->GetRealTimeFormat()
+                    channelWidget,
+                    ((SampleChannel *)sourceChannel)->GetStyle(),
+                    ((SampleChannel *)sourceChannel)->GetTimeUnits(),
+                    ((SampleChannel *)sourceChannel)->GetRealTimeFormat()
                 );
-            connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
             m_channels.push_back(m_sampleChannel);
             m_widget->AddChannel(m_sampleChannel, false, true);
             m_widget->SetAxisStyle(
-                m_sampleChannel->GetWidget()->GetChannelGraph()->GetValuleAxis(),
+                channelWidget->GetChannelGraph()->GetValuleAxis(),
                 m_sampleChannel->GetStyle() == SampleChannel::RealTime,
                 m_sampleChannel->GetRealTimeFormatText()
             );
         }
 
-        if (channel->GetWidget()->IsOnHorizontalAxis())
+        if (sourceChannel->GetWidget()->IsOnHorizontalAxis())
             SetHorizontalChannel(m_channels.last());
 
         hwIndex++;
@@ -470,56 +457,12 @@ void Measurement::_InitializeAxesAndChanels(Measurement *source)
     m_widget->ReplaceDisplays();//false
 }
 
-
-ChannelWidget *Measurement::_CreateChannelWidget(GraphicsContainer *graphicsContainer,
-    ChannelGraph *graph,
-    unsigned shortcutOrder,
-    const QString name,
-    QColor const &color,
-    bool visible,
-    QString const & units,
-    ChannelBase::ValueType valueType
-)
-{
-    return new ChannelWidget(
-        graphicsContainer,
-        graph,
-        shortcutOrder,
-        name,
-        color,
-        visible,
-        units,
-        Qt::SolidLine,
-        valueType,
-        GetPlot()
-    );
-}
-
-ChannelWidget *Measurement::_CreateSampleChannelWidget(
-    GraphicsContainer *graphicsContainer, ChannelGraph *graph, QColor const &color, bool visible, QString const & units)
-{
-    return _CreateChannelWidget(graphicsContainer, graph, 0, "", color, visible, units, ChannelBase::ValueTypeSample);
-}
-
-ChannelWidget *Measurement::_CreateHwChannelWidget(
-    GraphicsContainer *graphicsContainer, ChannelGraph *graph, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
-{
-    return _CreateChannelWidget(graphicsContainer, graph, shortcutOrder, name, color, visible, units, ChannelBase::ValueTypeUnknown);
-}
-
-bool Measurement::editChannel()
-{
-    editChannel((ChannelWidget*)sender());
-}
-
 void Measurement::_InitializeAxesAndChanels()
 {
     Axis * xAxis = m_widget->InitializeHorizontalAxis();
     Axis * yAxis = m_widget->InitializeVerticalAxis();
 
-    ChannelGraph *channelGraph = m_widget->AddChannelGraph(xAxis, Qt::black, 0, Qt::SolidLine);
-
-    ChannelWidget *widget = _CreateSampleChannelWidget(GetWidget(), channelGraph, Qt::black, true, "");
+    ChannelWidget *widget =  m_widget->_CreateSampleChannelWidget(GetWidget(), xAxis, Qt::black, true, "");
     m_sampleChannel =
         new SampleChannel(
             this,
@@ -528,35 +471,18 @@ void Measurement::_InitializeAxesAndChanels()
             SampleChannel::Sec,
             SampleChannel::hh_mm_ss
         );
-    connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     m_channels.push_back(m_sampleChannel);
     m_widget->AddChannel(m_sampleChannel, false, true);
     SetHorizontalChannel(m_sampleChannel);
 
-    for (unsigned i = 1; i <= CHANNEL_COUNT; i++)
-        _AddYChannel(_GetColorByOrder(i), yAxis);
+    for (unsigned i = 0; i < CHANNEL_COUNT; i++)
+        _AddYChannel(i, yAxis);
 
     m_widget->UpdateAxisNames();
     m_widget->ReplaceDisplays();//false
 }
 
-QColor Measurement::_GetColorByOrder(unsigned order)
-{
-    switch (order)
-    {
-    case 1: return Qt::red;
-    case 2: return Qt::blue;
-    case 3: return Qt::darkGreen;
-    case 4: return Qt::magenta;
-    case 5: return Qt::cyan;
-    case 6: return Qt::green;
-    case 7: return Qt::darkRed;
-    case 8: return Qt::darkGray;
-    default: return Qt::black; //also for 0
-    }
-}
-
-void Measurement::AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph, bool isSampleChannel)
+void Measurement::AddYChannel(ChannelBase *channel, bool isSampleChannel)
 {
     //FIXME here should be creation of graph and adding to a channelGraph map
     m_channels.push_back(channel);
@@ -583,15 +509,13 @@ void Measurement::RemoveChannel(ChannelBase *channelToRemove)
     qDebug() << "channel was not found and can not be deleted";
 }
 
-void Measurement::_AddYChannel(QColor const &color, Axis *axis)
+void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
-    unsigned order = m_channels.size()-1;
-    ChannelGraph *channelGraph = m_widget->AddChannelGraph(axis, color, order, Qt::SolidLine);
-    ChannelWidget *channelWidget = _CreateHwChannelWidget(
-        GetWidget(), channelGraph, order, QString(tr("Channel %1")).arg(order+1), color, true, "");
+    QColor color = m_widget->GetColorByOrder(order + 1);
+    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(GetWidget(), axis, order, QString(tr("Channel %1")).arg(order+1), color, true, "");
+
     HwChannel * newChannel = new HwChannel(this, channelWidget, order);
-    connect(newChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
-    AddYChannel(newChannel, channelGraph, false);
+    AddYChannel(newChannel, false);
 }
 
 Axis * Measurement::CreateAxis(QColor const & color)
@@ -626,12 +550,12 @@ unsigned Measurement::GetChannelCount()
 
 int Measurement::GetAxisIndex(Axis *axis)
 {
-    m_widget->GetAxisIndex(axis);
+    return m_widget->GetAxisIndex(axis);
 }
 
 Axis *Measurement::GetAxis(int index)
 {
-    m_widget->GetAxis(index);
+    return m_widget->GetAxis(index);
 }
 
 void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out)
@@ -699,33 +623,32 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     int hwIndex;
     in >> hwIndex;
 
-    ChannelGraph * channelGraph = m_widget->AddBlackChannelGraph(valueAxis);
     ChannelBase *channel;
     bool isSampleChannel = false;
+    ChannelWidget *channelWidget = NULL;
     if (hwIndex == -1)
     {
-        ChannelWidget *channelWidget = _CreateSampleChannelWidget(GetWidget(), channelGraph, Qt::black, true, "");
+        channelWidget =  m_widget->_CreateSampleChannelWidget(GetWidget(), valueAxis, Qt::black, true, "");
+
         channel = new SampleChannel(this, channelWidget);
         m_sampleChannel = (SampleChannel*)channel;
-        connect(m_sampleChannel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
         isSampleChannel = true;
     }
     else
     {
-        ChannelWidget *channelWidget = _CreateHwChannelWidget(GetWidget(), channelGraph, hwIndex, "", Qt::black, true, "");
+        channelWidget =  m_widget->_CreateHwChannelWidget(GetWidget(), valueAxis, hwIndex, "", Qt::black, true, "");
         channel = new HwChannel(this,channelWidget, hwIndex);
-        connect(channel->GetWidget(), SIGNAL(clicked()), this, SLOT(editChannel()));
     }
 
     //Workaround functionality has been splited
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
-    in >> channel->GetWidget();
+    in >> channelWidget;
 
     m_channels.push_back(channel);
     m_widget->AddChannel(channel, false, isSampleChannel);
-    if (channel->GetWidget()->IsOnHorizontalAxis())
+    if (channelWidget->IsOnHorizontalAxis())
         SetHorizontalChannel(channel);
 }
 
@@ -869,7 +792,7 @@ void Measurement::_SetColor(QColor const &color)
 
 bool Measurement::GetMarksShown()
 {
-    m_widget->GetMarksShown();
+    return m_widget->GetMarksShown();
 }
 
 void Measurement::_SetMarksShown(bool marksShown)
@@ -885,7 +808,7 @@ void Measurement::_SetType(Type type)
 
 int Measurement::GetSliderPos()
 {
-    m_widget->GetSliderPos();
+    return m_widget->GetSliderPos();
 }
 
 void Measurement::SetHorizontalChannel(ChannelBase *channel)

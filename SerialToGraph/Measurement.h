@@ -72,9 +72,9 @@ private:
     bool _FillQueue();
     bool _IsCompleteSetInQueue();
     void _AdjustDrawPeriod(unsigned drawDelay);
-    void _InitializeAxesAndChanels(Measurement *source);
+    void _InitializeAxesAndChanels(Measurement *sourceMeasurement);
     void _InitializeAxesAndChanels();
-    void _AddYChannel(const QColor &color, Axis *axis);
+    void _AddYChannel(unsigned order, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessActiveChannels();
@@ -99,36 +99,11 @@ private:
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }
     State _GetStateForSerialization();
-    QColor _GetColorByOrder(unsigned order);
     void _SetColor(QColor const &color);
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _DeserializeAxis(QDataStream &in, unsigned index);
-    ChannelWidget *_CreateChannelWidget(
-        GraphicsContainer *graphicsContainer,
-        ChannelGraph *graph,
-        unsigned shortcutOrder,
-        QString const name,
-        QColor const &color,
-        bool visible,
-        QString const & units,
-        ChannelBase::ValueType valueType
-    );
-    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer,
-        ChannelGraph *graph,
-        QColor const &color,
-        bool visible,
-        QString const & units
-    );
-    ChannelWidget *_CreateHwChannelWidget(GraphicsContainer *graphicsContainer,
-        ChannelGraph *graph,
-        unsigned shortcutOrder,
-        QString const name,
-        QColor const &color,
-        bool visible,
-        QString const & units
-    );
 
     GraphicsContainer *m_widget;
     Context const &m_context;
@@ -196,7 +171,7 @@ private:
     bool IsPlotInRangeMode();
     void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
-    void AddYChannel(ChannelBase *channel, ChannelGraph *channelGraph, bool isSampleChannel);
+    void AddYChannel(ChannelBase *channel, bool isSampleChannel);
     void RemoveChannel(ChannelBase *channelToRemove);
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
@@ -212,7 +187,6 @@ signals:
     void stateChanged();
     void nameChanged();
     void colorChanged();
-    void editChannel(ChannelWidget *channel);
     void valueSetMeasured();
 public slots:
     void showGraph(bool show);
@@ -220,7 +194,6 @@ public slots:
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
-    bool editChannel();
 };
 
 #endif // MEASUREMENT_H

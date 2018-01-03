@@ -540,10 +540,11 @@ ChannelGraph * GraphicsContainer::AddBlackChannelGraph(Axis * valueAxis)
 
 }
 
-ChannelGraph * GraphicsContainer::AddChannelGraph(
-    Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle)
+ChannelGraph * GraphicsContainer::AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle)
 {
-    return m_plot->AddChannelGraph(m_plot->xAxis, valueAxis, color, shapeIndex, GetMarksShown(), penStyle);
+    QCPAxis *keyAxis = (valueAxis->GetGraphAxis() == GetPlot()->xAxis) ?
+        GetPlot()->yAxis : GetPlot()->xAxis;
+    return m_plot->AddChannelGraph(keyAxis, valueAxis, color, shapeIndex, GetMarksShown(), penStyle);
 }
 
 
@@ -646,6 +647,11 @@ void GraphicsContainer::editChannel(ChannelWidget *channelWidget)
     settings->exec();
 }
 
+void GraphicsContainer::editChannel()
+{
+    editChannel((ChannelWidget*)sender());
+}
+
 void GraphicsContainer::RecalculateSliderMaximum()
 {
     ClearHorizontalValueSet();
@@ -678,5 +684,93 @@ ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceCont
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->GetChannelGraph()->GetShapeIndex(),
         sourceChannelWidget->GetPenStyle()
+    );
+}
+
+QColor GraphicsContainer::GetColorByOrder(unsigned order)
+{
+    switch (order)
+    {
+    case 1: return Qt::red;
+    case 2: return Qt::blue;
+    case 3: return Qt::darkGreen;
+    case 4: return Qt::magenta;
+    case 5: return Qt::cyan;
+    case 6: return Qt::green;
+    case 7: return Qt::darkRed;
+    case 8: return Qt::darkGray;
+    default: return Qt::black; //also for 0
+    }
+}
+
+ChannelWidget *GraphicsContainer::_CreateChannelWidget(GraphicsContainer *graphicsContainer,
+    ChannelGraph *graph,
+    unsigned shortcutOrder,
+    const QString name,
+    QColor const &color,
+    bool visible,
+    QString const & units,
+    bool isSampleChannel
+)
+{
+    ChannelWidget *widget = new ChannelWidget(
+        graphicsContainer,
+        graph,
+        shortcutOrder,
+        name,
+        color,
+        visible,
+        units,
+        Qt::SolidLine,
+        isSampleChannel ? ChannelBase::ValueTypeSample : ChannelBase::ValueTypeUnknown,
+        GetPlot()
+    );
+
+    connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
+    return widget;
+}
+
+ChannelWidget *GraphicsContainer::_CreateSampleChannelWidget(
+    GraphicsContainer *graphicsContainer, Axis *valueAxis, QColor const &color, bool visible, QString const & units)
+{
+    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
+    return _CreateChannelWidget(graphicsContainer, channelGraph, 0, "", color, visible, units, true);
+}
+
+ChannelWidget *GraphicsContainer::_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
+{
+    ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
+    return _CreateChannelWidget(
+        sourceGraphicsContainer,
+        channelGraph,
+        0,
+        "",
+        sourceChannelWidget->GetForeColor(),
+        sourceChannelWidget->IsActive(),
+        sourceChannelWidget->GetUnits(),
+        true
+    );
+}
+
+
+ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
+    GraphicsContainer *graphicsContainer, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
+{
+    ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
+    return _CreateChannelWidget(graphicsContainer, channelGraph, shortcutOrder, name, color, visible, units, false);
+}
+
+ChannelWidget *GraphicsContainer::_CloneHwChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
+{
+    ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
+    return _CreateChannelWidget(
+        sourceGraphicsContainer,
+        channelGraph,
+        shortcutOrder,
+        sourceChannelWidget->GetName(),
+        sourceChannelWidget->GetForeColor(),
+        sourceChannelWidget->IsActive(),
+        sourceChannelWidget->GetUnits(),
+        false
     );
 }

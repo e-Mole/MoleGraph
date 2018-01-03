@@ -8,6 +8,7 @@
 #include <map>
 
 class Axis;
+class Color;
 class ChannelBase;
 class ChannelGraph;
 class ChannelWidget;
@@ -111,11 +112,40 @@ public:
     bool IsHorizontalValueSetEmpty();
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
+    QColor GetColorByOrder(unsigned order);
+    ChannelWidget *_CreateChannelWidget(GraphicsContainer *graphicsContainer,
+        ChannelGraph *graph,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units,
+        bool isSampleChannel
+    );
+    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer,
+        Axis *valueAxis,
+        QColor const &color,
+        bool visible,
+        QString const & units
+    );
+    ChannelWidget *_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
+
+    ChannelWidget *_CreateHwChannelWidget(GraphicsContainer *graphicsContainer,
+        Axis *valueAxis,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units);
+
+    ChannelWidget *_CloneHwChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
+
 signals:
     void resized();
 public slots:
     void sliderValueChanged(int value);
     void editChannel(ChannelWidget *channelWidget);
+    void editChannel();
     void addNewValueSet();
 private slots:
     void markerLinePositionChanged(int position);

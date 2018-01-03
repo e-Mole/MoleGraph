@@ -166,7 +166,6 @@ Measurement * ChannelBase::GetMeasurement()
 {
     return m_measurement;
 }
-
 ChannelWidget *ChannelBase::GetWidget()
 {
     return m_widget;

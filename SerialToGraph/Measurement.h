@@ -172,7 +172,6 @@ private:
     void SetFollowMode(bool set);
     Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel, bool isSampleChannel);
-    void RemoveChannel(ChannelBase *channelToRemove);
     void IncreaseSliderMaximum(unsigned maximum);
     int GetLastClosestHorizontalValueIndex(double xValue) const;
     unsigned GetPositionByHorizontalValue(double value) const;

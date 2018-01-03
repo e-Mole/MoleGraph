@@ -489,26 +489,6 @@ void Measurement::AddYChannel(ChannelBase *channel, bool isSampleChannel)
     m_widget->AddChannel(channel, false, isSampleChannel);
 }
 
-void Measurement::RemoveChannel(ChannelBase *channelToRemove)
-{
-    for (int i = 0; i < m_channels.count(); i++)
-    {
-        ChannelBase *channel = m_channels[i];
-        if (channel == channelToRemove)
-        {
-            if (!m_widget->RemoveGraph(channel->GetWidget()))
-                qDebug() << "graph was not deleed";
-            m_widget->RescaleAxes(channel->GetWidget());
-
-            m_channels.remove(i);
-            m_widget->RemoveChannel(channel, false);
-            delete channel;
-            return;
-        }
-    }
-    qDebug() << "channel was not found and can not be deleted";
-}
-
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);

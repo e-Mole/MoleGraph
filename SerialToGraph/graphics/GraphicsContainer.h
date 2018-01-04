@@ -118,6 +118,7 @@ public:
     std::vector<ChannelWidget *> &GetChannelWidgets();
     unsigned GetChannelWidgetCount();
     ChannelWidget *GetChannelWidget(unsigned index);
+    ChannelWidget *GetChannelWidget(ChannelBase *channel);
     ChannelBase * GetChannel(ChannelWidget * widget);
     SampleChannel *GetSampleChannel();
     bool IsHorizontalValueSetEmpty();

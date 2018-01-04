@@ -621,6 +621,11 @@ ChannelWidget *GraphicsContainer::GetChannelWidget(unsigned index)
     return m_channelWidgets[index];
 }
 
+ChannelWidget *GraphicsContainer::GetChannelWidget(ChannelBase *channel)
+{
+    return m_channelToWidgetMapping[channel];
+}
+
 ChannelBase * GraphicsContainer::GetChannel(ChannelWidget * widget)
 {
     return m_widgetToChannelMapping[widget];

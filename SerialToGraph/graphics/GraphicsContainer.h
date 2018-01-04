@@ -39,6 +39,7 @@ class GraphicsContainer : public QWidget
     std::vector<ChannelWidget *> m_channelWidgets;
     std::map<ChannelWidget *, ChannelBase *> m_widgetToChannelMapping;
     std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
+    std::map<ChannelBase *, ChannelGraph *> m_channelToGraphMapping;
     std::set<double> m_horizontalValueSet;
     ChannelBase *m_horizontalChannel;
     QVector<Axis*> m_axes;
@@ -54,13 +55,23 @@ class GraphicsContainer : public QWidget
     void _FollowLastMeasuredValue();
     QCPAxis * _GetGraphAxis(unsigned index);
     Axis * _CreateAxis(QColor const & color, QCPAxis *graphAxis);
+    ChannelWidget *_CreateChannelWidget(ChannelBase *channel,
+        ChannelGraph *graph,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units,
+        bool isSampleChannel
+    );
+
 public:
     GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
     ~GraphicsContainer();
     bool SetGrid(bool grid);
     void ReplaceDisplays();
-    void AddChannel(ChannelBase *channel, bool replaceDisplays, bool isSampleChannel);
-    void RemoveChannel(ChannelBase *channel, bool replaceDisplays);
+    void _AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel);
+    //void RemoveChannel(ChannelBase *channel, bool replaceDisplays);
     QString &GetName() {return m_name; }
     void SetName(QString const &name) {m_name = name; } //TODO:signal?
     Plot *GetPlot() const;
@@ -113,19 +124,10 @@ public:
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    ChannelWidget *_CreateChannelWidget(GraphicsContainer *graphicsContainer,
-        ChannelGraph *graph,
-        unsigned shortcutOrder,
-        QString const name,
-        QColor const &color,
-        bool visible,
-        QString const & units,
-        bool isSampleChannel
-    );
-    ChannelWidget *_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer, Axis *valueAxis);
-    ChannelWidget *_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
+    ChannelWidget *CreateSampleChannelWidget(ChannelBase *channel, Axis *valueAxis);
+    ChannelWidget *CloneSampleChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
 
-    ChannelWidget *_CreateHwChannelWidget(GraphicsContainer *graphicsContainer,
+    ChannelWidget *_CreateHwChannelWidget(ChannelBase *channel,
         Axis *valueAxis,
         unsigned shortcutOrder,
         QString const name,
@@ -133,8 +135,8 @@ public:
         bool visible,
         QString const & units);
 
-    ChannelWidget *_CloneHwChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
-
+    ChannelWidget *CloneHwChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
+    void UpdateGraph();
 signals:
     void resized();
 public slots:

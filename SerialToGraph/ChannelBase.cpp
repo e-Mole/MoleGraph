@@ -19,10 +19,10 @@
 #include <QString>
 #include <limits>
 
-ChannelBase::ChannelBase(Measurement *measurement, ChannelWidget *channelWidget):
+ChannelBase::ChannelBase(Measurement *measurement):
     QObject(measurement->GetWidget()),
     m_measurement(measurement),
-    m_widget(channelWidget),
+    m_widget(NULL),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max())
 {
@@ -170,6 +170,12 @@ Measurement * ChannelBase::GetMeasurement()
 ChannelWidget *ChannelBase::GetWidget()
 {
     return m_widget;
+}
+
+//FIXME: temporary
+void ChannelBase::SetWidget(ChannelWidget *widget)
+{
+    m_widget = widget;
 }
 
 //I can't use == because same doubles have not to be exactly the same

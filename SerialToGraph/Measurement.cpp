@@ -421,25 +421,23 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
     {
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
-            ChannelWidget *channelWidget = m_widget->_CloneHwChannelWidget(GetWidget(), sourceChannel->GetWidget(), hwIndex);
-
-            HwChannel *hwChannel = new HwChannel(this, channelWidget, hwIndex);
+            HwChannel *hwChannel = new HwChannel(this, hwIndex);
+            ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(hwChannel, sourceMeasurement->GetWidget(), sourceChannel->GetWidget(), hwIndex);
             m_channels.push_back(hwChannel);
-            m_widget->AddChannel(hwChannel, false, false);
+
         }
         else
         {
-            ChannelWidget *channelWidget =  m_widget->_CloneSampleChannelWidget(GetWidget(), sourceChannel->GetWidget());
             m_sampleChannel =
                 new SampleChannel(
                     this,
-                    channelWidget,
                     ((SampleChannel *)sourceChannel)->GetStyle(),
                     ((SampleChannel *)sourceChannel)->GetTimeUnits(),
                     ((SampleChannel *)sourceChannel)->GetRealTimeFormat()
                 );
+            ChannelWidget *channelWidget =  m_widget->CloneSampleChannelWidget(m_sampleChannel, sourceMeasurement->GetWidget(), sourceChannel->GetWidget());
+
             m_channels.push_back(m_sampleChannel);
-            m_widget->AddChannel(m_sampleChannel, false, true);
             m_widget->SetAxisStyle(
                 channelWidget->GetChannelGraph()->GetValuleAxis(),
                 m_sampleChannel->GetStyle() == SampleChannel::RealTime,
@@ -462,17 +460,16 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * xAxis = m_widget->InitializeHorizontalAxis();
     Axis * yAxis = m_widget->InitializeVerticalAxis();
 
-    ChannelWidget *widget =  m_widget->_CreateSampleChannelWidget(GetWidget(), xAxis);
     m_sampleChannel =
         new SampleChannel(
             this,
-            widget,
             SampleChannel::Samples,
             SampleChannel::Sec,
             SampleChannel::hh_mm_ss
         );
+    ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis);
+
     m_channels.push_back(m_sampleChannel);
-    m_widget->AddChannel(m_sampleChannel, false, true);
     SetHorizontalChannel(m_sampleChannel);
 
     for (unsigned i = 0; i < CHANNEL_COUNT; i++)
@@ -486,15 +483,14 @@ void Measurement::AddYChannel(ChannelBase *channel, bool isSampleChannel)
 {
     //FIXME here should be creation of graph and adding to a channelGraph map
     m_channels.push_back(channel);
-    m_widget->AddChannel(channel, false, isSampleChannel);
 }
 
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
-    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(GetWidget(), axis, order, QString(tr("Channel %1")).arg(order+1), color, true, "");
+    HwChannel * newChannel = new HwChannel(this, order);
+    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order, QString(tr("Channel %1")).arg(order+1), color, true, "");
 
-    HwChannel * newChannel = new HwChannel(this, channelWidget, order);
     AddYChannel(newChannel, false);
 }
 
@@ -608,16 +604,17 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     ChannelWidget *channelWidget = NULL;
     if (hwIndex == -1)
     {
-        channelWidget =  m_widget->_CreateSampleChannelWidget(GetWidget(), valueAxis);
+        channel = new SampleChannel(this);
+        channelWidget =  m_widget->CreateSampleChannelWidget(channel, valueAxis);
 
-        channel = new SampleChannel(this, channelWidget);
         m_sampleChannel = (SampleChannel*)channel;
         isSampleChannel = true;
     }
     else
     {
-        channelWidget =  m_widget->_CreateHwChannelWidget(GetWidget(), valueAxis, hwIndex, "", Qt::black, true, "");
-        channel = new HwChannel(this,channelWidget, hwIndex);
+        channel = new HwChannel(this, hwIndex);
+        channelWidget =  m_widget->_CreateHwChannelWidget(channel, valueAxis, hwIndex, "", Qt::black, true, "");
+
     }
 
     //Workaround functionality has been splited
@@ -627,7 +624,6 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     in >> channelWidget;
 
     m_channels.push_back(channel);
-    m_widget->AddChannel(channel, false, isSampleChannel);
     if (channelWidget->IsOnHorizontalAxis())
         SetHorizontalChannel(channel);
 }

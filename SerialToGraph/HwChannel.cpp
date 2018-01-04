@@ -7,8 +7,8 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QString>
 
-HwChannel::HwChannel(Measurement *measurement, ChannelWidget *widget, int hwIndex) :
-    ChannelBase(measurement, widget),
+HwChannel::HwChannel(Measurement *measurement, int hwIndex) :
+    ChannelBase(measurement),
     m_hwIndex(hwIndex)
 {
     //GetWidget()->UpdateTitle();

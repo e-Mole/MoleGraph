@@ -5,14 +5,12 @@
 #include <Plot.h>
 #include <QDateTime>
 
-SampleChannel::SampleChannel(
-    Measurement *measurement,
-    ChannelWidget *widget,
+SampleChannel::SampleChannel(Measurement *measurement,
     Style format,
     TimeUnits timeUnits,
     RealTimeFormat realTimeFormat
 ) :
-    ChannelBase(measurement, widget),
+    ChannelBase(measurement),
     m_startDateTime(),
     m_style(format),
     m_timeUnits(timeUnits),

@@ -134,25 +134,20 @@ void GraphicsContainer::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-void GraphicsContainer::AddChannel(ChannelBase *channel, bool replaceDisplays, bool isSampleChannel)
+void GraphicsContainer::_AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel)
 {
-    ChannelWidget *widget = channel->GetWidget();
-    m_channelWidgets.push_back(widget);
-    m_widgetToChannelMapping[channel->GetWidget()] = channel;
-    m_channelToWidgetMapping[channel] = channel->GetWidget();
 
-    if (replaceDisplays)
-    {
-        ReplaceDisplays();
-    }
+    m_channelWidgets.push_back(widget);
+    m_widgetToChannelMapping[widget] = channel;
+    m_channelToWidgetMapping[channel] = widget;
+    m_channelToGraphMapping[channel] = widget->GetChannelGraph();
 
     if (isSampleChannel)
     {
-        m_sampleChannel = dynamic_cast<SampleChannel*>(channel);
         m_sampleChannelWidget = widget;
     }
 }
-
+/*
 void GraphicsContainer::RemoveChannel(ChannelBase *channel, bool replaceDisplays)
 {
     ChannelWidget *widget = m_channelToWidgetMapping[channel];
@@ -169,7 +164,7 @@ void GraphicsContainer::RemoveChannel(ChannelBase *channel, bool replaceDisplays
     if (replaceDisplays)
         ReplaceDisplays();
 }
-
+*/
 void GraphicsContainer::ReplaceDisplays()
 {
     //reset stretch
@@ -703,7 +698,8 @@ QColor GraphicsContainer::GetColorByOrder(unsigned order)
     }
 }
 
-ChannelWidget *GraphicsContainer::_CreateChannelWidget(GraphicsContainer *graphicsContainer,
+ChannelWidget *GraphicsContainer::_CreateChannelWidget(
+    ChannelBase * channel,
     ChannelGraph *graph,
     unsigned shortcutOrder,
     const QString name,
@@ -714,7 +710,7 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(GraphicsContainer *graphi
 )
 {
     ChannelWidget *widget = new ChannelWidget(
-        graphicsContainer,
+        this,
         graph,
         shortcutOrder,
         name,
@@ -726,21 +722,25 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(GraphicsContainer *graphi
         GetPlot()
     );
 
+    _AddChannelToMappings(channel, widget, isSampleChannel);
+    channel->SetWidget(widget);
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
+
     return widget;
 }
 
-ChannelWidget *GraphicsContainer::_CreateSampleChannelWidget(GraphicsContainer *graphicsContainer, Axis *valueAxis)
+ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(ChannelBase *channel, Axis *valueAxis)
 {   
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
-    return _CreateChannelWidget(graphicsContainer, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
+    return _CreateChannelWidget(
+        channel, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
 }
 
-ChannelWidget *GraphicsContainer::_CloneSampleChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
+ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     return _CreateChannelWidget(
-        sourceGraphicsContainer,
+        channel,
         channelGraph,
         0,
         sourceChannelWidget->GetName(),
@@ -753,17 +753,17 @@ ChannelWidget *GraphicsContainer::_CloneSampleChannelWidget(GraphicsContainer *s
 
 
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
-    GraphicsContainer *graphicsContainer, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
+    ChannelBase *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
 {
     ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
-    return _CreateChannelWidget(graphicsContainer, channelGraph, shortcutOrder, name, color, visible, units, false);
+    return _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false);
 }
 
-ChannelWidget *GraphicsContainer::_CloneHwChannelWidget(GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
+ChannelWidget *GraphicsContainer::CloneHwChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     return _CreateChannelWidget(
-        sourceGraphicsContainer,
+        channel,
         channelGraph,
         shortcutOrder,
         sourceChannelWidget->GetName(),
@@ -772,4 +772,20 @@ ChannelWidget *GraphicsContainer::_CloneHwChannelWidget(GraphicsContainer *sourc
         sourceChannelWidget->GetUnits(),
         false
     );
+}
+
+void GraphicsContainer::UpdateGraph()
+{
+/*    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
+    {
+        //FIXME: will not work for ghosts
+        double xValue = GetHorizontalChannel()->GetValue(i);
+        for (auto item : m_channelToGraphMapping)
+        {
+            ChannelBase *channel = item.first;
+            ChannelGraph *
+            if (channel->GetValueCount() > i)
+                channel->GetWidget()->UpdateGraph(xValue, channel->GetValue(i), false);
+        }
+    }*/
 }

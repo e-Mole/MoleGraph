@@ -17,7 +17,7 @@ class HwChannel : public ChannelBase
     int m_hwIndex;
     QVector<double> m_originalValues;
 public:
-    HwChannel(Measurement *measurement, ChannelWidget *widget, int hwIndex);
+    HwChannel(Measurement *measurement, int hwIndex);
 
     virtual Type GetType() { return Type_Hw; }
     virtual unsigned GetShortcutOrder() { return m_hwIndex + 1; }

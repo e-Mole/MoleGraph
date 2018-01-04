@@ -62,8 +62,8 @@ private:
     RealTimeFormat m_realTimeFormat;
 
 public:
-    SampleChannel(Measurement *measurement,
-        ChannelWidget *widget,
+    SampleChannel(
+        Measurement *measurement,
         Style format = Samples,
         TimeUnits timeUnits = Sec,
         RealTimeFormat realTimeFormat = hh_mm_ss);

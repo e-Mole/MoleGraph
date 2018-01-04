@@ -222,7 +222,6 @@ void MainWindow::ShowConsole(bool show)
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 {
     Measurement *m = new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels);
-    connect(m, SIGNAL(editChannel(ChannelWidget*)), m->GetWidget(), SLOT(editChannel(ChannelWidget*)));
     connect(m, SIGNAL(valueSetMeasured()), m->GetWidget(), SLOT(addNewValueSet()));
     return m;
 }

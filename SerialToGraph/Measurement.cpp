@@ -726,15 +726,8 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned version)
     for (unsigned i = 0; i < trackedHwChannelCount; ++i)
         _DeserializeChannelData(in, version);
 
-    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
-    {
-        double xValue = m_widget->GetHorizontalChannel()->GetValue(i);
-        foreach (ChannelBase *channel, m_channels)
-        {
-            if (channel->GetValueCount() > i)
-                channel->GetWidget()->UpdateGraph(xValue, channel->GetValue(i), false);
-        }
-    }
+
+    GetWidget()->UpdateGraphs();
     if (m_sampleChannel->GetValueCount() != 0)
         m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel()->GetLastValue());
 

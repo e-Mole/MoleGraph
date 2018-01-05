@@ -138,7 +138,7 @@ public:
         QString const & units);
 
     ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
-    void UpdateGraph();
+    void UpdateGraphs();
 signals:
     void resized();
 public slots:

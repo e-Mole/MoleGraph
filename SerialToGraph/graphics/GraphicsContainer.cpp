@@ -737,6 +737,7 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
 
 ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis)
 {   
+    m_sampleChannel = channel;
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
     return _CreateChannelWidget(
         channel, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
@@ -745,6 +746,7 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
 ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
     SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
 {
+    m_sampleChannel = channel;
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     return _CreateChannelWidget(
         channel,
@@ -791,18 +793,17 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
     return widget;
 }
 
-void GraphicsContainer::UpdateGraph()
+void GraphicsContainer::UpdateGraphs()
 {
-/*    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
+    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
     {
         //FIXME: will not work for ghosts
         double xValue = GetHorizontalChannel()->GetValue(i);
-        for (auto item : m_channelToGraphMapping)
+        for (auto item : m_channelToWidgetMapping)
         {
             ChannelBase *channel = item.first;
-            ChannelGraph *
             if (channel->GetValueCount() > i)
-                channel->GetWidget()->UpdateGraph(xValue, channel->GetValue(i), false);
+                item.second->UpdateGraph(xValue, channel->GetValue(i), false);
         }
-    }*/
+    }
 }

@@ -12,6 +12,7 @@ class Color;
 class ChannelBase;
 class ChannelGraph;
 class ChannelWidget;
+class HwChannel;
 class Measurement;
 class Plot;
 class QColor;
@@ -125,10 +126,10 @@ public:
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    ChannelWidget *CreateSampleChannelWidget(ChannelBase *channel, Axis *valueAxis);
-    ChannelWidget *CloneSampleChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
+    ChannelWidget *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis);
+    ChannelWidget *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
 
-    ChannelWidget *_CreateHwChannelWidget(ChannelBase *channel,
+    ChannelWidget *_CreateHwChannelWidget(HwChannel *channel,
         Axis *valueAxis,
         unsigned shortcutOrder,
         QString const name,
@@ -136,7 +137,7 @@ public:
         bool visible,
         QString const & units);
 
-    ChannelWidget *CloneHwChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
+    ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
     void UpdateGraph();
 signals:
     void resized();

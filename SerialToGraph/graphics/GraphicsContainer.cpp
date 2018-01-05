@@ -6,6 +6,7 @@
 #include <ChannelGraph.h>
 #include <ChannelSettings.h>
 #include <ChannelWidget.h>
+#include <HwChannel.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -194,7 +195,7 @@ void GraphicsContainer::ReplaceDisplays()
 
     foreach (ChannelWidget * channelWidget, m_channelWidgets)
     {
-        if (!channelWidget->IsActive())
+        if (!channelWidget->IsVisible())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -218,7 +219,7 @@ void GraphicsContainer::RedrawChannelValues()
 {
     foreach (ChannelWidget * channelWidget, m_channelWidgets)
     {
-        if (!channelWidget->IsActive())
+        if (!channelWidget->IsVisible())
             continue;
         m_plot->DisplayChannelValue(channelWidget);
     }
@@ -734,14 +735,15 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     return widget;
 }
 
-ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(ChannelBase *channel, Axis *valueAxis)
+ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis)
 {   
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
     return _CreateChannelWidget(
         channel, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
 }
 
-ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
+ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
+    SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     return _CreateChannelWidget(
@@ -750,7 +752,7 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(ChannelBase *channel,
         0,
         sourceChannelWidget->GetName(),
         sourceChannelWidget->GetForeColor(),
-        sourceChannelWidget->IsActive(),
+        sourceChannelWidget->IsVisible(),
         sourceChannelWidget->GetUnits(),
         true
     );
@@ -758,25 +760,35 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(ChannelBase *channel,
 
 
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
-    ChannelBase *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
+    HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
 {
     ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
-    return _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false);
+    ChannelWidget *widget = _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false);
+
+    channel->setActive(widget->isVisible());
+    connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
+
+    return widget;
 }
 
-ChannelWidget *GraphicsContainer::CloneHwChannelWidget(ChannelBase *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
+ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
+    HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
-    return _CreateChannelWidget(
+    ChannelWidget *widget = _CreateChannelWidget(
         channel,
         channelGraph,
         shortcutOrder,
         sourceChannelWidget->GetName(),
         sourceChannelWidget->GetForeColor(),
-        sourceChannelWidget->IsActive(),
+        sourceChannelWidget->IsVisible(),
         sourceChannelWidget->GetUnits(),
         false
     );
+
+    channel->setActive(widget->isVisible());
+    connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
+    return widget;
 }
 
 void GraphicsContainer::UpdateGraph()

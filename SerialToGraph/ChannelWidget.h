@@ -18,7 +18,7 @@ class ChannelWidget : public QWidget
     Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex WRITE SetShapeIndex)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
-    Q_PROPERTY(bool isVisible READ IsActive WRITE SetActive)
+    Q_PROPERTY(bool isVisible READ IsVisible WRITE SetVisible)
 
     class ValueLabel : public QLabel
     {
@@ -49,7 +49,7 @@ class ChannelWidget : public QWidget
     QString m_lastValueText;
     Qt::PenStyle m_penStyle;
     QString m_units;
-    bool m_isActive;
+    bool m_isVisible;
 public:
     ChannelWidget(
         QWidget* parent,
@@ -91,8 +91,8 @@ public:
     QString GetUnits();
     void SetUnits(QString const &units);
     void UpdateWidgetVisiblity();
-    bool IsActive();
-    void SetActive(bool active);
+    bool IsVisible();
+    void SetVisible(bool visible);
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
@@ -102,6 +102,7 @@ public:
 signals:
     void clicked();
     void sizeChanged();
+    void visibilityChanged(bool visible);
 public slots:
     void hideAllCHannelsChanged(bool hideAllChannels);
 };

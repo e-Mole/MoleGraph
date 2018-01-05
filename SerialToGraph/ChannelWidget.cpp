@@ -40,12 +40,9 @@ ChannelWidget::ChannelWidget(
     m_plot(plot),
     m_penStyle(penStyle),
     m_units(units),
-    m_isActive(isActive)
+    m_isVisible(isActive)
 {
-    connect(
-        &GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)),
-        this, SLOT(hideAllCHannelsChanged(bool))
-    );
+    connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
@@ -56,7 +53,7 @@ ChannelWidget::ChannelWidget(
     if (m_channelGraph->GetValuleAxis()->IsHorizontal())
         ShowOrHideGraph(false);
 
-    SetActive(m_isActive);
+    SetVisible(m_isVisible);
     DisplayNAValue(ChannelBase::ValueTypeUnknown);
 }
 
@@ -373,20 +370,21 @@ void ChannelWidget::SetUnits(QString const &units)
 
 void ChannelWidget::UpdateWidgetVisiblity()
 {
-    setVisible(m_isActive && !GlobalSettings::GetInstance().GetHideAllChannels());
+    setVisible(m_isVisible && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
-bool ChannelWidget::IsActive()
+bool ChannelWidget::IsVisible()
 {
-    return m_isActive;
+    return m_isVisible;
 }
 
-void ChannelWidget::SetActive(bool active)
+void ChannelWidget::SetVisible(bool visible)
 {
-    m_isActive = active;
+    m_isVisible = visible;
     UpdateWidgetVisiblity();
 
-    m_channelGraph->SetActive(active);
+    m_channelGraph->SetActive(visible);
+    visibilityChanged(visible);
 }
 
 void ChannelWidget::hideAllCHannelsChanged(bool hideAllChannels)

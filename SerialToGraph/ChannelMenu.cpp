@@ -72,7 +72,7 @@ void ChannelMenu::_AddChannel(ChannelWidget *channelWidget, bool removable)
 {
     unsigned rowNr = m_gridLayout->rowCount();
     ColorCheckBox *cb = new ColorCheckBox(channelWidget->GetName(), this);
-    cb->SetChecked(channelWidget->IsActive());
+    cb->SetChecked(channelWidget->IsVisible());
     cb->SetColor(channelWidget->GetForeColor());
 
     m_channelCheckBoxes[channelWidget] = cb;
@@ -145,7 +145,7 @@ void ChannelMenu::remove()
 
 void ChannelMenu::ActivateChannel(ChannelWidget *channelWidget, bool checked)
 {
-    channelWidget->SetActive(checked);
+    channelWidget->SetVisible(checked);
     m_channelCheckBoxes[channelWidget]->SetChecked(checked);
     stateChanged();
     m_graphicsContainer->ReplaceDisplays();
@@ -166,7 +166,7 @@ void ChannelMenu::noChannelsActivated()
 {
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channelWidget->IsActive())
+        if (channelWidget->IsVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
             ActivateChannel(channelWidget, false);
@@ -179,7 +179,7 @@ void ChannelMenu::allChannelsActivated()
 {
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (!channelWidget->IsActive())
+        if (!channelWidget->IsVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
             ActivateChannel(channelWidget, true);
@@ -245,10 +245,10 @@ void ChannelMenu::CreatePanelShortcuts()
 void ChannelMenu::channelActivatedCheckBox()
 {
     ChannelWidget * channelWidget = m_checkBoxChannels[(ColorCheckBox*)sender()];
-    ActivateChannel(channelWidget, !channelWidget->IsActive());
+    ActivateChannel(channelWidget, !channelWidget->IsVisible());
 }
 void ChannelMenu::channelActivatedShortcut()
 {
     ChannelWidget *channelWidget = m_shortcutChannels[(KeyShortcut*)sender()];
-    ActivateChannel(channelWidget, !channelWidget->IsActive());
+    ActivateChannel(channelWidget, !channelWidget->IsVisible());
 }

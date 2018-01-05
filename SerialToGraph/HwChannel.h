@@ -16,6 +16,7 @@ class HwChannel : public ChannelBase
     void _RecalculateExtremes();
     int m_hwIndex;
     QVector<double> m_originalValues;
+    bool m_isActive;
 public:
     HwChannel(Measurement *measurement, int hwIndex);
 
@@ -28,8 +29,10 @@ public:
     double GetOriginalValue(int index);
     void ChangeValue(int index, double newValue);
     virtual ChannelBase::ValueType GetValueType(unsigned index);
+    bool IsActive() {return m_isActive; }
 
-signals:
+public slots:
+    void setActive(bool isActive);
 
 public slots:
 };

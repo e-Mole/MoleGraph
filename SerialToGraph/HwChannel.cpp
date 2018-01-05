@@ -9,7 +9,8 @@
 
 HwChannel::HwChannel(Measurement *measurement, int hwIndex) :
     ChannelBase(measurement),
-    m_hwIndex(hwIndex)
+    m_hwIndex(hwIndex),
+    m_isActive(false)
 {
     //GetWidget()->UpdateTitle();
     //m_widget->SetForeColor(color); //change widget style with defined color and backcolor
@@ -61,4 +62,9 @@ ChannelBase::ValueType HwChannel::GetValueType(unsigned index)
 
     return GetValue(index) == GetOriginalValue(index) ?
         ValueTypeOriginal : ValueTypeChanged;
+}
+
+void HwChannel::setActive(bool isActive)
+{
+    m_isActive = isActive;
 }

@@ -534,7 +534,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channelWidget->IsActive() && channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
+        if (channelWidget->IsVisible() && channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
         {
             ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
             if (channel->GetMinValue() < lower)

@@ -1,6 +1,7 @@
 #include "Export.h"
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
+#include <HwChannel.h>
 #include <SampleChannel.h>
 #include <Measurement.h>
 #include <Plot.h>
@@ -30,7 +31,7 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
         bool firstForMeasurement = true;
         foreach (ChannelBase *channel, m->GetChannels())
         {
-            if (!channel->GetWidget()->IsActive()) //at least sample channel will be visible
+            if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive()) //at least sample channel will be visible
                 continue;
 
             if (firstColumn)
@@ -76,7 +77,7 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         {
             foreach (ChannelBase *channel, m->GetChannels())
             {
-                if (!channel->GetWidget()->IsActive())
+                if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive())
                     continue;
 
                 if (first)

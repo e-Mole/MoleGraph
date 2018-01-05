@@ -313,7 +313,7 @@ void Measurement::_ProcessActiveChannels()
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && channel->GetWidget()->IsActive())
+        if (channel->GetType() == ChannelBase::Type_Hw && ((HwChannel *)channel)->IsActive())
         {
             m_trackedHwChannels.insert(((HwChannel *)channel)->GetHwIndex(), channel);
             selectedChannels |= 1 << ((HwChannel *)channel)->GetHwIndex();
@@ -605,7 +605,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     if (hwIndex == -1)
     {
         channel = new SampleChannel(this);
-        channelWidget =  m_widget->CreateSampleChannelWidget(channel, valueAxis);
+        channelWidget =  m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis);
 
         m_sampleChannel = (SampleChannel*)channel;
         isSampleChannel = true;
@@ -613,7 +613,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     else
     {
         channel = new HwChannel(this, hwIndex);
-        channelWidget =  m_widget->_CreateHwChannelWidget(channel, valueAxis, hwIndex, "", Qt::black, true, "");
+        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex, "", Qt::black, true, "");
 
     }
 

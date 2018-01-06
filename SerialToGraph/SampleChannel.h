@@ -43,6 +43,7 @@ public:
         hh_mm_ss,
         mm_ss_zzz,
     };
+
 private:
 
     friend class ChannelSettings;
@@ -50,7 +51,6 @@ private:
     void _SetStyle(Style style);
     void _SetTimeUnits(TimeUnits units);
     void _SetFormat(RealTimeFormat format);
-    void _UpdateAxisAndValues();
     void _FillLastValueTextFromIndex(int index);
     QDateTime _GetStartDateTime() { return m_startDateTime; }
     QString _GetRealTimeText(double secSinceEpoch);
@@ -75,21 +75,17 @@ public:
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
     void AddValue(double value, double timeFromStart);
     virtual double GetValue(unsigned index) const;
-    QString GetRealTimeFormatText();
     RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
     bool IsInRealtimeStyle() { return m_style == RealTime; }
     virtual double GetMinValue();
     virtual double GetMaxValue();
     double GetTimeFromStart(unsigned index);
-    static QString GetStyleText(Style style);
-    QString GetStyleText() { return GetStyleText(m_style); }
     double GetSampleNr(unsigned index) const;
     QString GetTimestamp(double timeInMs);
-    QString GetValueTimestamp(unsigned index);
     virtual ChannelBase::ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeSample; }
 
 signals:
-
+    void propertyChanged();
 public slots:
 
 };

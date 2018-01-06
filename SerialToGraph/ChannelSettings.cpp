@@ -150,9 +150,9 @@ void ChannelSettings::_InitializeTimeFeatures()
     SampleChannel * channel = (SampleChannel*)m_channel;
 
     m_style = new bases::ComboBox(this);
-    m_style->addItem(channel->GetStyleText(SampleChannel::Samples), false);
-    m_style->addItem(channel->GetStyleText(SampleChannel::TimeOffset), false);
-    m_style->addItem(channel->GetStyleText(SampleChannel::RealTime), true); //RealTime state as data
+    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::Samples), false);
+    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::TimeOffset), false);
+    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);

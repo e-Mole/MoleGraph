@@ -1,6 +1,8 @@
 #ifndef GRAPHICSCONTAINER_H
 #define GRAPHICSCONTAINER_H
 
+#include <ChannelBase.h>
+#include <SampleChannel.h>
 #include <QWidget>
 #include <QString>
 #include <QVector>
@@ -9,7 +11,6 @@
 
 class Axis;
 class Color;
-class ChannelBase;
 class ChannelGraph;
 class ChannelWidget;
 class HwChannel;
@@ -21,7 +22,6 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
-class SampleChannel;
 
 class GraphicsContainer : public QWidget
 {
@@ -65,6 +65,7 @@ class GraphicsContainer : public QWidget
         QString const & units,
         bool isSampleChannel
     );
+    QString _GetRealTimeText(SampleChannel *channel, double secSinceEpoch);
 
 public:
     GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
@@ -139,6 +140,9 @@ public:
 
     ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
     void UpdateGraphs();
+    QString GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat);
+    QString GetSampleChannelStyleText(SampleChannel::Style style);
+    QString GetValueTimestamp(SampleChannel *channel, unsigned index);
 signals:
     void resized();
 public slots:
@@ -146,8 +150,10 @@ public slots:
     void editChannel(ChannelWidget *channelWidget);
     void editChannel();
     void addNewValueSet();
+    void sampleChannelPropertyChanged();
 private slots:
     void markerLinePositionChanged(int position);
+    void hwValueChanged(unsigned index);
 };
 
 #endif // GRAPHICSCONTAINER_H

@@ -13,7 +13,6 @@ class HwChannel : public ChannelBase
 {
     Q_OBJECT
 
-    void _RecalculateExtremes();
     int m_hwIndex;
     QVector<double> m_originalValues;
     bool m_isActive;
@@ -33,8 +32,8 @@ public:
 
 public slots:
     void setActive(bool isActive);
-
-public slots:
+signals:
+    void valueChanged(unsigned index);
 };
 
 #endif // HWCHANNEL_H

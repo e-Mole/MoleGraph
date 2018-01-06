@@ -12,8 +12,6 @@ HwChannel::HwChannel(Measurement *measurement, int hwIndex) :
     m_hwIndex(hwIndex),
     m_isActive(false)
 {
-    //GetWidget()->UpdateTitle();
-    //m_widget->SetForeColor(color); //change widget style with defined color and backcolor
 }
 
 void HwChannel::AddValue(double value)
@@ -33,23 +31,12 @@ double HwChannel::GetOriginalValue(int index)
     return m_originalValues[index];
 }
 
-void HwChannel::_RecalculateExtremes()
-{
-    m_channelMinValue = std::numeric_limits<double>::max();
-    m_channelMaxValue = -std::numeric_limits<double>::max();
-
-    for (unsigned i = 0; i < GetValueCount(); i++)
-        _UpdateExtremes(GetValue(i));
-}
 void HwChannel::ChangeValue(int index, double newValue)
 {
     m_values[index] = newValue;
-    m_widget->FillLastValueText(GetValue(index));
-    m_widget->ShowLastValueWithUnits(GetValueType(index));
     _RecalculateExtremes();
-    ChannelBase *horizontalChannel = m_measurement->GetHorizontalChannel();
-    //_RedrawGraphPoint(index, horizontalChannel);
-    GetWidget()->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
+
+    valueChanged(index);
 }
 
 ChannelBase::ValueType HwChannel::GetValueType(unsigned index)

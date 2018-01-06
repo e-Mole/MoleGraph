@@ -11,6 +11,7 @@
 class CentralWidget;
 class ChannelWidget;
 class Console;
+class GraphicsContainer;
 class GraphicsContainerManager;
 class Measurement;
 class PortListDialog;
@@ -34,7 +35,7 @@ class MainWindow : public QMainWindow
     void _OpenFile(QString const &filePath, bool values);
     bool _CouldBeOpen();
     QString _GetFileNameToSave(const QString &extension, bool values);
-    void _ExportCSV(QVector<Measurement *> const & measurements);
+    void _ExportCSV(std::vector<GraphicsContainer *> &graphicsContainers);
 
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;

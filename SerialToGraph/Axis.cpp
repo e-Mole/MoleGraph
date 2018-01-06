@@ -221,7 +221,7 @@ void Axis::UpdateGraphAxisStyle()
     if (axisChannel->GetType() == ChannelBase::Type_Sample)
     {
         realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannel::RealTime;
-        formatText = ((SampleChannel *)axisChannel)->GetRealTimeFormatText();
+        formatText = m_graphicsContainer->GetRealTimeFormatText(((SampleChannel *)axisChannel)->GetRealTimeFormat());
     }
 
     m_graphicsContainer->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);

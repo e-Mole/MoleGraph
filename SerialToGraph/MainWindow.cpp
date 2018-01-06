@@ -441,26 +441,26 @@ void MainWindow::exportPng()
 {
     QString fileName = _GetFileNameToSave("png", true);
     if (0 != fileName.size())
-        file::Export().ToPng(fileName, *m_currentMeasurement);
+        file::Export().ToPng(fileName, m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement));
 }
 
-void MainWindow::_ExportCSV(QVector<Measurement *> const & measurements)
+void MainWindow::_ExportCSV(std::vector<GraphicsContainer *> &graphicsContainers)
 {
     QString fileName = _GetFileNameToSave("csv", true);
     if (0 != fileName.size())
-       file::Export().ToCsv(fileName, measurements);
+       file::Export().ToCsv(fileName, graphicsContainers);
 }
 
 void MainWindow::exportCsv()
 {
-    QVector<Measurement *> measurements;
-    measurements.push_back(m_currentMeasurement);
+    std::vector<GraphicsContainer *> measurements;
+    measurements.push_back(m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement));
     _ExportCSV(measurements);
 }
 
 void MainWindow::exportAllCsv()
 {
-    _ExportCSV(m_context.m_measurements);
+    _ExportCSV(m_graphicsContainerManager->GetGraphicsContainers());
 }
 
 bool MainWindow::_CouldBeOpen()

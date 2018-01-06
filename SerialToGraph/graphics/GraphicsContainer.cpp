@@ -739,8 +739,12 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
 {   
     m_sampleChannel = channel;
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
-    return _CreateChannelWidget(
-        channel, channelGraph, 0, SampleChannel::GetStyleText(SampleChannel::Samples), Qt::black, true, "", true);
+    ChannelWidget *widget = _CreateChannelWidget(
+        channel, channelGraph, 0, GetSampleChannelStyleText(SampleChannel::Samples), Qt::black, true, "", true);
+
+    connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+
+    return widget;
 }
 
 ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
@@ -748,7 +752,7 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
 {
     m_sampleChannel = channel;
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
-    return _CreateChannelWidget(
+    ChannelWidget *widget = _CreateChannelWidget(
         channel,
         channelGraph,
         0,
@@ -758,6 +762,9 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         sourceChannelWidget->GetUnits(),
         true
     );
+
+    connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+    return widget;
 }
 
 
@@ -769,7 +776,7 @@ ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
 
     channel->setActive(widget->isVisible());
     connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
-
+    connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
     return widget;
 }
 
@@ -790,7 +797,20 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
 
     channel->setActive(widget->isVisible());
     connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
+    connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
     return widget;
+}
+
+void GraphicsContainer::hwValueChanged(unsigned index)
+{
+    HwChannel *channel = (HwChannel*)sender();
+    ChannelWidget *widget = m_channelToWidgetMapping[channel];
+    double newValue = channel->GetValue(index);
+
+    widget->FillLastValueText(newValue);
+    widget->ShowLastValueWithUnits(channel->GetValueType(index));
+    ChannelBase *horizontalChannel = GetHorizontalChannel();
+    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
 }
 
 void GraphicsContainer::UpdateGraphs()
@@ -806,4 +826,93 @@ void GraphicsContainer::UpdateGraphs()
                 item.second->UpdateGraph(xValue, channel->GetValue(i), false);
         }
     }
+}
+
+QString GraphicsContainer::GetSampleChannelStyleText(SampleChannel::Style style)
+{
+    switch (style)
+    {
+    case SampleChannel::Samples:
+        return tr("Samples");
+    case SampleChannel::TimeOffset:
+        return tr("Time Offset");
+    case SampleChannel::RealTime:
+        return tr("Real Time");
+    default:
+        return "";
+    }
+}
+
+QString GraphicsContainer::GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat)
+{
+    QLocale locale(QLocale::system());
+
+    switch (realTimeFormat)
+    {
+    case SampleChannel::dd_MM_yyyy:
+        return "dd.MM.yyyy";
+    case SampleChannel::dd_MM_hh_mm:
+        return "dd.MM.hh:ss";
+    case SampleChannel::hh_mm_ss:
+        return "hh:mm:ss";
+    case SampleChannel::mm_ss_zzz:
+        return QString("mm:ss") + locale.decimalPoint() + QString("ms");
+    default:
+        return ""; //it should be never reached
+    }
+}
+
+void GraphicsContainer::sampleChannelPropertyChanged()
+{
+    SampleChannel *channel = (SampleChannel*)sender();
+    ChannelWidget *widget = m_channelToWidgetMapping[channel];
+    widget->SetName(GetSampleChannelStyleText(channel->GetStyle()));
+    switch (channel->GetStyle())
+    {
+    case SampleChannel::TimeOffset:
+        switch (channel->GetTimeUnits())
+        {
+        case SampleChannel::Us:
+            widget->SetUnits(tr("μs"));
+            break;
+        case SampleChannel::Ms:
+            widget->SetUnits(tr("ms"));
+            break;
+        case SampleChannel::Sec:
+            widget->SetUnits(tr("s"));
+            break;
+        case SampleChannel::Min:
+            widget->SetUnits(tr("minutes"));
+            break;
+        case SampleChannel::Hours:
+            widget->SetUnits(tr("hours"));
+            break;
+        case SampleChannel::Days:
+            widget->SetUnits(tr("days"));
+            break;
+        }
+    break;
+    case SampleChannel::RealTime:
+        widget->SetUnits(GetRealTimeFormatText(channel->GetRealTimeFormat()));
+    break;
+    default:
+        widget->SetUnits("");
+    }
+
+    widget->ShowLastValueWithUnits();
+    widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
+    GetPlot()->RefillGraphs();
+    widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
+}
+
+QString GraphicsContainer::_GetRealTimeText(SampleChannel *channel, double secSinceEpoch)
+{
+    QDateTime dateTime;
+    dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
+    return dateTime.toString(GetRealTimeFormatText(channel->GetRealTimeFormat()));
+}
+
+QString GraphicsContainer::GetValueTimestamp(SampleChannel *channel, unsigned index)
+{
+    return _GetRealTimeText(channel, channel->GetValue(index));
 }

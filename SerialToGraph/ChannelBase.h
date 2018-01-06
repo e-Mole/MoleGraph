@@ -28,6 +28,7 @@ public:
         ValueTypeChanged,
         ValueTypeRangeValue
     };
+
 private:
     void _SetName(QString name);
     QString _GetName();
@@ -44,6 +45,7 @@ protected:
     double _CalculateSum(int left, int right);
     double _GetSumInRange(int left, int right);
     void _UpdateExtremes(double value);
+    void _RecalculateExtremes();
 
     Measurement * m_measurement;
     ChannelWidget *m_widget;
@@ -103,7 +105,6 @@ public:
     bool IsValueNA(int index) const;
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
 signals:
-
 };
 
 #endif // CHANNEL_H

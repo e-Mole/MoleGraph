@@ -18,6 +18,7 @@ public:
     void AddMeasurement(Measurement *m);
     void RemoveMeasurement(Measurement *m);
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
+    std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
 signals:
 
 public slots:

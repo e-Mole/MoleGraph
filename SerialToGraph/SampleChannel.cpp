@@ -21,73 +21,22 @@ SampleChannel::SampleChannel(Measurement *measurement,
 void SampleChannel::_SetStyle(Style style)
 {
     m_style = style;
-    GetWidget()->SetName(GetStyleText());
-    _UpdateAxisAndValues();
+    _RecalculateExtremes();
+    propertyChanged();
 
 }
 void SampleChannel::_SetTimeUnits(TimeUnits units)
 {
     m_timeUnits = units;
-
-    _UpdateAxisAndValues();
+    _RecalculateExtremes();
+    propertyChanged();
 }
 
 void SampleChannel::_SetFormat(RealTimeFormat format)
 {
     m_realTimeFormat = format;
-
-    _UpdateAxisAndValues();
-}
-
-void SampleChannel::_UpdateAxisAndValues()
-{
-    switch (m_style)
-    {
-    case TimeOffset:
-        switch (m_timeUnits)
-        {
-        case Us:
-            m_widget->SetUnits(tr("μs"));
-            break;
-        case Ms:
-            m_widget->SetUnits(tr("ms"));
-            break;
-        case Sec:
-            m_widget->SetUnits(tr("s"));
-            break;
-        case Min:
-            m_widget->SetUnits(tr("minutes"));
-            break;
-        case Hours:
-            m_widget->SetUnits(tr("hours"));
-            break;
-        case Days:
-            m_widget->SetUnits(tr("days"));
-            break;
-        }
-    break;
-    case RealTime:
-        m_widget->SetUnits(GetRealTimeFormatText());
-    break;
-    default:
-        m_widget->SetUnits("");
-    }
-
-    m_channelMinValue = std::numeric_limits<double>::max();
-    m_channelMaxValue = -std::numeric_limits<double>::max();
-    for (unsigned i = 0; i < GetValueCount(); i++)
-    {
-        double value = GetValue(i);
-        if (value < m_channelMinValue)
-            m_channelMinValue = value;
-        if (value > m_channelMaxValue)
-            m_channelMaxValue = value;
-    }
-
-    m_widget->ShowLastValueWithUnits();
-    m_widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
-    m_measurement->GetPlot()->RefillGraphs();
-    m_widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
+    _RecalculateExtremes();
+    propertyChanged();
 }
 
 void  SampleChannel::AddValue(double value, double timeFromStart)
@@ -130,33 +79,6 @@ double SampleChannel::GetValue(unsigned index) const
     return -1; //it should be never reached
 }
 
-
-QString SampleChannel::GetRealTimeFormatText()
-{
-    QLocale locale(QLocale::system());
-
-    switch (m_realTimeFormat)
-    {
-    case dd_MM_yyyy:
-        return "dd.MM.yyyy";
-    case dd_MM_hh_mm:
-        return "dd.MM.hh:ss";
-    case hh_mm_ss:
-        return "hh:mm:ss";
-    case mm_ss_zzz:
-        return QString("mm:ss") + locale.decimalPoint() + QString("ms");
-    default:
-        return ""; //it should be never reached
-    }
-}
-
-QString SampleChannel::_GetRealTimeText(double secSinceEpoch)
-{
-    QDateTime dateTime;
-    dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
-    return dateTime.toString(GetRealTimeFormatText());
-}
-
 double SampleChannel::GetMinValue()
 {
     if (!IsInRealtimeStyle())
@@ -181,24 +103,4 @@ double SampleChannel::GetMaxValue()
 double SampleChannel::GetTimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
-}
-
-QString SampleChannel::GetValueTimestamp(unsigned index)
-{
-    return _GetRealTimeText(GetValue(index));
-}
-
-QString SampleChannel::GetStyleText(Style style)
-{
-    switch (style)
-    {
-    case Samples:
-        return tr("Samples");
-    case TimeOffset:
-        return tr("Time Offset");
-    case RealTime:
-        return tr("Real Time");
-    default:
-        return "";
-    }
 }

@@ -213,3 +213,12 @@ bool ChannelBase::IsValueNA(int index) const
 {
     return index >= GetValueCount() || GetValue(index) == ChannelWidget::GetNaValue();
 }
+
+void ChannelBase::_RecalculateExtremes()
+{
+    m_channelMinValue = std::numeric_limits<double>::max();
+    m_channelMaxValue = -std::numeric_limits<double>::max();
+
+    for (unsigned i = 0; i < GetValueCount(); i++)
+        _UpdateExtremes(GetValue(i));
+}

@@ -1,6 +1,8 @@
 #include "Export.h"
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
+#include <graphics/GraphicsContainer.h>
+#include <graphics/GraphicsContainerManager.h>
 #include <HwChannel.h>
 #include <SampleChannel.h>
 #include <Measurement.h>
@@ -16,21 +18,23 @@ Export::Export()
 {
 }
 
-void Export::ToPng(QString const &fileName, Measurement const &measurement)
+void Export::ToPng(QString const &fileName, GraphicsContainer *graphicsContainer)
 {
-    measurement.GetPlot()->savePng(fileName);
+    graphicsContainer->GetPlot()->savePng(fileName);
 }
 
-void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurements)
+void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphicsContainers)
 {
     std::string measurementLine;
     std::string channelLine;
     bool firstColumn = true;
-    foreach (Measurement *m, measurements)
+
+    foreach (GraphicsContainer *gc, graphicsContainers)
     {
         bool firstForMeasurement = true;
-        foreach (ChannelBase *channel, m->GetChannels())
+        foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
         {
+            ChannelBase *channel = gc->GetChannel(channelWidget);
             if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive()) //at least sample channel will be visible
                 continue;
 
@@ -45,11 +49,11 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
             if (firstForMeasurement)
             {
                 firstForMeasurement = false;
-                measurementLine.append(m->GetName().toStdString());
+                measurementLine.append(gc->GetName().toStdString());
             }
-            SampleChannel *sampleChannel = m->GetSampleChannel();
+            SampleChannel *sampleChannel = gc->GetSampleChannel();
             if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
-                channelLine.append(sampleChannel->GetStyleText(SampleChannel::Samples).toStdString() + ";");
+                channelLine.append(gc->GetSampleChannelStyleText(sampleChannel->GetStyle()).toStdString() + ";");
 
             channelLine.append(
                 channel->GetWidget()->GetUnits().size() > 0 ?
@@ -64,7 +68,7 @@ void Export::_WriteHeader(QFile &file, QVector<Measurement *> const &measurement
     file.write(channelLine.c_str(), channelLine.size());
 }
 
-void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
+void Export::_WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsContainers)
 {
     unsigned sampleNr = 0;
     bool haveData;
@@ -73,10 +77,11 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         haveData = false;
         std::string lineContent;
         bool first = true;
-        foreach (Measurement *m, measurements)
+        foreach (GraphicsContainer *gc, graphicsContainers)
         {
-            foreach (ChannelBase *channel, m->GetChannels())
+            foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
             {
+                ChannelBase *channel = gc->GetChannel(channelWidget);
                 if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive())
                     continue;
 
@@ -90,11 +95,11 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
 
                 haveData = true;
 
-                SampleChannel *sampleChannel = m->GetSampleChannel();
+                SampleChannel *sampleChannel = gc->GetSampleChannel();
                 if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
                     lineContent.append(QString("%1;").arg(sampleNr).toStdString());
 
-                lineContent.append(_GetValueText(channel, sampleNr).toStdString());
+                lineContent.append(_GetValueText(gc, channel, sampleNr).toStdString());
             }
         }
         if (haveData)
@@ -106,23 +111,26 @@ void Export::_WriteData(QFile &file, QVector<Measurement *> const &measurements)
         sampleNr++;
     } while (haveData);
 }
-void Export::ToCsv(QString const &fileName, QVector<Measurement *> const &measurements)
+void Export::ToCsv(QString const &fileName, std::vector<GraphicsContainer *> &graphicsContainers)
 {
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
 
-    _WriteHeader(file, measurements);
-    _WriteData(file, measurements);
+    _WriteHeader(file, graphicsContainers);
+    _WriteData(file, graphicsContainers);
 
     file.close();
 }
 
-QString Export::_GetValueText(ChannelBase *channel, unsigned sampleNr)
+QString Export::_GetValueText(GraphicsContainer *gc, ChannelBase *channel, unsigned sampleNr)
 {
-    if (channel->GetType() == ChannelBase::Type_Sample &&
+    if (
+        channel->GetType() == ChannelBase::Type_Sample &&
         ((SampleChannel *)channel)->GetStyle() == SampleChannel::RealTime
     )
-        return ((SampleChannel *)channel)->GetValueTimestamp(sampleNr);
+    {
+        return gc->GetValueTimestamp((SampleChannel*)channel, sampleNr);
+    }
 
     QLocale locale(QLocale::system());
     locale.setNumberOptions(QLocale::OmitGroupSeparator);

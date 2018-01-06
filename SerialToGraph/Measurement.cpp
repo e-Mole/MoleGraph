@@ -441,7 +441,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             m_widget->SetAxisStyle(
                 channelWidget->GetChannelGraph()->GetValuleAxis(),
                 m_sampleChannel->GetStyle() == SampleChannel::RealTime,
-                m_sampleChannel->GetRealTimeFormatText()
+                m_widget->GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
             );
         }
 

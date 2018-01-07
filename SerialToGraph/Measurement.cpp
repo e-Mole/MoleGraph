@@ -422,7 +422,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
             HwChannel *hwChannel = new HwChannel(this, hwIndex);
-            ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(hwChannel, sourceMeasurement->GetWidget(), sourceChannel->GetWidget(), hwIndex);
+            ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(
+                hwChannel,
+                sourceMeasurement->GetWidget(),
+                sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel),
+                hwIndex);
             m_channels.push_back(hwChannel);
 
         }
@@ -435,7 +439,11 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
                     ((SampleChannel *)sourceChannel)->GetTimeUnits(),
                     ((SampleChannel *)sourceChannel)->GetRealTimeFormat()
                 );
-            ChannelWidget *channelWidget =  m_widget->CloneSampleChannelWidget(m_sampleChannel, sourceMeasurement->GetWidget(), sourceChannel->GetWidget());
+            ChannelWidget *channelWidget =  m_widget->CloneSampleChannelWidget(
+                m_sampleChannel,
+                sourceMeasurement->GetWidget(),
+                sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)
+            );
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
@@ -445,7 +453,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             );
         }
 
-        if (sourceChannel->GetWidget()->IsOnHorizontalAxis())
+        if (sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)->IsOnHorizontalAxis())
             SetHorizontalChannel(m_channels.last());
 
         hwIndex++;
@@ -568,13 +576,13 @@ void Measurement::SerializeColections(QDataStream &out)
         out << axis->GetAssignedChannelCount();
         foreach (ChannelBase *channel, m_channels)
         {
-            if (channel->GetWidget()->GetChannelGraph()->GetValuleAxis() == axis)
+            if (GetWidget()->GetChannelWidget(channel)->GetChannelGraph()->GetValuleAxis() == axis)
             {
                 out <<
                     (channel->GetType() == ChannelBase::Type_Hw ?
                         ((HwChannel *)channel)->GetHwIndex() : -1
                     );
-                out << channel->GetWidget();
+                out << GetWidget()->GetChannelWidget(channel);
             }
         }
     }

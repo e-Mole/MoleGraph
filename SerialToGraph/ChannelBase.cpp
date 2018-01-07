@@ -167,17 +167,6 @@ Measurement * ChannelBase::GetMeasurement()
     return m_measurement;
 }
 
-ChannelWidget *ChannelBase::GetWidget()
-{
-    return m_widget;
-}
-
-//FIXME: temporary
-void ChannelBase::SetWidget(ChannelWidget *widget)
-{
-    m_widget = widget;
-}
-
 //I can't use == because same doubles have not to be exactly the same
 int ChannelBase::GetLastClosestValueIndex(double value) const
 {

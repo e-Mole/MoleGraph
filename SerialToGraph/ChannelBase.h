@@ -93,8 +93,6 @@ public:
     { return m_channelMaxValue; }
 
     Measurement * GetMeasurement();
-    ChannelWidget *GetWidget();
-    void SetWidget(ChannelWidget *widget);
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}

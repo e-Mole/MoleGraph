@@ -56,9 +56,9 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
                 channelLine.append(gc->GetSampleChannelStyleText(sampleChannel->GetStyle()).toStdString() + ";");
 
             channelLine.append(
-                channel->GetWidget()->GetUnits().size() > 0 ?
-                    QString("%1 [%2]").arg(channel->GetWidget()->GetName()).arg(channel->GetWidget()->GetUnits()).toStdString().c_str() :
-                    channel->GetWidget()->GetName().toStdString().c_str()
+                channelWidget->GetUnits().size() > 0 ?
+                    QString("%1 [%2]").arg(channelWidget->GetName()).arg(channelWidget->GetUnits()).toStdString().c_str() :
+                    channelWidget->GetName().toStdString().c_str()
             );
         }
     }

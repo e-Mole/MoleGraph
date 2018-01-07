@@ -729,7 +729,6 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     );
 
     _AddChannelToMappings(channel, widget, isSampleChannel);
-    channel->SetWidget(widget);
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 
     return widget;

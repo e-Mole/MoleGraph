@@ -54,7 +54,7 @@ ChannelWidget::ChannelWidget(
         ShowOrHideGraph(false);
 
     SetVisible(m_isVisible);
-    DisplayNAValue(ChannelBase::ValueTypeUnknown);
+    DisplayNAValue(valueType);
 }
 
 void ChannelWidget::SetTransparent(bool transparent)

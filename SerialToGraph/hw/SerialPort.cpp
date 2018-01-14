@@ -8,7 +8,7 @@
 #include <string>
 #include <hw/HwSink.h>
 
-#define RESPONSE_WAITING 100 //100 ms should be enough
+#define RESPONSE_WAITING 200 //100 ms was not enough
 
 namespace hw
 {
@@ -88,15 +88,10 @@ qint64 SerialPort::Write(char const *data, unsigned size)
 
 bool SerialPort::WaitForBytesWritten()
 {
-    return m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
+    return m_serialPort.waitForBytesWritten(RESPONSE_WAITING * 5);
 }
 void SerialPort::ReadData(QByteArray &array, unsigned maxLength)
 {
-    /*unsigned counter = RESPONSE_WAITING;
-    while (--counter > 0 && !m_serialPort.waitForReadyRead(100)) //100 to be sure I get response from baudrate 9600 too
-    {
-    }*/
-
     array = m_serialPort.read(maxLength);
 }
 

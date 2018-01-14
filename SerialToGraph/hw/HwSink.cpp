@@ -359,17 +359,22 @@ bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data
     if (!m_port->IsOpen())
         return false;
 
-    qDebug() << "writen instruction:" << instruction <<
+    qDebug() << "written instruction:" << instruction <<
                 " data size:" << m_port->Write((char const *)&instruction , 1);
     if (!m_port->WaitForBytesWritten())
+    {
+        qWarning() << "WaitForBytesWritten returns false";
         return false;
-
+    }
     if (data.size() > 0)
     {
         qDebug() << "data present" << data.c_str() << " size:" << data.size();
         m_port->Write(data.c_str(), data.size());
         if (!m_port->WaitForBytesWritten())
+        {
+            qWarning() << "WaitForBytesWritten returns false";
             return false;
+        }
     }
     return true;
 }

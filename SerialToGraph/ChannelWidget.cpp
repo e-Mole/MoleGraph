@@ -373,7 +373,7 @@ void ChannelWidget::UpdateWidgetVisiblity()
     setVisible(m_isVisible && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
-bool ChannelWidget::IsVisible()
+bool ChannelWidget::isVisible()
 {
     return m_isVisible;
 }

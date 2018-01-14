@@ -111,7 +111,7 @@ GraphicsContainer::~GraphicsContainer()
     }
 }
 
-bool GraphicsContainer::SetGrid(bool grid)
+void GraphicsContainer::SetGrid(bool grid)
 {
     m_grid = grid;
     ReplaceDisplays();
@@ -195,7 +195,7 @@ void GraphicsContainer::ReplaceDisplays()
 
     foreach (ChannelWidget * channelWidget, m_channelWidgets)
     {
-        if (!channelWidget->IsVisible())
+        if (!channelWidget->isVisible())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -219,7 +219,7 @@ void GraphicsContainer::RedrawChannelValues()
 {
     foreach (ChannelWidget * channelWidget, m_channelWidgets)
     {
-        if (!channelWidget->IsVisible())
+        if (!channelWidget->isVisible())
             continue;
         m_plot->DisplayChannelValue(channelWidget);
     }
@@ -232,6 +232,11 @@ void GraphicsContainer::markerLinePositionChanged(int position)
     //i will move by slider but dont want to raise sliderValueChanged because I would get to this place again and again
     disconnect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
     m_scrollBar->setSliderPosition(position);
+
+    bool sliderOnRight = m_scrollBar->sliderPosition() == m_scrollBar->maximum();
+    if (m_followMode != sliderOnRight)
+    SetFollowMode(sliderOnRight);
+
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
 
     RedrawChannelValues();
@@ -255,6 +260,8 @@ void GraphicsContainer::_FollowLastMeasuredValue()
         return; //probably are present only ghost channels
 
     m_scrollBar->setSliderPosition(std::distance(m_horizontalValueSet.begin(), foundValue));
+    if (m_scrollBar->maximum() == 0)
+        sliderValueChanged(0);
     m_plot->ReplotIfNotDisabled();
 }
 
@@ -288,10 +295,12 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
 {
     if (m_followMode)
     {
-        foreach (ChannelWidget *channelWidget, m_channelWidgets)
+        if (!IsHorizontalValueSetEmpty())
         {
-            if (!IsHorizontalValueSetEmpty())
-                m_plot->DisplayChannelValue(channelWidget);
+            foreach (ChannelWidget *channelWidget, m_channelWidgets)
+            {
+                    m_plot->DisplayChannelValue(channelWidget);
+            }
         }
         m_plot->RescaleAxis(m_plot->xAxis);
     }
@@ -757,7 +766,7 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         0,
         sourceChannelWidget->GetName(),
         sourceChannelWidget->GetForeColor(),
-        sourceChannelWidget->IsVisible(),
+        sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
         true
     );
@@ -789,7 +798,7 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
         shortcutOrder,
         sourceChannelWidget->GetName(),
         sourceChannelWidget->GetForeColor(),
-        sourceChannelWidget->IsVisible(),
+        sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
         false
     );

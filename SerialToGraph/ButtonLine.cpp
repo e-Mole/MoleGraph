@@ -348,9 +348,9 @@ void ButtonLine::updateRunButtonsState()
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
        ChannelWidget *widget = m_measurement->GetWidget()->GetChannelWidget(channel);
-        if (channel->GetType() == ChannelBase::Type_Hw && widget->IsVisible())
+        if (channel->GetType() == ChannelBase::Type_Hw && widget->isVisible())
             hwChannelPresent = true;
-        if (widget->IsOnHorizontalAxis() && (widget->IsVisible() || channel->GetType() == ChannelBase::Type_Sample))
+        if (widget->IsOnHorizontalAxis() && (widget->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 

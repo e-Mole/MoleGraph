@@ -230,6 +230,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 {
     Measurement *m = new Measurement(this, m_context, m_hwSink, GetCurrnetMeasurement(), true);
     connect(m, SIGNAL(editChannel(ChannelWidget*)), m->GetWidget(), SLOT(editChannel(ChannelWidget*)));
+    connect(m, SIGNAL(valueSetMeasured()), m->GetWidget(), SLOT(addNewValueSet()));
     return m;
 }
 

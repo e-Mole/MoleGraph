@@ -15,7 +15,10 @@ Console::Console(QWidget *parent) :
     QTextEdit(parent)
 {
     s_console = this;
+
+#if QT_NO_DEBUG
     qInstallMessageHandler(messageOutput);
+#endif
 
 #if defined(Q_OS_ANDROID)
     setStyleSheet("background-color:black");

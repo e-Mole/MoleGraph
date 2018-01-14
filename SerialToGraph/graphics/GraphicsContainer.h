@@ -70,7 +70,7 @@ class GraphicsContainer : public QWidget
 public:
     GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
     ~GraphicsContainer();
-    bool SetGrid(bool grid);
+    void SetGrid(bool grid);
     void ReplaceDisplays();
     void _AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel);
     //void RemoveChannel(ChannelBase *channel, bool replaceDisplays);

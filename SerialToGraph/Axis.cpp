@@ -85,17 +85,17 @@ void Axis::UpdateGraphAxisName()
     for (unsigned i = 0; i < m_graphicsContainer->GetChannelWidgetCount(); i++)
     {
         ChannelWidget *channelWidget = m_graphicsContainer->GetChannelWidget(i);
-        if ((channelWidget->IsVisible() || channelWidget->IsOnHorizontalAxis()) &&
+        if ((channelWidget->isVisible() || channelWidget->IsOnHorizontalAxis()) &&
             channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
             if (!first)
             {
                 if (i+1 != m_graphicsContainer->GetChannelWidgetCount() &&
-                    m_graphicsContainer->GetChannelWidget(i+1)->IsVisible() &&
+                    m_graphicsContainer->GetChannelWidget(i+1)->isVisible() &&
                     this == m_graphicsContainer->GetChannelWidget(i+1)->GetChannelGraph()->GetValuleAxis() &&
                     i != 0 &&
-                    m_graphicsContainer->GetChannelWidget(i-1)->IsVisible() &&
+                    m_graphicsContainer->GetChannelWidget(i-1)->isVisible() &&
                     this == m_graphicsContainer->GetChannelWidget(i-1)->GetChannelGraph()->GetValuleAxis())
                 {
                     addMiddle = true;
@@ -134,7 +134,7 @@ void Axis::UpdateVisiblility()
 {
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channelWidget->IsVisible() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        if (channelWidget->isVisible() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();

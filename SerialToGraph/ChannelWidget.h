@@ -18,7 +18,7 @@ class ChannelWidget : public QWidget
     Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex WRITE SetShapeIndex)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
-    Q_PROPERTY(bool isVisible READ IsVisible WRITE SetVisible)
+    Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
 
     class ValueLabel : public QLabel
     {
@@ -91,7 +91,7 @@ public:
     QString GetUnits();
     void SetUnits(QString const &units);
     void UpdateWidgetVisiblity();
-    bool IsVisible();
+    bool isVisible();
     void SetVisible(bool visible);
 
     //to be compatible with measurement and would be possible to use the same serializer

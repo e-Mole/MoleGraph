@@ -29,7 +29,7 @@ public:
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache() {}
     qint64 Write(char const *data, unsigned size);
-    void WaitForBytesWritten();
+    bool WaitForBytesWritten();
     virtual bool IsOpen();
     virtual void Close();
     virtual bool OpenPort(QString id);

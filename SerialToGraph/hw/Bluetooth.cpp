@@ -121,9 +121,10 @@ qint64 Bluetooth::Write(char const *data, unsigned size)
     return m_socket->write(data, size);
 }
 
-void Bluetooth::WaitForBytesWritten()
+bool Bluetooth::WaitForBytesWritten()
 {
     //WaitForBytesWritten is not implemented for bluetotth
+    return true;
 }
 
 } //namespace hw

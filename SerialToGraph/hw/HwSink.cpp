@@ -243,7 +243,11 @@ void HwSink::portOpeningFinished()
         //It must be done asynchronously because of bloetooth. Waitng to data doesnt work
         //Reaction is checked in readyRead slot
         qDebug() << "port opened.";
-        Initialize();
+        if (!Initialize())
+        {
+            qWarning() << "serial port initialization failed";
+            m_port->Close();
+        }
     }
     else
     {
@@ -357,12 +361,15 @@ bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data
 
     qDebug() << "writen instruction:" << instruction <<
                 " data size:" << m_port->Write((char const *)&instruction , 1);
-    m_port->WaitForBytesWritten();
+    if (!m_port->WaitForBytesWritten())
+        return false;
+
     if (data.size() > 0)
     {
         qDebug() << "data present" << data.c_str() << " size:" << data.size();
         m_port->Write(data.c_str(), data.size());
-        m_port->WaitForBytesWritten();
+        if (!m_port->WaitForBytesWritten())
+            return false;
     }
     return true;
 }

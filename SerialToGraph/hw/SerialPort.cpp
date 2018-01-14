@@ -86,9 +86,9 @@ qint64 SerialPort::Write(char const *data, unsigned size)
     return m_serialPort.write(data, size);
 }
 
-void SerialPort::WaitForBytesWritten()
+bool SerialPort::WaitForBytesWritten()
 {
-    m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
+    return m_serialPort.waitForBytesWritten(RESPONSE_WAITING);
 }
 void SerialPort::ReadData(QByteArray &array, unsigned maxLength)
 {

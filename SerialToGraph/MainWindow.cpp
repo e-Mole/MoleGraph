@@ -313,6 +313,7 @@ void MainWindow::currentMeasurementChanged(int index)
         {
 
             m_buttonLine->ChangeMeasurement(m);
+            m_graphicsContainerManager->ChangeMeasurement(m);
 
             connect(m, SIGNAL(stateChanged()), m_buttonLine, SLOT(measurementStateChanged()));
             connect(m, SIGNAL(nameChanged()), this, SLOT(measurementNameChanged()));
@@ -483,15 +484,15 @@ void MainWindow::openNewFile()
 
 void MainWindow::saveFile()
 {
-    if (m_context.m_mainWindow.GetCurrentFileNameWithPath() != "")
-        _SaveFile(m_context.m_mainWindow.GetCurrentFileNameWithPath(), m_storedValues);
+    if (GetCurrentFileNameWithPath() != "")
+        _SaveFile(GetCurrentFileNameWithPath(), m_storedValues);
     else
         saveAsFile();
 }
 
 void MainWindow::_SaveFile(const QString &fileName, bool values)
 {
-    m_context.m_mainWindow.SerializeMeasurements(fileName, values);
+    SerializeMeasurements(fileName, values);
     GlobalSettings::GetInstance().SetSavedState(true);
 
     if (!GlobalSettings::GetInstance().AreSavedValues())

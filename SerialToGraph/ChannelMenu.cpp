@@ -21,11 +21,20 @@
 ChannelMenu::ChannelMenu(GraphicsContainer *graphicsContainer) :
     bases::MenuDialogBase(graphicsContainer, tr("Panels")),
     m_graphicsContainer(graphicsContainer),
-    m_graphShortcut(NULL),
+    m_plotShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL)
 {
     CreatePanelShortcuts();
+}
+
+ChannelMenu::~ChannelMenu()
+{
+    delete m_plotShortcut;
+    delete m_noChannelsShortcut;
+    delete m_allChannelsShortcut;
+    foreach (KeyShortcut *ks, m_shortcutChannels.keys())
+        delete ks;
 }
 
 QLabel* ChannelMenu::_GetShortcutLabel(QString const &shortcut)
@@ -42,7 +51,7 @@ void ChannelMenu::FillGrid()
     connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
     m_gridLayout->addWidget(m_graphCheckBox, row, 0);
 
-    _AddShortcut(row, m_graphShortcut->GetText());
+    _AddShortcut(row, m_plotShortcut->GetText());
 
     ++row;
     QPushButton *showAllButton = new QPushButton(tr("All Channels"), this);
@@ -116,14 +125,11 @@ void ChannelMenu::edit()
     ColorCheckBox *cb = m_channelCheckBoxes[channelWidget];
     cb->SetText(channelWidget->GetName());
     cb->SetColor(channelWidget->GetForeColor());
-
-    stateChanged();
 }
 
 void ChannelMenu::remove()
 {
     ChannelWidget * channelWidget = m_removeButtonToChannel[(QPushButton*)sender()];
-    Measurement *m = m_graphicsContainer->GetChannel(channelWidget)->GetMeasurement();
     m_channelCheckBoxes.remove(channelWidget);
     //m->RemoveChannel(m_graphicsContainer->GetChannel(channelWidget));
     for (int row = 0; row < m_gridLayout->rowCount(); row++)
@@ -145,21 +151,15 @@ void ChannelMenu::remove()
 
 void ChannelMenu::ActivateChannel(ChannelWidget *channelWidget, bool checked)
 {
-    channelWidget->SetVisible(checked);
     m_channelCheckBoxes[channelWidget]->SetChecked(checked);
-    stateChanged();
-    m_graphicsContainer->ReplaceDisplays();
-    GlobalSettings::GetInstance().SetSavedState(false);
+    m_graphicsContainer->ActivateChannel(channelWidget, checked);
 }
 
 void ChannelMenu::graphActivated()
 {
-    bool newState = !m_graphicsContainer->IsPlotVisible();
-    m_graphicsContainer->ShowGraph(newState);
-
     //because of calling by shortcut
-    m_graphCheckBox->SetChecked(newState);
-    GlobalSettings::GetInstance().SetSavedState(false);
+    m_graphCheckBox->SetChecked(!m_graphicsContainer->IsPlotVisible());
+    m_graphicsContainer->plotKeyShortcut();
 }
 
 void ChannelMenu::noChannelsActivated()
@@ -172,7 +172,6 @@ void ChannelMenu::noChannelsActivated()
             ActivateChannel(channelWidget, false);
         }
     }
-    stateChanged();
 }
 
 void ChannelMenu::allChannelsActivated()
@@ -185,8 +184,6 @@ void ChannelMenu::allChannelsActivated()
             ActivateChannel(channelWidget, true);
         }
     }
-    stateChanged();
-    m_graphicsContainer->ReplaceDisplays();
 }
 
 
@@ -203,31 +200,15 @@ QString ChannelMenu::_GetChannelShortcutText(ChannelWidget *channelWidget)
     return "";
 }
 
-void ChannelMenu::ClearPanelShortcuts()
-{
-    delete m_graphShortcut;
-    m_graphShortcut = NULL;
-
-    foreach (KeyShortcut *shortcut, m_shortcutChannels.keys())
-        delete shortcut;
-    m_shortcutChannels.clear();
-
-    delete m_allChannelsShortcut;
-    m_allChannelsShortcut = NULL;
-
-    delete m_noChannelsShortcut;
-    m_noChannelsShortcut = NULL;
-}
-
 void ChannelMenu::CreatePanelShortcuts()
 {
-    m_graphShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_G), this, SLOT(graphActivated()));
+    m_plotShortcut = new KeyShortcut(
+        m_graphicsContainer->GetPlotKeySequence(), this, SLOT(graphActivated()));
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
         KeyShortcut *s = new KeyShortcut(
-            QKeySequence(Qt::ALT + Qt::Key_0 + m_graphicsContainer->GetChannel(channelWidget)->GetShortcutOrder()),
+            m_graphicsContainer->GetChannelWidgetKeySequence(channelWidget),
             this,
             SLOT(channelActivatedShortcut())
         );
@@ -236,10 +217,10 @@ void ChannelMenu::CreatePanelShortcuts()
     }
 
     m_allChannelsShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_A), this, SLOT(allChannelsActivated()));
+        m_graphicsContainer->GetAllChannelsSequence(), this, SLOT(allChannelsActivated()));
 
     m_noChannelsShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_N), this, SLOT(noChannelsActivated()));
+        m_graphicsContainer->GetNoChannelsSequence(), this, SLOT(noChannelsActivated()));
 }
 
 void ChannelMenu::channelActivatedCheckBox()
@@ -247,6 +228,7 @@ void ChannelMenu::channelActivatedCheckBox()
     ChannelWidget * channelWidget = m_checkBoxChannels[(ColorCheckBox*)sender()];
     ActivateChannel(channelWidget, !channelWidget->isVisible());
 }
+
 void ChannelMenu::channelActivatedShortcut()
 {
     ChannelWidget *channelWidget = m_shortcutChannels[(KeyShortcut*)sender()];

@@ -11,7 +11,9 @@ KeyShortcut::KeyShortcut(QKeySequence const &sequence, QWidget *receiver, const 
     return NULL;
 #else
     m_shortcut = new QShortcut(sequence, receiver);
-    m_shortcut->connect(m_shortcut, SIGNAL(activated()), receiver, slot);
+    m_shortcut->connect(m_shortcut, SIGNAL(activated()), this, SIGNAL(activated()));
+    //to be sender of this event KeyShortcut (not QShortcut)
+    connect(this, SIGNAL(activated()), receiver, slot);
 #endif
 }
 
@@ -23,4 +25,9 @@ KeyShortcut::~KeyShortcut()
 QString KeyShortcut::GetText()
 {
     return (m_shortcut == NULL ? "" : m_shortcut->key().toString());
+}
+
+QKeySequence KeyShortcut::GetKeySequence()
+{
+    return m_shortcut->key();
 }

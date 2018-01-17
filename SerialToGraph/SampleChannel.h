@@ -69,7 +69,6 @@ public:
         RealTimeFormat realTimeFormat = hh_mm_ss);
 
     virtual Type GetType() { return Type_Sample; }
-    virtual unsigned GetShortcutOrder() { return 0; }
     Style GetStyle() {return m_style; }
     TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }

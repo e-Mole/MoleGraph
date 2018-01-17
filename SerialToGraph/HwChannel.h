@@ -20,7 +20,6 @@ public:
     HwChannel(Measurement *measurement, int hwIndex);
 
     virtual Type GetType() { return Type_Hw; }
-    virtual unsigned GetShortcutOrder() { return m_hwIndex + 1; }
     virtual void AddValue(double value);
     void AddValue(double original, double current);
 

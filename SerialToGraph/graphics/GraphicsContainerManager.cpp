@@ -3,7 +3,9 @@
 #include <graphics/GraphicsContainer.h>
 #include <Measurement.h>
 
-GraphicsContainerManager::GraphicsContainerManager(QObject *parent) : QObject(parent)
+GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
+    QObject(parent),
+    m_currentMeasurement(NULL)
 {
 }
 
@@ -37,4 +39,17 @@ void GraphicsContainerManager::updateChannelSizeFactor(int factor)
 GraphicsContainer *GraphicsContainerManager::GetGraphicsContainer(Measurement *m)
 {
     return m_mapping[m];
+}
+
+void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
+{
+    GraphicsContainer *currentContainer =  GetGraphicsContainer(m_currentMeasurement);
+    if (currentContainer != NULL)
+        currentContainer->Deactivate();
+
+    GraphicsContainer *newContainer =  GetGraphicsContainer(m);
+    if (newContainer != NULL)
+        newContainer->Activate();
+
+    m_currentMeasurement = m;
 }

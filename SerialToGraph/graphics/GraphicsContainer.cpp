@@ -7,6 +7,7 @@
 #include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <HwChannel.h>
+#include <KeyShortcut.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -42,7 +43,10 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, const QString &name, bool 
     m_horizontalChannel(NULL),
     m_marksShown(markShown),
     m_sampleChannelWidget(NULL),
-    m_sampleChannel(NULL)
+    m_sampleChannel(NULL),
+    m_plotKeyShortcut(NULL),
+    m_allChannelsShortcut(NULL),
+    m_noChannelsShortcut(NULL)
 {
     _InitializeLayouts();
 
@@ -109,6 +113,14 @@ GraphicsContainer::~GraphicsContainer()
     {
         delete channelWidget;
     }
+
+    delete m_plotKeyShortcut;
+    delete m_allChannelsShortcut;
+    delete m_noChannelsShortcut;
+    foreach (KeyShortcut *keyShortcut, m_channelWidgetKeyShortcuts.keys())
+        delete keyShortcut;
+
+
 }
 
 void GraphicsContainer::SetGrid(bool grid)
@@ -235,8 +247,9 @@ void GraphicsContainer::markerLinePositionChanged(int position)
 
     bool sliderOnRight = m_scrollBar->sliderPosition() == m_scrollBar->maximum();
     if (m_followMode != sliderOnRight)
-    SetFollowMode(sliderOnRight);
-
+    {
+        SetFollowMode(sliderOnRight);
+    }
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
 
     RedrawChannelValues();
@@ -924,3 +937,118 @@ QString GraphicsContainer::GetValueTimestamp(SampleChannel *channel, unsigned in
 {
     return _GetRealTimeText(channel, channel->GetValue(index));
 }
+
+void GraphicsContainer::_CreateKeyShortcuts()
+{
+    m_plotKeyShortcut = new KeyShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_G), this, SLOT(plotKeyShortcut()));
+
+    m_allChannelsShortcut = new KeyShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_A), this, SLOT(allChannelsKeyShortcut()));
+
+    m_noChannelsShortcut = new KeyShortcut(
+        QKeySequence(Qt::ALT + Qt::Key_N), this, SLOT(noChannelsKeyShortcut()));
+
+    foreach (ChannelWidget *channelWidget, GetChannelWidgets())
+    {
+        KeyShortcut *s = new KeyShortcut(
+            channelWidget->GetKeyShortcutSequence(),
+            this,
+            SLOT(channelKeyShortcut())
+        );
+        if (s != NULL)
+        {
+            m_channelWidgetKeyShortcuts[s] = channelWidget;
+        }
+    }
+}
+
+void GraphicsContainer::_RemoveKeyShortcuts()
+{
+    delete m_plotKeyShortcut;
+    m_plotKeyShortcut = NULL;
+
+    delete m_allChannelsShortcut;
+    m_allChannelsShortcut = NULL;
+
+    delete m_noChannelsShortcut;
+    m_noChannelsShortcut = NULL;
+
+    foreach (auto keyShortcut, m_channelWidgetKeyShortcuts.keys())
+    {
+        delete keyShortcut;
+    }
+    m_channelWidgetKeyShortcuts.clear();
+}
+
+
+void GraphicsContainer::ActivateChannel(ChannelWidget *channelWidget, bool checked)
+{
+    if (channelWidget->isVisible() == checked)
+        return; //nothing to change
+
+    channelWidget->SetVisible(checked);
+    ReplaceDisplays();
+    GlobalSettings::GetInstance().SetSavedState(false);
+}
+
+void GraphicsContainer::channelKeyShortcut()
+{
+    ChannelWidget *channelWidget = m_channelWidgetKeyShortcuts[(KeyShortcut*)sender()];
+    ActivateChannel(channelWidget, !channelWidget->isVisible());
+}
+
+void GraphicsContainer::plotKeyShortcut()
+{
+    bool newState = !IsPlotVisible();
+    ShowGraph(newState);
+    GlobalSettings::GetInstance().SetSavedState(false);
+
+}
+void GraphicsContainer::noChannelsKeyShortcut()
+{
+    foreach (ChannelWidget* channelWidget, m_channelWidgets)
+        ActivateChannel(channelWidget, false);
+
+}
+void GraphicsContainer::allChannelsKeyShortcut()
+{
+     foreach (ChannelWidget* channelWidget, m_channelWidgets)
+        ActivateChannel(channelWidget, true);
+}
+
+void GraphicsContainer::Activate()
+{
+    _CreateKeyShortcuts();
+}
+
+void GraphicsContainer::Deactivate()
+{
+    _RemoveKeyShortcuts();
+}
+
+QKeySequence GraphicsContainer::GetPlotKeySequence()
+{
+    return m_plotKeyShortcut->GetKeySequence();
+}
+
+QKeySequence GraphicsContainer::GetChannelWidgetKeySequence(ChannelWidget *channelWidget)
+{
+    for (auto it = m_channelWidgetKeyShortcuts.begin(); it != m_channelWidgetKeyShortcuts.end(); ++it)
+        if (it.value() == channelWidget)
+            return it.key()->GetKeySequence();
+
+    //probably ghost
+    return QKeySequence();
+}
+
+QKeySequence GraphicsContainer::GetAllChannelsSequence()
+{
+    return m_allChannelsShortcut->GetKeySequence();
+}
+
+QKeySequence GraphicsContainer::GetNoChannelsSequence()
+{
+    return m_noChannelsShortcut->GetKeySequence();
+}
+

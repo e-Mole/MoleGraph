@@ -35,12 +35,12 @@ ChannelWidget::ChannelWidget(
             foreColor
          )
     ),
-    m_shortcutOrder(shortcutOrder),
     m_channelGraph(channelGraph),
     m_plot(plot),
     m_penStyle(penStyle),
     m_units(units),
-    m_isVisible(isActive)
+    m_isVisible(isActive),
+    m_shortcutOrder(shortcutOrder)
 {
     connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
 
@@ -55,6 +55,11 @@ ChannelWidget::ChannelWidget(
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
+}
+
+QKeySequence ChannelWidget::GetKeyShortcutSequence()
+{
+    return m_shortcutOrder != -1 ? QKeySequence(Qt::ALT + Qt::Key_0 + m_shortcutOrder) : QKeySequence();
 }
 
 void ChannelWidget::SetTransparent(bool transparent)

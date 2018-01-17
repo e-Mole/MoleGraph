@@ -497,7 +497,7 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order);
-    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order, QString(tr("Channel %1")).arg(order+1), color, true, "");
+    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "");
 
     AddYChannel(newChannel, false);
 }
@@ -621,7 +621,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     else
     {
         channel = new HwChannel(this, hwIndex);
-        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex, "", Qt::black, true, "");
+        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "");
 
     }
 
@@ -801,30 +801,6 @@ ChannelBase *Measurement::GetHorizontalChannel() const
 bool Measurement::IsPlotInRangeMode()
 {
     return m_widget->IsPlotInRangeMode();
-}
-
-int Measurement::GetLastClosestHorizontalValueIndex(double xValue) const
-{
-    return m_widget->GetLastClosestHorizontalValueIndex(xValue);
-}
-
-unsigned Measurement::GetPositionByHorizontalValue(double value) const
-{
-    return m_widget->GetPositionByHorizontalValue(value);
-}
-
-double Measurement::GetHorizontalValueBySliderPos(unsigned position) const
-{
-    return m_widget->GetHorizontalValueBySliderPos(position);
-}
-
-unsigned Measurement::GetCurrentHorizontalChannelIndex() const
-{
-    return m_widget->GetCurrentHorizontalChannelIndex();
-}
-unsigned Measurement::GetHorizontalValueLastInex(double value) const
-{
-    return GetHorizontalValueLastInex(value);
 }
 
 GraphicsContainer *Measurement::GetWidget()

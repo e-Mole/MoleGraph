@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QWidget>
 #include <ChannelBase.h>
+#include <QKeySequence>
 
 class QSize;
 class ChannelGraph;
@@ -43,13 +44,14 @@ class ChannelWidget : public QWidget
     QString m_name;
     QLabel * m_title;
     ValueLabel *m_valueLabel;
-    unsigned m_shortcutOrder;
     ChannelGraph *m_channelGraph;
     Plot *m_plot;
     QString m_lastValueText;
     Qt::PenStyle m_penStyle;
     QString m_units;
     bool m_isVisible;
+    unsigned m_shortcutOrder;
+
 public:
     ChannelWidget(
         QWidget* parent,
@@ -98,7 +100,7 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
     Plot* GetPlot();
-
+    QKeySequence GetKeyShortcutSequence();
 signals:
     void clicked();
     void sizeChanged();

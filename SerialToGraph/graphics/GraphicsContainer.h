@@ -3,9 +3,10 @@
 
 #include <ChannelBase.h>
 #include <SampleChannel.h>
-#include <QWidget>
+#include <QMap>
 #include <QString>
 #include <QVector>
+#include <QWidget>
 #include <set>
 #include <map>
 
@@ -14,6 +15,7 @@ class Color;
 class ChannelGraph;
 class ChannelWidget;
 class HwChannel;
+class KeyShortcut;
 class Measurement;
 class Plot;
 class QColor;
@@ -66,6 +68,13 @@ class GraphicsContainer : public QWidget
         bool isSampleChannel
     );
     QString _GetRealTimeText(SampleChannel *channel, double secSinceEpoch);
+    void _CreateKeyShortcuts();
+    void _RemoveKeyShortcuts();
+
+    KeyShortcut *m_plotKeyShortcut;
+    QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
+    KeyShortcut *m_allChannelsShortcut;
+    KeyShortcut *m_noChannelsShortcut;
 
 public:
     GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
@@ -143,14 +152,27 @@ public:
     QString GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat);
     QString GetSampleChannelStyleText(SampleChannel::Style style);
     QString GetValueTimestamp(SampleChannel *channel, unsigned index);
+    void Activate();
+    void Deactivate();
+    QKeySequence GetPlotKeySequence();
+    QKeySequence GetChannelWidgetKeySequence(ChannelWidget *channelWidget);
+    QKeySequence GetAllChannelsSequence();
+    QKeySequence GetNoChannelsSequence();
+    void ActivateChannel(ChannelWidget *channelWidget, bool checked);
 signals:
     void resized();
+
 public slots:
     void sliderValueChanged(int value);
     void editChannel(ChannelWidget *channelWidget);
     void editChannel();
     void addNewValueSet();
     void sampleChannelPropertyChanged();
+    void channelKeyShortcut();
+    void plotKeyShortcut();
+    void noChannelsKeyShortcut();
+    void allChannelsKeyShortcut();
+
 private slots:
     void markerLinePositionChanged(int position);
     void hwValueChanged(unsigned index);

@@ -33,20 +33,17 @@ class ChannelMenu : public bases::MenuDialogBase
     QMap<QPushButton*, ChannelWidget*> m_editChannels;
     QMap<QPushButton*, ChannelWidget *> m_removeButtonToChannel;
     void _SetGraph(bool checked);
-    KeyShortcut *m_graphShortcut;
+    KeyShortcut *m_plotShortcut;
     QMap<KeyShortcut*, ChannelWidget*> m_shortcutChannels;
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
 
 public:
-    explicit ChannelMenu(GraphicsContainer *graphicsContainer);
+    ChannelMenu(GraphicsContainer *graphicsContainer);
+    ~ChannelMenu();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void UpdateCheckBoxes();
     void CreatePanelShortcuts();
-    void ClearPanelShortcuts();
-
-signals:
-    void stateChanged();
 
 public slots:
     void channelActivatedCheckBox();

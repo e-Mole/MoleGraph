@@ -173,11 +173,6 @@ private:
     Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel, bool isSampleChannel);
     void IncreaseSliderMaximum(unsigned maximum);
-    int GetLastClosestHorizontalValueIndex(double xValue) const;
-    unsigned GetPositionByHorizontalValue(double value) const;
-    double GetHorizontalValueBySliderPos(unsigned position) const;
-    unsigned GetCurrentHorizontalChannelIndex() const;
-    unsigned GetHorizontalValueLastInex(double value) const;
     int GetCurrentIndex();
     void DrawRestData();
     void RemoveWidget();

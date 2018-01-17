@@ -74,7 +74,6 @@ public:
     ChannelBase(Measurement *measurement);
 
     virtual Type GetType() = 0;
-    virtual unsigned GetShortcutOrder() = 0;
 
     virtual unsigned GetValueCount() const
     { return m_values.size();}

@@ -808,6 +808,7 @@ QColor Plot::_SetMarkerLineColor(bool isSame, bool isCurrent)
 
 void Plot::RedrawChannelMarks(int position)
 {
+    double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
-        channelWidget->GetChannelGraph()->ChangeSelectedMarkIndex(position);
+        channelWidget->GetChannelGraph()->ChangeSelectedMarkIndex(horizontalValue);
 }

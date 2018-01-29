@@ -253,6 +253,7 @@ void GraphicsContainer::markerLinePositionChanged(int position)
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
 
     RedrawChannelValues();
+    //FIXME: it probably should not be here but in polt
     m_plot->RedrawChannelMarks(position);
 }
 

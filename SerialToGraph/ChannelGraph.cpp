@@ -14,7 +14,7 @@ ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
   :
     QCPGraph(keyAxis, valueAxis->GetGraphAxis()),
     m_showAllMarks(showAllMarks),
-    m_selectedMarkIndex(-1),
+    m_selectedHorizontalValue(-1),
     m_valueAxis(valueAxis)
 {
     setPen(QPen(color, 1, penStyle));
@@ -93,11 +93,11 @@ void ChannelGraph::drawScatterPlot(QCPPainter *painter, QVector<QCPData> *scatte
       if (qIsNaN(scatterData->at(i).value))
         continue;
 
-      if (!m_showAllMarks && i != m_selectedMarkIndex)
+      if (!m_showAllMarks && scatterData->at(i).key != m_selectedHorizontalValue)
           continue;
 
       QCPScatterStyle current;
-      if (i == m_selectedMarkIndex)
+      if (scatterData->at(i).key == m_selectedHorizontalValue)
       {
           m_selectedMarkStyle.applyTo(painter, mPen);
           current = m_selectedMarkStyle;
@@ -115,9 +115,10 @@ void ChannelGraph::drawScatterPlot(QCPPainter *painter, QVector<QCPData> *scatte
         current.drawShape(painter, keyAxis->coordToPixel(scatterData->at(i).key), valueAxis->coordToPixel(scatterData->at(i).value));
   }
 }
-void ChannelGraph::ChangeSelectedMarkIndex(int index)
+void ChannelGraph::ChangeSelectedHorizontalValue(double horizontalValue)
 {
-    m_selectedMarkIndex = index;
+    //It will be redrawn in drawScatterPlot
+    m_selectedHorizontalValue = horizontalValue;
 }
 
 void ChannelGraph::ShowAllMarks(bool showAllMarks)

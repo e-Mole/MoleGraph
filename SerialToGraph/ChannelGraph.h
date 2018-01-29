@@ -7,7 +7,7 @@ class Axis;
 class ChannelGraph : public QCPGraph
 {
     bool m_showAllMarks;
-    int m_selectedMarkIndex;
+    double m_selectedHorizontalValue;
     QCPScatterStyle m_selectedMarkStyle;
     Axis *m_valueAxis;
     bool m_active;
@@ -31,7 +31,7 @@ public:
     );
 
     void SetMarkShape(unsigned shapeIndex);
-    void ChangeSelectedMarkIndex(int index);
+    void ChangeSelectedMarkIndex(double horizontalValue);
     void ShowAllMarks(bool showAllMarks);
     void SetColor(const QColor& color);
     void SetPenStyle(Qt::PenStyle penStyle);

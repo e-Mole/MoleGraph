@@ -79,9 +79,6 @@ Measurement::Measurement(
     connect(
         &m_hwSink, SIGNAL(connectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
-
-    m_widget->setAutoFillBackground(true);
-    connect(m_widget, SIGNAL(resized()), this, SLOT(replaceDisplays()));
 }
 
 Measurement::~Measurement()
@@ -219,11 +216,6 @@ bool Measurement::_ProcessValueSet()
     //im sure I have a horizontal value and may start to draw
     valueSetMeasured();
     return true;
-}
-
-void Measurement::IncreaseSliderMaximum(unsigned maximum)
-{
-    m_widget->AddHorizontalValue(maximum);
 }
 
 void Measurement::draw()
@@ -386,11 +378,6 @@ void Measurement::Stop()
 
     m_state = Finished;
     stateChanged();
-}
-
-void Measurement::replaceDisplays()
-{
-    m_widget->ReplaceDisplays();
 }
 
 void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)

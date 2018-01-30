@@ -101,6 +101,9 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, const QString &name, bool 
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
     connect(m_plot, SIGNAL(markerLinePositionChanged(int)), this, SLOT(markerLinePositionChanged(int)));
     m_plotAndSliderLayout->addWidget(m_scrollBar);
+
+    setAutoFillBackground(true);
+    connect(this, SIGNAL(resized()), this, SLOT(replaceDisplays()));
 }
 
 GraphicsContainer::~GraphicsContainer()
@@ -1053,3 +1056,7 @@ QKeySequence GraphicsContainer::GetNoChannelsSequence()
     return m_noChannelsShortcut->GetKeySequence();
 }
 
+void GraphicsContainer::replaceDisplays()
+{
+    ReplaceDisplays();
+}

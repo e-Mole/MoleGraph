@@ -161,7 +161,6 @@ private:
     ChannelBase *GetHorizontalChannel() const;
     bool IsPlotInRangeMode();
     void AddYChannel(ChannelBase *channel, bool isSampleChannel);
-    void IncreaseSliderMaximum(unsigned maximum);
     int GetCurrentIndex();
     void DrawRestData();
     void RemoveWidget();
@@ -171,8 +170,6 @@ signals:
     void nameChanged();
     void colorChanged();
     void valueSetMeasured();
-public slots:
-    void replaceDisplays();
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);

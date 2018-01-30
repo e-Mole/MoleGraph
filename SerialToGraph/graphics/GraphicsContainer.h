@@ -172,7 +172,7 @@ public slots:
     void plotKeyShortcut();
     void noChannelsKeyShortcut();
     void allChannelsKeyShortcut();
-
+    void replaceDisplays();
 private slots:
     void markerLinePositionChanged(int position);
     void hwValueChanged(unsigned index);

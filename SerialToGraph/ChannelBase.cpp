@@ -1,5 +1,4 @@
 #include "ChannelBase.h"
-#include <ChannelGraph.h>
 #include <ChannelWidget.h>
 #include <cmath>
 #include <GlobalSettings.h>

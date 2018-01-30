@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QObject>
 
-class ChannelGraph;
 class ChannelWidget;
 class Measurement;
 class QString;

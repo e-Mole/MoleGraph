@@ -15,7 +15,6 @@
 #include <set>
 
 class Axis;
-class ChannelGraph;
 class ChannelWidget;
 class GraphicsContainer;
 class Plot;
@@ -93,7 +92,6 @@ private:
 
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type);
-    unsigned _GetAxisCount();
     ChannelBase *_FindChannel(int hwIndex);
     void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
@@ -141,15 +139,9 @@ private:
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes() const;
     QVector<ChannelBase *> const & GetChannels() const;
-    Plot *GetPlot() const;
-    bool IsPlotVisible() const;
     State GetState() { return m_state; }
-    Axis *CreateAxis(QColor const & color);
-    void RemoveAxis(Axis * axis);
     ChannelBase *GetChannel(unsigned index);
     unsigned GetChannelCount();
-    int GetAxisIndex(Axis *axis);
-    Axis *GetAxis(int index);
     void Start();
     void Pause();
     void Continue();
@@ -165,12 +157,9 @@ private:
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown();
-    int GetSliderPos();
     void SetHorizontalChannel(ChannelBase *channel);
     ChannelBase *GetHorizontalChannel() const;
     bool IsPlotInRangeMode();
-    void SetFollowMode(bool set);
-    Axis *GetFirstVerticalAxis();
     void AddYChannel(ChannelBase *channel, bool isSampleChannel);
     void IncreaseSliderMaximum(unsigned maximum);
     int GetCurrentIndex();
@@ -183,7 +172,6 @@ signals:
     void colorChanged();
     void valueSetMeasured();
 public slots:
-    void showGraph(bool show);
     void replaceDisplays();
 private slots:
     void draw();

@@ -388,29 +388,9 @@ void Measurement::Stop()
     stateChanged();
 }
 
-Axis * Measurement::GetFirstVerticalAxis()
-{
-    return m_widget->GetFirstVerticalAxis();
-}
-
 void Measurement::replaceDisplays()
 {
     m_widget->ReplaceDisplays();
-}
-
-void Measurement::showGraph(bool show)
-{
-    m_widget->ShowGraph(show);
-}
-
-Plot *Measurement::GetPlot() const
-{
-    return m_widget->GetPlot();
-}
-
-bool Measurement::IsPlotVisible() const
-{
-    return m_widget->IsPlotVisible();
 }
 
 void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
@@ -502,16 +482,6 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
     AddYChannel(newChannel, false);
 }
 
-Axis * Measurement::CreateAxis(QColor const & color)
-{
-    return m_widget->CreateYAxis(color);
-}
-
-void Measurement::RemoveAxis(Axis * axis)
-{
-    m_widget->RemoveAxis(axis);
-}
-
 QVector<Axis *> const & Measurement::GetAxes() const
 {
     return m_widget->GetAxes();
@@ -530,16 +500,6 @@ ChannelBase *Measurement::GetChannel(unsigned index)
 unsigned Measurement::GetChannelCount()
 {
     return m_channels.count();
-}
-
-int Measurement::GetAxisIndex(Axis *axis)
-{
-    return m_widget->GetAxisIndex(axis);
-}
-
-Axis *Measurement::GetAxis(int index)
-{
-    return m_widget->GetAxis(index);
 }
 
 void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out)
@@ -783,11 +743,6 @@ void Measurement::_SetType(Type type)
     stateChanged();
 }
 
-int Measurement::GetSliderPos()
-{
-    return m_widget->GetSliderPos();
-}
-
 void Measurement::SetHorizontalChannel(ChannelBase *channel)
 {
     m_widget->SetHorizontalChannel(channel);
@@ -818,19 +773,9 @@ void Measurement::_SetName(QString &name)
     m_widget->SetName(name);
 }
 
-void Measurement::SetFollowMode(bool set)
-{
-    m_widget->SetFollowMode(set);
-}
-
 int Measurement::GetCurrentIndex()
 {
     return  m_widget->GetCurrentIndex();
-}
-
-unsigned Measurement::_GetAxisCount()
-{
-    return m_widget->GetAxisCount();
 }
 
 void Measurement::RemoveWidget()

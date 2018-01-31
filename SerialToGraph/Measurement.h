@@ -160,7 +160,6 @@ private:
     void SetHorizontalChannel(ChannelBase *channel);
     ChannelBase *GetHorizontalChannel() const;
     bool IsPlotInRangeMode();
-    void AddYChannel(ChannelBase *channel, bool isSampleChannel);
     int GetCurrentIndex();
     void DrawRestData();
     void RemoveWidget();

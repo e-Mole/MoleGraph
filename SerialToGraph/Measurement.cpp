@@ -454,19 +454,13 @@ void Measurement::_InitializeAxesAndChanels()
     m_widget->ReplaceDisplays();//false
 }
 
-void Measurement::AddYChannel(ChannelBase *channel, bool isSampleChannel)
-{
-    //FIXME here should be creation of graph and adding to a channelGraph map
-    m_channels.push_back(channel);
-}
-
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order);
     ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "");
 
-    AddYChannel(newChannel, false);
+    m_channels.push_back(newChannel);
 }
 
 QVector<Axis *> const & Measurement::GetAxes() const

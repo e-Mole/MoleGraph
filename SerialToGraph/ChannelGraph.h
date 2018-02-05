@@ -31,7 +31,7 @@ public:
     );
 
     void SetMarkShape(unsigned shapeIndex);
-    void ChangeSelectedMarkIndex(double horizontalValue);
+    void ChangeSelectedHorizontalValue(double horizontalValue);
     void ShowAllMarks(bool showAllMarks);
     void SetColor(const QColor& color);
     void SetPenStyle(Qt::PenStyle penStyle);

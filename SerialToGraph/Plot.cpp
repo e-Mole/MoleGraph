@@ -810,5 +810,5 @@ void Plot::RedrawChannelMarks(int position)
 {
     double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
-        channelWidget->GetChannelGraph()->ChangeSelectedMarkIndex(horizontalValue);
+        channelWidget->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
 }

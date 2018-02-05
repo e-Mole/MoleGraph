@@ -8,7 +8,6 @@
 #include <graphics/GraphicsContainerManager.h>
 #include <MainWindow.h>
 #include <Measurement.h>
-#include <MeasurementMenu.h>
 #include <MyMessageBox.h>
 #include <PlotContextMenu.h>
 #include <QAction>
@@ -187,13 +186,14 @@ void ButtonLine::fileMenuButtonPressed()
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    if (m_measurement == NULL)
+    GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m_measurement);
+    if (gc == NULL)
     {
         qWarning() << "measurement is not set";
         return;
     }
 
-    ChannelMenu *channelMenu = new ChannelMenu(m_graphicsContainerManager->GetGraphicsContainer(m_measurement));
+    ChannelMenu *channelMenu = new ChannelMenu(gc);
     connect(channelMenu, SIGNAL(stateChanged()), this, SLOT(updateRunButtonsState()));
     channelMenu->ReinitGrid();
     updateRunButtonsState();

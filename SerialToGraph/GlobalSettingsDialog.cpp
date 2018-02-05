@@ -4,6 +4,7 @@
 #include <Context.h>
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
+#include <graphics/GraphicsContainer.h>
 #include <hw/HwSink.h>
 #include <MainWindow.h>
 #include <Measurement.h>
@@ -190,7 +191,7 @@ bool GlobalSettingsDialog::BeforeAccept()
         m_settings.SetHideAllChannels(m_hideAllChannels->isChecked());
 
         foreach (Measurement *m, m_context.m_measurements)
-            m->replaceDisplays();
+            m->GetWidget()->replaceDisplays();
     }
 
     if (m_settings.GetLimitDir() != m_limitDirLine->text())

@@ -79,9 +79,6 @@ Measurement::Measurement(
     connect(
         &m_hwSink, SIGNAL(connectivityChanged(bool)),
         this, SLOT(portConnectivityChanged(bool)));
-
-    m_widget->setAutoFillBackground(true);
-    connect(m_widget, SIGNAL(resized()), this, SLOT(replaceDisplays()));
 }
 
 Measurement::~Measurement()
@@ -219,11 +216,6 @@ bool Measurement::_ProcessValueSet()
     //im sure I have a horizontal value and may start to draw
     valueSetMeasured();
     return true;
-}
-
-void Measurement::IncreaseSliderMaximum(unsigned maximum)
-{
-    m_widget->AddHorizontalValue(maximum);
 }
 
 void Measurement::draw()
@@ -388,31 +380,6 @@ void Measurement::Stop()
     stateChanged();
 }
 
-Axis * Measurement::GetFirstVerticalAxis()
-{
-    return m_widget->GetFirstVerticalAxis();
-}
-
-void Measurement::replaceDisplays()
-{
-    m_widget->ReplaceDisplays();
-}
-
-void Measurement::showGraph(bool show)
-{
-    m_widget->ShowGraph(show);
-}
-
-Plot *Measurement::GetPlot() const
-{
-    return m_widget->GetPlot();
-}
-
-bool Measurement::IsPlotVisible() const
-{
-    return m_widget->IsPlotVisible();
-}
-
 void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 {
     m_widget->InitializeAxes(sourceMeasurement->GetAxes());
@@ -487,29 +454,13 @@ void Measurement::_InitializeAxesAndChanels()
     m_widget->ReplaceDisplays();//false
 }
 
-void Measurement::AddYChannel(ChannelBase *channel, bool isSampleChannel)
-{
-    //FIXME here should be creation of graph and adding to a channelGraph map
-    m_channels.push_back(channel);
-}
-
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order);
     ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "");
 
-    AddYChannel(newChannel, false);
-}
-
-Axis * Measurement::CreateAxis(QColor const & color)
-{
-    return m_widget->CreateYAxis(color);
-}
-
-void Measurement::RemoveAxis(Axis * axis)
-{
-    m_widget->RemoveAxis(axis);
+    m_channels.push_back(newChannel);
 }
 
 QVector<Axis *> const & Measurement::GetAxes() const
@@ -530,16 +481,6 @@ ChannelBase *Measurement::GetChannel(unsigned index)
 unsigned Measurement::GetChannelCount()
 {
     return m_channels.count();
-}
-
-int Measurement::GetAxisIndex(Axis *axis)
-{
-    return m_widget->GetAxisIndex(axis);
-}
-
-Axis *Measurement::GetAxis(int index)
-{
-    return m_widget->GetAxis(index);
 }
 
 void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out)
@@ -783,11 +724,6 @@ void Measurement::_SetType(Type type)
     stateChanged();
 }
 
-int Measurement::GetSliderPos()
-{
-    return m_widget->GetSliderPos();
-}
-
 void Measurement::SetHorizontalChannel(ChannelBase *channel)
 {
     m_widget->SetHorizontalChannel(channel);
@@ -818,19 +754,9 @@ void Measurement::_SetName(QString &name)
     m_widget->SetName(name);
 }
 
-void Measurement::SetFollowMode(bool set)
-{
-    m_widget->SetFollowMode(set);
-}
-
 int Measurement::GetCurrentIndex()
 {
     return  m_widget->GetCurrentIndex();
-}
-
-unsigned Measurement::_GetAxisCount()
-{
-    return m_widget->GetAxisCount();
 }
 
 void Measurement::RemoveWidget()

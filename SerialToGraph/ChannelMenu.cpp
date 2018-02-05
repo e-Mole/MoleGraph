@@ -1,7 +1,6 @@
 #include "ChannelMenu.h"
 #include <bases/ClickableLabel.h>
 #include <ChannelBase.h>
-#include <ChannelGraph.h>
 #include <ChannelWidget.h>
 #include <ColorCheckBox.h>
 #include <GlobalSettings.h>

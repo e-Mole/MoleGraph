@@ -115,7 +115,7 @@ transparency=0</panel_attributes>
       <h>27</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red</panel_attributes>
+fg=black</panel_attributes>
     <additional_attributes>320.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -257,7 +257,7 @@ transparency=0</panel_attributes>
       <h>180</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red
+fg=black
 </panel_attributes>
     <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
   </element>
@@ -284,7 +284,7 @@ fg=red</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;.
 channelWidgetClicked
-fg=red</panel_attributes>
+fg=black</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
   </element>
   <element>
@@ -362,12 +362,12 @@ transparency=0</panel_attributes>
     <coordinates>
       <x>522</x>
       <y>801</y>
-      <w>117</w>
-      <h>81</h>
+      <w>108</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
 fg=red</panel_attributes>
-    <additional_attributes>10.0;70.0;110.0;70.0;110.0;10.0</additional_attributes>
+    <additional_attributes>10.0;80.0;100.0;80.0;100.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -442,8 +442,8 @@ transparency=0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>891</x>
-      <y>729</y>
+      <x>900</x>
+      <y>297</y>
       <w>135</w>
       <h>54</h>
     </coordinates>
@@ -457,14 +457,14 @@ transparency=0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>909</x>
-      <y>774</y>
-      <w>27</w>
-      <h>117</h>
+      <x>1026</x>
+      <y>315</y>
+      <w>90</w>
+      <h>27</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red</panel_attributes>
-    <additional_attributes>10.0;110.0;10.0;10.0</additional_attributes>
+fg=black</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLPackage</id>
@@ -548,7 +548,7 @@ fg=red
       <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
-fg=red
+fg=black
 </panel_attributes>
     <additional_attributes>10.0;80.0;80.0;80.0;80.0;10.0</additional_attributes>
   </element>
@@ -563,7 +563,7 @@ fg=red
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
 layer=3
 m2=1..n
-fg=red</panel_attributes>
+fg=black</panel_attributes>
     <additional_attributes>240.0;10.0;240.0;110.0;10.0;110.0</additional_attributes>
   </element>
   <element>
@@ -797,12 +797,12 @@ transparency=0</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>621</x>
-      <y>594</y>
+      <y>342</y>
       <w>315</w>
-      <h>153</h>
+      <h>279</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;</panel_attributes>
-    <additional_attributes>330.0;150.0;330.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>330.0;10.0;330.0;290.0;10.0;290.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -981,19 +981,6 @@ halign=center
 bg=gray
 transparency=0</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>522</x>
-      <y>864</y>
-      <w>306</w>
-      <h>36</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;.
-markerLinePositionChanged
-fg=red</panel_attributes>
-    <additional_attributes>320.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLNote</id>
@@ -1309,7 +1296,7 @@ fg=red</panel_attributes>
       <h>333</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red
+fg=black
 </panel_attributes>
     <additional_attributes>570.0;350.0;10.0;350.0;10.0;10.0</additional_attributes>
   </element>
@@ -1474,7 +1461,7 @@ transparency=0</panel_attributes>
       <h>225</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red
+fg=black
 m2=0..n</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;230.0</additional_attributes>
   </element>
@@ -1613,7 +1600,7 @@ transparency=0</panel_attributes>
       <h>432</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red
+fg=black
 </panel_attributes>
     <additional_attributes>10.0;20.0;80.0;20.0;80.0;460.0</additional_attributes>
   </element>
@@ -1662,7 +1649,7 @@ fg=red</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;.
   TabChosen
-fg=red</panel_attributes>
+fg=black</panel_attributes>
     <additional_attributes>10.0;20.0;100.0;20.0;100.0;470.0</additional_attributes>
   </element>
   <element>
@@ -1956,23 +1943,10 @@ layer=3
       <w>216</w>
       <h>369</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+fg=black
+m1=1..n</panel_attributes>
     <additional_attributes>10.0;390.0;10.0;360.0;220.0;360.0;220.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLPackage</id>
-    <coordinates>
-      <x>144</x>
-      <y>684</y>
-      <w>1134</w>
-      <h>486</h>
-    </coordinates>
-    <panel_attributes>lt=.
-grphics container
-layer=-2
-bg=light_gray</panel_attributes>
-    <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
@@ -1983,7 +1957,7 @@ bg=light_gray</panel_attributes>
       <h>81</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
-fg=red</panel_attributes>
+fg=black</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
   </element>
 </diagram>

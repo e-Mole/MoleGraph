@@ -136,55 +136,6 @@ bool Plot::event(QEvent *event)
     return QCustomPlot::event(event);
 }
 
-/*double Plot::_GetClosestXValue(double in)
-{
-    if (graphCount()== 0)
-    {
-        qDebug() << "graphCount()== 0";
-        return false;
-    }
-
-    QCPDataMap *dataMap = NULL;
-    for (int i = 0; i < graphCount(); i++)
-    {
-        if (graph(i)->data()->size() > 0)
-        {
-            //Im expecting all X are the same for filled graps
-            dataMap = graph(i)->data();
-            break;
-        }
-    }
-
-    if (dataMap == NULL)
-    {
-        qWarning() << "dataMap == NULL";
-        return false;
-    }
-    double xValue = 0;
-    auto itHi = dataMap->lowerBound(in);
-    if (itHi == dataMap->end())
-        xValue = dataMap->last().key;
-    else if(itHi == dataMap->begin())
-        xValue = dataMap->begin().key();
-    else
-    {
-        auto itLo = itHi;
-        itLo--;
-
-        xValue = (qAbs(in - itLo.key() < qAbs(itHi.key() - in))) ?
-            itLo.key() : itHi.key();
-    }
-
-    return xValue;
-}*/
-
-/*bool Plot::_FillClosestXIndex(double inValue, unsigned &outIndex)
-{
-    //double xValue = _GetClosestXValue(in);
-    outIndex = m_graphicsContainer->GetLastClosestHorizontalValueIndex(inValue);
-    return outIndex != ~0;
-}*/
-
 void Plot::MyMousePressEvent(QMouseEvent *event)
 {
     m_mousePressPosition = event->pos();
@@ -242,24 +193,6 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
 
     ReplotIfNotDisabled();
 }
-
-/*int Plot::_MinMaxCorection(int xIndex)
-{
-    //FIXME: it is probably wrong it must be related to slider
-    switch (m_markerTypeSelection)
-    {
-    case MTSSample:
-    case MTSRangeAutoBorder:
-        return xIndex;
-    case MTSRangeLeftBorder:
-        return qMin(m_markerPositions.second, xIndex);
-    case MTSRangeRightBorder:
-        return qMax(m_markerPositions.first, xIndex);
-    default:
-        qDebug() << "unknown marker type";
-        return xIndex;
-    }
-}*/
 
 void Plot::ZoomToFit()
 {

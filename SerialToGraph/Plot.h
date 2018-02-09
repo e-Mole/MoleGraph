@@ -56,10 +56,8 @@ public:
 private:
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
-    //double _GetClosestXValue(double in);
     bool _FillClosestXIndex(double inValue, unsigned &outIndex);
     QCPItemLine *_AddMarkerLine(QCPItemLine *markerLine, int position, const QColor color);
-    //int _MinMaxCorection(int xIndex);
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
     QCPItemRect *_DrawOutRect(bool isLeft, int position);
 

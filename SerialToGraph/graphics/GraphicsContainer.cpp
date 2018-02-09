@@ -387,21 +387,6 @@ unsigned GraphicsContainer::GetClosestHorizontalValueIndex(double value) const
     return closestIndex;
 }
 
-/*unsigned GraphicsContainer::GetPositionByHorizontalValue(double value) const
-{
-    std::set<double>::iterator it = m_horizontalValueSet.begin();
-    int i = 0;
-    for (; it != m_horizontalValueSet.end(); ++it)
-    {
-        if (value == *it)
-            return i;
-        i++;
-    }
-
-    qCritical() << "horizontal value not found";
-    return 0;
-}*/
-
 double GraphicsContainer::GetHorizontalValueBySliderPos(unsigned position) const
 {
     //FIXME: not really efective when there will be a lot of values and will be called often

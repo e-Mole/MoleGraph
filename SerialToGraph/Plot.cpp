@@ -1,7 +1,6 @@
 #include "Plot.h"
 #include <Axis.h>
 #include <ChannelWidget.h>
-#include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <qmath.h>
 #include <QColor>
@@ -600,37 +599,6 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Plot::DisplayChannelValue(ChannelWidget *channelWidget)
-{ 
-    Measurement *m = m_graphicsContainer->GetChannel(channelWidget)->GetMeasurement();
-    ChannelBase *horizontalChannel = m_graphicsContainer->GetHorizontalChannel(m);
-    int firstIndex = horizontalChannel->GetLastValueIndex(
-        m_graphicsContainer->GetHorizontalValueBySliderPos(m_markerPositions.first));
-    if (m_markerTypeSelection == MTSSample)
-    {
-        if (m_markerPositions.first != std::numeric_limits<int>::min())
-        {
-            ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
-            channelWidget->FillLastValueText(channel->GetValue(firstIndex));
-            channelWidget->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
-        }
-    }
-    else
-    {
-        int secondIndex = horizontalChannel->GetLastValueIndex(
-            m_graphicsContainer->GetHorizontalValueBySliderPos(m_markerPositions.second));
-
-        double rangeValue = 0;
-        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
-        if (channel->FillRangeValue(firstIndex, secondIndex, m_markerRangeValue, rangeValue))
-        {
-            //FIXME: stange
-            channelWidget->FillLastValueText(rangeValue);
-            channelWidget->ShowLastValueWithUnits();
-        }
-    }
-}
-
 void Plot::RemoveGraph(ChannelGraph *graph)
 {
     removeGraph(graph);
@@ -653,9 +621,6 @@ void Plot::RefillGraphs()
                 QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
             );
         }
-
-        if (!m_graphicsContainer->IsHorizontalValueSetEmpty())
-            DisplayChannelValue(channelWidget);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();

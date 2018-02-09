@@ -676,8 +676,6 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned version)
     for (unsigned i = 0; i < trackedHwChannelCount; ++i)
         _DeserializeChannelData(in, version);
 
-
-    GetWidget()->GetPlot()->RefillGraphs();
     if (m_sampleChannel->GetValueCount() != 0)
         m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
 
@@ -689,6 +687,8 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned version)
         m_valueSetCount = 0;
     }
 
+
+    m_widget->RefillWidgets();
     m_widget->ReplaceDisplays();//false
 }
 

@@ -46,8 +46,6 @@ public:
         MinValue
     };
 
-private:
-
     enum MarkerTypeSelection{
       MTSSample,
       MTSRangeAutoBorder,
@@ -55,6 +53,7 @@ private:
       MTSRangeRightBorder
     };
 
+private:
     void _SetDragAndZoom(QCPAxis *xAxis, QCPAxis *yAxis);
     bool _IsGraphAxisEmpty(QCPAxis *graphAxis);
     //double _GetClosestXValue(double in);
@@ -122,7 +121,6 @@ public:
     void ZoomToFit();
     DisplayMode GetDisplayMode() { return m_displayMode; }
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
-    void DisplayChannelValue(ChannelWidget *channelWidget);
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
     void RedrawChannelMarks(int position);
 
@@ -130,6 +128,11 @@ public:
         unsigned shapeIndex,
         bool shapeVisible,
         Qt::PenStyle lineStyle);
+
+    QPair<int, int>& GetMarkerPositions() { return m_markerPositions; }
+    MarkerTypeSelection GetMarkerTypeSelection() { return m_markerTypeSelection; }
+    ChannelBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
+
 signals:
     void markerLinePositionChanged(int xIndex);
 public slots:

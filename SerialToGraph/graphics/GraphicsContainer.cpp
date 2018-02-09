@@ -237,7 +237,7 @@ void GraphicsContainer::RedrawChannelValues()
     {
         if (!channelWidget->isVisible())
             continue;
-        m_plot->DisplayChannelValue(channelWidget);
+        _DisplayChannelValue(channelWidget);
     }
 }
 
@@ -316,7 +316,7 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
         {
             foreach (ChannelWidget *channelWidget, m_channelWidgets)
             {
-                    m_plot->DisplayChannelValue(channelWidget);
+                    _DisplayChannelValue(channelWidget);
             }
         }
         m_plot->RescaleAxis(m_plot->xAxis);
@@ -705,7 +705,7 @@ void GraphicsContainer::RecalculateSliderMaximum()
     {
         _FollowLastMeasuredValue();
     }
-    m_plot->RefillGraphs();
+    RefillWidgets();
 }
 
 
@@ -933,7 +933,7 @@ void GraphicsContainer::sampleChannelPropertyChanged()
 
     widget->ShowLastValueWithUnits();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
-    GetPlot()->RefillGraphs();
+    RefillWidgets();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
@@ -1066,4 +1066,44 @@ QKeySequence GraphicsContainer::GetNoChannelsSequence()
 void GraphicsContainer::replaceDisplays()
 {
     ReplaceDisplays();
+}
+
+void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
+{
+    ChannelBase *channel = GetChannel(channelWidget);
+    ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
+    int firstIndex = horizontalChannel->GetLastValueIndex(
+        GetHorizontalValueBySliderPos(m_plot->GetMarkerPositions().first));
+    if (m_plot->GetMarkerTypeSelection() == Plot::MTSSample)
+    {
+        if (m_plot->GetMarkerPositions().first != std::numeric_limits<int>::min())
+        {
+            channelWidget->FillLastValueText(channel->GetValue(firstIndex));
+            channelWidget->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
+        }
+    }
+    else
+    {
+        int secondIndex = horizontalChannel->GetLastValueIndex(
+            GetHorizontalValueBySliderPos(m_plot->GetMarkerPositions().second));
+
+        double rangeValue = 0;
+        if (channel->FillRangeValue(firstIndex, secondIndex, m_plot->GetMarkerRangeValue(), rangeValue))
+        {
+            channelWidget->FillLastValueText(rangeValue);
+            channelWidget->ShowLastValueWithUnits();
+        }
+    }
+}
+
+void GraphicsContainer::RefillWidgets()
+{
+    m_plot->RefillGraphs();
+    if (!IsHorizontalValueSetEmpty())
+    {
+        foreach (ChannelWidget *channelWidget, m_channelWidgets)
+        {
+            _DisplayChannelValue(channelWidget);
+        }
+    }
 }

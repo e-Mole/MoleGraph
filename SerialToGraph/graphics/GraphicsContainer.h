@@ -75,6 +75,7 @@ class GraphicsContainer : public QWidget
     QString _GetRealTimeText(SampleChannel *channel, double secSinceEpoch);
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
+    void _DisplayChannelValue(ChannelWidget *channelWidget);
 
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
@@ -157,6 +158,7 @@ public:
     QKeySequence GetAllChannelsSequence();
     QKeySequence GetNoChannelsSequence();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
+    void RefillWidgets();
 signals:
     void resized();
 

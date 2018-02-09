@@ -157,8 +157,6 @@ private:
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
     bool GetMarksShown();
-    void SetHorizontalChannel(ChannelBase *channel);
-    ChannelBase *GetHorizontalChannel() const;
     bool IsPlotInRangeMode();
     int GetCurrentIndex();
     void DrawRestData();

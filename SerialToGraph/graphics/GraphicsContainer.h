@@ -28,7 +28,7 @@ class QVBoxLayout;
 class GraphicsContainer : public QWidget
 {
     Q_OBJECT
-
+    Measurement *m_mainMeasurement;
     QHBoxLayout *m_mainLayout;
     QVBoxLayout *m_plotAndSliderLayout;
     QVBoxLayout *m_displaysAndSliderLayout;
@@ -44,12 +44,17 @@ class GraphicsContainer : public QWidget
     std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
     std::map<ChannelBase *, ChannelGraph *> m_channelToGraphMapping;
     std::set<double> m_horizontalValueSet;
-    ChannelBase *m_horizontalChannel;
+    double m_lastMeasuredHorizontalValue;
     QVector<Axis*> m_axes;
 
     bool m_marksShown;
     ChannelWidget *m_sampleChannelWidget;
     SampleChannel *m_sampleChannel;
+    KeyShortcut *m_plotKeyShortcut;
+    QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
+    KeyShortcut *m_allChannelsShortcut;
+    KeyShortcut *m_noChannelsShortcut;
+    QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
     virtual QSize sizeHint() const { return QSize(800,700); }
@@ -71,13 +76,8 @@ class GraphicsContainer : public QWidget
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
 
-    KeyShortcut *m_plotKeyShortcut;
-    QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
-    KeyShortcut *m_allChannelsShortcut;
-    KeyShortcut *m_noChannelsShortcut;
-
 public:
-    GraphicsContainer(QWidget *parent, QString const &name, bool markShown);
+    GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
     ~GraphicsContainer();
     void SetGrid(bool grid);
     void ReplaceDisplays();
@@ -96,13 +96,12 @@ public:
     void ShowGraph(bool show);
     bool IsPlotVisible() const;
     bool IsPlotInRangeMode();
-    int GetLastClosestHorizontalValueIndex(double xValue) const;
-    unsigned GetPositionByHorizontalValue(double value) const;
+    unsigned GetClosestHorizontalValueIndex(double value) const;
+    //unsigned GetPositionByHorizontalValue(double value) const;
     double GetHorizontalValueBySliderPos(unsigned position) const;
-    unsigned GetCurrentHorizontalChannelIndex() const;
-    unsigned GetHorizontalValueLastInex(double value) const;
     int GetSliderPos();
-    void SetHorizontalChannel(ChannelBase *channel);
+    double GetLastMeasuredHorizontalValue(Measurement *m);
+    void SetHorizontalChannel(Measurement *m, ChannelBase *channel);
     Axis * CreateNewAxis(unsigned index);
     Axis * CreateYAxis(QColor const & color);
     void RemoveAxis(Axis * axis);
@@ -125,7 +124,7 @@ public:
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
     bool RemoveGraph(ChannelWidget *channelWidget);
     void RescaleAxes(ChannelWidget *channelWidget);
-    ChannelBase *GetHorizontalChannel() const;
+    ChannelBase *GetHorizontalChannel(Measurement *measurement) const;
     std::vector<ChannelWidget *> &GetChannelWidgets();
     unsigned GetChannelWidgetCount();
     ChannelWidget *GetChannelWidget(unsigned index);
@@ -148,7 +147,6 @@ public:
         QString const & units);
 
     ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
-    void UpdateGraphs();
     QString GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat);
     QString GetSampleChannelStyleText(SampleChannel::Style style);
     QString GetValueTimestamp(SampleChannel *channel, unsigned index);

@@ -28,8 +28,9 @@
 
 using namespace atog;
 
-GraphicsContainer::GraphicsContainer(QWidget *parent, const QString &name, bool markShown) :
+GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, const QString &name, bool markShown) :
     QWidget(parent),
+    m_mainMeasurement(mainMeasurement),
     m_mainLayout(NULL),
     m_plotAndSliderLayout(NULL),
     m_displaysAndSliderLayout(NULL),
@@ -40,7 +41,7 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, const QString &name, bool 
     m_scrollBar(NULL),
     m_currentIndex(-1),
     m_followMode(true),
-    m_horizontalChannel(NULL),
+    m_lastMeasuredHorizontalValue(std::numeric_limits<double>::infinity()),
     m_marksShown(markShown),
     m_sampleChannelWidget(NULL),
     m_sampleChannel(NULL),
@@ -269,14 +270,13 @@ void GraphicsContainer::sliderValueChanged(int value)
 
 void GraphicsContainer::_FollowLastMeasuredValue()
 {
-    if (m_horizontalValueSet.empty())
-        return;
+    double foundValue = GetLastMeasuredHorizontalValue(m_mainMeasurement);
+    if (foundValue == ChannelBase::GetNaValue())
+        return; //nothing to follow
 
-    auto foundValue = m_horizontalValueSet.find(m_horizontalChannel->GetMaxValue());
-    if (foundValue == m_horizontalValueSet.end())
-        return; //probably are present only ghost channels
+    auto foundIterator = m_horizontalValueSet.find(foundValue);
 
-    m_scrollBar->setSliderPosition(std::distance(m_horizontalValueSet.begin(), foundValue));
+    m_scrollBar->setSliderPosition(std::distance(m_horizontalValueSet.begin(), foundIterator));
     if (m_scrollBar->maximum() == 0)
         sliderValueChanged(0);
     m_plot->ReplotIfNotDisabled();
@@ -366,12 +366,28 @@ bool GraphicsContainer::IsPlotInRangeMode()
     return GetPlot()->IsInRangeMode();
 }
 
-int GraphicsContainer::GetLastClosestHorizontalValueIndex(double xValue) const
+unsigned GraphicsContainer::GetClosestHorizontalValueIndex(double value) const
 {
-    return m_horizontalChannel->GetLastClosestValueIndex(xValue);
+    if (value == ChannelBase::GetNaValue())
+        return ~0;
+
+    double closestValue = 0;
+    unsigned closestIndex = ~0;
+    unsigned indexInSet = 0;
+    foreach (double valueInSet, m_horizontalValueSet)
+    {
+        if (fabs(valueInSet - value) < qFabs(valueInSet - closestValue))
+        {
+            closestValue = valueInSet;
+            closestIndex = indexInSet;
+        }
+        indexInSet++;
+    }
+
+    return closestIndex;
 }
 
-unsigned GraphicsContainer::GetPositionByHorizontalValue(double value) const
+/*unsigned GraphicsContainer::GetPositionByHorizontalValue(double value) const
 {
     std::set<double>::iterator it = m_horizontalValueSet.begin();
     int i = 0;
@@ -384,7 +400,7 @@ unsigned GraphicsContainer::GetPositionByHorizontalValue(double value) const
 
     qCritical() << "horizontal value not found";
     return 0;
-}
+}*/
 
 double GraphicsContainer::GetHorizontalValueBySliderPos(unsigned position) const
 {
@@ -400,36 +416,26 @@ double GraphicsContainer::GetHorizontalValueBySliderPos(unsigned position) const
     return 0;
 }
 
-unsigned GraphicsContainer::GetCurrentHorizontalChannelIndex() const
-{
-    return GetHorizontalValueLastInex(GetHorizontalValueBySliderPos(m_currentIndex));
-}
-unsigned GraphicsContainer::GetHorizontalValueLastInex(double value) const
-{
-    ChannelBase *horizontal = GetHorizontalChannel();
-    for (int i = horizontal->GetValueCount()-1; i >= 0; i--)
-        if (horizontal->GetValue(i) == value)
-            return i;
-
-    qCritical() << "required value was not found in horizontal channel";
-    return 0;
-}
-
 int GraphicsContainer::GetSliderPos()
 {
     return  m_scrollBar->value();
 }
 
-void GraphicsContainer::SetHorizontalChannel(ChannelBase *channel)
+double GraphicsContainer::GetLastMeasuredHorizontalValue(Measurement *m)
 {
-    m_horizontalChannel = channel;
-    m_horizontalValueSet.clear();
-    for (unsigned index = 0; index < channel->GetValueCount(); index++)
-        m_horizontalValueSet.insert(channel->GetValue(index));
+    if (!m_horizontalChannelMapping.contains(m))
+    {
+        qWarning("Expected horizontal channel has not been found");
+        return ChannelBase::GetNaValue();
+    }
 
-    m_scrollBar->setRange(0, m_horizontalValueSet.size()-1);
-    m_scrollBar->setValue(m_horizontalValueSet.size()-1); //move to last (mark lines and maprks will be moved too)
-    m_plot->RefillGraphs();
+    return m_horizontalChannelMapping[m]->GetLastValidValue();
+}
+
+void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel)
+{
+    m_horizontalChannelMapping.insert(m, channel);
+    RecalculateSliderMaximum();
 }
 
 Axis * GraphicsContainer::_CreateAxis(QColor const & color, QCPAxis *graphAxis)
@@ -627,9 +633,14 @@ void GraphicsContainer::RescaleAxes(ChannelWidget *channelWidget)
     m_plot->ReplotIfNotDisabled();
 }
 
-ChannelBase *GraphicsContainer::GetHorizontalChannel() const
+ChannelBase *GraphicsContainer::GetHorizontalChannel(Measurement *measurement) const
 {
-    return m_horizontalChannel;
+    if (!m_horizontalChannelMapping.contains(measurement))
+    {
+        qWarning("horzontalChannelMaping doesnt contain required measurement");
+        return NULL;
+    }
+    return m_horizontalChannelMapping[measurement];
 }
 
 std::vector<ChannelWidget *> &GraphicsContainer::GetChannelWidgets()
@@ -681,10 +692,20 @@ void GraphicsContainer::editChannel()
 
 void GraphicsContainer::RecalculateSliderMaximum()
 {
-    ClearHorizontalValueSet();
-    ChannelBase *horizontalChannel = GetHorizontalChannel();
-    for (unsigned i = 0; i < horizontalChannel->GetValueCount(); i++)
-        AddHorizontalValue(horizontalChannel->GetValue(i));
+    m_horizontalValueSet.clear();
+    foreach (ChannelBase *horizontalChannel, m_horizontalChannelMapping.values())
+    {
+        for (unsigned index = 0; index < horizontalChannel->GetValueCount(); index++)
+            m_horizontalValueSet.insert(horizontalChannel->GetValue(index));
+    }
+
+
+    CalculateScrollbarRange();
+    if (m_followMode)
+    {
+        _FollowLastMeasuredValue();
+    }
+    m_plot->RefillGraphs();
 }
 
 
@@ -693,15 +714,15 @@ void GraphicsContainer::addNewValueSet()
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
-    ChannelBase * horizontalChannel = m->GetHorizontalChannel();
+    ChannelBase * horizontalChannel = GetHorizontalChannel(m);
     SampleChannel * sampleChannel = m->GetSampleChannel();
-    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValue(), sampleChannel->GetLastValue(), false);
+    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
-        m_channelToWidgetMapping[channel]->UpdateGraph(horizontalChannel->GetLastValue(), channel->GetLastValue(), false);
+        m_channelToWidgetMapping[channel]->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
     }
-    AddHorizontalValue(horizontalChannel->GetLastValue());
+    AddHorizontalValue(horizontalChannel->GetLastValidValue());
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
@@ -834,24 +855,10 @@ void GraphicsContainer::hwValueChanged(unsigned index)
 
     widget->FillLastValueText(newValue);
     widget->ShowLastValueWithUnits(channel->GetValueType(index));
-    ChannelBase *horizontalChannel = GetHorizontalChannel();
+    ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
     widget->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
 }
 
-void GraphicsContainer::UpdateGraphs()
-{
-    for (unsigned i = 0; i < m_sampleChannel->GetValueCount(); ++i)
-    {
-        //FIXME: will not work for ghosts
-        double xValue = GetHorizontalChannel()->GetValue(i);
-        for (auto item : m_channelToWidgetMapping)
-        {
-            ChannelBase *channel = item.first;
-            if (channel->GetValueCount() > i)
-                item.second->UpdateGraph(xValue, channel->GetValue(i), false);
-        }
-    }
-}
 
 QString GraphicsContainer::GetSampleChannelStyleText(SampleChannel::Style style)
 {

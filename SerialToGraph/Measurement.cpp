@@ -45,6 +45,7 @@ Measurement::Measurement(
     m_widget(
         new GraphicsContainer(
             parent,
+            this,
             tr("Measurement %1").arg(context.m_measurements.size() + 1),
             source != NULL ? source->GetMarksShown() :false
         )
@@ -231,7 +232,7 @@ void Measurement::draw()
                 goto FINISH_DRAW;
         } while (_IsCompleteSetInQueue());
 
-        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel()->GetLastValue());
+        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
         _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
     }
 
@@ -421,7 +422,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
         }
 
         if (sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)->IsOnHorizontalAxis())
-            SetHorizontalChannel(m_channels.last());
+            m_widget->SetHorizontalChannel(this, m_channels.last());
 
         hwIndex++;
     }
@@ -445,7 +446,7 @@ void Measurement::_InitializeAxesAndChanels()
     ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis);
 
     m_channels.push_back(m_sampleChannel);
-    SetHorizontalChannel(m_sampleChannel);
+    m_widget->SetHorizontalChannel(this, m_sampleChannel);
 
     for (unsigned i = 0; i < CHANNEL_COUNT; i++)
         _AddYChannel(i, yAxis);
@@ -574,7 +575,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 
     m_channels.push_back(channel);
     if (channelWidget->IsOnHorizontalAxis())
-        SetHorizontalChannel(channel);
+        m_widget->SetHorizontalChannel(this, channel);
 }
 
 ChannelBase *Measurement::_FindChannel(int hwIndex)
@@ -676,9 +677,9 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned version)
         _DeserializeChannelData(in, version);
 
 
-    GetWidget()->UpdateGraphs();
+    GetWidget()->GetPlot()->RefillGraphs();
     if (m_sampleChannel->GetValueCount() != 0)
-        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel()->GetLastValue());
+        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
 
     if (!m_saveLoadValues)
     {
@@ -722,16 +723,6 @@ void Measurement::_SetType(Type type)
 {
     m_type = type;
     stateChanged();
-}
-
-void Measurement::SetHorizontalChannel(ChannelBase *channel)
-{
-    m_widget->SetHorizontalChannel(channel);
-}
-
-ChannelBase *Measurement::GetHorizontalChannel() const
-{
-    return m_widget->GetHorizontalChannel();
 }
 
 bool Measurement::IsPlotInRangeMode()

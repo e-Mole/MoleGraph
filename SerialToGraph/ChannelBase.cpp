@@ -40,7 +40,7 @@ void ChannelBase::AddValue( double value)
 {
     m_values.push_back(value);
 
-    if (value == ChannelWidget::GetNaValue())
+    if (value == GetNaValue())
         return;
 
     _UpdateExtremes(value);
@@ -164,28 +164,7 @@ bool ChannelBase::FillRangeValue(int left, int right, DisplayValue displayValue,
 Measurement * ChannelBase::GetMeasurement()
 {
     return m_measurement;
-}
-
-//I can't use == because same doubles have not to be exactly the same
-int ChannelBase::GetLastClosestValueIndex(double value) const
-{
-    double closestValue = 0;
-    int closestIndex = -1;
-    for (int i = m_values.count() -1; i >=0; --i)
-    {
-        if (IsValueNA(i))
-            continue;
-
-        double valueOnIndex = GetValue(i);
-        if (fabs(valueOnIndex - value) < qFabs(valueOnIndex - closestValue))
-        {
-            closestValue = valueOnIndex;
-            closestIndex = i;
-        }
-    }
-
-    return closestIndex;
-}
+}    
 
 double ChannelBase::GetValue(unsigned index) const
 {
@@ -199,7 +178,7 @@ double ChannelBase::GetValue(unsigned index) const
 
 bool ChannelBase::IsValueNA(int index) const
 {
-    return index >= GetValueCount() || GetValue(index) == ChannelWidget::GetNaValue();
+    return index >= GetValueCount() || GetValue(index) == GetNaValue();
 }
 
 void ChannelBase::_RecalculateExtremes()
@@ -209,4 +188,35 @@ void ChannelBase::_RecalculateExtremes()
 
     for (unsigned i = 0; i < GetValueCount(); i++)
         _UpdateExtremes(GetValue(i));
+}
+
+double ChannelBase::GetLastValidValue()
+{
+    //here must be int because when count is equal zero first index is less than 0
+    for (int index = GetValueCount()-1; index >= 0; --index)
+    {
+        if (IsValueNA(index))
+            continue;
+
+        return GetValue(index);
+    }
+    return GetNaValue();
+}
+
+double ChannelBase::GetNaValue()
+{
+    return std::numeric_limits<double>::infinity();
+}
+
+
+unsigned ChannelBase::GetLastValueIndex(double value) const
+{
+    //here must be int because when count is equal zero first index is less than 0
+    for (int index = GetValueCount()-1; index >=0; --index)
+    {
+        if (GetValue(index) == value)
+            return index;
+    }
+    qWarning("Value is not present in channel");
+    return -1;
 }

@@ -79,8 +79,7 @@ public:
 
     virtual double GetValue(unsigned index) const;
 
-    virtual double GetLastValue()
-    { return GetValue(m_values.count()-1); } //GetValue is virtual
+    double GetLastValidValue();
 
     virtual void AddValue( double value);
 
@@ -96,11 +95,11 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
-    int GetLastClosestValueIndex(double value) const;
     bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
     bool IsValueNA(int index) const;
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
-signals:
+    static double GetNaValue();
+    unsigned GetLastValueIndex(double value) const;
 };
 
 #endif // CHANNEL_H

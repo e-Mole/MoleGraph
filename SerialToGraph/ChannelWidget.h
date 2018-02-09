@@ -76,7 +76,6 @@ public:
     QString GetName();
     void SetName(QString const &name);
     void UpdateTitle();
-    static double GetNaValue();
     static QString GetNAValueString();
     void DisplayNAValue(ChannelBase::ValueType type);
     QColor &GetForeColor() { return m_valueLabel->GetForeColor(); }

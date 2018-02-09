@@ -38,7 +38,7 @@ ChannelSettings::ChannelSettings(GraphicsContainer *graphicsContainer, ChannelWi
     m_format(NULL),
     m_penStyle(NULL),
     m_currentValueChanged(false),
-    m_currentValue(ChannelWidget::GetNaValue())
+    m_currentValue(ChannelBase::GetNaValue())
 {
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
     m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
@@ -79,7 +79,10 @@ void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
     connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
     curValLayout->addWidget(naValue);
 
-    int currentIndex = m_graphicsContainer->GetCurrentHorizontalChannelIndex();
+    double currentHorizontalValue =
+        m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
+    unsigned currentIndex =
+        m_graphicsContainer->GetHorizontalChannel(channel->GetMeasurement())->GetLastValueIndex(currentHorizontalValue);
     if (currentIndex < (int)channel->GetValueCount())
     {
         QLocale locale(QLocale::system());
@@ -109,7 +112,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     QLocale locale(QLocale::system());
     double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(m_graphicsContainer->GetCurrentIndex());
     m_currentValueControl->setText(
-        (currentValue == ChannelWidget::GetNaValue()) ?
+        (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
             locale.toString(currentValue)
     );
@@ -121,7 +124,7 @@ void ChannelSettings::setOriginalValue(bool checked)
 void ChannelSettings::setNaValue(bool)
 {
     m_currentValueControl->setText(ChannelWidget::GetNAValueString());
-    m_currentValue = ChannelWidget::GetNaValue();
+    m_currentValue = ChannelBase::GetNaValue();
 }
 
 void ChannelSettings::currentValueChanged(QString const &content)
@@ -219,7 +222,7 @@ bool ChannelSettings::BeforeAccept()
 
             changedHorizontal = true;
             m_channelWidget->ShowOrHideGraph(false);
-            m_graphicsContainer->SetHorizontalChannel(m_channel);
+            m_graphicsContainer->SetHorizontalChannel(m_channel->GetMeasurement(), m_channel);
         }
 
         Axis *lastAxis = m_channelWidget->GetChannelGraph()->GetValuleAxis();
@@ -237,7 +240,7 @@ bool ChannelSettings::BeforeAccept()
         QLocale locale(QLocale::system());
         bool ok;
         locale.toDouble(m_currentValueControl->text(), &ok);
-        if (m_currentValue != m_channelWidget->GetNaValue() && !ok)
+        if (m_currentValue != ChannelBase::GetNaValue() && !ok)
         {
             MyMessageBox::information(this, tr("Current value is not a number."));
             return false;

@@ -1,4 +1,5 @@
 #include "Axis.h"
+#include "ChannelBase.h"
 #include "ChannelWidget.h"
 #include <ChannelGraph.h>
 #include <GlobalSettings.h>
@@ -279,18 +280,13 @@ void ChannelWidget::DisplayNAValue(ChannelBase::ValueType type)
     ShowLastValueWithUnits(type);
 }
 
-double ChannelWidget::GetNaValue()
-{
-    return std::numeric_limits<double>::infinity();
-}
-
 void ChannelWidget::FillLastValueText(QString text)
 {
     m_lastValueText = text;
 }
 void ChannelWidget::FillLastValueText(double value)
 {
-    if (value == GetNaValue())
+    if (value == ChannelBase::GetNaValue())
     {
         m_lastValueText = GetNAValueString();
         return;
@@ -340,7 +336,7 @@ void ChannelWidget::ShowOrHideGraph(bool shown)
 
 void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
 {
-    if (yValue == GetNaValue())
+    if (yValue == ChannelBase::GetNaValue())
         m_channelGraph->data()->remove(xValue);
     else
         m_channelGraph->data()->insert(xValue, QCPData(xValue, yValue));

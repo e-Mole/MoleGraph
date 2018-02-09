@@ -386,7 +386,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
                         continue;
 
                     for (unsigned j = 0; j < sampleCount; j++)
-                        channel->AddValue(ChannelWidget::GetNaValue());
+                        channel->AddValue(ChannelBase::GetNaValue());
                 }
             }
         }

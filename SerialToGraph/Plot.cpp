@@ -137,7 +137,7 @@ bool Plot::event(QEvent *event)
     return QCustomPlot::event(event);
 }
 
-double Plot::_GetClosestXValue(double in)
+/*double Plot::_GetClosestXValue(double in)
 {
     if (graphCount()== 0)
     {
@@ -177,14 +177,14 @@ double Plot::_GetClosestXValue(double in)
     }
 
     return xValue;
-}
+}*/
 
-bool Plot::_GetClosestXIndex(double in, int &out)
+/*bool Plot::_FillClosestXIndex(double inValue, unsigned &outIndex)
 {
-    double xValue = _GetClosestXValue(in);
-    out = m_graphicsContainer->GetLastClosestHorizontalValueIndex(xValue);
-    return out != -1;
-}
+    //double xValue = _GetClosestXValue(in);
+    outIndex = m_graphicsContainer->GetLastClosestHorizontalValueIndex(inValue);
+    return outIndex != ~0;
+}*/
 
 void Plot::MyMousePressEvent(QMouseEvent *event)
 {
@@ -233,19 +233,18 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
         qDebug() << "mouse handled";
         return;
     }
-    int xIndex;
-    if (_GetClosestXIndex(xAxis->pixelToCoord(event->pos().x()), xIndex))
+
+    int xIndex = m_graphicsContainer->GetClosestHorizontalValueIndex(xAxis->pixelToCoord(event->pos().x()));
+    if (~0 != xIndex)
     {
-        qDebug() << "clickedToPlot calling";
-        xIndex = _MinMaxCorection(xIndex);
-        double xValue = m_graphicsContainer->GetHorizontalChannel()->GetValue(xIndex);
-        SetMarkerLine(m_graphicsContainer->GetPositionByHorizontalValue(xValue));
+        //FIXME: I find closest XValue too by processing GetClosestHorizontalValueIndex I should use it and dont find it again
+        SetMarkerLine(xIndex);
     }
 
     ReplotIfNotDisabled();
 }
 
-int Plot::_MinMaxCorection(int xIndex)
+/*int Plot::_MinMaxCorection(int xIndex)
 {
     //FIXME: it is probably wrong it must be related to slider
     switch (m_markerTypeSelection)
@@ -261,7 +260,7 @@ int Plot::_MinMaxCorection(int xIndex)
         qDebug() << "unknown marker type";
         return xIndex;
     }
-}
+}*/
 
 void Plot::ZoomToFit()
 {
@@ -603,12 +602,10 @@ void Plot::selectionChanged()
 
 void Plot::DisplayChannelValue(ChannelWidget *channelWidget)
 { 
-    int firstIndex =
-        m_graphicsContainer->GetHorizontalValueLastInex(
-            m_graphicsContainer->GetHorizontalValueBySliderPos(
-                m_markerPositions.first
-            )
-        );
+    Measurement *m = m_graphicsContainer->GetChannel(channelWidget)->GetMeasurement();
+    ChannelBase *horizontalChannel = m_graphicsContainer->GetHorizontalChannel(m);
+    int firstIndex = horizontalChannel->GetLastValueIndex(
+        m_graphicsContainer->GetHorizontalValueBySliderPos(m_markerPositions.first));
     if (m_markerTypeSelection == MTSSample)
     {
         if (m_markerPositions.first != std::numeric_limits<int>::min())
@@ -620,12 +617,8 @@ void Plot::DisplayChannelValue(ChannelWidget *channelWidget)
     }
     else
     {
-        int secondIndex =
-            m_graphicsContainer->GetHorizontalValueLastInex(
-                m_graphicsContainer->GetHorizontalValueBySliderPos(
-                    m_markerPositions.second
-                )
-            );
+        int secondIndex = horizontalChannel->GetLastValueIndex(
+            m_graphicsContainer->GetHorizontalValueBySliderPos(m_markerPositions.second));
 
         double rangeValue = 0;
         ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
@@ -649,9 +642,9 @@ void Plot::RefillGraphs()
     {
         channelWidget->GetChannelGraph()->clearData();
         ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
+        ChannelBase * horizontalChannel = m_graphicsContainer->GetHorizontalChannel(channel->GetMeasurement());
         for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
         {
-            ChannelBase * horizontalChannel = m_graphicsContainer->GetHorizontalChannel();
             if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
                 continue;
 

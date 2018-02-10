@@ -1107,7 +1107,9 @@ void GraphicsContainer::AddGhost(
     }
     ChannelWidget *channelWidget = CloneHwChannelWidget(
         sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1);
-    channelWidget->GetChannelGraph()->SetPenStyle(Qt::DotLine);
+    channelWidget->SetPenStyle(Qt::DashLine);
 
+    _DisplayChannelValue(channelWidget);
     m_plot->RefillGraphs();
+    m_plot->SetMarkerLine(m_currentIndex);
 }

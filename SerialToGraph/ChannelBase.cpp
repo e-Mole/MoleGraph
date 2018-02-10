@@ -171,7 +171,7 @@ double ChannelBase::GetValue(unsigned index) const
     if (index >= m_values.count())
     {
         qCritical() << "value is out of range";
-        return 0;
+        return GetNaValue();
     }
     return m_values[index];
 }

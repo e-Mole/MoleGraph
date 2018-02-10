@@ -378,7 +378,9 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         }
         else
         {
+            m_graphicsContainerManager->AddGhost(m_measurements[1],1,0, m_measurements[0]);
             m_graphicsContainerManager->AddGhost(m_measurements[0],1,0, m_measurements[1]);
+
         }
 
         unsigned sampleCount = 0;

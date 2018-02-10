@@ -33,7 +33,6 @@ private:
     QString _GetName();
 protected:
     void mousePressEvent(QMouseEvent * event);
-    void _FillLastValueText(double value);
     double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
     double _GetMinInRange(int left, int right);

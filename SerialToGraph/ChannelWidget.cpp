@@ -283,10 +283,6 @@ void ChannelWidget::DisplayNAValue(ChannelBase::ValueType type)
     ShowLastValueWithUnits(type);
 }
 
-void ChannelWidget::FillLastValueText(QString text)
-{
-    m_lastValueText = text;
-}
 void ChannelWidget::FillLastValueText(double value)
 {
     if (value == ChannelBase::GetNaValue())

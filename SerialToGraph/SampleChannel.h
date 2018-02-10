@@ -51,7 +51,6 @@ private:
     void _SetStyle(Style style);
     void _SetTimeUnits(TimeUnits units);
     void _SetFormat(RealTimeFormat format);
-    void _FillLastValueTextFromIndex(int index);
     QDateTime _GetStartDateTime() { return m_startDateTime; }
     QString _GetRealTimeText(double secSinceEpoch);
 

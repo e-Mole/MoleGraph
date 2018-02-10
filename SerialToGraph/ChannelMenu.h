@@ -18,7 +18,7 @@ class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
-    void _AddChannel(ChannelWidget *channelWidget, bool removable);
+    void _AddChannel(ChannelWidget *channelWidget);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(unsigned row, QString const &shortcut);

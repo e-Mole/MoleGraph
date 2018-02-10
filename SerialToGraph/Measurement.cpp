@@ -394,7 +394,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
                 hwChannel,
                 sourceMeasurement->GetWidget(),
                 sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel),
-                hwIndex);
+                hwIndex,
+                false);
             m_channels.push_back(hwChannel);
 
         }
@@ -443,7 +444,7 @@ void Measurement::_InitializeAxesAndChanels()
             SampleChannel::Sec,
             SampleChannel::hh_mm_ss
         );
-    ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis);
+    ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis, false);
 
     m_channels.push_back(m_sampleChannel);
     m_widget->SetHorizontalChannel(this, m_sampleChannel);
@@ -459,7 +460,7 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order);
-    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "");
+    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
 
     m_channels.push_back(newChannel);
 }
@@ -555,7 +556,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     if (hwIndex == -1)
     {
         channel = new SampleChannel(this);
-        channelWidget =  m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis);
+        channelWidget =  m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis, false);
 
         m_sampleChannel = (SampleChannel*)channel;
         isSampleChannel = true;
@@ -563,7 +564,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     else
     {
         channel = new HwChannel(this, hwIndex);
-        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "");
+        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
 
     }
 

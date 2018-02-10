@@ -51,10 +51,10 @@ class ChannelWidget : public QWidget
     QString m_units;
     bool m_isVisible;
     unsigned m_shortcutOrder;
+    bool m_isGhost;
 
 public:
-    ChannelWidget(
-        QWidget* parent,
+    ChannelWidget(QWidget* parent,
         ChannelGraph *channelGraph,
         unsigned shortcutOrder,
         const QString &name,
@@ -63,7 +63,8 @@ public:
         QString units,
         Qt::PenStyle penStyle,
         ChannelBase::ValueType valueType,
-        Plot *plot
+        Plot *plot,
+        bool isGhost
     );
 
     void setTitle(QString const &title);
@@ -100,6 +101,7 @@ public:
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
     Plot* GetPlot();
     QKeySequence GetKeyShortcutSequence();
+    bool isGhost() {return m_isGhost; }
 signals:
     void clicked();
     void sizeChanged();

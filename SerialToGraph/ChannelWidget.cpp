@@ -22,7 +22,8 @@ ChannelWidget::ChannelWidget(
     QString units,
     Qt::PenStyle penStyle,
     ChannelBase::ValueType valueType,
-    Plot *plot
+    Plot *plot,
+    bool isGhost
 ) :
     QWidget(parent),
     m_name(name),
@@ -41,7 +42,8 @@ ChannelWidget::ChannelWidget(
     m_penStyle(penStyle),
     m_units(units),
     m_isVisible(isActive),
-    m_shortcutOrder(shortcutOrder)
+    m_shortcutOrder(shortcutOrder),
+    m_isGhost(isGhost)
 {
     connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
 
@@ -56,6 +58,7 @@ ChannelWidget::ChannelWidget(
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
+    SetTransparent(isGhost);
 }
 
 QKeySequence ChannelWidget::GetKeyShortcutSequence()
@@ -134,7 +137,7 @@ void ChannelWidget::ValueLabel::SetForeColor(const QColor &color)
     style = QString("QLabel { background-color : rgb(%1, %2, %3);").
             arg(m_backColor.red()).
             arg(m_backColor.green()).
-            arg(m_backColor.blue());;
+            arg(m_backColor.blue());
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);

@@ -43,6 +43,7 @@ class GraphicsContainer : public QWidget
     std::map<ChannelWidget *, ChannelBase *> m_widgetToChannelMapping;
     std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
     std::map<ChannelBase *, ChannelGraph *> m_channelToGraphMapping;
+    QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
     std::set<double> m_horizontalValueSet;
     double m_lastMeasuredHorizontalValue;
     QVector<Axis*> m_axes;
@@ -51,7 +52,7 @@ class GraphicsContainer : public QWidget
     ChannelWidget *m_sampleChannelWidget;
     SampleChannel *m_sampleChannel;
     KeyShortcut *m_plotKeyShortcut;
-    QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
+
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
     QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
@@ -71,7 +72,7 @@ class GraphicsContainer : public QWidget
         bool visible,
         QString const & units,
         bool isSampleChannel
-    );
+    , bool isGhost);
     QString _GetRealTimeText(SampleChannel *channel, double secSinceEpoch);
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
@@ -83,7 +84,7 @@ public:
     void SetGrid(bool grid);
     void ReplaceDisplays();
     void _AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel);
-    //void RemoveChannel(ChannelBase *channel, bool replaceDisplays);
+    void RemoveChannelWidget(ChannelWidget *channelWidget);
     QString &GetName() {return m_name; }
     void SetName(QString const &name) {m_name = name; } //TODO:signal?
     Plot *GetPlot() const;
@@ -98,7 +99,6 @@ public:
     bool IsPlotVisible() const;
     bool IsPlotInRangeMode();
     unsigned GetClosestHorizontalValueIndex(double value) const;
-    //unsigned GetPositionByHorizontalValue(double value) const;
     double GetHorizontalValueBySliderPos(unsigned position) const;
     int GetSliderPos();
     double GetLastMeasuredHorizontalValue(Measurement *m);
@@ -136,7 +136,7 @@ public:
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    ChannelWidget *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis);
+    ChannelWidget *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost);
     ChannelWidget *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
 
     ChannelWidget *_CreateHwChannelWidget(HwChannel *channel,
@@ -145,9 +145,9 @@ public:
         QString const name,
         QColor const &color,
         bool visible,
-        QString const & units);
+        QString const & units, bool isGhost);
 
-    ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder);
+    ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost);
     QString GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat);
     QString GetSampleChannelStyleText(SampleChannel::Style style);
     QString GetValueTimestamp(SampleChannel *channel, unsigned index);

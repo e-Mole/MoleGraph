@@ -164,24 +164,32 @@ void GraphicsContainer::_AddChannelToMappings(ChannelBase *channel, ChannelWidge
         m_sampleChannelWidget = widget;
     }
 }
-/*
-void GraphicsContainer::RemoveChannel(ChannelBase *channel, bool replaceDisplays)
-{
-    ChannelWidget *widget = m_channelToWidgetMapping[channel];
-    m_widgetToChannelMapping.erase(widget);
 
+void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
+{
     for (auto it = m_channelWidgets.begin(); it != m_channelWidgets.end(); ++it)
-    {
-        if (*it == widget)
+    {    if ((*it) == channelWidget)
         {
             m_channelWidgets.erase(it);
+            break;
         }
     }
 
-    if (replaceDisplays)
-        ReplaceDisplays();
+    for (auto it = m_channelToWidgetMapping.begin(); it != m_channelToWidgetMapping.end(); ++it)
+    {
+        if (it->second == channelWidget)
+        {
+            m_channelToWidgetMapping.erase(it);
+            break;
+        }
+    }
+
+    m_widgetToChannelMapping.erase(channelWidget);
+    m_plot->removeGraph(channelWidget->GetChannelGraph());
+    delete channelWidget;
+    ReplaceDisplays();
 }
-*/
+
 void GraphicsContainer::ReplaceDisplays()
 {
     //reset stretch
@@ -744,7 +752,8 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     QColor const &color,
     bool visible,
     QString const & units,
-    bool isSampleChannel
+    bool isSampleChannel,
+    bool isGhost
 )
 {
     ChannelWidget *widget = new ChannelWidget(
@@ -757,7 +766,8 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
         units,
         Qt::SolidLine,
         isSampleChannel ? ChannelBase::ValueTypeSample : ChannelBase::ValueTypeUnknown,
-        GetPlot()
+        GetPlot(),
+        isGhost
     );
 
     _AddChannelToMappings(channel, widget, isSampleChannel);
@@ -766,12 +776,12 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     return widget;
 }
 
-ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis)
+ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost)
 {   
     m_sampleChannel = channel;
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
     ChannelWidget *widget = _CreateChannelWidget(
-        channel, channelGraph, 0, GetSampleChannelStyleText(SampleChannel::Samples), Qt::black, true, "", true);
+        channel, channelGraph, 0, GetSampleChannelStyleText(SampleChannel::Samples), Qt::black, true, "", true, isGhost);
 
     connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
 
@@ -791,7 +801,8 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
-        true
+        true,
+        false
     );
 
     connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
@@ -800,10 +811,10 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
 
 
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
-    HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units)
+    HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)
 {
     ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
-    ChannelWidget *widget = _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false);
+    ChannelWidget *widget = _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false, isGhost);
 
     channel->setActive(widget->isVisible());
     connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
@@ -811,8 +822,9 @@ ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
     return widget;
 }
 
+//FIXME: clonned channel should not be ghost, added for temporary code
 ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
-    HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder)
+    HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     ChannelWidget *widget = _CreateChannelWidget(
@@ -823,7 +835,8 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
-        false
+        false,
+        isGhost
     );
 
     channel->setActive(widget->isVisible());
@@ -1106,7 +1119,8 @@ void GraphicsContainer::AddGhost(
         AddHorizontalValue(sourceHorizontalChannel->GetValue(index));
     }
     ChannelWidget *channelWidget = CloneHwChannelWidget(
-        sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1);
+        sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1, true);
+    channelWidget->SetName(sourceGraphicsContainer->GetName() + " - " + channelWidget->GetName());
     channelWidget->SetPenStyle(Qt::DashLine);
 
     _DisplayChannelValue(channelWidget);

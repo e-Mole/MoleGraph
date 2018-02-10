@@ -68,7 +68,7 @@ void ChannelMenu::FillGrid()
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
-        _AddChannel(channelWidget, false);
+        _AddChannel(channelWidget);
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -76,7 +76,7 @@ void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
     if (!shortcut.isEmpty())
         m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
 }
-void ChannelMenu::_AddChannel(ChannelWidget *channelWidget, bool removable)
+void ChannelMenu::_AddChannel(ChannelWidget *channelWidget)
 {
     unsigned rowNr = m_gridLayout->rowCount();
     ColorCheckBox *cb = new ColorCheckBox(channelWidget->GetName(), this);
@@ -95,7 +95,7 @@ void ChannelMenu::_AddChannel(ChannelWidget *channelWidget, bool removable)
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(editButton, rowNr, 2);
 
-    if (removable)
+    if (channelWidget->isGhost())
     {
         QPushButton *removeButton = new QPushButton(tr("Remove"), this);
         m_editChannels[removeButton] = channelWidget;
@@ -129,8 +129,9 @@ void ChannelMenu::edit()
 void ChannelMenu::remove()
 {
     ChannelWidget * channelWidget = m_removeButtonToChannel[(QPushButton*)sender()];
+    m_graphicsContainer->RemoveChannelWidget(channelWidget);
+
     m_channelCheckBoxes.remove(channelWidget);
-    //m->RemoveChannel(m_graphicsContainer->GetChannel(channelWidget));
     for (int row = 0; row < m_gridLayout->rowCount(); row++)
     {
         for (int col = 0; col < m_gridLayout->columnCount(); col++)
@@ -145,7 +146,6 @@ void ChannelMenu::remove()
     FillGrid();
 
     m_graphicsContainer->RecalculateSliderMaximum();
-
 }
 
 void ChannelMenu::ActivateChannel(ChannelWidget *channelWidget, bool checked)

@@ -1,4 +1,5 @@
 #include "GraphicsContainerManager.h"
+#include "HwChannel.h"
 #include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <Measurement.h>
@@ -52,4 +53,30 @@ void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
         newContainer->Activate();
 
     m_currentMeasurement = m;
+}
+
+void GraphicsContainerManager::AddGhost(
+    Measurement *sourceMeasurement,
+    unsigned sourceValueChannelIndex,
+    unsigned sourceHorizontalChannelIndex,
+    Measurement * destMeasurement
+)
+{
+    GraphicsContainer *sourceGraphicsContainer = m_mapping[sourceMeasurement];
+    GraphicsContainer *destGraphicsContainer = m_mapping[destMeasurement];
+
+    if (
+        sourceMeasurement->GetChannelCount() <= sourceValueChannelIndex ||
+        sourceMeasurement->GetChannelCount() <= sourceHorizontalChannelIndex)
+    {
+        qWarning("Ghost channel can't be created becasuse a source channel index is out of range");
+        return;
+    }
+
+    destGraphicsContainer->AddGhost(
+        qobject_cast<HwChannel*>(sourceMeasurement->GetChannel(sourceValueChannelIndex)),
+        sourceGraphicsContainer,
+        sourceGraphicsContainer->GetChannelWidget(sourceValueChannelIndex),
+        sourceMeasurement->GetChannel(sourceHorizontalChannelIndex)
+    );
 }

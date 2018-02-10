@@ -1092,3 +1092,22 @@ void GraphicsContainer::RefillWidgets()
         }
     }
 }
+
+void GraphicsContainer::AddGhost(
+    HwChannel *sourceChannel,
+    GraphicsContainer *sourceGraphicsContainer,
+    ChannelWidget *sourceValueChannelWidget,
+    ChannelBase *sourceHorizontalChannel
+)
+{
+    m_horizontalChannelMapping.insert(sourceChannel->GetMeasurement(), sourceHorizontalChannel);
+    for (unsigned index = 0; index < sourceHorizontalChannel->GetValueCount(); ++index)
+    {
+        AddHorizontalValue(sourceHorizontalChannel->GetValue(index));
+    }
+    ChannelWidget *channelWidget = CloneHwChannelWidget(
+        sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1);
+    channelWidget->GetChannelGraph()->SetPenStyle(Qt::DotLine);
+
+    m_plot->RefillGraphs();
+}

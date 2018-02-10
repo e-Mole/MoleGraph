@@ -159,6 +159,12 @@ public:
     QKeySequence GetNoChannelsSequence();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void RefillWidgets();
+    void AddGhost(
+        HwChannel *sourceChannel,
+        GraphicsContainer *sourceGraphicsContainer,
+        ChannelWidget *sourceValueChannelWidget,
+        ChannelBase *sourceHorizontalChannel
+    );
 signals:
     void resized();
 

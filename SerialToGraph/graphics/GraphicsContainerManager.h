@@ -10,10 +10,12 @@ class GraphicsContainer;
 
 class GraphicsContainerManager : public QObject
 {
+    Q_OBJECT
+
     std::vector<GraphicsContainer *> m_graphicsContainers;
     std::map<Measurement *, GraphicsContainer *> m_mapping;
     Measurement * m_currentMeasurement;
-    Q_OBJECT
+
 public:
     explicit GraphicsContainerManager(QObject *parent = nullptr);
     void AddMeasurement(Measurement *m);
@@ -21,6 +23,12 @@ public:
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
     std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
     void ChangeMeasurement(Measurement *m);
+    void AddGhost(
+        Measurement *sourceMeasurement,
+        unsigned sourceValueChannelIndex,
+        unsigned sourceHorizontalChannelIndex,
+        Measurement * destMeasurement
+     );
 signals:
 
 public slots:

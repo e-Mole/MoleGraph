@@ -194,7 +194,6 @@ void ButtonLine::panelMenuButtonPressed()
     }
 
     ChannelMenu *channelMenu = new ChannelMenu(gc);
-    connect(channelMenu, SIGNAL(stateChanged()), this, SLOT(updateRunButtonsState()));
     channelMenu->ReinitGrid();
     updateRunButtonsState();
 

@@ -170,7 +170,6 @@ double ChannelBase::GetValue(unsigned index) const
 {
     if (index >= m_values.count())
     {
-        qCritical() << "value is out of range";
         return GetNaValue();
     }
     return m_values[index];
@@ -217,6 +216,5 @@ unsigned ChannelBase::GetLastValueIndex(double value) const
         if (GetValue(index) == value)
             return index;
     }
-    qWarning("Value is not present in channel");
     return -1;
 }

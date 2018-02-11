@@ -23,8 +23,9 @@
 #include <QString>
 #include <SampleChannel.h>
 
-ChannelSettings::ChannelSettings(GraphicsContainer *graphicsContainer, ChannelWidget *channelWidget) :
-    bases::FormDialogColor(channelWidget, tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
+ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, GraphicsContainer *graphicsContainer, ChannelWidget *channelWidget) :
+    bases::FormDialogColor (channelWidget, tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
+    m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
     m_channelWidget(channelWidget),
     m_channel(graphicsContainer->GetChannel(channelWidget)),
@@ -38,8 +39,15 @@ ChannelSettings::ChannelSettings(GraphicsContainer *graphicsContainer, ChannelWi
     m_format(NULL),
     m_penStyle(NULL),
     m_currentValueChanged(false),
-    m_currentValue(ChannelBase::GetNaValue())
+    m_currentValue(ChannelBase::GetNaValue()),
+    m_measurementCombo(NULL),
+    m_channelCombo(NULL)
 {
+    if (m_channelWidget->isGhost())
+    {
+        _InitializeGhostCombos();
+    }
+
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
     m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
 
@@ -62,6 +70,55 @@ ChannelSettings::ChannelSettings(GraphicsContainer *graphicsContainer, ChannelWi
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
     _InitializePenStyle(channelWidget->GetPenStyle());
+}
+
+void ChannelSettings::_InitializeGhostCombos()
+{
+    m_measurementCombo = new bases::ComboBox(this);
+    m_formLayout->addRow(new QLabel(tr("Measurement"), this), m_measurementCombo);
+
+    m_channelCombo = new bases::ComboBox(this);
+    m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
+
+    connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo()));
+    _FillMeasurementCombo();
+}
+
+void ChannelSettings::_FillMeasurementCombo()
+{
+    ChannelBase *originalChannel = m_graphicsContainer->GetChannel(m_channelWidget);
+    Measurement *originalMeasurement = originalChannel->GetMeasurement();
+
+    unsigned index = 0;
+    foreach (Measurement *item, m_measurements)
+    {
+        if (item->GetWidget() == m_graphicsContainer)
+            continue; //it is not possible to select channels from current gc
+
+        m_measurementCombo->addItem(item->GetWidget()->GetName(), index);
+        if (item == originalMeasurement)
+        {
+            m_measurementCombo->setCurrentIndex(index);
+        }
+        index++;
+    }
+}
+
+void ChannelSettings::fillChannelCombo()
+{
+    Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData()];
+    GraphicsContainer *currentGC = currentMeasurement->GetWidget();
+    ChannelBase *originalChannel = m_graphicsContainer->GetChannel(m_channelWidget);
+
+    for (unsigned index = 0; index < currentMeasurement->GetChannelCount(); ++index)
+    {
+        ChannelBase * iteratingChannel = currentMeasurement->GetChannel(index);
+        m_channelCombo->addItem(currentGC->GetChannelWidget(iteratingChannel)->GetName(), index);
+        if (iteratingChannel == originalChannel)
+        {
+            m_channelCombo->setCurrentIndex(index);
+        }
+    }
 }
 
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)

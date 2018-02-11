@@ -77,6 +77,7 @@ class GraphicsContainer : public QWidget
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
     void _DisplayChannelValue(ChannelWidget *channelWidget);
+    void _EraseChannelWidgetMappings(ChannelWidget *channelWidget);
 
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
@@ -165,12 +166,13 @@ public:
         ChannelWidget *sourceValueChannelWidget,
         ChannelBase *sourceHorizontalChannel
     );
+    void ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget);
 signals:
     void resized();
+    void editChannel(ChannelWidget *channelWidget);
 
 public slots:
     void sliderValueChanged(int value);
-    void editChannel(ChannelWidget *channelWidget);
     void editChannel();
     void addNewValueSet();
     void sampleChannelPropertyChanged();

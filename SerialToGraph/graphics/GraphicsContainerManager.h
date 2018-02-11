@@ -7,6 +7,7 @@
 
 class Measurement;
 class GraphicsContainer;
+class ChannelWidget;
 
 class GraphicsContainerManager : public QObject
 {
@@ -14,6 +15,7 @@ class GraphicsContainerManager : public QObject
 
     std::vector<GraphicsContainer *> m_graphicsContainers;
     std::map<Measurement *, GraphicsContainer *> m_mapping;
+    std::vector<Measurement*> m_measurements;
     Measurement * m_currentMeasurement;
 
 public:
@@ -31,6 +33,8 @@ public:
      );
 signals:
 
+private slots:
+    void editChannel(ChannelWidget *channelWidget);
 public slots:
     void updateChannelSizeFactor(int factor);
 };

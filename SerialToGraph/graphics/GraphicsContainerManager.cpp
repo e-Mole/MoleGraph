@@ -1,5 +1,6 @@
 #include "GraphicsContainerManager.h"
 #include "HwChannel.h"
+#include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <Measurement.h>
@@ -12,9 +13,13 @@ GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
 
 void GraphicsContainerManager::AddMeasurement(Measurement *m)
 {
+    m_measurements.push_back(m);
     m_mapping[m] = m->GetWidget();
     m_graphicsContainers.push_back(m->GetWidget());
+
+    connect(m->GetWidget(), SIGNAL(editChannel(ChannelWidget*)), this, SLOT(editChannel(ChannelWidget*)));
 }
+
 void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
 {
     for (auto it = m_graphicsContainers.begin(); it != m_graphicsContainers.end(); ++it)
@@ -26,9 +31,17 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
         }
     }
     m->RemoveWidget();
-    m_mapping.erase(m);    
-}
+    m_mapping.erase(m);
 
+    for (auto it = m_measurements.begin(); it != m_measurements.end(); ++it)
+    {
+        if ((*it) == m)
+        {
+            m_measurements.erase(it);
+            break;
+        }
+    }
+}
 
 void GraphicsContainerManager::updateChannelSizeFactor(int factor)
 {
@@ -79,4 +92,10 @@ void GraphicsContainerManager::AddGhost(
         sourceGraphicsContainer->GetChannelWidget(sourceValueChannelIndex),
         sourceMeasurement->GetChannel(sourceHorizontalChannelIndex)
     );
+}
+
+void GraphicsContainerManager::editChannel(ChannelWidget *channelWidget)
+{
+    ChannelSettings *settings = new ChannelSettings(m_measurements, (GraphicsContainer*)sender(), channelWidget);
+    settings->exec();
 }

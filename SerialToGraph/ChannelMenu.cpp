@@ -1,6 +1,7 @@
 #include "ChannelMenu.h"
 #include <bases/ClickableLabel.h>
 #include <ChannelBase.h>
+#include <ChannelSettings.h>
 #include <ChannelWidget.h>
 #include <ColorCheckBox.h>
 #include <GlobalSettings.h>
@@ -64,11 +65,21 @@ void ChannelMenu::FillGrid()
     m_gridLayout->addWidget(showNoneButton, row, 0);
     _AddShortcut(row, m_noChannelsShortcut->GetText());
 
+    ++row;
+    QPushButton *addGhostChannel = new QPushButton(tr("Add Ghost Channel"), this);
+    connect(addGhostChannel, SIGNAL(clicked()), this, SLOT(addGhostChannelActivated()));
+    m_gridLayout->addWidget(addGhostChannel, row, 0);
+
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
         _AddChannel(channelWidget);
+}
+
+void ChannelMenu::addGhostChannelActivated()
+{
+    /*new ChannelSettings(m_graphicsContainer, NULL);*/
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)

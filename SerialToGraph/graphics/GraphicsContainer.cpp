@@ -165,7 +165,16 @@ void GraphicsContainer::_AddChannelToMappings(ChannelBase *channel, ChannelWidge
     }
 }
 
-void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
+void GraphicsContainer::ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget)
+{
+    _EraseChannelWidgetMappings(channelWidget);
+    _AddChannelToMappings(channel, channelWidget, dynamic_cast<SampleChannel*>(channel) != NULL);
+
+    _DisplayChannelValue(channelWidget);
+    m_plot->RefillGraphs();
+}
+
+void GraphicsContainer::_EraseChannelWidgetMappings(ChannelWidget *channelWidget)
 {
     for (auto it = m_channelWidgets.begin(); it != m_channelWidgets.end(); ++it)
     {    if ((*it) == channelWidget)
@@ -185,6 +194,11 @@ void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
     }
 
     m_widgetToChannelMapping.erase(channelWidget);
+
+}
+void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
+{
+    _EraseChannelWidgetMappings(channelWidget);
     m_plot->removeGraph(channelWidget->GetChannelGraph());
     delete channelWidget;
     ReplaceDisplays();
@@ -670,12 +684,6 @@ SampleChannel *GraphicsContainer::GetSampleChannel()
 bool GraphicsContainer::IsHorizontalValueSetEmpty()
 {
     return m_horizontalValueSet.empty();
-}
-
-void GraphicsContainer::editChannel(ChannelWidget *channelWidget)
-{
-    ChannelSettings *settings = new ChannelSettings(this, channelWidget);
-    settings->exec();
 }
 
 void GraphicsContainer::editChannel()

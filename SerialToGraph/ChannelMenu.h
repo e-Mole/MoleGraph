@@ -51,6 +51,7 @@ public slots:
     void graphActivated();
     void noChannelsActivated();
     void allChannelsActivated();
+    void addGhostChannelActivated();
     void edit();
     void remove();
 

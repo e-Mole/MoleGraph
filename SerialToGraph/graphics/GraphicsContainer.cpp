@@ -1130,8 +1130,9 @@ void GraphicsContainer::AddGhost(
         sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1, true);
     channelWidget->SetName(sourceGraphicsContainer->GetName() + " - " + channelWidget->GetName());
     channelWidget->SetPenStyle(Qt::DashLine);
-
+    replaceDisplays();
     _DisplayChannelValue(channelWidget);
+
     m_plot->RefillGraphs();
     m_plot->SetMarkerLine(m_currentIndex);
 }

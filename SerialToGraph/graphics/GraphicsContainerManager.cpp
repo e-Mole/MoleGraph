@@ -30,7 +30,6 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
             break;
         }
     }
-    m->RemoveWidget();
     m_mapping.erase(m);
 
     for (auto it = m_measurements.begin(); it != m_measurements.end(); ++it)
@@ -41,6 +40,7 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
             break;
         }
     }
+    m->RemoveWidget();
 }
 
 void GraphicsContainerManager::updateChannelSizeFactor(int factor)

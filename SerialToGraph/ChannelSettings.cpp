@@ -69,7 +69,11 @@ ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, Graphi
     AddColorButtonRow(channelWidget->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
-    _InitializePenStyle(channelWidget->GetPenStyle());
+    _InitializePenStyle(m_channelWidget->isGhost() ? Qt::DotLine : channelWidget->GetPenStyle());
+    if (m_channelWidget->isGhost())
+    {
+        _FillMeasurementCombo();
+    }
 }
 
 void ChannelSettings::_InitializeGhostCombos()
@@ -78,10 +82,10 @@ void ChannelSettings::_InitializeGhostCombos()
     m_formLayout->addRow(new QLabel(tr("Measurement"), this), m_measurementCombo);
 
     m_channelCombo = new bases::ComboBox(this);
-    m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
+    m_formLayout->addRow(new QLabel(tr("Channel"), this), m_channelCombo);
 
-    connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo()));
-    _FillMeasurementCombo();
+    connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
+    connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
 }
 
 void ChannelSettings::_FillMeasurementCombo()
@@ -104,12 +108,14 @@ void ChannelSettings::_FillMeasurementCombo()
     }
 }
 
-void ChannelSettings::fillChannelCombo()
+void ChannelSettings::fillChannelCombo(int measurementComboIndex)
 {
-    Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData()];
+    Q_UNUSED(measurementComboIndex)
+    Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
     GraphicsContainer *currentGC = currentMeasurement->GetWidget();
     ChannelBase *originalChannel = m_graphicsContainer->GetChannel(m_channelWidget);
 
+    bool channelFound = false;
     for (unsigned index = 0; index < currentMeasurement->GetChannelCount(); ++index)
     {
         ChannelBase * iteratingChannel = currentMeasurement->GetChannel(index);
@@ -117,8 +123,27 @@ void ChannelSettings::fillChannelCombo()
         if (iteratingChannel == originalChannel)
         {
             m_channelCombo->setCurrentIndex(index);
+            channelFound = true;
         }
     }
+    if (!channelFound)
+    {
+        m_channelCombo->setCurrentIndex(1); //skip samples
+    }
+}
+
+void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
+{
+    Q_UNUSED(channelComboIndex)
+    Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
+    GraphicsContainer *currentGC = currentMeasurement->GetWidget();
+    ChannelBase *currentChannel = currentMeasurement->GetChannel(m_channelCombo->currentData().toInt());
+    ChannelWidget *currentChannelWidget = currentGC->GetChannelWidget(currentChannel);
+
+    m_name->setText(currentMeasurement->GetName() + "." + currentChannelWidget->GetName());
+    m_units->setText(currentChannelWidget->GetUnits());
+    SetColorButtonColor(currentChannelWidget->GetForeColor());
+    m_shapeComboBox->setCurrentIndex(currentChannelWidget->GetChannelGraph()->GetShapeIndex());
 }
 
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
@@ -372,6 +397,19 @@ bool ChannelSettings::BeforeAccept()
         m_channelWidget->GetPlot()->ReplotIfNotDisabled();
 
     }
+
+    if (m_channelWidget->isGhost())
+    {
+        Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
+        GraphicsContainer *currentGC = currentMeasurement->GetWidget();
+        ChannelBase *currentChannel = currentMeasurement->GetChannel(m_channelCombo->currentData().toInt());
+
+        if (m_graphicsContainer->GetChannel(m_channelWidget) != currentChannel)
+        {
+            m_graphicsContainer->ReplaceChannelForWidget(currentChannel, m_channelWidget);
+        }
+    }
+
 
     return true;
 }

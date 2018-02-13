@@ -403,13 +403,13 @@ bool ChannelSettings::BeforeAccept()
 
     if (m_channelWidget->isGhost())
     {
-        Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
-        GraphicsContainer *currentGC = currentMeasurement->GetWidget();
-        ChannelBase *currentChannel = currentMeasurement->GetChannel(m_channelCombo->currentData().toInt());
+        Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
+        GraphicsContainer *originalGC = originalMeasurement->GetWidget();
+        ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
 
-        if (m_graphicsContainer->GetChannel(m_channelWidget) != currentChannel)
+        if (m_graphicsContainer->GetChannel(m_channelWidget) != originalChannel)
         {
-            m_graphicsContainer->ReplaceChannelForWidget(currentChannel, m_channelWidget);
+            m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelWidget);
         }
     }
 

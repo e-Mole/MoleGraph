@@ -409,6 +409,8 @@ bool ChannelSettings::BeforeAccept()
 
         if (m_graphicsContainer->GetChannel(m_channelWidget) != originalChannel)
         {
+            //FIXME: is it removed somewhere?
+            m_graphicsContainer->SetHorizontalChannel(originalMeasurement, originalGC->GetHorizontalChannel(originalMeasurement));
             m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelWidget);
         }
     }

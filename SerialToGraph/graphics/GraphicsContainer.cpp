@@ -130,7 +130,7 @@ GraphicsContainer::~GraphicsContainer()
 void GraphicsContainer::SetGrid(bool grid)
 {
     m_grid = grid;
-    ReplaceDisplays();
+    replaceDisplays();
 }
 
 void GraphicsContainer::_InitializeLayouts()
@@ -201,10 +201,10 @@ void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
     _EraseChannelWidgetMappings(channelWidget);
     m_plot->removeGraph(channelWidget->GetChannelGraph());
     delete channelWidget;
-    ReplaceDisplays();
+    replaceDisplays();
 }
 
-void GraphicsContainer::ReplaceDisplays()
+void GraphicsContainer::replaceDisplays()
 {
     //reset stretch
     for (int i = 0; i < m_displayLayout->columnCount(); i++)
@@ -372,7 +372,7 @@ void GraphicsContainer::ShowGraph(bool show)
 
     m_mainLayout->setStretch(0, show);
     m_mainLayout->setStretch(1, !show);
-    ReplaceDisplays();
+    replaceDisplays();
 
     m_plot->setVisible(show);
 }
@@ -1005,7 +1005,7 @@ void GraphicsContainer::ActivateChannel(ChannelWidget *channelWidget, bool check
         return; //nothing to change
 
     channelWidget->SetVisible(checked);
-    ReplaceDisplays();
+    replaceDisplays();
     GlobalSettings::GetInstance().SetSavedState(false);
 }
 
@@ -1067,11 +1067,6 @@ QKeySequence GraphicsContainer::GetAllChannelsSequence()
 QKeySequence GraphicsContainer::GetNoChannelsSequence()
 {
     return m_noChannelsShortcut->GetKeySequence();
-}
-
-void GraphicsContainer::replaceDisplays()
-{
-    ReplaceDisplays();
 }
 
 void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)

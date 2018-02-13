@@ -83,7 +83,6 @@ public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
     ~GraphicsContainer();
     void SetGrid(bool grid);
-    void ReplaceDisplays();
     void _AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel);
     void RemoveChannelWidget(ChannelWidget *channelWidget);
     QString &GetName() {return m_name; }

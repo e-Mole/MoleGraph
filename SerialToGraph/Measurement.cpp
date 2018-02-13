@@ -429,7 +429,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
     }
 
     m_widget->UpdateAxes();
-    m_widget->ReplaceDisplays();//false
+    m_widget->replaceDisplays();//false
 }
 
 void Measurement::_InitializeAxesAndChanels()
@@ -453,7 +453,7 @@ void Measurement::_InitializeAxesAndChanels()
         _AddYChannel(i, yAxis);
 
     m_widget->UpdateAxisNames();
-    m_widget->ReplaceDisplays();//false
+    m_widget->replaceDisplays();//false
 }
 
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
@@ -690,7 +690,7 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned version)
 
 
     m_widget->RefillWidgets();
-    m_widget->ReplaceDisplays();//false
+    m_widget->replaceDisplays();//false
 }
 
 Measurement::State Measurement::_GetStateForSerialization()

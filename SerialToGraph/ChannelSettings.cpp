@@ -69,7 +69,7 @@ ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, Graphi
     AddColorButtonRow(channelWidget->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
-    _InitializePenStyle(m_channelWidget->isGhost() ? Qt::DotLine : channelWidget->GetPenStyle());
+    _InitializePenStyle(channelWidget->GetPenStyle());
     if (m_channelWidget->isGhost())
     {
         _FillMeasurementCombo();

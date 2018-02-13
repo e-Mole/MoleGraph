@@ -126,14 +126,12 @@ void ChannelSettings::fillChannelCombo(int measurementComboIndex)
         if (iteratingChannel == originalChannel)
         {
             m_channelCombo->setCurrentIndex(index);
-            loadFromOriginalWidget(index);
             channelFound = true;
         }
     }
     if (!channelFound)
     {
         m_channelCombo->setCurrentIndex(1); //skip samples
-        loadFromOriginalWidget(1);
     }
 }
 

@@ -475,6 +475,20 @@ QVector<ChannelBase *> const & Measurement::GetChannels() const
     return m_channels;
 }
 
+unsigned Measurement::GetChannelIndex(ChannelBase * channel)
+{
+    unsigned index = 0;
+    foreach (ChannelBase *item, m_channels)
+    {
+        if (item == channel)
+        {
+            return index;
+        }
+        ++index;
+    }
+    return ~0;
+}
+
 ChannelBase *Measurement::GetChannel(unsigned index)
 {
     return m_channels[index];

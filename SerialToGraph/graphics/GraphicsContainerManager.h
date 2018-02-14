@@ -29,7 +29,7 @@ public:
         Measurement *sourceMeasurement,
         unsigned sourceValueChannelIndex,
         unsigned sourceHorizontalChannelIndex,
-        Measurement * destMeasurement
+        GraphicsContainer *destGraphicsContainer
      );
 signals:
 

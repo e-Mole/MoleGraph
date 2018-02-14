@@ -228,10 +228,30 @@ Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
-    Measurement *m = new Measurement(this, m_context, m_hwSink, GetCurrnetMeasurement(), true);
-    connect(m, SIGNAL(editChannel(ChannelWidget*)), m->GetWidget(), SLOT(editChannel(ChannelWidget*)));
-    connect(m, SIGNAL(valueSetMeasured()), m->GetWidget(), SLOT(addNewValueSet()));
-    return m;
+    Measurement *currentMeasurement = GetCurrnetMeasurement();
+    GraphicsContainer* currentGC = currentMeasurement->GetWidget();
+
+    Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true);
+    GraphicsContainer *newGC = newMeasurement->GetWidget();
+
+    foreach (ChannelWidget *w, currentGC->GetChannelWidgets())
+    {
+        if (w->isGhost())
+        {
+            ChannelBase * originalChannel = currentGC->GetChannel(w);
+            Measurement * originalMeasurement = originalChannel->GetMeasurement();
+            ChannelBase * originalHorizontalChannel = currentGC->GetHorizontalChannel(originalMeasurement);
+            m_graphicsContainerManager->AddGhost(
+                originalMeasurement,
+                originalMeasurement->GetChannelIndex(originalChannel),
+                originalMeasurement->GetChannelIndex(originalHorizontalChannel),
+                newGC
+            );
+        }
+    }
+    connect(newMeasurement, SIGNAL(editChannel(ChannelWidget*)), newGC, SLOT(editChannel(ChannelWidget*)));
+    connect(newMeasurement, SIGNAL(valueSetMeasured()), newGC, SLOT(addNewValueSet()));
+    return newMeasurement;
 }
 
 void MainWindow::ConfirmMeasurement(Measurement *m)
@@ -378,8 +398,8 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         }
         else
         {
-            m_graphicsContainerManager->AddGhost(m_measurements[1],1,0, m_measurements[0]);
-            m_graphicsContainerManager->AddGhost(m_measurements[0],1,0, m_measurements[1]);
+            m_graphicsContainerManager->AddGhost(m_measurements[1],1,0, m_graphicsContainerManager->GetGraphicsContainer(m_measurements[0]));
+            m_graphicsContainerManager->AddGhost(m_measurements[0],1,0, m_graphicsContainerManager->GetGraphicsContainer(m_measurements[1]));
 
         }
 

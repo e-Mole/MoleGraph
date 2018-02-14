@@ -728,8 +728,17 @@ void GraphicsContainer::addNewValueSet()
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
 {
+    Axis *originalAxis = sourceChannelWidget->GetChannelGraph()->GetValuleAxis();
+    unsigned originalAxisIndex = sourceContainer->GetAxisIndex(originalAxis);
+    Axis *axis = NULL;
+    //ti can happend in case of ghost that axis with the same title is not available
+    if (GetAxes().size() > originalAxisIndex && originalAxis->GetTitle() == GetAxis(originalAxisIndex)->GetTitle())
+        axis = GetAxis(originalAxisIndex);
+    else
+        axis = GetFirstVerticalAxis();
+
     return  AddChannelGraph(
-        GetAxis(sourceContainer->GetAxisIndex(sourceChannelWidget->GetChannelGraph()->GetValuleAxis())),
+        axis,
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->GetChannelGraph()->GetShapeIndex(),
         sourceChannelWidget->GetPenStyle()

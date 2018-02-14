@@ -162,6 +162,7 @@ private:
     void DrawRestData();
     void RemoveWidget();
     QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
+    unsigned GetChannelIndex(ChannelBase * channel);
 signals:
     void stateChanged();
     void nameChanged();

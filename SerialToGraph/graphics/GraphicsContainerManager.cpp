@@ -72,12 +72,10 @@ void GraphicsContainerManager::AddGhost(
     Measurement *sourceMeasurement,
     unsigned sourceValueChannelIndex,
     unsigned sourceHorizontalChannelIndex,
-    Measurement * destMeasurement
+    GraphicsContainer *destGraphicsContainer
 )
 {
     GraphicsContainer *sourceGraphicsContainer = m_mapping[sourceMeasurement];
-    GraphicsContainer *destGraphicsContainer = m_mapping[destMeasurement];
-
     if (
         sourceMeasurement->GetChannelCount() <= sourceValueChannelIndex ||
         sourceMeasurement->GetChannelCount() <= sourceHorizontalChannelIndex)

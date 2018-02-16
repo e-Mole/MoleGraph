@@ -25,8 +25,9 @@ class MeasurementMenu : public bases::MenuDialogBase
     QMap<bases::ClickableLabel*,Measurement*> m_nameToItem;
 public:
     MeasurementMenu(QWidget *parent, const Context &context);
+    void ReinitGridAndAdjustSize();
 signals:
-
+    void removeMeasurementRequest(Measurement *m);
 private slots:
     void addButtonPressed();
     void editButtonPressed();

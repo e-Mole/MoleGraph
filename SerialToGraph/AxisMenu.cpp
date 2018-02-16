@@ -76,8 +76,6 @@ void AxisMenu::addButtonPressed()
     }
     else
         m_graphicsContainer->RemoveAxis(newAxis);
-
-    CloseIfPopup();
 }
 
 void AxisMenu::removeButtonPressed()
@@ -107,7 +105,6 @@ void AxisMenu::removeButtonPressed()
                 )
             )
             {
-                CloseIfPopup();
                 return;
             }
 
@@ -128,7 +125,6 @@ void AxisMenu::removeButtonPressed()
 #if !defined(Q_OS_ANDROID)
     adjustSize();
 #endif
-    CloseIfPopup();
 }
 
 void AxisMenu::editButtonPressed()
@@ -143,6 +139,4 @@ void AxisMenu::editButtonPressed()
             ReinitGrid();
         }
     }
-
-    CloseIfPopup();
 }

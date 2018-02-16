@@ -20,11 +20,6 @@ MenuDialogBase::~MenuDialogBase()
 
 }
 
-void MenuDialogBase::CloseIfPopup()
-{
-    //close();
-}
-
 void MenuDialogBase::ReinitGrid()
 {
     while ( m_gridLayout->count() != 0)

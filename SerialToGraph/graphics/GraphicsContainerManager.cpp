@@ -97,3 +97,32 @@ void GraphicsContainerManager::editChannel(ChannelWidget *channelWidget)
     ChannelSettings *settings = new ChannelSettings(m_measurements, (GraphicsContainer*)sender(), channelWidget);
     settings->exec();
 }
+
+bool GraphicsContainerManager::HaveMeasurementGhosts(Measurement *m)
+{
+    foreach (GraphicsContainer* gc, m_graphicsContainers)
+    {
+        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        {
+            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void GraphicsContainerManager::RemoveGhosts(Measurement *m)
+{
+    foreach (GraphicsContainer* gc, m_graphicsContainers)
+    {
+        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        {
+            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            {
+                gc->RemoveChannelWidget(w);
+            }
+        }
+    }
+}

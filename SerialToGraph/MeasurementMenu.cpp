@@ -101,8 +101,6 @@ void MeasurementMenu::addButtonPressed()
     }
     else
         m_context.m_mainWindow.RemoveMeasurement(m, false);
-
-    CloseIfPopup();
 }
 
 void MeasurementMenu::cloneButtonPressed()
@@ -112,7 +110,6 @@ void MeasurementMenu::cloneButtonPressed()
     );
     GlobalSettings::GetInstance().SetSavedState(false);
     ReinitGrid();
-    CloseIfPopup();
 }
 
 void MeasurementMenu::removeButtonPressed()
@@ -120,42 +117,15 @@ void MeasurementMenu::removeButtonPressed()
     Measurement *m =
         m_removeButtonToItem.find((QPushButton*)sender()).value();
 
-    if (m->GetState() == Measurement::Running || m->GetState() == Measurement::Paused)
-    {
-        if (MyMessageBox::No ==
-            MyMessageBox::question(
-                this,
-                QString(tr("The measurement '%1' is in progress. Really remove it?")).arg(m->GetName()),
-                tr("Remove")
-            )
-        )
-        {
-            return;
-        }
-        m->Stop();
-    }
-    else if (m->GetState() == Measurement::Finished)
-    {
-        if (MyMessageBox::No ==
-            MyMessageBox::question(
-                this,
-                QString(tr("The measurement '%1' alread contains data. Really remove it?")).arg(m->GetName()),
-                tr("Remove")
-            )
-        )
-        {
-            return;
-        }
-    }
+    removeMeasurementRequest(m);
+}
 
-    m_context.m_mainWindow.RemoveMeasurement(m, true);
-    GlobalSettings::GetInstance().SetSavedState(false);
-
+void MeasurementMenu::ReinitGridAndAdjustSize()
+{
     ReinitGrid();
 #if !defined(Q_OS_ANDROID)
     adjustSize();
 #endif
-    CloseIfPopup();
 }
 
 void MeasurementMenu::editButtonPressed()
@@ -170,8 +140,6 @@ void MeasurementMenu::editButtonPressed()
             ReinitGrid();
         }
     }
-
-    CloseIfPopup();
 }
 
 void MeasurementMenu::nameClicked()

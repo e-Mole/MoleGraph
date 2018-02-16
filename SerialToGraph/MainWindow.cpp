@@ -50,7 +50,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_menuButton(NULL),
     m_centralWidget(NULL),
     m_storedValues(true),
-    m_graphicsContainerManager(NULL)
+    m_graphicsContainerManager(NULL),
+    m_measurementMenu(NULL)
 {
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
@@ -672,8 +673,11 @@ void MainWindow::ShowMenuButton(bool show)
 
 void MainWindow::measurementMenuButtonPressed()
 {
-    MeasurementMenu measurementMenu(centralWidget(), m_context);
-    measurementMenu.exec();
+    m_measurementMenu = new MeasurementMenu(centralWidget(), m_context);
+    connect(m_measurementMenu, SIGNAL(removeMeasurementRequest(Measurement*)), this, SLOT(removeMeasurement(Measurement*)));
+    m_measurementMenu->exec();
+    delete m_measurementMenu;
+    m_measurementMenu = NULL;
 }
 
 void MainWindow::axisMenuButtonPressed()
@@ -688,4 +692,71 @@ void MainWindow::settings()
     GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
     settingsDialog->connect(settingsDialog, SIGNAL(updateChannelSizeFactor(int)), m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int)));
     settingsDialog->exec();
+}
+
+QString MainWindow::_DisplayMeasurementRemoveMessage(Measurement *m, bool isInProgress, bool alreadyMeasured, bool haveGhosts)
+{
+    QString message;
+    if (isInProgress)
+    {
+        message = QString(tr("The measurement '%1' is in progress.")).arg(m->GetName()) + "\n";
+    }
+    else if (alreadyMeasured)
+    {
+        message = QString(tr("The measurement '%1' alread contains data. Really remove it?")).arg(m->GetName()) + "\n";
+    }
+
+    if (haveGhosts)
+    {
+        message += tr("Ghost displayed in another measurements will be removed too.") + "\n";
+    }
+    if (!message.isEmpty())
+    {
+        message += "Really remove the measurement?";
+    }
+    return message;
+}
+
+void MainWindow::removeMeasurement(Measurement *m)
+{
+    bool haveGhosts = m_graphicsContainerManager->HaveMeasurementGhosts(m);
+    if (m->GetState() == Measurement::Running || m->GetState() == Measurement::Paused)
+    {
+        if (MyMessageBox::No ==
+            MyMessageBox::question(
+                this,
+                _DisplayMeasurementRemoveMessage(m, true, false, haveGhosts),
+                tr("Remove")
+            )
+        )
+        {
+            return;
+        }
+        m->Stop();
+    }
+    else if (m->GetState() == Measurement::Finished)
+    {
+        if (MyMessageBox::No ==
+            MyMessageBox::question(
+                this,
+                _DisplayMeasurementRemoveMessage(m, false, true, haveGhosts),
+                tr("Remove")
+            )
+        )
+        {
+            return;
+        }
+    }
+
+    if (haveGhosts)
+    {
+        m_graphicsContainerManager->RemoveGhosts(m);
+    }
+    RemoveMeasurement(m, true);
+    GlobalSettings::GetInstance().SetSavedState(false);
+
+    if (m_measurementMenu)
+    {
+        m_measurementMenu->ReinitGridAndAdjustSize();
+    }
 }

@@ -14,6 +14,7 @@ class Console;
 class GraphicsContainer;
 class GraphicsContainerManager;
 class Measurement;
+class MeasurementMenu;
 class PortListDialog;
 class QApplication;
 class QDataStream;
@@ -36,6 +37,7 @@ class MainWindow : public QMainWindow
     bool _CouldBeOpen();
     QString _GetFileNameToSave(const QString &extension, bool values);
     void _ExportCSV(std::vector<GraphicsContainer *> &graphicsContainers);
+    QString _DisplayMeasurementRemoveMessage(Measurement *m, bool isInProgress, bool alreadyMeasured, bool haveGhosts);
 
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
@@ -54,6 +56,7 @@ class MainWindow : public QMainWindow
     QWidget *m_centralWidget;
     bool m_storedValues;
     GraphicsContainerManager *m_graphicsContainerManager;
+    MeasurementMenu *m_measurementMenu;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -96,6 +99,7 @@ private slots:
     void settings();
 public slots:
     void openSerialPort();
+    void removeMeasurement(Measurement *m);
 };
 
 #endif // MAINWINDOW_H

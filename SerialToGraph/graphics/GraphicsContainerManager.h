@@ -31,6 +31,8 @@ public:
         unsigned sourceHorizontalChannelIndex,
         GraphicsContainer *destGraphicsContainer
      );
+    bool HaveMeasurementGhosts(Measurement *m);
+    void RemoveGhosts(Measurement *m);
 signals:
 
 private slots:

@@ -16,7 +16,6 @@ class MenuDialogBase : public PlatformDialog
     void keyReleaseEvent(QKeyEvent * event);
 
 protected:
-    void CloseIfPopup();
     virtual void FillGrid() = 0;
 
     QGridLayout *m_gridLayout;

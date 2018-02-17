@@ -399,20 +399,6 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             ConfirmMeasurement(m);
         }
 
-        //FIXME: delete temporarry code
-        unsigned sourceMeasurementIndex = 0;
-        unsigned destMeasurementIndex = 1;
-        if (m_measurements.size() <= sourceMeasurementIndex || m_measurements.size() <= destMeasurementIndex)
-        {
-            qWarning("Ghost can't be created. measurement indexes are out of range");
-        }
-        else
-        {
-            m_graphicsContainerManager->AddGhost(m_measurements[1],1,0, m_graphicsContainerManager->GetGraphicsContainer(m_measurements[0]));
-            m_graphicsContainerManager->AddGhost(m_measurements[0],1,0, m_graphicsContainerManager->GetGraphicsContainer(m_measurements[1]));
-
-        }
-
         unsigned sampleCount = 0;
         if (serializerVersion == 2)
         {

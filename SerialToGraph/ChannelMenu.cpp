@@ -66,7 +66,7 @@ void ChannelMenu::FillGrid()
     _AddShortcut(row, m_noChannelsShortcut->GetText());
 
     ++row;
-    QPushButton *addGhostChannel = new QPushButton(tr("Add Ghost Channel"), this);
+    QPushButton *addGhostChannel = new QPushButton(tr("Add Virtual Channel"), this);
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
     m_gridLayout->addWidget(addGhostChannel, row, 0);

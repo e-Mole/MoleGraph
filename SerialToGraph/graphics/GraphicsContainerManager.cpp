@@ -68,7 +68,7 @@ void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
     m_currentMeasurement = m;
 }
 
-void GraphicsContainerManager::AddGhost(
+ChannelWidget * GraphicsContainerManager::AddGhost(
     Measurement *sourceMeasurement,
     unsigned sourceValueChannelIndex,
     unsigned sourceHorizontalChannelIndex,
@@ -81,11 +81,11 @@ void GraphicsContainerManager::AddGhost(
         sourceMeasurement->GetChannelCount() <= sourceHorizontalChannelIndex)
     {
         qWarning("Ghost channel can't be created becasuse a source channel index is out of range");
-        return;
+        return NULL;
     }
 
-    destGraphicsContainer->AddGhost(
-        qobject_cast<HwChannel*>(sourceMeasurement->GetChannel(sourceValueChannelIndex)),
+    return destGraphicsContainer->AddGhost(
+        dynamic_cast<HwChannel *>(sourceMeasurement->GetChannel(sourceValueChannelIndex)),
         sourceGraphicsContainer,
         sourceGraphicsContainer->GetChannelWidget(sourceValueChannelIndex),
         sourceMeasurement->GetChannel(sourceHorizontalChannelIndex)
@@ -126,3 +126,30 @@ void GraphicsContainerManager::RemoveGhosts(Measurement *m)
         }
     }
 }
+
+bool GraphicsContainerManager::IsGhostAddable(Measurement *m)
+{
+    return m_measurements.size() > 1; //ghost can be added only when are present another measurements then current
+}
+
+ChannelBase *GraphicsContainerManager::GetChannelForGhost(Measurement *m)
+{
+    foreach (Measurement * item, m_measurements)
+    {
+        if (item == m)
+        {
+            continue;
+        }
+
+        for (unsigned index = 0; index < m->GetChannelCount(); ++index)
+        {
+            ChannelBase *channel = item->GetChannel(index);
+            if (channel->GetType() == ChannelBase::Type_Hw)
+                return channel;
+        }
+    }
+
+    return NULL;
+}
+
+

@@ -1118,7 +1118,7 @@ void GraphicsContainer::RefillWidgets()
     }
 }
 
-void GraphicsContainer::AddGhost(
+ChannelWidget * GraphicsContainer::AddGhost(
     HwChannel *sourceChannel,
     GraphicsContainer *sourceGraphicsContainer,
     ChannelWidget *sourceValueChannelWidget,
@@ -1139,4 +1139,5 @@ void GraphicsContainer::AddGhost(
 
     m_plot->RefillGraphs();
     m_plot->SetMarkerLine(m_currentIndex);
+    return channelWidget;
 }

@@ -3,6 +3,7 @@
 #include <Axis.h>
 #include <ButtonLine.h>
 #include <ChannelBase.h>
+#include <ChannelMenu.h>
 #include <ChannelWidget.h>
 #include <Console.h>
 #include <file/Export.h>
@@ -51,7 +52,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_centralWidget(NULL),
     m_storedValues(true),
     m_graphicsContainerManager(NULL),
-    m_measurementMenu(NULL)
+    m_measurementMenu(NULL),
+    m_channelMenu(NULL)
 {
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
@@ -75,7 +77,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
-    m_buttonLine = new ButtonLine(this, m_graphicsContainerManager, m_hwSink, Qt::Vertical);
+    m_buttonLine = new ButtonLine(this, m_hwSink, Qt::Vertical);
     connect(m_buttonLine, SIGNAL(connectivityButtonReleased()), this, SLOT(openSerialPort()));
     connect(m_buttonLine, SIGNAL(openNewFile()), this, SLOT(openNewFile()));
     connect(m_buttonLine, SIGNAL(openFileValues()), this, SLOT(openFileValues()));
@@ -90,6 +92,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(exportPng()), this, SLOT(exportPng()));
     connect(m_buttonLine, SIGNAL(axisMenuButtonPressed()), this, SLOT(axisMenuButtonPressed()));
     connect(m_buttonLine, SIGNAL(settings()), this, SLOT(settings()));
+    connect(m_buttonLine, SIGNAL(panelMenuButtonPressed(Measurement*)), this, SLOT(showPanelMenu(Measurement*)));
+
     connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
             m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
@@ -296,9 +300,14 @@ void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
     {
         m_graphicsContainerManager->RemoveMeasurement(m);
         m_measurements.removeOne(m);
-        m_currentMeasurement = NULL;
+        if (m == m_currentMeasurement)
+        {
+            m_currentMeasurement = (m_measurements.size() == 0) ?
+                m_currentMeasurement = NULL : m_currentMeasurement = m_measurements[0];
+
+            m_buttonLine->ChangeMeasurement(m_currentMeasurement);
+        }
         m_measurementTabs->removeTab(m_measurements.indexOf(m));
-        m_buttonLine->ChangeMeasurement(NULL);
     }
 
     delete m;
@@ -759,4 +768,38 @@ void MainWindow::removeMeasurement(Measurement *m)
     {
         m_measurementMenu->ReinitGridAndAdjustSize();
     }
+}
+
+void MainWindow::addGhostChannel()
+{
+    ChannelBase *channel = m_graphicsContainerManager->GetChannelForGhost(m_currentMeasurement);
+    Measurement *m = channel->GetMeasurement();
+    GraphicsContainer *originalGc = m_graphicsContainerManager->GetGraphicsContainer(m);
+    GraphicsContainer *destGc = m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement);
+    ChannelWidget *ghostWidget = m_graphicsContainerManager->AddGhost(
+        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc);
+
+    m_channelMenu->ReinitGrid(); //to be added
+    ghostWidget->clicked();
+    m_channelMenu->ReinitGrid(); //to be changed name or color
+}
+
+void MainWindow::showPanelMenu(Measurement *m)
+{
+    GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
+    if (gc == NULL)
+    {
+        qWarning() << "measurement is not set";
+        return;
+    }
+
+    m_channelMenu = new ChannelMenu(gc, m_graphicsContainerManager->IsGhostAddable(m));
+    connect(m_channelMenu, SIGNAL(addGhostChannelActivated()), this, SLOT(addGhostChannel()));
+    m_channelMenu->ReinitGrid();
+    m_buttonLine->updateRunButtonsState();
+
+    m_channelMenu->UpdateCheckBoxes();
+    m_channelMenu->exec();
+    delete m_channelMenu;
+    m_channelMenu = NULL;
 }

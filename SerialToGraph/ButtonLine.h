@@ -11,7 +11,6 @@ class Axis;
 class ChannelBase;
 class ChannelMenu;
 class ConnectivityLabel;
-class GraphicsContainerManager;
 class Measurement;
 //class QAction;
 class PlotContextMenu;
@@ -41,7 +40,6 @@ class ButtonLine : public QWidget
     QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
     QKeySequence _GetKey(QShortcut *shortcut);
 
-    GraphicsContainerManager *m_graphicsContainerManager;
     QGridLayout *m_mainLayout;
     QPushButton *m_startButton;
     QPushButton *m_sampleRequestButton;
@@ -72,7 +70,7 @@ class ButtonLine : public QWidget
     QMap<QAction*, QString> m_recentFileActions;
     ChannelMenu *m_channelMenu;
 public:
-    ButtonLine(QWidget *parent, GraphicsContainerManager *graphicsContainerManager, hw::HwSink &hwSink, Qt::Orientation orientation);
+    ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
     void ReplaceButtons(Qt::Orientation orientation);
 
@@ -95,21 +93,22 @@ signals:
     void exportAllCsv();
     void axisMenuButtonPressed();
     void settings();
+    void panelMenuButtonPressed(Measurement *);
 
 private slots:
     void sampleRequest();
     void about();
     void openRecentFileSlot();
-    void updateRunButtonsState();
+    void panelMenuButtonPressed();
 public slots:
     void connectivityStateChanged(QString const & stateText, hw::HwSink::State state);
     void fileMenuButtonPressed();
-    void panelMenuButtonPressed();
     void viewMenuButtonPressed();
     void measurementStateChanged();
     void start();
     void pauseContinue();
     void stop();
+    void updateRunButtonsState();
 };
 
 #endif // BUTTONLINE_H

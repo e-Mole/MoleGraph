@@ -9,6 +9,7 @@
 #include <QVector>
 
 class CentralWidget;
+class ChannelMenu;
 class ChannelWidget;
 class Console;
 class GraphicsContainer;
@@ -57,6 +58,7 @@ class MainWindow : public QMainWindow
     bool m_storedValues;
     GraphicsContainerManager *m_graphicsContainerManager;
     MeasurementMenu *m_measurementMenu;
+    ChannelMenu *m_channelMenu;
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
@@ -97,9 +99,10 @@ private slots:
     void exportAllCsv();
     void axisMenuButtonPressed();
     void settings();
-public slots:
     void openSerialPort();
     void removeMeasurement(Measurement *m);
+    void addGhostChannel();
+    void showPanelMenu(Measurement *m);
 };
 
 #endif // MAINWINDOW_H

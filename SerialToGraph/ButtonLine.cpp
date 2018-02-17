@@ -5,7 +5,6 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
-#include <graphics/GraphicsContainerManager.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -41,9 +40,8 @@
 #   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, GraphicsContainerManager *graphicsContainerManager,  hw::HwSink &hwSink, Qt::Orientation orientation):
+ButtonLine::ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation):
     QWidget(parent),
-    m_graphicsContainerManager(graphicsContainerManager),
     m_mainLayout(new QGridLayout()),
     m_startButton(NULL),
     m_sampleRequestButton(NULL),
@@ -186,19 +184,7 @@ void ButtonLine::fileMenuButtonPressed()
 
 void ButtonLine::panelMenuButtonPressed()
 {
-    GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m_measurement);
-    if (gc == NULL)
-    {
-        qWarning() << "measurement is not set";
-        return;
-    }
-
-    ChannelMenu *channelMenu = new ChannelMenu(gc);
-    channelMenu->ReinitGrid();
-    updateRunButtonsState();
-
-    channelMenu->UpdateCheckBoxes();
-    channelMenu->exec();
+    panelMenuButtonPressed(m_measurement);
 }
 
 void ButtonLine::viewMenuButtonPressed()

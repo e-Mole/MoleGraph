@@ -159,7 +159,7 @@ public:
     QKeySequence GetNoChannelsSequence();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void RefillWidgets();
-    void AddGhost(
+    ChannelWidget * AddGhost(
         HwChannel *sourceChannel,
         GraphicsContainer *sourceGraphicsContainer,
         ChannelWidget *sourceValueChannelWidget,

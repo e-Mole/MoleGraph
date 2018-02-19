@@ -133,6 +133,7 @@ void ChannelSettings::fillChannelCombo(int measurementComboIndex)
     {
         m_channelCombo->setCurrentIndex(1); //skip samples
     }
+    loadFromOriginalWidget(m_channelCombo->currentIndex());
 }
 
 void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)

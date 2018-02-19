@@ -52,6 +52,10 @@ void ChannelGraph::SetPenStyle(Qt::PenStyle penStyle)
     QPen p = pen();
     p.setStyle(penStyle);
     setPen(p);
+
+    p = selectedPen();
+    p.setStyle(penStyle);
+    setSelectedPen(p);
 }
 
 void ChannelGraph::SetMarkShape(unsigned shapeIndex)

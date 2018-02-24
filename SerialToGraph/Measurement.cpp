@@ -530,7 +530,7 @@ void Measurement::SerializeColections(QDataStream &out)
     foreach (Axis *axis, GetAxes())
     {
         out << axis;
-        out << axis->GetAssignedChannelCount();
+        out << axis->GetAssignedChannelCountWithoutGhosts();
         foreach (ChannelBase *channel, m_channels)
         {
             if (GetWidget()->GetChannelWidget(channel)->GetChannelGraph()->GetValuleAxis() == axis)

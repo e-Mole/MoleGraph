@@ -227,13 +227,17 @@ void Axis::UpdateGraphAxisStyle()
     m_graphicsContainer->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
 }
 
-unsigned Axis::GetAssignedChannelCount()
+unsigned Axis::GetAssignedChannelCountWithoutGhosts()
 {
     unsigned count = 0;
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
-        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
-            count++;
+    {
 
+        if (!channelWidget->isGhost() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        {
+            count++;
+        }
+    }
     return count;
 }
 

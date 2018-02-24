@@ -51,6 +51,9 @@ double SampleChannel::GetSampleNr(unsigned index) const
 }
 double SampleChannel::GetValue(unsigned index) const
 {
+    if (index == ~0)
+        return ChannelBase::GetNaValue();
+
     switch (m_style)
     {
     case Samples:
@@ -76,7 +79,7 @@ double SampleChannel::GetValue(unsigned index) const
             return m_timeFromStart[index] /(60*60*24);
         }
     }
-    return -1; //it should be never reached
+    return ChannelBase::GetNaValue(); //it should be never reached
 }
 
 double SampleChannel::GetMinValue()

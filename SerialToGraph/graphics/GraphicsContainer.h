@@ -78,7 +78,7 @@ class GraphicsContainer : public QWidget
     void _RemoveKeyShortcuts();
     void _DisplayChannelValue(ChannelWidget *channelWidget);
     void _EraseChannelWidgetMappings(ChannelWidget *channelWidget);
-
+    bool _IsTracked(Measurement *m);
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
     ~GraphicsContainer();

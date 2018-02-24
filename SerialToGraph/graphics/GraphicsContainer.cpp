@@ -198,7 +198,13 @@ void GraphicsContainer::_EraseChannelWidgetMappings(ChannelWidget *channelWidget
 }
 void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
 {
+    Measurement *sourceMeasurement = m_widgetToChannelMapping[channelWidget]->GetMeasurement();
     _EraseChannelWidgetMappings(channelWidget);
+    if (!_IsTracked(sourceMeasurement))
+    {
+        disconnect(sourceMeasurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
+    }
+
     m_plot->removeGraph(channelWidget->GetChannelGraph());
     delete channelWidget;
     replaceDisplays();
@@ -417,7 +423,9 @@ double GraphicsContainer::GetHorizontalValueBySliderPos(unsigned position) const
     for (; it != m_horizontalValueSet.end(); ++it)
     {
         if (position == i++)
+        {
             return (*it);
+        }
     }
     qCritical() << "horizontal value position is out of range";
     return 0;
@@ -721,7 +729,12 @@ void GraphicsContainer::addNewValueSet()
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
-        m_channelToWidgetMapping[channel]->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
+        auto it = m_channelToWidgetMapping.find(channel);
+        if (it != m_channelToWidgetMapping.end())
+        {
+            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
+
+        }
     }
     AddHorizontalValue(horizontalChannel->GetLastValidValue());
 }
@@ -786,6 +799,12 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
         GetPlot(),
         isGhost
     );
+
+    Measurement *sourceMeasurement = channel->GetMeasurement();
+    if (!_IsTracked(sourceMeasurement))
+    {
+        connect(sourceMeasurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
+    }
 
     _AddChannelToMappings(channel, widget, isSampleChannel);
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
@@ -949,6 +968,7 @@ void GraphicsContainer::sampleChannelPropertyChanged()
     widget->ShowLastValueWithUnits();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
     RefillWidgets();
+    RecalculateSliderMaximum();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
@@ -1118,6 +1138,18 @@ void GraphicsContainer::RefillWidgets()
     }
 }
 
+bool GraphicsContainer::_IsTracked(Measurement *m)
+{
+    for (auto it = m_widgetToChannelMapping.begin(); it != m_widgetToChannelMapping.end(); ++it)
+    {
+        if (it->first->isGhost() && it->second->GetMeasurement() == m)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 ChannelWidget * GraphicsContainer::AddGhost(
     HwChannel *sourceChannel,
     GraphicsContainer *sourceGraphicsContainer,
@@ -1125,7 +1157,8 @@ ChannelWidget * GraphicsContainer::AddGhost(
     ChannelBase *sourceHorizontalChannel
 )
 {
-    m_horizontalChannelMapping.insert(sourceChannel->GetMeasurement(), sourceHorizontalChannel);
+    Measurement *sourceMeasurement = sourceChannel->GetMeasurement();
+    m_horizontalChannelMapping.insert(sourceMeasurement, sourceHorizontalChannel);
     for (unsigned index = 0; index < sourceHorizontalChannel->GetValueCount(); ++index)
     {
         AddHorizontalValue(sourceHorizontalChannel->GetValue(index));

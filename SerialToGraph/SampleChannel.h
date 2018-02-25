@@ -8,6 +8,8 @@ class SampleChannel : public ChannelBase
 {
     Q_OBJECT
 
+    //FIXME: have to be moved somewhere
+    /*
     Q_PROPERTY(QDateTime startDateTime READ _GetStartDateTime WRITE SetStartTime)
     Q_PROPERTY(Style style READ GetStyle WRITE _SetStyle)
     Q_PROPERTY(TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
@@ -16,7 +18,7 @@ class SampleChannel : public ChannelBase
     Q_ENUMS(Style)
     Q_ENUMS(TimeUnits)
     Q_ENUMS(RealTimeFormat)
-
+    */
     void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits

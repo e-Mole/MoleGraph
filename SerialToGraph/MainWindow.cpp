@@ -360,6 +360,11 @@ Measurement *MainWindow::GetCurrnetMeasurement()
     return NULL;
 }
 
+void MainWindow::_ShowCoruptedFileMessage(QString const &fileName)
+{
+    MyMessageBox::critical(this, QString(tr("File %1 is corrupted.")).arg(fileName));
+}
+
 void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
 {
     _SetCurrentFileName(fileName);
@@ -377,8 +382,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         unsigned serializerVersion;
         in >> serializerVersion; //not used yet
 
-        if (serializerVersion < ATOG_LOWEST_VERSION ||
-            serializerVersion > ATOG_SERIALIZER_VERSION)
+        if (serializerVersion < ATOG_LOWEST_VERSION || serializerVersion > ATOG_SERIALIZER_VERSION)
         {
             MyMessageBox::critical(this, QString(tr("Unsuported file version (%1)")).arg(fileName));
             return;
@@ -418,10 +422,17 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
                 }
             }
         }
+        if (serializerVersion > 3)
+        {
+            if (! _DeSerializeGhsotColections(in))
+            {
+                _ShowCoruptedFileMessage(fileName);
+            }
+        }
     }
     catch (...)
     {
-        MyMessageBox::critical(this, QString(tr("File %1 is corrupted.")).arg(fileName));
+        _ShowCoruptedFileMessage(fileName);
     }
 
     file.close();
@@ -444,6 +455,8 @@ void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
         m->SetSaveLoadValues(values);
         out << m;
     }
+
+    _SerializeGhsotColections(out);
 
     file.flush();
     file.close();
@@ -786,4 +799,109 @@ void MainWindow::showPanelMenu(Measurement *m)
     m_channelMenu->exec();
     delete m_channelMenu;
     m_channelMenu = NULL;
+}
+
+unsigned MainWindow::_GetGhostCount()
+{
+    unsigned count = 0;
+    foreach (GraphicsContainer *gc, m_graphicsContainerManager->GetGraphicsContainers())
+    {
+        foreach (ChannelWidget *chw, gc->GetChannelWidgets())
+        {
+            if (chw->isGhost())
+                ++count;
+        }
+    }
+    return count;
+}
+
+void MainWindow::_SerializeGhsotColections(QDataStream &out)
+{
+    out << _GetGhostCount();
+
+    for (unsigned gcIndex = 0; gcIndex < m_graphicsContainerManager->GetGraphicsContainers().size(); ++gcIndex)
+    {
+        GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
+
+        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        {
+            if (w->isGhost())
+            {
+                ChannelBase *ch = gc->GetChannel(w);
+                Measurement *m = ch->GetMeasurement();
+                for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
+                {
+                    if (m = m_measurements[mIndex])
+                    {
+                        GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
+                        unsigned hChIndex =  m->GetChannelIndex(gc->GetHorizontalChannel(m));
+                        for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
+                        {
+                            if (ch == m->GetChannel(chIndex))
+                            {
+                                out << mIndex;
+                                out << chIndex;
+                                out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
+                                out << gcIndex;
+                                out << w;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
+{
+    unsigned recordCount = 0;
+    in >> recordCount;
+
+    for (unsigned index = 0; index < recordCount; ++index)
+    {
+        unsigned mIndex = 0;
+        in >> mIndex;
+        if (m_measurements.count() <= mIndex)
+        {
+            qWarning() << "Measurement index is out of range";
+            return false;
+        }
+        Measurement *m = m_measurements[mIndex];
+
+        unsigned chIndex = 0;
+        in >> chIndex;
+        if (m->GetChannelCount() <= chIndex)
+        {
+            qWarning() << "Channel index is out of range";
+            return false;
+        }
+
+        unsigned hchIndex = 0;
+        in >> hchIndex;
+        if (m->GetChannelCount() <= hchIndex)
+        {
+            qWarning() << "Horizontal channel index is out of range";
+            return false;
+        }
+
+        unsigned gcIndex = 0;
+        in >> gcIndex;
+        if (m_graphicsContainerManager->GetGraphicsContainers().size() <= gcIndex)
+        {
+            qWarning() << "GrahicsContainer index is out of range";
+            return false;
+        }
+
+        ChannelWidget *ghost = m_graphicsContainerManager->AddGhost(
+            m_measurements[mIndex],
+            chIndex,
+            hchIndex,
+            m_graphicsContainerManager->GetGraphicsContainers()[gcIndex]
+        );
+        in >> ghost;
+    }
+
+    return true;
 }

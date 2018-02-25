@@ -232,7 +232,6 @@ unsigned Axis::GetAssignedChannelCountWithoutGhosts()
     unsigned count = 0;
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-
         if (!channelWidget->isGhost() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;

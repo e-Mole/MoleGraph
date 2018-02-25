@@ -25,21 +25,6 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    void _SetCurrentFileName(QString const &fileName);
-    void _WriteUnsupportedFileVersion();
-    void keyReleaseEvent(QKeyEvent * event);
-    void closeEvent(QCloseEvent *event);
-    bool _RealyExit();
-    QString _MessageIfUnsaved();
-    QString _GetRootDir();
-    void _SaveFile(const QString &fileName, bool values);
-    void _OpenFile(bool values);
-    void _OpenFile(QString const &filePath, bool values);
-    bool _CouldBeOpen();
-    QString _GetFileNameToSave(const QString &extension, bool values);
-    void _ExportCSV(std::vector<GraphicsContainer *> &graphicsContainers);
-    QString _DisplayMeasurementRemoveMessage(Measurement *m, bool isInProgress, bool alreadyMeasured, bool haveGhosts);
-
     hw::HwSink m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
@@ -59,6 +44,26 @@ class MainWindow : public QMainWindow
     GraphicsContainerManager *m_graphicsContainerManager;
     MeasurementMenu *m_measurementMenu;
     ChannelMenu *m_channelMenu;
+
+    void _SetCurrentFileName(QString const &fileName);
+    void _WriteUnsupportedFileVersion();
+    void keyReleaseEvent(QKeyEvent * event);
+    void closeEvent(QCloseEvent *event);
+    bool _RealyExit();
+    QString _MessageIfUnsaved();
+    QString _GetRootDir();
+    void _SaveFile(const QString &fileName, bool values);
+    void _OpenFile(bool values);
+    void _OpenFile(QString const &filePath, bool values);
+    bool _CouldBeOpen();
+    QString _GetFileNameToSave(const QString &extension, bool values);
+    void _ExportCSV(std::vector<GraphicsContainer *> &graphicsContainers);
+    QString _DisplayMeasurementRemoveMessage(Measurement *m, bool isInProgress, bool alreadyMeasured, bool haveGhosts);
+    void _SerializeGhsotColections(QDataStream &out);
+    bool _DeSerializeGhsotColections(QDataStream &in);
+    void _ShowCoruptedFileMessage(const QString &fileName);
+    unsigned _GetGhostCount();
+
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();

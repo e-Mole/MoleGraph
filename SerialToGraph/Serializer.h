@@ -12,7 +12,7 @@
 namespace atog
 {
 
-#define ATOG_SERIALIZER_VERSION 3
+#define ATOG_SERIALIZER_VERSION 4
 #define ATOG_LOWEST_VERSION 2
 #define TERMINATOR_STRING "!end!"
 #define COLECTIONS_ID "colections"

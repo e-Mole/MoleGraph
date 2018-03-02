@@ -468,7 +468,9 @@ QString MainWindow::_GetFileNameToSave(QString const &extension, bool values)
         this,
         tr(values ? "Save as" : "Save without Values As"),
         _GetRootDir(),
-        "*." + extension
+        "*." + extension,
+        GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing(),
+        GlobalSettings::GetInstance().GetLimitDir()
     );
 
     if (fileName.size() == 0)

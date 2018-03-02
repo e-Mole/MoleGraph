@@ -8,7 +8,6 @@ KeyShortcut::KeyShortcut(QKeySequence const &sequence, QWidget *receiver, const 
     //Android doesn't supprt keyboard shortcuts
     Q_UNUSED(sequence);
     Q_UNUSED(slot);
-    return NULL;
 #else
     m_shortcut = new QShortcut(sequence, receiver);
     m_shortcut->connect(m_shortcut, SIGNAL(activated()), this, SIGNAL(activated()));

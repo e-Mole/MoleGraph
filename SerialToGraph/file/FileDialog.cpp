@@ -35,12 +35,16 @@ QString FileDialog::getSaveFileName(
     QWidget *parent,
     const QString &caption,
     const QString &dir,
-    const QString &filter)
+    const QString &filter,
+    bool acceptChangesByDialogClosing,
+    const QString &limitDir)
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_SaveFile, parent, caption, dir, filter, settings);
+        OwnFileDialog::Type_SaveFile, parent, caption, dir, filter, acceptChangesByDialogClosing, limitDir);
 #else
+    Q_UNUSED(acceptChangesByDialogClosing);
+    Q_UNUSED(limitDir);
     NativeFileDialog nfd(QFileDialog::AcceptSave, parent, caption, dir, filter, GlobalSettings::GetInstance().GetLimitDir());
     return 0 == nfd.exec() ? "" : nfd.selectedFiles()[0];
 #endif
@@ -50,14 +54,16 @@ QString FileDialog::getExistingDirectory(
     QWidget *parent,
     const QString &caption,
     const QString &dir,
-    const GlobalSettings &settings
+    bool acceptChangesByDialogClosing,
+    const QString &limitDir
 )
 {
 #if defined(OWN_FILE_DIALOG)
     return OwnFileDialog::ExecuteFileDialog(
-        OwnFileDialog::Type_SelectDir, parent, caption, dir, "", settings);
+        OwnFileDialog::Type_SelectDir, parent, caption, dir, "", acceptChangesByDialogClosing, limitDir);
 #else
-    Q_UNUSED(settings); //TODO: limit is not implemeted for common file dialog
+    Q_UNUSED(acceptChangesByDialogClosing);
+    Q_UNUSED(limitDir);
     return QFileDialog::getExistingDirectory(parent, caption, dir);
 #endif
 }

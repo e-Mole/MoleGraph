@@ -72,7 +72,11 @@ SOURCES += main.cpp\
     data/measurementManager.cpp \
     KeyShortcut.cpp \
     graphics/GraphicsContainerManager.cpp \
-    graphics/GraphicsContainer.cpp
+    graphics/GraphicsContainer.cpp \
+    SensorFile.cpp \
+    hw/Sensor.cpp \
+    hw/SensorManager.cpp \
+    hw/SensorQuantity.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -124,7 +128,11 @@ HEADERS  += MainWindow.h \
     data/measurementManager.h \
     KeyShortcut.h \
     graphics/GraphicsContainerManager.h \
-    graphics/GraphicsContainer.h
+    graphics/GraphicsContainer.h \
+    SensorFile.h \
+    hw/Sensor.h \
+    hw/SensorManager.h \
+    hw/SensorQuantity.h
 
 CONFIG += mobility
 CONFIG += c++11

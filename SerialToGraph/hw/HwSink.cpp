@@ -7,6 +7,7 @@
 #include <hw/Bluetooth.h>
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
+#include <hw/Sensor.h>
 #include <MyMessageBox.h>
 #include <QCoreApplication>
 #include <QDebug>
@@ -102,6 +103,17 @@ void HwSink::SetSelectedChannels(unsigned char channels)
     tmp.append((char const *)&channels, 1);
     _WriteInstruction(INS_ENABLED_CHANNELS, tmp);
 }
+
+void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex)
+{
+    std::string tmp;
+    tmp.append(hwIndex, 1);
+    tmp.append(port, 1);
+    tmp.append(sensorId, 1);
+    tmp.append(quantityId, 1);
+    _WriteInstruction(INS_SET_SENSOR, tmp);
+}
+
 
 bool HwSink::IsDeviceConnected()
 {

@@ -42,7 +42,8 @@ private:
         INS_GET_SAMLPE = 8,
         INS_PAUSE = 9,
         INS_CONTINUE = 10,
-        INS_INITIALIZE = 11
+        INS_INITIALIZE = 11,
+        INS_SET_SENSOR = 12
     };
 
     bool _WriteInstruction(Instructions instruction, std::string const &data);
@@ -90,6 +91,7 @@ public:
     QString GetStateString();
     void InitializeBluetooth();
     void TerminateBluetooth();
+    void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex);
 
 signals:
     void StartCommandDetected();

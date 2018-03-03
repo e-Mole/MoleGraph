@@ -6,8 +6,12 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <hw/Sensor.h>
+#include <hw/SensorManager.h>
+#include <hw/SensorQuantity.h>
 #include <HwChannel.h>
 #include <Measurement.h>
+#include <memory>
 #include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -23,7 +27,30 @@
 #include <QString>
 #include <SampleChannel.h>
 
-ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, GraphicsContainer *graphicsContainer, ChannelWidget *channelWidget) :
+QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
+{
+    if (quantity->GetName() == "")
+        return "";
+    if (quantity->GetName() == "Current")
+        return tr("Current");
+    if (quantity->GetName() == "Humidity")
+        return tr("Humidity");
+    if (quantity->GetName() == "Pressure")
+        return tr("Pressure");
+    if (quantity->GetName() == "Temperature")
+        return tr("Temperature");
+    if (quantity->GetName() == "Voltage")
+        return tr("Voltage");
+
+    qWarning() << "unknown quantity to translate " << quantity->GetName();
+}
+
+ChannelSettings::ChannelSettings(
+    QVector<Measurement *> measurements,
+    GraphicsContainer *graphicsContainer,
+    ChannelWidget *channelWidget,
+    hw::SensorManager *sensorManager
+) :
     bases::FormDialogColor (channelWidget, tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
     m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
@@ -41,11 +68,16 @@ ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, Graphi
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
     m_measurementCombo(NULL),
-    m_channelCombo(NULL)
+    m_channelCombo(NULL),
+    m_sensorQuantityComboBox(NULL),
+    m_sensorNameComboBox(NULL),
+    m_sensorPortComboBox(NULL),
+    m_sensorManager(sensorManager)
 {
     if (m_channelWidget->isGhost())
     {
         _InitializeGhostCombos();
+        AddSeparator();
     }
 
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
@@ -56,16 +88,20 @@ ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, Graphi
     {
         m_name->setVisible(false);
         _InitializeTimeFeatures();
+        AddSeparator();
     }
     else
     {
         if (channel->GetType() == ChannelBase::Type_Hw)
+        {
             _InitializeValueLine(channelWidget);
-
+            AddSeparator();
+            _InitializeSensorItems();
+            AddSeparator();
+        }
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
     }
-
     AddColorButtonRow(channelWidget->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
@@ -76,6 +112,113 @@ ChannelSettings::ChannelSettings(std::vector<Measurement *> measurements, Graphi
         connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
         connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
     }
+}
+
+void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
+{
+    (*item) = new bases::ComboBox(this);
+    (*item)->setEnabled(m_channel->GetMeasurement()->GetState() == Measurement::Ready);
+    m_formLayout->addRow(new QLabel(label, this), (*item));
+    connect((*item), SIGNAL(currentIndexChanged(int)), this, slot);
+}
+
+void ChannelSettings::_FillSensorPortCB()
+{
+    m_sensorPortComboBox->addItem(tr("Undefined"), hw::SensorManager::nonePortId);
+    for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
+    {
+        m_sensorPortComboBox->addItem(_GetPortName(i), i);
+        if (i == ((HwChannel *)m_channel)->GetSensorPort())
+            m_sensorPortComboBox->setCurrentIndex(m_sensorPortComboBox->count() - 1);
+    }
+}
+
+void ChannelSettings::_FillSensorNameCB()
+{
+    unsigned currentSensorId = ((HwChannel*)m_channel)->GetSensor()->GetId();
+    m_sensorNameComboBox->clear();
+    foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
+    {
+
+        if (sensor->GetId() == hw::Sensor::noSensorId)
+        {
+            if (m_sensorPortComboBox->currentData().toInt() == hw::SensorManager::nonePortId)
+            {
+                m_sensorNameComboBox->addItem(sensor->GetName(), sensor->GetId());
+                m_sensorNameComboBox->setEnabled(false);
+                return;
+            }
+        }
+        else
+        {
+            m_sensorNameComboBox->addItem(sensor->GetName(), sensor->GetId());
+        }
+
+        if (currentSensorId == sensor->GetId())
+        {
+            m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
+        }
+    }
+    m_sensorNameComboBox->setEnabled(true);
+}
+
+void ChannelSettings::_FillSensorQuanitityCB()
+{
+    hw::SensorQuantity *currentSensorQuanity = ((HwChannel*)m_channel)->GetSensorQuantity();
+    m_sensorQuantityComboBox->clear();
+    unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
+
+    foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
+    {
+        if (sensor->GetId() == currentSensorOrder)
+        {
+            foreach (hw::SensorQuantity *quantity, sensor->GetQuantities())
+            {
+                m_sensorQuantityComboBox->addItem(_GetQuantityString(quantity), quantity->GetId());
+                if (currentSensorQuanity == quantity)
+                {
+                    m_sensorQuantityComboBox->setCurrentIndex(m_sensorQuantityComboBox->count() - 1);
+                }
+            }
+            break;
+        }
+    }
+    m_sensorQuantityComboBox->setEnabled(m_sensorQuantityComboBox->count() > 1);
+}
+
+void ChannelSettings::_InitializeSensorItems()
+{
+    _InitializeSensorItem(&m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
+    _InitializeSensorItem(&m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
+    _InitializeSensorItem(&m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQualityChanged(int)));
+
+    _FillSensorPortCB();
+    _FillSensorNameCB();
+    _FillSensorQuanitityCB();
+
+}
+
+void ChannelSettings::sensorPortChanged(int index)
+{
+    Q_UNUSED(index)
+    if (
+        (m_sensorPortComboBox->currentData().toInt() == hw::SensorManager::nonePortId) ==
+        !(m_sensorNameComboBox->currentData().toInt() == hw::Sensor::noSensorId))
+    {
+        _FillSensorNameCB();
+    }
+}
+
+void ChannelSettings::sensorNameChanged(int index)
+{
+    Q_UNUSED(index)
+    _FillSensorQuanitityCB();
+}
+
+void ChannelSettings::sensorQualityChanged(int index)
+{
+    Q_UNUSED(index)
+
 }
 
 void ChannelSettings::_InitializeGhostCombos()
@@ -390,18 +533,6 @@ bool ChannelSettings::BeforeAccept()
         m_channelWidget->SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
     }
 
-    if (changed)
-    {
-        GlobalSettings::GetInstance().SetSavedState(false);
-        if (changedHorizontal)
-        {
-            m_channelWidget->UpdateTitle();
-        }
-
-        m_channelWidget->GetPlot()->ReplotIfNotDisabled();
-
-    }
-
     if (m_channelWidget->isGhost())
     {
         Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
@@ -416,6 +547,43 @@ bool ChannelSettings::BeforeAccept()
         }
     }
 
+    if (m_channel->GetType() == ChannelBase::Type_Hw)
+    {
+        HwChannel *hwChannel = (HwChannel *)m_channel;
+        hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
+        if (NULL != sensor && sensor != hwChannel->GetSensor())
+        {
+          hwChannel->_SetSensor(sensor);
+          changed = true;
+        }
+
+        unsigned port = m_sensorPortComboBox->currentData().toInt();
+        if (port != hwChannel->GetSensorPort())
+        {
+            hwChannel->_SetSensorPort(port);
+            changed = true;
+        }
+
+        hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(m_sensorQuantityComboBox->currentData().toInt());
+        if (quantity != hwChannel->GetSensorQuantity())
+        {
+            hwChannel->_SetSensorQuantity(quantity);
+            changed = true;
+        }
+    }
+
+    //NOTE: must be last!
+    if (changed)
+    {
+        GlobalSettings::GetInstance().SetSavedState(false);
+        if (changedHorizontal)
+        {
+            m_channelWidget->UpdateTitle();
+        }
+
+        m_channelWidget->GetPlot()->ReplotIfNotDisabled();
+
+    }
 
     return true;
 }
@@ -517,4 +685,9 @@ void ChannelSettings::axisChanged(int index)
         Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
         m_shapeComboBox->setEnabled(!axis->IsHorizontal());
     }
+}
+
+QString ChannelSettings::_GetPortName(int port)
+{
+    return tr("Port %1").arg(port);
 }

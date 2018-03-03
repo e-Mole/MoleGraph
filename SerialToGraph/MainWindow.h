@@ -21,6 +21,8 @@ class QApplication;
 class QDataStream;
 class QGridLayout;
 class QTabWidget;
+namespace hw { class SensorManager; }
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -44,6 +46,7 @@ class MainWindow : public QMainWindow
     GraphicsContainerManager *m_graphicsContainerManager;
     MeasurementMenu *m_measurementMenu;
     ChannelMenu *m_channelMenu;
+    hw::SensorManager *m_sensorManager;
 
     void _SetCurrentFileName(QString const &fileName);
     void _WriteUnsupportedFileVersion();
@@ -108,6 +111,7 @@ private slots:
     void removeMeasurement(Measurement *m);
     void addGhostChannel();
     void showPanelMenu(Measurement *m);
+    void editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget);
 };
 
 #endif // MAINWINDOW_H

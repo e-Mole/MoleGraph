@@ -37,7 +37,7 @@ public:
     bool IsGhostAddable(Measurement *m);
     ChannelBase *GetChannelForGhost(Measurement *m);
 signals:
-
+    void editChannel(GraphicsContainer *gc, ChannelWidget *channelWidget);
 private slots:
     void editChannel(ChannelWidget *channelWidget);
 public slots:

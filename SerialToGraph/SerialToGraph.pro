@@ -32,7 +32,7 @@ SOURCES += main.cpp\
     bases/PlatformDialog.cpp \
     hw/Bluetooth.cpp \
     hw/HwSink.cpp \
-    hw/PortBase.cpp \    
+    hw/PortBase.cpp \
     qcustomplot/qcustomplot.cpp \
     Axis.cpp \
     AxisChooseDialog.cpp \
@@ -73,7 +73,6 @@ SOURCES += main.cpp\
     KeyShortcut.cpp \
     graphics/GraphicsContainerManager.cpp \
     graphics/GraphicsContainer.cpp \
-    SensorFile.cpp \
     hw/Sensor.cpp \
     hw/SensorManager.cpp \
     hw/SensorQuantity.cpp
@@ -129,14 +128,13 @@ HEADERS  += MainWindow.h \
     KeyShortcut.h \
     graphics/GraphicsContainerManager.h \
     graphics/GraphicsContainer.h \
-    SensorFile.h \
     hw/Sensor.h \
     hw/SensorManager.h \
     hw/SensorQuantity.h
 
 CONFIG += mobility
 CONFIG += c++11
-MOBILITY = 
+MOBILITY =
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 

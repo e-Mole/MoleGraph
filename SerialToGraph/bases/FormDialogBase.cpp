@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QString>
 #include <GlobalSettings.h>
+#include <QFrame>
 
 namespace bases
 {
@@ -43,6 +44,14 @@ void FormDialogBase::closeEvent(QCloseEvent * e)
         storeAndAccept();
 
     PlatformDialog::closeEvent(e);
+}
+
+void FormDialogBase::AddSeparator()
+{
+    QFrame *frame = new QFrame(this);
+    frame->setFrameShape(QFrame::HLine);
+    frame->setFrameShadow(QFrame::Sunken);
+    m_formLayout->addRow(frame);
 }
 
 } //namespace bases

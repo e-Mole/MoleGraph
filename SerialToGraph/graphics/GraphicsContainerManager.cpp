@@ -94,8 +94,7 @@ ChannelWidget * GraphicsContainerManager::AddGhost(
 
 void GraphicsContainerManager::editChannel(ChannelWidget *channelWidget)
 {
-    ChannelSettings *settings = new ChannelSettings(m_measurements, (GraphicsContainer*)sender(), channelWidget);
-    settings->exec();
+    editChannel((GraphicsContainer*)sender(), channelWidget);
 }
 
 bool GraphicsContainerManager::HaveMeasurementGhosts(Measurement *m)
@@ -151,5 +150,3 @@ ChannelBase *GraphicsContainerManager::GetChannelForGhost(Measurement *m)
 
     return NULL;
 }
-
-

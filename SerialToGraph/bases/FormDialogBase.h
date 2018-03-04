@@ -23,6 +23,8 @@ public:
 
     bool IsChanged()
     {   return m_changed; }
+
+    void AddSeparator();
 signals:
 
 private slots:

@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "quantities":
+  [
+    {
+      "quantityId" : "0",
+      "quantityName" : ""
+    },
+    {
+      "quantityId" : "1",
+      "quantityName" : "Temperature"
+    },
+    {
+      "quantityId" : "2",
+      "quantityName" : "Voltage"
+    },
+    {
+      "quantityId" : "3",
+      "quantityName" : "Current"
+    },
+    {
+      "quantityId" : "4",
+      "quantityName" : "Pressure"
+    },
+    {
+      "quantityId" : "5",
+      "quantityName" : "Humidity"
+    }
+  ],
+  "sensors":
+  [
+    {
+      "sensorId" : 0,
+      "sensorName": "",
+      "quantities" : [ "" ]
+    },
+    {
+      "sensorId" : 1,
+      "sensorName": "Generic (Voltage 0-5 V)",
+      "quantities" : [ "" ]
+    },
+    {
+      "sensorId" : 10,
+      "sensorName": "Temp1",
+      "quantities" : [ "Temperature" ]
+    },
+    {
+      "sensorId" : 11,
+      "sensorName": "Volt1",
+      "quantities" : [ "Voltage" ]
+    },
+    {
+      "sensorId" : 12,
+      "sensorName": "Curr1",
+      "quantities" : [ "Current" ]
+    },
+    {
+      "sensorId" : 13,
+      "sensorName": "Press1",
+      "quantities" : [ "Pressure" ]
+    },
+    {
+      "sensorId" : 14,
+      "sensorName": "Humd1",
+      "quantities" : [ "Humidity" ]
+    },
+    {
+      "sensorId" : 15,
+      "sensorName": "Composed",
+      "quantities" : [ "Current",  "Voltage"]
+    }
+  ]
+}

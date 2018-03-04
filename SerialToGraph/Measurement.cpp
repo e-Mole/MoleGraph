@@ -8,6 +8,8 @@
 #include <graphics/GraphicsContainer.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
+#include <hw/Sensor.h>
+#include <Hw/SensorManager.h>
 #include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -39,7 +41,8 @@ Measurement::Measurement(
     Context &context,
     hw::HwSink &hwSink,
     Measurement *source,
-    bool initializeAxiesAndChannels
+    bool initializeAxiesAndChannels,
+    hw::SensorManager *sensorManager
 ):
     QObject(parent),
     m_widget(
@@ -65,7 +68,8 @@ Measurement::Measurement(
     m_saveLoadValues(false),
     m_color(source != NULL ? source->GetColor() : Qt::black),
     m_secondsInPause(0),
-    m_valueSetCount(0)
+    m_valueSetCount(0),
+    m_sensorManager(sensorManager)
 {
     m_drawTimer->setSingleShot(true); //will be started from timeout slot
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
@@ -306,11 +310,26 @@ void Measurement::_ProcessActiveChannels()
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->GetType() == ChannelBase::Type_Hw && ((HwChannel *)channel)->IsActive())
+        if (channel->GetType() != ChannelBase::Type_Hw)
         {
-            m_trackedHwChannels.insert(((HwChannel *)channel)->GetHwIndex(), channel);
-            selectedChannels |= 1 << ((HwChannel *)channel)->GetHwIndex();
+            continue;
         }
+
+        HwChannel *hwChannel = (HwChannel *)channel;
+        if (!hwChannel->IsActive())
+        {
+            continue;
+        }
+
+        m_trackedHwChannels.insert(hwChannel->GetHwIndex(), channel);
+        selectedChannels |= 1 << hwChannel->GetHwIndex();
+        m_hwSink.SetSensor(
+            hwChannel->GetSensorPort(),
+            hwChannel->GetSensor()->GetId(),
+            (unsigned)hwChannel->GetSensorQuantity(),
+            hwChannel->GetHwIndex()
+        );
+
     }
     m_hwSink.SetSelectedChannels(selectedChannels);
 }
@@ -389,7 +408,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
     {
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
-            HwChannel *hwChannel = new HwChannel(this, hwIndex);
+            HwChannel *hwChannel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
             ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(
                 hwChannel,
                 sourceMeasurement->GetWidget(),
@@ -459,7 +478,7 @@ void Measurement::_InitializeAxesAndChanels()
 void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
-    HwChannel * newChannel = new HwChannel(this, order);
+    HwChannel * newChannel = new HwChannel(this, order, m_sensorManager->GetNoneSensor());
     ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
 
     m_channels.push_back(newChannel);
@@ -577,7 +596,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     }
     else
     {
-        channel = new HwChannel(this, hwIndex);
+        channel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
         channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
 
     }

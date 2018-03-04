@@ -25,7 +25,7 @@ class QTimer;
 class SampleChannel;
 struct Context;
 
-namespace hw { class HwSink;}
+namespace hw { class HwSink; class SensorManager;}
 
 class Measurement : public QObject
 {
@@ -124,14 +124,14 @@ private:
     double m_secondsInPause;
     QTime m_pauseStartTime;
     unsigned m_valueSetCount;
+    hw::SensorManager *m_sensorManager;
  public:
-    Measurement(
-        QWidget *parent,
+    Measurement(QWidget *parent,
         Context &context,
         hw::HwSink &hwSink,
         Measurement *source,
         bool initializeAxiesAndChannels
-);
+, hw::SensorManager *sensorManager);
     ~Measurement();
 
     QString &GetName();

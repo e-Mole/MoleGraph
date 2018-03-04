@@ -5,6 +5,7 @@
 #include <ChannelBase.h>
 #include <ChannelMenu.h>
 #include <ChannelWidget.h>
+#include <ChannelSettings.h>
 #include <Console.h>
 #include <file/Export.h>
 #include <file/FileDialog.h>
@@ -12,6 +13,7 @@
 #include <GlobalSettingsDialog.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
+#include <hw/SensorManager.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -53,12 +55,14 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_storedValues(true),
     m_graphicsContainerManager(NULL),
     m_measurementMenu(NULL),
-    m_channelMenu(NULL)
+    m_channelMenu(NULL),
+    m_sensorManager(new hw::SensorManager(this))
 {
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
 
     m_graphicsContainerManager = new GraphicsContainerManager(m_centralWidget);
+    connect(m_graphicsContainerManager, SIGNAL(editChannel(GraphicsContainer*,ChannelWidget*)), this, SLOT(editChannel(GraphicsContainer*,ChannelWidget*)));
 
     m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
@@ -226,7 +230,7 @@ void MainWindow::ShowConsole(bool show)
 
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 {
-    Measurement *m = new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels);
+    Measurement *m = new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels, m_sensorManager);
     return m;
 }
 
@@ -235,7 +239,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
     Measurement *currentMeasurement = GetCurrnetMeasurement();
     GraphicsContainer* currentGC = currentMeasurement->GetWidget();
 
-    Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true);
+    Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true, m_sensorManager);
     GraphicsContainer *newGC = newMeasurement->GetWidget();
 
     foreach (ChannelWidget *w, currentGC->GetChannelWidgets())
@@ -906,4 +910,10 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
     }
 
     return true;
+}
+
+void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
+{
+    ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
+    settings->exec();
 }

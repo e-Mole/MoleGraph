@@ -125,6 +125,9 @@ void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString cons
 void ChannelSettings::_FillSensorPortCB()
 {
     m_sensorPortComboBox->addItem(tr("Undefined"), hw::SensorManager::nonePortId);
+    if (m_sensorManager->GetSensors().size() == 1)
+        return; //sensors are not defined
+
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);

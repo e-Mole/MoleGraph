@@ -100,6 +100,11 @@
     },
     {
       "sensorId" : 5,
+      "sensorName" : "Pressure sensor (MLX90614)",
+      "quantities" : [ "Temperature", "Temperature" ]
+    },    
+    {
+      "sensorId" : 5,
       "sensorName" : "Pressure sensor (MPX5700DP)",
       "quantities" : [ "Pressure" ]
     },

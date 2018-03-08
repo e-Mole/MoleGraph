@@ -3,7 +3,7 @@
 #include <OneWire.h> 
 #include <Wire.h> 
 
-#define VERSION "ATG_4" //arduino to graph version 
+#define VERSION "ATG_5" //arduino to graph version 
 
 enum Instructions
 {

@@ -108,11 +108,12 @@ void HwSink::SetSelectedChannels(unsigned char channels)
 
 void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex)
 {
+    port --; // hack :/ - change port ID to range 0-3 (4 ports)
     std::string tmp;
-    tmp.append(hwIndex, 1);
-    tmp.append(port, 1);
-    tmp.append(sensorId, 1);
-    tmp.append(quantityId, 1);
+    tmp.append((char const *)&hwIndex, 1);
+    tmp.append((char const *)&port, 1);
+    tmp.append((char const *)&sensorId, 1);
+    tmp.append((char const *)&quantityId, 1);
 
     _WriteInstruction(INS_SET_SENSOR, tmp);
 }

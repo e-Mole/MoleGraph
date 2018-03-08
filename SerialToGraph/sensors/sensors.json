@@ -25,49 +25,160 @@
     {
       "quantityId" : 5,
       "quantityName" : "Humidity"
+    },
+    {
+      "quantityId" : 6,
+      "quantityName" : "RAW"
+    },
+    {
+      "quantityId" : 7,
+      "quantityName" : "Acceleration"
+    },
+    {
+      "quantityId" : 8,
+      "quantityName" : "Magnetic Field Intensity"
+    },
+    {
+      "quantityId" : 9,
+      "quantityName" : "Force"
+    },
+    {
+      "quantityId" : 10,
+      "quantityName" : "UV Index"
+    },
+    {
+      "quantityId" : 11,
+      "quantityName" : "pH"
+    },
+    {
+      "quantityId" : 12,
+      "quantityName" : "Conductivity"
+    },
+    {
+      "quantityId" : 13,
+      "quantityName" : "Illuminace"
+    } ,
+    {
+      "quantityId" : 14,
+      "quantityName" : "Concentration"
+    } ,
+    {
+      "quantityId" : 15,
+      "quantityName" : "Distance"
+    } ,
+    {
+      "quantityId" : 16,
+      "quantityName" : "Velocity"
     }
   ],
   "sensors":
   [
     {
       "sensorId" : 0,
-      "sensorName": "",
+      "sensorName" : "",
       "quantities" : [ "" ]
+    },
+    {
+      "sensorId" : 101,
+      "sensorName" : "Generic (AD 10bit)",
+      "quantities" : ["RAW", "Voltage" ]
     },
     {
       "sensorId" : 1,
-      "sensorName": "Generic (Voltage 0-5 V)",
-      "quantities" : [ "" ]
-    },
-    {
-      "sensorId" : 10,
-      "sensorName": "Temp1",
+      "sensorName" : "Thermometer (DS18B20)",
       "quantities" : [ "Temperature" ]
     },
     {
-      "sensorId" : 11,
-      "sensorName": "Volt1",
-      "quantities" : [ "Voltage" ]
+      "sensorId" : 2,
+      "sensorName" : "Pressure + Thermometer + Hygrometer (BME280)",
+      "quantities" : [ "Pressure", "Temperature", "Humidity" ]
     },
     {
-      "sensorId" : 12,
-      "sensorName": "Curr1",
-      "quantities" : [ "Current" ]
+      "sensorId" : 3,
+      "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
+      "quantities" : [ "Acceleration", "Magnetic Field Intensity" ]
     },
     {
-      "sensorId" : 13,
-      "sensorName": "Press1",
+      "sensorId" : 5,
+      "sensorName" : "Pressure sensor (MLX90614)",
+      "quantities" : [ "Temperature", "Temperature" ]
+    },
+    {
+      "sensorId" : 5,
+      "sensorName" : "Pressure sensor (MPX5700DP)",
       "quantities" : [ "Pressure" ]
     },
     {
+      "sensorId" : 7,
+      "sensorName" : "Force sensor",
+      "quantities" : [ "Force" ]
+    },
+    {
+      "sensorId" : 10,
+      "sensorName" : "EKG sensor (AD8232)",
+      "quantities" : [ "Voltage" ]
+    },
+    {
+      "sensorId" : 11,
+      "sensorName" : "Color sensor (TCS3200)",
+      "quantities" : [ "RAW" ]
+    },
+    {
+      "sensorId" : 13,
+      "sensorName" : "UV sensor (GUVA-S12SD)",
+      "quantities" : [ "UV Index" ]
+    },
+    {
       "sensorId" : 14,
-      "sensorName": "Humd1",
-      "quantities" : [ "Humidity" ]
+      "sensorName" : "pH sensor",
+      "quantities" : [ "pH" ]
     },
     {
       "sensorId" : 15,
-      "sensorName": "Composed",
-      "quantities" : [ "Current",  2 ]
+      "sensorName" : "Conductivity sensor",
+      "quantities" : [ "Conductivity" ]
+    },
+    {
+      "sensorId" : 16,
+      "sensorName" : "Voltage + Current sensor",
+      "quantities" : [ "Voltage", "Current" ]
+    },
+    {
+      "sensorId" : 18,
+      "sensorName" : "Light sensor (photoresistor)",
+      "quantities" : [ "Illuminace" ]
+    },
+    {  "sensorId" : 19,
+      "sensorName" : "CO2 gas sensor (MH-Y16)",
+      "quantities" : [ "Concentration" ]
+    },
+    {  "sensorId" : 20,
+      "sensorName" : "O2 gas sensor (ME2-O2)",
+      "quantities" : [ "Concentration" ]
+    },
+    {  "sensorId" : 21,
+      "sensorName" : "Motion sensor (SR-04)",
+      "quantities" : [ "Distance", "Velocity", "Acceleration" ]
+    },
+    {  "sensorId" : 22,
+      "sensorName" : "Heart rate sensor (simple)",
+      "quantities" : [ "Voltage" ]
+    },
+    {  "sensorId" : 23,
+      "sensorName" : "Magnetic field sensor",
+      "quantities" : [ "Voltage" ]
+    },
+    {  "sensorId" : 24,
+      "sensorName" : "Thermometer + Hygrometer (DHT11)",
+      "quantities" : [ "Temperature", "Humidity" ]
+    },
+    {  "sensorId" : 25,
+      "sensorName" : "Alcohol gas sensor (MQ-3)",
+      "quantities" : [ "Concentration" ]
+    },
+    {  "sensorId" : 26,
+      "sensorName" : "Particle/Dust sensor (DSM501)",
+      "quantities" : [ "Concentration" ]
     }
   ]
 }

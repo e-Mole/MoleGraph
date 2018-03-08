@@ -42,6 +42,8 @@ QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
     if (quantity->GetName() == "Voltage")
         return tr("Voltage");
 
+    return quantity->GetName(); //TODO: TFs mod: Remove!!!
+
     qWarning() << "unknown quantity to translate " << quantity->GetName();
 }
 

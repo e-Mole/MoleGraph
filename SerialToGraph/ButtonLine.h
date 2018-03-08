@@ -9,10 +9,8 @@
 
 class Axis;
 class ChannelBase;
-class ChannelMenu;
 class ConnectivityLabel;
 class Measurement;
-//class QAction;
 class PlotContextMenu;
 class QDialog;
 class QGridLayout;
@@ -68,7 +66,6 @@ class ButtonLine : public QWidget
     Measurement *m_measurement;
     QWidget* m_space;
     QMap<QAction*, QString> m_recentFileActions;
-    ChannelMenu *m_channelMenu;
 public:
     ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);

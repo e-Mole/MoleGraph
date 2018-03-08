@@ -63,7 +63,8 @@ namespace hw
             QJsonArray jsonSensorQuantities = sensorObject["quantities"].toArray();
             foreach (QJsonValue const &sensorValue, jsonSensorQuantities)
             {
-                sensor->AddQuantity(GetSensorQuantity(sensorValue.toString()));
+                sensor->AddQuantity((sensorValue.toInt(-1) != -1) ?
+                    GetSensorQuantity(sensorValue.toInt()) : GetSensorQuantity(sensorValue.toString()));
             }
 
             m_sensors.push_back(sensor);

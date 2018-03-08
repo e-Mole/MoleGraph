@@ -3,27 +3,27 @@
   "quantities":
   [
     {
-      "quantityId" : "0",
+      "quantityId" : 0,
       "quantityName" : ""
     },
     {
-      "quantityId" : "1",
+      "quantityId" : 1,
       "quantityName" : "Temperature"
     },
     {
-      "quantityId" : "2",
+      "quantityId" : 2,
       "quantityName" : "Voltage"
     },
     {
-      "quantityId" : "3",
+      "quantityId" : 3,
       "quantityName" : "Current"
     },
     {
-      "quantityId" : "4",
+      "quantityId" : 4,
       "quantityName" : "Pressure"
     },
     {
-      "quantityId" : "5",
+      "quantityId" : 5,
       "quantityName" : "Humidity"
     }
   ],
@@ -67,7 +67,7 @@
     {
       "sensorId" : 15,
       "sensorName": "Composed",
-      "quantities" : [ "Current",  "Voltage"]
+      "quantities" : [ "Current",  2 ]
     }
   ]
 }

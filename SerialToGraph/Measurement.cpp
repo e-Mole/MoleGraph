@@ -9,7 +9,8 @@
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <hw/Sensor.h>
-#include <Hw/SensorManager.h>
+#include <hw/SensorManager.h>
+#include <hw/SensorQuantity.h>
 #include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -326,7 +327,7 @@ void Measurement::_ProcessActiveChannels()
         m_hwSink.SetSensor(
             hwChannel->GetSensorPort(),
             hwChannel->GetSensor()->GetId(),
-            (unsigned)hwChannel->GetSensorQuantity(),
+            hwChannel->GetSensorQuantity()->GetId(),
             hwChannel->GetHwIndex()
         );
 

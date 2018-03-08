@@ -525,6 +525,10 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
             ((HwChannel *)channel)->GetHwIndex() : -1
         );
 
+    if (channel->GetType() == ChannelBase::Type_Sample)
+    {
+        out << ((SampleChannel*)channel)->GetStartDateTime();
+    }
     unsigned valueCount = ((m_saveLoadValues) ? channel->GetValueCount() : 0);
     out << valueCount;
     for (unsigned i = 0; i < valueCount; ++i)
@@ -578,7 +582,7 @@ bool SortChannels(ChannelBase *first, ChannelBase *second)
             first->GetType() < second->GetType();
 }
 
-void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion)
 {
     int hwIndex;
     in >> hwIndex;
@@ -601,12 +605,13 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 
     }
 
-    //Workaround functionality has been splited
+    //FIXME: may be later necessary just for version lower than 4. check it!
+    //Workaround. Many features has been moved to channelWidget but some left
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
-    in >> channelWidget;
 
+    in >> channelWidget;
     m_channels.push_back(channel);
     if (channelWidget->IsOnHorizontalAxis())
         m_widget->SetHorizontalChannel(this, channel);
@@ -629,7 +634,7 @@ ChannelBase *Measurement::_FindChannel(int hwIndex)
 
     return NULL;
 }
-void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
+void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVersion)
 {
     int hwIndex;
     in >> hwIndex;
@@ -642,7 +647,16 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
     }
 
     if (channel->GetType() == ChannelBase::Type_Hw)
+    {
         m_trackedHwChannels[hwIndex] = channel;
+    }
+    else if (channel->GetType() == ChannelBase::Type_Sample && collectionVersion > 3)
+    {
+
+        QDateTime startTime;
+        in >> startTime;
+        ((SampleChannel*)channel)->SetStartTime(startTime);
+    }
 
     unsigned valueCount;
     in >> valueCount;
@@ -661,7 +675,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
         }
         else
         {
-            if (version == 2)
+            if (collectionVersion == 2)
             {
                if (m_saveLoadValues)
                 channel->AddValue(value);
@@ -680,35 +694,35 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
     }
 }
 
-void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
+void Measurement::_DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion)
 {
     Axis *axis = m_widget->CreateNewAxis(index);
     in >> axis;
     int channelCount;
     in >> channelCount;
     for (int i = 0; i < channelCount; i++)
-        _DeserializeChannel(in, axis);
+        _DeserializeChannel(in, axis, collectionVersion);
 
     //Now I have all channels for the axis and can display corect label
     m_widget->UpdateAxis(axis);
 }
 
-void Measurement::DeserializeColections(QDataStream &in, unsigned version)
+void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVersion)
 {
     unsigned axisCount;
     in >> axisCount;
     for (unsigned i = 0; i < axisCount; ++i)
-        _DeserializeAxis(in, i);
+        _DeserializeAxis(in, i, collectionVersion);
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
     //samples
-    _DeserializeChannelData(in, version);
+    _DeserializeChannelData(in, collectionVersion);
 
     unsigned trackedHwChannelCount;
     in >> trackedHwChannelCount;
     for (unsigned i = 0; i < trackedHwChannelCount; ++i)
-        _DeserializeChannelData(in, version);
+        _DeserializeChannelData(in, collectionVersion);
 
     if (m_sampleChannel->GetValueCount() != 0)
         m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());

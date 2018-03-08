@@ -100,7 +100,11 @@ void GlobalSettingsDialog::_InitializeLimitDir()
 void GlobalSettingsDialog::limitDirClicked()
 {
     QString dir = file::FileDialog::getExistingDirectory(
-        this, tr("Select directory"), m_limitDirLine->text(), m_settings
+        this,
+        tr("Select directory"),
+        m_limitDirLine->text(),
+        GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing(),
+        GlobalSettings::GetInstance().GetLimitDir()
     );
 
     if (dir != "")

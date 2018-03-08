@@ -21,12 +21,15 @@ public:
     static QString getSaveFileName(QWidget *parent,
         const QString &caption,
         const QString &dir,
-        const QString &filter);
+        const QString &filter,
+        bool acceptChangesByDialogClosing,
+        const QString &limitDir);
 
     static QString getExistingDirectory(QWidget *parent,
         const QString &caption,
         const QString &dir,
-        const GlobalSettings &settings
+        bool acceptChangesByDialogClosing,
+        const QString &limitDir
     );
 };
 

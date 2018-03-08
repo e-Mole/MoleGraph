@@ -16,8 +16,10 @@
 #include <QQueue>
 #include <QTimer>
 #include <QWidget>
-#define PROTOCOL_ID "ATG_4"
+#define PROTOCOL_ID "ATG_5"
 
+//FIXME: workaround
+#define LEGACY_PROTOCOL_ID "ATG_4"
 namespace hw
 {
 HwSink::HwSink(QWidget *parent) :
@@ -111,6 +113,7 @@ void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, un
     tmp.append(port, 1);
     tmp.append(sensorId, 1);
     tmp.append(quantityId, 1);
+
     _WriteInstruction(INS_SET_SENSOR, tmp);
 }
 
@@ -290,7 +293,7 @@ void HwSink::readyRead()
     QByteArray array;
     m_port->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
     qDebug() << array;
-    if ((array.toStdString() != PROTOCOL_ID))
+    if ((array.toStdString() != PROTOCOL_ID && array.toStdString() != LEGACY_PROTOCOL_ID))
     {
         MyMessageBox::warning(
             (QWidget*)parent(),

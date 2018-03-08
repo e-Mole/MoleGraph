@@ -33,15 +33,15 @@
     {
       "quantityId" : 7,
       "quantityName" : "Acceleration"
-    },
+    }, 
     {
       "quantityId" : 8,
       "quantityName" : "Magnetic Field Intensity"
-    },
+    }, 
     {
       "quantityId" : 9,
       "quantityName" : "Force"
-    },
+    }, 
     {
       "quantityId" : 10,
       "quantityName" : "UV Index"
@@ -69,7 +69,7 @@
     {
       "quantityId" : 16,
       "quantityName" : "Velocity"
-    }
+    }                      
   ],
   "sensors":
   [
@@ -82,7 +82,7 @@
       "sensorId" : 101,
       "sensorName" : "Generic (AD 10bit)",
       "quantities" : ["RAW", "Voltage" ]
-    },
+    },   
     {
       "sensorId" : 1,
       "sensorName" : "Thermometer (DS18B20)",
@@ -92,7 +92,7 @@
       "sensorId" : 2,
       "sensorName" : "Pressure + Thermometer + Hygrometer (BME280)",
       "quantities" : [ "Pressure", "Temperature", "Humidity" ]
-    },
+    },    
     {
       "sensorId" : 3,
       "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
@@ -100,11 +100,11 @@
     },
     {
       "sensorId" : 5,
-      "sensorName" : "Pressure sensor (MLX90614)",
+      "sensorName" : "IR Thermometer (MLX90614)",
       "quantities" : [ "Temperature", "Temperature" ]
-    },
+    },    
     {
-      "sensorId" : 5,
+      "sensorId" : 6,
       "sensorName" : "Pressure sensor (MPX5700DP)",
       "quantities" : [ "Pressure" ]
     },
@@ -122,7 +122,7 @@
       "sensorId" : 11,
       "sensorName" : "Color sensor (TCS3200)",
       "quantities" : [ "RAW" ]
-    },
+    },                   
     {
       "sensorId" : 13,
       "sensorName" : "UV sensor (GUVA-S12SD)",

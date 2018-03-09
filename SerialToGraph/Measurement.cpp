@@ -328,6 +328,7 @@ void Measurement::_ProcessActiveChannels()
             hwChannel->GetSensorPort(),
             hwChannel->GetSensor()->GetId(),
             hwChannel->GetSensorQuantity()->GetId(),
+            hwChannel->GetSensorQuantityOrder(),
             hwChannel->GetHwIndex()
         );
 

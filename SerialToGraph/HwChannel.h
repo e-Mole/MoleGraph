@@ -22,10 +22,11 @@ class HwChannel : public ChannelBase
     hw::Sensor *m_sensor;
     unsigned m_sensorPort;
     hw::SensorQuantity *m_sensorQuantity;
+    unsigned m_sensorQuantityOrder;
 
     void _SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
     void _SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
-    void _SetSensorQuantity(hw::SensorQuantity *sensorQuantity) {m_sensorQuantity = sensorQuantity; }
+    void _SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
 
 public:
     HwChannel(Measurement *measurement, int hwIndex, hw::Sensor *sensor);
@@ -43,6 +44,8 @@ public:
     unsigned GetSensorId() {return m_sensor->GetId(); }
     unsigned GetSensorPort() { return m_sensorPort; }
     hw::SensorQuantity * GetSensorQuantity() { return m_sensorQuantity; }
+    unsigned GetSensorQuantityOrder() { return m_sensorQuantityOrder; }
+
 public slots:
     void setActive(bool isActive);
 signals:

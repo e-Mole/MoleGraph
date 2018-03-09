@@ -91,7 +91,7 @@ public:
     QString GetStateString();
     void InitializeBluetooth();
     void TerminateBluetooth();
-    void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex);
+    void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
 
 signals:
     void StartCommandDetected();

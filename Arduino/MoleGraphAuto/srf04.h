@@ -7,7 +7,7 @@
 
 class SRF04 : public TimerAbstract {
   public:
-    SRF04(uint8_t, uint32_t, uint8_t);
+    SRF04(uint32_t, uint8_t);
     virtual bool process();
     virtual float read(uint8_t);
   private:

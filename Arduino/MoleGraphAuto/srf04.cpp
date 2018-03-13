@@ -2,7 +2,7 @@
 
 #define SRF04_WAIT  75
 
-SRF04::SRF04(uint8_t _type, uint32_t _period, uint8_t _port) : TimerAbstract(_type, _period, _port) {
+SRF04::SRF04(uint32_t _period, uint8_t _port) : TimerAbstract(_period, _port) {
   trigger = PORTS[port][1];
   pinMode(trigger, OUTPUT);
   delta  = period; 
@@ -44,9 +44,9 @@ bool SRF04::process() {
 float SRF04::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; break;         // poloha
-    case 1: result = velocity; break;      // rychlost
-    case 2: result = acceleration; break;  // zrychleni
+    case 0: result = value; value = NO_DATA; break;  // poloha
+    case 1: result = velocity; velocity = NO_DATA; break;  // rychlost
+    case 2: result = acceleration; acceleration = NO_DATA; break;  // zrychleni
   }
   return result;
 }

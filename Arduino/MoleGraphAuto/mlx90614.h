@@ -8,12 +8,11 @@
 
 class MLX90614 : public Sensor {
   public:
-    MLX90614(uint8_t, uint32_t, uint8_t);
+    MLX90614(uint32_t, uint8_t);
     virtual bool process();
     virtual float read(uint8_t);
   private:
     float value2;
-    float readTemp(uint8_t);
 };
 
 

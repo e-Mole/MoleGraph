@@ -1,6 +1,6 @@
 #include "dht11.h"
 
-DHT11::DHT11(uint8_t _type, uint32_t _period, uint8_t _port) : Sensor(_type, _period, _port) {
+DHT11::DHT11(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin = PORTS[port][0];
   pinMode(pin, INPUT_PULLUP);
   pinMode(PORTS[port][2], OUTPUT);
@@ -123,8 +123,8 @@ float DHT11::read(uint8_t _spec) {
   float result = NO_DATA;
 //  if (_lastresult) {
     switch (_spec) {
-      case 0: result = data[0]; break;  // teplota
-      case 1: result = data[2]; break;  // vlhkost
+      case 0: result = data[0]; break;  // vlhkost
+      case 1: result = data[2]; break;  // teplota
     }
 //  }
   return result;

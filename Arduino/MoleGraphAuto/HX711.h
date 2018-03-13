@@ -7,13 +7,15 @@
 
 class HX711 : public Sensor {
   public:
-    HX711(uint8_t, uint32_t, uint8_t);
-    virtual bool process();
-    virtual void calibrate();
+    HX711(uint32_t, uint8_t);
+    virtual bool  process();
+    virtual float read(uint8_t);
+    virtual void  calibrate();
   private:
-    int32_t   getValue();
     uint8_t   data, clk;
     uint8_t   gain = 3; // A x128
+  protected:
+    int32_t   getValue();
     int32_t   offset;
 };
 

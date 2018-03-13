@@ -8,7 +8,7 @@
 
 class DHT11 : public Sensor {
   public:
-    DHT11(uint8_t _type, uint32_t _period, uint8_t _port);
+    DHT11(uint32_t _period, uint8_t _port);
     virtual bool process();
     virtual float read(uint8_t);
   private:

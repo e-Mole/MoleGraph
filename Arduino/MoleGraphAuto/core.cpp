@@ -5,7 +5,7 @@ float data[MAX_CHANNELS];
 #define PERIOD  1000
 uint32_t time, startTime;
 uint32_t period = PERIOD;
-uint8_t sendMask = 0;
+uint8_t  sendMask = 0;
 
 bool running = 0;
 uint8_t dataReady = 0;
@@ -18,11 +18,12 @@ void start() {
     StartStop = 1;
 
 // hack moleGraph zatim neposila pri vytvareni kanalu Tvz  
-  for (uint8_t i = 0; i < MAX_PORTS; i++) {
-    if (sensor[i] != NULL) {
-      sensor[i]->period = period;
-    }
-  }   
+    for (uint8_t i = 0; i < MAX_PORTS; i++) {
+      if (sensor[i] != NULL) {
+        sensor[i]->period = period;
+      }
+    }   
+
     time = Millis();
     startTime = time;
     for (uint8_t i = 0; i < MAX_PORTS; i++) {
@@ -30,8 +31,8 @@ void start() {
         sensor[i]->start(time);
       }
     }   
-    time -= period;
-//    if (scanType == PERIODICAL) running = 1;  // kdyz neni poslan prikaz scantype
+//    time -= period;
+    time -= 5;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
   }
 }
 
@@ -140,6 +141,7 @@ struct ChannelSetting {
   uint8_t port;
   uint8_t sensorType;
   uint8_t spec;
+  uint8_t order;  
 //  uint32_t period;  
 }; 
 
@@ -147,7 +149,8 @@ uint8_t setChannel() {
   ChannelSetting ch;
   Serial.readBytes((uint8_t*)&ch, sizeof(ChannelSetting));
 //  newChannel(ch.channel, (SensorType)ch.sensorType, ch.period, ch.port, ch.spec);    
-  newChannel(ch.channel, (SensorType)ch.sensorType, 1000, ch.port, ch.spec);    
+//  newChannel(ch.channel, (SensorType)ch.sensorType, 1000, ch.port, ch.spec);    
+  newChannel(ch.channel, (SensorType)ch.sensorType, 1000, ch.port, ch.order);    
 }
 
 void setScanType() {

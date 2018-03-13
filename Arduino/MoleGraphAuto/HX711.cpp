@@ -1,6 +1,6 @@
 #include "hx711.h"
 
-HX711::HX711(uint8_t _type, uint32_t _period, uint8_t _port) : Sensor(_type, _period, _port) {
+HX711::HX711(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   data = PORTS[_port][0];
   clk  = PORTS[_port][1];
   pinMode(data, INPUT);
@@ -37,16 +37,19 @@ int32_t HX711::getValue() {
 bool HX711::process() {
   if (Action(period)) {
     if (digitalRead(data)) return 0;
-
-    value = getValue() - offset;
-    
+    value = getValue();   
     time += period;
     return 1;
   }
   return 0;
 }
 
+float HX711::read(uint8_t _spec) {
+  return value - offset;
+}
+
 void HX711::calibrate() {
   offset = getValue();
 }
+
 

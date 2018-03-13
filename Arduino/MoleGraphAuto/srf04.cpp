@@ -44,9 +44,9 @@ bool SRF04::process() {
 float SRF04::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; break;  // poloha
-    case 1: result = velocity; break;  // poloha
-    case 2: result = acceleration; break;  // poloha
+    case 0: result = value; break;         // poloha
+    case 1: result = velocity; break;      // rychlost
+    case 2: result = acceleration; break;  // zrychleni
   }
   return result;
 }

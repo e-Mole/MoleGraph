@@ -123,8 +123,8 @@ float DHT11::read(uint8_t _spec) {
   float result = NO_DATA;
 //  if (_lastresult) {
     switch (_spec) {
-      case 0: result = data[0]; break;  // vlhkost
-      case 1: result = data[2]; break;  // teplota
+      case 0: result = data[0]; break;  // teplota
+      case 1: result = data[2]; break;  // vlhkost
     }
 //  }
   return result;

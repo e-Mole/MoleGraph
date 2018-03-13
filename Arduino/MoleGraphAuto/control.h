@@ -17,6 +17,9 @@
 #include "mpx5700dp.h"
 #include "lux.h"
 #include "hx711.h"
+#include "magnetometr.h"
+#include "soundmeter.h"
+#include "silomer.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //
@@ -40,8 +43,9 @@ enum SensorType {
   SENSOR_MAGNETOMETR  = 23,   // A023 Cidlo magnetickeho pole
   SENSOR_DHT11        = 24,   // W024 Vlhkost a teplota DHT11
   SENSOR_MQ3          = 25,   // A025 Cidlo alkoholu (plyn) MQ-3
-  SENSOR_DSM501       = 26,   // A026 Cidlo prachovych castic DSM501  
-  SENSOR_AD           = 101,  // A101 Analogovy vstu 0-5V
+  SENSOR_DSM501       = 26,   // A026 Cidlo prachovych castic DSM501
+  SENSOR_SOUNDMETER   = 27,   // A027 Cidlo intenzity zvuku (mikrofon)
+  SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu
   SENSOR_VL53L0X      = 105,  // I105 Dalkomer VL53L0X

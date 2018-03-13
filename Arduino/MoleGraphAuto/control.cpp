@@ -60,18 +60,20 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
   
   if (sensor[_port] == NULL) {
     switch (_type) {
-      case SENSOR_DS18B20:  sensor[_port] = new DS18B20(_period, _port); break;
-      case SENSOR_AD:       sensor[_port] = new AD(_period, _port); break;
-      case SENSOR_VL53L0X:  sensor[_port] = new VL53L0X(_period, _port); break;
-      case SENSOR_FORCE:    sensor[_port] = new Force(_period, _port); break;
-      case SENSOR_HX711:    sensor[_port] = new HX711(_period, _port); break;
-      case SENSOR_DHT11:    sensor[_port] = new DHT11(_period, _port); break;
-      case SENSOR_MLX90614: sensor[_port] = new MLX90614(_period, _port); break;
-      case SENSOR_MPX5700DP:sensor[_port] = new MPX5700DP(_period, _port); break;
-      case SENSOR_SRF04:    sensor[_port] = new SRF04(_period, _port); break;
-      case SENSOR_LUX:      sensor[_port] = new Lux(_period, _port); break;   
-      case SENSOR_TIMER:    sensor[_port] = new Timer(_period, _port); break;   
-      case SENSOR_LED:      sensor[_port] = new LedBlink(_period, _port); break;
+      case SENSOR_DS18B20:  		sensor[_port] = new DS18B20(_period, _port); break;
+      case SENSOR_AD:       		sensor[_port] = new AD(_period, _port); break;
+      case SENSOR_VL53L0X:  		sensor[_port] = new VL53L0X(_period, _port); break;
+      case SENSOR_FORCE:    		sensor[_port] = new Silomer(_period, _port); break;
+      case SENSOR_HX711:    		sensor[_port] = new HX711(_period, _port); break;
+      case SENSOR_DHT11:    		sensor[_port] = new DHT11(_period, _port); break;
+      case SENSOR_MLX90614: 		sensor[_port] = new MLX90614(_period, _port); break;
+      case SENSOR_MPX5700DP:		sensor[_port] = new MPX5700DP(_period, _port); break;
+      case SENSOR_SRF04:    		sensor[_port] = new SRF04(_period, _port); break;
+      case SENSOR_LUX:      		sensor[_port] = new Lux(_period, _port); break;
+      case SENSOR_TIMER:    		sensor[_port] = new Timer(_period, _port); break;
+      case SENSOR_LED:      		sensor[_port] = new LedBlink(_period, _port); break;
+      case SENSOR_MAGNETOMETR:  sensor[_port] = new Magnetometr(_period, _port); break;
+      case SENSOR_SOUNDMETER:   sensor[_port] = new Soundmeter(_period, _port); break;
     }
     DEBUG_PRINT("Creating sensor on port: "); DEBUG_PRINTLN(_port);
   }

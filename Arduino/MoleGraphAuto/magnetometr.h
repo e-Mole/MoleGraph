@@ -7,11 +7,13 @@
 
 class Magnetometr : public Sensor {
   public:
-    Magnetometr(uint8_t, uint32_t, uint8_t);
+    Magnetometr(uint32_t, uint8_t);
     virtual bool process();
+    virtual float read(uint8_t);
+  protected:
+    uint8_t pin, pin_digi;
   private:
-    uint8_t   pin;
+    float value2;
 };
-
 
 #endif

@@ -3,14 +3,15 @@
 
 #include <Arduino.h>
 #include "systick.h"
-#include "AD.h"
+#include "Sensor.h"
 
-class MPX5700DP : public AD {
+class MPX5700DP : public Sensor {
   public:
     MPX5700DP(uint32_t, uint8_t);
-    virtual float read(uint8_t);
-    virtual void  calibrate(); 
+    virtual bool process();
+    virtual void calibrate(); 
   private:
+    uint8_t   pin;
     int32_t   offset = 0;
     float     scale; 
 };

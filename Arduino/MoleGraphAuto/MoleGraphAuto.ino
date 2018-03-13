@@ -3,7 +3,7 @@
 #include <OneWire.h> 
 #include <Wire.h> 
 
-#define VERSION "ATG_4" //arduino to graph version 
+#define VERSION "ATG_5" //arduino to graph version 
 
 enum Instructions
 {
@@ -112,7 +112,7 @@ void loop() {
   SystemProcess(newTime);
 
   if (button) {
-    if (sensor[button-1] != NULL) 
+    if (sensor[button-1] != NULL)
       sensor[button-1]->calibrate();      
   }
 

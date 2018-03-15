@@ -359,6 +359,7 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
         );
 
         m_plot->RescaleAllAxes();
+        _FollowLastMeasuredValue();
     }
     m_plot->ReplotIfNotDisabled();
 }

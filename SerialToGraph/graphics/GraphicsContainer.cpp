@@ -326,9 +326,7 @@ void GraphicsContainer::AddHorizontalValue(double value)
 {
     m_horizontalValueSet.insert(value);
 
-    CalculateScrollbarRange() ;
-    if (m_followMode)
-        _FollowLastMeasuredValue();
+    CalculateScrollbarRange();
 }
 
 void GraphicsContainer::ClearHorizontalValueSet()
@@ -359,12 +357,9 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
                 m_horizontalValueSet.find(lastHorizontalValue)
             )
         );
-    }
 
-    //FIXME: why it is separated
-    if (m_followMode)
         m_plot->RescaleAllAxes();
-
+    }
     m_plot->ReplotIfNotDisabled();
 }
 
@@ -720,6 +715,7 @@ void GraphicsContainer::RecalculateSliderMaximum()
 
 void GraphicsContainer::addNewValueSet()
 {
+    GetPlot()->setDisabled(true);
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
@@ -737,6 +733,7 @@ void GraphicsContainer::addNewValueSet()
         }
     }
     AddHorizontalValue(horizontalChannel->GetLastValidValue());
+    GetPlot()->setDisabled(true);
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)

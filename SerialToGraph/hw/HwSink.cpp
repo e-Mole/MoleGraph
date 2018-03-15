@@ -108,7 +108,7 @@ void HwSink::SetSelectedChannels(unsigned char channels)
 
 void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex)
 {
-    port --; // TODO: TFsmod: hack :/ - change port ID to range 0-3 (4 ports)
+    port --; // TODO: TFs mod: hack :/ - change port ID to range 0-3 (4 ports)
     std::string tmp;
     tmp.append((char const *)&hwIndex, 1);
     tmp.append((char const *)&port, 1);

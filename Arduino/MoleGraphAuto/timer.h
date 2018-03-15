@@ -22,7 +22,7 @@ inline void delay_us(uint16_t x) {
 
 class TimerAbstract : public Sensor {
   public:
-    TimerAbstract(uint8_t, uint32_t, uint8_t);
+    TimerAbstract(uint32_t, uint8_t);
     virtual ~TimerAbstract();
     virtual void start(uint32_t);
   protected:
@@ -31,7 +31,7 @@ class TimerAbstract : public Sensor {
 
 class Timer : public TimerAbstract {
   public:
-    Timer(uint8_t, uint32_t, uint8_t);
+    Timer(uint32_t, uint8_t);
     virtual bool process();
     virtual float read(uint8_t);
   protected:

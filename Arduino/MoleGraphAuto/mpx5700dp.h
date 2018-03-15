@@ -7,7 +7,7 @@
 
 class MPX5700DP : public Sensor {
   public:
-    MPX5700DP(uint8_t, uint32_t, uint8_t);
+    MPX5700DP(uint32_t, uint8_t);
     virtual bool process();
     virtual void calibrate(); 
   private:

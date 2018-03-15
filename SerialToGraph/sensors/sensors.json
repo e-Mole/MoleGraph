@@ -69,6 +69,14 @@
     {
       "quantityId" : 16,
       "quantityName" : "Velocity"
+    },
+    {
+      "quantityId" : 17,
+      "quantityName" : "Trigger"
+    },
+    {
+      "quantityId" : 18,
+      "quantityName" : "Sound intensity level"
     }                      
   ],
   "sensors":
@@ -146,7 +154,7 @@
     {
       "sensorId" : 18,
       "sensorName" : "Light sensor (photoresistor)",
-      "quantities" : [ "Illuminace" ]
+      "quantities" : [ "Illuminace", "Trigger"  ]
     },
     {  "sensorId" : 19,
       "sensorName" : "CO2 gas sensor (MH-Y16)",
@@ -166,11 +174,11 @@
     },
     {  "sensorId" : 23,
       "sensorName" : "Magnetic field sensor",
-      "quantities" : [ "Voltage" ]
+      "quantities" : [ "RAW", "Voltage", "Trigger" ]
     },
     {  "sensorId" : 24,
       "sensorName" : "Thermometer + Hygrometer (DHT11)",
-      "quantities" : [ "Temperature", "Humidity" ]
+      "quantities" : [ "Humidity", "Temperature" ]
     },
     {  "sensorId" : 25,
       "sensorName" : "Alcohol gas sensor (MQ-3)",
@@ -179,6 +187,10 @@
     {  "sensorId" : 26,
       "sensorName" : "Particle/Dust sensor (DSM501)",
       "quantities" : [ "Concentration" ]
-    }
+    },
+    {  "sensorId" : 27,
+      "sensorName" : "Sound sensor (microphone)",
+      "quantities" : [ "RAW", "Voltage", "Trigger" ]
+    }    
   ]
 }

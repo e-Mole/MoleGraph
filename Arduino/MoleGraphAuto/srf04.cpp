@@ -2,7 +2,7 @@
 
 #define SRF04_WAIT  75
 
-SRF04::SRF04(uint8_t _type, uint32_t _period, uint8_t _port) : TimerAbstract(_type, _period, _port) {
+SRF04::SRF04(uint32_t _period, uint8_t _port) : TimerAbstract(_period, _port) {
   trigger = PORTS[port][1];
   pinMode(trigger, OUTPUT);
   delta  = period; 

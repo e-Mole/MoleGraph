@@ -8,7 +8,7 @@
 
 class DS18B20 : public Sensor {
   public:
-    DS18B20(uint8_t _type, uint32_t _period, uint8_t _port, uint8_t _resolution = 3);
+    DS18B20(uint32_t _period, uint8_t _port, uint8_t _resolution = 3);
     virtual bool process();
   private:
     uint8_t   pin;

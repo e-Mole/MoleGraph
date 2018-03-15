@@ -2,9 +2,7 @@
 
 #define DS18B20_WAIT  800
 
-//byte ADDR[] = {0x10, 0x64, 0x55, 0x34, 0x00, 0x00, 0x00, 0xE5};
-
-DS18B20::DS18B20(uint8_t _type, uint32_t _period, uint8_t _port, uint8_t _resolution) : Sensor(_type, _period, _port) {
+DS18B20::DS18B20(uint32_t _period, uint8_t _port, uint8_t _resolution) : Sensor(_period, _port) {
   pin = PORTS[port][0];
   pinMode(pin, INPUT_PULLUP);
   pinMode(PORTS[port][2], OUTPUT);
@@ -48,20 +46,16 @@ bool DS18B20::get() {
   if (ds->crc8(data, 9) == 0) {      
     int16_t x = data[0] | ((uint16_t)data[1] << 8);
     value =  (float)x * (1.0f/16); 
-//    value =  (float)x * (1.0f/2); 
     return 1;
   }
   return 0;
 }
 
 bool DS18B20::process() {
-//  uint32_t timeStamp = Millis();
   if (Action(delta)) {
-//  if (timeStamp - time >= delta) {
     if (active == 0) {
       active = 1;
-//      time = timeStamp;   // musime cekat minimalne DS1820_WAIT od ted, ne od minule aktivace (nemusi byt presne dodrzena perioda)
-      time += period;   // musime cekat minimalne DS1820_WAIT od ted, ne od minule aktivace (nemusi byt presne dodrzena perioda)
+      time += period;
       delta = DS18B20_WAIT >> (3 - resolution);
       startTemp();
     } else {

@@ -66,7 +66,7 @@ ISR (PC_INT) {
   lastState = a;
 }
 
-TimerAbstract::TimerAbstract(uint8_t _type, uint32_t _period, uint8_t _port) : Sensor(_type, _period, _port) {
+TimerAbstract::TimerAbstract(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin = PORTS[port][0];
   pinMode(pin, INPUT_PULLUP);
   maskPC |= (1 << (pin % 0x07));
@@ -84,7 +84,7 @@ void TimerAbstract::start(uint32_t now) {
   Sensor::start(now);
 }
 
-Timer::Timer(uint8_t _type, uint32_t _period, uint8_t _port) : TimerAbstract(_type, _period, _port) {
+Timer::Timer(uint32_t _period, uint8_t _port) : TimerAbstract(_period, _port) {
 }
 
 bool Timer::process() {

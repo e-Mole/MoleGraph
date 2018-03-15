@@ -7,7 +7,7 @@
 
 class Silomer : public Sensor {
   public:
-    Silomer(uint8_t, uint32_t, uint8_t);
+    Silomer(uint32_t, uint8_t);
     virtual bool process();
     virtual void calibrate();
   private:

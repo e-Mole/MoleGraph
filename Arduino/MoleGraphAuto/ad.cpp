@@ -1,6 +1,6 @@
 #include "ad.h"
 
-AD::AD(uint8_t _type, uint32_t _period, uint8_t _port) : Sensor(_type, _period, _port) {
+AD::AD(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin = PORTS[_port][0];
   pinMode(pin, INPUT);
 }

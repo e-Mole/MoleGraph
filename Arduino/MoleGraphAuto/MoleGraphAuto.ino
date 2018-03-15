@@ -7,7 +7,7 @@
 
 enum Instructions
 {
-  INS_NONE = 0, //data
+  INS_NONE = 0, 
   INS_GET_VERSION = 1,
   INS_SET_TIME = 2,
   INS_SET_FREQUENCY = 3,
@@ -112,7 +112,7 @@ void loop() {
   SystemProcess(newTime);
 
   if (button) {
-    if (sensor[button-1] != NULL) 
+    if (sensor[button-1] != NULL)
       sensor[button-1]->calibrate();      
   }
 

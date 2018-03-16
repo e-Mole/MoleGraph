@@ -734,7 +734,7 @@ void GraphicsContainer::addNewValueSet()
         }
     }
     AddHorizontalValue(horizontalChannel->GetLastValidValue());
-    GetPlot()->setDisabled(true);
+    GetPlot()->setDisabled(false);
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)

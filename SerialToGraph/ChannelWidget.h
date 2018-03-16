@@ -86,7 +86,7 @@ public:
     unsigned GetShapeIndex();
     void SetShapeIndex(unsigned index);
     void ShowOrHideGraph(bool shown);
-    void UpdateGraph(double xValue, double yValue, bool replot);
+    void UpdateGraph(double xValue, double yValue);
     ChannelGraph * GetChannelGraph();
     bool IsOnHorizontalAxis();
     QString GetUnits();

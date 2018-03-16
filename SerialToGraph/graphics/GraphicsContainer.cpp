@@ -716,7 +716,7 @@ void GraphicsContainer::RecalculateSliderMaximum()
 
 void GraphicsContainer::addNewValueSet()
 {
-    GetPlot()->setDisabled(true);
+    //GetPlot()->setDisabled(true); //TODO: fix problem with disabeled plot area, remove for testing
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used

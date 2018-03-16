@@ -30,7 +30,8 @@ HwSink::HwSink(QWidget *parent) :
     m_knownIssue(false),
     m_state(Offline),
     parentWidget(parent),
-    m_protocolIdTimer(NULL)
+    m_protocolIdTimer(NULL),
+    m_legacyFirmwareVersion(false)
 {
 
 }
@@ -108,6 +109,9 @@ void HwSink::SetSelectedChannels(unsigned char channels)
 
 void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex)
 {
+    if (m_legacyFirmwareVersion)
+        return;
+
     port --; // TODO: TFsmod: hack :/ - change port ID to range 0-3 (4 ports)
     std::string tmp;
     tmp.append((char const *)&hwIndex, 1);
@@ -115,6 +119,7 @@ void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, un
     tmp.append((char const *)&sensorId, 1);
     tmp.append((char const *)&quantityId, 1);
     tmp.append((char const *)&quantityOrder, 1);
+
     _WriteInstruction(INS_SET_SENSOR, tmp);
 }
 
@@ -303,6 +308,15 @@ void HwSink::readyRead()
 
         _ConnectionFailed();
         return;
+    }
+
+    if (array.toStdString() == LEGACY_PROTOCOL_ID)
+    {
+        MyMessageBox::warning(
+            (QWidget*)parent(),
+            tr("Detected an old firmware version. Sensor settings will not be supported.")
+        );
+        m_legacyFirmwareVersion = true;
     }
 
     m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.

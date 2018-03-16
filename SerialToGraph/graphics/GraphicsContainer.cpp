@@ -722,14 +722,14 @@ void GraphicsContainer::addNewValueSet()
     //TODO:m_horizontalChannel will not be defined -> should be used
     ChannelBase * horizontalChannel = GetHorizontalChannel(m);
     SampleChannel * sampleChannel = m->GetSampleChannel();
-    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
+    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue());
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
         auto it = m_channelToWidgetMapping.find(channel);
         if (it != m_channelToWidgetMapping.end())
         {
-            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
+            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue());
 
         }
     }
@@ -888,7 +888,7 @@ void GraphicsContainer::hwValueChanged(unsigned index)
     widget->FillLastValueText(newValue);
     widget->ShowLastValueWithUnits(channel->GetValueType(index));
     ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
-    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
+    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue);
 }
 
 

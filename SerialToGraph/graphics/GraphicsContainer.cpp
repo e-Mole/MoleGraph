@@ -716,7 +716,6 @@ void GraphicsContainer::RecalculateSliderMaximum()
 
 void GraphicsContainer::addNewValueSet()
 {
-    GetPlot()->setDisabled(true);
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
@@ -734,7 +733,6 @@ void GraphicsContainer::addNewValueSet()
         }
     }
     AddHorizontalValue(horizontalChannel->GetLastValidValue());
-    GetPlot()->setDisabled(false);
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)

@@ -333,14 +333,17 @@ void ChannelWidget::ShowOrHideGraph(bool shown)
     m_plot->RescaleAllAxes();
 }
 
-void ChannelWidget::UpdateGraph(double xValue, double yValue)
+void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
 {
     if (yValue == ChannelBase::GetNaValue())
         m_channelGraph->data()->remove(xValue);
     else
         m_channelGraph->data()->insert(xValue, QCPData(xValue, yValue));
 
-    m_plot->ReplotIfNotDisabled();
+    if (replot)
+    {
+        m_plot->ReplotIfNotDisabled();
+    }
 }
 
 ChannelGraph *ChannelWidget::GetChannelGraph()

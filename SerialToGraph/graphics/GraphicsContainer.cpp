@@ -716,25 +716,23 @@ void GraphicsContainer::RecalculateSliderMaximum()
 
 void GraphicsContainer::addNewValueSet()
 {
-    GetPlot()->setDisabled(true);
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
     ChannelBase * horizontalChannel = GetHorizontalChannel(m);
     SampleChannel * sampleChannel = m->GetSampleChannel();
-    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue());
+    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
         auto it = m_channelToWidgetMapping.find(channel);
         if (it != m_channelToWidgetMapping.end())
         {
-            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue());
+            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
 
         }
     }
     AddHorizontalValue(horizontalChannel->GetLastValidValue());
-    GetPlot()->setDisabled(false);
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
@@ -888,7 +886,7 @@ void GraphicsContainer::hwValueChanged(unsigned index)
     widget->FillLastValueText(newValue);
     widget->ShowLastValueWithUnits(channel->GetValueType(index));
     ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
-    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue);
+    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
 }
 
 

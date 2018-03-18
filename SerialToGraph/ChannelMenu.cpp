@@ -65,12 +65,12 @@ void ChannelMenu::FillGrid()
     m_gridLayout->addWidget(showNoneButton, row, 0);
     _AddShortcut(row, m_noChannelsShortcut->GetText());
 
-    /*++row;
+    ++row;
     QPushButton *addGhostChannel = new QPushButton(tr("Add Virtual Channel"), this);
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
     m_gridLayout->addWidget(addGhostChannel, row, 0);
-    */
+
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 

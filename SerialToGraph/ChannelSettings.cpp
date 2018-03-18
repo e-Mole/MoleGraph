@@ -164,7 +164,7 @@ void ChannelSettings::_FillSensorNameCB()
             m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
         }
     }
-    m_sensorNameComboBox->setEnabled(true);
+    m_sensorNameComboBox->setEnabled(m_channel->GetMeasurement()->GetState() == Measurement::Ready);
 }
 
 void ChannelSettings::_FillSensorQuanitityCB()
@@ -188,7 +188,10 @@ void ChannelSettings::_FillSensorQuanitityCB()
             break;
         }
     }
-    m_sensorQuantityComboBox->setEnabled(m_sensorQuantityComboBox->count() > 1);
+    m_sensorQuantityComboBox->setEnabled(
+        m_channel->GetMeasurement()->GetState() == Measurement::Ready &&
+        m_sensorQuantityComboBox->count() > 1
+    );
 }
 
 void ChannelSettings::_InitializeSensorItems()

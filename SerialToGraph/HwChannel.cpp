@@ -9,13 +9,13 @@
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
 
-HwChannel::HwChannel(Measurement *measurement, int hwIndex, hw::Sensor *sensor):
+HwChannel::HwChannel(Measurement *measurement, int hwIndex, hw::Sensor *sensor, unsigned sensorPort, hw::SensorQuantity *quantity):
     ChannelBase(measurement),
     m_hwIndex(hwIndex),
     m_isActive(false),
     m_sensor(sensor),
-    m_sensorPort(hw::SensorManager::nonePortId),
-    m_sensorQuantity(sensor->GetQuantities().front()) //at least one quantity is expected
+    m_sensorPort(sensorPort),
+    m_sensorQuantity(quantity ? quantity : sensor->GetQuantities().front()) //at least one quantity is expected
 {
 }
 

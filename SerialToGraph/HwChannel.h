@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <hw/Sensor.h>
+#include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
 
 class Axis;
@@ -33,7 +34,13 @@ class HwChannel : public ChannelBase
     void _SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
 
 public:
-    HwChannel(Measurement *measurement, int hwIndex, hw::Sensor *sensor);
+    HwChannel(
+        Measurement *measurement,
+        int hwIndex,
+        hw::Sensor *sensor,
+        unsigned sensorPort=hw::SensorManager::nonePortId,
+        hw::SensorQuantity *quantity= NULL
+    );
 
     virtual Type GetType() { return Type_Hw; }
     virtual void AddValue(double value);

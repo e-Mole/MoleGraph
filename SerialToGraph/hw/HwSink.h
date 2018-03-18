@@ -62,6 +62,7 @@ private:
     PortInfo m_openedPortInfo;
     QTimer *m_protocolIdTimer;
     QTimer *m_initializeTimer;
+    bool m_legacyFirmwareVersion;
 public:
     HwSink(QWidget *parent);
     ~HwSink();
@@ -91,7 +92,7 @@ public:
     QString GetStateString();
     void InitializeBluetooth();
     void TerminateBluetooth();
-    void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex);
+    void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
 
 signals:
     void StartCommandDetected();

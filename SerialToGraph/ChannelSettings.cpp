@@ -42,6 +42,8 @@ QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
     if (quantity->GetName() == "Voltage")
         return tr("Voltage");
 
+    return quantity->GetName(); //TODO: TFs mod: Remove!!!
+
     qWarning() << "unknown quantity to translate " << quantity->GetName();
 }
 
@@ -125,6 +127,9 @@ void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString cons
 void ChannelSettings::_FillSensorPortCB()
 {
     m_sensorPortComboBox->addItem(tr("Undefined"), hw::SensorManager::nonePortId);
+    if (m_sensorManager->GetSensors().size() == 1)
+        return; //sensors are not defined
+
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);
@@ -159,7 +164,7 @@ void ChannelSettings::_FillSensorNameCB()
             m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
         }
     }
-    m_sensorNameComboBox->setEnabled(true);
+    m_sensorNameComboBox->setEnabled(m_channel->GetMeasurement()->GetState() == Measurement::Ready);
 }
 
 void ChannelSettings::_FillSensorQuanitityCB()
@@ -183,7 +188,10 @@ void ChannelSettings::_FillSensorQuanitityCB()
             break;
         }
     }
-    m_sensorQuantityComboBox->setEnabled(m_sensorQuantityComboBox->count() > 1);
+    m_sensorQuantityComboBox->setEnabled(
+        m_channel->GetMeasurement()->GetState() == Measurement::Ready &&
+        m_sensorQuantityComboBox->count() > 1
+    );
 }
 
 void ChannelSettings::_InitializeSensorItems()
@@ -553,7 +561,7 @@ bool ChannelSettings::BeforeAccept()
         hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
         if (NULL != sensor && sensor != hwChannel->GetSensor())
         {
-          hwChannel->_SetSensor(sensor);
+          hwChannel->SetSensor(sensor);
           changed = true;
         }
 
@@ -567,7 +575,7 @@ bool ChannelSettings::BeforeAccept()
         hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(m_sensorQuantityComboBox->currentData().toInt());
         if (quantity != hwChannel->GetSensorQuantity())
         {
-            hwChannel->_SetSensorQuantity(quantity);
+            hwChannel->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
             changed = true;
         }
     }

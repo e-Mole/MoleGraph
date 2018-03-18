@@ -1,7 +1,6 @@
 #include "ButtonLine.h"
 #include <AboutDialog.h>
 #include <Axis.h>
-#include <ChannelMenu.h>
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>

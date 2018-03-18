@@ -1,6 +1,7 @@
 #include "SensorManager.h"
 #include <hw/Sensor.h>
 #include <hw/SensorQuantity.h>
+#include <MyMessageBox.h>
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
@@ -18,9 +19,23 @@ namespace hw
     }
 
 
+    void SensorManager::_PrepareMinimalSensorSet()
+    {
+        m_quantities.push_back(new SensorQuantity(this, 0, ""));
+        m_sensors.push_back((new Sensor(this, "", 0))->AddQuantity(GetSensorQuantity("")));
+    }
+
     void SensorManager::_InitializeSensors()
     {
         QString jsonData = _GetSensorsFileContent();
+        if (jsonData.isEmpty())
+        {
+            MyMessageBox::critical(
+                NULL,
+                tr("\"sensors.json\" file has not been found in the \"sensors\" subfolder. Sensor set will not be available!")
+            );
+            _PrepareMinimalSensorSet();
+        }
         QJsonDocument document = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject object = document.object();
         unsigned jsonVersion = object["version"].toInt();
@@ -48,7 +63,8 @@ namespace hw
             QJsonArray jsonSensorQuantities = sensorObject["quantities"].toArray();
             foreach (QJsonValue const &sensorValue, jsonSensorQuantities)
             {
-                sensor->AddQuantity(GetSensorQuantity(sensorValue.toString()));
+                sensor->AddQuantity((sensorValue.toInt(-1) != -1) ?
+                    GetSensorQuantity(sensorValue.toInt()) : GetSensorQuantity(sensorValue.toString()));
             }
 
             m_sensors.push_back(sensor);
@@ -60,6 +76,11 @@ namespace hw
         QString content;
         QFile jsonFile;
         jsonFile.setFileName(JSON_FILE_NAME);
+        if (!jsonFile.exists())
+        {
+            qWarning() << "Sensor file has not been found";
+            return "";
+        }
         jsonFile.open(QIODevice::ReadOnly | QIODevice::Text);
         content = jsonFile.readAll();
         jsonFile.close();

@@ -677,7 +677,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::ShowMenuButton(bool show)
 {
-    qDebug() << show;
     m_measurementTabs->setCornerWidget(show ? m_menuButton : NULL, Qt::TopLeftCorner);
     m_menuButton->setVisible(show);
     m_menuButton->repaint();

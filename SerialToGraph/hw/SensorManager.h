@@ -16,6 +16,7 @@ namespace hw
         std::vector<SensorQuantity *> m_quantities;
         void _InitializeSensors();
         QString _GetSensorsFileContent();
+        void _PrepareMinimalSensorSet();
 
     public:
         static unsigned const sensorPortCount = 4;

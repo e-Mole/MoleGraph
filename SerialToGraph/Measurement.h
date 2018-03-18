@@ -17,6 +17,7 @@
 class Axis;
 class ChannelWidget;
 class GraphicsContainer;
+class HwChannel;
 class Plot;
 class QColor;
 class QCPAxis;
@@ -43,7 +44,7 @@ class Measurement : public QObject
 
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
     //version 3 contains original values in HwChannel coolections
-    Q_PROPERTY(bool colections_for_version3 READ _PhonyGetcollections WRITE _PhonySetColections)
+    Q_PROPERTY(bool colections_from_version4 READ _PhonyGetcollections WRITE _PhonySetColections)
 
     Q_ENUMS(SampleUnits)
     Q_ENUMS(State)
@@ -81,7 +82,7 @@ private:
     unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
-    void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
+    void _DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
     void _SetName(QString &name);
@@ -101,7 +102,8 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
-    void _DeserializeAxis(QDataStream &in, unsigned index);
+    void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
+    void _ConnectHwChannel(HwChannel *channel);
 
     GraphicsContainer *m_widget;
     Context const &m_context;
@@ -150,7 +152,7 @@ private:
     Type GetType() { return m_type; }
     GraphicsContainer *GetWidget();
     void SerializeColections(QDataStream &out);
-    void DeserializeColections(QDataStream &in, unsigned version);
+    void DeserializeColections(QDataStream &in, unsigned collectionVersion);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
         { m_saveLoadValues = saveLoadValues; }
 
@@ -171,6 +173,8 @@ signals:
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
+    void sensorIdChoosen(unsigned sensorId);
+    void sensorQuantityIdChoosen(unsigned sensorQuantityId);
 };
 
 #endif // MEASUREMENT_H

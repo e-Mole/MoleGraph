@@ -8,9 +8,9 @@ class SampleChannel : public ChannelBase
 {
     Q_OBJECT
 
-    //FIXME: have to be moved somewhere
-    /*
-    Q_PROPERTY(QDateTime startDateTime READ _GetStartDateTime WRITE SetStartTime)
+    Q_PROPERTY(QDateTime startDateTime READ GetStartDateTime WRITE SetStartTime)
+
+    //FIXME: legacy format compatibility reasons
     Q_PROPERTY(Style style READ GetStyle WRITE _SetStyle)
     Q_PROPERTY(TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
     Q_PROPERTY(RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE _SetFormat)
@@ -18,7 +18,7 @@ class SampleChannel : public ChannelBase
     Q_ENUMS(Style)
     Q_ENUMS(TimeUnits)
     Q_ENUMS(RealTimeFormat)
-    */
+
     void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
     enum TimeUnits
@@ -53,7 +53,6 @@ private:
     void _SetStyle(Style style);
     void _SetTimeUnits(TimeUnits units);
     void _SetFormat(RealTimeFormat format);
-    QDateTime _GetStartDateTime() { return m_startDateTime; }
     QString _GetRealTimeText(double secSinceEpoch);
 
     QVector<double> m_timeFromStart; //sample time from measurement srart
@@ -73,6 +72,7 @@ public:
     Style GetStyle() {return m_style; }
     TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
+    QDateTime GetStartDateTime() const { return m_startDateTime; }
     void AddValue(double value, double timeFromStart);
     virtual double GetValue(unsigned index) const;
     RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }

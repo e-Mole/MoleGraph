@@ -9,7 +9,8 @@
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <hw/Sensor.h>
-#include <Hw/SensorManager.h>
+#include <hw/SensorManager.h>
+#include <hw/SensorQuantity.h>
 #include <MainWindow.h>
 #include <MyMessageBox.h>
 #include <Plot.h>
@@ -326,7 +327,8 @@ void Measurement::_ProcessActiveChannels()
         m_hwSink.SetSensor(
             hwChannel->GetSensorPort(),
             hwChannel->GetSensor()->GetId(),
-            (unsigned)hwChannel->GetSensorQuantity(),
+            hwChannel->GetSensorQuantity()->GetId(),
+            hwChannel->GetSensorQuantityOrder(),
             hwChannel->GetHwIndex()
         );
 
@@ -400,6 +402,12 @@ void Measurement::Stop()
     stateChanged();
 }
 
+void Measurement::_ConnectHwChannel(HwChannel *channel)
+{
+    connect(channel, SIGNAL(sensorIdChoosen(uint)), this, SLOT(sensorIdChoosen(uint)));
+    connect(channel, SIGNAL(sensorQuantityIdChoosen(uint)), this, SLOT(sensorQuantityIdChoosen(uint)));
+}
+
 void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 {
     m_widget->InitializeAxes(sourceMeasurement->GetAxes());
@@ -408,14 +416,17 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
     {
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
-            HwChannel *hwChannel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
+            HwChannel *origChannel = dynamic_cast<HwChannel *>(sourceChannel);
+            HwChannel *newChannel = new HwChannel(this, hwIndex, origChannel->GetSensor(), origChannel->GetSensorPort(), origChannel->GetSensorQuantity());
+            _ConnectHwChannel(newChannel);
+
             ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(
-                hwChannel,
+                newChannel,
                 sourceMeasurement->GetWidget(),
                 sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel),
                 hwIndex,
                 false);
-            m_channels.push_back(hwChannel);
+            m_channels.push_back(newChannel);
 
         }
         else
@@ -479,6 +490,8 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order, m_sensorManager->GetNoneSensor());
+    _ConnectHwChannel(newChannel);
+
     ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
 
     m_channels.push_back(newChannel);
@@ -525,6 +538,7 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
             ((HwChannel *)channel)->GetHwIndex() : -1
         );
 
+    out << channel;
     unsigned valueCount = ((m_saveLoadValues) ? channel->GetValueCount() : 0);
     out << valueCount;
     for (unsigned i = 0; i < valueCount; ++i)
@@ -578,7 +592,7 @@ bool SortChannels(ChannelBase *first, ChannelBase *second)
             first->GetType() < second->GetType();
 }
 
-void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion)
 {
     int hwIndex;
     in >> hwIndex;
@@ -597,16 +611,19 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     else
     {
         channel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
+        _ConnectHwChannel((HwChannel*)channel);
+
         channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
 
     }
 
-    //Workaround functionality has been splited
+    //FIXME: may be later necessary just for version lower than 4. check it!
+    //Workaround. Many features has been moved to channelWidget but some left
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
-    in >> channelWidget;
 
+    in >> channelWidget;
     m_channels.push_back(channel);
     if (channelWidget->IsOnHorizontalAxis())
         m_widget->SetHorizontalChannel(this, channel);
@@ -629,7 +646,7 @@ ChannelBase *Measurement::_FindChannel(int hwIndex)
 
     return NULL;
 }
-void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
+void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVersion)
 {
     int hwIndex;
     in >> hwIndex;
@@ -642,7 +659,14 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
     }
 
     if (channel->GetType() == ChannelBase::Type_Hw)
+    {
         m_trackedHwChannels[hwIndex] = channel;
+    }
+
+    if (collectionVersion > 3)
+    {
+        in >> channel;
+    }
 
     unsigned valueCount;
     in >> valueCount;
@@ -661,7 +685,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
         }
         else
         {
-            if (version == 2)
+            if (collectionVersion == 2)
             {
                if (m_saveLoadValues)
                 channel->AddValue(value);
@@ -680,35 +704,35 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned version)
     }
 }
 
-void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
+void Measurement::_DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion)
 {
     Axis *axis = m_widget->CreateNewAxis(index);
     in >> axis;
     int channelCount;
     in >> channelCount;
     for (int i = 0; i < channelCount; i++)
-        _DeserializeChannel(in, axis);
+        _DeserializeChannel(in, axis, collectionVersion);
 
     //Now I have all channels for the axis and can display corect label
     m_widget->UpdateAxis(axis);
 }
 
-void Measurement::DeserializeColections(QDataStream &in, unsigned version)
+void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVersion)
 {
     unsigned axisCount;
     in >> axisCount;
     for (unsigned i = 0; i < axisCount; ++i)
-        _DeserializeAxis(in, i);
+        _DeserializeAxis(in, i, collectionVersion);
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
     //samples
-    _DeserializeChannelData(in, version);
+    _DeserializeChannelData(in, collectionVersion);
 
     unsigned trackedHwChannelCount;
     in >> trackedHwChannelCount;
     for (unsigned i = 0; i < trackedHwChannelCount; ++i)
-        _DeserializeChannelData(in, version);
+        _DeserializeChannelData(in, collectionVersion);
 
     if (m_sampleChannel->GetValueCount() != 0)
         m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
@@ -788,4 +812,27 @@ void Measurement::RemoveWidget()
 {
     delete m_widget;
     m_widget = NULL;
+}
+
+void Measurement::sensorIdChoosen(unsigned sensorId)
+{
+    HwChannel *channel = dynamic_cast<HwChannel *>(sender());
+    channel->SetSensor(m_sensorManager->GetSensor(sensorId));
+}
+
+void Measurement::sensorQuantityIdChoosen(unsigned sensorQuantityId)
+{
+    HwChannel *channel = dynamic_cast<HwChannel *>(sender());
+    hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(sensorQuantityId);
+
+    int order = 0;
+    foreach (hw::SensorQuantity *item, channel->GetSensor()->GetQuantities())
+    {
+        if (item == quantity)
+        {
+            channel->SetSensorQuantity(quantity, order);
+            return;
+        }
+        order++;
+    }
 }

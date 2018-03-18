@@ -326,9 +326,7 @@ void GraphicsContainer::AddHorizontalValue(double value)
 {
     m_horizontalValueSet.insert(value);
 
-    CalculateScrollbarRange() ;
-    if (m_followMode)
-        _FollowLastMeasuredValue();
+    CalculateScrollbarRange();
 }
 
 void GraphicsContainer::ClearHorizontalValueSet()
@@ -359,12 +357,10 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
                 m_horizontalValueSet.find(lastHorizontalValue)
             )
         );
-    }
 
-    //FIXME: why it is separated
-    if (m_followMode)
         m_plot->RescaleAllAxes();
-
+        _FollowLastMeasuredValue();
+    }
     m_plot->ReplotIfNotDisabled();
 }
 
@@ -844,7 +840,6 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
     connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
     return widget;
 }
-
 
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
     HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)

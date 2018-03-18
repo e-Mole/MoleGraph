@@ -16,8 +16,10 @@
 #include <QQueue>
 #include <QTimer>
 #include <QWidget>
-#define PROTOCOL_ID "ATG_4"
+#define PROTOCOL_ID "ATG_5"
 
+//FIXME: workaround
+#define LEGACY_PROTOCOL_ID "ATG_4"
 namespace hw
 {
 HwSink::HwSink(QWidget *parent) :
@@ -28,7 +30,8 @@ HwSink::HwSink(QWidget *parent) :
     m_knownIssue(false),
     m_state(Offline),
     parentWidget(parent),
-    m_protocolIdTimer(NULL)
+    m_protocolIdTimer(NULL),
+    m_legacyFirmwareVersion(false)
 {
 
 }
@@ -104,13 +107,19 @@ void HwSink::SetSelectedChannels(unsigned char channels)
     _WriteInstruction(INS_ENABLED_CHANNELS, tmp);
 }
 
-void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned hwIndex)
+void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex)
 {
+    if (m_legacyFirmwareVersion)
+        return;
+
+    port --; // TODO: TFs mod: hack :/ - change port ID to range 0-3 (4 ports)
     std::string tmp;
-    tmp.append(hwIndex, 1);
-    tmp.append(port, 1);
-    tmp.append(sensorId, 1);
-    tmp.append(quantityId, 1);
+    tmp.append((char const *)&hwIndex, 1);
+    tmp.append((char const *)&port, 1);
+    tmp.append((char const *)&sensorId, 1);
+    tmp.append((char const *)&quantityId, 1);
+    tmp.append((char const *)&quantityOrder, 1);
+
     _WriteInstruction(INS_SET_SENSOR, tmp);
 }
 
@@ -290,7 +299,7 @@ void HwSink::readyRead()
     QByteArray array;
     m_port->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
     qDebug() << array;
-    if ((array.toStdString() != PROTOCOL_ID))
+    if ((array.toStdString() != PROTOCOL_ID && array.toStdString() != LEGACY_PROTOCOL_ID))
     {
         MyMessageBox::warning(
             (QWidget*)parent(),
@@ -299,6 +308,15 @@ void HwSink::readyRead()
 
         _ConnectionFailed();
         return;
+    }
+
+    if (array.toStdString() == LEGACY_PROTOCOL_ID)
+    {
+        MyMessageBox::warning(
+            (QWidget*)parent(),
+            tr("Detected an old firmware version. Sensor settings will not be supported.")
+        );
+        m_legacyFirmwareVersion = true;
     }
 
     m_knownIssue = false; //connection is estabilished. Connection fail will be a new issue.

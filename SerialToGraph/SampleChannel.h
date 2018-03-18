@@ -8,8 +8,9 @@ class SampleChannel : public ChannelBase
 {
     Q_OBJECT
 
-    //FIXME: legacy format compatibility reasons
     Q_PROPERTY(QDateTime startDateTime READ GetStartDateTime WRITE SetStartTime)
+
+    //FIXME: legacy format compatibility reasons
     Q_PROPERTY(Style style READ GetStyle WRITE _SetStyle)
     Q_PROPERTY(TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
     Q_PROPERTY(RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE _SetFormat)

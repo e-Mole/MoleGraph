@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QString>
 #include <hw/Sensor.h>
+#include <hw/SensorQuantity.h>
+
 class Axis;
 class Measurement;
 class QColor;
@@ -16,6 +18,10 @@ class HwChannel : public ChannelBase
 
     Q_OBJECT
 
+    Q_PROPERTY(unsigned sensorPort READ GetSensorPort WRITE _SetSensorPort)
+    Q_PROPERTY(unsigned sensorId READ GetSensorId WRITE sensorIdChoosen)
+    Q_PROPERTY(unsigned sensorQuantityId READ GetSensorQuantityId WRITE sensorQuantityIdChoosen)
+
     int m_hwIndex;
     QVector<double> m_originalValues;
     bool m_isActive;
@@ -24,9 +30,7 @@ class HwChannel : public ChannelBase
     hw::SensorQuantity *m_sensorQuantity;
     unsigned m_sensorQuantityOrder;
 
-    void _SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
     void _SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
-    void _SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
 
 public:
     HwChannel(Measurement *measurement, int hwIndex, hw::Sensor *sensor);
@@ -44,12 +48,17 @@ public:
     unsigned GetSensorId() {return m_sensor->GetId(); }
     unsigned GetSensorPort() { return m_sensorPort; }
     hw::SensorQuantity * GetSensorQuantity() { return m_sensorQuantity; }
+    unsigned GetSensorQuantityId() { return m_sensorQuantity->GetId(); }
     unsigned GetSensorQuantityOrder() { return m_sensorQuantityOrder; }
+    void SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
+    void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
 
 public slots:
     void setActive(bool isActive);
 signals:
     void valueChanged(unsigned index);
+    void sensorIdChoosen(unsigned sensorId);
+    void sensorQuantityIdChoosen(unsigned sensorQuantityId);
 };
 
 #endif // HWCHANNEL_H

@@ -61,7 +61,7 @@ void HwChannel::setActive(bool isActive)
     m_isActive = isActive;
 }
 
-void HwChannel::_SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order)
+void HwChannel::SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order)
 {
     m_sensorQuantity = sensorQuantity;
     m_sensorQuantityOrder = order;

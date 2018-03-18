@@ -561,7 +561,7 @@ bool ChannelSettings::BeforeAccept()
         hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
         if (NULL != sensor && sensor != hwChannel->GetSensor())
         {
-          hwChannel->_SetSensor(sensor);
+          hwChannel->SetSensor(sensor);
           changed = true;
         }
 
@@ -575,7 +575,7 @@ bool ChannelSettings::BeforeAccept()
         hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(m_sensorQuantityComboBox->currentData().toInt());
         if (quantity != hwChannel->GetSensorQuantity())
         {
-            hwChannel->_SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
+            hwChannel->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
             changed = true;
         }
     }

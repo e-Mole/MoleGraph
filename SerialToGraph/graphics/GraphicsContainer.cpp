@@ -841,7 +841,6 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
     return widget;
 }
 
-
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
     HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)
 {

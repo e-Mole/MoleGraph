@@ -17,6 +17,7 @@
 class Axis;
 class ChannelWidget;
 class GraphicsContainer;
+class HwChannel;
 class Plot;
 class QColor;
 class QCPAxis;
@@ -102,6 +103,7 @@ private:
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
+    void _ConnectHwChannel(HwChannel *channel);
 
     GraphicsContainer *m_widget;
     Context const &m_context;
@@ -171,6 +173,8 @@ signals:
 private slots:
     void draw();
     void portConnectivityChanged(bool connected);
+    void sensorIdChoosen(unsigned sensorId);
+    void sensorQuantityIdChoosen(unsigned sensorQuantityId);
 };
 
 #endif // MEASUREMENT_H

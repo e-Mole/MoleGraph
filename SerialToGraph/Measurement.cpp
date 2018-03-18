@@ -402,6 +402,12 @@ void Measurement::Stop()
     stateChanged();
 }
 
+void Measurement::_ConnectHwChannel(HwChannel *channel)
+{
+    connect(channel, SIGNAL(sensorIdChoosen(uint)), this, SLOT(sensorIdChoosen(uint)));
+    connect(channel, SIGNAL(sensorQuantityIdChoosen(uint)), this, SLOT(sensorQuantityIdChoosen(uint)));
+}
+
 void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 {
     m_widget->InitializeAxes(sourceMeasurement->GetAxes());
@@ -411,6 +417,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
             HwChannel *hwChannel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
+            _ConnectHwChannel(hwChannel);
+
             ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(
                 hwChannel,
                 sourceMeasurement->GetWidget(),
@@ -481,6 +489,8 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
 {
     QColor color = m_widget->GetColorByOrder(order + 1);
     HwChannel * newChannel = new HwChannel(this, order, m_sensorManager->GetNoneSensor());
+    _ConnectHwChannel(newChannel);
+
     ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
 
     m_channels.push_back(newChannel);
@@ -600,6 +610,8 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned
     else
     {
         channel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
+        _ConnectHwChannel((HwChannel*)channel);
+
         channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
 
     }
@@ -799,4 +811,27 @@ void Measurement::RemoveWidget()
 {
     delete m_widget;
     m_widget = NULL;
+}
+
+void Measurement::sensorIdChoosen(unsigned sensorId)
+{
+    HwChannel *channel = dynamic_cast<HwChannel *>(sender());
+    channel->SetSensor(m_sensorManager->GetSensor(sensorId));
+}
+
+void Measurement::sensorQuantityIdChoosen(unsigned sensorQuantityId)
+{
+    HwChannel *channel = dynamic_cast<HwChannel *>(sender());
+    hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(sensorQuantityId);
+
+    int order = 0;
+    foreach (hw::SensorQuantity *item, channel->GetSensor()->GetQuantities())
+    {
+        if (item == quantity)
+        {
+            channel->SetSensorQuantity(quantity, order);
+            return;
+        }
+        order++;
+    }
 }

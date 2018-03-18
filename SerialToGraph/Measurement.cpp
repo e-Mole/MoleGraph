@@ -506,10 +506,7 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
             ((HwChannel *)channel)->GetHwIndex() : -1
         );
 
-    if (channel->GetType() == ChannelBase::Type_Sample)
-    {
-        out << ((SampleChannel*)channel)->GetStartDateTime();
-    }
+    out << channel;
     unsigned valueCount = ((m_saveLoadValues) ? channel->GetValueCount() : 0);
     out << valueCount;
     for (unsigned i = 0; i < valueCount; ++i)
@@ -631,12 +628,10 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
     {
         m_trackedHwChannels[hwIndex] = channel;
     }
-    else if (channel->GetType() == ChannelBase::Type_Sample && collectionVersion > 3)
-    {
 
-        QDateTime startTime;
-        in >> startTime;
-        ((SampleChannel*)channel)->SetStartTime(startTime);
+    if (collectionVersion > 3)
+    {
+        in >> channel;
     }
 
     unsigned valueCount;

@@ -6,6 +6,7 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/SampleChannelProperties.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <hw/Sensor.h>
@@ -454,8 +455,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
                 channelWidget->GetChannelGraph()->GetValuleAxis(),
-                m_sampleChannel->GetStyle() == SampleChannel::RealTime,
-                m_widget->GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
+                m_sampleChannel->GetStyle() == SampleChannelProperties::RealTime,
+                SampleChannelProperties::GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
             );
         }
 
@@ -477,9 +478,9 @@ void Measurement::_InitializeAxesAndChanels()
     m_sampleChannel =
         new SampleChannel(
             this,
-            SampleChannel::Samples,
-            SampleChannel::Sec,
-            SampleChannel::hh_mm_ss
+            SampleChannelProperties::Samples,
+            SampleChannelProperties::Sec,
+            SampleChannelProperties::hh_mm_ss
         );
     ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis, false);
 

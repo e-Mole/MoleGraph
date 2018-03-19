@@ -3,6 +3,7 @@
 #include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
+#include <graphics/SampleChannelProperties.h>
 #include <HwChannel.h>
 #include <SampleChannel.h>
 #include <Measurement.h>
@@ -52,8 +53,8 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
                 measurementLine.append(gc->GetName().toStdString());
             }
             SampleChannel *sampleChannel = gc->GetSampleChannel();
-            if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
-                channelLine.append(gc->GetSampleChannelStyleText(sampleChannel->GetStyle()).toStdString() + ";");
+            if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannelProperties::Samples)
+                channelLine.append(SampleChannelProperties::GetSampleChannelStyleText(sampleChannel->GetStyle()).toStdString() + ";");
 
             channelLine.append(
                 channelWidget->GetUnits().size() > 0 ?
@@ -96,7 +97,7 @@ void Export::_WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsC
                 haveData = true;
 
                 SampleChannel *sampleChannel = gc->GetSampleChannel();
-                if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannel::Samples)
+                if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannelProperties::Samples)
                     lineContent.append(QString("%1;").arg(sampleNr).toStdString());
 
                 lineContent.append(_GetValueText(gc, channel, sampleNr).toStdString());
@@ -126,7 +127,7 @@ QString Export::_GetValueText(GraphicsContainer *gc, ChannelBase *channel, unsig
 {
     if (
         channel->GetType() == ChannelBase::Type_Sample &&
-        ((SampleChannel *)channel)->GetStyle() == SampleChannel::RealTime
+        ((SampleChannel *)channel)->GetStyle() == SampleChannelProperties::RealTime
     )
     {
         return gc->GetValueTimestamp((SampleChannel*)channel, sampleNr);

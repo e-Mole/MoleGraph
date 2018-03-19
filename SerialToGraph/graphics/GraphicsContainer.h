@@ -24,6 +24,7 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
+class SampleChannelProperties;
 
 class GraphicsContainer : public QWidget
 {
@@ -56,6 +57,7 @@ class GraphicsContainer : public QWidget
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
     QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
+    SampleChannelProperties *m_sampleChannelProperties;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
     virtual QSize sizeHint() const { return QSize(800,700); }
@@ -148,8 +150,6 @@ public:
         QString const & units, bool isGhost);
 
     ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost);
-    QString GetRealTimeFormatText(SampleChannel::RealTimeFormat realTimeFormat);
-    QString GetSampleChannelStyleText(SampleChannel::Style style);
     QString GetValueTimestamp(SampleChannel *channel, unsigned index);
     void Activate();
     void Deactivate();

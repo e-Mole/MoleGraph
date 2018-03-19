@@ -6,9 +6,9 @@
 #include <QDateTime>
 
 SampleChannel::SampleChannel(Measurement *measurement,
-    Style format,
-    TimeUnits timeUnits,
-    RealTimeFormat realTimeFormat
+    SampleChannelProperties::Style format,
+    SampleChannelProperties::TimeUnits timeUnits,
+    SampleChannelProperties::RealTimeFormat realTimeFormat
 ) :
     ChannelBase(measurement),
     m_startDateTime(),
@@ -18,21 +18,21 @@ SampleChannel::SampleChannel(Measurement *measurement,
 {
 }
 
-void SampleChannel::_SetStyle(Style style)
+void SampleChannel::_SetStyle(SampleChannelProperties::Style style)
 {
     m_style = style;
     _RecalculateExtremes();
     propertyChanged();
 
 }
-void SampleChannel::_SetTimeUnits(TimeUnits units)
+void SampleChannel::_SetTimeUnits(SampleChannelProperties::TimeUnits units)
 {
     m_timeUnits = units;
     _RecalculateExtremes();
     propertyChanged();
 }
 
-void SampleChannel::_SetFormat(RealTimeFormat format)
+void SampleChannel::_SetFormat(SampleChannelProperties::RealTimeFormat format)
 {
     m_realTimeFormat = format;
     _RecalculateExtremes();
@@ -56,26 +56,26 @@ double SampleChannel::GetValue(unsigned index) const
 
     switch (m_style)
     {
-    case Samples:
+    case SampleChannelProperties::Samples:
         return GetSampleNr(index);
-    case RealTime:
+    case SampleChannelProperties::RealTime:
         return
             m_startDateTime.toMSecsSinceEpoch() / 1000.0 + m_timeFromStart[index] - //in seconds
             m_timeFromStart[0]; //first sample is on offset 0
-    case TimeOffset:
+    case SampleChannelProperties::TimeOffset:
         switch (m_timeUnits)
         {
-        case Us:
+        case SampleChannelProperties::Us:
             return m_timeFromStart[index] * 1000000;
-        case Ms:
+        case SampleChannelProperties::Ms:
             return m_timeFromStart[index] * 1000;
-        case Sec:
+        case SampleChannelProperties::Sec:
             return m_timeFromStart[index];
-        case Min:
+        case SampleChannelProperties::Min:
             return m_timeFromStart[index] / 60;
-        case Hours:
+        case SampleChannelProperties::Hours:
             return m_timeFromStart[index] /(60*60);
-        case Days:
+        case SampleChannelProperties::Days:
             return m_timeFromStart[index] /(60*60*24);
         }
     }

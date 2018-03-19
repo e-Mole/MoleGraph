@@ -75,7 +75,8 @@ SOURCES += main.cpp\
     graphics/GraphicsContainer.cpp \
     hw/Sensor.cpp \
     hw/SensorManager.cpp \
-    hw/SensorQuantity.cpp
+    hw/SensorQuantity.cpp \
+    graphics/SampleChannelProperties.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -130,7 +131,8 @@ HEADERS  += MainWindow.h \
     graphics/GraphicsContainer.h \
     hw/Sensor.h \
     hw/SensorManager.h \
-    hw/SensorQuantity.h
+    hw/SensorQuantity.h \
+    graphics/SampleChannelProperties.h
 
 CONFIG += mobility
 CONFIG += c++11

@@ -6,6 +6,7 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/SampleChannelProperties.h>
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
@@ -390,9 +391,9 @@ void ChannelSettings::_InitializeTimeFeatures()
     SampleChannel * channel = (SampleChannel*)m_channel;
 
     m_style = new bases::ComboBox(this);
-    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::Samples), false);
-    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::TimeOffset), false);
-    m_style->addItem(m_graphicsContainer->GetSampleChannelStyleText(SampleChannel::RealTime), true); //RealTime state as data
+    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::Samples), false);
+    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::TimeOffset), false);
+    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
@@ -406,7 +407,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(channel->m_timeUnits);
-    m_timeUnits->setEnabled(channel->m_style == SampleChannel::TimeOffset);
+    m_timeUnits->setEnabled(channel->m_style == SampleChannelProperties::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
     m_format = new bases::ComboBox(this);
@@ -415,14 +416,14 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_format->addItem(tr("hour:minute:second"));
     m_format->addItem(tr("minute:second.milisecond"));
     m_format->setCurrentIndex(channel->m_realTimeFormat);
-    m_format->setEnabled(channel->m_style == SampleChannel::RealTime);
+    m_format->setEnabled(channel->m_style == SampleChannelProperties::RealTime);
     m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
 }
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled((SampleChannel::Style)index == SampleChannel::TimeOffset);
-    m_format->setEnabled((SampleChannel::Style)index == SampleChannel::RealTime);
+    m_timeUnits->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::TimeOffset);
+    m_format->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::RealTime);
     _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
 
@@ -511,19 +512,19 @@ bool ChannelSettings::BeforeAccept()
         if ((int)channelWithTime->m_timeUnits != m_timeUnits->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetTimeUnits((SampleChannel::TimeUnits)m_timeUnits->currentIndex());
+            channelWithTime->_SetTimeUnits((SampleChannelProperties::TimeUnits)m_timeUnits->currentIndex());
         }
 
         if ((int)channelWithTime->m_realTimeFormat != m_format->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetFormat((SampleChannel::RealTimeFormat)m_format->currentIndex());
+            channelWithTime->_SetFormat((SampleChannelProperties::RealTimeFormat)m_format->currentIndex());
         }
 
         if ((int)channelWithTime->m_style != m_style->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetStyle((SampleChannel::Style)m_style->currentIndex());
+            channelWithTime->_SetStyle((SampleChannelProperties::Style)m_style->currentIndex());
         }
     }
     else

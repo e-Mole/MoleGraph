@@ -39,7 +39,8 @@ public:
         int hwIndex,
         hw::Sensor *sensor,
         unsigned sensorPort=hw::SensorManager::nonePortId,
-        hw::SensorQuantity *quantity= NULL
+        hw::SensorQuantity *quantity= NULL,
+        unsigned quantityOrder=0
     );
 
     virtual Type GetType() { return Type_Hw; }

@@ -417,7 +417,14 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
         if (sourceChannel->GetType() == ChannelBase::Type_Hw)
         { 
             HwChannel *origChannel = dynamic_cast<HwChannel *>(sourceChannel);
-            HwChannel *newChannel = new HwChannel(this, hwIndex, origChannel->GetSensor(), origChannel->GetSensorPort(), origChannel->GetSensorQuantity());
+            HwChannel *newChannel = new HwChannel(
+                this,
+                hwIndex,
+                origChannel->GetSensor(),
+                origChannel->GetSensorPort(),
+                origChannel->GetSensorQuantity(),
+                origChannel->GetSensorQuantityOrder()
+            );
             _ConnectHwChannel(newChannel);
 
             ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(

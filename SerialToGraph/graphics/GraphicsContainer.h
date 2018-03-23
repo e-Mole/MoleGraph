@@ -75,7 +75,6 @@ class GraphicsContainer : public QWidget
         QString const & units,
         bool isSampleChannel
     , bool isGhost);
-    QString _GetRealTimeText(SampleChannel *channel, double secSinceEpoch);
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
     void _DisplayChannelValue(ChannelWidget *channelWidget);

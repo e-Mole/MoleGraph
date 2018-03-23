@@ -80,6 +80,7 @@ public:
     static QString GetNAValueString();
     void DisplayNAValue(ChannelBase::ValueType type);
     QColor &GetForeColor() { return m_valueLabel->GetForeColor(); }
+    void FillLastValueText(const QString &text);
     void FillLastValueText(double value);
     Qt::PenStyle GetPenStyle();
     void SetPenStyle(Qt::PenStyle penStyle);

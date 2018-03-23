@@ -16,10 +16,6 @@ class SampleChannel : public ChannelBase
     Q_PROPERTY(SampleChannelProperties::TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
     Q_PROPERTY(SampleChannelProperties::RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE _SetFormat)
 
-    Q_ENUMS(SampleChannelProperties::Style)
-    Q_ENUMS(SampleChannelProperties::TimeUnits)
-    Q_ENUMS(SampleChannelProperties::RealTimeFormat)
-
     void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
 

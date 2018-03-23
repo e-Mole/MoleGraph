@@ -19,6 +19,7 @@
 #include <QGridLayout>
 #include <QMetaProperty>
 #include <QScrollBar>
+#include <QTime>
 #include <QVBoxLayout>
 #include <SampleChannel.h> 
 #include <Serializer.h>
@@ -903,16 +904,9 @@ void GraphicsContainer::sampleChannelPropertyChanged()
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
-QString GraphicsContainer::_GetRealTimeText(SampleChannel *channel, double secSinceEpoch)
-{
-    QDateTime dateTime;
-    dateTime.setMSecsSinceEpoch(secSinceEpoch * 1000.0);
-    return dateTime.toString(m_sampleChannelProperties->GetRealTimeFormatText(channel->GetRealTimeFormat()));
-}
-
 QString GraphicsContainer::GetValueTimestamp(SampleChannel *channel, unsigned index)
 {
-    return _GetRealTimeText(channel, channel->GetValue(index));
+    return m_sampleChannelProperties->GetRealTimeText(channel, channel->GetValue(index), GetPlot()->IsInRangeMode());
 }
 
 void GraphicsContainer::_CreateKeyShortcuts()
@@ -1032,6 +1026,8 @@ QKeySequence GraphicsContainer::GetNoChannelsSequence()
 void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
 {
     ChannelBase *channel = GetChannel(channelWidget);
+    SampleChannel *sampleChannel = dynamic_cast<SampleChannel *>(channel);
+
     ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
     int firstIndex = horizontalChannel->GetLastValueIndex(
         GetHorizontalValueBySliderPos(m_plot->GetMarkerPositions().first));
@@ -1039,7 +1035,15 @@ void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
     {
         if (m_plot->GetMarkerPositions().first != std::numeric_limits<int>::min())
         {
-            channelWidget->FillLastValueText(channel->GetValue(firstIndex));
+
+            if (sampleChannel && sampleChannel->GetStyle() == SampleChannelProperties::RealTime)
+            {
+                channelWidget->FillLastValueText(GetValueTimestamp(sampleChannel, firstIndex));
+            }
+            else
+            {
+                channelWidget->FillLastValueText(channel->GetValue(firstIndex));
+            }
             channelWidget->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
         }
     }
@@ -1051,7 +1055,15 @@ void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
         double rangeValue = 0;
         if (channel->FillRangeValue(firstIndex, secondIndex, m_plot->GetMarkerRangeValue(), rangeValue))
         {
-            channelWidget->FillLastValueText(rangeValue);
+            if (sampleChannel && sampleChannel->GetStyle() == SampleChannelProperties::RealTime)
+            {
+                channelWidget->FillLastValueText(m_sampleChannelProperties->GetRealTimeText(sampleChannel, rangeValue, true));
+            }
+            else
+            {
+                channelWidget->FillLastValueText(rangeValue);
+
+            }
             channelWidget->ShowLastValueWithUnits();
         }
     }

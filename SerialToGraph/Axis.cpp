@@ -4,6 +4,7 @@
 #include <SampleChannel.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/SampleChannelProperties.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
@@ -220,8 +221,8 @@ void Axis::UpdateGraphAxisStyle()
 
     if (axisChannel->GetType() == ChannelBase::Type_Sample)
     {
-        realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannel::RealTime;
-        formatText = m_graphicsContainer->GetRealTimeFormatText(((SampleChannel *)axisChannel)->GetRealTimeFormat());
+        realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannelProperties::RealTime;
+        formatText = SampleChannelProperties::GetRealTimeFormatText(((SampleChannel *)axisChannel)->GetRealTimeFormat());
     }
 
     m_graphicsContainer->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);

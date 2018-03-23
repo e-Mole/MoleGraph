@@ -16,7 +16,8 @@ class ChannelWidget : public QWidget
 
     Q_PROPERTY(QString name READ GetName WRITE SetName)
     Q_PROPERTY(QColor color READ GetForeColor WRITE SetForeColor)
-    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex WRITE SetShapeIndex)
+    Q_PROPERTY(unsigned shapeIndex WRITE _SetShapeIndexDepricated)
+    Q_PROPERTY(int shapeIndex2 READ GetShapeIndex WRITE SetShapeIndex)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
     Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
@@ -40,7 +41,7 @@ class ChannelWidget : public QWidget
     virtual void mousePressEvent(QMouseEvent * event);
     virtual void resizeEvent(QResizeEvent * event);
     QColor _GetBackColorFromType(ChannelBase::ValueType type);
-
+    void _SetShapeIndexDepricated (unsigned index);
     QString m_name;
     QLabel * m_title;
     ValueLabel *m_valueLabel;

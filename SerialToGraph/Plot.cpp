@@ -465,14 +465,17 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (channelWidget->isVisible() && channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == axis)
-        {
-            ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
-            if (channel->GetMinValue() < lower)
-                lower = channel->GetMinValue();
-            if (channel->GetMaxValue() > upper)
-                upper = channel->GetMaxValue();
-        }
+        if (!channelWidget->isVisible() || channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
+            continue;
+
+        if (channelWidget->GetShapeIndex() == 0 && channelWidget->GetPenStyle() == Qt::NoPen)
+            continue;
+
+        ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
+        if (channel->GetMinValue() < lower)
+            lower = channel->GetMinValue();
+        if (channel->GetMaxValue() > upper)
+            upper = channel->GetMaxValue();
     }
 
     double margin = qFabs(upper - lower) / RESCALE_MARGIN_RATIO;
@@ -480,6 +483,11 @@ void Plot::RescaleAxis(QCPAxis *axis)
         margin = qFabs(upper / RESCALE_MARGIN_RATIO);
 
     axis->setRange(lower - margin, upper + margin);
+
+    //hide when no channel is displayed
+    axis->setVisible(
+        lower != std::numeric_limits<double>::max() ||
+        upper != -std::numeric_limits<double>::max());
 }
 
 void Plot::RescaleAllAxes()

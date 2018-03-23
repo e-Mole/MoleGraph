@@ -60,7 +60,7 @@ void ChannelGraph::SetPenStyle(Qt::PenStyle penStyle)
 
 void ChannelGraph::SetMarkShape(unsigned shapeIndex)
 {
-    QCPScatterStyle::ScatterShape shape = (QCPScatterStyle::ScatterShape)(shapeIndex + 2);
+    QCPScatterStyle::ScatterShape shape = (QCPScatterStyle::ScatterShape)(shapeIndex);
     m_selectedMarkStyle.setShape(shape);
 
     //there must be something else them ssNone to be drawScatterPlot called
@@ -132,8 +132,7 @@ void ChannelGraph::ShowAllMarks(bool showAllMarks)
 
 int ChannelGraph::GetShapeIndex()
 {
-    return (m_selectedMarkStyle.shape() == QCPScatterStyle::ssNone) ?
-        -1 : ((unsigned)m_selectedMarkStyle.shape()) -2;
+    return ((unsigned)m_selectedMarkStyle.shape());
 }
 
 void ChannelGraph::AssignToAxis(Axis *axis)

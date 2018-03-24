@@ -73,6 +73,7 @@ class GraphicsContainer : public QWidget
         QColor const &color,
         bool visible,
         QString const & units,
+        Qt::PenStyle penStyle,
         bool isSampleChannel
     , bool isGhost);
     void _CreateKeyShortcuts();
@@ -146,7 +147,8 @@ public:
         QString const name,
         QColor const &color,
         bool visible,
-        QString const & units, bool isGhost);
+        QString const & units,
+        bool isGhost);
 
     ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost);
     QString GetValueTimestamp(SampleChannel *channel, unsigned index);

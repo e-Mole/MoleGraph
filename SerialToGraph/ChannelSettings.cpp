@@ -296,7 +296,7 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
     ChannelWidget *originalChannelWidget = originalGC->GetChannelWidget(originalChannel);
 
-    m_name->setText(originalGC->GetName() + "." + originalChannelWidget->GetName());
+    m_name->setText(m_graphicsContainer->GetGhostWidgetName(originalGC, originalChannelWidget));
     m_units->setText(originalChannelWidget->GetUnits());
     SetColorButtonColor(originalChannelWidget->GetForeColor());
     m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
@@ -663,6 +663,7 @@ void ChannelSettings::_RefillAxisCombo()
                 m_channelWidget->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
                 axis->IsHorizontal(); //as same as to horizontal
 
+
         if (!valid)
         {
             if (m_channel->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
@@ -670,6 +671,9 @@ void ChannelSettings::_RefillAxisCombo()
             else
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
         }
+
+        if (valid && axis->IsHorizontal() && m_channelWidget->isGhost())
+            valid = false;
 
         if (valid)
             m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);

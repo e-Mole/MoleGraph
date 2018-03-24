@@ -425,8 +425,8 @@ double GraphicsContainer::GetHorizontalValueBySliderPos(unsigned position) const
             return (*it);
         }
     }
-    qCritical() << "horizontal value position is out of range";
-    return 0;
+
+    return ChannelBase::GetNaValue();
 }
 
 int GraphicsContainer::GetSliderPos()
@@ -645,6 +645,7 @@ void GraphicsContainer::RescaleAxes(ChannelWidget *channelWidget)
     m_plot->rescaleAxes(channelWidget->GetChannelGraph()->GetValuleAxis());
     m_plot->ReplotIfNotDisabled();
 }
+
 
 ChannelBase *GraphicsContainer::GetHorizontalChannel(Measurement *measurement) const
 {
@@ -1093,6 +1094,11 @@ bool GraphicsContainer::_IsTracked(Measurement *m)
     return false;
 }
 
+QString GraphicsContainer::GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget)
+{
+    return sourceGraphicsContainer->GetName() + "." + channelWidget->GetName();
+}
+
 ChannelWidget * GraphicsContainer::AddGhost(
     HwChannel *sourceChannel,
     GraphicsContainer *sourceGraphicsContainer,
@@ -1108,7 +1114,7 @@ ChannelWidget * GraphicsContainer::AddGhost(
     }
     ChannelWidget *channelWidget = CloneHwChannelWidget(
         sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1, true);
-    channelWidget->SetName(sourceGraphicsContainer->GetName() + " - " + channelWidget->GetName());
+    channelWidget->SetName(GetGhostWidgetName(sourceGraphicsContainer, channelWidget));
     channelWidget->SetPenStyle(Qt::DashLine);
     replaceDisplays();
     _DisplayChannelValue(channelWidget);

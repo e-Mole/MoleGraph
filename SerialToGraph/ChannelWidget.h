@@ -95,6 +95,7 @@ public:
     void SetUnits(QString const &units);
     void UpdateWidgetVisiblity();
     bool isVisible();
+    bool IsDrawable();
     void SetVisible(bool visible);
 
     //to be compatible with measurement and would be possible to use the same serializer

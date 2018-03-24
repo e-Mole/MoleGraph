@@ -165,6 +165,7 @@ public:
         ChannelBase *sourceHorizontalChannel
     );
     void ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget);
+    static QString GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget);
 signals:
     void resized();
     void editChannel(ChannelWidget *channelWidget);

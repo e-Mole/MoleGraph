@@ -899,13 +899,16 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
             return false;
         }
 
+        GraphicsContainer *destGC = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
         ChannelWidget *ghost = m_graphicsContainerManager->AddGhost(
             m_measurements[mIndex],
             chIndex,
             hchIndex,
-            m_graphicsContainerManager->GetGraphicsContainers()[gcIndex]
+            destGC
         );
         in >> ghost;
+        //FIXME: just two is necessary to update (value + horizontal)
+        destGC->UpdateAxes();
     }
 
     return true;

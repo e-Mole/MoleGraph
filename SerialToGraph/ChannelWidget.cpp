@@ -69,7 +69,7 @@ QKeySequence ChannelWidget::GetKeyShortcutSequence()
 void ChannelWidget::SetTransparent(bool transparent)
 {
     QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);
-    effect->setOpacity(transparent ? 0.6 : 1);
+    effect->setOpacity(transparent ? 0.7 : 1);
     setGraphicsEffect(effect);
 }
 
@@ -381,6 +381,11 @@ void ChannelWidget::UpdateWidgetVisiblity()
 bool ChannelWidget::isVisible()
 {
     return m_isVisible;
+}
+
+bool ChannelWidget::IsDrawable()
+{
+    return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }
 
 void ChannelWidget::SetVisible(bool visible)

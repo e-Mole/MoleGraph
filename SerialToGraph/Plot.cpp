@@ -465,10 +465,10 @@ void Plot::RescaleAxis(QCPAxis *axis)
 
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
-        if (!channelWidget->isVisible() || channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
+        if (!channelWidget->IsDrawable() || channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
             continue;
 
-        if (channelWidget->GetShapeIndex() == 0 && channelWidget->GetPenStyle() == Qt::NoPen)
+        if (!channelWidget->IsDrawable())
             continue;
 
         ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);

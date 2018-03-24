@@ -26,6 +26,8 @@ class Axis : public QObject
     void _SetIsOnRight(bool isOnRight);
     void _SetIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal;}
     void _SetIsShownName(bool isShownName);
+    void _FillChannelWidgets(std::vector<ChannelWidget *> &widgets, std::vector<GraphicsContainer *> &containers);
+    QString _GetWidgetName(GraphicsContainer *container, ChannelWidget *widget);
 
     friend class AxisCopy;
     friend class AxesDialog;

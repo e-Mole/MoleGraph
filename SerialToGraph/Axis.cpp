@@ -68,6 +68,66 @@ const Axis &Axis::operator =(const Axis &axis)
     return *this;
 }
 
+void Axis::_FillChannelWidgets(std::vector<ChannelWidget*> &widgets, std::vector<GraphicsContainer *> &containers )
+{
+    foreach (ChannelWidget *widget, m_graphicsContainer->GetChannelWidgets())
+    {
+        if (widget->GetChannelGraph()->GetValuleAxis() != this)
+        {
+            continue;
+        }
+
+        if (widget->IsDrawable() || widget->IsOnHorizontalAxis())
+        {
+            widgets.push_back(widget);
+            containers.push_back(m_graphicsContainer);
+        }
+
+
+        if (widget->IsOnHorizontalAxis())
+        {
+            std::vector<ChannelWidget*> ghostWidgets;
+            std::vector<GraphicsContainer *> ghostContainers;
+            foreach (ChannelWidget *ghostWidget, m_graphicsContainer->GetChannelWidgets())
+            {
+                if (!ghostWidget->isGhost() || !ghostWidget->IsDrawable())
+                {
+                    continue;
+                }
+
+                Measurement *m = m_graphicsContainer->GetChannel(ghostWidget)->GetMeasurement();
+                ChannelBase *horizontalChannel = m_graphicsContainer->GetHorizontalChannel(m);
+                GraphicsContainer *sourceContainer = m->GetWidget();
+                ChannelWidget * horizontalChannelWidget = sourceContainer->GetChannelWidget(horizontalChannel);
+                if (std::find(widgets.begin(), widgets.end(), horizontalChannelWidget) == widgets.end())
+                {
+                    ghostWidgets.push_back(horizontalChannelWidget);
+                    ghostContainers.push_back(sourceContainer);
+                }
+            }
+
+            if (!ghostWidgets.empty() && !widget->IsDrawable())
+            {
+                //It is not necessary to display name of horizintal channel because it is hidden and are here other to display
+                widgets.clear();
+                containers.clear();
+            }
+            widgets.insert(widgets.end(), ghostWidgets.begin(), ghostWidgets.end());
+            containers.insert(containers.end(), ghostContainers.begin(), ghostContainers.end());
+        }
+    }
+}
+
+QString Axis::_GetWidgetName(GraphicsContainer *container, ChannelWidget *widget)
+{
+
+    if (container == m_graphicsContainer)
+        return widget->GetName();
+
+    //horizontal channel of ghost
+    return m_graphicsContainer->GetGhostWidgetName(container, widget);
+}
+
 void Axis::UpdateGraphAxisName()
 {
     if (m_isShownName)
@@ -79,47 +139,45 @@ void Axis::UpdateGraphAxisName()
 
      QString channels;
     bool first =true;
-    unsigned count = 0;
     bool addMiddle = false;
     QString units;
 
-    for (unsigned i = 0; i < m_graphicsContainer->GetChannelWidgetCount(); i++)
+
+    std::vector<ChannelWidget*> widgets;
+    std::vector<GraphicsContainer*> containers;
+    _FillChannelWidgets(widgets, containers);
+    unsigned size = widgets.size();
+    for (unsigned i = 0; i < size; i++)
     {
-        ChannelWidget *channelWidget = m_graphicsContainer->GetChannelWidget(i);
-        if ((channelWidget->isVisible() || channelWidget->IsOnHorizontalAxis()) &&
-            channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        if (!first)
         {
-            count++;
-            if (!first)
+            if (i+1 != size &&
+                widgets[i+1]->IsDrawable() &&
+                this == widgets[i+1]->GetChannelGraph()->GetValuleAxis() &&
+                i != 0 &&
+                widgets[i-1]->IsDrawable() &&
+                this == widgets[i-1]->GetChannelGraph()->GetValuleAxis())
             {
-                if (i+1 != m_graphicsContainer->GetChannelWidgetCount() &&
-                    m_graphicsContainer->GetChannelWidget(i+1)->isVisible() &&
-                    this == m_graphicsContainer->GetChannelWidget(i+1)->GetChannelGraph()->GetValuleAxis() &&
-                    i != 0 &&
-                    m_graphicsContainer->GetChannelWidget(i-1)->isVisible() &&
-                    this == m_graphicsContainer->GetChannelWidget(i-1)->GetChannelGraph()->GetValuleAxis())
-                {
-                    addMiddle = true;
-                    continue;
-                }
-                channels += ", ";
+                addMiddle = true;
+                continue;
             }
-            else
-                first = false;
-
-            if (addMiddle)
-            {
-                channels += ".. ,";
-                addMiddle = false;
-            }
-
-            channels += channelWidget->GetName();
-
-            if (0 == units.size())
-                units = channelWidget->GetUnits();
-            else if (units != channelWidget->GetUnits())
-                units = "/n"; //escape sequence for no units
+            channels += ", ";
         }
+        else
+            first = false;
+
+        if (addMiddle)
+        {
+            channels += ".. ,";
+            addMiddle = false;
+        }
+
+        channels += _GetWidgetName(containers[i], widgets[i]);
+
+        if (0 == units.size())
+            units = widgets[i]->GetUnits();
+        else if (units != widgets[i]->GetUnits())
+            units = "/n"; //escape sequence for no units
     }
 
     bool round = GlobalSettings::GetInstance().GetUnitBrackets() == "()";

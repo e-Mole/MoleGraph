@@ -83,6 +83,13 @@ ChannelSettings::ChannelSettings(
         AddSeparator();
     }
 
+    if (m_channelWidget->isGhost())
+    {
+        _FillMeasurementCombo();
+        connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
+        connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
+    }
+
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
     m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
 
@@ -109,12 +116,6 @@ ChannelSettings::ChannelSettings(
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
     _InitializePenStyle(channelWidget->GetPenStyle());
-    if (m_channelWidget->isGhost())
-    {
-        _FillMeasurementCombo();
-        connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
-        connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
-    }
 }
 
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
@@ -296,10 +297,22 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
     ChannelWidget *originalChannelWidget = originalGC->GetChannelWidget(originalChannel);
 
-    m_name->setText(m_graphicsContainer->GetGhostWidgetName(originalGC, originalChannelWidget));
-    m_units->setText(originalChannelWidget->GetUnits());
-    SetColorButtonColor(originalChannelWidget->GetForeColor());
-    m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
+    if (m_name)
+    {
+        m_name->setText(m_graphicsContainer->GetGhostWidgetName(originalGC, originalChannelWidget));
+    }
+    if (m_units)
+    {
+        m_units->setText(originalChannelWidget->GetUnits());
+    }
+    if (m_colorButtonWidget)
+    {
+        SetColorButtonColor(originalChannelWidget->GetForeColor());
+    }
+    if (m_shapeComboBox)
+    {
+        m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
+    }
 }
 
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)

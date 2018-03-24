@@ -77,7 +77,15 @@
     {
       "quantityId" : 18,
       "quantityName" : "Sound intensity level"
-    }                      
+    },
+    {
+      "quantityId" : 19,
+      "quantityName" : "Altitude"
+    },
+    {
+      "quantityId" : 20,
+      "quantityName" : "Dewpoint"
+    }                        
   ],
   "sensors":
   [
@@ -99,7 +107,7 @@
     {
       "sensorId" : 2,
       "sensorName" : "Pressure + Thermometer + Hygrometer (BME280)",
-      "quantities" : [ "Pressure", "Temperature", "Humidity" ]
+      "quantities" : [ "Pressure", "Temperature", "Humidity", "Altitude", "Dewpoint" ]
     },    
     {
       "sensorId" : 3,

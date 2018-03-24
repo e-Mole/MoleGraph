@@ -20,6 +20,7 @@
 #include "magnetometr.h"
 #include "soundmeter.h"
 #include "silomer.h"
+#include "bme280.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //

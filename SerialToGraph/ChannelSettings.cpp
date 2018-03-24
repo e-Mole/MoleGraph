@@ -485,6 +485,7 @@ bool ChannelSettings::BeforeAccept()
         lastAxis->UpdateVisiblility();
         m_graphicsContainer->GetPlot()->RescaleAxis(lastAxis->GetGraphAxis());
 
+        rescaleAxis = true;
         changed = true;
     }
 
@@ -515,7 +516,7 @@ bool ChannelSettings::BeforeAccept()
         m_channelWidget->SetForeColor(m_color);
     }
 
-    if (m_channelWidget->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentIndex())
+    if (m_channelWidget->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentData().toInt())
     {
         changed = true;
         m_channelWidget->SetShapeIndex(m_shapeComboBox->currentData().toInt());

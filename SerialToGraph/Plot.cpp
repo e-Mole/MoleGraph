@@ -463,13 +463,13 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double lower = std::numeric_limits<double>::max();
     double upper = -std::numeric_limits<double>::max();
 
+    bool processedAtLeasOne = false;
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
     {
         if (!channelWidget->IsDrawable() || channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
             continue;
 
-        if (!channelWidget->IsDrawable())
-            continue;
+        processedAtLeasOne = true;
 
         ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
         if (channel->GetMinValue() < lower)
@@ -485,9 +485,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
     axis->setRange(lower - margin, upper + margin);
 
     //hide when no channel is displayed
-    axis->setVisible(
-        lower != std::numeric_limits<double>::max() ||
-        upper != -std::numeric_limits<double>::max());
+    axis->setVisible(processedAtLeasOne);
 }
 
 void Plot::RescaleAllAxes()

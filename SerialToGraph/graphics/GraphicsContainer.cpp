@@ -816,7 +816,7 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
     ChannelWidget *widget = _CreateChannelWidget(
         channel,
         channelGraph,
-        1,
+        0,
         m_sampleChannelProperties->GetSampleChannelStyleText(SampleChannelProperties::Samples),
         Qt::black,
         true,

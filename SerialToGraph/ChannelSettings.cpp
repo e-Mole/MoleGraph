@@ -83,6 +83,13 @@ ChannelSettings::ChannelSettings(
         AddSeparator();
     }
 
+    if (m_channelWidget->isGhost())
+    {
+        _FillMeasurementCombo();
+        connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
+        connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
+    }
+
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
     m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
 
@@ -109,12 +116,6 @@ ChannelSettings::ChannelSettings(
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelWidget);
     _InitializePenStyle(channelWidget->GetPenStyle());
-    if (m_channelWidget->isGhost())
-    {
-        _FillMeasurementCombo();
-        connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
-        connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
-    }
 }
 
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
@@ -296,10 +297,22 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
     ChannelWidget *originalChannelWidget = originalGC->GetChannelWidget(originalChannel);
 
-    m_name->setText(originalGC->GetName() + "." + originalChannelWidget->GetName());
-    m_units->setText(originalChannelWidget->GetUnits());
-    SetColorButtonColor(originalChannelWidget->GetForeColor());
-    m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
+    if (m_name)
+    {
+        m_name->setText(m_graphicsContainer->GetGhostWidgetName(originalGC, originalChannelWidget));
+    }
+    if (m_units)
+    {
+        m_units->setText(originalChannelWidget->GetUnits());
+    }
+    if (m_colorButtonWidget)
+    {
+        SetColorButtonColor(originalChannelWidget->GetForeColor());
+    }
+    if (m_shapeComboBox)
+    {
+        m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
+    }
 }
 
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
@@ -450,6 +463,8 @@ bool ChannelSettings::BeforeAccept()
 
     bool changed = false;
     bool changedHorizontal = false;
+    bool rescaleAxis = false;
+
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
     if (m_channelWidget->GetChannelGraph()->GetValuleAxis() != axis)
     {
@@ -503,7 +518,9 @@ bool ChannelSettings::BeforeAccept()
     if (m_channelWidget->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentIndex())
     {
         changed = true;
-        m_channelWidget->SetShapeIndex(m_shapeComboBox->currentIndex());
+        m_channelWidget->SetShapeIndex(m_shapeComboBox->currentData().toInt());
+        rescaleAxis = true;
+
     }
 
     if (m_channel->GetType() == ChannelBase::Type_Sample)
@@ -540,6 +557,7 @@ bool ChannelSettings::BeforeAccept()
     {
         changed = true;
         m_channelWidget->SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
+        rescaleAxis = true;
     }
 
     if (m_channelWidget->isGhost())
@@ -584,6 +602,11 @@ bool ChannelSettings::BeforeAccept()
     //NOTE: must be last!
     if (changed)
     {
+        if (rescaleAxis)
+        {
+           m_graphicsContainer->GetPlot()->RescaleAxis(axis->GetGraphAxis());
+        }
+
         GlobalSettings::GetInstance().SetSavedState(false);
         if (changedHorizontal)
         {
@@ -614,21 +637,30 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
 void ChannelSettings::_InitializeShapeCombo(ChannelWidget *channelWidget)
 {
     m_shapeComboBox = new bases::ComboBox(this);
-    m_shapeComboBox->addItem(tr("Cross"));
-    m_shapeComboBox->addItem(tr("Plus"));
-    m_shapeComboBox->addItem(tr("Circle"));
-    m_shapeComboBox->addItem(tr("Disc"));
-    m_shapeComboBox->addItem(tr("Square"));
-    m_shapeComboBox->addItem(tr("Diamond"));
-    m_shapeComboBox->addItem(tr("Star"));
-    m_shapeComboBox->addItem(tr("Triangle"));
-    m_shapeComboBox->addItem(tr("Inverted Triangle"));
-    m_shapeComboBox->addItem(tr("Cross and Square"));
-    m_shapeComboBox->addItem(tr("Plus and Square"));
-    m_shapeComboBox->addItem(tr("Cross and Circle"));
-    m_shapeComboBox->addItem(tr("Plus and Circle"));
-    m_shapeComboBox->addItem(tr("Peace"));
-    m_shapeComboBox->setCurrentIndex(channelWidget->GetChannelGraph()->GetShapeIndex());
+    m_shapeComboBox->addItem(tr("None"), 0);
+    m_shapeComboBox->addItem(tr("Cross"), 2);
+    m_shapeComboBox->addItem(tr("Plus"), 3);
+    m_shapeComboBox->addItem(tr("Circle"), 4);
+    m_shapeComboBox->addItem(tr("Disc"), 5);
+    m_shapeComboBox->addItem(tr("Square"), 6);
+    m_shapeComboBox->addItem(tr("Diamond"), 7);
+    m_shapeComboBox->addItem(tr("Star"), 8);
+    m_shapeComboBox->addItem(tr("Triangle"), 9);
+    m_shapeComboBox->addItem(tr("Inverted Triangle"), 10);
+    m_shapeComboBox->addItem(tr("Cross and Square"), 11);
+    m_shapeComboBox->addItem(tr("Plus and Square"), 12);
+    m_shapeComboBox->addItem(tr("Cross and Circle"), 13);
+    m_shapeComboBox->addItem(tr("Plus and Circle"), 14);
+    m_shapeComboBox->addItem(tr("Peace"), 15);
+    if (channelWidget->GetChannelGraph()->GetShapeIndex() == 0)
+    {
+        m_shapeComboBox->setCurrentIndex(0);
+    }
+    else
+    {
+        m_shapeComboBox->setCurrentIndex(channelWidget->GetChannelGraph()->GetShapeIndex() - 1); //skip dot
+    }
+
     m_shapeComboBox->setEnabled(!channelWidget->IsOnHorizontalAxis());
     m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
 }
@@ -644,6 +676,7 @@ void ChannelSettings::_RefillAxisCombo()
                 m_channelWidget->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
                 axis->IsHorizontal(); //as same as to horizontal
 
+
         if (!valid)
         {
             if (m_channel->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
@@ -651,6 +684,9 @@ void ChannelSettings::_RefillAxisCombo()
             else
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
         }
+
+        if (valid && axis->IsHorizontal() && m_channelWidget->isGhost())
+            valid = false;
 
         if (valid)
             m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);

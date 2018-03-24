@@ -136,9 +136,10 @@ void ChannelMenu::edit()
 void ChannelMenu::remove()
 {
     ChannelWidget * channelWidget = m_removeButtonToChannel[(QPushButton*)sender()];
+    m_channelCheckBoxes.remove(channelWidget);
     m_graphicsContainer->RemoveChannelWidget(channelWidget);
 
-    m_channelCheckBoxes.remove(channelWidget);
+
     for (int row = 0; row < m_gridLayout->rowCount(); row++)
     {
         for (int col = 0; col < m_gridLayout->columnCount(); col++)

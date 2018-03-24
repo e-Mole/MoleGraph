@@ -111,7 +111,6 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
-    void RemoveGraph(ChannelGraph *graph);
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
@@ -121,6 +120,7 @@ public:
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
     void RedrawChannelMarks(int position);
+    Axis *GetHorizontalAxis();
 
     ChannelGraph *AddChannelGraph(QCPAxis *keyAxis, Axis *valueAxis, const QColor &color,
         unsigned shapeIndex,
@@ -130,6 +130,7 @@ public:
     QPair<int, int>& GetMarkerPositions() { return m_markerPositions; }
     MarkerTypeSelection GetMarkerTypeSelection() { return m_markerTypeSelection; }
     ChannelBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
+    void UpdateHorizontalAxisName();
 
 signals:
     void markerLinePositionChanged(int xIndex);

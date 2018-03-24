@@ -125,7 +125,6 @@ public:
     ChannelGraph * AddBlackChannelGraph(Axis *valueAxis);
     ChannelGraph * AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle);
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
-    bool RemoveGraph(ChannelWidget *channelWidget);
     void RescaleAxes(ChannelWidget *channelWidget);
     ChannelBase *GetHorizontalChannel(Measurement *measurement) const;
     std::vector<ChannelWidget *> &GetChannelWidgets();

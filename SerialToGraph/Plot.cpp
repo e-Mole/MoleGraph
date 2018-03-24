@@ -540,11 +540,6 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
-void Plot::RemoveGraph(ChannelGraph *graph)
-{
-    removeGraph(graph);
-}
-
 void Plot::RefillGraphs()
 {
     foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
@@ -710,4 +705,20 @@ void Plot::RedrawChannelMarks(int position)
     double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
         channelWidget->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
+}
+
+Axis *Plot::GetHorizontalAxis()
+{
+    foreach (Axis *item, m_graphicsContainer->GetAxes())
+    {   if (item->GetGraphAxis() == xAxis)
+            return item;
+    }
+
+    qWarning() << "horizontal axis not found";
+    return NULL;
+}
+
+void Plot::UpdateHorizontalAxisName()
+{
+    GetHorizontalAxis()->UpdateGraphAxisName();
 }

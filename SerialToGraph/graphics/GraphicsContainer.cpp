@@ -210,6 +210,7 @@ void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
     m_plot->removeGraph(channelWidget->GetChannelGraph());
     delete channelWidget;
     replaceDisplays();
+    m_plot->UpdateHorizontalAxisName();
 }
 
 void GraphicsContainer::replaceDisplays()
@@ -633,11 +634,6 @@ void GraphicsContainer::UpdateAxes()
 void GraphicsContainer::SetAxisStyle(Axis *axis, bool dateTime, QString const &format)
 {
     m_plot->SetAxisStyle(axis->GetGraphAxis(), dateTime, format);
-}
-
-bool GraphicsContainer::RemoveGraph(ChannelWidget *channelWidget)
-{
-    return m_plot->removeGraph(channelWidget->GetChannelGraph());
 }
 
 void GraphicsContainer::RescaleAxes(ChannelWidget *channelWidget)
@@ -1130,9 +1126,12 @@ ChannelWidget * GraphicsContainer::AddGhost(
         sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1, true);
     channelWidget->SetName(GetGhostWidgetName(sourceGraphicsContainer, channelWidget));
     channelWidget->SetPenStyle(Qt::DashLine);
+    channelWidget->SetVisible(true);
+
     replaceDisplays();
     _DisplayChannelValue(channelWidget);
 
+    m_plot->UpdateHorizontalAxisName();
     m_plot->RefillGraphs();
     m_plot->SetMarkerLine(m_currentIndex);
     return channelWidget;

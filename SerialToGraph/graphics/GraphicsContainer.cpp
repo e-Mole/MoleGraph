@@ -577,7 +577,7 @@ ChannelGraph * GraphicsContainer::AddBlackChannelGraph(Axis * valueAxis)
     QCPAxis *keyAxis = (valueAxis->GetGraphAxis() == m_plot->xAxis) ?
         m_plot->yAxis : m_plot->xAxis;
     return m_plot->AddChannelGraph(
-        keyAxis, valueAxis, Qt::black, 0, GetMarksShown(), Qt::SolidLine);
+        keyAxis, valueAxis, Qt::black, 2/*ssCross*/, GetMarksShown(), Qt::SolidLine);
 
 }
 
@@ -781,6 +781,7 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     QColor const &color,
     bool visible,
     QString const & units,
+    Qt::PenStyle penStyle,
     bool isSampleChannel,
     bool isGhost
 )
@@ -793,7 +794,7 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
         color,
         visible,
         units,
-        Qt::SolidLine,
+        penStyle,
         isSampleChannel ? ChannelBase::ValueTypeSample : ChannelBase::ValueTypeUnknown,
         GetPlot(),
         isGhost
@@ -814,9 +815,19 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
 ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost)
 {   
     m_sampleChannel = channel;
-    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 0, Qt::SolidLine);
+    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 2/*ssCross*/, Qt::SolidLine);
     ChannelWidget *widget = _CreateChannelWidget(
-        channel, channelGraph, 0, m_sampleChannelProperties->GetSampleChannelStyleText(SampleChannelProperties::Samples), Qt::black, true, "", true, isGhost);
+        channel,
+        channelGraph,
+        1,
+        m_sampleChannelProperties->GetSampleChannelStyleText(SampleChannelProperties::Samples),
+        Qt::black,
+        true,
+        "",
+        Qt::SolidLine,
+        true,
+        isGhost
+    );
 
     connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
 
@@ -836,6 +847,7 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
+        sourceChannelWidget->GetPenStyle(),
         true,
         false
     );
@@ -847,8 +859,9 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
     HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)
 {
-    ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 0, Qt::SolidLine);
-    ChannelWidget *widget = _CreateChannelWidget(channel, channelGraph, shortcutOrder, name, color, visible, units, false, isGhost);
+    ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 2/*ssCross*/, Qt::SolidLine);
+    ChannelWidget *widget = _CreateChannelWidget(
+        channel, channelGraph, shortcutOrder, name, color, visible, units, Qt::SolidLine, false, isGhost);
 
     channel->setActive(widget->isVisible());
     connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
@@ -869,6 +882,7 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->isVisible(),
         sourceChannelWidget->GetUnits(),
+        sourceChannelWidget->GetPenStyle(),
         false,
         isGhost
     );

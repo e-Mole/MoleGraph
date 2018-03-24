@@ -18,6 +18,7 @@ void GraphicsContainerManager::AddMeasurement(Measurement *m)
     m_graphicsContainers.push_back(m->GetWidget());
 
     connect(m->GetWidget(), SIGNAL(editChannel(ChannelWidget*)), this, SLOT(editChannel(ChannelWidget*)));
+    //connect(m->GetWidget(), SIGNAL(edit))
 }
 
 void GraphicsContainerManager::RemoveMeasurement(Measurement *m)

@@ -917,5 +917,7 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
 void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
 {
     ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
-    settings->exec();
+    connect (settings, SIGNAL(rejected()), this, SIGNAL(channelSettingsRejected()));
+    int result  = settings->exec();
+
 }

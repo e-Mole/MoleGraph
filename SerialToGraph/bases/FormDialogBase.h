@@ -26,7 +26,7 @@ public:
 
     void AddSeparator();
 signals:
-
+    void rejected();
 private slots:
     void storeAndAccept();
 };

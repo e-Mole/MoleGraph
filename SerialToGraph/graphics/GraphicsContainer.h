@@ -165,6 +165,8 @@ public:
         ChannelWidget *sourceValueChannelWidget,
         ChannelBase *sourceHorizontalChannel
     );
+    void ConfirmGhost(ChannelWidget *channelWidget);
+
     void ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget);
     static QString GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget);
 signals:

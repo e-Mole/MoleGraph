@@ -38,6 +38,7 @@ public:
     ChannelBase *GetChannelForGhost(Measurement *m);
 signals:
     void editChannel(GraphicsContainer *gc, ChannelWidget *channelWidget);
+    void editChannelRejected();
 private slots:
     void editChannel(ChannelWidget *channelWidget);
 public slots:

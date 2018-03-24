@@ -88,6 +88,8 @@ public:
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
     void ShowMenuButton(bool show);
 
+signals:
+    editChannelRejected();
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);

@@ -58,6 +58,7 @@ class GraphicsContainer : public QWidget
     KeyShortcut *m_noChannelsShortcut;
     QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
     SampleChannelProperties *m_sampleChannelProperties;
+    ChannelWidget *m_ghostWaitingForConfirmation;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
     virtual QSize sizeHint() const { return QSize(800,700); }
@@ -165,10 +166,11 @@ public:
         ChannelWidget *sourceValueChannelWidget,
         ChannelBase *sourceHorizontalChannel
     );
-    void ConfirmGhost(ChannelWidget *channelWidget);
 
     void ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget);
     static QString GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget);
+    void ConfirmGhostChannel();
+    void RejectGhostChannel();
 signals:
     void resized();
     void editChannel(ChannelWidget *channelWidget);

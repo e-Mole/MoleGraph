@@ -26,12 +26,11 @@ public:
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
     std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
     void ChangeMeasurement(Measurement *m);
-    ChannelWidget *AddGhost(
-        Measurement *sourceMeasurement,
+    ChannelWidget *AddGhost(Measurement *sourceMeasurement,
         unsigned sourceValueChannelIndex,
         unsigned sourceHorizontalChannelIndex,
         GraphicsContainer *destGraphicsContainer
-     );
+     , bool confirmed);
     bool HaveMeasurementGhosts(Measurement *m);
     void RemoveGhosts(Measurement *m);
     bool IsGhostAddable(Measurement *m);

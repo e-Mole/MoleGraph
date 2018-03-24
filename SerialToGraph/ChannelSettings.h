@@ -72,6 +72,7 @@ public:
         GraphicsContainer *graphicsContainer,
         ChannelWidget *channelWidget,
         hw::SensorManager *sensorManager);
+    GraphicsContainer *GetGraphicsContainer();
 signals:
 
 private slots:

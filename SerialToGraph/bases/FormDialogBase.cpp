@@ -43,6 +43,7 @@ void FormDialogBase::closeEvent(QCloseEvent * e)
     if (m_acceptChangesByDialogClosing)
     {
         storeAndAccept();
+        accepted();
     }
     else
     {

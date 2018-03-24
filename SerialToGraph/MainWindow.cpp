@@ -253,11 +253,11 @@ Measurement *MainWindow::CloneCurrentMeasurement()
                 originalMeasurement,
                 originalMeasurement->GetChannelIndex(originalChannel),
                 originalMeasurement->GetChannelIndex(originalHorizontalChannel),
-                newGC
+                newGC,
+                true
             );
         }
     }
-    connect(newMeasurement, SIGNAL(editChannel(ChannelWidget*)), newGC, SLOT(editChannel(ChannelWidget*)));
     return newMeasurement;
 }
 
@@ -779,7 +779,7 @@ void MainWindow::addGhostChannel()
     GraphicsContainer *originalGc = m_graphicsContainerManager->GetGraphicsContainer(m);
     GraphicsContainer *destGc = m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement);
     ChannelWidget *ghostWidget = m_graphicsContainerManager->AddGhost(
-        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc);
+        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc, false);
 
     m_channelMenu->ReinitGrid(); //to be added
     ghostWidget->clicked();
@@ -904,7 +904,8 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
             m_measurements[mIndex],
             chIndex,
             hchIndex,
-            destGC
+            destGC,
+            true
         );
         in >> ghost;
         //FIXME: just two is necessary to update (value + horizontal)
@@ -917,7 +918,27 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
 void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
 {
     ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
-    connect (settings, SIGNAL(rejected()), this, SIGNAL(channelSettingsRejected()));
-    int result  = settings->exec();
+    connect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));
+    connect(settings, SIGNAL(rejected()), this, SLOT(channelEditingRejected()));
+    settings->exec();
+}
 
+void MainWindow::_DisconnectChannelSettings(ChannelSettings *settings)
+{
+    disconnect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));
+    disconnect(settings, SIGNAL(rejected()), this, SLOT(channelEditingRejected()));
+}
+
+void MainWindow::channelEditingAccepted()
+{
+    ChannelSettings *settings = (ChannelSettings *) sender();
+    _DisconnectChannelSettings(settings);
+    settings->GetGraphicsContainer()->ConfirmGhostChannel();
+}
+
+void MainWindow::channelEditingRejected()
+{
+    ChannelSettings *settings = (ChannelSettings *) sender();
+    _DisconnectChannelSettings(settings);
+    settings->GetGraphicsContainer()->RejectGhostChannel();
 }

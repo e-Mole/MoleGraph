@@ -10,6 +10,7 @@
 
 class CentralWidget;
 class ChannelMenu;
+class ChannelSettings;
 class ChannelWidget;
 class Console;
 class GraphicsContainer;
@@ -66,6 +67,7 @@ class MainWindow : public QMainWindow
     bool _DeSerializeGhsotColections(QDataStream &in);
     void _ShowCoruptedFileMessage(const QString &fileName);
     unsigned _GetGhostCount();
+    void _DisconnectChannelSettings(ChannelSettings *settings);
 
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
@@ -88,8 +90,6 @@ public:
     void ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu);
     void ShowMenuButton(bool show);
 
-signals:
-    editChannelRejected();
 private slots:
     void measurementNameChanged();
     void currentMeasurementChanged(int index);
@@ -114,6 +114,8 @@ private slots:
     void addGhostChannel();
     void showPanelMenu(Measurement *m);
     void editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget);
+    void channelEditingAccepted();
+    void channelEditingRejected();
 };
 
 #endif // MAINWINDOW_H

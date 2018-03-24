@@ -49,7 +49,8 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_plotKeyShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
-    m_sampleChannelProperties(new SampleChannelProperties(this))
+    m_sampleChannelProperties(new SampleChannelProperties(this)),
+    m_ghostWaitingForConfirmation(NULL)
 {
     _InitializeLayouts();
 
@@ -1128,18 +1129,27 @@ ChannelWidget * GraphicsContainer::AddGhost(
     channelWidget->SetName(GetGhostWidgetName(sourceGraphicsContainer, channelWidget));
     channelWidget->SetPenStyle(Qt::DashLine);
     channelWidget->SetVisible(false);
+    m_ghostWaitingForConfirmation = channelWidget;
     return channelWidget;
 }
 
-void GraphicsContainer::ConfirmGhost(ChannelWidget *channelWidget)
+void GraphicsContainer::ConfirmGhostChannel()
 {
-    channelWidget->SetVisible(true);
+    m_ghostWaitingForConfirmation->SetVisible(true);
 
     replaceDisplays();
-    _DisplayChannelValue(channelWidget);
+    _DisplayChannelValue(m_ghostWaitingForConfirmation);
 
     m_plot->UpdateHorizontalAxisName();
     m_plot->RefillGraphs();
     m_plot->SetMarkerLine(m_currentIndex);
 
+    m_ghostWaitingForConfirmation = NULL;
+}
+
+void GraphicsContainer::RejectGhostChannel()
+{
+    _EraseChannelWidgetMappings(m_ghostWaitingForConfirmation);
+    delete m_ghostWaitingForConfirmation;
+    m_ghostWaitingForConfirmation = NULL;
 }

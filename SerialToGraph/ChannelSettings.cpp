@@ -737,3 +737,8 @@ QString ChannelSettings::_GetPortName(int port)
 {
     return tr("Port %1").arg(port);
 }
+
+GraphicsContainer *ChannelSettings::GetGraphicsContainer()
+{
+    return m_graphicsContainer;
+}

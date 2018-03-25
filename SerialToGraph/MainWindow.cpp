@@ -14,6 +14,7 @@
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
 #include <hw/SensorManager.h>
+#include <HwChannel.h>
 #include <Plot.h>
 #include <PortListDialog.h>
 #include <Measurement.h>
@@ -250,13 +251,15 @@ Measurement *MainWindow::CloneCurrentMeasurement()
             ChannelBase * originalChannel = currentGC->GetChannel(w);
             Measurement * originalMeasurement = originalChannel->GetMeasurement();
             ChannelBase * originalHorizontalChannel = currentGC->GetHorizontalChannel(originalMeasurement);
-            m_graphicsContainerManager->AddGhost(
+
+            newGC->AddGhost(dynamic_cast<HwChannel*>(originalChannel), currentGC, w, originalHorizontalChannel, true);
+            /*m_graphicsContainerManager->AddGhost(
                 originalMeasurement,
                 originalMeasurement->GetChannelIndex(originalChannel),
                 originalMeasurement->GetChannelIndex(originalHorizontalChannel),
                 newGC,
                 true
-            );
+            );*/
         }
     }
     return newMeasurement;

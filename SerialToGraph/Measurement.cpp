@@ -83,9 +83,7 @@ Measurement::Measurement(
         else
             _InitializeAxesAndChanels();
     }
-    connect(
-        &m_hwSink, SIGNAL(connectivityChanged(bool)),
-        this, SLOT(portConnectivityChanged(bool)));
+    connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), this, SLOT(portConnectivityChanged(bool)));
 }
 
 Measurement::~Measurement()

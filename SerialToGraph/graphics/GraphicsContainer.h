@@ -160,12 +160,11 @@ public:
     QKeySequence GetNoChannelsSequence();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void RefillWidgets();
-    ChannelWidget * AddGhost(
-        HwChannel *sourceChannel,
+    ChannelWidget * AddGhost(HwChannel *sourceChannel,
         GraphicsContainer *sourceGraphicsContainer,
         ChannelWidget *sourceValueChannelWidget,
         ChannelBase *sourceHorizontalChannel
-    );
+    , bool confirmed);
 
     void ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget);
     static QString GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget);

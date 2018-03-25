@@ -86,17 +86,13 @@ ChannelWidget * GraphicsContainerManager::AddGhost(
         return NULL;
     }
 
-    ChannelWidget *ghost = destGraphicsContainer->AddGhost(
+    return destGraphicsContainer->AddGhost(
         dynamic_cast<HwChannel *>(sourceMeasurement->GetChannel(sourceValueChannelIndex)),
         sourceGraphicsContainer,
         sourceGraphicsContainer->GetChannelWidget(sourceValueChannelIndex),
-        sourceMeasurement->GetChannel(sourceHorizontalChannelIndex)
+        sourceMeasurement->GetChannel(sourceHorizontalChannelIndex),
+        confirmed
     );
-
-    if (confirmed)
-        destGraphicsContainer->ConfirmGhostChannel();
-
-    return ghost;
 }
 
 void GraphicsContainerManager::editChannel(ChannelWidget *channelWidget)

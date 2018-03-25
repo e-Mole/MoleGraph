@@ -1115,7 +1115,8 @@ ChannelWidget * GraphicsContainer::AddGhost(
     HwChannel *sourceChannel,
     GraphicsContainer *sourceGraphicsContainer,
     ChannelWidget *sourceValueChannelWidget,
-    ChannelBase *sourceHorizontalChannel
+    ChannelBase *sourceHorizontalChannel,
+    bool confirmed
 )
 {
     Measurement *sourceMeasurement = sourceChannel->GetMeasurement();
@@ -1130,6 +1131,10 @@ ChannelWidget * GraphicsContainer::AddGhost(
     channelWidget->SetPenStyle(Qt::DashLine);
     channelWidget->SetVisible(false);
     m_ghostWaitingForConfirmation = channelWidget;
+
+    if (confirmed)
+        ConfirmGhostChannel();
+
     return channelWidget;
 }
 

@@ -154,8 +154,8 @@ win32:RC_ICONS += MoleGraph.ico
 ICON = MoleGraph.icns # icons for Mac OS X
 
 RESOURCES += \
-    translations.qrc
-
+    translations.qrc \
+    sensors/sensors.json
 
 android{
 DISTFILES += \
@@ -169,3 +169,4 @@ DISTFILES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
+

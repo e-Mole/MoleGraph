@@ -9,7 +9,7 @@
 #include <QJsonDocument>
 
 
-#define JSON_FILE_NAME "sensors/sensors.json"
+#define JSON_FILE_NAME ":/sensors/sensors.json"
 namespace hw
 {
     SensorManager::SensorManager(QObject *parent):
@@ -30,10 +30,7 @@ namespace hw
         QString jsonData = _GetSensorsFileContent();
         if (jsonData.isEmpty())
         {
-            MyMessageBox::critical(
-                NULL,
-                tr("\"sensors.json\" file has not been found in the \"sensors\" subfolder. Sensor set will not be available!")
-            );
+            //TODO: this code is probably never reached because sensors are in resources now
             _PrepareMinimalSensorSet();
         }
         QJsonDocument document = QJsonDocument::fromJson(jsonData.toUtf8());

@@ -12,6 +12,7 @@
 
 #define PADDING 0
 #define BORDER 1
+#define GHOST_TRANSPARENCY 0x60
 ChannelWidget::ChannelWidget(
     QWidget* parent,
     ChannelGraph *channelGraph,
@@ -58,19 +59,11 @@ ChannelWidget::ChannelWidget(
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
-    SetTransparent(isGhost);
 }
 
 QKeySequence ChannelWidget::GetKeyShortcutSequence()
 {
     return m_shortcutOrder != -1 ? QKeySequence(Qt::ALT + Qt::Key_0 + m_shortcutOrder) : QKeySequence();
-}
-
-void ChannelWidget::SetTransparent(bool transparent)
-{
-    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);
-    effect->setOpacity(transparent ? 0.7 : 1);
-    setGraphicsEffect(effect);
 }
 
 ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, const QColor &backColor, const QColor &foreColor
@@ -134,10 +127,11 @@ void ChannelWidget::ValueLabel::SetForeColor(const QColor &color)
 {
     m_foreColor = color;
     QString style;
-    style = QString("QLabel { background-color : rgb(%1, %2, %3);").
+    style = QString("QLabel { background-color : rgba(%1, %2, %3, %4);").
             arg(m_backColor.red()).
             arg(m_backColor.green()).
-            arg(m_backColor.blue());
+            arg(m_backColor.blue()).
+            arg(m_backColor.alpha());
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);
@@ -232,13 +226,13 @@ QColor ChannelWidget::_GetBackColorFromType(ChannelBase::ValueType type)
     switch (type)
     {
     case ChannelBase::ValueTypeSample:
-        return QColor(0xd0, 0xd0, 0xd0);
+        return QColor(0xd0, 0xd0, 0xd0); //It can't be ghost
     case ChannelBase::ValueTypeChanged:
-        return QColor(0xff, 0xd0, 0xd0);
+        return QColor(0xff, 0xd0, 0xd0, m_isGhost ? GHOST_TRANSPARENCY : 0xff);
     case ChannelBase::ValueTypeUnknown:
     case ChannelBase::ValueTypeOriginal:
     case ChannelBase::ValueTypeRangeValue:
-        return QColor(0xff, 0xff, 0xff);
+        return QColor(0xff, 0xff, 0xff, m_isGhost ? GHOST_TRANSPARENCY : 0xff);
     default:
         qDebug() << "wrong ValueType";
         return QColor();

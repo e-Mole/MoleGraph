@@ -27,6 +27,7 @@ class ChannelWidget : public QWidget
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
         QColor m_foreColor;
+
     public:
         ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, QColor const &backColor, QColor const &foreColor);
         void SetMimimumFontSize(unsigned sizeFactor);
@@ -74,7 +75,6 @@ public:
     QSize GetMinimumSize();
     void SetForeColor(QColor const &color);
     void SetMinimumFontSize(unsigned sizeFactor) {m_valueLabel->SetMinimumFontSize(sizeFactor); }
-    void SetTransparent(bool transparent);
     QString GetName();
     void SetName(QString const &name);
     void UpdateTitle();

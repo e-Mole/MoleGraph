@@ -46,7 +46,7 @@ public:
     void UpdateCheckBoxes();
     void CreatePanelShortcuts();
 signals:
-    addGhostChannelActivated();
+    void addGhostChannelActivated();
 public slots:
     void channelActivatedCheckBox();
     void channelActivatedShortcut();

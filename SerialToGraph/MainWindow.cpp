@@ -56,7 +56,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_graphicsContainerManager(NULL),
     m_measurementMenu(NULL),
     m_channelMenu(NULL),
-    m_sensorManager(new hw::SensorManager(this))
+    m_sensorManager(new hw::SensorManager(this)),
+    m_ghostCreating(false)
 {
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
@@ -782,6 +783,7 @@ void MainWindow::addGhostChannel()
         m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc, false);
 
     m_channelMenu->ReinitGrid(); //to be added
+    m_ghostCreating = true;
     ghostWidget->clicked();
     m_channelMenu->ReinitGrid(); //to be changed name or color
 }
@@ -918,8 +920,11 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
 void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
 {
     ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
-    connect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));
-    connect(settings, SIGNAL(rejected()), this, SLOT(channelEditingRejected()));
+    if (m_ghostCreating)
+    {
+        connect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));
+        connect(settings, SIGNAL(rejected()), this, SLOT(channelEditingRejected()));
+    }
     settings->exec();
 }
 
@@ -927,6 +932,7 @@ void MainWindow::_DisconnectChannelSettings(ChannelSettings *settings)
 {
     disconnect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));
     disconnect(settings, SIGNAL(rejected()), this, SLOT(channelEditingRejected()));
+    m_ghostCreating = false;
 }
 
 void MainWindow::channelEditingAccepted()

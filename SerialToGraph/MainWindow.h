@@ -48,6 +48,7 @@ class MainWindow : public QMainWindow
     MeasurementMenu *m_measurementMenu;
     ChannelMenu *m_channelMenu;
     hw::SensorManager *m_sensorManager;
+    bool m_ghostCreating;
 
     void _SetCurrentFileName(QString const &fileName);
     void _WriteUnsupportedFileVersion();

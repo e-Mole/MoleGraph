@@ -43,6 +43,7 @@ class ChannelWidget : public QWidget
     virtual void resizeEvent(QResizeEvent * event);
     QColor _GetBackColorFromType(ChannelBase::ValueType type);
     void _SetShapeIndexDepricated (unsigned index);
+    void _InitTitle();
     QString m_name;
     QLabel * m_title;
     ValueLabel *m_valueLabel;

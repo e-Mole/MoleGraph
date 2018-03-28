@@ -12,7 +12,7 @@
 
 #define PADDING 0
 #define BORDER 1
-#define GHOST_TRANSPARENCY 0x60
+#define GHOST_TRANSPARENCY 0x80
 ChannelWidget::ChannelWidget(
     QWidget* parent,
     ChannelGraph *channelGraph,
@@ -48,6 +48,7 @@ ChannelWidget::ChannelWidget(
 {
     connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
 
+    _InitTitle();
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
     layout->addWidget(m_title);
@@ -59,6 +60,17 @@ ChannelWidget::ChannelWidget(
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
+}
+
+void ChannelWidget::_InitTitle()
+{
+    QString style = QString("color : rgba(%1, %2, %3, %4);").
+            arg(0x0).
+            arg(0x00).
+            arg(0x00).
+            arg(isGhost() ? GHOST_TRANSPARENCY : 0xff);
+
+    m_title->setStyleSheet(style);
 }
 
 QKeySequence ChannelWidget::GetKeyShortcutSequence()

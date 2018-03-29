@@ -1,6 +1,8 @@
 #include "HwChannelProperties.h"
-
-HwChannelProperties::HwChannelProperties()
+#include <ChannelBase.h>
+#include <ChannelWidget.h>
+HwChannelProperties::HwChannelProperties(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
+    ChannelPropertiesBase(parent, channel, channelWidget)
 {
 
 }

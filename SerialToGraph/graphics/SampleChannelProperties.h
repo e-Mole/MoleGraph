@@ -1,11 +1,14 @@
 #ifndef SAMPLECHANNELPROPERTIES_H
 #define SAMPLECHANNELPROPERTIES_H
 
-#include <QObject>
+#include <graphics/ChannelPropertiesBase.h>
 #include <QString>
 
+class ChannelBase;
+class ChannelWidget;
+class QObject;
 class SampleChannel;
-class SampleChannelProperties : public QObject
+class SampleChannelProperties : public ChannelPropertiesBase
 {
     Q_OBJECT
 
@@ -42,7 +45,7 @@ private:
 
     static QString _ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range);
 public:
-    SampleChannelProperties(QObject *parent);
+    SampleChannelProperties(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
 
     static QString GetRealTimeFormatText(RealTimeFormat realTimeFormat);
     static QString GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat);

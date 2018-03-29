@@ -24,7 +24,7 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
-class SampleChannelProperties;
+class ChannelPropertiesBase;
 
 class GraphicsContainer : public QWidget
 {
@@ -40,6 +40,7 @@ class GraphicsContainer : public QWidget
     QScrollBar *m_scrollBar;
     unsigned m_currentIndex;
     bool m_followMode;
+    std::vector<ChannelPropertiesBase *> m_channelProperties;
     std::vector<ChannelWidget *> m_channelWidgets;
     std::map<ChannelWidget *, ChannelBase *> m_widgetToChannelMapping;
     std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
@@ -57,7 +58,6 @@ class GraphicsContainer : public QWidget
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
     QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
-    SampleChannelProperties *m_sampleChannelProperties;
     ChannelWidget *m_ghostWaitingForConfirmation;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
@@ -82,6 +82,10 @@ class GraphicsContainer : public QWidget
     void _DisplayChannelValue(ChannelWidget *channelWidget);
     void _EraseChannelWidgetMappings(ChannelWidget *channelWidget);
     bool _IsTracked(Measurement *m);
+    void _SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget);
+    void _HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget);
+
+
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
     ~GraphicsContainer();

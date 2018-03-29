@@ -1,6 +1,7 @@
 #include "GraphicsContainer.h"
 #include <Axis.h>
 #include <GlobalSettings.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/SampleChannelProperties.h>
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
@@ -49,7 +50,6 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_plotKeyShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
-    m_sampleChannelProperties(new SampleChannelProperties(this)),
     m_ghostWaitingForConfirmation(NULL)
 {
     _InitializeLayouts();
@@ -810,6 +810,13 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
     return widget;
 }
 
+void GraphicsContainer::_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget)
+{
+    m_channelProperties.push_back(new SampleChannelProperties(this, channel, widget));
+    connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+
+}
+
 ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost)
 {   
     m_sampleChannel = channel;
@@ -818,7 +825,7 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
         channel,
         channelGraph,
         0,
-        m_sampleChannelProperties->GetSampleChannelStyleText(SampleChannelProperties::Samples),
+        SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::Samples),
         Qt::black,
         true,
         "",
@@ -827,8 +834,7 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
         isGhost
     );
 
-    connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
-
+    _SampleCannelWidgetCreationPostProcess(channel, widget);
     return widget;
 }
 
@@ -850,8 +856,16 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         false
     );
 
-    connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+    _SampleCannelWidgetCreationPostProcess(channel, widget);
     return widget;
+}
+
+void GraphicsContainer::_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget)
+{
+    m_channelProperties.push_back(new HwChannelProperties(this, channel, widget));
+    channel->setActive(widget->isVisible());
+    connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
+    connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
 }
 
 ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
@@ -861,9 +875,7 @@ ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
     ChannelWidget *widget = _CreateChannelWidget(
         channel, channelGraph, shortcutOrder, name, color, visible, units, Qt::SolidLine, false, isGhost);
 
-    channel->setActive(widget->isVisible());
-    connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
-    connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
+    _HwCannelWidgetCreationPostProcess(channel, widget);
     return widget;
 }
 
@@ -885,9 +897,7 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
         isGhost
     );
 
-    channel->setActive(widget->isVisible());
-    connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
-    connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
+    _HwCannelWidgetCreationPostProcess(channel, widget);
     return widget;
 }
 
@@ -907,9 +917,9 @@ void GraphicsContainer::sampleChannelPropertyChanged()
 {
     SampleChannel *channel = (SampleChannel*)sender();
     ChannelWidget *widget = m_channelToWidgetMapping[channel];
-    widget->SetName(m_sampleChannelProperties->GetSampleChannelStyleText(channel->GetStyle()));
+    widget->SetName(SampleChannelProperties::GetSampleChannelStyleText(channel->GetStyle()));
     widget->SetUnits(
-        m_sampleChannelProperties->GetUnits(channel->GetStyle(), channel->GetTimeUnits(), channel->GetRealTimeFormat()));
+        SampleChannelProperties::GetUnits(channel->GetStyle(), channel->GetTimeUnits(), channel->GetRealTimeFormat()));
     widget->ShowLastValueWithUnits();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
     RefillWidgets();
@@ -919,7 +929,7 @@ void GraphicsContainer::sampleChannelPropertyChanged()
 
 QString GraphicsContainer::GetValueTimestamp(SampleChannel *channel, unsigned index)
 {
-    return m_sampleChannelProperties->GetRealTimeText(channel, channel->GetValue(index), GetPlot()->IsInRangeMode());
+    return SampleChannelProperties::GetRealTimeText(channel, channel->GetValue(index), GetPlot()->IsInRangeMode());
 }
 
 void GraphicsContainer::_CreateKeyShortcuts()
@@ -1070,7 +1080,7 @@ void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
         {
             if (sampleChannel && sampleChannel->GetStyle() == SampleChannelProperties::RealTime)
             {
-                channelWidget->FillLastValueText(m_sampleChannelProperties->GetRealTimeText(sampleChannel, rangeValue, true));
+                channelWidget->FillLastValueText(SampleChannelProperties::GetRealTimeText(sampleChannel, rangeValue, true));
             }
             else
             {

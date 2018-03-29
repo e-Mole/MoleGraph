@@ -1,4 +1,6 @@
 #include "SampleChannelProperties.h"
+#include <ChannelBase.h>
+#include <ChannelWidget.h>
 #include <graphics/SampleChannelProperties.h>
 #include <QDateTime>
 #include <QDebug>
@@ -6,7 +8,8 @@
 #include <QString>
 #include <SampleChannel.h>
 
-SampleChannelProperties::SampleChannelProperties(QObject *parent) : QObject(parent)
+SampleChannelProperties::SampleChannelProperties(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
+    ChannelPropertiesBase(parent, channel, channelWidget)
 {
 
 }

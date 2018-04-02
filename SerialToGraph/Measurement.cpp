@@ -6,7 +6,8 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/HwChannelProxy.h>
+#include <graphics/SampleChannelProxy.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <hw/Sensor.h>
@@ -236,7 +237,7 @@ void Measurement::draw()
                 goto FINISH_DRAW;
         } while (_IsCompleteSetInQueue());
 
-        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
+        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannelProxy(this)->GetLastValidValue());
         _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
     }
 
@@ -426,7 +427,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             );
             _ConnectHwChannel(newChannel);
 
-            ChannelWidget *channelWidget = m_widget->CloneHwChannelWidget(
+            m_widget->CloneHwChannelWidget(
                 newChannel,
                 sourceMeasurement->GetWidget(),
                 sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel),
@@ -444,7 +445,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
                     ((SampleChannel *)sourceChannel)->GetTimeUnits(),
                     ((SampleChannel *)sourceChannel)->GetRealTimeFormat()
                 );
-            ChannelWidget *channelWidget =  m_widget->CloneSampleChannelWidget(
+            SampleChannelProxy *channelProxy =  m_widget->CloneSampleChannelWidget(
                 m_sampleChannel,
                 sourceMeasurement->GetWidget(),
                 sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)
@@ -452,9 +453,9 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
-                channelWidget->GetChannelGraph()->GetValuleAxis(),
-                m_sampleChannel->GetStyle() == SampleChannelProperties::RealTime,
-                SampleChannelProperties::GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
+                channelProxy->GetWidget()->GetChannelGraph()->GetValuleAxis(),
+                m_sampleChannel->GetStyle() == SampleChannelProxy::RealTime,
+                SampleChannelProxy::GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
             );
         }
 
@@ -476,12 +477,11 @@ void Measurement::_InitializeAxesAndChanels()
     m_sampleChannel =
         new SampleChannel(
             this,
-            SampleChannelProperties::Samples,
-            SampleChannelProperties::Sec,
-            SampleChannelProperties::hh_mm_ss
+            SampleChannelProxy::Samples,
+            SampleChannelProxy::Sec,
+            SampleChannelProxy::hh_mm_ss
         );
-    ChannelWidget *widget =  m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis, false);
-
+    m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis, false);
     m_channels.push_back(m_sampleChannel);
     m_widget->SetHorizontalChannel(this, m_sampleChannel);
 
@@ -498,8 +498,7 @@ void Measurement::_AddYChannel(unsigned order, Axis *axis)
     HwChannel * newChannel = new HwChannel(this, order, m_sensorManager->GetNoneSensor());
     _ConnectHwChannel(newChannel);
 
-    ChannelWidget *channelWidget =  m_widget->_CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
-
+    m_widget->CreateHwChannelWidget(newChannel, axis, order + 1, QString(tr("Channel %1")).arg(order+1), color, true, "", false);
     m_channels.push_back(newChannel);
 }
 
@@ -598,28 +597,24 @@ bool SortChannels(ChannelBase *first, ChannelBase *second)
             first->GetType() < second->GetType();
 }
 
-void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 {
     int hwIndex;
     in >> hwIndex;
 
     ChannelBase *channel;
-    bool isSampleChannel = false;
-    ChannelWidget *channelWidget = NULL;
+    ChannelProxyBase *channelProxy = NULL;
     if (hwIndex == -1)
     {
         channel = new SampleChannel(this);
-        channelWidget =  m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis, false);
-
+        channelProxy = m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis, false);
         m_sampleChannel = (SampleChannel*)channel;
-        isSampleChannel = true;
     }
     else
     {
         channel = new HwChannel(this, hwIndex, m_sensorManager->GetNoneSensor());
         _ConnectHwChannel((HwChannel*)channel);
-
-        channelWidget =  m_widget->_CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
+        channelProxy = m_widget->CreateHwChannelWidget((HwChannel*)channel, valueAxis, hwIndex + 1, "", Qt::black, true, "", false);
 
     }
 
@@ -629,9 +624,9 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned
     in >> channel;
     in.rollbackTransaction();
 
-    in >> channelWidget;
+    in >> channelProxy->GetWidget();
     m_channels.push_back(channel);
-    if (channelWidget->IsOnHorizontalAxis())
+    if (channelProxy->GetWidget()->IsOnHorizontalAxis())
         m_widget->SetHorizontalChannel(this, channel);
 }
 
@@ -710,14 +705,14 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
     }
 }
 
-void Measurement::_DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion)
+void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
 {
     Axis *axis = m_widget->CreateNewAxis(index);
     in >> axis;
     int channelCount;
     in >> channelCount;
     for (int i = 0; i < channelCount; i++)
-        _DeserializeChannel(in, axis, collectionVersion);
+        _DeserializeChannel(in, axis);
 
     //Now I have all channels for the axis and can display corect label
     m_widget->UpdateAxis(axis);
@@ -725,10 +720,11 @@ void Measurement::_DeserializeAxis(QDataStream &in, unsigned index, unsigned col
 
 void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVersion)
 {
+    Q_UNUSED(collectionVersion)
     unsigned axisCount;
     in >> axisCount;
     for (unsigned i = 0; i < axisCount; ++i)
-        _DeserializeAxis(in, i, collectionVersion);
+        _DeserializeAxis(in, i);
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 
@@ -741,7 +737,7 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVers
         _DeserializeChannelData(in, collectionVersion);
 
     if (m_sampleChannel->GetValueCount() != 0)
-        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannel(this)->GetLastValidValue());
+        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannelProxy(this)->GetLastValidValue());
 
     if (!m_saveLoadValues)
     {

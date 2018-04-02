@@ -92,9 +92,9 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (axis == channelWidget->GetChannelGraph()->GetValuleAxis())
+        if (axis == proxy->GetWidget()->GetChannelGraph()->GetValuleAxis())
         {
             if (MyMessageBox::No ==
                 MyMessageBox::question(
@@ -111,10 +111,11 @@ void AxisMenu::removeButtonPressed()
         }
     }
 
-    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (axis == channelWidget->GetChannelGraph()->GetValuleAxis())
-            channelWidget->GetChannelGraph()->AssignToAxis(firstVertical);
+        ChannelWidget *widget = proxy->GetWidget();
+        if (axis == widget->GetChannelGraph()->GetValuleAxis())
+            widget->GetChannelGraph()->AssignToAxis(firstVertical);
     }
     m_graphicsContainer->RemoveAxis(axis);
     GlobalSettings::GetInstance().SetSavedState(false);

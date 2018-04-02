@@ -35,7 +35,7 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
     menu->addAction(tr("Zoom in"), this, SLOT(zoomInSelected()));
     menu->addAction(tr("Zoom out"), this, SLOT(zoomOutSelected()));
     menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->
-        setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
+        setEnabled(m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0);
     menu->addSeparator();
     menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
     menu->addSeparator();
@@ -71,7 +71,7 @@ QAction * PlotContextMenu::InitMarkerTypeSelection(
         m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection);
 
     //FIXME: will not work with ghosts
-    action->setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
+    action->setEnabled(m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0);
     return action;
 }
 

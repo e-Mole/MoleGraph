@@ -1,14 +1,14 @@
 #ifndef SAMPLECHANNELPROPERTIES_H
 #define SAMPLECHANNELPROPERTIES_H
 
-#include <graphics/ChannelPropertiesBase.h>
+#include <graphics/ChannelProxyBase.h>
 #include <QString>
 
 class ChannelBase;
 class ChannelWidget;
 class QObject;
 class SampleChannel;
-class SampleChannelProperties : public ChannelPropertiesBase
+class SampleChannelProxy : public ChannelProxyBase
 {
     Q_OBJECT
 
@@ -42,15 +42,20 @@ public:
     };
 private:
     static QString _FillTimeValueString(RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
-
     static QString _ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range);
+    SampleChannel *_GetChannel() const;
 public:
-    SampleChannelProperties(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
+    SampleChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
 
+    QString GetRealTimeFormatText();
     static QString GetRealTimeFormatText(RealTimeFormat realTimeFormat);
     static QString GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat);
     static QString GetSampleChannelStyleText(Style style);
-    static QString GetRealTimeText(SampleChannel *channel, double seconds, bool range);
+    QString GetRealTimeText(unsigned index, bool range) const;
+    QString GetRealTimeText(double value, bool range) const;
+    Style GetStyle();
+    virtual double GetValue(unsigned index) const;
+    virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget * newWidget);
 
 signals:
 

@@ -74,8 +74,8 @@ void ChannelMenu::FillGrid()
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
-        _AddChannel(channelWidget);
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
+        _AddChannel(channelProxy->GetWidget());
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -171,24 +171,26 @@ void ChannelMenu::graphActivated()
 
 void ChannelMenu::noChannelsActivated()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (channelWidget->isVisible())
+        ChannelWidget *widget = channelProxy->GetWidget();
+        if (widget->isVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channelWidget, false);
+            ActivateChannel(widget, false);
         }
     }
 }
 
 void ChannelMenu::allChannelsActivated()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (!channelWidget->isVisible())
+        ChannelWidget *widget = channelProxy->GetWidget();
+        if (!widget->isVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channelWidget, true);
+            ActivateChannel(widget, true);
         }
     }
 }
@@ -212,15 +214,16 @@ void ChannelMenu::CreatePanelShortcuts()
     m_plotShortcut = new KeyShortcut(
         m_graphicsContainer->GetPlotKeySequence(), this, SLOT(graphActivated()));
 
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
+        ChannelWidget *widget = channelProxy->GetWidget();
         KeyShortcut *s = new KeyShortcut(
-            m_graphicsContainer->GetChannelWidgetKeySequence(channelWidget),
+            m_graphicsContainer->GetChannelWidgetKeySequence(widget),
             this,
             SLOT(channelActivatedShortcut())
         );
         if (s != NULL)
-            m_shortcutChannels[s] = channelWidget;
+            m_shortcutChannels[s] = widget;
     }
 
     m_allChannelsShortcut = new KeyShortcut(

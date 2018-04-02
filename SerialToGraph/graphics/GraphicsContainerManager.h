@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+class HwChannelProxy;
 class Measurement;
 class GraphicsContainer;
 class ChannelBase;
@@ -26,14 +27,14 @@ public:
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
     std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
     void ChangeMeasurement(Measurement *m);
-    ChannelWidget *AddGhost(Measurement *sourceMeasurement,
+    HwChannelProxy *AddGhost(Measurement *sourceMeasurement,
         unsigned sourceValueChannelIndex,
         unsigned sourceHorizontalChannelIndex,
         GraphicsContainer *destGraphicsContainer
      , bool confirmed);
     bool HaveMeasurementGhosts(Measurement *m);
     void RemoveGhosts(Measurement *m);
-    bool IsGhostAddable(Measurement *m);
+    bool IsGhostAddable();
     ChannelBase *GetChannelForGhost(Measurement *m);
 signals:
     void editChannel(GraphicsContainer *gc, ChannelWidget *channelWidget);

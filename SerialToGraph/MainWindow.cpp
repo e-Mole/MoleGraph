@@ -11,8 +11,10 @@
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <GlobalSettingsDialog.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
+#include <graphics/HwChannelProxy.h>
 #include <hw/SensorManager.h>
 #include <HwChannel.h>
 #include <Plot.h>
@@ -244,22 +246,14 @@ Measurement *MainWindow::CloneCurrentMeasurement()
     Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true, m_sensorManager);
     GraphicsContainer *newGC = newMeasurement->GetWidget();
 
-    foreach (ChannelWidget *w, currentGC->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
     {
+        ChannelWidget *w = proxy->GetWidget();
         if (w->isGhost())
         {
-            ChannelBase * originalChannel = currentGC->GetChannel(w);
-            Measurement * originalMeasurement = originalChannel->GetMeasurement();
-            ChannelBase * originalHorizontalChannel = currentGC->GetHorizontalChannel(originalMeasurement);
-
-            newGC->AddGhost(dynamic_cast<HwChannel*>(originalChannel), currentGC, w, originalHorizontalChannel, true);
-            /*m_graphicsContainerManager->AddGhost(
-                originalMeasurement,
-                originalMeasurement->GetChannelIndex(originalChannel),
-                originalMeasurement->GetChannelIndex(originalHorizontalChannel),
-                newGC,
-                true
-            );*/
+            Measurement * originalMeasurement = proxy->GetChannelMeasurement();
+            ChannelProxyBase * originalHorizontalChannelProxy = currentGC->GetHorizontalChannelProxy(originalMeasurement);
+            newGC->AddGhost(dynamic_cast<HwChannel*>(proxy->GetChannel()), currentGC, w, originalHorizontalChannelProxy->GetChannel(), true);
         }
     }
     return newMeasurement;
@@ -308,9 +302,7 @@ void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
         m_measurements.removeOne(m);
         if (m == m_currentMeasurement)
         {
-            m_currentMeasurement = (m_measurements.size() == 0) ?
-                m_currentMeasurement = NULL : m_currentMeasurement = m_measurements[0];
-
+            m_currentMeasurement = (m_measurements.size() == 0) ? NULL : m_measurements[0];
             m_buttonLine->ChangeMeasurement(m_currentMeasurement);
         }
         m_measurementTabs->removeTab(m_measurements.indexOf(m));
@@ -782,12 +774,12 @@ void MainWindow::addGhostChannel()
     Measurement *m = channel->GetMeasurement();
     GraphicsContainer *originalGc = m_graphicsContainerManager->GetGraphicsContainer(m);
     GraphicsContainer *destGc = m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement);
-    ChannelWidget *ghostWidget = m_graphicsContainerManager->AddGhost(
-        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc, false);
+    HwChannelProxy *ghostProxy = m_graphicsContainerManager->AddGhost(
+        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannelProxy(m)->GetChannel()), destGc, false);
 
     m_channelMenu->ReinitGrid(); //to be added
     m_ghostCreating = true;
-    ghostWidget->clicked();
+    ghostProxy->GetWidget()->clicked();
     m_channelMenu->ReinitGrid(); //to be changed name or color
 }
 
@@ -800,7 +792,7 @@ void MainWindow::showPanelMenu(Measurement *m)
         return;
     }
 
-    m_channelMenu = new ChannelMenu(gc, m_graphicsContainerManager->IsGhostAddable(m));
+    m_channelMenu = new ChannelMenu(gc, m_graphicsContainerManager->IsGhostAddable());
     connect(m_channelMenu, SIGNAL(addGhostChannelActivated()), this, SLOT(addGhostChannel()));
     m_channelMenu->ReinitGrid();
     m_buttonLine->updateRunButtonsState();
@@ -816,9 +808,9 @@ unsigned MainWindow::_GetGhostCount()
     unsigned count = 0;
     foreach (GraphicsContainer *gc, m_graphicsContainerManager->GetGraphicsContainers())
     {
-        foreach (ChannelWidget *chw, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (chw->isGhost())
+            if (proxy->GetWidget()->isGhost())
                 ++count;
         }
     }
@@ -833,18 +825,19 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
     {
         GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
 
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
+            ChannelWidget *w = proxy->GetWidget();
             if (w->isGhost())
             {
-                ChannelBase *ch = gc->GetChannel(w);
-                Measurement *m = ch->GetMeasurement();
+                ChannelBase *ch = proxy->GetChannel();
+                Measurement *m = proxy->GetChannelMeasurement();
                 for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
                 {
-                    if (m = m_measurements[mIndex])
+                    if (m == m_measurements[mIndex])
                     {
                         GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
-                        unsigned hChIndex =  m->GetChannelIndex(gc->GetHorizontalChannel(m));
+                        unsigned hChIndex =  gc->GetHorizontalChannelProxy(m)->GetChannelIndex();
                         for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
                         {
                             if (ch == m->GetChannel(chIndex))
@@ -905,14 +898,14 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
         }
 
         GraphicsContainer *destGC = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
-        ChannelWidget *ghost = m_graphicsContainerManager->AddGhost(
+        HwChannelProxy *ghostProxy = m_graphicsContainerManager->AddGhost(
             m_measurements[mIndex],
             chIndex,
             hchIndex,
             destGC,
             true
         );
-        in >> ghost;
+        in >> ghostProxy->GetWidget();
         //FIXME: just two is necessary to update (value + horizontal)
         destGC->UpdateAxes();
     }

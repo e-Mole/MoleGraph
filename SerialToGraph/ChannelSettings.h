@@ -10,7 +10,7 @@
 namespace bases { class ComboBox; }
 namespace hw { class SensorManager; class SensorQuantity; }
 class Axis;
-class ChannelBase;
+class ChannelProxyBase;
 class ChannelWidget;
 class GraphicsContainer;
 class Measurement;
@@ -46,7 +46,7 @@ class ChannelSettings : public bases::FormDialogColor
     QVector<Measurement *> m_measurements;
     GraphicsContainer *m_graphicsContainer;
     ChannelWidget *m_channelWidget;
-    ChannelBase *m_channel;
+    ChannelProxyBase *m_channelProxy;
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;

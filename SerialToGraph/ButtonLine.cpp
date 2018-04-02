@@ -4,6 +4,7 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/ChannelProxyBase.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -331,10 +332,11 @@ void ButtonLine::updateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-       ChannelWidget *widget = m_measurement->GetWidget()->GetChannelWidget(channel);
-        if (channel->GetType() == ChannelBase::Type_Hw && widget->isVisible())
+       ChannelProxyBase *channelProxyBase = m_measurement->GetWidget()->GetChannelProxy(channel);
+       ChannelWidget *channelWidget = channelProxyBase->GetWidget();
+        if (channel->GetType() == ChannelBase::Type_Hw && channelWidget->isVisible())
             hwChannelPresent = true;
-        if (widget->IsOnHorizontalAxis() && (widget->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
+        if (channelWidget->IsOnHorizontalAxis() && (channelWidget->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 

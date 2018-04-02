@@ -47,8 +47,8 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
 void GraphicsContainerManager::updateChannelSizeFactor(int factor)
 {
     foreach (GraphicsContainer *gc, m_graphicsContainers)
-        foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
-            channelWidget->SetMinimumFontSize(factor);
+        foreach (ChannelProxyBase *channelProxy, gc->GetChannelProxies())
+            channelProxy->GetWidget()->SetMinimumFontSize(factor);
 }
 
 GraphicsContainer *GraphicsContainerManager::GetGraphicsContainer(Measurement *m)
@@ -69,7 +69,7 @@ void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
     m_currentMeasurement = m;
 }
 
-ChannelWidget * GraphicsContainerManager::AddGhost(
+HwChannelProxy * GraphicsContainerManager::AddGhost(
     Measurement *sourceMeasurement,
     unsigned sourceValueChannelIndex,
     unsigned sourceHorizontalChannelIndex,
@@ -104,9 +104,10 @@ bool GraphicsContainerManager::HaveMeasurementGhosts(Measurement *m)
 {
     foreach (GraphicsContainer* gc, m_graphicsContainers)
     {
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            ChannelWidget *w = proxy->GetWidget();
+            if (w->isGhost() && gc->GetChannelProxy(w)->GetChannelMeasurement() == m)
             {
                 return true;
             }
@@ -119,9 +120,10 @@ void GraphicsContainerManager::RemoveGhosts(Measurement *m)
 {
     foreach (GraphicsContainer* gc, m_graphicsContainers)
     {
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            ChannelWidget *w = proxy->GetWidget();
+            if (w->isGhost() && gc->GetChannelProxy(w)->GetChannelMeasurement() == m)
             {
                 gc->RemoveChannelWidget(w);
             }
@@ -129,7 +131,7 @@ void GraphicsContainerManager::RemoveGhosts(Measurement *m)
     }
 }
 
-bool GraphicsContainerManager::IsGhostAddable(Measurement *m)
+bool GraphicsContainerManager::IsGhostAddable()
 {
     return m_measurements.size() > 1; //ghost can be added only when are present another measurements then current
 }

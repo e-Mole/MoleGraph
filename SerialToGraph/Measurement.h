@@ -82,7 +82,7 @@ private:
     unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
-    void _DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion);
+    void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
     void _SetName(QString &name);
@@ -102,7 +102,7 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
-    void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
+    void _DeserializeAxis(QDataStream &in, unsigned index);
     void _ConnectHwChannel(HwChannel *channel);
 
     GraphicsContainer *m_widget;
@@ -164,7 +164,7 @@ private:
     void DrawRestData();
     void RemoveWidget();
     QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
-    unsigned GetChannelIndex(ChannelBase * channel);
+    unsigned GetChannelIndex(ChannelBase *channel);
 signals:
     void stateChanged();
     void nameChanged();

@@ -4,7 +4,7 @@
 #include <SampleChannel.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/SampleChannelProxy.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <qcustomplot/qcustomplot.h>
@@ -36,10 +36,11 @@ void Axis::_ReassignGraphAxis(QCPAxis *axis)
 {
     if (NULL != m_graphAxis)
     {
-        foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
         {
-            if (channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
-                channelWidget->GetChannelGraph()-> AssignToGraphAxis(axis);
+            ChannelWidget *widget = proxy->GetWidget();
+            if (widget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() == m_graphAxis)
+                widget->GetChannelGraph()-> AssignToGraphAxis(axis);
         }
 
         m_graphicsContainer->GetPlot()->RemoveAxis(m_graphAxis);
@@ -70,8 +71,9 @@ const Axis &Axis::operator =(const Axis &axis)
 
 void Axis::_FillChannelWidgets(std::vector<ChannelWidget*> &widgets, std::vector<GraphicsContainer *> &containers )
 {
-    foreach (ChannelWidget *widget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
+        ChannelWidget *widget = proxy->GetWidget();
         if (widget->GetChannelGraph()->GetValuleAxis() != this)
         {
             continue;
@@ -88,17 +90,17 @@ void Axis::_FillChannelWidgets(std::vector<ChannelWidget*> &widgets, std::vector
         {
             std::vector<ChannelWidget*> ghostWidgets;
             std::vector<GraphicsContainer *> ghostContainers;
-            foreach (ChannelWidget *ghostWidget, m_graphicsContainer->GetChannelWidgets())
+            foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
             {
+                ChannelWidget *ghostWidget = proxy->GetWidget();
                 if (!ghostWidget->isGhost() || !ghostWidget->IsDrawable())
                 {
                     continue;
                 }
 
-                Measurement *m = m_graphicsContainer->GetChannel(ghostWidget)->GetMeasurement();
-                ChannelBase *horizontalChannel = m_graphicsContainer->GetHorizontalChannel(m);
+                Measurement *m = m_graphicsContainer->GetChannelProxy(ghostWidget)->GetChannelMeasurement();
                 GraphicsContainer *sourceContainer = m->GetWidget();
-                ChannelWidget * horizontalChannelWidget = sourceContainer->GetChannelWidget(horizontalChannel);
+                ChannelWidget * horizontalChannelWidget = sourceContainer->GetHorizontalChannelProxy()->GetWidget();
                 if (std::find(widgets.begin(), widgets.end(), horizontalChannelWidget) == widgets.end())
                 {
                     ghostWidgets.push_back(horizontalChannelWidget);
@@ -191,9 +193,10 @@ void Axis::UpdateGraphAxisName()
 
 void Axis::UpdateVisiblility()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (channelWidget->isVisible() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        ChannelWidget *widget = proxy->GetWidget();
+        if (widget->isVisible() && widget->GetChannelGraph()->GetValuleAxis() == this)
         {
             m_graphAxis->setVisible(true);
             m_graphicsContainer->GetPlot()->ReplotIfNotDisabled();
@@ -235,12 +238,13 @@ GraphicsContainer * Axis::GetGraphicsContainer()
 
 bool Axis::IsEmptyExcept(ChannelWidget *except)
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (channelWidget == except)
+        ChannelWidget *widget = proxy->GetWidget();
+        if (widget == except)
             continue;
 
-        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        if (widget->GetChannelGraph()->GetValuleAxis() == this)
             return false;
     }
 
@@ -249,13 +253,14 @@ bool Axis::IsEmptyExcept(ChannelWidget *except)
 
 bool Axis::ContainsChannelWithRealTimeStyle()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (channelWidget->GetChannelGraph()->GetValuleAxis() != this)
+        ChannelWidget *widget = proxy->GetWidget();
+        if (widget->GetChannelGraph()->GetValuleAxis() != this)
             continue;
 
-        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
-        if (channel->GetType() == ChannelBase::Type_Sample && ((SampleChannel*)channel)->IsInRealtimeStyle())
+        SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_graphicsContainer->GetChannelProxy(widget));
+        if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
             return true;
     }
     return false;
@@ -263,24 +268,26 @@ bool Axis::ContainsChannelWithRealTimeStyle()
 
 void Axis::UpdateGraphAxisStyle()
 {
-    ChannelBase *axisChannel = NULL;
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
-        if (channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+    ChannelProxyBase *axisChannelProxy = NULL;
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
+    {
+        if (proxy->GetWidget()->GetChannelGraph()->GetValuleAxis() == this)
         {
-            axisChannel = m_graphicsContainer->GetChannel(channelWidget);
+            axisChannelProxy = proxy;
             break; //I know, that real time channel is on oun axis
         }
-
-    if (axisChannel == NULL)
+    }
+    if (axisChannelProxy == NULL)
         return; //empty axis
 
     bool realTimeStyle = false;
     QString formatText = "";
 
-    if (axisChannel->GetType() == ChannelBase::Type_Sample)
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy *>(axisChannelProxy);
+    if (sampleChannelProxy)
     {
-        realTimeStyle = ((SampleChannel *)axisChannel)->GetStyle() == SampleChannelProperties::RealTime;
-        formatText = SampleChannelProperties::GetRealTimeFormatText(((SampleChannel *)axisChannel)->GetRealTimeFormat());
+        realTimeStyle = sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime;
+        formatText = sampleChannelProxy->GetRealTimeFormatText();
     }
 
     m_graphicsContainer->GetPlot()->SetAxisStyle(m_graphAxis, realTimeStyle, formatText);
@@ -289,9 +296,10 @@ void Axis::UpdateGraphAxisStyle()
 unsigned Axis::GetAssignedChannelCountWithoutGhosts()
 {
     unsigned count = 0;
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (!channelWidget->isGhost() && channelWidget->GetChannelGraph()->GetValuleAxis() == this)
+        ChannelWidget *widget = proxy->GetWidget();
+        if (!widget->isGhost() && widget->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
         }

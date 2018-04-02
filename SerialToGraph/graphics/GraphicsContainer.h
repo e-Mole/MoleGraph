@@ -13,8 +13,10 @@
 class Axis;
 class Color;
 class ChannelGraph;
+class ChannelProxyBase;
 class ChannelWidget;
 class HwChannel;
+class HwChannelProxy;
 class KeyShortcut;
 class Measurement;
 class Plot;
@@ -24,7 +26,6 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
-class ChannelPropertiesBase;
 
 class GraphicsContainer : public QWidget
 {
@@ -40,11 +41,7 @@ class GraphicsContainer : public QWidget
     QScrollBar *m_scrollBar;
     unsigned m_currentIndex;
     bool m_followMode;
-    std::vector<ChannelPropertiesBase *> m_channelProperties;
-    std::vector<ChannelWidget *> m_channelWidgets;
-    std::map<ChannelWidget *, ChannelBase *> m_widgetToChannelMapping;
-    std::map<ChannelBase *, ChannelWidget *> m_channelToWidgetMapping;
-    std::map<ChannelBase *, ChannelGraph *> m_channelToGraphMapping;
+    QVector<ChannelProxyBase *> m_channelProxies;
     QMap<KeyShortcut*, ChannelWidget*> m_channelWidgetKeyShortcuts;
     std::set<double> m_horizontalValueSet;
     double m_lastMeasuredHorizontalValue;
@@ -52,13 +49,13 @@ class GraphicsContainer : public QWidget
 
     bool m_marksShown;
     ChannelWidget *m_sampleChannelWidget;
-    SampleChannel *m_sampleChannel;
+    SampleChannelProxy *m_sampleChannelProxy;
     KeyShortcut *m_plotKeyShortcut;
 
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
-    QMap<Measurement*, ChannelBase*> m_horizontalChannelMapping;
-    ChannelWidget *m_ghostWaitingForConfirmation;
+    QMap<Measurement*, ChannelProxyBase*> m_horizontalChannelMapping;
+    HwChannelProxy *m_ghostWaitingForConfirmation;
 
     virtual void resizeEvent(QResizeEvent *){ resized(); }
     virtual QSize sizeHint() const { return QSize(800,700); }
@@ -79,18 +76,16 @@ class GraphicsContainer : public QWidget
     , bool isGhost);
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
-    void _DisplayChannelValue(ChannelWidget *channelWidget);
-    void _EraseChannelWidgetMappings(ChannelWidget *channelWidget);
+    void _DisplayChannelValue(ChannelProxyBase *channelProxy);
     bool _IsTracked(Measurement *m);
-    void _SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget);
-    void _HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget);
+    SampleChannelProxy *_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget);
+    HwChannelProxy *_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget);
 
 
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
     ~GraphicsContainer();
     void SetGrid(bool grid);
-    void _AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel);
     void RemoveChannelWidget(ChannelWidget *channelWidget);
     QString &GetName() {return m_name; }
     void SetName(QString const &name) {m_name = name; } //TODO:signal?
@@ -131,21 +126,21 @@ public:
     ChannelGraph * AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle);
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
     void RescaleAxes(ChannelWidget *channelWidget);
-    ChannelBase *GetHorizontalChannel(Measurement *measurement) const;
-    std::vector<ChannelWidget *> &GetChannelWidgets();
-    unsigned GetChannelWidgetCount();
-    ChannelWidget *GetChannelWidget(unsigned index);
+    ChannelProxyBase *GetHorizontalChannelProxy() const;
+    ChannelProxyBase *GetHorizontalChannelProxy(Measurement *measurement) const;
+    QVector<ChannelProxyBase *> &GetChannelProxies();
+    unsigned GetChannelProxiesCount();
     ChannelWidget *GetChannelWidget(ChannelBase *channel);
-    ChannelBase * GetChannel(ChannelWidget * widget);
-    SampleChannel *GetSampleChannel();
+    ChannelWidget *GetChannelWidget(unsigned index);
+    SampleChannelProxy *GetSampleChannelProxy();
     bool IsHorizontalValueSetEmpty();
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    ChannelWidget *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost);
-    ChannelWidget *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
+    SampleChannelProxy *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost);
+    SampleChannelProxy *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
 
-    ChannelWidget *_CreateHwChannelWidget(HwChannel *channel,
+    HwChannelProxy *CreateHwChannelWidget(HwChannel *channel,
         Axis *valueAxis,
         unsigned shortcutOrder,
         QString const name,
@@ -154,8 +149,8 @@ public:
         QString const & units,
         bool isGhost);
 
-    ChannelWidget *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost);
-    QString GetValueTimestamp(SampleChannel *channel, unsigned index);
+    HwChannelProxy *CloneHwChannelWidget(HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost);
+    QString GetValueTimestamp(SampleChannelProxy *channelProxy, unsigned index);
     void Activate();
     void Deactivate();
     QKeySequence GetPlotKeySequence();
@@ -164,7 +159,7 @@ public:
     QKeySequence GetNoChannelsSequence();
     void ActivateChannel(ChannelWidget *channelWidget, bool checked);
     void RefillWidgets();
-    ChannelWidget * AddGhost(HwChannel *sourceChannel,
+    HwChannelProxy *AddGhost(HwChannel *sourceChannel,
         GraphicsContainer *sourceGraphicsContainer,
         ChannelWidget *sourceValueChannelWidget,
         ChannelBase *sourceHorizontalChannel
@@ -174,6 +169,8 @@ public:
     static QString GetGhostWidgetName(GraphicsContainer * sourceGraphicsContainer, ChannelWidget *channelWidget);
     void ConfirmGhostChannel();
     void RejectGhostChannel();
+    ChannelProxyBase *GetChannelProxy(ChannelBase *channel);
+    ChannelProxyBase *GetChannelProxy(ChannelWidget *widget);
 signals:
     void resized();
     void editChannel(ChannelWidget *channelWidget);

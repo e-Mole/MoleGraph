@@ -3,7 +3,8 @@
 #include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/HwChannelProxy.h>
+#include <graphics/SampleChannelProxy.h>
 #include <HwChannel.h>
 #include <SampleChannel.h>
 #include <Measurement.h>
@@ -33,10 +34,11 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
     foreach (GraphicsContainer *gc, graphicsContainers)
     {
         bool firstForMeasurement = true;
-        foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *channelProxy, gc->GetChannelProxies())
         {
-            ChannelBase *channel = gc->GetChannel(channelWidget);
-            if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive()) //at least sample channel will be visible
+            ChannelWidget *channelWidget = channelProxy->GetWidget();
+            HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(channelProxy);
+            if (hwChannelProxy && !hwChannelProxy->IsActive()) //at least sample channel will be visible
                 continue;
 
             if (firstColumn)
@@ -52,9 +54,9 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
                 firstForMeasurement = false;
                 measurementLine.append(gc->GetName().toStdString());
             }
-            SampleChannel *sampleChannel = gc->GetSampleChannel();
-            if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannelProperties::Samples)
-                channelLine.append(SampleChannelProperties::GetSampleChannelStyleText(sampleChannel->GetStyle()).toStdString() + ";");
+            SampleChannelProxy *sampleChannelProxy = gc->GetSampleChannelProxy();
+            if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProxy::Samples)
+                channelLine.append(SampleChannelProxy::GetSampleChannelStyleText(sampleChannelProxy->GetStyle()).toStdString() + ";");
 
             channelLine.append(
                 channelWidget->GetUnits().size() > 0 ?
@@ -80,10 +82,10 @@ void Export::_WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsC
         bool first = true;
         foreach (GraphicsContainer *gc, graphicsContainers)
         {
-            foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
+            foreach (ChannelProxyBase *channelProxy, gc->GetChannelProxies())
             {
-                ChannelBase *channel = gc->GetChannel(channelWidget);
-                if (channel->GetType() == ChannelBase::Type_Hw && !((HwChannel*)channel)->IsActive())
+                HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(channelProxy);
+                if (hwChannelProxy && !hwChannelProxy->IsActive())
                     continue;
 
                 if (first)
@@ -91,16 +93,16 @@ void Export::_WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsC
                 else
                     lineContent.append(";");
 
-                if (channel->GetValueCount() <= sampleNr)
+                if (channelProxy->GetValueCount() <= sampleNr)
                     continue;
 
                 haveData = true;
 
-                SampleChannel *sampleChannel = gc->GetSampleChannel();
-                if (channel == sampleChannel && sampleChannel->GetStyle() != SampleChannelProperties::Samples)
+                SampleChannelProxy *sampleChannelProxy = gc->GetSampleChannelProxy();
+                if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProxy::Samples)
                     lineContent.append(QString("%1;").arg(sampleNr).toStdString());
 
-                lineContent.append(_GetValueText(gc, channel, sampleNr).toStdString());
+                lineContent.append(_GetValueText(gc, channelProxy, sampleNr).toStdString());
             }
         }
         if (haveData)
@@ -123,18 +125,16 @@ void Export::ToCsv(QString const &fileName, std::vector<GraphicsContainer *> &gr
     file.close();
 }
 
-QString Export::_GetValueText(GraphicsContainer *gc, ChannelBase *channel, unsigned sampleNr)
+QString Export::_GetValueText(GraphicsContainer *gc, ChannelProxyBase *channelProxy, unsigned sampleNr)
 {
-    if (
-        channel->GetType() == ChannelBase::Type_Sample &&
-        ((SampleChannel *)channel)->GetStyle() == SampleChannelProperties::RealTime
-    )
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(channelProxy);
+    if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
     {
-        return gc->GetValueTimestamp((SampleChannel*)channel, sampleNr);
+        return gc->GetValueTimestamp(sampleChannelProxy, sampleNr);
     }
 
     QLocale locale(QLocale::system());
     locale.setNumberOptions(QLocale::OmitGroupSeparator);
-    return locale.toString(channel->GetValue(sampleNr));
+    return locale.toString(channelProxy->GetValue(sampleNr));
 }
 } //namespace file

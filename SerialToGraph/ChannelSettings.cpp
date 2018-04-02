@@ -6,7 +6,8 @@
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/HwChannelProxy.h>
+#include <graphics/SampleChannelProxy.h>
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
@@ -58,23 +59,23 @@ ChannelSettings::ChannelSettings(
     m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
     m_channelWidget(channelWidget),
-    m_channel(graphicsContainer->GetChannel(channelWidget)),
+    m_channelProxy(graphicsContainer->GetChannelProxy(channelWidget)),
     m_currentValueControl(NULL),
     m_name(NULL),
     m_units(NULL),
+    m_measurementCombo(NULL),
+    m_channelCombo(NULL),
     m_shapeComboBox(NULL),
     m_axisComboBox(NULL),
     m_style(NULL),
     m_timeUnits(NULL),
     m_format(NULL),
     m_penStyle(NULL),
-    m_currentValueChanged(false),
-    m_currentValue(ChannelBase::GetNaValue()),
-    m_measurementCombo(NULL),
-    m_channelCombo(NULL),
     m_sensorQuantityComboBox(NULL),
     m_sensorNameComboBox(NULL),
     m_sensorPortComboBox(NULL),
+    m_currentValueChanged(false),
+    m_currentValue(ChannelBase::GetNaValue()),
     m_sensorManager(sensorManager)
 {
     if (m_channelWidget->isGhost())
@@ -93,8 +94,8 @@ ChannelSettings::ChannelSettings(
     m_name = new QLineEdit(m_channelWidget->GetName(), this);
     m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
 
-    ChannelBase *channel = graphicsContainer->GetChannel(channelWidget);
-    if (channel->GetType() == ChannelBase::Type_Sample)
+    ChannelProxyBase *channelProxy = graphicsContainer->GetChannelProxy(channelWidget);
+    if (dynamic_cast<SampleChannelProxy*>(channelProxy))
     {
         m_name->setVisible(false);
         _InitializeTimeFeatures();
@@ -102,7 +103,7 @@ ChannelSettings::ChannelSettings(
     }
     else
     {
-        if (channel->GetType() == ChannelBase::Type_Hw)
+        if (dynamic_cast<HwChannelProxy*>(channelProxy))
         {
             _InitializeValueLine(channelWidget);
             AddSeparator();
@@ -121,7 +122,7 @@ ChannelSettings::ChannelSettings(
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
 {
     (*item) = new bases::ComboBox(this);
-    (*item)->setEnabled(m_channel->GetMeasurement()->GetState() == Measurement::Ready);
+    (*item)->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
     m_formLayout->addRow(new QLabel(label, this), (*item));
     connect((*item), SIGNAL(currentIndexChanged(int)), this, slot);
 }
@@ -135,14 +136,14 @@ void ChannelSettings::_FillSensorPortCB()
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);
-        if (i == ((HwChannel *)m_channel)->GetSensorPort())
+        if (i == ((HwChannel *)m_channelProxy)->GetSensorPort())
             m_sensorPortComboBox->setCurrentIndex(m_sensorPortComboBox->count() - 1);
     }
 }
 
 void ChannelSettings::_FillSensorNameCB()
 {
-    unsigned currentSensorId = ((HwChannel*)m_channel)->GetSensor()->GetId();
+    unsigned currentSensorId = ((HwChannel*)m_channelProxy)->GetSensor()->GetId();
     m_sensorNameComboBox->clear();
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
@@ -166,12 +167,12 @@ void ChannelSettings::_FillSensorNameCB()
             m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
         }
     }
-    m_sensorNameComboBox->setEnabled(m_channel->GetMeasurement()->GetState() == Measurement::Ready);
+    m_sensorNameComboBox->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
 }
 
 void ChannelSettings::_FillSensorQuanitityCB()
 {
-    hw::SensorQuantity *currentSensorQuanity = ((HwChannel*)m_channel)->GetSensorQuantity();
+    hw::SensorQuantity *currentSensorQuanity = ((HwChannel*)m_channelProxy)->GetSensorQuantity();
     m_sensorQuantityComboBox->clear();
     unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
 
@@ -191,7 +192,7 @@ void ChannelSettings::_FillSensorQuanitityCB()
         }
     }
     m_sensorQuantityComboBox->setEnabled(
-        m_channel->GetMeasurement()->GetState() == Measurement::Ready &&
+        m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready &&
         m_sensorQuantityComboBox->count() > 1
     );
 }
@@ -242,8 +243,8 @@ void ChannelSettings::_InitializeGhostCombos()
 
 void ChannelSettings::_FillMeasurementCombo()
 {
-    ChannelBase *originalChannel = m_graphicsContainer->GetChannel(m_channelWidget);
-    Measurement *originalMeasurement = originalChannel->GetMeasurement();
+    ChannelProxyBase *originalChannelProxy = m_graphicsContainer->GetChannelProxy(m_channelWidget);
+    Measurement *originalMeasurement = originalChannelProxy->GetChannelMeasurement();
 
     unsigned comboIndex = 0;
     unsigned measurementIndex = ~0;
@@ -269,14 +270,14 @@ void ChannelSettings::fillChannelCombo(int measurementComboIndex)
     Q_UNUSED(measurementComboIndex)
     Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
     GraphicsContainer *currentGC = currentMeasurement->GetWidget();
-    ChannelBase *originalChannel = m_graphicsContainer->GetChannel(m_channelWidget);
+    ChannelProxyBase *originalChannelProxy = m_graphicsContainer->GetChannelProxy(m_channelWidget);
 
     bool channelFound = false;
     for (unsigned index = 0; index < currentMeasurement->GetChannelCount(); ++index)
     {
         ChannelBase * iteratingChannel = currentMeasurement->GetChannel(index);
         m_channelCombo->addItem(currentGC->GetChannelWidget(iteratingChannel)->GetName(), index);
-        if (iteratingChannel == originalChannel)
+        if (iteratingChannel == originalChannelProxy->GetChannel())
         {
             m_channelCombo->setCurrentIndex(index);
             channelFound = true;
@@ -317,7 +318,7 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
 
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
 {
-    ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
+    ChannelProxyBase *channelProxy = m_graphicsContainer->GetChannelProxy(channelWidget);
     QHBoxLayout *curValLayout = new QHBoxLayout();
     m_currentValueControl = new QLineEdit(this);
     curValLayout->addWidget(m_currentValueControl);
@@ -333,12 +334,12 @@ void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
     double currentHorizontalValue =
         m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
     unsigned currentIndex =
-        m_graphicsContainer->GetHorizontalChannel(channel->GetMeasurement())->GetLastValueIndex(currentHorizontalValue);
-    if (currentIndex < (int)channel->GetValueCount())
+        m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
+    if (currentIndex < (int)channelProxy->GetValueCount())
     {
         QLocale locale(QLocale::system());
-        QString currentValueStr = (channel->IsValueNA(currentIndex)) ?
-            channelWidget->GetNAValueString() : locale.toString(channel->GetValue(currentIndex));
+        QString currentValueStr = (channelProxy->IsValueNA(currentIndex)) ?
+            channelWidget->GetNAValueString() : locale.toString(channelProxy->GetValue(currentIndex));
 
         m_currentValueControl->setText(currentValueStr);
     }
@@ -361,7 +362,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     //this method is called just in a case the original value box is  enabled and
     //it is just in the case index is in range of this channel
     QLocale locale(QLocale::system());
-    double currentValue = ((HwChannel*)m_channel)->GetOriginalValue(m_graphicsContainer->GetCurrentIndex());
+    double currentValue = ((HwChannel*)m_channelProxy)->GetOriginalValue(m_graphicsContainer->GetCurrentIndex());
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
@@ -380,6 +381,7 @@ void ChannelSettings::setNaValue(bool)
 
 void ChannelSettings::currentValueChanged(QString const &content)
 {
+    Q_UNUSED(content)
     QLocale locale(QLocale::system());
     m_currentValue = locale.toDouble(m_currentValueControl->text());
     m_currentValueChanged = true;
@@ -401,12 +403,12 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
 
 void ChannelSettings::_InitializeTimeFeatures()
 {
-    SampleChannel * channel = (SampleChannel*)m_channel;
+    SampleChannel * channel = (SampleChannel*)m_channelProxy;
 
     m_style = new bases::ComboBox(this);
-    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::Samples), false);
-    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::TimeOffset), false);
-    m_style->addItem(SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::RealTime), true); //RealTime state as data
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::Samples), false);
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::TimeOffset), false);
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
@@ -420,7 +422,7 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(channel->m_timeUnits);
-    m_timeUnits->setEnabled(channel->m_style == SampleChannelProperties::TimeOffset);
+    m_timeUnits->setEnabled(channel->m_style == SampleChannelProxy::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
     m_format = new bases::ComboBox(this);
@@ -429,14 +431,14 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_format->addItem(tr("hour:minute:second"));
     m_format->addItem(tr("minute:second.milisecond"));
     m_format->setCurrentIndex(channel->m_realTimeFormat);
-    m_format->setEnabled(channel->m_style == SampleChannelProperties::RealTime);
+    m_format->setEnabled(channel->m_style == SampleChannelProxy::RealTime);
     m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
 }
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::TimeOffset);
-    m_format->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::RealTime);
+    m_timeUnits->setEnabled((SampleChannelProxy::Style)index == SampleChannelProxy::TimeOffset);
+    m_format->setEnabled((SampleChannelProxy::Style)index == SampleChannelProxy::RealTime);
     _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
 
@@ -475,7 +477,7 @@ bool ChannelSettings::BeforeAccept()
 
             changedHorizontal = true;
             m_channelWidget->ShowOrHideGraph(false);
-            m_graphicsContainer->SetHorizontalChannel(m_channel->GetMeasurement(), m_channel);
+            m_graphicsContainer->SetHorizontalChannel(m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel());
         }
 
         Axis *lastAxis = m_channelWidget->GetChannelGraph()->GetValuleAxis();
@@ -489,7 +491,7 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
     }
 
-    if (m_channel->GetType() == ChannelBase::Type_Hw && m_currentValueChanged)
+    if (m_channelProxy->GetType() == ChannelBase::Type_Hw && m_currentValueChanged)
     {
         QLocale locale(QLocale::system());
         bool ok;
@@ -500,11 +502,11 @@ bool ChannelSettings::BeforeAccept()
             return false;
         }
         changed = true;
-        ((HwChannel *)m_channel)->ChangeValue(
-            m_channel->GetMeasurement()->GetCurrentIndex(),
+        ((HwChannel *)m_channelProxy)->ChangeValue(
+            m_channelProxy->GetChannelMeasurement()->GetCurrentIndex(),
             m_currentValue);
     }
-    if (m_channelWidget->GetName() != m_name->text() && m_channel->GetType() != ChannelBase::Type_Sample)
+    if (m_channelWidget->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
     {
         changed = true;
         m_channelWidget->SetName(m_name->text());
@@ -524,25 +526,25 @@ bool ChannelSettings::BeforeAccept()
 
     }
 
-    if (m_channel->GetType() == ChannelBase::Type_Sample)
+    if (m_channelProxy->GetType() == ChannelBase::Type_Sample)
     {
-        SampleChannel *channelWithTime = (SampleChannel *)m_channel;
+        SampleChannel *channelWithTime = (SampleChannel *)m_channelProxy;
         if ((int)channelWithTime->m_timeUnits != m_timeUnits->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetTimeUnits((SampleChannelProperties::TimeUnits)m_timeUnits->currentIndex());
+            channelWithTime->_SetTimeUnits((SampleChannelProxy::TimeUnits)m_timeUnits->currentIndex());
         }
 
         if ((int)channelWithTime->m_realTimeFormat != m_format->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetFormat((SampleChannelProperties::RealTimeFormat)m_format->currentIndex());
+            channelWithTime->_SetFormat((SampleChannelProxy::RealTimeFormat)m_format->currentIndex());
         }
 
         if ((int)channelWithTime->m_style != m_style->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetStyle((SampleChannelProperties::Style)m_style->currentIndex());
+            channelWithTime->_SetStyle((SampleChannelProxy::Style)m_style->currentIndex());
         }
     }
     else
@@ -567,17 +569,17 @@ bool ChannelSettings::BeforeAccept()
         GraphicsContainer *originalGC = originalMeasurement->GetWidget();
         ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
 
-        if (m_graphicsContainer->GetChannel(m_channelWidget) != originalChannel)
+        if (m_graphicsContainer->GetChannelProxy(m_channelWidget)->GetChannel() != originalChannel)
         {
             //FIXME: is it removed somewhere?
-            m_graphicsContainer->SetHorizontalChannel(originalMeasurement, originalGC->GetHorizontalChannel(originalMeasurement));
+            m_graphicsContainer->SetHorizontalChannel(originalMeasurement, originalGC->GetHorizontalChannelProxy(originalMeasurement)->GetChannel());
             m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelWidget);
         }
     }
 
-    if (m_channel->GetType() == ChannelBase::Type_Hw)
+    if (m_channelProxy->GetType() == ChannelBase::Type_Hw)
     {
-        HwChannel *hwChannel = (HwChannel *)m_channel;
+        HwChannel *hwChannel = (HwChannel *)m_channelProxy;
         hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
         if (NULL != sensor && sensor != hwChannel->GetSensor())
         {
@@ -623,12 +625,13 @@ bool ChannelSettings::BeforeAccept()
 
 bool ChannelSettings::_MoveLastHorizontalToVertical()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
+        ChannelWidget *widget = proxy->GetWidget();
         //find last horizontal axis
-        if (channelWidget->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
+        if (widget->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
         {
-            AxisChooseDialog dialog(this, m_graphicsContainer, channelWidget, m_channelWidget);
+            AxisChooseDialog dialog(this, m_graphicsContainer, widget, m_channelWidget);
             return (QDialog::Rejected != dialog.exec());
         }
     }
@@ -680,7 +683,7 @@ void ChannelSettings::_RefillAxisCombo()
 
         if (!valid)
         {
-            if (m_channel->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
+            if (m_channelProxy->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
                 valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
             else
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel

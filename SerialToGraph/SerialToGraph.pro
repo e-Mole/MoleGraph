@@ -19,6 +19,8 @@ QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = $$TARGET
 QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
+QMAKE_CXXFLAGS += -Werror=return-type
+QMAKE_CXXFLAGS += -Wno-sign-compare
 
 QT       += core gui bluetooth widgets printsupport
 
@@ -76,9 +78,9 @@ SOURCES += main.cpp\
     hw/Sensor.cpp \
     hw/SensorManager.cpp \
     hw/SensorQuantity.cpp \
-    graphics/SampleChannelProperties.cpp \
-    graphics/ChannelPropertiesBase.cpp \
-    graphics/HwChannelProperties.cpp
+    graphics/ChannelProxyBase.cpp \
+    graphics/SampleChannelProxy.cpp \
+    graphics/HwChannelProxy.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -134,9 +136,9 @@ HEADERS  += MainWindow.h \
     hw/Sensor.h \
     hw/SensorManager.h \
     hw/SensorQuantity.h \
-    graphics/SampleChannelProperties.h \
-    graphics/ChannelPropertiesBase.h \
-    graphics/HwChannelProperties.h
+    graphics/ChannelProxyBase.h \
+    graphics/HwChannelProxy.h \
+    graphics/SampleChannelProxy.h
 
 CONFIG += mobility
 CONFIG += c++11

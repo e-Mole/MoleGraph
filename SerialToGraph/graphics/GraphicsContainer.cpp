@@ -1,8 +1,9 @@
 #include "GraphicsContainer.h"
 #include <Axis.h>
 #include <GlobalSettings.h>
-#include <graphics/HwChannelProperties.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/ChannelProxyBase.h>
+#include <graphics/HwChannelProxy.h>
+#include <graphics/SampleChannelProxy.h>
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
 #include <ChannelSettings.h>
@@ -46,7 +47,7 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_lastMeasuredHorizontalValue(std::numeric_limits<double>::infinity()),
     m_marksShown(markShown),
     m_sampleChannelWidget(NULL),
-    m_sampleChannel(NULL),
+    m_sampleChannelProxy(NULL),
     m_plotKeyShortcut(NULL),
     m_allChannelsShortcut(NULL),
     m_noChannelsShortcut(NULL),
@@ -112,22 +113,11 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
 
 GraphicsContainer::~GraphicsContainer()
 {
-    foreach (Axis *axis, m_axes)
-    {
-        delete axis;
-    }
-    foreach (ChannelWidget *channelWidget, m_channelWidgets)
-    {
-        delete channelWidget;
-    }
-
     delete m_plotKeyShortcut;
     delete m_allChannelsShortcut;
     delete m_noChannelsShortcut;
     foreach (KeyShortcut *keyShortcut, m_channelWidgetKeyShortcuts.keys())
         delete keyShortcut;
-
-
 }
 
 void GraphicsContainer::SetGrid(bool grid)
@@ -154,55 +144,43 @@ void GraphicsContainer::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-void GraphicsContainer::_AddChannelToMappings(ChannelBase *channel, ChannelWidget *widget, bool isSampleChannel)
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelWidget *widget)
 {
-
-    m_channelWidgets.push_back(widget);
-    m_widgetToChannelMapping[widget] = channel;
-    m_channelToWidgetMapping[channel] = widget;
-    m_channelToGraphMapping[channel] = widget->GetChannelGraph();
-
-    if (isSampleChannel)
+    foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        m_sampleChannelWidget = widget;
+        if (channelProxy->ContainsChannelWidget(widget))
+            return channelProxy;
     }
+    qWarning() << "channel properties was not found by widget.";
+    return NULL;
+}
+
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelBase *channel)
+{
+    foreach (ChannelProxyBase *channelProxy, m_channelProxies)
+    {
+        if (channelProxy->ContainsChannel(channel))
+            return channelProxy;
+    }
+    qWarning() << "channel properties was not found by channel.";
+    return NULL;
 }
 
 void GraphicsContainer::ReplaceChannelForWidget(ChannelBase *channel, ChannelWidget *channelWidget)
 {
-    _EraseChannelWidgetMappings(channelWidget);
-    _AddChannelToMappings(channel, channelWidget, dynamic_cast<SampleChannel*>(channel) != NULL);
+    ChannelProxyBase *channelProxy = GetChannelProxy(channelWidget);
+    channelProxy->ChangeChannel(channel);
 
-    _DisplayChannelValue(channelWidget);
+    _DisplayChannelValue(channelProxy);
     m_plot->RefillGraphs();
 }
 
-void GraphicsContainer::_EraseChannelWidgetMappings(ChannelWidget *channelWidget)
-{
-    for (auto it = m_channelWidgets.begin(); it != m_channelWidgets.end(); ++it)
-    {    if ((*it) == channelWidget)
-        {
-            m_channelWidgets.erase(it);
-            break;
-        }
-    }
-
-    for (auto it = m_channelToWidgetMapping.begin(); it != m_channelToWidgetMapping.end(); ++it)
-    {
-        if (it->second == channelWidget)
-        {
-            m_channelToWidgetMapping.erase(it);
-            break;
-        }
-    }
-
-    m_widgetToChannelMapping.erase(channelWidget);
-
-}
 void GraphicsContainer::RemoveChannelWidget(ChannelWidget *channelWidget)
 {
-    Measurement *sourceMeasurement = m_widgetToChannelMapping[channelWidget]->GetMeasurement();
-    _EraseChannelWidgetMappings(channelWidget);
+    ChannelProxyBase *channelProxy = GetChannelProxy(channelWidget);
+    m_channelProxies.removeOne(channelProxy);
+    Measurement *sourceMeasurement = channelProxy->GetChannelMeasurement();
+
     if (!_IsTracked(sourceMeasurement))
     {
         disconnect(sourceMeasurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
@@ -221,17 +199,18 @@ void GraphicsContainer::replaceDisplays()
     for (int i = 0; i < m_displayLayout->columnCount(); i++)
         m_displayLayout->setColumnStretch(i,0);
 
-    foreach (ChannelWidget * channelWidget, m_channelWidgets)
+    foreach (ChannelProxyBase * channelProxy, m_channelProxies)
     {
-        m_displayLayout->removeWidget(channelWidget);
-        channelWidget->UpdateWidgetVisiblity();
+        ChannelWidget *widget = channelProxy->GetWidget();
+        m_displayLayout->removeWidget(widget);
+        widget->UpdateWidgetVisiblity();
     }
 
     if (GlobalSettings::GetInstance().GetHideAllChannels())
         return;
 
     unsigned widgetHeight = height() + m_displayLayout->spacing()*2; //have to compense spacing added to last diplay
-    unsigned channelMinHeight= m_channelWidgets[0]->GetMinimumSize().height();
+    unsigned channelMinHeight= m_channelProxies[0]->GetWidget()->GetMinimumSize().height();
     unsigned verticalMax = m_grid ?
         VERTIACAL_MAX :
         (unsigned)((double)widgetHeight / (double)(channelMinHeight + m_displayLayout->spacing()));
@@ -240,11 +219,12 @@ void GraphicsContainer::replaceDisplays()
     //There must not be 0 because of zero dividing;
     //I try to place all of them vertically first
     if (verticalMax == 0)
-        verticalMax = m_channelWidgets.size();
+        verticalMax = m_channelProxies.size();
 
-    foreach (ChannelWidget * channelWidget, m_channelWidgets)
+    foreach (ChannelProxyBase * channelProxy, m_channelProxies)
     {
-        if (!channelWidget->isVisible())
+        ChannelWidget *widget = channelProxy->GetWidget();
+        if (!widget->isVisible())
             continue;
 
         unsigned count =  m_displayLayout->count();
@@ -252,7 +232,7 @@ void GraphicsContainer::replaceDisplays()
         unsigned row = count % verticalMax;
         unsigned column = count / verticalMax;
 
-        m_displayLayout->addWidget(channelWidget, row, column);
+        m_displayLayout->addWidget(widget, row, column);
         m_displayLayout->setColumnStretch(column, 1);
     }
 
@@ -266,11 +246,11 @@ Plot *GraphicsContainer::GetPlot() const
 
 void GraphicsContainer::RedrawChannelValues()
 {
-    foreach (ChannelWidget * channelWidget, m_channelWidgets)
+    foreach (ChannelProxyBase * channelProxy, m_channelProxies)
     {
-        if (!channelWidget->isVisible())
+        if (!channelProxy->GetWidget()->isVisible())
             continue;
-        _DisplayChannelValue(channelWidget);
+        _DisplayChannelValue(channelProxy);
     }
 }
 
@@ -345,9 +325,9 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
     {
         if (!IsHorizontalValueSetEmpty())
         {
-            foreach (ChannelWidget *channelWidget, m_channelWidgets)
+            foreach (ChannelProxyBase *channelProxy, m_channelProxies)
             {
-                    _DisplayChannelValue(channelWidget);
+                _DisplayChannelValue(channelProxy);
             }
         }
         m_plot->RescaleAxis(m_plot->xAxis);
@@ -450,7 +430,8 @@ double GraphicsContainer::GetLastMeasuredHorizontalValue(Measurement *m)
 
 void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel)
 {
-    m_horizontalChannelMapping.insert(m, channel);
+    ChannelProxyBase *originalProxy = m->GetWidget()->GetChannelProxy(channel);
+    m_horizontalChannelMapping.insert(m, originalProxy->Clone(this, GetHorizontalChannelProxy()->GetWidget()));
     RecalculateSliderMaximum();
 }
 
@@ -568,9 +549,9 @@ void GraphicsContainer::SetMarksShown(bool marksShown)
 {
     m_marksShown = marksShown;
 
-    foreach (ChannelWidget *channelWidget, m_channelWidgets)
+    foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        channelWidget->GetChannelGraph()->ShowAllMarks(m_marksShown);
+        channelProxy->GetWidget()->GetChannelGraph()->ShowAllMarks(m_marksShown);
     }
     m_plot->ReplotIfNotDisabled();
 }
@@ -644,46 +625,56 @@ void GraphicsContainer::RescaleAxes(ChannelWidget *channelWidget)
     m_plot->ReplotIfNotDisabled();
 }
 
-
-ChannelBase *GraphicsContainer::GetHorizontalChannel(Measurement *measurement) const
+ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy() const
 {
-    if (!m_horizontalChannelMapping.contains(measurement))
-    {
-        qWarning("horzontalChannelMaping doesnt contain required measurement");
-        return NULL;
+    foreach (ChannelProxyBase *proxy, m_channelProxies) {
+        if (proxy->GetWidget()->IsOnHorizontalAxis())
+        {
+            return proxy;
+        }
     }
+    qWarning() << "Horizoontal channel proxy has not been found.";
+    return NULL;
+}
+
+ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy(Measurement *measurement) const
+{
     return m_horizontalChannelMapping[measurement];
 }
 
-std::vector<ChannelWidget *> &GraphicsContainer::GetChannelWidgets()
+QVector<ChannelProxyBase *> &GraphicsContainer::GetChannelProxies()
 {
-    return m_channelWidgets;
+    return m_channelProxies;
 }
 
-unsigned GraphicsContainer::GetChannelWidgetCount()
+unsigned GraphicsContainer::GetChannelProxiesCount()
 {
-    return m_channelWidgets.size();
+    return m_channelProxies.size();
 }
 
-
-ChannelWidget *GraphicsContainer::GetChannelWidget(unsigned index)
-{
-    return m_channelWidgets[index];
-}
 
 ChannelWidget *GraphicsContainer::GetChannelWidget(ChannelBase *channel)
 {
-    return m_channelToWidgetMapping[channel];
+    foreach (ChannelProxyBase *proxy, m_channelProxies)
+    {
+        if (proxy->GetChannel() == channel)
+        {
+            return proxy->GetWidget();
+        }
+    }
+
+    qWarning() << "channe proxy base has not been found for channel";
+    return NULL;
 }
 
-ChannelBase * GraphicsContainer::GetChannel(ChannelWidget * widget)
+ChannelWidget *GraphicsContainer::GetChannelWidget(unsigned index)
 {
-    return m_widgetToChannelMapping[widget];
+    return m_channelProxies[index]->GetWidget();
 }
 
-SampleChannel *GraphicsContainer::GetSampleChannel()
+SampleChannelProxy *GraphicsContainer::GetSampleChannelProxy()
 {
-    return m_sampleChannel;
+    return m_sampleChannelProxy;
 }
 
 bool GraphicsContainer::IsHorizontalValueSetEmpty()
@@ -699,10 +690,10 @@ void GraphicsContainer::editChannel()
 void GraphicsContainer::RecalculateSliderMaximum()
 {
     m_horizontalValueSet.clear();
-    foreach (ChannelBase *horizontalChannel, m_horizontalChannelMapping.values())
+    foreach (ChannelProxyBase *horizontalChannelProxy, m_horizontalChannelMapping.values())
     {
-        for (unsigned index = 0; index < horizontalChannel->GetValueCount(); index++)
-            m_horizontalValueSet.insert(horizontalChannel->GetValue(index));
+        for (unsigned index = 0; index < horizontalChannelProxy->GetValueCount(); index++)
+            m_horizontalValueSet.insert(horizontalChannelProxy->GetValue(index));
     }
 
 
@@ -720,20 +711,19 @@ void GraphicsContainer::addNewValueSet()
     Measurement *m = (Measurement*)sender();
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
-    ChannelBase * horizontalChannel = GetHorizontalChannel(m);
+    ChannelProxyBase * horizontalChannelProxy = GetHorizontalChannelProxy(m);
     SampleChannel * sampleChannel = m->GetSampleChannel();
-    m_sampleChannelWidget->UpdateGraph(horizontalChannel->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
+    m_sampleChannelWidget->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
-        auto it = m_channelToWidgetMapping.find(channel);
-        if (it != m_channelToWidgetMapping.end())
+        ChannelProxyBase *channelProxy = GetChannelProxy(channel);
+        if (channelProxy)
         {
-            it->second->UpdateGraph(horizontalChannel->GetLastValidValue(), channel->GetLastValidValue(), false);
-
+            channelProxy->GetWidget()->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), channel->GetLastValidValue(), false);
         }
     }
-    AddHorizontalValue(horizontalChannel->GetLastValidValue());
+    AddHorizontalValue(horizontalChannelProxy->GetLastValidValue());
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
@@ -804,28 +794,29 @@ ChannelWidget *GraphicsContainer::_CreateChannelWidget(
         connect(sourceMeasurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
     }
 
-    _AddChannelToMappings(channel, widget, isSampleChannel);
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 
     return widget;
 }
 
-void GraphicsContainer::_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget)
+SampleChannelProxy * GraphicsContainer::_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget)
 {
-    m_channelProperties.push_back(new SampleChannelProperties(this, channel, widget));
+    SampleChannelProxy *proxy = new SampleChannelProxy(this, channel, widget);
+    m_sampleChannelWidget = widget;
+    m_channelProxies.push_back(proxy);
+    m_sampleChannelProxy = proxy;
     connect(channel, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
-
+    return proxy;
 }
 
-ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost)
+SampleChannelProxy *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost)
 {   
-    m_sampleChannel = channel;
     ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 2/*ssCross*/, Qt::SolidLine);
     ChannelWidget *widget = _CreateChannelWidget(
         channel,
         channelGraph,
         0,
-        SampleChannelProperties::GetSampleChannelStyleText(SampleChannelProperties::Samples),
+        SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::Samples),
         Qt::black,
         true,
         "",
@@ -834,14 +825,12 @@ ChannelWidget *GraphicsContainer::CreateSampleChannelWidget(SampleChannel *chann
         isGhost
     );
 
-    _SampleCannelWidgetCreationPostProcess(channel, widget);
-    return widget;
+    return _SampleCannelWidgetCreationPostProcess(channel, widget);
 }
 
-ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
+SampleChannelProxy *GraphicsContainer::CloneSampleChannelWidget(
     SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget)
 {
-    m_sampleChannel = channel;
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
     ChannelWidget *widget = _CreateChannelWidget(
         channel,
@@ -856,31 +845,31 @@ ChannelWidget *GraphicsContainer::CloneSampleChannelWidget(
         false
     );
 
-    _SampleCannelWidgetCreationPostProcess(channel, widget);
-    return widget;
+    return _SampleCannelWidgetCreationPostProcess(channel, widget);
 }
 
-void GraphicsContainer::_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget)
+HwChannelProxy *GraphicsContainer::_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget)
 {
-    m_channelProperties.push_back(new HwChannelProperties(this, channel, widget));
+    HwChannelProxy *proxy = new HwChannelProxy(this, channel, widget);
+    m_channelProxies.push_back(proxy);
     channel->setActive(widget->isVisible());
     connect(widget, SIGNAL(visibilityChanged(bool)), channel, SLOT(setActive(bool)));
     connect(channel, SIGNAL(valueChanged(unsigned)), this, SLOT(hwValueChanged(unsigned)));
+    return proxy;
 }
 
-ChannelWidget *GraphicsContainer::_CreateHwChannelWidget(
+HwChannelProxy *GraphicsContainer::CreateHwChannelWidget(
     HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)
 {
     ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 2/*ssCross*/, Qt::SolidLine);
     ChannelWidget *widget = _CreateChannelWidget(
         channel, channelGraph, shortcutOrder, name, color, visible, units, Qt::SolidLine, false, isGhost);
 
-    _HwCannelWidgetCreationPostProcess(channel, widget);
-    return widget;
+    return _HwCannelWidgetCreationPostProcess(channel, widget);
 }
 
 //FIXME: clonned channel should not be ghost, added for temporary code
-ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
+HwChannelProxy *GraphicsContainer::CloneHwChannelWidget(
     HwChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget, unsigned shortcutOrder, bool isGhost)
 {
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelWidget);
@@ -897,29 +886,28 @@ ChannelWidget *GraphicsContainer::CloneHwChannelWidget(
         isGhost
     );
 
-    _HwCannelWidgetCreationPostProcess(channel, widget);
-    return widget;
+    return _HwCannelWidgetCreationPostProcess(channel, widget);
 }
 
 void GraphicsContainer::hwValueChanged(unsigned index)
 {
     HwChannel *channel = (HwChannel*)sender();
-    ChannelWidget *widget = m_channelToWidgetMapping[channel];
+    ChannelWidget *widget = GetChannelProxy(channel)->GetWidget();
     double newValue = channel->GetValue(index);
 
     widget->FillLastValueText(newValue);
     widget->ShowLastValueWithUnits(channel->GetValueType(index));
-    ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
-    widget->UpdateGraph(horizontalChannel->GetValue(index), newValue, true);
+    ChannelProxyBase *proxy = GetHorizontalChannelProxy(channel->GetMeasurement());
+    widget->UpdateGraph(proxy->GetValue(index), newValue, true);
 }
 
 void GraphicsContainer::sampleChannelPropertyChanged()
 {
     SampleChannel *channel = (SampleChannel*)sender();
-    ChannelWidget *widget = m_channelToWidgetMapping[channel];
-    widget->SetName(SampleChannelProperties::GetSampleChannelStyleText(channel->GetStyle()));
+    ChannelWidget *widget = GetChannelProxy(channel)->GetWidget();
+    widget->SetName(SampleChannelProxy::GetSampleChannelStyleText(channel->GetStyle()));
     widget->SetUnits(
-        SampleChannelProperties::GetUnits(channel->GetStyle(), channel->GetTimeUnits(), channel->GetRealTimeFormat()));
+        SampleChannelProxy::GetUnits(channel->GetStyle(), channel->GetTimeUnits(), channel->GetRealTimeFormat()));
     widget->ShowLastValueWithUnits();
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
     RefillWidgets();
@@ -927,32 +915,24 @@ void GraphicsContainer::sampleChannelPropertyChanged()
     widget->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
-QString GraphicsContainer::GetValueTimestamp(SampleChannel *channel, unsigned index)
+QString GraphicsContainer::GetValueTimestamp(SampleChannelProxy *channelProxy, unsigned index)
 {
-    return SampleChannelProperties::GetRealTimeText(channel, channel->GetValue(index), GetPlot()->IsInRangeMode());
+    return channelProxy->GetRealTimeText(index, GetPlot()->IsInRangeMode());
 }
 
 void GraphicsContainer::_CreateKeyShortcuts()
 {
-    m_plotKeyShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_G), this, SLOT(plotKeyShortcut()));
+    m_plotKeyShortcut = new KeyShortcut(QKeySequence(Qt::ALT + Qt::Key_G), this, SLOT(plotKeyShortcut()));
+    m_allChannelsShortcut = new KeyShortcut(QKeySequence(Qt::ALT + Qt::Key_A), this, SLOT(allChannelsKeyShortcut()));
+    m_noChannelsShortcut = new KeyShortcut(QKeySequence(Qt::ALT + Qt::Key_N), this, SLOT(noChannelsKeyShortcut()));
 
-    m_allChannelsShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_A), this, SLOT(allChannelsKeyShortcut()));
-
-    m_noChannelsShortcut = new KeyShortcut(
-        QKeySequence(Qt::ALT + Qt::Key_N), this, SLOT(noChannelsKeyShortcut()));
-
-    foreach (ChannelWidget *channelWidget, GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, GetChannelProxies())
     {
-        KeyShortcut *s = new KeyShortcut(
-            channelWidget->GetKeyShortcutSequence(),
-            this,
-            SLOT(channelKeyShortcut())
-        );
+        ChannelWidget *widget = channelProxy->GetWidget();
+        KeyShortcut *s = new KeyShortcut(widget->GetKeyShortcutSequence(), this, SLOT(channelKeyShortcut()));
         if (s != NULL)
         {
-            m_channelWidgetKeyShortcuts[s] = channelWidget;
+            m_channelWidgetKeyShortcuts[s] = widget;
         }
     }
 }
@@ -1001,14 +981,14 @@ void GraphicsContainer::plotKeyShortcut()
 }
 void GraphicsContainer::noChannelsKeyShortcut()
 {
-    foreach (ChannelWidget* channelWidget, m_channelWidgets)
-        ActivateChannel(channelWidget, false);
+    foreach (ChannelProxyBase* channelProxy, m_channelProxies)
+        ActivateChannel(channelProxy->GetWidget(), false);
 
 }
 void GraphicsContainer::allChannelsKeyShortcut()
 {
-     foreach (ChannelWidget* channelWidget, m_channelWidgets)
-        ActivateChannel(channelWidget, true);
+    foreach (ChannelProxyBase* channelProxy, m_channelProxies)
+        ActivateChannel(channelProxy->GetWidget(), true);
 }
 
 void GraphicsContainer::Activate()
@@ -1046,48 +1026,46 @@ QKeySequence GraphicsContainer::GetNoChannelsSequence()
     return m_noChannelsShortcut->GetKeySequence();
 }
 
-void GraphicsContainer::_DisplayChannelValue(ChannelWidget *channelWidget)
+void GraphicsContainer::_DisplayChannelValue(ChannelProxyBase *channelProxy)
 {
-    ChannelBase *channel = GetChannel(channelWidget);
-    SampleChannel *sampleChannel = dynamic_cast<SampleChannel *>(channel);
-
-    ChannelBase *horizontalChannel = GetHorizontalChannel(channel->GetMeasurement());
-    int firstIndex = horizontalChannel->GetLastValueIndex(
+    ChannelWidget *widget = channelProxy->GetWidget();
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy *>(channelProxy);
+    ChannelProxyBase *horizontalChannelProxy = GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+    int firstIndex = horizontalChannelProxy->GetLastValueIndex(
         GetHorizontalValueBySliderPos(m_plot->GetMarkerPositions().first));
     if (m_plot->GetMarkerTypeSelection() == Plot::MTSSample)
     {
         if (m_plot->GetMarkerPositions().first != std::numeric_limits<int>::min())
         {
-
-            if (sampleChannel && sampleChannel->GetStyle() == SampleChannelProperties::RealTime)
+            if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
             {
-                channelWidget->FillLastValueText(GetValueTimestamp(sampleChannel, firstIndex));
+                widget->FillLastValueText(GetValueTimestamp(sampleChannelProxy, firstIndex));
             }
             else
             {
-                channelWidget->FillLastValueText(channel->GetValue(firstIndex));
+                widget->FillLastValueText(channelProxy->GetValue(firstIndex));
             }
-            channelWidget->ShowLastValueWithUnits(channel->GetValueType(firstIndex));
+            widget->ShowLastValueWithUnits(channelProxy->GetValueType(firstIndex));
         }
     }
     else
     {
-        int secondIndex = horizontalChannel->GetLastValueIndex(
+        int secondIndex = horizontalChannelProxy->GetLastValueIndex(
             GetHorizontalValueBySliderPos(m_plot->GetMarkerPositions().second));
 
         double rangeValue = 0;
-        if (channel->FillRangeValue(firstIndex, secondIndex, m_plot->GetMarkerRangeValue(), rangeValue))
+        if (channelProxy->FillRangeValue(firstIndex, secondIndex, m_plot->GetMarkerRangeValue(), rangeValue))
         {
-            if (sampleChannel && sampleChannel->GetStyle() == SampleChannelProperties::RealTime)
+            if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
             {
-                channelWidget->FillLastValueText(SampleChannelProperties::GetRealTimeText(sampleChannel, rangeValue, true));
+                widget->FillLastValueText(sampleChannelProxy->GetRealTimeText(rangeValue, true));
             }
             else
             {
-                channelWidget->FillLastValueText(rangeValue);
+                widget->FillLastValueText(rangeValue);
 
             }
-            channelWidget->ShowLastValueWithUnits();
+            widget->ShowLastValueWithUnits();
         }
     }
 }
@@ -1097,18 +1075,18 @@ void GraphicsContainer::RefillWidgets()
     m_plot->RefillGraphs();
     if (!IsHorizontalValueSetEmpty())
     {
-        foreach (ChannelWidget *channelWidget, m_channelWidgets)
+        foreach (ChannelProxyBase *channelProxy, m_channelProxies)
         {
-            _DisplayChannelValue(channelWidget);
+            _DisplayChannelValue(channelProxy);
         }
     }
 }
 
 bool GraphicsContainer::_IsTracked(Measurement *m)
 {
-    for (auto it = m_widgetToChannelMapping.begin(); it != m_widgetToChannelMapping.end(); ++it)
+    foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        if (it->first->isGhost() && it->second->GetMeasurement() == m)
+        if (channelProxy->GetWidget()->isGhost() && channelProxy->GetChannelMeasurement() == m)
         {
             return true;
         }
@@ -1121,7 +1099,7 @@ QString GraphicsContainer::GetGhostWidgetName(GraphicsContainer * sourceGraphics
     return sourceGraphicsContainer->GetName() + "." + channelWidget->GetName();
 }
 
-ChannelWidget * GraphicsContainer::AddGhost(
+HwChannelProxy * GraphicsContainer::AddGhost(
     HwChannel *sourceChannel,
     GraphicsContainer *sourceGraphicsContainer,
     ChannelWidget *sourceValueChannelWidget,
@@ -1130,27 +1108,30 @@ ChannelWidget * GraphicsContainer::AddGhost(
 )
 {
     Measurement *sourceMeasurement = sourceChannel->GetMeasurement();
-    m_horizontalChannelMapping.insert(sourceMeasurement, sourceHorizontalChannel);
+
+    ChannelProxyBase *originalProxy = sourceMeasurement->GetWidget()->GetHorizontalChannelProxy();
+    m_horizontalChannelMapping.insert(sourceMeasurement, originalProxy->Clone(this, GetHorizontalChannelProxy()->GetWidget()));
     for (unsigned index = 0; index < sourceHorizontalChannel->GetValueCount(); ++index)
     {
         AddHorizontalValue(sourceHorizontalChannel->GetValue(index));
     }
-    ChannelWidget *channelWidget = CloneHwChannelWidget(
+    HwChannelProxy *proxy = CloneHwChannelWidget(
         sourceChannel, sourceGraphicsContainer, sourceValueChannelWidget, -1, true);
-    channelWidget->SetName(GetGhostWidgetName(sourceGraphicsContainer, channelWidget));
-    channelWidget->SetPenStyle(Qt::DashLine);
-    channelWidget->SetVisible(false);
-    m_ghostWaitingForConfirmation = channelWidget;
+    ChannelWidget* widget = proxy->GetWidget();
+    widget->SetName(GetGhostWidgetName(sourceGraphicsContainer, widget));
+    widget->SetPenStyle(Qt::DashLine);
+    widget->SetVisible(false);
+    m_ghostWaitingForConfirmation = proxy;
 
     if (confirmed)
         ConfirmGhostChannel();
 
-    return channelWidget;
+    return proxy;
 }
 
 void GraphicsContainer::ConfirmGhostChannel()
 {
-    m_ghostWaitingForConfirmation->SetVisible(true);
+    m_ghostWaitingForConfirmation->GetWidget()->SetVisible(true);
 
     replaceDisplays();
     _DisplayChannelValue(m_ghostWaitingForConfirmation);
@@ -1164,7 +1145,7 @@ void GraphicsContainer::ConfirmGhostChannel()
 
 void GraphicsContainer::RejectGhostChannel()
 {
-    _EraseChannelWidgetMappings(m_ghostWaitingForConfirmation);
+    m_channelProxies.removeOne(m_ghostWaitingForConfirmation);
     delete m_ghostWaitingForConfirmation;
     m_ghostWaitingForConfirmation = NULL;
 }

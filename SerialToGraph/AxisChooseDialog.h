@@ -14,15 +14,15 @@ class AxisChooseDialog : public QDialog
     Q_OBJECT
 
     GraphicsContainer *m_graphicsContainer;
-    ChannelWidget *m_originalHChannelWidget;
-    ChannelWidget *m_newHChannelWidget;
+    ChannelWidget *m_originalHorizontalChannelWidget;
+    ChannelWidget *m_newHorizontalChannelWidget;
     bool m_isOriginalChannelRealTime;
     QRadioButton *m_newAxis;
     QMap<QRadioButton *, Axis*> m_axes;
 
 
 public:
-    AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsContainer, ChannelWidget *originalHChannelWidget, ChannelWidget *newHChannelWidget);
+    AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsContainer, ChannelWidget *originalHorizontalChannelWidget, ChannelWidget *newHorizontalChannelWidget);
 
 signals:
 

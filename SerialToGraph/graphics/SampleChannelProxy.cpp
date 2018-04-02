@@ -1,20 +1,25 @@
-#include "SampleChannelProperties.h"
+#include "SampleChannelProxy.h"
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <graphics/SampleChannelProperties.h>
+#include <graphics/SampleChannelProxy.h>
 #include <QDateTime>
 #include <QDebug>
 #include <QLocale>
 #include <QString>
 #include <SampleChannel.h>
 
-SampleChannelProperties::SampleChannelProperties(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
-    ChannelPropertiesBase(parent, channel, channelWidget)
+SampleChannelProxy::SampleChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
+    ChannelProxyBase(parent, channel, channelWidget)
 {
 
 }
 
-QString SampleChannelProperties::GetRealTimeFormatText(RealTimeFormat realTimeFormat)
+QString SampleChannelProxy::GetRealTimeFormatText()
+{
+    return GetRealTimeFormatText(_GetChannel()->GetRealTimeFormat());
+}
+
+QString SampleChannelProxy::GetRealTimeFormatText(RealTimeFormat realTimeFormat)
 {
     QLocale locale(QLocale::system());
 
@@ -34,7 +39,7 @@ QString SampleChannelProperties::GetRealTimeFormatText(RealTimeFormat realTimeFo
     }
 }
 
-QString SampleChannelProperties::GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat
+QString SampleChannelProxy::GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat
 )
 {
     switch (style)
@@ -67,7 +72,7 @@ QString SampleChannelProperties::GetUnits(Style style, TimeUnits timeUnits, Real
     }
 }
 
-QString SampleChannelProperties::GetSampleChannelStyleText(Style style)
+QString SampleChannelProxy::GetSampleChannelStyleText(Style style)
 {
     switch (style)
     {
@@ -83,7 +88,7 @@ QString SampleChannelProperties::GetSampleChannelStyleText(Style style)
     }
 }
 
-QString SampleChannelProperties::_FillTimeValueString(
+QString SampleChannelProxy::_FillTimeValueString(
     RealTimeFormat format,
     unsigned years,
     unsigned months,
@@ -110,7 +115,7 @@ QString SampleChannelProperties::_FillTimeValueString(
     }
 }
 
-QString SampleChannelProperties::_ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range)
+QString SampleChannelProxy::_ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range)
 {
 
     if (range)
@@ -137,8 +142,35 @@ QString SampleChannelProperties::_ConvertDateTimeToString(RealTimeFormat format,
     return dateTime.toString(GetRealTimeFormatText(format));
 }
 
-QString SampleChannelProperties::GetRealTimeText(SampleChannel *channel, double seconds, bool range)
+SampleChannel *SampleChannelProxy::_GetChannel() const
 {
+    return dynamic_cast<SampleChannel *>(m_channel);
+}
+
+QString SampleChannelProxy::GetRealTimeText(double value, bool range) const
+{
+    SampleChannel *channel = _GetChannel();
     RealTimeFormat format = channel->GetRealTimeFormat();
-    return _ConvertDateTimeToString(format, seconds, range);
+    return _ConvertDateTimeToString(format, value, range);
+}
+QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
+{
+    SampleChannel *channel = _GetChannel();
+    double value = channel->GetValue(index);
+    return GetRealTimeText(value, range);
+}
+
+SampleChannelProxy::Style SampleChannelProxy::GetStyle()
+{
+    return _GetChannel()->GetStyle();
+}
+
+double SampleChannelProxy::GetValue(unsigned index) const
+{
+    return m_channel->GetValue(index);
+}
+
+SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
+{
+    return new SampleChannelProxy(parent, m_channel, newWidget);
 }

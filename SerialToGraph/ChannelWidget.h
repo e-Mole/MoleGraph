@@ -16,7 +16,7 @@ class ChannelWidget : public QWidget
 
     Q_PROPERTY(QString name READ GetName WRITE SetName)
     Q_PROPERTY(QColor color READ GetForeColor WRITE SetForeColor)
-    Q_PROPERTY(unsigned shapeIndex WRITE _SetShapeIndexDepricated)
+    Q_PROPERTY(unsigned shapeIndex WRITE _SetShapeIndexDepricated) //for depricated file format. will be never written to file
     Q_PROPERTY(int shapeIndex2 READ GetShapeIndex WRITE SetShapeIndex)
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)

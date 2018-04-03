@@ -427,11 +427,18 @@ double GraphicsContainer::GetLastMeasuredHorizontalValue(Measurement *m)
     return m_horizontalChannelMapping[m]->GetLastValidValue();
 }
 
-void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel)
+void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel, ChannelWidget *originalHorizontalWidget)
 {
     ChannelProxyBase *originalProxy = m->GetWidget()->GetChannelProxy(channel);
-    m_horizontalChannelMapping.insert(m, originalProxy->Clone(this, GetHorizontalChannelProxy()->GetWidget()));
+    ChannelProxyBase *thisHorizontalChannelProxy =NULL;
+
+    m_horizontalChannelMapping.insert(m, originalProxy->Clone(this, originalHorizontalWidget));
     RecalculateSliderMaximum();
+}
+
+void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel)
+{
+    SetHorizontalChannel(m, channel, GetHorizontalChannelProxy()->GetWidget());
 }
 
 Axis * GraphicsContainer::_CreateAxis(QColor const & color, QCPAxis *graphAxis)

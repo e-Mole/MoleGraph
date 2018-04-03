@@ -476,8 +476,6 @@ bool ChannelSettings::BeforeAccept()
                 return false; //no axis has been selected
 
             changedHorizontal = true;
-            m_channelWidget->ShowOrHideGraph(false);
-            m_graphicsContainer->SetHorizontalChannel(m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel());
         }
 
         Axis *lastAxis = m_channelWidget->GetChannelGraph()->GetValuleAxis();
@@ -634,9 +632,18 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
         if (widget->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
         {
             AxisChooseDialog dialog(this, m_graphicsContainer, widget, m_channelWidget);
-            return (QDialog::Rejected != dialog.exec());
+            if (QDialog::Rejected != dialog.exec())
+            {
+                m_channelWidget->ShowGraph(false);
+                m_graphicsContainer->SetHorizontalChannel(
+                    m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel(), widget);
+                return true;
+            }
+            return false;
         }
     }
+    qWarning() << "horizontal axes has not been found";
+
     return false; //it should never reach this point
 }
 

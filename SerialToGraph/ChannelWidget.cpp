@@ -56,7 +56,7 @@ ChannelWidget::ChannelWidget(
     layout->setSpacing(1);
 
     if (m_channelGraph->GetValuleAxis()->IsHorizontal())
-        ShowOrHideGraph(false);
+        ShowGraph(false);
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
@@ -338,7 +338,7 @@ void ChannelWidget::SetShapeIndex(unsigned index)
     m_channelGraph->SetMarkShape(index);
 }
 
-void ChannelWidget::ShowOrHideGraph(bool shown)
+void ChannelWidget::ShowGraph(bool shown)
 {
     m_channelGraph->setVisible(shown);
     m_plot->RescaleAllAxes();

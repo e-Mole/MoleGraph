@@ -104,6 +104,7 @@ public:
     double GetHorizontalValueBySliderPos(unsigned position) const;
     int GetSliderPos();
     double GetLastMeasuredHorizontalValue(Measurement *m);
+    void SetHorizontalChannel(Measurement *m, ChannelBase *channel, ChannelWidget *originalHorizontalWidget);
     void SetHorizontalChannel(Measurement *m, ChannelBase *channel);
     Axis * CreateNewAxis(unsigned index);
     Axis * CreateYAxis(QColor const & color);

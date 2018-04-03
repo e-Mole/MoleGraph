@@ -88,7 +88,7 @@ public:
     void SetPenStyle(Qt::PenStyle penStyle);
     unsigned GetShapeIndex();
     void SetShapeIndex(unsigned index);
-    void ShowOrHideGraph(bool shown);
+    void ShowGraph(bool shown);
     void UpdateGraph(double xValue, double yValue, bool replot);
     ChannelGraph * GetChannelGraph();
     bool IsOnHorizontalAxis();

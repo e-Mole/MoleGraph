@@ -66,6 +66,8 @@ QString SampleChannelProxy::GetUnits(Style style, TimeUnits timeUnits, RealTimeF
     break;
     case RealTime:
         return GetRealTimeFormatText(realTimeFormat);
+    case Samples:
+        return "";
     default:
         qWarning() << "unknown sample style";
         return "";
@@ -165,6 +167,11 @@ SampleChannelProxy::Style SampleChannelProxy::GetStyle()
     return _GetChannel()->GetStyle();
 }
 
+void SampleChannelProxy::SetStyle(Style style)
+{
+    _GetChannel()->SetStyle(style);
+}
+
 double SampleChannelProxy::GetValue(unsigned index) const
 {
     return m_channel->GetValue(index);
@@ -173,4 +180,24 @@ double SampleChannelProxy::GetValue(unsigned index) const
 SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
 {
     return new SampleChannelProxy(parent, m_channel, newWidget);
+}
+
+SampleChannelProxy::TimeUnits SampleChannelProxy::GetTimeUnits()
+{
+    return _GetChannel()->GetTimeUnits();
+}
+
+void SampleChannelProxy::SetTimeUnits(SampleChannelProxy::TimeUnits units)
+{
+    _GetChannel()->SetTimeUnits(units);
+}
+
+SampleChannelProxy::RealTimeFormat SampleChannelProxy::GetRealTimeFormat()
+{
+    return _GetChannel()->GetRealTimeFormat();
+}
+
+void SampleChannelProxy::SetRealTimeFormat(RealTimeFormat format)
+{
+    return _GetChannel()->SetRealTimeFormat(format);
 }

@@ -18,21 +18,21 @@ SampleChannel::SampleChannel(Measurement *measurement,
 {
 }
 
-void SampleChannel::_SetStyle(SampleChannelProxy::Style style)
+void SampleChannel::SetStyle(SampleChannelProxy::Style style)
 {
     m_style = style;
     _RecalculateExtremes();
     propertyChanged();
 
 }
-void SampleChannel::_SetTimeUnits(SampleChannelProxy::TimeUnits units)
+void SampleChannel::SetTimeUnits(SampleChannelProxy::TimeUnits units)
 {
     m_timeUnits = units;
     _RecalculateExtremes();
     propertyChanged();
 }
 
-void SampleChannel::_SetFormat(SampleChannelProxy::RealTimeFormat format)
+void SampleChannel::SetRealTimeFormat(SampleChannelProxy::RealTimeFormat format)
 {
     m_realTimeFormat = format;
     _RecalculateExtremes();

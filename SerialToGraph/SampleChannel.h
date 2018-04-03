@@ -12,9 +12,9 @@ class SampleChannel : public ChannelBase
     Q_PROPERTY(QDateTime startDateTime READ GetStartDateTime WRITE SetStartTime)
 
     //FIXME: legacy format compatibility reasons
-    Q_PROPERTY(SampleChannelProxy::Style style READ GetStyle WRITE _SetStyle)
-    Q_PROPERTY(SampleChannelProxy::TimeUnits timeUnits READ GetTimeUnits WRITE _SetTimeUnits)
-    Q_PROPERTY(SampleChannelProxy::RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE _SetFormat)
+    Q_PROPERTY(SampleChannelProxy::Style style READ GetStyle WRITE SetStyle)
+    Q_PROPERTY(SampleChannelProxy::TimeUnits timeUnits READ GetTimeUnits WRITE SetTimeUnits)
+    Q_PROPERTY(SampleChannelProxy::RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE SetRealTimeFormat)
 
     void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
 public:
@@ -24,9 +24,6 @@ private:
 
     friend class ChannelSettings;
 
-    void _SetStyle(SampleChannelProxy::Style style);
-    void _SetTimeUnits(SampleChannelProxy::TimeUnits units);
-    void _SetFormat(SampleChannelProxy::RealTimeFormat format);
     QString _GetRealTimeText(double secSinceEpoch);
 
     QVector<double> m_timeFromStart; //sample time from measurement srart
@@ -44,6 +41,8 @@ public:
 
     virtual Type GetType() { return Type_Sample; }
     SampleChannelProxy::Style GetStyle() {return m_style; }
+    void SetStyle(SampleChannelProxy::Style style);
+
     SampleChannelProxy::TimeUnits GetTimeUnits() { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
     QDateTime GetStartDateTime() const { return m_startDateTime; }
@@ -57,6 +56,8 @@ public:
     double GetSampleNr(unsigned index) const;
     QString GetTimestamp(double timeInMs);
     virtual ChannelBase::ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeSample; }
+    void SetTimeUnits(SampleChannelProxy::TimeUnits units);
+    void SetRealTimeFormat(SampleChannelProxy::RealTimeFormat format);
 
 signals:
     void propertyChanged();

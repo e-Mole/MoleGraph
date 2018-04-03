@@ -54,8 +54,13 @@ public:
     QString GetRealTimeText(unsigned index, bool range) const;
     QString GetRealTimeText(double value, bool range) const;
     Style GetStyle();
+    void SetStyle(Style style);
     virtual double GetValue(unsigned index) const;
     virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget * newWidget);
+    TimeUnits GetTimeUnits();
+    void SetTimeUnits(TimeUnits units);
+    RealTimeFormat GetRealTimeFormat();
+    void SetRealTimeFormat(RealTimeFormat format);
 
 signals:
 

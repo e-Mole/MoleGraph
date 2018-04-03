@@ -136,14 +136,14 @@ void ChannelSettings::_FillSensorPortCB()
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);
-        if (i == ((HwChannel *)m_channelProxy)->GetSensorPort())
+        if (i == dynamic_cast<HwChannelProxy*>(m_channelProxy)->GetSensorPort())
             m_sensorPortComboBox->setCurrentIndex(m_sensorPortComboBox->count() - 1);
     }
 }
 
 void ChannelSettings::_FillSensorNameCB()
 {
-    unsigned currentSensorId = ((HwChannel*)m_channelProxy)->GetSensor()->GetId();
+    unsigned currentSensorId = dynamic_cast<HwChannelProxy*>(m_channelProxy)->GetSensor()->GetId();
     m_sensorNameComboBox->clear();
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
@@ -502,7 +502,7 @@ bool ChannelSettings::BeforeAccept()
             return false;
         }
         changed = true;
-        ((HwChannel *)m_channelProxy)->ChangeValue(
+        dynamic_cast<HwChannelProxy*>(m_channelProxy)->ChangeValue(
             m_channelProxy->GetChannelMeasurement()->GetCurrentIndex(),
             m_currentValue);
     }
@@ -526,25 +526,25 @@ bool ChannelSettings::BeforeAccept()
 
     }
 
-    if (m_channelProxy->GetType() == ChannelBase::Type_Sample)
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_channelProxy);
+    if (sampleChannelProxy)
     {
-        SampleChannel *channelWithTime = (SampleChannel *)m_channelProxy;
-        if ((int)channelWithTime->m_timeUnits != m_timeUnits->currentIndex())
+        if ((int)sampleChannelProxy->GetTimeUnits() != m_timeUnits->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetTimeUnits((SampleChannelProxy::TimeUnits)m_timeUnits->currentIndex());
+            sampleChannelProxy->SetTimeUnits((SampleChannelProxy::TimeUnits)m_timeUnits->currentIndex());
         }
 
-        if ((int)channelWithTime->m_realTimeFormat != m_format->currentIndex())
+        if ((int)sampleChannelProxy->GetRealTimeFormat() != m_format->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetFormat((SampleChannelProxy::RealTimeFormat)m_format->currentIndex());
+            sampleChannelProxy->SetRealTimeFormat((SampleChannelProxy::RealTimeFormat)m_format->currentIndex());
         }
 
-        if ((int)channelWithTime->m_style != m_style->currentIndex())
+        if ((int)sampleChannelProxy->GetStyle() != m_style->currentIndex())
         {
             changed = true;
-            channelWithTime->_SetStyle((SampleChannelProxy::Style)m_style->currentIndex());
+            sampleChannelProxy->SetStyle((SampleChannelProxy::Style)m_style->currentIndex());
         }
     }
     else
@@ -577,27 +577,29 @@ bool ChannelSettings::BeforeAccept()
         }
     }
 
-    if (m_channelProxy->GetType() == ChannelBase::Type_Hw)
+
+    HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
+    if (hwChannelProxy)
     {
-        HwChannel *hwChannel = (HwChannel *)m_channelProxy;
+
         hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
-        if (NULL != sensor && sensor != hwChannel->GetSensor())
+        if (NULL != sensor && sensor != hwChannelProxy->GetSensor())
         {
-          hwChannel->SetSensor(sensor);
+          hwChannelProxy->SetSensor(sensor);
           changed = true;
         }
 
         unsigned port = m_sensorPortComboBox->currentData().toInt();
-        if (port != hwChannel->GetSensorPort())
+        if (port != hwChannelProxy->GetSensorPort())
         {
-            hwChannel->_SetSensorPort(port);
+            hwChannelProxy->SetSensorPort(port);
             changed = true;
         }
 
         hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(m_sensorQuantityComboBox->currentData().toInt());
-        if (quantity != hwChannel->GetSensorQuantity())
+        if (quantity != hwChannelProxy->GetSensorQuantity())
         {
-            hwChannel->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
+            hwChannelProxy->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
             changed = true;
         }
     }

@@ -276,7 +276,6 @@ void GraphicsContainer::markerLinePositionChanged(int position)
 
 void GraphicsContainer::sliderValueChanged(int value)
 {
-    qDebug() << "slider value" << value;
     m_plot->SetMarkerLine(value);
     m_plot->ReplotIfNotDisabled();
 }

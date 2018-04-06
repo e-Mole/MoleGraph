@@ -42,14 +42,22 @@ ChannelBase::ValueType ChannelProxyBase::GetValueType(unsigned index)
     return m_channel->GetValueType(index);
 }
 
-unsigned ChannelProxyBase::GetValueCount()
+unsigned ChannelProxyBase::GetValueCount() const
 {
     return m_channel->GetValueCount();
 }
 
 double ChannelProxyBase::GetLastValidValue()
 {
-    return m_channel->GetLastValidValue();
+    //here must be int because when count is equal zero first index is less than 0
+    for (int index = GetValueCount()-1; index >= 0; --index)
+    {
+        if (IsValueNA(index))
+            continue;
+
+        return GetValue(index);
+    }
+    return ChannelBase::GetNaValue();
 }
 
 unsigned ChannelProxyBase::GetLastValueIndex(double value)
@@ -60,11 +68,6 @@ unsigned ChannelProxyBase::GetLastValueIndex(double value)
 unsigned ChannelProxyBase::GetChannelIndex()
 {
     return m_channel->GetMeasurement()->GetChannelIndex(m_channel);
-}
-
-bool ChannelProxyBase::IsValueNA(int index) const
-{
-    return m_channel->IsValueNA(index);
 }
 
 ChannelBase::Type ChannelProxyBase::GetType()
@@ -194,4 +197,9 @@ bool ChannelProxyBase::FillRangeValue(int left, int right, DisplayValue displayV
     }
 
     return true;
+}
+
+bool ChannelProxyBase::IsValueNA(int index) const
+{
+    return index >= GetValueCount() || GetValue(index) == ChannelBase::GetNaValue();
 }

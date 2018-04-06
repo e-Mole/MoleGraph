@@ -43,11 +43,10 @@ public:
     Measurement *GetChannelMeasurement();
     ChannelWidget *GetWidget();
 
-    bool IsValueNA(int index) const;
     unsigned GetChannelIndex();
     unsigned GetLastValueIndex(double value);
     double GetLastValidValue();
-    unsigned GetValueCount();
+    unsigned GetValueCount() const;
     virtual double GetValue(unsigned index) const = 0;
     virtual ChannelProxyBase *Clone(QObject *parent, ChannelWidget * newWidget) = 0;
     ChannelBase::ValueType GetValueType(unsigned index);
@@ -58,6 +57,7 @@ public:
     //TODO: just temporary solution
     ChannelBase *GetChannel() {return m_channel;}
     ChannelBase::Type GetType();
+    bool IsValueNA(int index) const;
 signals:
 
 public slots:

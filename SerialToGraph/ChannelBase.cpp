@@ -59,11 +59,6 @@ double ChannelBase::GetValue(unsigned index) const
     return m_values[index];
 }
 
-bool ChannelBase::IsValueNA(int index) const
-{
-    return index >= GetValueCount() || GetValue(index) == GetNaValue();
-}
-
 void ChannelBase::_RecalculateExtremes()
 {
     m_channelMinValue = std::numeric_limits<double>::max();
@@ -71,19 +66,6 @@ void ChannelBase::_RecalculateExtremes()
 
     for (unsigned i = 0; i < GetValueCount(); i++)
         _UpdateExtremes(GetValue(i));
-}
-
-double ChannelBase::GetLastValidValue()
-{
-    //here must be int because when count is equal zero first index is less than 0
-    for (int index = GetValueCount()-1; index >= 0; --index)
-    {
-        if (IsValueNA(index))
-            continue;
-
-        return GetValue(index);
-    }
-    return GetNaValue();
 }
 
 double ChannelBase::GetNaValue()

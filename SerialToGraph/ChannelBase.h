@@ -58,8 +58,6 @@ public:
 
     virtual double GetValue(unsigned index) const;
 
-    double GetLastValidValue();
-
     virtual void AddValue( double value);
 
     virtual double GetMinValue()
@@ -74,7 +72,6 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
-    bool IsValueNA(int index) const;
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
     static double GetNaValue();
     unsigned GetLastValueIndex(double value) const;

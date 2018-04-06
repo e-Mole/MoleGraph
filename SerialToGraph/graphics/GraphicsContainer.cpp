@@ -716,15 +716,15 @@ void GraphicsContainer::addNewValueSet()
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
     ChannelProxyBase * horizontalChannelProxy = GetHorizontalChannelProxy(m);
-    SampleChannel * sampleChannel = m->GetSampleChannel();
-    m_sampleChannelWidget->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), sampleChannel->GetLastValidValue(), false);
+    SampleChannelProxy * sampleChannelProxy = m->GetWidget()->GetSampleChannelProxy();
+    m_sampleChannelWidget->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), sampleChannelProxy->GetLastValidValue(), false);
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
     {
         ChannelProxyBase *channelProxy = GetChannelProxy(channel);
         if (channelProxy)
         {
-            channelProxy->GetWidget()->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), channel->GetLastValidValue(), false);
+            channelProxy->GetWidget()->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), channelProxy->GetLastValidValue(), false);
         }
     }
     AddHorizontalValue(horizontalChannelProxy->GetLastValidValue());

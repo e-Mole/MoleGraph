@@ -1121,7 +1121,13 @@ HwChannelProxy * GraphicsContainer::AddGhost(
     Measurement *sourceMeasurement = sourceChannel->GetMeasurement();
 
     ChannelProxyBase *originalProxy = sourceMeasurement->GetWidget()->GetHorizontalChannelProxy();
-    m_horizontalChannelMapping.insert(sourceMeasurement, originalProxy->Clone(this, GetHorizontalChannelProxy()->GetWidget()));
+    ChannelProxyBase *thisProxy = GetHorizontalChannelProxy();
+    if (originalProxy == NULL || thisProxy == NULL)
+    {
+        qWarning() << "channel proxies are not valiud";
+        return NULL;
+    }
+    m_horizontalChannelMapping.insert(sourceMeasurement, originalProxy->Clone(this, thisProxy->GetWidget()));
     for (unsigned index = 0; index < sourceHorizontalChannel->GetValueCount(); ++index)
     {
         AddHorizontalValue(sourceHorizontalChannel->GetValue(index));

@@ -56,7 +56,7 @@ public:
     virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    virtual double GetValue(unsigned index) const;
+    double GetValue(unsigned index) const;
 
     virtual void AddValue( double value);
 

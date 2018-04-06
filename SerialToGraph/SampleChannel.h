@@ -40,14 +40,14 @@ public:
         SampleChannelProxy::RealTimeFormat realTimeFormat = SampleChannelProxy::hh_mm_ss);
 
     virtual Type GetType() { return Type_Sample; }
-    SampleChannelProxy::Style GetStyle() {return m_style; }
+    SampleChannelProxy::Style GetStyle() const {return m_style; }
     void SetStyle(SampleChannelProxy::Style style);
 
-    SampleChannelProxy::TimeUnits GetTimeUnits() { return m_timeUnits; }
+    SampleChannelProxy::TimeUnits GetTimeUnits() const { return m_timeUnits; }
     void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
     QDateTime GetStartDateTime() const { return m_startDateTime; }
     void AddValue(double value, double timeFromStart);
-    virtual double GetValue(unsigned index) const;
+    virtual double GetTimeFromStart(unsigned index) const;
     SampleChannelProxy::RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
     bool IsInRealtimeStyle() { return m_style == SampleChannelProxy::RealTime; }
     virtual double GetMinValue();

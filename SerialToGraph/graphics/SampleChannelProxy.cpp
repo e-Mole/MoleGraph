@@ -162,7 +162,7 @@ QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
     return GetRealTimeText(value, range);
 }
 
-SampleChannelProxy::Style SampleChannelProxy::GetStyle()
+SampleChannelProxy::Style SampleChannelProxy::GetStyle() const
 {
     return _GetChannel()->GetStyle();
 }
@@ -174,7 +174,38 @@ void SampleChannelProxy::SetStyle(Style style)
 
 double SampleChannelProxy::GetValue(unsigned index) const
 {
-    return m_channel->GetValue(index);
+    if (index == ~0)
+        return ChannelBase::GetNaValue();
+
+    SampleChannel *sampleChannel = _GetChannel();
+    double timeFromStart = sampleChannel->GetTimeFromStart(index);
+
+    switch (GetStyle())
+    {
+    case Samples:
+        return sampleChannel->GetValue(index);
+    case SampleChannelProxy::RealTime:
+        return
+            sampleChannel->GetStartDateTime().toMSecsSinceEpoch() / 1000.0 + timeFromStart - //in seconds
+            sampleChannel->GetTimeFromStart(0); //first sample is on offset 0
+    case SampleChannelProxy::TimeOffset:
+        switch (GetTimeUnits())
+        {
+        case Us:
+            return timeFromStart * 1000000;
+        case Ms:
+            return timeFromStart * 1000;
+        case Sec:
+            return timeFromStart;
+        case Min:
+            return timeFromStart / 60;
+        case Hours:
+            return timeFromStart /(60*60);
+        case Days:
+            return timeFromStart /(60*60*24);
+        }
+    }
+    return ChannelBase::GetNaValue(); //it should be never reached
 }
 
 SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
@@ -182,7 +213,7 @@ SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget * n
     return new SampleChannelProxy(parent, m_channel, newWidget);
 }
 
-SampleChannelProxy::TimeUnits SampleChannelProxy::GetTimeUnits()
+SampleChannelProxy::TimeUnits SampleChannelProxy::GetTimeUnits() const
 {
     return _GetChannel()->GetTimeUnits();
 }

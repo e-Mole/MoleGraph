@@ -53,11 +53,11 @@ public:
     static QString GetSampleChannelStyleText(Style style);
     QString GetRealTimeText(unsigned index, bool range) const;
     QString GetRealTimeText(double value, bool range) const;
-    Style GetStyle();
+    Style GetStyle() const;
     void SetStyle(Style style);
     virtual double GetValue(unsigned index) const;
     virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget * newWidget);
-    TimeUnits GetTimeUnits();
+    TimeUnits GetTimeUnits() const;
     void SetTimeUnits(TimeUnits units);
     RealTimeFormat GetRealTimeFormat();
     void SetRealTimeFormat(RealTimeFormat format);

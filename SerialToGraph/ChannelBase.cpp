@@ -213,7 +213,7 @@ unsigned ChannelBase::GetLastValueIndex(double value) const
     //here must be int because when count is equal zero first index is less than 0
     for (int index = GetValueCount()-1; index >=0; --index)
     {
-        if (GetValue(index) == value)
+        if (qFuzzyCompare(GetValue(index), value))
             return index;
     }
     return -1;

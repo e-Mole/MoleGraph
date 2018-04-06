@@ -1,7 +1,7 @@
 #ifndef PLOT_H
 #define PLOT_H
 
-#include <ChannelBase.h>
+#include <graphics/ChannelProxyBase.h>
 #include <ChannelGraph.h>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
@@ -75,7 +75,7 @@ private:
     QPoint m_mouseReleasePosition;
     DisplayMode m_displayMode;
     MarkerTypeSelection m_markerTypeSelection;
-    ChannelBase::DisplayValue m_markerRangeValue;
+    ChannelProxyBase::DisplayValue m_markerRangeValue;
     //FIXME: currently unused but should be
     QList<ChannelGraph *> m_channelGraphs;
 
@@ -129,7 +129,7 @@ public:
 
     QPair<int, int>& GetMarkerPositions() { return m_markerPositions; }
     MarkerTypeSelection GetMarkerTypeSelection() { return m_markerTypeSelection; }
-    ChannelBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
+    ChannelProxyBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
     void UpdateHorizontalAxisName();
 
 signals:

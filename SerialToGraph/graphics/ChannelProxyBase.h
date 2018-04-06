@@ -10,10 +10,31 @@ class ChannelProxyBase : public QObject
 {
     Q_OBJECT
 
+    double _GetDelta(int left, int right);
+    double _GetMaxInRange(int left, int right);
+    double _GetMinInRange(int left, int right);
+    double _GetMeanInRange(int left, int right);
+    double _GetMedianInRange(int left, int right);
+    double _GetVarianceInRange(int left, int right);
+    double _GetStandardDeviation(int left, int right);
+    double _CalculateSum(int left, int right);
+    double _GetSumInRange(int left, int right);
+
     ChannelWidget *m_channelWidget;
 protected:
     ChannelBase *m_channel;
 public:
+    enum DisplayValue{
+        DVDelta,
+        DVMax,
+        DVMin,
+        DVAverage,
+        DVMedian,
+        DVVariance,
+        DVStandDeviation,
+        DVSum
+    };
+
     ChannelProxyBase(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
 
     bool ContainsChannelWidget(ChannelWidget *channelWidget);
@@ -30,7 +51,7 @@ public:
     virtual double GetValue(unsigned index) const = 0;
     virtual ChannelProxyBase *Clone(QObject *parent, ChannelWidget * newWidget) = 0;
     ChannelBase::ValueType GetValueType(unsigned index);
-    bool FillRangeValue(int left, int right, ChannelBase::DisplayValue displayValue, double &rangeValue);
+    bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
     double GetMinValue();
     double GetMaxValue();
 

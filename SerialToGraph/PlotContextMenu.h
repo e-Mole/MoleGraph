@@ -1,6 +1,6 @@
 #ifndef CONTEXTMENU_H
 #define CONTEXTMENU_H
-
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <Plot.h>
 #include <QMenu>
@@ -15,7 +15,7 @@ class PlotContextMenu : public QMenu
     QAction * InitMarkerTypeSelection(
         QMenu *menu, QString const &label, Plot::MarkerTypeSelection markerTypeSelection);
     QAction * InitMarkerRangeValue(
-        QMenu *menu, QString const &label, ChannelBase::DisplayValue markerRangeValue);
+        QMenu *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue);
 
     void _SetMarkerType(QAction * action);
 

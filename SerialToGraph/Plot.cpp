@@ -44,7 +44,7 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
     m_wheelEvent(NULL),
     m_displayMode(SampleValue),
     m_markerTypeSelection(MTSSample),
-    m_markerRangeValue(ChannelBase::DVDelta)
+    m_markerRangeValue(ChannelProxyBase::DVDelta)
 {
      //remove originally created axis rect
     plotLayout()->clear();

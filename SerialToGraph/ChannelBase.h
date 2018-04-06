@@ -33,15 +33,6 @@ private:
     QString _GetName();
 protected:
     void mousePressEvent(QMouseEvent * event);
-    double _GetDelta(int left, int right);
-    double _GetMaxInRange(int left, int right);
-    double _GetMinInRange(int left, int right);
-    double _GetMeanInRange(int left, int right);
-    double _GetMedianInRange(int left, int right);
-    double _GetVarianceInRange(int left, int right);
-    double _GetStandardDeviation(int left, int right);
-    double _CalculateSum(int left, int right);
-    double _GetSumInRange(int left, int right);
     void _UpdateExtremes(double value);
     void _RecalculateExtremes();
 
@@ -56,17 +47,6 @@ public:
     {
         Type_Sample,
         Type_Hw
-    };
-
-    enum DisplayValue{
-        DVDelta,
-        DVMax,
-        DVMin,
-        DVAverage,
-        DVMedian,
-        DVVariance,
-        DVStandDeviation,
-        DVSum
     };
 
     ChannelBase(Measurement *measurement);
@@ -94,7 +74,6 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
-    bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
     bool IsValueNA(int index) const;
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
     static double GetNaValue();

@@ -4,7 +4,6 @@
 #include <bases/MenuDialogBase.h>
 #include <QMap>
 class ButtonLine;
-class ChannelBase;
 class ChannelWidget;
 class ColorCheckBox;
 class GraphicsContainer;

@@ -4,11 +4,8 @@
 #include <QString>
 #include <QVector>
 
-class Axis;
-class ChannelBase;
 class MainWindow;
 class Measurement;
-class Plot;
 
 struct Context
 {

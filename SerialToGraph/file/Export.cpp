@@ -1,13 +1,9 @@
 #include "Export.h"
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
-#include <HwChannel.h>
-#include <SampleChannel.h>
-#include <Measurement.h>
 #include <Plot.h>
 #include <QFile>
 #include <QLocale>

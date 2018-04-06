@@ -1,11 +1,10 @@
 #include "AxisChooseDialog.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
-#include <SampleChannel.h>
+#include <graphics/SampleChannelProxy.h>
 #include <ChannelGraph.h>
 #include <MainWindow.h>
 #include <Measurement.h>

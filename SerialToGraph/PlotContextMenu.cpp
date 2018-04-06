@@ -1,10 +1,8 @@
 #include "PlotContextMenu.h"
 #include <QAction>
 #include <QActionGroup>
-#include <ChannelBase.h>
 #include <QMenu>
 #include <QWidget>
-#include <SampleChannel.h>
 
 PlotContextMenu::PlotContextMenu(QWidget *parent,  GraphicsContainer *graphicsContainer):
     QMenu(parent),

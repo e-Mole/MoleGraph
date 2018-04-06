@@ -494,7 +494,8 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
     }
 
-    if (m_channelProxy->GetType() == ChannelBase::Type_Hw && m_currentValueChanged)
+    HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
+    if (hwChannelProxy && m_currentValueChanged)
     {
         QLocale locale(QLocale::system());
         bool ok;
@@ -506,7 +507,7 @@ bool ChannelSettings::BeforeAccept()
         }
         changed = true;
         unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
-        dynamic_cast<HwChannelProxy*>(m_channelProxy)->ChangeValue(currentIndex, m_currentValue);
+        hwChannelProxy->ChangeValue(currentIndex, m_currentValue);
     }
     if (m_channelWidget->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
     {
@@ -579,8 +580,6 @@ bool ChannelSettings::BeforeAccept()
         }
     }
 
-
-    HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
     if (hwChannelProxy)
     {
 
@@ -696,7 +695,7 @@ void ChannelSettings::_RefillAxisCombo()
 
         if (!valid)
         {
-            if (m_channelProxy->GetType() == ChannelBase::Type_Sample && m_style->currentData().toBool())
+            if (dynamic_cast<SampleChannelProxy *>(m_channelProxy) && m_style->currentData().toBool())
                 valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
             else
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel

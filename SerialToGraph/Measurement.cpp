@@ -311,12 +311,12 @@ void Measurement::_ProcessActiveChannels()
     unsigned selectedChannels = 0;
     foreach (ChannelBase *channel, m_channels)
     {
-        if (channel->GetType() != ChannelBase::Type_Hw)
+        HwChannel *hwChannel = dynamic_cast<HwChannel *>(channel);
+        if (hwChannel == NULL)
         {
             continue;
         }
 
-        HwChannel *hwChannel = (HwChannel *)channel;
         if (!hwChannel->IsActive())
         {
             continue;
@@ -414,16 +414,17 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
     int hwIndex = -1;
     foreach (ChannelBase *sourceChannel, sourceMeasurement->GetChannels())
     {
-        if (sourceChannel->GetType() == ChannelBase::Type_Hw)
+        HwChannel *hwChannel = dynamic_cast<HwChannel *>(sourceChannel);
+        SampleChannel *sampleChannel = dynamic_cast<SampleChannel *>(sourceChannel);
+        if (hwChannel)
         { 
-            HwChannel *origChannel = dynamic_cast<HwChannel *>(sourceChannel);
             HwChannel *newChannel = new HwChannel(
                 this,
                 hwIndex,
-                origChannel->GetSensor(),
-                origChannel->GetSensorPort(),
-                origChannel->GetSensorQuantity(),
-                origChannel->GetSensorQuantityOrder()
+                hwChannel->GetSensor(),
+                hwChannel->GetSensorPort(),
+                hwChannel->GetSensorQuantity(),
+                hwChannel->GetSensorQuantityOrder()
             );
             _ConnectHwChannel(newChannel);
 
@@ -436,15 +437,12 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             m_channels.push_back(newChannel);
 
         }
-        else
+        else if (sampleChannel)
         {
-            m_sampleChannel =
-                new SampleChannel(
-                    this,
-                    ((SampleChannel *)sourceChannel)->GetStyle(),
-                    ((SampleChannel *)sourceChannel)->GetTimeUnits(),
-                    ((SampleChannel *)sourceChannel)->GetRealTimeFormat()
-                );
+            m_sampleChannel = new SampleChannel(
+                this, sampleChannel->GetStyle(), sampleChannel->GetTimeUnits(), sampleChannel->GetRealTimeFormat()
+            );
+
             SampleChannelProxy *channelProxy =  m_widget->CloneSampleChannelWidget(
                 m_sampleChannel,
                 sourceMeasurement->GetWidget(),

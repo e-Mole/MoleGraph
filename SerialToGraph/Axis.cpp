@@ -1,7 +1,5 @@
 #include "Axis.h"
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <SampleChannel.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/SampleChannelProxy.h>

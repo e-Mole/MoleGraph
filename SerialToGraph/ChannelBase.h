@@ -74,7 +74,6 @@ public:
 
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
     static double GetNaValue();
-    unsigned GetLastValueIndex(double value) const;
 };
 
 #endif // CHANNEL_H

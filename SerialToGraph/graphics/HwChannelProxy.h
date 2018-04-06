@@ -24,6 +24,7 @@ public:
     void SetSensorPort(unsigned sensorPort);
     hw::SensorQuantity *GetSensorQuantity();
     void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
+    double GetOriginalValue(int index);
 };
 
 #endif // HWCHANNELPROPERTIES_H

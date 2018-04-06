@@ -172,7 +172,7 @@ void ChannelSettings::_FillSensorNameCB()
 
 void ChannelSettings::_FillSensorQuanitityCB()
 {
-    hw::SensorQuantity *currentSensorQuanity = ((HwChannel*)m_channelProxy)->GetSensorQuantity();
+    hw::SensorQuantity *currentSensorQuanity = ((HwChannelProxy*)m_channelProxy)->GetSensorQuantity();
     m_sensorQuantityComboBox->clear();
     unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
 
@@ -316,6 +316,14 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     }
 }
 
+unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
+{
+    double currentHorizontalValue =
+        m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
+    return m_graphicsContainer->GetHorizontalChannelProxy(
+        channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
+}
+
 void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
 {
     ChannelProxyBase *channelProxy = m_graphicsContainer->GetChannelProxy(channelWidget);
@@ -331,10 +339,7 @@ void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
     connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
     curValLayout->addWidget(naValue);
 
-    double currentHorizontalValue =
-        m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
-    unsigned currentIndex =
-        m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
+    unsigned currentIndex = _GetCurrentValueIndex(channelProxy);
     if (currentIndex < (int)channelProxy->GetValueCount())
     {
         QLocale locale(QLocale::system());
@@ -362,7 +367,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     //this method is called just in a case the original value box is  enabled and
     //it is just in the case index is in range of this channel
     QLocale locale(QLocale::system());
-    double currentValue = ((HwChannel*)m_channelProxy)->GetOriginalValue(m_graphicsContainer->GetCurrentIndex());
+    double currentValue = ((HwChannelProxy*)m_channelProxy)->GetOriginalValue(_GetCurrentValueIndex(m_channelProxy));
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
@@ -403,13 +408,13 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
 
 void ChannelSettings::_InitializeTimeFeatures()
 {
-    SampleChannel * channel = (SampleChannel*)m_channelProxy;
+    SampleChannelProxy * channelProxy = (SampleChannelProxy*)m_channelProxy;
 
     m_style = new bases::ComboBox(this);
     m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::Samples), false);
     m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::TimeOffset), false);
     m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::RealTime), true); //RealTime state as data
-    m_style->setCurrentIndex(channel->m_style);//unfortunately I cant use a template with a Qt class
+    m_style->setCurrentIndex(channelProxy->GetStyle());//unfortunately I cant use a template with a Qt class
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
     m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
 
@@ -421,8 +426,8 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Minuts"));
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
-    m_timeUnits->setCurrentIndex(channel->m_timeUnits);
-    m_timeUnits->setEnabled(channel->m_style == SampleChannelProxy::TimeOffset);
+    m_timeUnits->setCurrentIndex(channelProxy->GetTimeUnits());
+    m_timeUnits->setEnabled(channelProxy->GetStyle() == SampleChannelProxy::TimeOffset);
     m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
 
     m_format = new bases::ComboBox(this);
@@ -430,8 +435,8 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_format->addItem(tr("day.month.hour:minute"));
     m_format->addItem(tr("hour:minute:second"));
     m_format->addItem(tr("minute:second.milisecond"));
-    m_format->setCurrentIndex(channel->m_realTimeFormat);
-    m_format->setEnabled(channel->m_style == SampleChannelProxy::RealTime);
+    m_format->setCurrentIndex(channelProxy->GetRealTimeFormat());
+    m_format->setEnabled(channelProxy->GetStyle() == SampleChannelProxy::RealTime);
     m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
 }
 
@@ -500,9 +505,8 @@ bool ChannelSettings::BeforeAccept()
             return false;
         }
         changed = true;
-        dynamic_cast<HwChannelProxy*>(m_channelProxy)->ChangeValue(
-            m_channelProxy->GetChannelMeasurement()->GetCurrentIndex(),
-            m_currentValue);
+        unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
+        dynamic_cast<HwChannelProxy*>(m_channelProxy)->ChangeValue(currentIndex, m_currentValue);
     }
     if (m_channelWidget->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
     {

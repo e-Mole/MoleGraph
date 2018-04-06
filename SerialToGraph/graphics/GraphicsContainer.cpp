@@ -430,8 +430,6 @@ double GraphicsContainer::GetLastMeasuredHorizontalValue(Measurement *m)
 void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel, ChannelWidget *originalHorizontalWidget)
 {
     ChannelProxyBase *originalProxy = m->GetWidget()->GetChannelProxy(channel);
-    ChannelProxyBase *thisHorizontalChannelProxy =NULL;
-
     m_horizontalChannelMapping.insert(m, originalProxy->Clone(this, originalHorizontalWidget));
     RecalculateSliderMaximum();
 }
@@ -1030,6 +1028,13 @@ QKeySequence GraphicsContainer::GetAllChannelsSequence()
 QKeySequence GraphicsContainer::GetNoChannelsSequence()
 {
     return m_noChannelsShortcut->GetKeySequence();
+}
+
+int GraphicsContainer::GetLastHorizontalValueIndex(Measurement *m, unsigned markerPosition)
+{
+    ChannelProxyBase *horizontalChannelProxy = GetHorizontalChannelProxy(m);
+    return horizontalChannelProxy->GetLastValueIndex(
+        GetHorizontalValueBySliderPos(markerPosition));
 }
 
 void GraphicsContainer::_DisplayChannelValue(ChannelProxyBase *channelProxy)

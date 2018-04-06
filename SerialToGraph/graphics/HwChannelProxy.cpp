@@ -65,3 +65,8 @@ void HwChannelProxy::SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsig
 {
     _GetChannel()->SetSensorQuantity(sensorQuantity, order);
 }
+
+double HwChannelProxy::GetOriginalValue(int index)
+{
+    return _GetChannel()->GetOriginalValue(index);
+}

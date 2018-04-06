@@ -32,6 +32,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
+    unsigned _GetCurrentValueIndex(ChannelProxyBase *channelProxy);
     void _InitializeValueLine(ChannelWidget *channelWidget);
     void _InitializeGhostCombos();
     void _FillMeasurementCombo();

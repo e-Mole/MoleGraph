@@ -24,7 +24,9 @@ ChannelMenu::ChannelMenu(GraphicsContainer *graphicsContainer, bool isGhostAddab
     m_noChannelsShortcut(NULL),
     m_isGhostAddable(isGhostAddable)
 {
+#if !defined(Q_OS_ANDROID)
     CreatePanelShortcuts();
+#endif
 }
 
 ChannelMenu::~ChannelMenu()
@@ -50,20 +52,27 @@ void ChannelMenu::FillGrid()
     connect(m_graphCheckBox, SIGNAL(clicked()), this, SLOT(graphActivated()));
     m_gridLayout->addWidget(m_graphCheckBox, row, 0);
 
-    _AddShortcut(row, m_plotShortcut->GetText());
+    if (m_plotShortcut)
+    {
+        _AddShortcut(row, m_plotShortcut->GetText());
+    }
 
     ++row;
     QPushButton *showAllButton = new QPushButton(tr("All Channels"), this);
     connect(showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
     m_gridLayout->addWidget(showAllButton, row, 0);
-    _AddShortcut(row, m_allChannelsShortcut->GetText());
-
+    if (m_allChannelsShortcut)
+    {
+        _AddShortcut(row, m_allChannelsShortcut->GetText());
+    }
     ++row;
     QPushButton *showNoneButton = new QPushButton(tr("No Channels"), this);
     connect(showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
     m_gridLayout->addWidget(showNoneButton, row, 0);
-    _AddShortcut(row, m_noChannelsShortcut->GetText());
-
+    if (m_noChannelsShortcut)
+    {
+        _AddShortcut(row, m_noChannelsShortcut->GetText());
+    }
     ++row;
     QPushButton *addGhostChannel = new QPushButton(tr("Add Virtual Channel"), this);
     addGhostChannel->setEnabled(m_isGhostAddable);

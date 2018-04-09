@@ -8,6 +8,7 @@ class ChannelBase;
 class ChannelWidget;
 class QObject;
 class SampleChannel;
+class SampleChannelWidget;
 class SampleChannelProxy : public ChannelProxyBase
 {
     Q_OBJECT
@@ -44,8 +45,9 @@ private:
     static QString _FillTimeValueString(RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
     static QString _ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range);
     SampleChannel *_GetChannel() const;
+    SampleChannelWidget *_GetChannelWidget() const;
 public:
-    SampleChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
+    SampleChannelProxy(QObject *parent, SampleChannel *channel, SampleChannelWidget *channelWidget);
 
     QString GetRealTimeFormatText();
     static QString GetRealTimeFormatText(RealTimeFormat realTimeFormat);
@@ -56,11 +58,13 @@ public:
     Style GetStyle() const;
     void SetStyle(Style style);
     virtual double GetValue(unsigned index) const;
-    virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget * newWidget);
+    virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);
     TimeUnits GetTimeUnits() const;
     void SetTimeUnits(TimeUnits units);
     RealTimeFormat GetRealTimeFormat();
     void SetRealTimeFormat(RealTimeFormat format);
+    double GetMinValue();
+    double GetMaxValue();
 
 signals:
 

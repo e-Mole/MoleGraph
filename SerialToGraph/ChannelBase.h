@@ -60,10 +60,10 @@ public:
 
     virtual void AddValue( double value);
 
-    virtual double GetMinValue()
+    double GetMinValue()
     { return m_channelMinValue; }
 
-    virtual double GetMaxValue()
+    double GetMaxValue()
     { return m_channelMaxValue; }
 
     Measurement * GetMeasurement();

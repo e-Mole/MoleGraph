@@ -20,8 +20,8 @@ class ChannelProxyBase : public QObject
     double _CalculateSum(int left, int right);
     double _GetSumInRange(int left, int right);
 
-    ChannelWidget *m_channelWidget;
 protected:
+    ChannelWidget *m_channelWidget;
     ChannelBase *m_channel;
 public:
     enum DisplayValue{
@@ -51,8 +51,8 @@ public:
     virtual ChannelProxyBase *Clone(QObject *parent, ChannelWidget * newWidget) = 0;
     ChannelBase::ValueType GetValueType(unsigned index);
     bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
-    double GetMinValue();
-    double GetMaxValue();
+    virtual double GetMinValue();
+    virtual double GetMaxValue();
 
     //TODO: just temporary solution
     ChannelBase *GetChannel() {return m_channel;}

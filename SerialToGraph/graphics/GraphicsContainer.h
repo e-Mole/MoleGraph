@@ -26,6 +26,7 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
+class SampleChannelWidget;
 
 class GraphicsContainer : public QWidget
 {
@@ -64,7 +65,7 @@ class GraphicsContainer : public QWidget
     void _FollowLastMeasuredValue();
     QCPAxis * _GetGraphAxis(unsigned index);
     Axis * _CreateAxis(QColor const & color, QCPAxis *graphAxis);
-    ChannelWidget *_CreateChannelWidget(ChannelBase *channel,
+    SampleChannelWidget *_CreateSampleChannelWidget(
         ChannelGraph *graph,
         unsigned shortcutOrder,
         QString const name,
@@ -72,13 +73,25 @@ class GraphicsContainer : public QWidget
         bool visible,
         QString const & units,
         Qt::PenStyle penStyle,
-        bool isSampleChannel
-    , bool isGhost);
+        SampleChannelProxy::Style style,
+        SampleChannelProxy::TimeUnits timeUnits,
+        SampleChannelProxy::RealTimeFormat realTimeFormat);
+
+    ChannelWidget *_CreateHwChannelWidget(ChannelBase *channel,
+        ChannelGraph *graph,
+        unsigned shortcutOrder,
+        QString const name,
+        QColor const &color,
+        bool visible,
+        QString const & units,
+        Qt::PenStyle penStyle,
+        bool isGhost);
+
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
     void _DisplayChannelValue(ChannelProxyBase *channelProxy);
     bool _IsTracked(Measurement *m);
-    SampleChannelProxy *_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget);
+    SampleChannelProxy *_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, SampleChannelWidget *widget);
     HwChannelProxy *_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget);
 
 
@@ -138,8 +151,8 @@ public:
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    SampleChannelProxy *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis, bool isGhost);
-    SampleChannelProxy *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, ChannelWidget *sourceChannelWidget);
+    SampleChannelProxy *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis);
+    SampleChannelProxy *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, SampleChannelWidget *sourceChannelWidget);
 
     HwChannelProxy *CreateHwChannelWidget(HwChannel *channel,
         Axis *valueAxis,

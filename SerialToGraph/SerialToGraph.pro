@@ -80,7 +80,8 @@ SOURCES += main.cpp\
     hw/SensorQuantity.cpp \
     graphics/ChannelProxyBase.cpp \
     graphics/SampleChannelProxy.cpp \
-    graphics/HwChannelProxy.cpp
+    graphics/HwChannelProxy.cpp \
+    graphics/SampleChannelWidget.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -138,7 +139,8 @@ HEADERS  += MainWindow.h \
     hw/SensorQuantity.h \
     graphics/ChannelProxyBase.h \
     graphics/HwChannelProxy.h \
-    graphics/SampleChannelProxy.h
+    graphics/SampleChannelProxy.h \
+    graphics/SampleChannelWidget.h
 
 CONFIG += mobility
 CONFIG += c++11

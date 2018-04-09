@@ -8,6 +8,7 @@
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
+#include <graphics/SampleChannelWidget.h>
 #include <HwChannel.h>
 #include <hw/HwSink.h>
 #include <hw/Sensor.h>
@@ -439,21 +440,18 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
         }
         else if (sampleChannel)
         {
-            m_sampleChannel = new SampleChannel(
-                this, sampleChannel->GetStyle(), sampleChannel->GetTimeUnits(), sampleChannel->GetRealTimeFormat()
-            );
+            m_sampleChannel = new SampleChannel(this);
 
-            SampleChannelProxy *channelProxy =  m_widget->CloneSampleChannelWidget(
-                m_sampleChannel,
-                sourceMeasurement->GetWidget(),
-                sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)
-            );
+            SampleChannelWidget *sampleChannelWidget =
+                dynamic_cast<SampleChannelWidget*>(sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel));
+            SampleChannelProxy *channelProxy =
+                m_widget->CloneSampleChannelWidget(m_sampleChannel, sourceMeasurement->GetWidget(), sampleChannelWidget);
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
                 channelProxy->GetWidget()->GetChannelGraph()->GetValuleAxis(),
-                m_sampleChannel->GetStyle() == SampleChannelProxy::RealTime,
-                SampleChannelProxy::GetRealTimeFormatText(m_sampleChannel->GetRealTimeFormat())
+                sampleChannelWidget->GetStyle() == SampleChannelProxy::RealTime,
+                SampleChannelProxy::GetRealTimeFormatText(sampleChannelWidget->GetRealTimeFormat())
             );
         }
 
@@ -472,14 +470,8 @@ void Measurement::_InitializeAxesAndChanels()
     Axis * xAxis = m_widget->InitializeHorizontalAxis();
     Axis * yAxis = m_widget->InitializeVerticalAxis();
 
-    m_sampleChannel =
-        new SampleChannel(
-            this,
-            SampleChannelProxy::Samples,
-            SampleChannelProxy::Sec,
-            SampleChannelProxy::hh_mm_ss
-        );
-    m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis, false);
+    m_sampleChannel = new SampleChannel(this);
+    m_widget->CreateSampleChannelWidget(m_sampleChannel, xAxis);
     m_channels.push_back(m_sampleChannel);
     m_widget->SetHorizontalChannel(this, m_sampleChannel);
 
@@ -605,7 +597,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     if (hwIndex == -1)
     {
         channel = new SampleChannel(this);
-        channelProxy = m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis, false);
+        channelProxy = m_widget->CreateSampleChannelWidget((SampleChannel*)channel, valueAxis);
         m_sampleChannel = (SampleChannel*)channel;
     }
     else

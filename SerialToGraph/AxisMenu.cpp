@@ -1,7 +1,6 @@
 #include "AxisMenu.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
 #include <MainWindow.h>
@@ -94,7 +93,7 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (axis == proxy->GetWidget()->GetChannelGraph()->GetValuleAxis())
+        if (axis == proxy->GetChannelGraph()->GetValuleAxis())
         {
             if (MyMessageBox::No ==
                 MyMessageBox::question(
@@ -113,9 +112,8 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        ChannelWidget *widget = proxy->GetWidget();
-        if (axis == widget->GetChannelGraph()->GetValuleAxis())
-            widget->GetChannelGraph()->AssignToAxis(firstVertical);
+        if (axis == proxy->GetChannelGraph()->GetValuleAxis())
+            proxy->GetChannelGraph()->AssignToAxis(firstVertical);
     }
     m_graphicsContainer->RemoveAxis(axis);
     GlobalSettings::GetInstance().SetSavedState(false);

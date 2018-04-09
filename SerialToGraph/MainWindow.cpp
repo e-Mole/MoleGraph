@@ -4,8 +4,8 @@
 #include <ButtonLine.h>
 #include <ChannelBase.h>
 #include <ChannelMenu.h>
-#include <ChannelWidget.h>
 #include <ChannelSettings.h>
+#include <ChannelWidget.h> //because of widget serialization and signals
 #include <Console.h>
 #include <file/Export.h>
 #include <file/FileDialog.h>
@@ -66,7 +66,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     setCentralWidget(m_centralWidget);
 
     m_graphicsContainerManager = new GraphicsContainerManager(m_centralWidget);
-    connect(m_graphicsContainerManager, SIGNAL(editChannel(GraphicsContainer*,ChannelWidget*)), this, SLOT(editChannel(GraphicsContainer*,ChannelWidget*)));
+    connect(m_graphicsContainerManager, SIGNAL(editChannel(GraphicsContainer*,ChannelProxyBase*)), this, SLOT(editChannel(GraphicsContainer*,ChannelProxyBase*)));
 
     m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
@@ -248,12 +248,11 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 
     foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
     {
-        ChannelWidget *w = proxy->GetWidget();
-        if (w->isGhost())
+        if (proxy->isGhost())
         {
             Measurement * originalMeasurement = proxy->GetChannelMeasurement();
             ChannelProxyBase * originalHorizontalChannelProxy = currentGC->GetHorizontalChannelProxy(originalMeasurement);
-            newGC->AddGhost(dynamic_cast<HwChannel*>(proxy->GetChannel()), currentGC, w, originalHorizontalChannelProxy->GetChannel(), true);
+            newGC->AddGhost(dynamic_cast<HwChannelProxy*>(proxy), currentGC, originalHorizontalChannelProxy->GetChannel(), true);
         }
     }
     return newMeasurement;
@@ -810,7 +809,7 @@ unsigned MainWindow::_GetGhostCount()
     {
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->GetWidget()->isGhost())
+            if (proxy->isGhost())
                 ++count;
         }
     }
@@ -827,8 +826,7 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
 
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            ChannelWidget *w = proxy->GetWidget();
-            if (w->isGhost())
+            if (proxy->isGhost())
             {
                 ChannelBase *ch = proxy->GetChannel();
                 Measurement *m = proxy->GetChannelMeasurement();
@@ -846,7 +844,7 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
                                 out << chIndex;
                                 out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
                                 out << gcIndex;
-                                out << w;
+                                out << proxy->GetWidget();
                                 break;
                             }
                         }
@@ -918,9 +916,9 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
     return true;
 }
 
-void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
+void MainWindow::editChannel(GraphicsContainer* gc, ChannelProxyBase *channelProxy)
 {
-    ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
+    ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelProxy, m_sensorManager);
     if (m_ghostCreating)
     {
         connect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));

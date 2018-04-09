@@ -1,6 +1,5 @@
 #include "HwChannel.h"
 #include <Axis.h>
-#include <ChannelWidget.h>
 #include <limits>
 #include <Measurement.h>
 #include <QColor>

@@ -11,7 +11,6 @@ namespace bases { class ComboBox; }
 namespace hw { class SensorManager; class SensorQuantity; }
 class Axis;
 class ChannelProxyBase;
-class ChannelWidget;
 class GraphicsContainer;
 class Measurement;
 class SampleChannel;
@@ -24,7 +23,7 @@ class ChannelSettings : public bases::FormDialogColor
 {
     Q_OBJECT
 
-    void _InitializeShapeCombo(ChannelWidget *channelWidget);
+    void _InitializeShapeCombo(ChannelProxyBase *channelProxy);
     void _InitializeAxisCombo();
     bool _MoveLastHorizontalToVertical();
     virtual bool BeforeAccept();
@@ -33,7 +32,7 @@ class ChannelSettings : public bases::FormDialogColor
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
     unsigned _GetCurrentValueIndex(ChannelProxyBase *channelProxy);
-    void _InitializeValueLine(ChannelWidget *channelWidget);
+    void _InitializeValueLine(ChannelProxyBase *channelProxy);
     void _InitializeGhostCombos();
     void _FillMeasurementCombo();
     void _InitializeSensorItems();
@@ -46,7 +45,6 @@ class ChannelSettings : public bases::FormDialogColor
 
     QVector<Measurement *> m_measurements;
     GraphicsContainer *m_graphicsContainer;
-    ChannelWidget *m_channelWidget;
     ChannelProxyBase *m_channelProxy;
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
@@ -68,10 +66,9 @@ class ChannelSettings : public bases::FormDialogColor
     hw::SensorManager *m_sensorManager;
 
 public:
-    ChannelSettings(
-        QVector<Measurement *> measurements,
+    ChannelSettings(QVector<Measurement *> measurements,
         GraphicsContainer *graphicsContainer,
-        ChannelWidget *channelWidget,
+        ChannelProxyBase *channelProxy,
         hw::SensorManager *sensorManager);
     GraphicsContainer *GetGraphicsContainer();
 signals:

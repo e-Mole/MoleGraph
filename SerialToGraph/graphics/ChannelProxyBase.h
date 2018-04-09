@@ -4,8 +4,11 @@
 #include <QObject>
 #include <ChannelBase.h>
 
+class ChannelGraph;
 class ChannelWidget;
+class KeyShortcut;
 class Measurement;
+class Plot;
 class ChannelProxyBase : public QObject
 {
     Q_OBJECT
@@ -23,6 +26,7 @@ class ChannelProxyBase : public QObject
 protected:
     ChannelWidget *m_channelWidget;
     ChannelBase *m_channel;
+    KeyShortcut* m_keyShortcut;
 public:
     enum DisplayValue{
         DVDelta,
@@ -58,9 +62,30 @@ public:
     ChannelBase *GetChannel() {return m_channel;}
     ChannelBase::Type GetType();
     bool IsValueNA(int index) const;
-signals:
-
-public slots:
+    void SetKeyShortcut(KeyShortcut *shortcut);
+    KeyShortcut* GetKeyShortcut() const;
+    QString GetName() const;
+    void SetName(QString const &name);
+    void UpdateTitle();
+    QColor &GetForeColor() const;
+    void SetForeColor(const QColor &color);
+    bool isVisible();
+    void SetVisible(bool visible);
+    bool isGhost();
+    ChannelGraph *GetChannelGraph();
+    bool IsDrawable();
+    bool IsOnHorizontalAxis();
+    Qt::PenStyle GetPenStyle();
+    void SetPenStyle(Qt::PenStyle penStyle);
+    QString GetNAValueString();
+    unsigned GetShapeIndex() const;
+    void SetShapeIndex(unsigned index);
+    QString GetUnits();
+    void SetUnits(QString const &units);
+    Plot* GetPlot();
+    void ShowGraph(bool show);
+    void UpdateGraph(double xValue, double yValue, bool replot);
+    void SetMinimumFontSize(unsigned sizeFactor);
 };
 
 #endif // CHANNELPROPERTIESBASE_H

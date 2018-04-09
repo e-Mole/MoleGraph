@@ -1,16 +1,19 @@
 #include "ChannelProxyBase.h"
 #include <ChannelBase.h>
+#include <ChannelGraph.h>
 #include <ChannelWidget.h>
+#include <KeyShortcut.h>
 #include <Measurement.h>
+#include <Plot.h>
 #include <QDebug>
 
 ChannelProxyBase::ChannelProxyBase(
     QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
     QObject(parent),
     m_channelWidget(channelWidget),
-    m_channel(channel)
+    m_channel(channel),
+    m_keyShortcut(NULL)
 {
-
 }
 
 ChannelWidget *ChannelProxyBase::GetWidget()
@@ -208,4 +211,123 @@ bool ChannelProxyBase::FillRangeValue(int left, int right, DisplayValue displayV
 bool ChannelProxyBase::IsValueNA(int index) const
 {
     return index >= GetValueCount() || GetValue(index) == ChannelBase::GetNaValue();
+}
+
+KeyShortcut *ChannelProxyBase::GetKeyShortcut() const
+{
+    return m_keyShortcut;
+}
+
+void ChannelProxyBase::SetKeyShortcut(KeyShortcut *shortcut)
+{
+    m_keyShortcut = shortcut;
+}
+
+QString ChannelProxyBase::GetName()const
+{
+    return m_channelWidget->GetName();
+}
+void ChannelProxyBase::SetName(QString const &name)
+{
+    m_channelWidget->SetName(name);
+}
+
+void ChannelProxyBase::UpdateTitle()
+{
+    m_channelWidget->UpdateTitle();
+}
+
+QColor &ChannelProxyBase::GetForeColor() const
+{
+    return m_channelWidget->GetForeColor();
+}
+
+void ChannelProxyBase::SetForeColor(const QColor &color)
+{
+    m_channelWidget->SetForeColor(color);
+}
+
+bool ChannelProxyBase::isVisible()
+{
+    return m_channelWidget->isVisible();
+}
+
+void ChannelProxyBase::SetVisible(bool visible)
+{
+    m_channelWidget->setVisible(visible);
+}
+
+bool ChannelProxyBase::isGhost()
+{
+    return m_channelWidget->isGhost();
+}
+
+ChannelGraph *ChannelProxyBase::GetChannelGraph()
+{
+    return m_channelWidget->GetChannelGraph();
+}
+
+bool ChannelProxyBase::IsDrawable()
+{
+   return m_channelWidget->IsDrawable();
+}
+
+bool ChannelProxyBase::IsOnHorizontalAxis()
+{
+    return m_channelWidget->IsOnHorizontalAxis();
+}
+
+Qt::PenStyle ChannelProxyBase::GetPenStyle()
+{
+    return m_channelWidget->GetPenStyle();
+}
+
+void ChannelProxyBase::SetPenStyle(Qt::PenStyle penStyle)
+{
+    m_channelWidget->SetPenStyle(penStyle);
+}
+
+QString ChannelProxyBase::GetNAValueString()
+{
+    return m_channelWidget->GetNAValueString();
+}
+
+unsigned ChannelProxyBase::GetShapeIndex() const
+{
+    return m_channelWidget->GetShapeIndex();
+}
+
+void ChannelProxyBase::SetShapeIndex(unsigned index)
+{
+    m_channelWidget->SetShapeIndex(index);
+}
+
+QString ChannelProxyBase::GetUnits()
+{
+    return m_channelWidget->GetUnits();
+}
+
+void ChannelProxyBase::SetUnits(QString const &units)
+{
+    m_channelWidget->SetUnits(units);
+}
+
+Plot* ChannelProxyBase::GetPlot()
+{
+    return m_channelWidget->GetPlot();
+}
+
+void ChannelProxyBase::ShowGraph(bool show)
+{
+    m_channelWidget->ShowGraph(show);
+}
+
+void ChannelProxyBase::UpdateGraph(double xValue, double yValue, bool replot)
+{
+    m_channelWidget->UpdateGraph(xValue, yValue, replot);
+}
+
+void ChannelProxyBase::SetMinimumFontSize(unsigned sizeFactor)
+{
+    m_channelWidget->SetMinimumFontSize(sizeFactor);
 }

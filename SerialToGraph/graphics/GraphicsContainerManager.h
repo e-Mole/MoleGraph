@@ -9,7 +9,7 @@ class HwChannelProxy;
 class Measurement;
 class GraphicsContainer;
 class ChannelBase;
-class ChannelWidget;
+class ChannelProxyBase;
 
 class GraphicsContainerManager : public QObject
 {
@@ -37,10 +37,10 @@ public:
     bool IsGhostAddable();
     ChannelBase *GetChannelForGhost(Measurement *m);
 signals:
-    void editChannel(GraphicsContainer *gc, ChannelWidget *channelWidget);
+    void editChannel(GraphicsContainer *gc, ChannelProxyBase *channelProxy);
     void editChannelRejected();
 private slots:
-    void editChannel(ChannelWidget *channelWidget);
+    void editChannel(ChannelProxyBase *channelProxy);
 public slots:
     void updateChannelSizeFactor(int factor);
 };

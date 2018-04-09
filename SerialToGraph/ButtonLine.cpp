@@ -2,7 +2,6 @@
 #include <AboutDialog.h>
 #include <Axis.h>
 #include <ChannelBase.h>
-#include <ChannelWidget.h>
 #include <GlobalSettings.h>
 #include <graphics/ChannelProxyBase.h>
 #include <MainWindow.h>
@@ -332,11 +331,10 @@ void ButtonLine::updateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-       ChannelProxyBase *channelProxyBase = m_measurement->GetWidget()->GetChannelProxy(channel);
-       ChannelWidget *channelWidget = channelProxyBase->GetWidget();
-        if (channel->GetType() == ChannelBase::Type_Hw && channelWidget->isVisible())
+        ChannelProxyBase *channelProxy = m_measurement->GetWidget()->GetChannelProxy(channel);
+        if (channel->GetType() == ChannelBase::Type_Hw && channelProxy->isVisible())
             hwChannelPresent = true;
-        if (channelWidget->IsOnHorizontalAxis() && (channelWidget->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
+        if (channelProxy->IsOnHorizontalAxis() && (channelProxy->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 

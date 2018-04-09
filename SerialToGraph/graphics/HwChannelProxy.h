@@ -16,7 +16,7 @@ public:
     HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
     virtual double GetValue(unsigned index) const;
     void ChangeValue(int index, double newValue);
-    virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget * newWidget);
+    virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newPrxoy);
     bool IsActive();
     hw::Sensor *GetSensor();
     void SetSensor(hw::Sensor *sensor);

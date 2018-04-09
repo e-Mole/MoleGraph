@@ -212,9 +212,9 @@ double SampleChannelProxy::GetValue(unsigned index) const
     return ChannelBase::GetNaValue(); //it should be never reached
 }
 
-SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
+SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget *newProxy)
 {
-    SampleChannelWidget *sampleChannelWidget = dynamic_cast<SampleChannelWidget*>(newWidget);
+    SampleChannelWidget *sampleChannelWidget = dynamic_cast<SampleChannelWidget*>(newProxy);
     if (!sampleChannelWidget)
     {
         qWarning() << "It is not possible to clone hwChannelWidget to sampleChannel Widget";

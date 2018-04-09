@@ -1,5 +1,4 @@
 #include "ChannelBase.h"
-#include <ChannelWidget.h>
 #include <cmath>
 #include <GlobalSettings.h>
 #include <Measurement.h>
@@ -20,7 +19,6 @@
 ChannelBase::ChannelBase(Measurement *measurement):
     QObject(measurement),
     m_measurement(measurement),
-    m_widget(NULL),
     m_channelMinValue(std::numeric_limits<double>::max()),
     m_channelMaxValue(-std::numeric_limits<double>::max())
 {
@@ -72,3 +70,4 @@ double ChannelBase::GetNaValue()
 {
     return std::numeric_limits<double>::infinity();
 }
+

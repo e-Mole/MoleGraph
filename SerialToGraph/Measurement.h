@@ -15,7 +15,6 @@
 #include <set>
 
 class Axis;
-class ChannelWidget;
 class GraphicsContainer;
 class HwChannel;
 class Plot;

@@ -430,9 +430,8 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             _ConnectHwChannel(newChannel);
 
             m_widget->CloneHwChannelWidget(
-                newChannel,
+                dynamic_cast<HwChannelProxy*>(sourceMeasurement->GetWidget()->GetChannelProxy(sourceChannel)),
                 sourceMeasurement->GetWidget(),
-                sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel),
                 hwIndex,
                 false);
             m_channels.push_back(newChannel);
@@ -449,7 +448,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
-                channelProxy->GetWidget()->GetChannelGraph()->GetValuleAxis(),
+                channelProxy->GetChannelGraph()->GetValuleAxis(),
                 sampleChannelWidget->GetStyle() == SampleChannelProxy::RealTime,
                 SampleChannelProxy::GetRealTimeFormatText(sampleChannelWidget->GetRealTimeFormat())
             );
@@ -616,7 +615,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
 
     in >> channelProxy->GetWidget();
     m_channels.push_back(channel);
-    if (channelProxy->GetWidget()->IsOnHorizontalAxis())
+    if (channelProxy->IsOnHorizontalAxis())
         m_widget->SetHorizontalChannel(this, channel);
 }
 

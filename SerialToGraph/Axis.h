@@ -6,7 +6,7 @@
 #include <QString>
 #include <QMetaProperty>
 
-class ChannelWidget;
+class ChannelProxyBase;
 class GraphicsContainer;
 class QCPAxis;
 class QString;
@@ -26,8 +26,8 @@ class Axis : public QObject
     void _SetIsOnRight(bool isOnRight);
     void _SetIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal;}
     void _SetIsShownName(bool isShownName);
-    void _FillChannelWidgets(std::vector<ChannelWidget *> &widgets, std::vector<GraphicsContainer *> &containers);
-    QString _GetWidgetName(GraphicsContainer *container, ChannelWidget *widget);
+    void _FillChannelProxies(std::vector<ChannelProxyBase *> &proxies, std::vector<GraphicsContainer *> &containers);
+    QString _GetChannelName(GraphicsContainer *container, ChannelProxyBase *proxy);
 
     friend class AxisCopy;
     friend class AxesDialog;
@@ -71,7 +71,7 @@ public:
 
     void UpdateVisiblility();
     void UpdateGraphAxisName();
-    bool IsEmptyExcept(ChannelWidget *except);
+    bool IsEmptyExcept(ChannelProxyBase *except);
     bool ContainsChannelWithRealTimeStyle();
     void UpdateGraphAxisStyle();
     unsigned GetAssignedChannelCountWithoutGhosts();

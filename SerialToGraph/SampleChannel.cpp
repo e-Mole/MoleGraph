@@ -1,6 +1,5 @@
 #include "SampleChannel.h"
 #include <Axis.h>
-#include <ChannelWidget.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QDateTime>

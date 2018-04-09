@@ -1,5 +1,4 @@
 #include "Export.h"
-#include <ChannelWidget.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
 #include <graphics/HwChannelProxy.h>
@@ -32,7 +31,6 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
         bool firstForMeasurement = true;
         foreach (ChannelProxyBase *channelProxy, gc->GetChannelProxies())
         {
-            ChannelWidget *channelWidget = channelProxy->GetWidget();
             HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(channelProxy);
             if (hwChannelProxy && !hwChannelProxy->IsActive()) //at least sample channel will be visible
                 continue;
@@ -55,9 +53,9 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
                 channelLine.append(SampleChannelProxy::GetSampleChannelStyleText(sampleChannelProxy->GetStyle()).toStdString() + ";");
 
             channelLine.append(
-                channelWidget->GetUnits().size() > 0 ?
-                    QString("%1 [%2]").arg(channelWidget->GetName()).arg(channelWidget->GetUnits()).toStdString().c_str() :
-                    channelWidget->GetName().toStdString().c_str()
+                channelProxy->GetUnits().size() > 0 ?
+                    QString("%1 [%2]").arg(channelProxy->GetName()).arg(channelProxy->GetUnits()).toStdString().c_str() :
+                    channelProxy->GetName().toStdString().c_str()
             );
         }
     }

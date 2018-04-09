@@ -5,6 +5,7 @@
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
@@ -52,14 +53,13 @@ QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
 ChannelSettings::ChannelSettings(
     QVector<Measurement *> measurements,
     GraphicsContainer *graphicsContainer,
-    ChannelWidget *channelWidget,
+    ChannelProxyBase *channelProxy,
     hw::SensorManager *sensorManager
 ) :
-    bases::FormDialogColor (channelWidget, tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
+    bases::FormDialogColor (channelProxy->GetWidget(), tr("Channel settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
     m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
-    m_channelWidget(channelWidget),
-    m_channelProxy(graphicsContainer->GetChannelProxy(channelWidget)),
+    m_channelProxy(channelProxy),
     m_currentValueControl(NULL),
     m_name(NULL),
     m_units(NULL),
@@ -78,23 +78,22 @@ ChannelSettings::ChannelSettings(
     m_currentValue(ChannelBase::GetNaValue()),
     m_sensorManager(sensorManager)
 {
-    if (m_channelWidget->isGhost())
+    if (m_channelProxy->isGhost())
     {
         _InitializeGhostCombos();
         AddSeparator();
     }
 
-    if (m_channelWidget->isGhost())
+    if (m_channelProxy->isGhost())
     {
         _FillMeasurementCombo();
         connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
         connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
     }
 
-    m_name = new QLineEdit(m_channelWidget->GetName(), this);
-    m_units = new QLineEdit(m_channelWidget->GetUnits(), this);
+    m_name = new QLineEdit(m_channelProxy->GetName(), this);
+    m_units = new QLineEdit(m_channelProxy->GetUnits(), this);
 
-    ChannelProxyBase *channelProxy = graphicsContainer->GetChannelProxy(channelWidget);
     if (dynamic_cast<SampleChannelProxy*>(channelProxy))
     {
         m_name->setVisible(false);
@@ -105,7 +104,7 @@ ChannelSettings::ChannelSettings(
     {
         if (dynamic_cast<HwChannelProxy*>(channelProxy))
         {
-            _InitializeValueLine(channelWidget);
+            _InitializeValueLine(channelProxy);
             AddSeparator();
             _InitializeSensorItems();
             AddSeparator();
@@ -113,10 +112,10 @@ ChannelSettings::ChannelSettings(
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
     }
-    AddColorButtonRow(channelWidget->GetForeColor());
+    AddColorButtonRow(channelProxy->GetForeColor());
     _InitializeAxisCombo();
-    _InitializeShapeCombo(channelWidget);
-    _InitializePenStyle(channelWidget->GetPenStyle());
+    _InitializeShapeCombo(channelProxy);
+    _InitializePenStyle(channelProxy->GetPenStyle());
 }
 
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
@@ -243,8 +242,7 @@ void ChannelSettings::_InitializeGhostCombos()
 
 void ChannelSettings::_FillMeasurementCombo()
 {
-    ChannelProxyBase *originalChannelProxy = m_graphicsContainer->GetChannelProxy(m_channelWidget);
-    Measurement *originalMeasurement = originalChannelProxy->GetChannelMeasurement();
+    Measurement *originalMeasurement = m_channelProxy->GetChannelMeasurement();
 
     unsigned comboIndex = 0;
     unsigned measurementIndex = ~0;
@@ -254,7 +252,6 @@ void ChannelSettings::_FillMeasurementCombo()
         if (item->GetWidget() == m_graphicsContainer)
             continue; //it is not possible to select channels from current gc
 
-        QString name = item->GetWidget()->GetName();
         m_measurementCombo->addItem(item->GetWidget()->GetName(), measurementIndex);
         if (item == originalMeasurement)
         {
@@ -270,14 +267,14 @@ void ChannelSettings::fillChannelCombo(int measurementComboIndex)
     Q_UNUSED(measurementComboIndex)
     Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
     GraphicsContainer *currentGC = currentMeasurement->GetWidget();
-    ChannelProxyBase *originalChannelProxy = m_graphicsContainer->GetChannelProxy(m_channelWidget);
+
 
     bool channelFound = false;
     for (unsigned index = 0; index < currentMeasurement->GetChannelCount(); ++index)
     {
         ChannelBase * iteratingChannel = currentMeasurement->GetChannel(index);
         m_channelCombo->addItem(currentGC->GetChannelWidget(iteratingChannel)->GetName(), index);
-        if (iteratingChannel == originalChannelProxy->GetChannel())
+        if (iteratingChannel == m_channelProxy->GetChannel())
         {
             m_channelCombo->setCurrentIndex(index);
             channelFound = true;
@@ -296,23 +293,23 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
     GraphicsContainer *originalGC = originalMeasurement->GetWidget();
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
-    ChannelWidget *originalChannelWidget = originalGC->GetChannelWidget(originalChannel);
+    ChannelProxyBase *originalChannelProxy = originalGC->GetChannelProxy(originalChannel);
 
     if (m_name)
     {
-        m_name->setText(m_graphicsContainer->GetGhostWidgetName(originalGC, originalChannelWidget));
+        m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
     }
     if (m_units)
     {
-        m_units->setText(originalChannelWidget->GetUnits());
+        m_units->setText(originalChannelProxy->GetUnits());
     }
     if (m_colorButtonWidget)
     {
-        SetColorButtonColor(originalChannelWidget->GetForeColor());
+        SetColorButtonColor(originalChannelProxy->GetForeColor());
     }
     if (m_shapeComboBox)
     {
-        m_shapeComboBox->setCurrentIndex(originalChannelWidget->GetChannelGraph()->GetShapeIndex());
+        m_shapeComboBox->setCurrentIndex(originalChannelProxy->GetChannelGraph()->GetShapeIndex());
     }
 }
 
@@ -324,9 +321,8 @@ unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
         channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
 }
 
-void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
+void ChannelSettings::_InitializeValueLine(ChannelProxyBase *channelProxy)
 {
-    ChannelProxyBase *channelProxy = m_graphicsContainer->GetChannelProxy(channelWidget);
     QHBoxLayout *curValLayout = new QHBoxLayout();
     m_currentValueControl = new QLineEdit(this);
     curValLayout->addWidget(m_currentValueControl);
@@ -344,7 +340,7 @@ void ChannelSettings::_InitializeValueLine(ChannelWidget *channelWidget)
     {
         QLocale locale(QLocale::system());
         QString currentValueStr = (channelProxy->IsValueNA(currentIndex)) ?
-            channelWidget->GetNAValueString() : locale.toString(channelProxy->GetValue(currentIndex));
+            channelProxy->GetNAValueString() : locale.toString(channelProxy->GetValue(currentIndex));
 
         m_currentValueControl->setText(currentValueStr);
     }
@@ -452,7 +448,7 @@ bool ChannelSettings::_AxisCheckForRealTimeMode()
     if (m_style != NULL && m_style->currentData().toBool()) //channel with realtime style
     {
         Axis *axis = ((Axis *)m_axisComboBox->currentData().toLongLong());
-        if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channelWidget))
+        if (!axis->IsHorizontal() && !axis->IsEmptyExcept(m_channelProxy))
         {
             MyMessageBox::critical(
                 this,
@@ -473,7 +469,7 @@ bool ChannelSettings::BeforeAccept()
     bool rescaleAxis = false;
 
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
-    if (m_channelWidget->GetChannelGraph()->GetValuleAxis() != axis)
+    if (m_channelProxy->GetChannelGraph()->GetValuleAxis() != axis)
     {
         if (axis->IsHorizontal())
         {
@@ -483,8 +479,8 @@ bool ChannelSettings::BeforeAccept()
             changedHorizontal = true;
         }
 
-        Axis *lastAxis = m_channelWidget->GetChannelGraph()->GetValuleAxis();
-        m_channelWidget->GetChannelGraph()->AssignToAxis(axis);
+        Axis *lastAxis = m_channelProxy->GetChannelGraph()->GetValuleAxis();
+        m_channelProxy->GetChannelGraph()->AssignToAxis(axis);
         lastAxis->UpdateGraphAxisName();
         lastAxis->UpdateGraphAxisStyle();
         lastAxis->UpdateVisiblility();
@@ -509,22 +505,22 @@ bool ChannelSettings::BeforeAccept()
         unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
         hwChannelProxy->ChangeValue(currentIndex, m_currentValue);
     }
-    if (m_channelWidget->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
+    if (m_channelProxy->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
     {
         changed = true;
-        m_channelWidget->SetName(m_name->text());
+        m_channelProxy->SetName(m_name->text());
     }
 
-    if (m_channelWidget->GetForeColor() != m_color)
+    if (m_channelProxy->GetForeColor() != m_color)
     {
         changed = true;
-        m_channelWidget->SetForeColor(m_color);
+        m_channelProxy->SetForeColor(m_color);
     }
 
-    if (m_channelWidget->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentData().toInt())
+    if (m_channelProxy->GetChannelGraph()->GetShapeIndex() != (unsigned)m_shapeComboBox->currentData().toInt())
     {
         changed = true;
-        m_channelWidget->SetShapeIndex(m_shapeComboBox->currentData().toInt());
+        m_channelProxy->SetShapeIndex(m_shapeComboBox->currentData().toInt());
         rescaleAxis = true;
 
     }
@@ -552,31 +548,31 @@ bool ChannelSettings::BeforeAccept()
     }
     else
     {
-        if (m_channelWidget->GetUnits() != m_units->text())
+        if (m_channelProxy->GetUnits() != m_units->text())
         {
             changed = true;
-            m_channelWidget->SetUnits(m_units->text());
+            m_channelProxy->SetUnits(m_units->text());
         }
     }
 
-    if (m_penStyle->currentIndex() != (int)m_channelWidget->GetPenStyle())
+    if (m_penStyle->currentIndex() != (int)m_channelProxy->GetPenStyle())
     {
         changed = true;
-        m_channelWidget->SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
+        m_channelProxy->SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
         rescaleAxis = true;
     }
 
-    if (m_channelWidget->isGhost())
+    if (m_channelProxy->isGhost())
     {
         Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
         GraphicsContainer *originalGC = originalMeasurement->GetWidget();
         ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
 
-        if (m_graphicsContainer->GetChannelProxy(m_channelWidget)->GetChannel() != originalChannel)
+        if (m_channelProxy->GetChannel() != originalChannel)
         {
             //FIXME: is it removed somewhere?
             m_graphicsContainer->SetHorizontalChannel(originalMeasurement, originalGC->GetHorizontalChannelProxy(originalMeasurement)->GetChannel());
-            m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelWidget);
+            m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelProxy);
         }
     }
 
@@ -616,10 +612,10 @@ bool ChannelSettings::BeforeAccept()
         GlobalSettings::GetInstance().SetSavedState(false);
         if (changedHorizontal)
         {
-            m_channelWidget->UpdateTitle();
+            m_channelProxy->UpdateTitle();
         }
 
-        m_channelWidget->GetPlot()->ReplotIfNotDisabled();
+        m_channelProxy->GetPlot()->ReplotIfNotDisabled();
 
     }
 
@@ -630,16 +626,15 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
 {
     foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        ChannelWidget *widget = proxy->GetWidget();
         //find last horizontal axis
-        if (widget->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
+        if (proxy->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
         {
-            AxisChooseDialog dialog(this, m_graphicsContainer, widget, m_channelWidget);
+            AxisChooseDialog dialog(this, m_graphicsContainer, proxy, m_channelProxy);
             if (QDialog::Rejected != dialog.exec())
             {
-                m_channelWidget->ShowGraph(false);
+                m_channelProxy->ShowGraph(false);
                 m_graphicsContainer->SetHorizontalChannel(
-                    m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel(), widget);
+                    m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel(), proxy);
                 return true;
             }
             return false;
@@ -650,7 +645,7 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
     return false; //it should never reach this point
 }
 
-void ChannelSettings::_InitializeShapeCombo(ChannelWidget *channelWidget)
+void ChannelSettings::_InitializeShapeCombo(ChannelProxyBase *channelProxy)
 {
     m_shapeComboBox = new bases::ComboBox(this);
     m_shapeComboBox->addItem(tr("None"), 0);
@@ -668,16 +663,16 @@ void ChannelSettings::_InitializeShapeCombo(ChannelWidget *channelWidget)
     m_shapeComboBox->addItem(tr("Cross and Circle"), 13);
     m_shapeComboBox->addItem(tr("Plus and Circle"), 14);
     m_shapeComboBox->addItem(tr("Peace"), 15);
-    if (channelWidget->GetChannelGraph()->GetShapeIndex() == 0)
+    if (channelProxy->GetChannelGraph()->GetShapeIndex() == 0)
     {
         m_shapeComboBox->setCurrentIndex(0);
     }
     else
     {
-        m_shapeComboBox->setCurrentIndex(channelWidget->GetChannelGraph()->GetShapeIndex() - 1); //skip dot
+        m_shapeComboBox->setCurrentIndex(channelProxy->GetChannelGraph()->GetShapeIndex() - 1); //skip dot
     }
 
-    m_shapeComboBox->setEnabled(!channelWidget->IsOnHorizontalAxis());
+    m_shapeComboBox->setEnabled(!channelProxy->IsOnHorizontalAxis());
     m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
 }
 
@@ -689,7 +684,7 @@ void ChannelSettings::_RefillAxisCombo()
     foreach (Axis *axis, m_graphicsContainer->GetAxes())
     {
         bool valid =
-                m_channelWidget->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
+                m_channelProxy->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
                 axis->IsHorizontal(); //as same as to horizontal
 
 
@@ -701,7 +696,7 @@ void ChannelSettings::_RefillAxisCombo()
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
         }
 
-        if (valid && axis->IsHorizontal() && m_channelWidget->isGhost())
+        if (valid && axis->IsHorizontal() && m_channelProxy->isGhost())
             valid = false;
 
         if (valid)
@@ -709,7 +704,7 @@ void ChannelSettings::_RefillAxisCombo()
     }
 
     m_axisComboBox->setCurrentIndex(
-        m_axisComboBox->findData((qlonglong)(m_channelWidget->GetChannelGraph()->GetValuleAxis())));
+        m_axisComboBox->findData((qlonglong)(m_channelProxy->GetChannelGraph()->GetValuleAxis())));
     connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
 }
 void ChannelSettings::_InitializeAxisCombo()
@@ -717,7 +712,7 @@ void ChannelSettings::_InitializeAxisCombo()
     m_axisComboBox = new bases::ComboBox(this);
     _RefillAxisCombo();
 
-    if (m_channelWidget->IsOnHorizontalAxis())
+    if (m_channelProxy->IsOnHorizontalAxis())
         m_axisComboBox->setEnabled(false);
     else
         m_axisComboBox->setEnabled(true);
@@ -728,7 +723,7 @@ void ChannelSettings::axisChanged(int index)
 {
     if (0 == index) //New Axis...
     {
-        Axis*newAxis = m_graphicsContainer->CreateYAxis(m_channelWidget->GetForeColor());
+        Axis*newAxis = m_graphicsContainer->CreateYAxis(m_channelProxy->GetForeColor());
 
         AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
         if (QDialog::Accepted == dialog.exec())

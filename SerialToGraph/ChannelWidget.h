@@ -81,7 +81,7 @@ public:
     void UpdateTitle();
     static QString GetNAValueString();
     void DisplayNAValue(ChannelBase::ValueType type);
-    QColor &GetForeColor() { return m_valueLabel->GetForeColor(); }
+    QColor &GetForeColor() const { return m_valueLabel->GetForeColor(); }
     void FillLastValueText(const QString &text);
     void FillLastValueText(double value);
     Qt::PenStyle GetPenStyle();

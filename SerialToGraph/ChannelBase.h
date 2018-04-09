@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QObject>
 
-class ChannelWidget;
 class Measurement;
 class QString;
 
@@ -37,7 +36,6 @@ protected:
     void _RecalculateExtremes();
 
     Measurement * m_measurement;
-    ChannelWidget *m_widget;
     QVector<double> m_values;
     double m_channelMinValue;
     double m_channelMaxValue;

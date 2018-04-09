@@ -1,6 +1,6 @@
 #include "Plot.h"
 #include <Axis.h>
-#include <ChannelWidget.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <qmath.h>
 #include <QColor>
@@ -466,8 +466,7 @@ void Plot::RescaleAxis(QCPAxis *axis)
     bool processedAtLeasOne = false;
     foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        ChannelWidget *widget = channelProxy->GetWidget();
-        if (!widget->IsDrawable() || widget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
+        if (!channelProxy->IsDrawable() || channelProxy->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
             continue;
 
         processedAtLeasOne = true;
@@ -542,15 +541,14 @@ void Plot::RefillGraphs()
 {
     foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        ChannelWidget *channelWidget = channelProxy->GetWidget();
-        channelWidget->GetChannelGraph()->clearData();
+        channelProxy->GetChannelGraph()->clearData();
         ChannelProxyBase * horizontalChannelProxy = m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
         for (unsigned i = 0; i < channelProxy->GetValueCount(); i++) //untracked channels have no values
         {
             if (channelProxy->IsValueNA(i) || horizontalChannelProxy->IsValueNA(i))
                 continue;
 
-            channelWidget->GetChannelGraph()->data()->insert(
+            channelProxy->GetChannelGraph()->data()->insert(
                 horizontalChannelProxy->GetValue(i),
                 QCPData(horizontalChannelProxy->GetValue(i), channelProxy->GetValue(i))
             );
@@ -702,7 +700,7 @@ void Plot::RedrawChannelMarks(int position)
 {
     double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
     foreach (ChannelProxyBase * channelProxy, m_graphicsContainer->GetChannelProxies())
-        channelProxy->GetWidget()->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
+        channelProxy->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
 }
 
 Axis *Plot::GetHorizontalAxis()

@@ -1,8 +1,8 @@
 #include "AxisChooseDialog.h"
 #include <Axis.h>
 #include <AxisSettings.h>
-#include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/SampleChannelProxy.h>
 #include <ChannelGraph.h>
@@ -15,16 +15,15 @@
 #include <QWidget>
 
 
-AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsContainer, ChannelWidget *originalHorizontalChannelWidget, ChannelWidget *newHorizontalChannelWidget) :
-    QDialog(parent),   
+AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsContainer, ChannelProxyBase *originalHorizontalChannelProxy, ChannelProxyBase *newHorizontalChannelProxy) :
+    QDialog(parent),
     m_graphicsContainer(graphicsContainer),
-    m_originalHorizontalChannelWidget(originalHorizontalChannelWidget),
-    m_newHorizontalChannelWidget(newHorizontalChannelWidget),
+    m_originalHorizontalChannelProxy(originalHorizontalChannelProxy),
+    m_newHorizontalChannelProxy(newHorizontalChannelProxy),
     m_isOriginalChannelRealTime(false),
     m_newAxis(NULL)
 {
-    ChannelProxyBase *proxy = m_graphicsContainer->GetChannelProxy(originalHorizontalChannelWidget);
-    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(proxy);
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(originalHorizontalChannelProxy);
     m_isOriginalChannelRealTime = sampleChannelProxy && (sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime);
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -33,13 +32,13 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
     {
         text =
             QString(tr("There might be just one channel on a horizontal axis. Values of a hannel '%1' are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.")).
-                arg(proxy->GetWidget()->GetName());
+                arg(originalHorizontalChannelProxy->GetName());
     }
     else
     {
         text =
             QString(tr("There might be just one channel on a horizontal axis. Please, chose a different one for a channel '%1'.")).
-                arg(proxy->GetWidget()->GetName());
+                arg(originalHorizontalChannelProxy->GetName());
     }
 
     QLabel *label = new QLabel(text, this);
@@ -52,10 +51,10 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
 
     foreach (Axis *axis, m_graphicsContainer->GetAxes())
     {
-        if (axis == proxy->GetWidget()->GetChannelGraph()->GetValuleAxis())
+        if (axis == originalHorizontalChannelProxy->GetChannelGraph()->GetValuleAxis())
             continue;
 
-        if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHorizontalChannelWidget))
+        if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHorizontalChannelProxy))
             continue;
 
         QRadioButton *rb = new QRadioButton(axis->GetTitle(), this);
@@ -68,13 +67,13 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
 
 void AxisChooseDialog::newAxisSelected()
 {
-    Axis*newAxis = m_graphicsContainer->CreateYAxis(m_originalHorizontalChannelWidget->GetForeColor());
+    Axis*newAxis = m_graphicsContainer->CreateYAxis(m_originalHorizontalChannelProxy->GetForeColor());
 
     AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         GlobalSettings::GetInstance().SetSavedState(false);
-        m_originalHorizontalChannelWidget->GetChannelGraph()->AssignToAxis(newAxis);
+        m_originalHorizontalChannelProxy->GetChannelGraph()->AssignToAxis(newAxis);
         accept();
     }
     else
@@ -87,7 +86,7 @@ void AxisChooseDialog::axisSelected()
     {
         if (it.key() == (QRadioButton *)sender())
         {
-            ChannelGraph *channelGraph = m_originalHorizontalChannelWidget->GetChannelGraph();
+            ChannelGraph *channelGraph = m_originalHorizontalChannelProxy->GetChannelGraph();
             channelGraph->AssignToAxis(it.value());
             break;
         }

@@ -21,7 +21,7 @@ namespace atog
 template <class T>
 QDataStream &operator<<(QDataStream &out, T *t)
 {
-    for(int i=0; i<t->metaObject()->propertyCount(); ++i)
+    for(int i=0; i < t->metaObject()->propertyCount(); ++i)
     {
         if(t->metaObject()->property(i).isStored(t))
         {

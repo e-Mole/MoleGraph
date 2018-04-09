@@ -11,7 +11,6 @@
 #include <QPair>
 #include <QMap>
 
-class ChannelWidget;
 class GraphicsContainer;
 class QColor;
 class QEvent;

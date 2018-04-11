@@ -165,11 +165,6 @@ ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelBase *channel)
     return NULL;
 }
 
-ChannelProxyBase *GraphicsContainer::GetChannelProxy(unsigned index)
-{
-    return m_channelProxies[index];
-}
-
 void GraphicsContainer::ReplaceChannelForWidget(ChannelBase *channel, ChannelProxyBase *channelProxy)
 {
     channelProxy->ChangeChannel(channel);
@@ -1133,7 +1128,7 @@ bool GraphicsContainer::_IsTracked(Measurement *m)
 {
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        if (channelProxy->isGhost() && channelProxy->GetChannelMeasurement() == m)
+        if (channelProxy->IsGhost() && channelProxy->GetChannelMeasurement() == m)
         {
             return true;
         }

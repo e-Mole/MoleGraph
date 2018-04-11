@@ -78,14 +78,11 @@ ChannelSettings::ChannelSettings(
     m_currentValue(ChannelBase::GetNaValue()),
     m_sensorManager(sensorManager)
 {
-    if (m_channelProxy->isGhost())
+    if (m_channelProxy->IsGhost())
     {
         _InitializeGhostCombos();
         AddSeparator();
-    }
 
-    if (m_channelProxy->isGhost())
-    {
         _FillMeasurementCombo();
         connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
         connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
@@ -562,7 +559,7 @@ bool ChannelSettings::BeforeAccept()
         rescaleAxis = true;
     }
 
-    if (m_channelProxy->isGhost())
+    if (m_channelProxy->IsGhost())
     {
         Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
         GraphicsContainer *originalGC = originalMeasurement->GetWidget();
@@ -696,7 +693,7 @@ void ChannelSettings::_RefillAxisCombo()
                 valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
         }
 
-        if (valid && axis->IsHorizontal() && m_channelProxy->isGhost())
+        if (valid && axis->IsHorizontal() && m_channelProxy->IsGhost())
             valid = false;
 
         if (valid)

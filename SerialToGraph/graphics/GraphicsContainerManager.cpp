@@ -86,8 +86,9 @@ HwChannelProxy * GraphicsContainerManager::AddGhost(
         return NULL;
     }
 
+    ChannelBase *sourceChannel = sourceMeasurement->GetChannel(sourceValueChannelIndex);
     return destGraphicsContainer->AddGhost(
-        dynamic_cast<HwChannelProxy *>(sourceGraphicsContainer->GetChannelProxy(sourceValueChannelIndex)),
+        dynamic_cast<HwChannelProxy *>(sourceGraphicsContainer->GetChannelProxy(sourceChannel)),
         sourceGraphicsContainer,
         sourceMeasurement->GetChannel(sourceHorizontalChannelIndex),
         confirmed
@@ -105,7 +106,7 @@ bool GraphicsContainerManager::HaveMeasurementGhosts(Measurement *m)
     {
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->isGhost() && proxy->GetChannelMeasurement() == m)
+            if (proxy->IsGhost() && proxy->GetChannelMeasurement() == m)
             {
                 return true;
             }
@@ -120,7 +121,7 @@ void GraphicsContainerManager::RemoveGhosts(Measurement *m)
     {
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->isGhost() && proxy->GetChannelMeasurement() == m)
+            if (proxy->IsGhost() && proxy->GetChannelMeasurement() == m)
             {
                 gc->RemoveChannelProxy(proxy);
             }

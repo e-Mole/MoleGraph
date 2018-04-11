@@ -248,7 +248,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 
     foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
     {
-        if (proxy->isGhost())
+        if (proxy->IsGhost())
         {
             Measurement * originalMeasurement = proxy->GetChannelMeasurement();
             ChannelProxyBase * originalHorizontalChannelProxy = currentGC->GetHorizontalChannelProxy(originalMeasurement);
@@ -809,7 +809,7 @@ unsigned MainWindow::_GetGhostCount()
     {
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->isGhost())
+            if (proxy->IsGhost())
                 ++count;
         }
     }
@@ -826,7 +826,7 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
 
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->isGhost())
+            if (proxy->IsGhost())
             {
                 ChannelBase *ch = proxy->GetChannel();
                 Measurement *m = proxy->GetChannelMeasurement();
@@ -911,7 +911,9 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
         in >> ghostProxy->GetWidget();
         //FIXME: just two is necessary to update (value + horizontal)
         destGC->UpdateAxes();
+        destGC->replaceDisplays();
     }
+
 
     return true;
 }

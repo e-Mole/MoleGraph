@@ -68,7 +68,7 @@ void ChannelWidget::_InitTitle()
             arg(0x0).
             arg(0x00).
             arg(0x00).
-            arg(isGhost() ? GHOST_TRANSPARENCY : 0xff);
+            arg(IsGhost() ? GHOST_TRANSPARENCY : 0xff);
 
     m_title->setStyleSheet(style);
 }
@@ -391,7 +391,7 @@ bool ChannelWidget::isVisible()
 
 bool ChannelWidget::IsDrawable()
 {
-    return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
+    return true;//isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }
 
 void ChannelWidget::SetVisible(bool visible)

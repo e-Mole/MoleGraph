@@ -184,7 +184,6 @@ public:
     void RejectGhostChannel();
     ChannelProxyBase *GetChannelProxy(ChannelBase *channel);
     ChannelProxyBase *GetChannelProxy(ChannelWidget *widget);
-    ChannelProxyBase *GetChannelProxy(unsigned index);
     int GetLastHorizontalValueIndex(Measurement *m, unsigned markerPosition);
 signals:
     void resized();

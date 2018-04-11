@@ -110,7 +110,7 @@ void ChannelMenu::_AddChannel(ChannelProxyBase *channelProxy)
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(editButton, rowNr, 2);
 
-    if (channelProxy->isGhost())
+    if (channelProxy->IsGhost())
     {
         QPushButton *removeButton = new QPushButton(tr("Remove"), this);
         m_editChannels[removeButton] = channelProxy;

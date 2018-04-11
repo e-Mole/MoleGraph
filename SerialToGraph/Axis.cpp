@@ -87,7 +87,7 @@ void Axis::_FillChannelProxies(std::vector<ChannelProxyBase *> &proxies, std::ve
             std::vector<GraphicsContainer *> ghostContainers;
             foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
             {
-                if (!proxy->isGhost() || !proxy->IsDrawable())
+                if (!proxy->IsGhost() || !proxy->IsDrawable())
                 {
                     continue;
                 }
@@ -289,7 +289,7 @@ unsigned Axis::GetAssignedChannelCountWithoutGhosts()
     unsigned count = 0;
     foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (!proxy->isGhost() && proxy->GetChannelGraph()->GetValuleAxis() == this)
+        if (!proxy->IsGhost() && proxy->GetChannelGraph()->GetValuleAxis() == this)
         {
             count++;
         }

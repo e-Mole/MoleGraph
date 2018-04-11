@@ -254,12 +254,12 @@ bool ChannelProxyBase::isVisible()
 
 void ChannelProxyBase::SetVisible(bool visible)
 {
-    m_channelWidget->setVisible(visible);
+    m_channelWidget->SetVisible(visible);
 }
 
-bool ChannelProxyBase::isGhost()
+bool ChannelProxyBase::IsGhost()
 {
-    return m_channelWidget->isGhost();
+    return m_channelWidget->IsGhost();
 }
 
 ChannelGraph *ChannelProxyBase::GetChannelGraph()

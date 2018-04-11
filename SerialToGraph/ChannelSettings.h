@@ -49,8 +49,9 @@ class ChannelSettings : public bases::FormDialogColor
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;
-    bases::ComboBox * m_measurementCombo;
-    bases::ComboBox * m_channelCombo;
+    bases::ComboBox * m_sourceMeasurementCombo;
+    bases::ComboBox * m_sourceChannelCombo;
+    bases::ComboBox * m_sourceHorizontalChannelCombo;
     bases::ComboBox * m_shapeComboBox;
     bases::ComboBox * m_axisComboBox;
     bases::ComboBox * m_style;
@@ -79,7 +80,7 @@ private slots:
     void currentValueChanged(QString const &content);
     void setOriginalValue(bool checked);
     void setNaValue(bool);
-    void fillChannelCombo(int measurementComboIndex);
+    void fillChannelCombos(int measurementComboIndex);
     void loadFromOriginalWidget(int channelComboIndex);
     void sensorQualityChanged(int index);
     void sensorNameChanged(int index);

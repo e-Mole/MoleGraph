@@ -63,8 +63,9 @@ ChannelSettings::ChannelSettings(
     m_currentValueControl(NULL),
     m_name(NULL),
     m_units(NULL),
-    m_measurementCombo(NULL),
-    m_channelCombo(NULL),
+    m_sourceMeasurementCombo(NULL),
+    m_sourceChannelCombo(NULL),
+    m_sourceHorizontalChannelCombo(NULL),
     m_shapeComboBox(NULL),
     m_axisComboBox(NULL),
     m_style(NULL),
@@ -84,8 +85,8 @@ ChannelSettings::ChannelSettings(
         AddSeparator();
 
         _FillMeasurementCombo();
-        connect(m_measurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombo(int)));
-        connect(m_channelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
+        connect(m_sourceMeasurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombos(int)));
+        connect(m_sourceChannelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
     }
 
     m_name = new QLineEdit(m_channelProxy->GetName(), this);
@@ -230,11 +231,14 @@ void ChannelSettings::sensorQualityChanged(int index)
 
 void ChannelSettings::_InitializeGhostCombos()
 {
-    m_measurementCombo = new bases::ComboBox(this);
-    m_formLayout->addRow(new QLabel(tr("Measurement"), this), m_measurementCombo);
+    m_sourceMeasurementCombo = new bases::ComboBox(this);
+    m_formLayout->addRow(new QLabel(tr("Source Measurement"), this), m_sourceMeasurementCombo);
 
-    m_channelCombo = new bases::ComboBox(this);
-    m_formLayout->addRow(new QLabel(tr("Channel"), this), m_channelCombo);
+    m_sourceChannelCombo = new bases::ComboBox(this);
+    m_formLayout->addRow(new QLabel(tr("Source Channel"), this), m_sourceChannelCombo);
+
+    m_sourceHorizontalChannelCombo = new bases::ComboBox(this);
+    m_formLayout->addRow(new QLabel(tr("Source Horizontal Channel"), this), m_sourceHorizontalChannelCombo);
 }
 
 void ChannelSettings::_FillMeasurementCombo()
@@ -249,47 +253,55 @@ void ChannelSettings::_FillMeasurementCombo()
         if (item->GetWidget() == m_graphicsContainer)
             continue; //it is not possible to select channels from current gc
 
-        m_measurementCombo->addItem(item->GetWidget()->GetName(), measurementIndex);
+        m_sourceMeasurementCombo->addItem(item->GetWidget()->GetName(), measurementIndex);
         if (item == originalMeasurement)
         {
-            m_measurementCombo->setCurrentIndex(comboIndex);
-            fillChannelCombo(comboIndex);
+            m_sourceMeasurementCombo->setCurrentIndex(comboIndex);
+            fillChannelCombos(comboIndex);
         }
         comboIndex++;
     }
 }
 
-void ChannelSettings::fillChannelCombo(int measurementComboIndex)
+void ChannelSettings::fillChannelCombos(int measurementComboIndex)
 {
     Q_UNUSED(measurementComboIndex)
-    Measurement *currentMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
-    GraphicsContainer *currentGC = currentMeasurement->GetWidget();
+    Measurement *sourceMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
+    GraphicsContainer *sourceGC = sourceMeasurement->GetWidget();
 
 
     bool channelFound = false;
-    for (unsigned index = 0; index < currentMeasurement->GetChannelCount(); ++index)
+    for (unsigned index = 0; index < sourceMeasurement->GetChannelCount(); ++index)
     {
-        ChannelBase * iteratingChannel = currentMeasurement->GetChannel(index);
-        m_channelCombo->addItem(currentGC->GetChannelWidget(iteratingChannel)->GetName(), index);
+        ChannelBase * iteratingChannel = sourceMeasurement->GetChannel(index);
+        QString channelName = sourceGC->GetChannelProxy(iteratingChannel)->GetName();
+        m_sourceChannelCombo->addItem(channelName, index);
+        m_sourceHorizontalChannelCombo->addItem(channelName, index);
+
         if (iteratingChannel == m_channelProxy->GetChannel())
         {
-            m_channelCombo->setCurrentIndex(index);
+            m_sourceChannelCombo->setCurrentIndex(index);
             channelFound = true;
+        }
+
+        if (iteratingChannel == sourceGC->GetHorizontalChannelProxy()->GetChannel())
+        {
+            m_sourceHorizontalChannelCombo->setCurrentIndex(index);
         }
     }
     if (!channelFound)
     {
-        m_channelCombo->setCurrentIndex(1); //skip samples
+        m_sourceChannelCombo->setCurrentIndex(1); //skip samples
     }
-    loadFromOriginalWidget(m_channelCombo->currentIndex());
+    loadFromOriginalWidget(m_sourceChannelCombo->currentIndex());
 }
 
 void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
 {
     Q_UNUSED(channelComboIndex)
-    Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
+    Measurement *originalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
     GraphicsContainer *originalGC = originalMeasurement->GetWidget();
-    ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
+    ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
     ChannelProxyBase *originalChannelProxy = originalGC->GetChannelProxy(originalChannel);
 
     if (m_name)
@@ -561,9 +573,9 @@ bool ChannelSettings::BeforeAccept()
 
     if (m_channelProxy->IsGhost())
     {
-        Measurement *originalMeasurement = m_measurements[m_measurementCombo->currentData().toInt()];
+        Measurement *originalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
         GraphicsContainer *originalGC = originalMeasurement->GetWidget();
-        ChannelBase *originalChannel = originalMeasurement->GetChannel(m_channelCombo->currentData().toInt());
+        ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
 
         if (m_channelProxy->GetChannel() != originalChannel)
         {

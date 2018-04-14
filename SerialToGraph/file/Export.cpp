@@ -49,7 +49,7 @@ void Export::_WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphic
                 measurementLine.append(gc->GetName().toStdString());
             }
             SampleChannelProxy *sampleChannelProxy = gc->GetSampleChannelProxy();
-            if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProxy::Samples)
+            if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProperties::Samples)
                 channelLine.append(SampleChannelProxy::GetSampleChannelStyleText(sampleChannelProxy->GetStyle()).toStdString() + ";");
 
             channelLine.append(
@@ -93,7 +93,7 @@ void Export::_WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsC
                 haveData = true;
 
                 SampleChannelProxy *sampleChannelProxy = gc->GetSampleChannelProxy();
-                if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProxy::Samples)
+                if (channelProxy == sampleChannelProxy && sampleChannelProxy->GetStyle() != SampleChannelProperties::Samples)
                     lineContent.append(QString("%1;").arg(sampleNr).toStdString());
 
                 lineContent.append(_GetValueText(gc, channelProxy, sampleNr).toStdString());
@@ -122,7 +122,7 @@ void Export::ToCsv(QString const &fileName, std::vector<GraphicsContainer *> &gr
 QString Export::_GetValueText(GraphicsContainer *gc, ChannelProxyBase *channelProxy, unsigned sampleNr)
 {
     SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(channelProxy);
-    if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
+    if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProperties::RealTime)
     {
         return gc->GetValueTimestamp(sampleChannelProxy, sampleNr);
     }

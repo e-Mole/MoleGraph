@@ -12,11 +12,12 @@ namespace hw {class Sensor; class SensorQuantity; }
 class HwChannelProxy : public ChannelProxyBase
 {
     HwChannel *_GetChannel() const;
+    ChannelProperties *_GetChannelProperties();
 public:
-    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
+    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties);
     virtual double GetValue(unsigned index) const;
     void ChangeValue(int index, double newValue);
-    virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newPrxoy);
+    virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);
     bool IsActive();
     hw::Sensor *GetSensor();
     void SetSensor(hw::Sensor *sensor);

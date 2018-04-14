@@ -24,7 +24,7 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
     m_newAxis(NULL)
 {
     SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(originalHorizontalChannelProxy);
-    m_isOriginalChannelRealTime = sampleChannelProxy && (sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime);
+    m_isOriginalChannelRealTime = sampleChannelProxy && (sampleChannelProxy->GetStyle() == SampleChannelProperties::RealTime);
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     QString text;

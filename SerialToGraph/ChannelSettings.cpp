@@ -8,6 +8,7 @@
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
+#include <graphics/SampleChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
@@ -60,71 +61,85 @@ ChannelSettings::ChannelSettings(
     m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
     m_channelProxy(channelProxy),
-    m_currentValueControl(NULL),
-    m_name(NULL),
-    m_units(NULL),
-    m_sourceMeasurementCombo(NULL),
-    m_sourceChannelCombo(NULL),
-    m_sourceHorizontalChannelCombo(NULL),
-    m_shapeComboBox(NULL),
-    m_axisComboBox(NULL),
-    m_style(NULL),
-    m_timeUnits(NULL),
-    m_format(NULL),
-    m_penStyle(NULL),
-    m_sensorQuantityComboBox(NULL),
-    m_sensorNameComboBox(NULL),
-    m_sensorPortComboBox(NULL),
+    m_currentValueControl(new QLineEdit(this)),
+    m_name(new QLineEdit(m_channelProxy->GetName(), this)),
+    m_units(new QLineEdit(m_channelProxy->GetUnits(), this)),
+    m_sourceMeasurementCombo(new bases::ComboBox(this)),
+    m_sourceChannelCombo(new bases::ComboBox(this)),
+    m_shapeComboBox(new bases::ComboBox(this)),
+    m_axisComboBox(new bases::ComboBox(this)),
+    m_style(new bases::ComboBox(this)),
+    m_timeUnits(new bases::ComboBox(this)),
+    m_format(new bases::ComboBox(this)),
+    m_penStyle(new bases::ComboBox(this)),
+    m_sensorQuantityComboBox(new bases::ComboBox(this)),
+    m_sensorNameComboBox(new bases::ComboBox(this)),
+    m_sensorPortComboBox(new bases::ComboBox(this)),
+    m_originlValue(new QPushButton(tr("Original"), this)),
+    m_naValue(new QPushButton(tr("n/a"), this)),
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
-    m_sensorManager(sensorManager)
+    m_sensorManager(sensorManager),
+    m_originalProxyChanged(false)
 {
+    _HideAllOptional();
+
     if (m_channelProxy->IsGhost())
     {
         _InitializeGhostCombos();
-        AddSeparator();
-
-        _FillMeasurementCombo();
         connect(m_sourceMeasurementCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(fillChannelCombos(int)));
         connect(m_sourceChannelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
     }
 
-    m_name = new QLineEdit(m_channelProxy->GetName(), this);
-    m_units = new QLineEdit(m_channelProxy->GetUnits(), this);
-
     if (dynamic_cast<SampleChannelProxy*>(channelProxy))
     {
-        m_name->setVisible(false);
-        _InitializeTimeFeatures();
-        AddSeparator();
+        _InitializeTimeFeatures(dynamic_cast<SampleChannelProxy*>(channelProxy));
     }
-    else
+
+    if (dynamic_cast<HwChannelProxy*>(channelProxy) || m_channelProxy->IsGhost())
     {
-        if (dynamic_cast<HwChannelProxy*>(channelProxy))
-        {
-            _InitializeValueLine(channelProxy);
-            AddSeparator();
-            _InitializeSensorItems();
-            AddSeparator();
-        }
+
+        _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
+        _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
+        AddSeparator();
+
+        m_name->setVisible(true);
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
+        m_units->setVisible(true);
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+
     }
     AddColorButtonRow(channelProxy->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelProxy);
     _InitializePenStyle(channelProxy->GetPenStyle());
+    m_originalProxyChanged = false;
 }
 
-void ChannelSettings::_InitializeSensorItem(bases::ComboBox **item, QString const &label, const char* slot)
+void ChannelSettings::_HideAllOptional()
 {
-    (*item) = new bases::ComboBox(this);
-    (*item)->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
-    m_formLayout->addRow(new QLabel(label, this), (*item));
-    connect((*item), SIGNAL(currentIndexChanged(int)), this, slot);
+    m_name->setVisible(false);
+    m_currentValueControl->setVisible(false);
+    m_units->setVisible(false);
+    m_sourceMeasurementCombo->setVisible(false);
+    m_sourceChannelCombo->setVisible(false);
+    m_style->setVisible(false);
+    m_timeUnits->setVisible(false);
+    m_format->setVisible(false);
+    m_sensorQuantityComboBox->setVisible(false);
+    m_sensorNameComboBox->setVisible(false);
+    m_sensorPortComboBox->setVisible(false);
+    m_originlValue->setVisible(false);
+    m_naValue->setVisible(false);
+}
+void ChannelSettings::_InitializeSensorItem(bases::ComboBox *item, QString const &label, const char* slot)
+{
+    item->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
+    m_formLayout->addRow(new QLabel(label, this), item);
+    connect(item, SIGNAL(currentIndexChanged(int)), this, slot);
 }
 
-void ChannelSettings::_FillSensorPortCB()
+void ChannelSettings::_FillSensorPortCB(HwChannelProxy *channelProxy)
 {
     m_sensorPortComboBox->addItem(tr("Undefined"), hw::SensorManager::nonePortId);
     if (m_sensorManager->GetSensors().size() == 1)
@@ -133,14 +148,15 @@ void ChannelSettings::_FillSensorPortCB()
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);
-        if (i == dynamic_cast<HwChannelProxy*>(m_channelProxy)->GetSensorPort())
+        if (i == channelProxy->GetSensorPort())
             m_sensorPortComboBox->setCurrentIndex(m_sensorPortComboBox->count() - 1);
     }
+    m_sensorPortComboBox->setEnabled(channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
 }
 
-void ChannelSettings::_FillSensorNameCB()
+void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
 {
-    unsigned currentSensorId = dynamic_cast<HwChannelProxy*>(m_channelProxy)->GetSensor()->GetId();
+    unsigned currentSensorId = channelProxy->GetSensor()->GetId();
     m_sensorNameComboBox->clear();
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
@@ -164,12 +180,12 @@ void ChannelSettings::_FillSensorNameCB()
             m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
         }
     }
-    m_sensorNameComboBox->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
+    m_sensorNameComboBox->setEnabled(channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
 }
 
-void ChannelSettings::_FillSensorQuanitityCB()
+void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
 {
-    hw::SensorQuantity *currentSensorQuanity = ((HwChannelProxy*)m_channelProxy)->GetSensorQuantity();
+    hw::SensorQuantity *currentSensorQuanity = channelProxy->GetSensorQuantity();
     m_sensorQuantityComboBox->clear();
     unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
 
@@ -194,33 +210,52 @@ void ChannelSettings::_FillSensorQuanitityCB()
     );
 }
 
-void ChannelSettings::_InitializeSensorItems()
+void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
 {
-    _InitializeSensorItem(&m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
-    _InitializeSensorItem(&m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
-    _InitializeSensorItem(&m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQualityChanged(int)));
+    m_sensorPortComboBox->setVisible(true);
+    m_sensorNameComboBox->setVisible(true);
+    m_sensorQuantityComboBox->setVisible(true);
+    _InitializeSensorItem(m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
+    _InitializeSensorItem(m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
+    _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQualityChanged(int)));
+    _FillSensorItems(channelProxy);
+}
 
-    _FillSensorPortCB();
-    _FillSensorNameCB();
-    _FillSensorQuanitityCB();
+void ChannelSettings::_FillSensorItems(HwChannelProxy *channelProxy)
+{
+    m_sensorPortComboBox->clear();
+    m_sensorNameComboBox->clear();
+    m_sensorQuantityComboBox->clear();
 
+    m_sensorPortComboBox->setEnabled(channelProxy);
+    m_sensorNameComboBox->setEnabled(channelProxy);
+    m_sensorNameComboBox->setEnabled(channelProxy);
+
+    if (channelProxy)
+    {
+        _FillSensorPortCB(channelProxy);
+        _FillSensorNameCB(channelProxy);
+        _FillSensorQuanitityCB(channelProxy);
+    }
 }
 
 void ChannelSettings::sensorPortChanged(int index)
 {
     Q_UNUSED(index)
-    if (
+    if (index != -1 &&
         (m_sensorPortComboBox->currentData().toInt() == hw::SensorManager::nonePortId) ==
-        !(m_sensorNameComboBox->currentData().toInt() == hw::Sensor::noSensorId))
+        !(m_sensorNameComboBox->currentData().toInt() == hw::Sensor::noSensorId)
+    )
     {
-        _FillSensorNameCB();
+        _FillSensorNameCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     }
 }
 
 void ChannelSettings::sensorNameChanged(int index)
 {
     Q_UNUSED(index)
-    _FillSensorQuanitityCB();
+    if (index != -1)
+        _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
 }
 
 void ChannelSettings::sensorQualityChanged(int index)
@@ -231,14 +266,12 @@ void ChannelSettings::sensorQualityChanged(int index)
 
 void ChannelSettings::_InitializeGhostCombos()
 {
-    m_sourceMeasurementCombo = new bases::ComboBox(this);
+    m_sourceMeasurementCombo->setVisible(true);
+    m_sourceChannelCombo->setVisible(true);
     m_formLayout->addRow(new QLabel(tr("Source Measurement"), this), m_sourceMeasurementCombo);
-
-    m_sourceChannelCombo = new bases::ComboBox(this);
     m_formLayout->addRow(new QLabel(tr("Source Channel"), this), m_sourceChannelCombo);
-
-    m_sourceHorizontalChannelCombo = new bases::ComboBox(this);
-    m_formLayout->addRow(new QLabel(tr("Source Horizontal Channel"), this), m_sourceHorizontalChannelCombo);
+    AddSeparator();
+    _FillMeasurementCombo();
 }
 
 void ChannelSettings::_FillMeasurementCombo()
@@ -276,17 +309,11 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
         ChannelBase * iteratingChannel = sourceMeasurement->GetChannel(index);
         QString channelName = sourceGC->GetChannelProxy(iteratingChannel)->GetName();
         m_sourceChannelCombo->addItem(channelName, index);
-        m_sourceHorizontalChannelCombo->addItem(channelName, index);
 
         if (iteratingChannel == m_channelProxy->GetChannel())
         {
             m_sourceChannelCombo->setCurrentIndex(index);
             channelFound = true;
-        }
-
-        if (iteratingChannel == sourceGC->GetHorizontalChannelProxy()->GetChannel())
-        {
-            m_sourceHorizontalChannelCombo->setCurrentIndex(index);
         }
     }
     if (!channelFound)
@@ -304,22 +331,24 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
     ChannelProxyBase *originalChannelProxy = originalGC->GetChannelProxy(originalChannel);
 
-    if (m_name)
-    {
-        m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
-    }
-    if (m_units)
-    {
-        m_units->setText(originalChannelProxy->GetUnits());
-    }
-    if (m_colorButtonWidget)
+    m_channelProxy = originalChannelProxy->Clone(this, m_channelProxy->GetWidget());
+    m_originalProxyChanged = true;
+
+    _FillSensorItems(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+    _FillValueLine(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+
+    m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
+
+    m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+    m_units->setText(originalChannelProxy->GetUnits());
+
+    if (m_colorButtonWidget) //it is created thgether with add color button
     {
         SetColorButtonColor(originalChannelProxy->GetForeColor());
     }
-    if (m_shapeComboBox)
-    {
-        m_shapeComboBox->setCurrentIndex(originalChannelProxy->GetChannelGraph()->GetShapeIndex());
-    }
+
+    m_shapeComboBox->setCurrentIndex(originalChannelProxy->GetChannelGraph()->GetShapeIndex());
+
 }
 
 unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
@@ -330,22 +359,34 @@ unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
         channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
 }
 
-void ChannelSettings::_InitializeValueLine(ChannelProxyBase *channelProxy)
+void ChannelSettings::_InitializeValueLine(HwChannelProxy *channelProxy)
 {
+    m_currentValueControl->setVisible(true);
+    m_originlValue->setVisible(true);
+    m_naValue->setVisible(true);
     QHBoxLayout *curValLayout = new QHBoxLayout();
-    m_currentValueControl = new QLineEdit(this);
     curValLayout->addWidget(m_currentValueControl);
+    connect(m_originlValue, SIGNAL(clicked(bool)), this, SLOT(setOriginalValue(bool)));
+    curValLayout->addWidget(m_originlValue);
+    connect(m_naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
+    curValLayout->addWidget(m_naValue);
+    m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
+    AddSeparator();
 
-    QPushButton *originlValue = new QPushButton(tr("Original"), this);
-    connect(originlValue, SIGNAL(clicked(bool)), this, SLOT(setOriginalValue(bool)));
-    curValLayout->addWidget(originlValue);
+    _FillValueLine(channelProxy);
+    //must be defined after setTest
+    connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
+}
 
-    QPushButton *naValue = new QPushButton(tr("n/a"), this);
-    connect(naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
-    curValLayout->addWidget(naValue);
+void ChannelSettings::_FillValueLine(HwChannelProxy *channelProxy)
+{
+    unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
+    m_currentValueControl->setText("");
+    m_currentValueControl->setEnabled(channelProxy);
+    m_originlValue->setEnabled(channelProxy);
+    m_naValue->setEnabled(channelProxy);
 
-    unsigned currentIndex = _GetCurrentValueIndex(channelProxy);
-    if (currentIndex < (int)channelProxy->GetValueCount())
+    if (channelProxy && currentIndex < (int)channelProxy->GetValueCount())
     {
         QLocale locale(QLocale::system());
         QString currentValueStr = (channelProxy->IsValueNA(currentIndex)) ?
@@ -353,17 +394,6 @@ void ChannelSettings::_InitializeValueLine(ChannelProxyBase *channelProxy)
 
         m_currentValueControl->setText(currentValueStr);
     }
-    else
-    {
-        m_currentValueControl->setDisabled(true);
-        originlValue->setDisabled(true);
-        naValue->setDisabled(true);
-    }
-    //must be defined after setTest
-    connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
-
-
-    m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
 }
 
 void ChannelSettings::setOriginalValue(bool checked)
@@ -399,7 +429,6 @@ void ChannelSettings::currentValueChanged(QString const &content)
 
 void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
 {
-    m_penStyle = new bases::ComboBox(this);
     m_penStyle->addItem(tr("No Line"));
     m_penStyle->addItem(tr("Solid Line"));
     m_penStyle->addItem(tr("Dash Line"));
@@ -411,20 +440,25 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
     m_formLayout->addRow(new QLabel(tr("Pen Style"), this), m_penStyle);
 }
 
-void ChannelSettings::_InitializeTimeFeatures()
+void ChannelSettings::_FillTimeFeatures(SampleChannelProxy *channelProxy)
 {
-    SampleChannelProxy * channelProxy = (SampleChannelProxy*)m_channelProxy;
+    m_style->clear();
+    m_timeUnits->clear();
+    m_format->clear();
 
-    m_style = new bases::ComboBox(this);
-    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::Samples), false);
-    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::TimeOffset), false);
-    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProxy::RealTime), true); //RealTime state as data
+    m_style->setEnabled(channelProxy);
+    m_timeUnits->setEnabled(channelProxy);
+    m_format->setEnabled(channelProxy);
+    if (!channelProxy)
+    {
+        return;
+    }
+
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProperties::Samples), false);
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProperties::TimeOffset), false);
+    m_style->addItem(SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProperties::RealTime), true); //RealTime state as data
     m_style->setCurrentIndex(channelProxy->GetStyle());//unfortunately I cant use a template with a Qt class
-    connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
-    m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
 
-    m_units->setVisible(false); //there will be diplayed timeUnits combo box instead units
-    m_timeUnits = new bases::ComboBox(this);
     m_timeUnits->addItem(tr("Microseconds"));
     m_timeUnits->addItem(tr("Miliseconds"));
     m_timeUnits->addItem(tr("Seconds"));
@@ -432,23 +466,32 @@ void ChannelSettings::_InitializeTimeFeatures()
     m_timeUnits->addItem(tr("Hours"));
     m_timeUnits->addItem(tr("Days"));
     m_timeUnits->setCurrentIndex(channelProxy->GetTimeUnits());
-    m_timeUnits->setEnabled(channelProxy->GetStyle() == SampleChannelProxy::TimeOffset);
-    m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
+    m_timeUnits->setEnabled(channelProxy->GetStyle() == SampleChannelProperties::TimeOffset);
 
-    m_format = new bases::ComboBox(this);
     m_format->addItem(tr("day.month.year"));
     m_format->addItem(tr("day.month.hour:minute"));
     m_format->addItem(tr("hour:minute:second"));
     m_format->addItem(tr("minute:second.milisecond"));
     m_format->setCurrentIndex(channelProxy->GetRealTimeFormat());
-    m_format->setEnabled(channelProxy->GetStyle() == SampleChannelProxy::RealTime);
+    m_format->setEnabled(channelProxy->GetStyle() == SampleChannelProperties::RealTime);
+}
+void ChannelSettings::_InitializeTimeFeatures(SampleChannelProxy *channelProxy)
+{
+    m_style->setVisible(true);
+    m_timeUnits->setVisible(true);
+    m_format->setVisible(true);
+    m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
+    m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
     m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
+    AddSeparator();
+    _FillTimeFeatures(channelProxy);
+    connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
 }
 
 void ChannelSettings::styleChanged(int index)
 {
-    m_timeUnits->setEnabled((SampleChannelProxy::Style)index == SampleChannelProxy::TimeOffset);
-    m_format->setEnabled((SampleChannelProxy::Style)index == SampleChannelProxy::RealTime);
+    m_timeUnits->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::TimeOffset);
+    m_format->setEnabled((SampleChannelProperties::Style)index == SampleChannelProperties::RealTime);
     _RefillAxisCombo(); //on axis with RealTime channel must not be another channel
 }
 
@@ -540,19 +583,19 @@ bool ChannelSettings::BeforeAccept()
         if ((int)sampleChannelProxy->GetTimeUnits() != m_timeUnits->currentIndex())
         {
             changed = true;
-            sampleChannelProxy->SetTimeUnits((SampleChannelProxy::TimeUnits)m_timeUnits->currentIndex());
+            sampleChannelProxy->SetTimeUnits((SampleChannelProperties::TimeUnits)m_timeUnits->currentIndex());
         }
 
         if ((int)sampleChannelProxy->GetRealTimeFormat() != m_format->currentIndex())
         {
             changed = true;
-            sampleChannelProxy->SetRealTimeFormat((SampleChannelProxy::RealTimeFormat)m_format->currentIndex());
+            sampleChannelProxy->SetRealTimeFormat((SampleChannelProperties::RealTimeFormat)m_format->currentIndex());
         }
 
         if ((int)sampleChannelProxy->GetStyle() != m_style->currentIndex())
         {
             changed = true;
-            sampleChannelProxy->SetStyle((SampleChannelProxy::Style)m_style->currentIndex());
+            sampleChannelProxy->SetStyle((SampleChannelProperties::Style)m_style->currentIndex());
         }
     }
     else
@@ -656,7 +699,6 @@ bool ChannelSettings::_MoveLastHorizontalToVertical()
 
 void ChannelSettings::_InitializeShapeCombo(ChannelProxyBase *channelProxy)
 {
-    m_shapeComboBox = new bases::ComboBox(this);
     m_shapeComboBox->addItem(tr("None"), 0);
     m_shapeComboBox->addItem(tr("Cross"), 2);
     m_shapeComboBox->addItem(tr("Plus"), 3);
@@ -718,7 +760,6 @@ void ChannelSettings::_RefillAxisCombo()
 }
 void ChannelSettings::_InitializeAxisCombo()
 {
-    m_axisComboBox = new bases::ComboBox(this);
     _RefillAxisCombo();
 
     if (m_channelProxy->IsOnHorizontalAxis())

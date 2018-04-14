@@ -1,37 +1,36 @@
 #include "SampleChannelProxy.h"
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <graphics/SampleChannelWidget.h>
 #include <QDateTime>
 #include <QDebug>
 #include <QLocale>
 #include <QString>
 #include <SampleChannel.h>
 
-SampleChannelProxy::SampleChannelProxy(QObject *parent, SampleChannel *channel, SampleChannelWidget *channelWidget) :
-    ChannelProxyBase(parent, channel, channelWidget)
+SampleChannelProxy::SampleChannelProxy(QObject *parent, SampleChannel *channel, ChannelWidget *channelWidget, SampleChannelProperties *properties) :
+    ChannelProxyBase(parent, channel, channelWidget, properties)
 {
 
 }
 
 QString SampleChannelProxy::GetRealTimeFormatText()
 {
-    return GetRealTimeFormatText(_GetChannelWidget()->GetRealTimeFormat());
+    return GetRealTimeFormatText(_GetChannelProperties()->GetRealTimeFormat());
 }
 
-QString SampleChannelProxy::GetRealTimeFormatText(RealTimeFormat realTimeFormat)
+QString SampleChannelProxy::GetRealTimeFormatText(SampleChannelProperties::RealTimeFormat realTimeFormat)
 {
     QLocale locale(QLocale::system());
 
     switch (realTimeFormat)
     {
-    case dd_MM_yyyy:
+    case SampleChannelProperties::dd_MM_yyyy:
         return "dd.MM.yyyy";
-    case dd_MM_hh_mm:
+    case SampleChannelProperties::dd_MM_hh_mm:
         return "dd.MM.hh:mm";
-    case hh_mm_ss:
+    case SampleChannelProperties::hh_mm_ss:
         return "hh:mm:ss";
-    case mm_ss_zzz:
+    case SampleChannelProperties::mm_ss_zzz:
         return QString("mm:ss") + locale.decimalPoint() + QString("ms");
     default:
         qWarning() << "unknown realTimeFormat";
@@ -39,34 +38,34 @@ QString SampleChannelProxy::GetRealTimeFormatText(RealTimeFormat realTimeFormat)
     }
 }
 
-QString SampleChannelProxy::GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat
+QString SampleChannelProxy::GetUnits(SampleChannelProperties::Style style, SampleChannelProperties::TimeUnits timeUnits, SampleChannelProperties::RealTimeFormat realTimeFormat
 )
 {
     switch (style)
     {
-    case TimeOffset:
+    case SampleChannelProperties::TimeOffset:
         switch (timeUnits)
         {
-        case Us:
+        case SampleChannelProperties::Us:
             return tr("μs");
-        case Ms:
+        case SampleChannelProperties::Ms:
             return tr("ms");
-        case Sec:
+        case SampleChannelProperties::Sec:
             return tr("s");
-        case Min:
+        case SampleChannelProperties::Min:
             return tr("minutes");
-        case Hours:
+        case SampleChannelProperties::Hours:
             return tr("hours");
-        case Days:
+        case SampleChannelProperties::Days:
             return tr("days");
         default:
             qWarning() << "unknown timeUnits";
             return "";
         }
     break;
-    case RealTime:
+    case SampleChannelProperties::RealTime:
         return GetRealTimeFormatText(realTimeFormat);
-    case Samples:
+    case SampleChannelProperties::Samples:
         return "";
     default:
         qWarning() << "unknown sample style";
@@ -74,15 +73,15 @@ QString SampleChannelProxy::GetUnits(Style style, TimeUnits timeUnits, RealTimeF
     }
 }
 
-QString SampleChannelProxy::GetSampleChannelStyleText(Style style)
+QString SampleChannelProxy::GetSampleChannelStyleText(SampleChannelProperties::Style style)
 {
     switch (style)
     {
-    case Samples:
+    case SampleChannelProperties::Samples:
         return tr("Samples");
-    case TimeOffset:
+    case SampleChannelProperties::TimeOffset:
         return tr("Time Offset");
-    case RealTime:
+    case SampleChannelProperties::RealTime:
         return tr("Real Time");
     default:
         qWarning() << "unknown sample style";
@@ -91,7 +90,7 @@ QString SampleChannelProxy::GetSampleChannelStyleText(Style style)
 }
 
 QString SampleChannelProxy::_FillTimeValueString(
-    RealTimeFormat format,
+    SampleChannelProperties::RealTimeFormat format,
     unsigned years,
     unsigned months,
     unsigned days,
@@ -103,13 +102,13 @@ QString SampleChannelProxy::_FillTimeValueString(
     QLocale locale(QLocale::system());
     switch (format)
     {
-    case dd_MM_yyyy:
+    case SampleChannelProperties::dd_MM_yyyy:
         return QString("%1.%2.%3").arg(days).arg(months).arg(years, 2, 10, QChar('0'));
-    case dd_MM_hh_mm:
+    case SampleChannelProperties::dd_MM_hh_mm:
         return QString("%1.%2.%3:%4").arg(days).arg(months, 2, 10, QChar('0')).arg(hours).arg(mins, 2, 10, QChar('0'));
-    case hh_mm_ss:
+    case SampleChannelProperties::hh_mm_ss:
         return QString("%1:%2:%3").arg(hours).arg(mins, 2, 10, QChar('0')).arg(secs, 2, 10, QChar('0'));
-    case mm_ss_zzz:
+    case SampleChannelProperties::mm_ss_zzz:
         return QString("%1:%2%3%4").arg(mins).arg(secs, 2, 10, QChar('0')).arg(locale.decimalPoint()).arg(msecs, 4, 10, QChar('0'));
     default:
         qWarning() << "unknown realTimeFormat";
@@ -117,7 +116,7 @@ QString SampleChannelProxy::_FillTimeValueString(
     }
 }
 
-QString SampleChannelProxy::_ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range)
+QString SampleChannelProxy::_ConvertDateTimeToString(SampleChannelProperties::RealTimeFormat format, double seconds, bool range)
 {
 
     if (range)
@@ -149,14 +148,14 @@ SampleChannel *SampleChannelProxy::_GetChannel() const
     return dynamic_cast<SampleChannel *>(m_channel);
 }
 
-SampleChannelWidget *SampleChannelProxy::_GetChannelWidget() const
+SampleChannelProperties *SampleChannelProxy::_GetChannelProperties() const
 {
-    return dynamic_cast<SampleChannelWidget *>(m_channelWidget);
+    return dynamic_cast<SampleChannelProperties *>(m_properties);
 }
 
 QString SampleChannelProxy::GetRealTimeText(double value, bool range) const
 {
-    RealTimeFormat format = _GetChannelWidget()->GetRealTimeFormat();
+    SampleChannelProperties::RealTimeFormat format = _GetChannelProperties()->GetRealTimeFormat();
     return _ConvertDateTimeToString(format, value, range);
 }
 QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
@@ -166,14 +165,14 @@ QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
     return GetRealTimeText(value, range);
 }
 
-SampleChannelProxy::Style SampleChannelProxy::GetStyle() const
+SampleChannelProperties::Style SampleChannelProxy::GetStyle() const
 {
-    return _GetChannelWidget()->GetStyle();
+    return _GetChannelProperties()->GetStyle();
 }
 
-void SampleChannelProxy::SetStyle(Style style)
+void SampleChannelProxy::SetStyle(SampleChannelProperties::Style style)
 {
-    _GetChannelWidget()->SetStyle(style);
+    _GetChannelProperties()->SetStyle(style);
 }
 
 double SampleChannelProxy::GetValue(unsigned index) const
@@ -186,66 +185,61 @@ double SampleChannelProxy::GetValue(unsigned index) const
 
     switch (GetStyle())
     {
-    case Samples:
+    case SampleChannelProperties::Samples:
         return sampleChannel->GetValue(index);
-    case SampleChannelProxy::RealTime:
+    case SampleChannelProperties::RealTime:
         return
             sampleChannel->GetStartDateTime().toMSecsSinceEpoch() / 1000.0 + timeFromStart - //in seconds
             sampleChannel->GetTimeFromStart(0); //first sample is on offset 0
-    case SampleChannelProxy::TimeOffset:
+    case SampleChannelProperties::TimeOffset:
         switch (GetTimeUnits())
         {
-        case Us:
+        case SampleChannelProperties::Us:
             return timeFromStart * 1000000;
-        case Ms:
+        case SampleChannelProperties::Ms:
             return timeFromStart * 1000;
-        case Sec:
+        case SampleChannelProperties::Sec:
             return timeFromStart;
-        case Min:
+        case SampleChannelProperties::Min:
             return timeFromStart / 60;
-        case Hours:
+        case SampleChannelProperties::Hours:
             return timeFromStart /(60*60);
-        case Days:
+        case SampleChannelProperties::Days:
             return timeFromStart /(60*60*24);
         }
     }
     return ChannelBase::GetNaValue(); //it should be never reached
 }
 
-SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget *newProxy)
+SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget *newWidget)
 {
-    SampleChannelWidget *sampleChannelWidget = dynamic_cast<SampleChannelWidget*>(newProxy);
-    if (!sampleChannelWidget)
-    {
-        qWarning() << "It is not possible to clone hwChannelWidget to sampleChannel Widget";
-        return NULL;
-    }
-    return new SampleChannelProxy(parent, _GetChannel(), sampleChannelWidget);
+    SampleChannelProperties *sampleChannelProperties = new SampleChannelProperties(parent, _GetChannelProperties());
+    return new SampleChannelProxy(parent, _GetChannel(), newWidget, sampleChannelProperties);
 }
 
-SampleChannelProxy::TimeUnits SampleChannelProxy::GetTimeUnits() const
+SampleChannelProperties::TimeUnits SampleChannelProxy::GetTimeUnits() const
 {
-    return _GetChannelWidget()->GetTimeUnits();
+    return _GetChannelProperties()->GetTimeUnits();
 }
 
-void SampleChannelProxy::SetTimeUnits(SampleChannelProxy::TimeUnits units)
+void SampleChannelProxy::SetTimeUnits(SampleChannelProperties::TimeUnits units)
 {
-    _GetChannelWidget()->SetTimeUnits(units);
+    _GetChannelProperties()->SetTimeUnits(units);
 }
 
-SampleChannelProxy::RealTimeFormat SampleChannelProxy::GetRealTimeFormat()
+SampleChannelProperties::RealTimeFormat SampleChannelProxy::GetRealTimeFormat()
 {
-    return _GetChannelWidget()->GetRealTimeFormat();
+    return _GetChannelProperties()->GetRealTimeFormat();
 }
 
-void SampleChannelProxy::SetRealTimeFormat(RealTimeFormat format)
+void SampleChannelProxy::SetRealTimeFormat(SampleChannelProperties::RealTimeFormat format)
 {
-    return _GetChannelWidget()->SetRealTimeFormat(format);
+    return _GetChannelProperties()->SetRealTimeFormat(format);
 }
 
 double SampleChannelProxy::GetMinValue()
 {
-    if (!_GetChannelWidget()->IsInRealtimeStyle())
+    if (!_GetChannelProperties()->IsInRealtimeStyle())
         return _GetChannel()->GetMinValue();
     if (GetValueCount() > 0)
         return GetValue(0);
@@ -255,7 +249,7 @@ double SampleChannelProxy::GetMinValue()
 
 double SampleChannelProxy::GetMaxValue()
 {
-    if (!_GetChannelWidget()->IsInRealtimeStyle())
+    if (!_GetChannelProperties()->IsInRealtimeStyle())
         return _GetChannel()->GetMaxValue();
 
     if (GetValueCount() > 0)

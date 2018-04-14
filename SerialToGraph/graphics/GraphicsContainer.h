@@ -2,6 +2,7 @@
 #define GRAPHICSCONTAINER_H
 
 #include <ChannelBase.h>
+#include <graphics/ChannelProperties.h>
 #include <SampleChannel.h>
 #include <QMap>
 #include <QString>
@@ -26,7 +27,6 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
-class SampleChannelWidget;
 
 class GraphicsContainer : public QWidget
 {
@@ -64,34 +64,12 @@ class GraphicsContainer : public QWidget
     void _FollowLastMeasuredValue();
     QCPAxis * _GetGraphAxis(unsigned index);
     Axis * _CreateAxis(QColor const & color, QCPAxis *graphAxis);
-    SampleChannelWidget *_CreateSampleChannelWidget(
-        ChannelGraph *graph,
-        unsigned shortcutOrder,
-        QString const name,
-        QColor const &color,
-        bool visible,
-        QString const & units,
-        Qt::PenStyle penStyle,
-        SampleChannelProxy::Style style,
-        SampleChannelProxy::TimeUnits timeUnits,
-        SampleChannelProxy::RealTimeFormat realTimeFormat);
-
-    ChannelWidget *_CreateHwChannelWidget(ChannelBase *channel,
-        ChannelGraph *graph,
-        unsigned shortcutOrder,
-        QString const name,
-        QColor const &color,
-        bool visible,
-        QString const & units,
-        Qt::PenStyle penStyle,
-        bool isGhost);
-
     void _CreateKeyShortcuts();
     void _RemoveKeyShortcuts();
     void _DisplayChannelValue(ChannelProxyBase *channelProxy);
     bool _IsTracked(Measurement *m);
-    SampleChannelProxy *_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, SampleChannelWidget *widget);
-    HwChannelProxy *_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget);
+    SampleChannelProxy *_SampleCannelWidgetCreationPostProcess(SampleChannel *channel, ChannelWidget *widget, SampleChannelProperties *properties);
+    HwChannelProxy *_HwCannelWidgetCreationPostProcess(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties);
 
 
 public:
@@ -150,10 +128,10 @@ public:
     void RecalculateSliderMaximum();
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
     QColor GetColorByOrder(unsigned order);
-    SampleChannelProxy *CreateSampleChannelWidget(SampleChannel *channel, Axis *valueAxis);
-    SampleChannelProxy *CloneSampleChannelWidget(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, SampleChannelWidget *sourceChannelWidget);
+    SampleChannelProxy *CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost);
+    SampleChannelProxy *CloneSampleChannelProxy(SampleChannel *channel, GraphicsContainer *sourceGraphicsContainer, SampleChannelProxy *sourceChannelProxy);
 
-    HwChannelProxy *CreateHwChannelWidget(HwChannel *channel,
+    HwChannelProxy *CreateHwChannelProxy(HwChannel *channel,
         Axis *valueAxis,
         unsigned shortcutOrder,
         QString const name,
@@ -184,6 +162,7 @@ public:
     void RejectGhostChannel();
     ChannelProxyBase *GetChannelProxy(ChannelBase *channel);
     ChannelProxyBase *GetChannelProxy(ChannelWidget *widget);
+    ChannelProxyBase *GetChannelProxy(ChannelProperties *properties);
     int GetLastHorizontalValueIndex(Measurement *m, unsigned markerPosition);
 signals:
     void resized();

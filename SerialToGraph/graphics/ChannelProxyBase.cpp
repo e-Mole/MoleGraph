@@ -2,16 +2,18 @@
 #include <ChannelBase.h>
 #include <ChannelGraph.h>
 #include <ChannelWidget.h>
+#include <graphics/ChannelProperties.h>
 #include <KeyShortcut.h>
 #include <Measurement.h>
 #include <Plot.h>
 #include <QDebug>
 
 ChannelProxyBase::ChannelProxyBase(
-    QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
+    QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties) :
     QObject(parent),
     m_channelWidget(channelWidget),
     m_channel(channel),
+    m_properties(properties),
     m_keyShortcut(NULL)
 {
 }
@@ -20,6 +22,12 @@ ChannelWidget *ChannelProxyBase::GetWidget()
 {
     return m_channelWidget;
 }
+
+ChannelProperties *ChannelProxyBase::GetProperties()
+{
+    return m_properties;
+}
+
 bool ChannelProxyBase::ContainsChannelWidget(ChannelWidget *channelWidget)
 {
     return m_channelWidget == channelWidget;
@@ -28,6 +36,11 @@ bool ChannelProxyBase::ContainsChannelWidget(ChannelWidget *channelWidget)
 bool ChannelProxyBase::ContainsChannel(ChannelBase *channel)
 {
     return m_channel == channel;
+}
+
+bool ChannelProxyBase::ContainsChannelProperties(ChannelProperties *channelProperties)
+{
+    return m_properties == channelProperties;
 }
 
 void ChannelProxyBase::ChangeChannel(ChannelBase *channel)

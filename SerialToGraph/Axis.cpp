@@ -251,7 +251,7 @@ bool Axis::ContainsChannelWithRealTimeStyle()
             continue;
 
         SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(proxy);
-        if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime)
+        if (sampleChannelProxy && sampleChannelProxy->GetStyle() == SampleChannelProperties::RealTime)
             return true;
     }
     return false;
@@ -277,7 +277,7 @@ void Axis::UpdateGraphAxisStyle()
     SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy *>(axisChannelProxy);
     if (sampleChannelProxy)
     {
-        realTimeStyle = sampleChannelProxy->GetStyle() == SampleChannelProxy::RealTime;
+        realTimeStyle = sampleChannelProxy->GetStyle() == SampleChannelProperties::RealTime;
         formatText = sampleChannelProxy->GetRealTimeFormatText();
     }
 

@@ -5,6 +5,7 @@
 
 class GlobalSettings;
 class QFormLayout;
+class QFrame;
 class QString;
 
 namespace bases
@@ -24,7 +25,7 @@ public:
     bool IsChanged()
     {   return m_changed; }
 
-    void AddSeparator();
+    QFrame *AddSeparator();
 
 private slots:
     void storeAndAccept();

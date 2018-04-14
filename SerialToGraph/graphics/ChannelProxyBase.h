@@ -5,6 +5,7 @@
 #include <ChannelBase.h>
 
 class ChannelGraph;
+class ChannelProperties;
 class ChannelWidget;
 class KeyShortcut;
 class Measurement;
@@ -26,6 +27,7 @@ class ChannelProxyBase : public QObject
 protected:
     ChannelWidget *m_channelWidget;
     ChannelBase *m_channel;
+    ChannelProperties *m_properties;
     KeyShortcut* m_keyShortcut;
 public:
     enum DisplayValue{
@@ -39,14 +41,15 @@ public:
         DVSum
     };
 
-    ChannelProxyBase(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
+    ChannelProxyBase(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties);
 
     bool ContainsChannelWidget(ChannelWidget *channelWidget);
     bool ContainsChannel(ChannelBase *channel);
+    bool ContainsChannelProperties(ChannelProperties *channelProperties);
     void ChangeChannel(ChannelBase *channel);
     Measurement *GetChannelMeasurement();
     ChannelWidget *GetWidget();
-
+    ChannelProperties *GetProperties();
     unsigned GetChannelIndex();
     unsigned GetLastValueIndex(double value);
     double GetLastValidValue();

@@ -15,13 +15,13 @@ class SampleChannelProxy : public ChannelProxyBase
 
     static QString _FillTimeValueString(SampleChannelProperties::RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
     static QString _ConvertDateTimeToString(SampleChannelProperties::RealTimeFormat format, double seconds, bool range);
-    SampleChannel *_GetChannel() const;
     SampleChannelProperties *_GetChannelProperties() const;
 public:
     SampleChannelProxy(QObject *parent, SampleChannel *channel, ChannelWidget *channelWidget, SampleChannelProperties *properties);
 
     QString GetRealTimeFormatText();
     static QString GetRealTimeFormatText(SampleChannelProperties::RealTimeFormat realTimeFormat);
+    QString GetUnits();
     static QString GetUnits(
         SampleChannelProperties::Style style, SampleChannelProperties::TimeUnits timeUnits, SampleChannelProperties::RealTimeFormat realTimeFormat);
     static QString GetSampleChannelStyleText(SampleChannelProperties::Style style);
@@ -37,7 +37,8 @@ public:
     void SetRealTimeFormat(SampleChannelProperties::RealTimeFormat format);
     double GetMinValue();
     double GetMaxValue();
-
+    SampleChannel *GetChannel() const;
+    SampleChannelProperties *GetProperties();
 signals:
 
 public slots:

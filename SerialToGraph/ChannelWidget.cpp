@@ -391,7 +391,7 @@ bool ChannelWidget::isVisible()
 
 bool ChannelWidget::IsDrawable()
 {
-    return true;//isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
+    return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }
 
 void ChannelWidget::SetVisible(bool visible)

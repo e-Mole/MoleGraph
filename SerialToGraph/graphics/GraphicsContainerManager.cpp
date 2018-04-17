@@ -69,7 +69,7 @@ void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
     m_currentMeasurement = m;
 }
 
-HwChannelProxy * GraphicsContainerManager::AddGhost(
+ChannelProxyBase * GraphicsContainerManager::AddGhost(
     Measurement *sourceMeasurement,
     unsigned sourceValueChannelIndex,
     unsigned sourceHorizontalChannelIndex,
@@ -88,7 +88,7 @@ HwChannelProxy * GraphicsContainerManager::AddGhost(
 
     ChannelBase *sourceChannel = sourceMeasurement->GetChannel(sourceValueChannelIndex);
     return destGraphicsContainer->AddGhost(
-        dynamic_cast<HwChannelProxy *>(sourceGraphicsContainer->GetChannelProxy(sourceChannel)),
+        sourceGraphicsContainer->GetChannelProxy(sourceChannel),
         sourceGraphicsContainer,
         sourceMeasurement->GetChannel(sourceHorizontalChannelIndex),
         confirmed

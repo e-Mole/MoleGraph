@@ -11,7 +11,6 @@ namespace hw {class Sensor; class SensorQuantity; }
 
 class HwChannelProxy : public ChannelProxyBase
 {
-    HwChannel *_GetChannel() const;
     ChannelProperties *_GetChannelProperties();
 public:
     HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties);
@@ -26,6 +25,7 @@ public:
     hw::SensorQuantity *GetSensorQuantity();
     void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
     double GetOriginalValue(int index);
+    HwChannel *GetChannel() const;
 };
 
 #endif // HWCHANNELPROPERTIES_H

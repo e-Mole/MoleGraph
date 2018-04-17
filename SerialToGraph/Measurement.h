@@ -71,7 +71,7 @@ private:
     bool _FillQueue();
     bool _IsCompleteSetInQueue();
     void _AdjustDrawPeriod(unsigned drawDelay);
-    void _InitializeAxesAndChanels(Measurement *sourceMeasurement);
+    void _CloneAxesAndChanels(Measurement *sourceMeasurement);
     void _InitializeAxesAndChanels();
     void _AddYChannel(unsigned order, Axis *axis);
     bool _CheckOtherMeasurementsForRun();

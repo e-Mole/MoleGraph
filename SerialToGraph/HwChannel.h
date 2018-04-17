@@ -41,6 +41,8 @@ public:
         unsigned quantityOrder=0
     );
 
+    HwChannel(Measurement *m, HwChannel *source);
+
     virtual Type GetType() { return Type_Hw; }
     virtual void AddValue(double value);
     void AddValue(double original, double current);

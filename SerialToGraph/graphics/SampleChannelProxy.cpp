@@ -38,6 +38,17 @@ QString SampleChannelProxy::GetRealTimeFormatText(SampleChannelProperties::RealT
     }
 }
 
+SampleChannelProperties *SampleChannelProxy::GetProperties()
+{
+    return dynamic_cast<SampleChannelProperties *>(m_properties);
+}
+
+QString SampleChannelProxy::GetUnits()
+{
+    SampleChannelProperties *properties = GetProperties();
+    return GetUnits(properties->GetStyle(), properties->GetTimeUnits(), properties->GetRealTimeFormat());
+}
+
 QString SampleChannelProxy::GetUnits(SampleChannelProperties::Style style, SampleChannelProperties::TimeUnits timeUnits, SampleChannelProperties::RealTimeFormat realTimeFormat
 )
 {
@@ -143,7 +154,7 @@ QString SampleChannelProxy::_ConvertDateTimeToString(SampleChannelProperties::Re
     return dateTime.toString(GetRealTimeFormatText(format));
 }
 
-SampleChannel *SampleChannelProxy::_GetChannel() const
+SampleChannel *SampleChannelProxy::GetChannel() const
 {
     return dynamic_cast<SampleChannel *>(m_channel);
 }
@@ -160,7 +171,7 @@ QString SampleChannelProxy::GetRealTimeText(double value, bool range) const
 }
 QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
 {
-    SampleChannel *channel = _GetChannel();
+    SampleChannel *channel = GetChannel();
     double value = channel->GetValue(index);
     return GetRealTimeText(value, range);
 }
@@ -180,7 +191,7 @@ double SampleChannelProxy::GetValue(unsigned index) const
     if (index == ~0)
         return ChannelBase::GetNaValue();
 
-    SampleChannel *sampleChannel = _GetChannel();
+    SampleChannel *sampleChannel = GetChannel();
     double timeFromStart = sampleChannel->GetTimeFromStart(index);
 
     switch (GetStyle())
@@ -213,8 +224,8 @@ double SampleChannelProxy::GetValue(unsigned index) const
 
 SampleChannelProxy *SampleChannelProxy::Clone(QObject *parent, ChannelWidget *newWidget)
 {
-    SampleChannelProperties *sampleChannelProperties = new SampleChannelProperties(parent, _GetChannelProperties());
-    return new SampleChannelProxy(parent, _GetChannel(), newWidget, sampleChannelProperties);
+    SampleChannelProperties *sampleChannelProperties = new SampleChannelProperties(this, _GetChannelProperties());
+    return new SampleChannelProxy(parent, GetChannel(), newWidget, sampleChannelProperties);
 }
 
 SampleChannelProperties::TimeUnits SampleChannelProxy::GetTimeUnits() const
@@ -240,7 +251,7 @@ void SampleChannelProxy::SetRealTimeFormat(SampleChannelProperties::RealTimeForm
 double SampleChannelProxy::GetMinValue()
 {
     if (!_GetChannelProperties()->IsInRealtimeStyle())
-        return _GetChannel()->GetMinValue();
+        return GetChannel()->GetMinValue();
     if (GetValueCount() > 0)
         return GetValue(0);
 
@@ -250,7 +261,7 @@ double SampleChannelProxy::GetMinValue()
 double SampleChannelProxy::GetMaxValue()
 {
     if (!_GetChannelProperties()->IsInRealtimeStyle())
-        return _GetChannel()->GetMaxValue();
+        return GetChannel()->GetMaxValue();
 
     if (GetValueCount() > 0)
         return GetValue(GetValueCount()-1);

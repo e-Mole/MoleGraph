@@ -19,7 +19,7 @@ double HwChannelProxy::GetValue(unsigned index) const
 
 void HwChannelProxy::ChangeValue(int index, double newValue)
 {
-    _GetChannel()->ChangeValue(index, newValue);
+    GetChannel()->ChangeValue(index, newValue);
 }
 
 HwChannelProxy *HwChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
@@ -28,7 +28,7 @@ HwChannelProxy *HwChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget
     return new HwChannelProxy(parent, m_channel, newWidget, newProperties);
 }
 
-HwChannel *HwChannelProxy::_GetChannel() const
+HwChannel *HwChannelProxy::GetChannel() const
 {
     return dynamic_cast<HwChannel*>(m_channel);
 }
@@ -39,40 +39,40 @@ ChannelProperties *HwChannelProxy::_GetChannelProperties()
 }
 bool HwChannelProxy::IsActive()
 {
-    return _GetChannel()->IsActive();
+    return GetChannel()->IsActive();
 }
 
 hw::Sensor *HwChannelProxy::GetSensor()
 {
-    return _GetChannel()->GetSensor();
+    return GetChannel()->GetSensor();
 }
 
 void HwChannelProxy::SetSensor(hw::Sensor *sensor)
 {
-    _GetChannel()->SetSensor(sensor);
+    GetChannel()->SetSensor(sensor);
 }
 
 unsigned HwChannelProxy::GetSensorPort()
 {
-    return _GetChannel()->GetSensorPort();
+    return GetChannel()->GetSensorPort();
 }
 
 void HwChannelProxy::SetSensorPort(unsigned sensorPort)
 {
-    _GetChannel()->SetSensorPort(sensorPort);
+    GetChannel()->SetSensorPort(sensorPort);
 }
 
 hw::SensorQuantity *HwChannelProxy::GetSensorQuantity()
 {
-    return _GetChannel()->GetSensorQuantity();
+    return GetChannel()->GetSensorQuantity();
 }
 
 void HwChannelProxy::SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order)
 {
-    _GetChannel()->SetSensorQuantity(sensorQuantity, order);
+    GetChannel()->SetSensorQuantity(sensorQuantity, order);
 }
 
 double HwChannelProxy::GetOriginalValue(int index)
 {
-    return _GetChannel()->GetOriginalValue(index);
+    return GetChannel()->GetOriginalValue(index);
 }

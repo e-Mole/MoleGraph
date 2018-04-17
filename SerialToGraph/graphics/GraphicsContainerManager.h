@@ -27,7 +27,7 @@ public:
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
     std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
     void ChangeMeasurement(Measurement *m);
-    HwChannelProxy *AddGhost(Measurement *sourceMeasurement,
+    ChannelProxyBase *AddGhost(Measurement *sourceMeasurement,
         unsigned sourceValueChannelIndex,
         unsigned sourceHorizontalChannelIndex,
         GraphicsContainer *destGraphicsContainer

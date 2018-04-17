@@ -26,6 +26,17 @@ HwChannel::HwChannel(
 {
 }
 
+HwChannel::HwChannel(Measurement *m, HwChannel *source):
+    ChannelBase(m),
+    m_hwIndex(source->m_hwIndex),
+    m_isActive(false),
+    m_sensor(source->m_sensor),
+    m_sensorPort(source->m_sensorPort),
+    m_sensorQuantity(source->m_sensorQuantity),
+    m_sensorQuantityOrder(source->m_sensorQuantityOrder)
+{
+}
+
 void HwChannel::AddValue(double value)
 {
     m_originalValues.push_back(value);

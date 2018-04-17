@@ -53,6 +53,7 @@ class ChannelSettings : public bases::FormDialogColor
     QVector<Measurement *> m_measurements;
     GraphicsContainer *m_graphicsContainer;
     ChannelProxyBase *m_channelProxy;
+    ChannelProxyBase * m_originalProxy;
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;
@@ -73,7 +74,6 @@ class ChannelSettings : public bases::FormDialogColor
     bool m_currentValueChanged;
     double m_currentValue;
     hw::SensorManager *m_sensorManager;
-    bool m_originalProxyChanged;
 public:
     ChannelSettings(QVector<Measurement *> measurements,
         GraphicsContainer *graphicsContainer,

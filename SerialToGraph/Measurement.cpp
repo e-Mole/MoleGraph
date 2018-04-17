@@ -80,7 +80,7 @@ Measurement::Measurement(
     if (initializeAxiesAndChannels)
     {
         if (source != NULL)
-            _InitializeAxesAndChanels(source);
+            _CloneAxesAndChanels(source);
         else
             _InitializeAxesAndChanels();
     }
@@ -408,42 +408,30 @@ void Measurement::_ConnectHwChannel(HwChannel *channel)
     connect(channel, SIGNAL(sensorQuantityIdChoosen(uint)), this, SLOT(sensorQuantityIdChoosen(uint)));
 }
 
-void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
+void Measurement::_CloneAxesAndChanels(Measurement *sourceMeasurement)
 {
-    m_widget->InitializeAxes(sourceMeasurement->GetAxes());
+    GraphicsContainer *sourceGraphiscContainer = sourceMeasurement->GetWidget();
+    m_widget->CloneAxes(sourceMeasurement->GetAxes());
     int hwIndex = -1;
     foreach (ChannelBase *sourceChannel, sourceMeasurement->GetChannels())
     {
         HwChannel *hwChannel = dynamic_cast<HwChannel *>(sourceChannel);
-        SampleChannel *sampleChannel = dynamic_cast<SampleChannel *>(sourceChannel);
         if (hwChannel)
-        { 
-            HwChannel *newChannel = new HwChannel(
-                this,
-                hwIndex,
-                hwChannel->GetSensor(),
-                hwChannel->GetSensorPort(),
-                hwChannel->GetSensorQuantity(),
-                hwChannel->GetSensorQuantityOrder()
-            );
+        {
+            HwChannelProxy *sourceChannelProxy = dynamic_cast<HwChannelProxy*>(sourceGraphiscContainer->GetChannelProxy(sourceChannel));
+            HwChannel *newChannel = new HwChannel(this, hwChannel);
             _ConnectHwChannel(newChannel);
-
-            m_widget->CloneHwChannelWidget(
-                dynamic_cast<HwChannelProxy*>(sourceMeasurement->GetWidget()->GetChannelProxy(sourceChannel)),
-                sourceMeasurement->GetWidget(),
-                hwIndex,
-                false);
+            m_widget->CloneHwChannelProxy(sourceChannelProxy, newChannel, sourceChannelProxy->IsGhost());
             m_channels.push_back(newChannel);
 
         }
-        else if (sampleChannel)
+        else //sampleChannel
         {
             m_sampleChannel = new SampleChannel(this);
-
             SampleChannelProxy *sourceChannelProxy =
-                dynamic_cast<SampleChannelProxy*>(sourceMeasurement->GetWidget()->GetChannelProxy(sourceChannel));
+                dynamic_cast<SampleChannelProxy*>(sourceGraphiscContainer->GetChannelProxy(sourceChannel));
             SampleChannelProxy *newChannelProxy =
-                m_widget->CloneSampleChannelProxy(m_sampleChannel, sourceMeasurement->GetWidget(), sourceChannelProxy);
+                m_widget->CloneSampleChannelProxy(sourceChannelProxy, m_sampleChannel, sourceChannelProxy->IsGhost());
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(
@@ -453,7 +441,7 @@ void Measurement::_InitializeAxesAndChanels(Measurement *sourceMeasurement)
             );
         }
 
-        if (sourceMeasurement->GetWidget()->GetChannelWidget(sourceChannel)->IsOnHorizontalAxis())
+        if (sourceGraphiscContainer->GetChannelWidget(sourceChannel)->IsOnHorizontalAxis())
             m_widget->SetHorizontalChannel(this, m_channels.last());
 
         hwIndex++;

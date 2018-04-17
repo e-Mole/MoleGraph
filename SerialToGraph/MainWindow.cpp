@@ -773,7 +773,7 @@ void MainWindow::addGhostChannel()
     Measurement *m = channel->GetMeasurement();
     GraphicsContainer *originalGc = m_graphicsContainerManager->GetGraphicsContainer(m);
     GraphicsContainer *destGc = m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement);
-    HwChannelProxy *ghostProxy = m_graphicsContainerManager->AddGhost(
+    ChannelProxyBase *ghostProxy = m_graphicsContainerManager->AddGhost(
         m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannelProxy(m)->GetChannel()), destGc, false);
 
     m_channelMenu->ReinitGrid(); //to be added
@@ -896,7 +896,7 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
         }
 
         GraphicsContainer *destGC = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
-        HwChannelProxy *ghostProxy = m_graphicsContainerManager->AddGhost(
+        ChannelProxyBase *ghostProxy = m_graphicsContainerManager->AddGhost(
             m_measurements[mIndex],
             chIndex,
             hchIndex,

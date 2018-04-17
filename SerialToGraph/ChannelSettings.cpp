@@ -61,6 +61,7 @@ ChannelSettings::ChannelSettings(
     m_measurements(measurements),
     m_graphicsContainer(graphicsContainer),
     m_channelProxy(channelProxy),
+    m_originalProxy(channelProxy),
     m_currentValueControl(new QLineEdit(this)),
     m_name(new QLineEdit(m_channelProxy->GetName(), this)),
     m_units(new QLineEdit(m_channelProxy->GetUnits(), this)),
@@ -79,8 +80,7 @@ ChannelSettings::ChannelSettings(
     m_naValue(new QPushButton(tr("n/a"), this)),
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
-    m_sensorManager(sensorManager),
-    m_originalProxyChanged(false)
+    m_sensorManager(sensorManager)
 {
     _HideAllOptional();
 
@@ -91,7 +91,7 @@ ChannelSettings::ChannelSettings(
         connect(m_sourceChannelCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadFromOriginalWidget(int)));
     }
 
-    if (dynamic_cast<SampleChannelProxy*>(channelProxy))
+    if (dynamic_cast<SampleChannelProxy*>(channelProxy) || m_channelProxy->IsGhost())
     {
         _InitializeTimeFeatures(dynamic_cast<SampleChannelProxy*>(channelProxy));
     }
@@ -113,7 +113,6 @@ ChannelSettings::ChannelSettings(
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelProxy);
     _InitializePenStyle(channelProxy->GetPenStyle());
-    m_originalProxyChanged = false;
 }
 
 void ChannelSettings::_HideAllOptional()
@@ -331,12 +330,13 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
     ChannelProxyBase *originalChannelProxy = originalGC->GetChannelProxy(originalChannel);
 
-    m_channelProxy = originalChannelProxy->Clone(this, m_channelProxy->GetWidget());
-    m_originalProxyChanged = true;
-
+    if (originalChannelProxy->GetChannel() != m_channelProxy->GetChannel())
+    {
+        m_channelProxy = originalChannelProxy->Clone(this, m_channelProxy->GetWidget());
+    }
     _FillSensorItems(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     _FillValueLine(dynamic_cast<HwChannelProxy*>(m_channelProxy));
-
+    _FillTimeFeatures(dynamic_cast<SampleChannelProxy*>(m_channelProxy));
     m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
 
     m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy));
@@ -348,7 +348,6 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     }
 
     m_shapeComboBox->setCurrentIndex(originalChannelProxy->GetChannelGraph()->GetShapeIndex());
-
 }
 
 unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
@@ -557,7 +556,7 @@ bool ChannelSettings::BeforeAccept()
         unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
         hwChannelProxy->ChangeValue(currentIndex, m_currentValue);
     }
-    if (m_channelProxy->GetName() != m_name->text() && m_channelProxy->GetType() != ChannelBase::Type_Sample)
+    if (m_channelProxy->GetName() != m_name->text() && (hwChannelProxy || m_channelProxy->IsGhost()))
     {
         changed = true;
         m_channelProxy->SetName(m_name->text());
@@ -577,9 +576,9 @@ bool ChannelSettings::BeforeAccept()
 
     }
 
-    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_channelProxy);
-    if (sampleChannelProxy)
+    if (dynamic_cast<SampleChannelProxy*>(m_channelProxy))
     {
+        SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_channelProxy);
         if ((int)sampleChannelProxy->GetTimeUnits() != m_timeUnits->currentIndex())
         {
             changed = true;
@@ -597,6 +596,7 @@ bool ChannelSettings::BeforeAccept()
             changed = true;
             sampleChannelProxy->SetStyle((SampleChannelProperties::Style)m_style->currentIndex());
         }
+        sampleChannelProxy->SetUnits(sampleChannelProxy->GetUnits());
     }
     else
     {
@@ -614,23 +614,8 @@ bool ChannelSettings::BeforeAccept()
         rescaleAxis = true;
     }
 
-    if (m_channelProxy->IsGhost())
-    {
-        Measurement *originalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
-        GraphicsContainer *originalGC = originalMeasurement->GetWidget();
-        ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
-
-        if (m_channelProxy->GetChannel() != originalChannel)
-        {
-            //FIXME: is it removed somewhere?
-            m_graphicsContainer->SetHorizontalChannel(originalMeasurement, originalGC->GetHorizontalChannelProxy(originalMeasurement)->GetChannel());
-            m_graphicsContainer->ReplaceChannelForWidget(originalChannel, m_channelProxy);
-        }
-    }
-
     if (hwChannelProxy)
     {
-
         hw::Sensor *sensor = m_sensorManager->GetSensor(m_sensorNameComboBox->currentData().toInt());
         if (NULL != sensor && sensor != hwChannelProxy->GetSensor())
         {
@@ -650,6 +635,28 @@ bool ChannelSettings::BeforeAccept()
         {
             hwChannelProxy->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
             changed = true;
+        }
+    }
+
+    if (m_channelProxy->IsGhost())
+    {
+        Measurement *newOriginalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
+        GraphicsContainer *originalGC = newOriginalMeasurement->GetWidget();
+        ChannelBase *newOriginalChannel = newOriginalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
+
+        if (m_originalProxy->GetChannel() != newOriginalChannel)
+        {
+            //FIXME: is it removed somewhere?
+            m_graphicsContainer->SetHorizontalChannel(newOriginalMeasurement, originalGC->GetHorizontalChannelProxy(newOriginalMeasurement)->GetChannel());
+
+            //Note: proxy is compleetly exchanged also in the case when is changed just ChannelBase. it is more generic
+            m_graphicsContainer->ReplaceChannelProxy(m_originalProxy, m_channelProxy);
+            m_graphicsContainer->GhostAddingChangingPostProcess(m_channelProxy);
+
+            changed = true;
+            //it was aready done in GhostAddingChangingPostProcess
+            changedHorizontal = false;
+            rescaleAxis = false;
         }
     }
 

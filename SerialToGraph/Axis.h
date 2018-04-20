@@ -29,7 +29,6 @@ class Axis : public QObject
     void _FillChannelProxies(std::vector<ChannelProxyBase *> &proxies, std::vector<GraphicsContainer *> &containers);
     QString _GetChannelName(GraphicsContainer *container, ChannelProxyBase *proxy);
 
-    friend class AxisCopy;
     friend class AxesDialog;
     friend class AxisSettings;
 

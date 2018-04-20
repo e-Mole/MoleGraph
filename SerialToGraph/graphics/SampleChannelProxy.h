@@ -16,6 +16,7 @@ class SampleChannelProxy : public ChannelProxyBase
     static QString _FillTimeValueString(SampleChannelProperties::RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
     static QString _ConvertDateTimeToString(SampleChannelProperties::RealTimeFormat format, double seconds, bool range);
     SampleChannelProperties *_GetChannelProperties() const;
+    double _GetTimeOffsetValue(double timeFromStart) const;
 public:
     SampleChannelProxy(QObject *parent, SampleChannel *channel, ChannelWidget *channelWidget, SampleChannelProperties *properties);
 

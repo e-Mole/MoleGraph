@@ -20,27 +20,36 @@ ChannelBase::ChannelBase(Measurement *measurement):
     QObject(measurement),
     m_measurement(measurement),
     m_channelMinValue(std::numeric_limits<double>::max()),
-    m_channelMaxValue(-std::numeric_limits<double>::max())
+    m_channelMaxValue(-std::numeric_limits<double>::max()),
+    m_channelMinValueIndex(~0),
+    m_channelMaxValueIndex(~0)
 {
 }
 
-void ChannelBase::_UpdateExtremes(double value)
+void ChannelBase::_UpdateExtremes(double value, unsigned index)
 {
     if (value < m_channelMinValue)
+    {
         m_channelMinValue = value;
+        m_channelMinValueIndex = index;
+    }
 
     if (value > m_channelMaxValue)
+    {
         m_channelMaxValue = value;
+        m_channelMaxValueIndex = index;
+    }
 }
 
 void ChannelBase::AddValue( double value)
 {
+    unsigned index = m_values.count();
     m_values.push_back(value);
 
     if (value == GetNaValue())
         return;
 
-    _UpdateExtremes(value);
+    _UpdateExtremes(value, index);
 }
 
 Measurement * ChannelBase::GetMeasurement()
@@ -48,7 +57,7 @@ Measurement * ChannelBase::GetMeasurement()
     return m_measurement;
 }    
 
-double ChannelBase::GetValue(unsigned index) const
+double ChannelBase::GetRawValue(unsigned index) const
 {
     if (index >= m_values.count())
     {
@@ -61,9 +70,6 @@ void ChannelBase::_RecalculateExtremes()
 {
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();
-
-    for (unsigned i = 0; i < GetValueCount(); i++)
-        _UpdateExtremes(GetValue(i));
 }
 
 double ChannelBase::GetNaValue()

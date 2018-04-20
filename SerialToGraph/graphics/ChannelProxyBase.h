@@ -4,6 +4,7 @@
 #include <QObject>
 #include <ChannelBase.h>
 
+class Axis;
 class ChannelGraph;
 class ChannelProperties;
 class ChannelWidget;
@@ -89,6 +90,7 @@ public:
     void ShowGraph(bool show);
     void UpdateGraph(double xValue, double yValue, bool replot);
     void SetMinimumFontSize(unsigned sizeFactor);
+    Axis *GetAxis();
 };
 
 #endif // CHANNELPROPERTIESBASE_H

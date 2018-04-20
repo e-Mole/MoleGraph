@@ -319,7 +319,8 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
     {
         m_sourceChannelCombo->setCurrentIndex(1); //skip samples
     }
-    loadFromOriginalWidget(m_sourceChannelCombo->currentIndex());
+    //it must not be here to it doesnt be filled after each openning of the window
+    //loadFromOriginalWidget(m_sourceChannelCombo->currentIndex());
 }
 
 void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
@@ -518,6 +519,7 @@ bool ChannelSettings::BeforeAccept()
     bool changed = false;
     bool changedHorizontal = false;
     bool rescaleAxis = false;
+    bool changeStyle = false;
 
     Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
     if (m_channelProxy->GetChannelGraph()->GetValuleAxis() != axis)
@@ -582,18 +584,21 @@ bool ChannelSettings::BeforeAccept()
         if ((int)sampleChannelProxy->GetTimeUnits() != m_timeUnits->currentIndex())
         {
             changed = true;
+            changeStyle = true;
             sampleChannelProxy->SetTimeUnits((SampleChannelProperties::TimeUnits)m_timeUnits->currentIndex());
         }
 
         if ((int)sampleChannelProxy->GetRealTimeFormat() != m_format->currentIndex())
         {
             changed = true;
+            changeStyle = true;
             sampleChannelProxy->SetRealTimeFormat((SampleChannelProperties::RealTimeFormat)m_format->currentIndex());
         }
 
         if ((int)sampleChannelProxy->GetStyle() != m_style->currentIndex())
         {
             changed = true;
+            changeStyle = true;
             sampleChannelProxy->SetStyle((SampleChannelProperties::Style)m_style->currentIndex());
         }
         sampleChannelProxy->SetUnits(sampleChannelProxy->GetUnits());
@@ -663,7 +668,12 @@ bool ChannelSettings::BeforeAccept()
     //NOTE: must be last!
     if (changed)
     {
-        if (rescaleAxis)
+        if (changeStyle)
+        {
+           m_channelProxy->GetAxis()->UpdateGraphAxisStyle();
+           m_graphicsContainer->GetPlot()->RefillSingleGraph(m_channelProxy);
+        }
+        else if (rescaleAxis) //axis rescaling is part of RefillSingleGraph
         {
            m_graphicsContainer->GetPlot()->RescaleAxis(axis->GetGraphAxis());
         }

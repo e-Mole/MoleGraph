@@ -526,12 +526,12 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
     {
         if (channel->GetType() == ChannelBase::Type_Sample)
         {
-            out << ((SampleChannel*)channel)->GetValue(i);
+            out << ((SampleChannel*)channel)->GetRawValue(i);
             out << ((SampleChannel*)channel)->GetTimeFromStart(i);
         }
         else
         {
-            out << channel->GetValue(i);
+            out << channel->GetRawValue(i);
             out << ((HwChannel*)channel)->GetOriginalValue(i);
         }
     }

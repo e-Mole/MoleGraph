@@ -90,7 +90,7 @@ ChannelProxyBase * GraphicsContainerManager::AddGhost(
     return destGraphicsContainer->AddGhost(
         sourceGraphicsContainer->GetChannelProxy(sourceChannel),
         sourceGraphicsContainer,
-        sourceMeasurement->GetChannel(sourceHorizontalChannelIndex),
+        sourceGraphicsContainer->GetHorizontalChannelProxy(sourceMeasurement),
         confirmed
     );
 }

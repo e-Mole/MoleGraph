@@ -152,7 +152,7 @@ public:
     void RefillWidgets();
     ChannelProxyBase *AddGhost(ChannelProxyBase *sourceChannelProxy,
         GraphicsContainer *sourceGraphicsContainer,
-        ChannelBase *sourceHorizontalChannel
+        ChannelProxyBase *sourceHorizontalProxy
     , bool confirmed);
 
     static QString GetGhostName(GraphicsContainer * sourceGraphicsContainer, ChannelProxyBase *channelProxy);
@@ -163,6 +163,8 @@ public:
     ChannelProxyBase *GetChannelProxy(ChannelProperties *properties);
     int GetLastHorizontalValueIndex(Measurement *m, unsigned markerPosition);
     void ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy);
+    bool ContainsAnyData();
+
 signals:
     void resized();
     void editChannel(ChannelProxyBase *channelProxy);

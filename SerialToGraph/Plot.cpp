@@ -537,22 +537,35 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
+void Plot::_RefillSingleGraph(ChannelProxyBase *channelProxy)
+{
+    channelProxy->GetChannelGraph()->clearData();
+    ChannelProxyBase * horizontalChannelProxy = m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+    for (unsigned i = 0; i < channelProxy->GetValueCount(); i++) //untracked channels have no values
+    {
+        if (channelProxy->IsValueNA(i) || horizontalChannelProxy->IsValueNA(i))
+            continue;
+
+        channelProxy->GetChannelGraph()->data()->insert(
+            horizontalChannelProxy->GetValue(i),
+            QCPData(horizontalChannelProxy->GetValue(i), channelProxy->GetValue(i))
+        );
+    }
+}
+
+void Plot::RefillSingleGraph(ChannelProxyBase *channelProxy)
+{
+    _RefillSingleGraph(channelProxy);
+    QCPAxis *axis = channelProxy->GetAxis()->GetGraphAxis();
+    RescaleAxis(axis);
+    ReplotIfNotDisabled();
+}
+
 void Plot::RefillGraphs()
 {
     foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        channelProxy->GetChannelGraph()->clearData();
-        ChannelProxyBase * horizontalChannelProxy = m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
-        for (unsigned i = 0; i < channelProxy->GetValueCount(); i++) //untracked channels have no values
-        {
-            if (channelProxy->IsValueNA(i) || horizontalChannelProxy->IsValueNA(i))
-                continue;
-
-            channelProxy->GetChannelGraph()->data()->insert(
-                horizontalChannelProxy->GetValue(i),
-                QCPData(horizontalChannelProxy->GetValue(i), channelProxy->GetValue(i))
-            );
-        }
+        _RefillSingleGraph(channelProxy);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();

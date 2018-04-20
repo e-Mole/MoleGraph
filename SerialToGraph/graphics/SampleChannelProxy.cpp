@@ -172,7 +172,7 @@ QString SampleChannelProxy::GetRealTimeText(double value, bool range) const
 QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
 {
     SampleChannel *channel = GetChannel();
-    double value = channel->GetValue(index);
+    double value = channel->GetRawValue(index);
     return GetRealTimeText(value, range);
 }
 
@@ -186,6 +186,26 @@ void SampleChannelProxy::SetStyle(SampleChannelProperties::Style style)
     _GetChannelProperties()->SetStyle(style);
 }
 
+double SampleChannelProxy::_GetTimeOffsetValue(double timeFromStart) const
+{
+    switch (GetTimeUnits())
+    {
+    case SampleChannelProperties::Us:
+        return timeFromStart * 1000000;
+    case SampleChannelProperties::Ms:
+        return timeFromStart * 1000;
+    case SampleChannelProperties::Sec:
+        return timeFromStart;
+    case SampleChannelProperties::Min:
+        return timeFromStart / 60;
+    case SampleChannelProperties::Hours:
+        return timeFromStart /(60*60);
+    case SampleChannelProperties::Days:
+        return timeFromStart /(60*60*24);
+    }
+    qWarning("unknown time unit");
+    return ChannelBase::GetNaValue();
+}
 double SampleChannelProxy::GetValue(unsigned index) const
 {
     if (index == ~0)
@@ -197,27 +217,13 @@ double SampleChannelProxy::GetValue(unsigned index) const
     switch (GetStyle())
     {
     case SampleChannelProperties::Samples:
-        return sampleChannel->GetValue(index);
+        return sampleChannel->GetSampleNr(index);
     case SampleChannelProperties::RealTime:
         return
             sampleChannel->GetStartDateTime().toMSecsSinceEpoch() / 1000.0 + timeFromStart - //in seconds
             sampleChannel->GetTimeFromStart(0); //first sample is on offset 0
     case SampleChannelProperties::TimeOffset:
-        switch (GetTimeUnits())
-        {
-        case SampleChannelProperties::Us:
-            return timeFromStart * 1000000;
-        case SampleChannelProperties::Ms:
-            return timeFromStart * 1000;
-        case SampleChannelProperties::Sec:
-            return timeFromStart;
-        case SampleChannelProperties::Min:
-            return timeFromStart / 60;
-        case SampleChannelProperties::Hours:
-            return timeFromStart /(60*60);
-        case SampleChannelProperties::Days:
-            return timeFromStart /(60*60*24);
-        }
+        return _GetTimeOffsetValue(timeFromStart);
     }
     return ChannelBase::GetNaValue(); //it should be never reached
 }
@@ -250,21 +256,38 @@ void SampleChannelProxy::SetRealTimeFormat(SampleChannelProperties::RealTimeForm
 
 double SampleChannelProxy::GetMinValue()
 {
-    if (!_GetChannelProperties()->IsInRealtimeStyle())
-        return GetChannel()->GetMinValue();
-    if (GetValueCount() > 0)
-        return GetValue(0);
+    if (GetValueCount() == 0)
+        return 0;
 
-    return 0;
+    if (_GetChannelProperties()->IsInRealtimeStyle())
+    {
+        return GetValue(0);
+    }
+
+    if (_GetChannelProperties()->GetStyle() == SampleChannelProperties::TimeOffset)
+    {
+        double timeFromStart = dynamic_cast<SampleChannel *>(m_channel)->GetTimeFromStart(m_channel->GetMinValueIndex());
+        return _GetTimeOffsetValue(timeFromStart);
+    }
+
+    return m_channel->GetMinValue();
 }
 
 double SampleChannelProxy::GetMaxValue()
 {
-    if (!_GetChannelProperties()->IsInRealtimeStyle())
-        return GetChannel()->GetMaxValue();
+    if (GetValueCount() == 0)
+        return 1;
 
-    if (GetValueCount() > 0)
+    if (_GetChannelProperties()->IsInRealtimeStyle())
+    {
         return GetValue(GetValueCount()-1);
+    }
 
-    return 1;
+    if (_GetChannelProperties()->GetStyle() == SampleChannelProperties::TimeOffset)
+    {
+        double timeFromStart = dynamic_cast<SampleChannel *>(m_channel)->GetTimeFromStart(m_channel->GetMaxValueIndex());
+        return _GetTimeOffsetValue(timeFromStart);
+    }
+
+    return m_channel->GetMaxValue();
 }

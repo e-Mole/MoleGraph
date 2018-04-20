@@ -70,7 +70,7 @@ ChannelBase::ValueType HwChannel::GetValueType(unsigned index)
     if (m_measurement->IsPlotInRangeMode())
         return ValueTypeRangeValue;
 
-    return GetValue(index) == GetOriginalValue(index) ?
+    return GetRawValue(index) == GetOriginalValue(index) ?
         ValueTypeOriginal : ValueTypeChanged;
 }
 

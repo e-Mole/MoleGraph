@@ -32,8 +32,7 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->addAction(tr("Zoom in"), this, SLOT(zoomInSelected()));
     menu->addAction(tr("Zoom out"), this, SLOT(zoomOutSelected()));
-    menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->
-        setEnabled(m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0);
+    menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->setEnabled(m_graphicsContainer->ContainsAnyData());
     menu->addSeparator();
     menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
     menu->addSeparator();

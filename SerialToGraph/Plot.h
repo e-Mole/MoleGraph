@@ -59,6 +59,7 @@ private:
     QCPItemLine *_AddMarkerLine(QCPItemLine *markerLine, int position, const QColor color);
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
     QCPItemRect *_DrawOutRect(bool isLeft, int position);
+    void _RefillSingleGraph(ChannelProxyBase *channelProxy);
 
     GraphicsContainer *m_graphicsContainer;
     bool m_disabled;
@@ -110,6 +111,7 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
+    void RefillSingleGraph(ChannelProxyBase *channelProxy);
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);

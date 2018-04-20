@@ -910,14 +910,14 @@ void GraphicsContainer::hwValueChanged(unsigned index)
         qWarning() << "HChannel can't be changed because it is NULL";
         return;
     }
-
-    ChannelWidget *widget = GetChannelProxy(channel)->GetWidget();
-    double newValue = channel->GetValue(index);
+    HwChannelProxy *channelProxy = dynamic_cast<HwChannelProxy*>(GetChannelProxy(channel));
+    ChannelWidget *widget = channelProxy->GetWidget();
+    double newValue = channelProxy->GetValue(index);
 
     widget->FillLastValueText(newValue);
-    widget->ShowLastValueWithUnits(channel->GetValueType(index));
-    ChannelProxyBase *proxy = GetHorizontalChannelProxy(channel->GetMeasurement());
-    widget->UpdateGraph(proxy->GetValue(index), newValue, true);
+    widget->ShowLastValueWithUnits(channelProxy->GetValueType(index));
+    ChannelProxyBase *horizontalChanelProxy = GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+    widget->UpdateGraph(horizontalChanelProxy->GetValue(index), newValue, true);
 }
 
 void GraphicsContainer::sampleChannelPropertyChanged()
@@ -1131,7 +1131,7 @@ QString GraphicsContainer::GetGhostName(GraphicsContainer * sourceGraphicsContai
 ChannelProxyBase * GraphicsContainer::AddGhost(
     ChannelProxyBase *sourceChannelProxy,
     GraphicsContainer *sourceGraphicsContainer,
-    ChannelBase *sourceHorizontalChannel,
+    ChannelProxyBase *sourceHorizontalProxy,
     bool confirmed
 )
 {
@@ -1147,9 +1147,9 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
     m_horizontalChannelMapping.insert(
         sourceMeasurement, originalHorizontalProxy->Clone(this, thisHorizontalProxy->GetWidget())
     );
-    for (unsigned index = 0; index < sourceHorizontalChannel->GetValueCount(); ++index)
+    for (unsigned index = 0; index < sourceHorizontalProxy->GetValueCount(); ++index)
     {
-        AddHorizontalValue(sourceHorizontalChannel->GetValue(index));
+        AddHorizontalValue(sourceHorizontalProxy->GetValue(index));
     }
     ChannelProxyBase *newProxy = NULL;
     if (dynamic_cast<HwChannelProxy*>(sourceChannelProxy))
@@ -1205,4 +1205,16 @@ void GraphicsContainer::ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelP
     int index = m_channelProxies.indexOf(oldProxy);
     delete m_channelProxies[index];
     m_channelProxies[index] = newProxy;
+}
+
+bool GraphicsContainer::ContainsAnyData()
+{
+    foreach (ChannelProxyBase *proxy, m_channelProxies)
+    {
+        if (proxy->GetValueCount() > 0)
+        {
+            return true;
+        }
+    }
+    return false;
 }

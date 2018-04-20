@@ -252,7 +252,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
         {
             Measurement * originalMeasurement = proxy->GetChannelMeasurement();
             ChannelProxyBase * originalHorizontalChannelProxy = currentGC->GetHorizontalChannelProxy(originalMeasurement);
-            newGC->AddGhost(dynamic_cast<HwChannelProxy*>(proxy), currentGC, originalHorizontalChannelProxy->GetChannel(), true);
+            newGC->AddGhost(proxy, currentGC, originalHorizontalChannelProxy, true);
         }
     }
     return newMeasurement;

@@ -28,3 +28,8 @@ double SampleChannel::GetTimeFromStart(unsigned index)
 {
     return m_timeFromStart[index];
 }
+
+double SampleChannel::GetSampleNr(unsigned index) const
+{
+    return ChannelBase::GetRawValue(index);
+}

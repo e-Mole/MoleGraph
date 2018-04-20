@@ -32,13 +32,16 @@ private:
     QString _GetName();
 protected:
     void mousePressEvent(QMouseEvent * event);
-    void _UpdateExtremes(double value);
+    void _UpdateExtremes(double value, unsigned index);
     void _RecalculateExtremes();
 
     Measurement * m_measurement;
     QVector<double> m_values;
     double m_channelMinValue;
     double m_channelMaxValue;
+    unsigned m_channelMinValueIndex;
+    unsigned m_channelMaxValueIndex;
+
 
 public:
     enum Type
@@ -54,15 +57,19 @@ public:
     virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    double GetValue(unsigned index) const;
+    double GetRawValue(unsigned index) const;
 
     virtual void AddValue( double value);
 
     double GetMinValue()
     { return m_channelMinValue; }
-
     double GetMaxValue()
     { return m_channelMaxValue; }
+
+    unsigned GetMinValueIndex()
+    { return m_channelMinValueIndex; }
+    unsigned GetMaxValueIndex()
+    { return m_channelMaxValueIndex; }
 
     Measurement * GetMeasurement();
 

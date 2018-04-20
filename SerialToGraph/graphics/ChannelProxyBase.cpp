@@ -344,3 +344,8 @@ void ChannelProxyBase::SetMinimumFontSize(unsigned sizeFactor)
 {
     m_channelWidget->SetMinimumFontSize(sizeFactor);
 }
+
+Axis * ChannelProxyBase::GetAxis()
+{
+    return GetChannelGraph()->GetValuleAxis();
+}

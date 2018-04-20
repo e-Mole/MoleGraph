@@ -14,7 +14,7 @@ HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWid
 
 double HwChannelProxy::GetValue(unsigned index) const
 {
-    return m_channel->GetValue(index);
+    return m_channel->GetRawValue(index);
 }
 
 void HwChannelProxy::ChangeValue(int index, double newValue)

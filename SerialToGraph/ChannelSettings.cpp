@@ -106,6 +106,7 @@ ChannelSettings::ChannelSettings(
         m_name->setVisible(true);
         m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
         m_units->setVisible(true);
+        m_units->setEnabled(dynamic_cast<HwChannelProxy*>(channelProxy));
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
 
     }
@@ -340,7 +341,7 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     _FillTimeFeatures(dynamic_cast<SampleChannelProxy*>(m_channelProxy));
     m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
 
-    m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+    m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy) != NULL);
     m_units->setText(originalChannelProxy->GetUnits());
 
     if (m_colorButtonWidget) //it is created thgether with add color button

@@ -410,7 +410,7 @@ void Measurement::_ConnectHwChannel(HwChannel *channel)
 
 void Measurement::_CloneAxesAndChanels(Measurement *sourceMeasurement)
 {
-    GraphicsContainer *sourceGraphiscContainer = sourceMeasurement->GetWidget();
+    GraphicsContainer *sourceGraphiscContainer = sourceMeasurement->GetGC();
     m_widget->CloneAxes(sourceMeasurement->GetAxes());
     int hwIndex = -1;
     foreach (ChannelBase *sourceChannel, sourceMeasurement->GetChannels())
@@ -547,13 +547,13 @@ void Measurement::SerializeColections(QDataStream &out)
         out << axis->GetAssignedChannelCountWithoutGhosts();
         foreach (ChannelBase *channel, m_channels)
         {
-            if (GetWidget()->GetChannelWidget(channel)->GetChannelGraph()->GetValuleAxis() == axis)
+            if (GetGC()->GetChannelWidget(channel)->GetChannelGraph()->GetValuleAxis() == axis)
             {
                 out <<
                     (channel->GetType() == ChannelBase::Type_Hw ?
                         ((HwChannel *)channel)->GetHwIndex() : -1
                     );
-                out << GetWidget()->GetChannelWidget(channel);
+                out << GetGC()->GetChannelWidget(channel);
             }
         }
     }
@@ -766,7 +766,7 @@ bool Measurement::IsPlotInRangeMode()
     return m_widget->IsPlotInRangeMode();
 }
 
-GraphicsContainer *Measurement::GetWidget()
+GraphicsContainer *Measurement::GetGC()
 {
     return m_widget;
 }

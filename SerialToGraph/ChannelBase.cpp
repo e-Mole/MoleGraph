@@ -70,6 +70,11 @@ void ChannelBase::_RecalculateExtremes()
 {
     m_channelMinValue = std::numeric_limits<double>::max();
     m_channelMaxValue = -std::numeric_limits<double>::max();
+
+    for (unsigned i = 0; i < GetValueCount(); i++)
+    {
+        _UpdateExtremes(m_values[i], i);
+    }
 }
 
 double ChannelBase::GetNaValue()

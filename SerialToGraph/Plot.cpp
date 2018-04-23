@@ -453,7 +453,6 @@ QCPAxis *Plot::AddYAxis(bool onRight)
 
 void Plot::RescaleAxis(QCPAxis *axis)
 {
-
     if (axis == xAxis)
     {
         axis->rescale(true);

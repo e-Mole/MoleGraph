@@ -93,7 +93,7 @@ void Axis::_FillChannelProxies(std::vector<ChannelProxyBase *> &proxies, std::ve
                 }
 
                 Measurement *m = proxy->GetChannelMeasurement();
-                GraphicsContainer *sourceContainer = m->GetWidget();
+                GraphicsContainer *sourceContainer = m->GetGC();
                 ChannelProxyBase * horizontalChannelProxy = sourceContainer->GetHorizontalChannelProxy();
                 if (std::find(proxies.begin(), proxies.end(), horizontalChannelProxy) == proxies.end())
                 {

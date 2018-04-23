@@ -241,18 +241,16 @@ Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
     Measurement *currentMeasurement = GetCurrnetMeasurement();
-    GraphicsContainer* currentGC = currentMeasurement->GetWidget();
+    GraphicsContainer* currentGC = currentMeasurement->GetGC();
 
     Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true, m_sensorManager);
-    GraphicsContainer *newGC = newMeasurement->GetWidget();
+    GraphicsContainer *newGC = newMeasurement->GetGC();
 
     foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
     {
         if (proxy->IsGhost())
         {
-            Measurement * originalMeasurement = proxy->GetChannelMeasurement();
-            ChannelProxyBase * originalHorizontalChannelProxy = currentGC->GetHorizontalChannelProxy(originalMeasurement);
-            newGC->AddGhost(proxy, currentGC, originalHorizontalChannelProxy, true);
+            newGC->AddGhost(proxy, currentGC, true);
         }
     }
     return newMeasurement;
@@ -261,7 +259,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    GraphicsContainer *graphicsContainer = m->GetWidget();
+    GraphicsContainer *graphicsContainer = m->GetGC();
     m_graphicsContainerManager->AddMeasurement(m);
 
     int index = m_measurementTabs->addTab(graphicsContainer, graphicsContainer->GetName());
@@ -274,13 +272,13 @@ void MainWindow::measurementColorChanged()
 {
     Measurement * m = (Measurement*)sender();
     for (int i = 0; i < m_measurementTabs->count(); ++i)
-        if (m_measurementTabs->widget(i) == m->GetWidget())
+        if (m_measurementTabs->widget(i) == m->GetGC())
             m_measurementTabs->tabBar()->setTabTextColor(i, m->GetColor());
 }
 
 void MainWindow::SwichCurrentMeasurement(Measurement *m)
 {
-    m_measurementTabs->setCurrentWidget(m->GetWidget());
+    m_measurementTabs->setCurrentWidget(m->GetGC());
 }
 
 void MainWindow::RemoveAllMeasurements()
@@ -315,7 +313,7 @@ void MainWindow::measurementNameChanged()
     Measurement *measurement = (Measurement*)sender();
     for(int i = 0; i < m_measurementTabs->count(); i++)
     {
-        if (m_measurementTabs->widget(i) == measurement->GetWidget())
+        if (m_measurementTabs->widget(i) == measurement->GetGC())
         {
             m_measurementTabs->setTabText(i, measurement->GetName());
             break;
@@ -336,7 +334,7 @@ void MainWindow::currentMeasurementChanged(int index)
 
     foreach (Measurement *m, m_measurements)
     {
-        if (m->GetWidget() == m_measurementTabs->widget(index))
+        if (m->GetGC() == m_measurementTabs->widget(index))
         {
 
             m_buttonLine->ChangeMeasurement(m);
@@ -353,7 +351,7 @@ void MainWindow::currentMeasurementChanged(int index)
 Measurement *MainWindow::GetCurrnetMeasurement()
 {
     foreach (Measurement *m, m_measurements)
-        if (m->GetWidget() == m_measurementTabs->currentWidget())
+        if (m->GetGC() == m_measurementTabs->currentWidget())
             return m;
 
     return NULL;
@@ -396,7 +394,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             Measurement *m = CreateNewMeasurement(false);
             m->SetSaveLoadValues(values);
             in >> m;
-            m->GetWidget()->RecalculateSliderMaximum();
+            m->GetGC()->RecalculateSliderMaximum();
             ConfirmMeasurement(m);
         }
 
@@ -688,7 +686,7 @@ void MainWindow::measurementMenuButtonPressed()
 
 void MainWindow::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetWidget());
+    AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetGC());
     axisMenu.exec();
 }
 
@@ -778,7 +776,7 @@ void MainWindow::addGhostChannel()
 
     m_channelMenu->ReinitGrid(); //to be added
     m_ghostCreating = true;
-    ghostProxy->GetWidget()->clicked();
+    destGc->editChannel(ghostProxy);
     m_channelMenu->ReinitGrid(); //to be changed name or color
 }
 

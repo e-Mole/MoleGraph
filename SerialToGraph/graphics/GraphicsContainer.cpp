@@ -143,7 +143,7 @@ void GraphicsContainer::_InitializeLayouts()
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
 }
 
-ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelWidget *widget)
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelWidget *widget) const
 {
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
@@ -154,7 +154,24 @@ ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelWidget *widget)
     return NULL;
 }
 
-ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelBase *channel)
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(unsigned channelIndex) const
+{
+    foreach (ChannelProxyBase *item, m_channelProxies)
+    {
+        if (item->IsGhost())
+        {
+            continue;
+        }
+
+        unsigned itemIndex = item->GetChannelMeasurement()->GetChannelIndex(item->GetChannel());
+        if (itemIndex == channelIndex)
+            return item;
+    }
+    qWarning() << "channel proxy has not been found by index.";
+    return NULL;
+}
+
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelBase *channel) const
 {
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
@@ -165,7 +182,7 @@ ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelBase *channel)
     return NULL;
 }
 
-ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelProperties *properties)
+ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelProperties *properties) const
 {
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
@@ -306,11 +323,12 @@ void GraphicsContainer::CalculateScrollbarRange()
     m_scrollBar->setRange(0, m_horizontalValueSet.size()-1);
 }
 
-void GraphicsContainer::AddHorizontalValue(double value)
+void GraphicsContainer::AddHorizontalValue(double value, bool recalculateScroolBarRange)
 {
     m_horizontalValueSet.insert(value);
 
-    CalculateScrollbarRange();
+    if (recalculateScroolBarRange)
+        CalculateScrollbarRange();
 }
 
 void GraphicsContainer::ClearHorizontalValueSet()
@@ -429,7 +447,7 @@ double GraphicsContainer::GetLastMeasuredHorizontalValue(Measurement *m)
 
 void GraphicsContainer::SetHorizontalChannel(Measurement *m, ChannelBase *channel, ChannelProxyBase *originalHorizontalChannelProxy)
 {
-    ChannelProxyBase *originalProxy = m->GetWidget()->GetChannelProxy(channel);
+    ChannelProxyBase *originalProxy = m->GetGC()->GetChannelProxy(channel);
     m_horizontalChannelMapping.insert(
         m,
         originalProxy->Clone(this, originalHorizontalChannelProxy->GetWidget())
@@ -646,6 +664,12 @@ ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy() const
 
 ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy(Measurement *measurement) const
 {
+    if (!m_horizontalChannelMapping.contains(measurement))
+    {
+        qWarning() << "HorizontalChannel Proxy has not been found for entered measurement";
+        return NULL;
+    }
+
     return m_horizontalChannelMapping[measurement];
 }
 
@@ -719,7 +743,7 @@ void GraphicsContainer::addNewValueSet()
     //TODO: WILL be refactored to could contain samples from more measurements
     //TODO:m_horizontalChannel will not be defined -> should be used
     ChannelProxyBase * horizontalChannelProxy = GetHorizontalChannelProxy(m);
-    SampleChannelProxy * sampleChannelProxy = m->GetWidget()->GetSampleChannelProxy();
+    SampleChannelProxy * sampleChannelProxy = m->GetGC()->GetSampleChannelProxy();
     m_sampleChannelWidget->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), sampleChannelProxy->GetLastValidValue(), false);
 
     for (ChannelBase *channel : m->GetTrackedHwChannels().values())
@@ -730,7 +754,7 @@ void GraphicsContainer::addNewValueSet()
             channelProxy->UpdateGraph(horizontalChannelProxy->GetLastValidValue(), channelProxy->GetLastValidValue(), false);
         }
     }
-    AddHorizontalValue(horizontalChannelProxy->GetLastValidValue());
+    AddHorizontalValue(horizontalChannelProxy->GetLastValidValue(), true);
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
@@ -808,7 +832,7 @@ SampleChannelProxy *GraphicsContainer::CreateSampleChannelProxy(SampleChannel *c
 SampleChannelProxy *GraphicsContainer::CloneSampleChannelProxy(
     SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost)
 {
-    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetWidget();
+    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
     ChannelGraph *newChannelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget());
 
     ChannelWidget *newWidget = new ChannelWidget(
@@ -882,7 +906,7 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
 
 HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
 {
-    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetWidget();
+    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
     ChannelWidget * sourceChannelWidget = dynamic_cast<ChannelWidget*>(sourceChannelProxy->GetWidget());
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget());
     ChannelWidget *widget = new ChannelWidget(
@@ -1131,26 +1155,9 @@ QString GraphicsContainer::GetGhostName(GraphicsContainer * sourceGraphicsContai
 ChannelProxyBase * GraphicsContainer::AddGhost(
     ChannelProxyBase *sourceChannelProxy,
     GraphicsContainer *sourceGraphicsContainer,
-    ChannelProxyBase *sourceHorizontalProxy,
     bool confirmed
 )
 {
-    Measurement *sourceMeasurement = sourceChannelProxy->GetChannelMeasurement();
-
-    ChannelProxyBase *originalHorizontalProxy = sourceMeasurement->GetWidget()->GetHorizontalChannelProxy();
-    ChannelProxyBase *thisHorizontalProxy = GetHorizontalChannelProxy();
-    if (originalHorizontalProxy == NULL || thisHorizontalProxy == NULL)
-    {
-        qWarning() << "channel proxies are not valiud";
-        return NULL;
-    }
-    m_horizontalChannelMapping.insert(
-        sourceMeasurement, originalHorizontalProxy->Clone(this, thisHorizontalProxy->GetWidget())
-    );
-    for (unsigned index = 0; index < sourceHorizontalProxy->GetValueCount(); ++index)
-    {
-        AddHorizontalValue(sourceHorizontalProxy->GetValue(index));
-    }
     ChannelProxyBase *newProxy = NULL;
     if (dynamic_cast<HwChannelProxy*>(sourceChannelProxy))
     {
@@ -1166,6 +1173,10 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
     newProxy->SetName(GetGhostName(sourceGraphicsContainer, newProxy));
     newProxy->SetPenStyle(Qt::DashLine);
     newProxy->SetVisible(false);
+
+    m_channelProxies.append(newProxy);
+    _AddHorizontalChannelProxy(newProxy->GetChannelMeasurement(), _GetMainHorizontalChannelIndex());
+    CalculateScrollbarRange();
     m_ghostWaitingForConfirmation = newProxy;
 
     if (confirmed)
@@ -1177,18 +1188,63 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
 void GraphicsContainer::ConfirmGhostChannel()
 {
     m_ghostWaitingForConfirmation->SetVisible(true);
-    m_channelProxies.push_back(m_ghostWaitingForConfirmation);
-    GhostAddingChangingPostProcess(m_ghostWaitingForConfirmation);
+    GhostManipupationPostProcess(m_ghostWaitingForConfirmation);
     m_ghostWaitingForConfirmation = NULL;
 }
 
-
-void GraphicsContainer::GhostAddingChangingPostProcess(ChannelProxyBase *ghostProxy)
+unsigned GraphicsContainer::_GetMainHorizontalChannelIndex()
 {
+    return m_horizontalChannelMapping[m_mainMeasurement]->GetChannelIndex();
+
+}
+void GraphicsContainer::_AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex)
+{
+    GraphicsContainer *gc = m->GetGC();
+    ChannelProxyBase *horizontalChannelProxy = gc->GetChannelProxy(mainHorizontalChannelIndex);
+
+    m_horizontalChannelMapping[m] = horizontalChannelProxy;
+    for (unsigned index = 0; index < horizontalChannelProxy->GetValueCount(); ++index)
+    {
+        AddHorizontalValue(horizontalChannelProxy->GetValue(index), false);
+    }
+}
+
+void GraphicsContainer::RefillHorizontalChannelMapping()
+{
+    unsigned mainHorizontalIndex = _GetMainHorizontalChannelIndex();
+
+    //cleaning
+    m_horizontalValueSet.clear();
+    foreach (Measurement *m, m_horizontalChannelMapping.keys())
+    {
+        ChannelProxyBase *channelProxy = m_horizontalChannelMapping[m];
+        if (!m_channelProxies.contains(channelProxy))
+        {
+            delete channelProxy;
+        }
+    }
+    m_horizontalChannelMapping.clear();
+
+    //filling
+    foreach (ChannelProxyBase *proxy, m_channelProxies)
+    {
+        Measurement *m = proxy->GetChannelMeasurement();
+        if (m_horizontalChannelMapping.contains(m))
+        {
+            continue; //already processed
+        }
+        _AddHorizontalChannelProxy(m, mainHorizontalIndex);
+    }
+    CalculateScrollbarRange();
+}
+
+void GraphicsContainer::GhostManipupationPostProcess(ChannelProxyBase *ghostProxy)
+{
+    RefillHorizontalChannelMapping();
     replaceDisplays();
     _DisplayChannelValue(ghostProxy);
 
-    m_plot->UpdateHorizontalAxisName();
+    //m_plot->UpdateHorizontalAxisName();
     m_plot->RefillGraphs();
     m_plot->SetMarkerLine(m_currentIndex);
 }
@@ -1197,14 +1253,22 @@ void GraphicsContainer::RejectGhostChannel()
 {
     m_channelProxies.removeOne(m_ghostWaitingForConfirmation);
     delete m_ghostWaitingForConfirmation;
+    RefillHorizontalChannelMapping();
     m_ghostWaitingForConfirmation = NULL;
 }
 
-void GraphicsContainer::ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy)
+bool GraphicsContainer::ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy)
 {
     int index = m_channelProxies.indexOf(oldProxy);
     delete m_channelProxies[index];
     m_channelProxies[index] = newProxy;
+
+    if (m_ghostWaitingForConfirmation == oldProxy)
+    {
+        m_ghostWaitingForConfirmation = newProxy;
+        return false;
+    }
+    return true;
 }
 
 bool GraphicsContainer::ContainsAnyData()

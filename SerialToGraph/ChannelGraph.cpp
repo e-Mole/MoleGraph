@@ -130,7 +130,7 @@ void ChannelGraph::ShowAllMarks(bool showAllMarks)
     m_showAllMarks = showAllMarks;
 }
 
-int ChannelGraph::GetShapeIndex()
+int ChannelGraph::GetShapeIndex() const
 {
     return ((unsigned)m_selectedMarkStyle.shape());
 }

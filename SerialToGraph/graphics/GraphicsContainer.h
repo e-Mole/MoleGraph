@@ -70,6 +70,8 @@ class GraphicsContainer : public QWidget
     bool _IsTracked(Measurement *m);
     SampleChannelProxy *_CreateSampleChannelProxy(SampleChannel *channel, ChannelWidget *widget, SampleChannelProperties *properties, bool isGhost);
     HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost);
+    unsigned _GetMainHorizontalChannelIndex();
+    void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
 
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
@@ -82,7 +84,7 @@ public:
     void SetFollowMode(bool set);
     void RedrawChannelValues();
     int GetCurrentIndex() { return m_currentIndex; }
-    void AddHorizontalValue(double value);
+    void AddHorizontalValue(double value, bool recalculateScroolBarRange);
     void ClearHorizontalValueSet();
     void CalculateScrollbarRange();
     void ReadingValuesPostProcess(double lastHorizontalValue);
@@ -129,7 +131,7 @@ public:
     QColor GetColorByOrder(unsigned order);
     SampleChannelProxy *CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost);
     SampleChannelProxy *CloneSampleChannelProxy(SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost);
-    void GhostAddingChangingPostProcess(ChannelProxyBase *ghostProxy);
+    void GhostManipupationPostProcess(ChannelProxyBase *ghostProxy);
 
     HwChannelProxy *CreateHwChannelProxy(HwChannel *channel,
         Axis *valueAxis,
@@ -152,19 +154,19 @@ public:
     void RefillWidgets();
     ChannelProxyBase *AddGhost(ChannelProxyBase *sourceChannelProxy,
         GraphicsContainer *sourceGraphicsContainer,
-        ChannelProxyBase *sourceHorizontalProxy
-    , bool confirmed);
+        bool confirmed);
 
     static QString GetGhostName(GraphicsContainer * sourceGraphicsContainer, ChannelProxyBase *channelProxy);
     void ConfirmGhostChannel();
     void RejectGhostChannel();
-    ChannelProxyBase *GetChannelProxy(ChannelBase *channel);
-    ChannelProxyBase *GetChannelProxy(ChannelWidget *widget);
-    ChannelProxyBase *GetChannelProxy(ChannelProperties *properties);
+    ChannelProxyBase *GetChannelProxy(unsigned channelIndex) const;
+    ChannelProxyBase *GetChannelProxy(ChannelBase *channel) const ;
+    ChannelProxyBase *GetChannelProxy(ChannelWidget *widget) const ;
+    ChannelProxyBase *GetChannelProxy(ChannelProperties *properties) const;
     int GetLastHorizontalValueIndex(Measurement *m, unsigned markerPosition);
-    void ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy);
+    bool ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy);
     bool ContainsAnyData();
-
+    void RefillHorizontalChannelMapping();
 signals:
     void resized();
     void editChannel(ChannelProxyBase *channelProxy);

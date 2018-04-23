@@ -76,7 +76,7 @@ public:
     bool isVisible();
     void SetVisible(bool visible);
     bool IsGhost();
-    ChannelGraph *GetChannelGraph();
+    ChannelGraph *GetChannelGraph() const;
     bool IsDrawable();
     bool IsOnHorizontalAxis();
     Qt::PenStyle GetPenStyle();

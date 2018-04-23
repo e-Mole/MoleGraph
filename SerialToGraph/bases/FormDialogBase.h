@@ -15,6 +15,7 @@ class FormDialogBase : public PlatformDialog
     Q_OBJECT
 protected:
     virtual bool BeforeAccept() = 0;
+    virtual void BeforeReject() {};
     virtual void closeEvent(QCloseEvent * e);
     QFormLayout *m_formLayout;
     bool m_acceptChangesByDialogClosing;

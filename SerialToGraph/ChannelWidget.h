@@ -84,19 +84,19 @@ public:
     QColor &GetForeColor() const { return m_valueLabel->GetForeColor(); }
     void FillLastValueText(const QString &text);
     void FillLastValueText(double value);
-    Qt::PenStyle GetPenStyle();
+    Qt::PenStyle GetPenStyle() const;
     void SetPenStyle(Qt::PenStyle penStyle);
-    unsigned GetShapeIndex();
+    unsigned GetShapeIndex() const;
     void SetShapeIndex(unsigned index);
     void ShowGraph(bool shown);
     void UpdateGraph(double xValue, double yValue, bool replot);
-    ChannelGraph * GetChannelGraph();
+    ChannelGraph * GetChannelGraph() const;
     bool IsOnHorizontalAxis();
     QString GetUnits();
     void SetUnits(QString const &units);
     void UpdateWidgetVisiblity();
-    bool isVisible();
-    bool IsDrawable();
+    bool isVisible() const;
+    bool IsDrawable() const;
     void SetVisible(bool visible);
 
     //to be compatible with measurement and would be possible to use the same serializer

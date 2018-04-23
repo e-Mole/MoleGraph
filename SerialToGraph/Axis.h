@@ -64,7 +64,7 @@ public:
     bool IsHorizontal() { return m_isHorizontal; }
     bool IsOnRight() { return m_isOnRight; }
     bool IsShownName() { return m_isShownName; }
-    QCPAxis *GetGraphAxis(){ return m_graphAxis; }
+    QCPAxis *GetGraphAxis() const { return m_graphAxis; }
 
     GraphicsContainer * GetGraphicsContainer();
 

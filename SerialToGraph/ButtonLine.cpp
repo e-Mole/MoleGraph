@@ -331,7 +331,7 @@ void ButtonLine::updateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-        ChannelProxyBase *channelProxy = m_measurement->GetWidget()->GetChannelProxy(channel);
+        ChannelProxyBase *channelProxy = m_measurement->GetGC()->GetChannelProxy(channel);
         if (channel->GetType() == ChannelBase::Type_Hw && channelProxy->isVisible())
             hwChannelPresent = true;
         if (channelProxy->IsOnHorizontalAxis() && (channelProxy->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
@@ -401,7 +401,7 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     m_viewMenu = NULL;
     if (NULL != measurement)
     {
-        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetWidget());
+        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetGC());
         m_viewMenu->setTitle("View");
     }
 }

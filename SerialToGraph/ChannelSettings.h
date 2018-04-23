@@ -29,7 +29,6 @@ class ChannelSettings : public bases::FormDialogColor
     void _InitializeShapeCombo(ChannelProxyBase *channelProxy);
     void _InitializeAxisCombo();
     bool _MoveLastHorizontalToVertical();
-    virtual bool BeforeAccept();
     void _InitializeTimeFeatures(SampleChannelProxy *channelProxy);
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
@@ -49,6 +48,11 @@ class ChannelSettings : public bases::FormDialogColor
     QString _GetQuantityString(hw::SensorQuantity *quantity);
     QString _GetPortName(int port);
     void _HideAllOptional();
+    void _SetHorizontalChannel(Measurement *m);
+    void _ConnectCurrentValueChange();
+    void _DisconnectCurrentValueChange();
+    virtual bool BeforeAccept();
+    virtual void BeforeReject();
 
     QVector<Measurement *> m_measurements;
     GraphicsContainer *m_graphicsContainer;

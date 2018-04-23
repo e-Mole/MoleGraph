@@ -275,7 +275,7 @@ bool ChannelProxyBase::IsGhost()
     return m_channelWidget->IsGhost();
 }
 
-ChannelGraph *ChannelProxyBase::GetChannelGraph()
+ChannelGraph *ChannelProxyBase::GetChannelGraph() const
 {
     return m_channelWidget->GetChannelGraph();
 }

@@ -14,10 +14,10 @@ GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
 void GraphicsContainerManager::AddMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    m_mapping[m] = m->GetWidget();
-    m_graphicsContainers.push_back(m->GetWidget());
+    m_mapping[m] = m->GetGC();
+    m_graphicsContainers.push_back(m->GetGC());
 
-    connect(m->GetWidget(), SIGNAL(editChannel(ChannelProxyBase*)), this, SLOT(editChannel(ChannelProxyBase*)));
+    connect(m->GetGC(), SIGNAL(editChannel(ChannelProxyBase*)), this, SLOT(editChannel(ChannelProxyBase*)));
     //connect(m->GetWidget(), SIGNAL(edit))
 }
 
@@ -25,7 +25,7 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
 {
     for (auto it = m_graphicsContainers.begin(); it != m_graphicsContainers.end(); ++it)
     {
-        if ((*it) ==  m->GetWidget())
+        if ((*it) ==  m->GetGC())
         {
             m_graphicsContainers.erase(it);
             break;
@@ -90,7 +90,6 @@ ChannelProxyBase * GraphicsContainerManager::AddGhost(
     return destGraphicsContainer->AddGhost(
         sourceGraphicsContainer->GetChannelProxy(sourceChannel),
         sourceGraphicsContainer,
-        sourceGraphicsContainer->GetHorizontalChannelProxy(sourceMeasurement),
         confirmed
     );
 }

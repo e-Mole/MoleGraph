@@ -283,10 +283,10 @@ void ChannelSettings::_FillMeasurementCombo()
     foreach (Measurement *item, m_measurements)
     {
         measurementIndex++;
-        if (item->GetWidget() == m_graphicsContainer)
+        if (item->GetGC() == m_graphicsContainer)
             continue; //it is not possible to select channels from current gc
 
-        m_sourceMeasurementCombo->addItem(item->GetWidget()->GetName(), measurementIndex);
+        m_sourceMeasurementCombo->addItem(item->GetGC()->GetName(), measurementIndex);
         if (item == originalMeasurement)
         {
             m_sourceMeasurementCombo->setCurrentIndex(comboIndex);
@@ -300,8 +300,8 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
 {
     Q_UNUSED(measurementComboIndex)
     Measurement *sourceMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
-    GraphicsContainer *sourceGC = sourceMeasurement->GetWidget();
-
+    GraphicsContainer *sourceGC = sourceMeasurement->GetGC();
+    _SetHorizontalChannel(sourceMeasurement);
 
     bool channelFound = false;
     for (unsigned index = 0; index < sourceMeasurement->GetChannelCount(); ++index)
@@ -327,14 +327,16 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
 void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
 {
     Q_UNUSED(channelComboIndex)
+    _DisconnectCurrentValueChange();
+
     Measurement *originalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
-    GraphicsContainer *originalGC = originalMeasurement->GetWidget();
+    GraphicsContainer *originalGC = originalMeasurement->GetGC();
     ChannelBase *originalChannel = originalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
     ChannelProxyBase *originalChannelProxy = originalGC->GetChannelProxy(originalChannel);
 
     if (originalChannelProxy->GetChannel() != m_channelProxy->GetChannel())
     {
-        m_channelProxy = originalChannelProxy->Clone(this, m_channelProxy->GetWidget());
+        m_channelProxy = originalChannelProxy->Clone(m_graphicsContainer, m_channelProxy->GetWidget());
     }
     _FillSensorItems(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     _FillValueLine(dynamic_cast<HwChannelProxy*>(m_channelProxy));
@@ -350,14 +352,16 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
     }
 
     m_shapeComboBox->setCurrentIndex(originalChannelProxy->GetChannelGraph()->GetShapeIndex());
+
+    _ConnectCurrentValueChange();
 }
 
 unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
 {
     double currentHorizontalValue =
         m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
-    return m_graphicsContainer->GetHorizontalChannelProxy(
-        channelProxy->GetChannelMeasurement())->GetLastValueIndex(currentHorizontalValue);
+    return m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement())->
+            GetLastValueIndex(currentHorizontalValue);
 }
 
 void ChannelSettings::_InitializeValueLine(HwChannelProxy *channelProxy)
@@ -375,8 +379,19 @@ void ChannelSettings::_InitializeValueLine(HwChannelProxy *channelProxy)
     AddSeparator();
 
     _FillValueLine(channelProxy);
-    //must be defined after setTest
+    //must be defined after setText
+    _ConnectCurrentValueChange();
+}
+
+
+void ChannelSettings::_ConnectCurrentValueChange()
+{
     connect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
+}
+
+void ChannelSettings::_DisconnectCurrentValueChange()
+{
+    disconnect(m_currentValueControl, SIGNAL(textChanged(QString)), this, SLOT(currentValueChanged(QString)));
 }
 
 void ChannelSettings::_FillValueLine(HwChannelProxy *channelProxy)
@@ -512,6 +527,141 @@ bool ChannelSettings::_AxisCheckForRealTimeMode()
     }
     return true;
 }
+
+bool ChannelSettings::_MoveLastHorizontalToVertical()
+{
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
+    {
+        //find last horizontal axis
+        if (proxy->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
+        {
+            AxisChooseDialog dialog(this, m_graphicsContainer, proxy, m_channelProxy);
+            if (QDialog::Rejected != dialog.exec())
+            {
+                m_channelProxy->ShowGraph(false);
+                m_graphicsContainer->SetHorizontalChannel(
+                    m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel(), proxy);
+                return true;
+            }
+            return false;
+        }
+    }
+    qWarning() << "horizontal axes has not been found";
+
+    return false; //it should never reach this point
+}
+
+void ChannelSettings::_InitializeShapeCombo(ChannelProxyBase *channelProxy)
+{
+    m_shapeComboBox->addItem(tr("None"), 0);
+    m_shapeComboBox->addItem(tr("Cross"), 2);
+    m_shapeComboBox->addItem(tr("Plus"), 3);
+    m_shapeComboBox->addItem(tr("Circle"), 4);
+    m_shapeComboBox->addItem(tr("Disc"), 5);
+    m_shapeComboBox->addItem(tr("Square"), 6);
+    m_shapeComboBox->addItem(tr("Diamond"), 7);
+    m_shapeComboBox->addItem(tr("Star"), 8);
+    m_shapeComboBox->addItem(tr("Triangle"), 9);
+    m_shapeComboBox->addItem(tr("Inverted Triangle"), 10);
+    m_shapeComboBox->addItem(tr("Cross and Square"), 11);
+    m_shapeComboBox->addItem(tr("Plus and Square"), 12);
+    m_shapeComboBox->addItem(tr("Cross and Circle"), 13);
+    m_shapeComboBox->addItem(tr("Plus and Circle"), 14);
+    m_shapeComboBox->addItem(tr("Peace"), 15);
+    if (channelProxy->GetChannelGraph()->GetShapeIndex() == 0)
+    {
+        m_shapeComboBox->setCurrentIndex(0);
+    }
+    else
+    {
+        m_shapeComboBox->setCurrentIndex(channelProxy->GetChannelGraph()->GetShapeIndex() - 1); //skip dot
+    }
+
+    m_shapeComboBox->setEnabled(!channelProxy->IsOnHorizontalAxis());
+    m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
+}
+
+void ChannelSettings::_RefillAxisCombo()
+{
+    disconnect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
+    m_axisComboBox->clear();
+    m_axisComboBox->addItem(tr("New Axis..."));
+    foreach (Axis *axis, m_graphicsContainer->GetAxes())
+    {
+        bool valid =
+                m_channelProxy->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
+                axis->IsHorizontal(); //as same as to horizontal
+
+
+        if (!valid)
+        {
+            if (dynamic_cast<SampleChannelProxy *>(m_channelProxy) && m_style->currentData().toBool())
+                valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
+            else
+                valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
+        }
+
+        if (valid && axis->IsHorizontal() && m_channelProxy->IsGhost())
+            valid = false;
+
+        if (valid)
+            m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
+    }
+
+    m_axisComboBox->setCurrentIndex(
+        m_axisComboBox->findData((qlonglong)(m_channelProxy->GetChannelGraph()->GetValuleAxis())));
+    connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
+}
+void ChannelSettings::_InitializeAxisCombo()
+{
+    _RefillAxisCombo();
+
+    if (m_channelProxy->IsOnHorizontalAxis())
+        m_axisComboBox->setEnabled(false);
+    else
+        m_axisComboBox->setEnabled(true);
+    m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
+}
+
+void ChannelSettings::axisChanged(int index)
+{
+    if (0 == index) //New Axis...
+    {
+        Axis*newAxis = m_graphicsContainer->CreateYAxis(m_channelProxy->GetForeColor());
+
+        AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
+        if (QDialog::Accepted == dialog.exec())
+        {
+            GlobalSettings::GetInstance().SetSavedState(false);
+            m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
+            m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
+            m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one
+        }
+        else
+            m_graphicsContainer->RemoveAxis(newAxis);
+    }
+    else
+    {
+        Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
+        m_shapeComboBox->setEnabled(!axis->IsHorizontal());
+    }
+}
+
+QString ChannelSettings::_GetPortName(int port)
+{
+    return tr("Port %1").arg(port);
+}
+
+GraphicsContainer *ChannelSettings::GetGraphicsContainer()
+{
+    return m_graphicsContainer;
+}
+
+void ChannelSettings::_SetHorizontalChannel(Measurement *m)
+{
+    m_graphicsContainer->SetHorizontalChannel(m, m->GetGC()->GetHorizontalChannelProxy(m)->GetChannel());
+}
+
 bool ChannelSettings::BeforeAccept()
 {
     if (!_AxisCheckForRealTimeMode())
@@ -647,17 +797,16 @@ bool ChannelSettings::BeforeAccept()
     if (m_channelProxy->IsGhost())
     {
         Measurement *newOriginalMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
-        GraphicsContainer *originalGC = newOriginalMeasurement->GetWidget();
         ChannelBase *newOriginalChannel = newOriginalMeasurement->GetChannel(m_sourceChannelCombo->currentData().toInt());
 
         if (m_originalProxy->GetChannel() != newOriginalChannel)
         {
-            //FIXME: is it removed somewhere?
-            m_graphicsContainer->SetHorizontalChannel(newOriginalMeasurement, originalGC->GetHorizontalChannelProxy(newOriginalMeasurement)->GetChannel());
-
             //Note: proxy is compleetly exchanged also in the case when is changed just ChannelBase. it is more generic
-            m_graphicsContainer->ReplaceChannelProxy(m_originalProxy, m_channelProxy);
-            m_graphicsContainer->GhostAddingChangingPostProcess(m_channelProxy);
+            //returns false when it is a new ghost - in this case it will be processed by a confirmation process
+            if (m_graphicsContainer->ReplaceChannelProxy(m_originalProxy, m_channelProxy))
+            {
+                m_graphicsContainer->GhostManipupationPostProcess(m_channelProxy);
+            }
 
             changed = true;
             //it was aready done in GhostAddingChangingPostProcess
@@ -682,141 +831,21 @@ bool ChannelSettings::BeforeAccept()
         GlobalSettings::GetInstance().SetSavedState(false);
         if (changedHorizontal)
         {
+            m_graphicsContainer->RefillHorizontalChannelMapping();
             m_channelProxy->UpdateTitle();
         }
 
         m_channelProxy->GetPlot()->ReplotIfNotDisabled();
-
     }
 
     return true;
 }
 
-bool ChannelSettings::_MoveLastHorizontalToVertical()
+void ChannelSettings::BeforeReject()
 {
-    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
+    if (m_channelProxy != m_originalProxy)
     {
-        //find last horizontal axis
-        if (proxy->GetChannelGraph()->GetValuleAxis()->IsHorizontal())
-        {
-            AxisChooseDialog dialog(this, m_graphicsContainer, proxy, m_channelProxy);
-            if (QDialog::Rejected != dialog.exec())
-            {
-                m_channelProxy->ShowGraph(false);
-                m_graphicsContainer->SetHorizontalChannel(
-                    m_channelProxy->GetChannelMeasurement(), m_channelProxy->GetChannel(), proxy);
-                return true;
-            }
-            return false;
-        }
+        delete m_channelProxy;
+        m_graphicsContainer->GhostManipupationPostProcess(m_originalProxy);
     }
-    qWarning() << "horizontal axes has not been found";
-
-    return false; //it should never reach this point
-}
-
-void ChannelSettings::_InitializeShapeCombo(ChannelProxyBase *channelProxy)
-{
-    m_shapeComboBox->addItem(tr("None"), 0);
-    m_shapeComboBox->addItem(tr("Cross"), 2);
-    m_shapeComboBox->addItem(tr("Plus"), 3);
-    m_shapeComboBox->addItem(tr("Circle"), 4);
-    m_shapeComboBox->addItem(tr("Disc"), 5);
-    m_shapeComboBox->addItem(tr("Square"), 6);
-    m_shapeComboBox->addItem(tr("Diamond"), 7);
-    m_shapeComboBox->addItem(tr("Star"), 8);
-    m_shapeComboBox->addItem(tr("Triangle"), 9);
-    m_shapeComboBox->addItem(tr("Inverted Triangle"), 10);
-    m_shapeComboBox->addItem(tr("Cross and Square"), 11);
-    m_shapeComboBox->addItem(tr("Plus and Square"), 12);
-    m_shapeComboBox->addItem(tr("Cross and Circle"), 13);
-    m_shapeComboBox->addItem(tr("Plus and Circle"), 14);
-    m_shapeComboBox->addItem(tr("Peace"), 15);
-    if (channelProxy->GetChannelGraph()->GetShapeIndex() == 0)
-    {
-        m_shapeComboBox->setCurrentIndex(0);
-    }
-    else
-    {
-        m_shapeComboBox->setCurrentIndex(channelProxy->GetChannelGraph()->GetShapeIndex() - 1); //skip dot
-    }
-
-    m_shapeComboBox->setEnabled(!channelProxy->IsOnHorizontalAxis());
-    m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
-}
-
-void ChannelSettings::_RefillAxisCombo()
-{
-    disconnect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
-    m_axisComboBox->clear();
-    m_axisComboBox->addItem(tr("New Axis..."));
-    foreach (Axis *axis, m_graphicsContainer->GetAxes())
-    {
-        bool valid =
-                m_channelProxy->GetChannelGraph()->GetValuleAxis() == axis || //I should be able to switch back to original axis
-                axis->IsHorizontal(); //as same as to horizontal
-
-
-        if (!valid)
-        {
-            if (dynamic_cast<SampleChannelProxy *>(m_channelProxy) && m_style->currentData().toBool())
-                valid = axis->IsEmptyExcept(NULL); //channel with real time style might be moved only on empty vertical axis because of differet graphic axis style
-            else
-                valid = !axis->ContainsChannelWithRealTimeStyle();//but on DateTime axis might be only one channel
-        }
-
-        if (valid && axis->IsHorizontal() && m_channelProxy->IsGhost())
-            valid = false;
-
-        if (valid)
-            m_axisComboBox->addItem(axis->GetTitle(), (qlonglong)axis);
-    }
-
-    m_axisComboBox->setCurrentIndex(
-        m_axisComboBox->findData((qlonglong)(m_channelProxy->GetChannelGraph()->GetValuleAxis())));
-    connect(m_axisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(axisChanged(int)));
-}
-void ChannelSettings::_InitializeAxisCombo()
-{
-    _RefillAxisCombo();
-
-    if (m_channelProxy->IsOnHorizontalAxis())
-        m_axisComboBox->setEnabled(false);
-    else
-        m_axisComboBox->setEnabled(true);
-    m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
-}
-
-void ChannelSettings::axisChanged(int index)
-{
-    if (0 == index) //New Axis...
-    {
-        Axis*newAxis = m_graphicsContainer->CreateYAxis(m_channelProxy->GetForeColor());
-
-        AxisSettings dialog(this, newAxis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
-        if (QDialog::Accepted == dialog.exec())
-        {
-            GlobalSettings::GetInstance().SetSavedState(false);
-            m_axisComboBox->addItem(newAxis->GetTitle(), (qlonglong)newAxis);
-            m_axisComboBox->setCurrentIndex(m_axisComboBox->findData((qlonglong)(newAxis)));
-            m_shapeComboBox->setEnabled(true); //new axis might be just a horizontal one
-        }
-        else
-            m_graphicsContainer->RemoveAxis(newAxis);
-    }
-    else
-    {
-        Axis *axis = (Axis *)m_axisComboBox->currentData().toLongLong();
-        m_shapeComboBox->setEnabled(!axis->IsHorizontal());
-    }
-}
-
-QString ChannelSettings::_GetPortName(int port)
-{
-    return tr("Port %1").arg(port);
-}
-
-GraphicsContainer *ChannelSettings::GetGraphicsContainer()
-{
-    return m_graphicsContainer;
 }

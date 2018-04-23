@@ -35,8 +35,8 @@ public:
     void ShowAllMarks(bool showAllMarks);
     void SetColor(const QColor& color);
     void SetPenStyle(Qt::PenStyle penStyle);
-    int GetShapeIndex();
-    Axis *GetValuleAxis()
+    int GetShapeIndex() const;
+    Axis *GetValuleAxis() const
     { return m_valueAxis;}
     void AssignToAxis(Axis *axis);
     void AssignToGraphAxis(QCPAxis *graphAxis);

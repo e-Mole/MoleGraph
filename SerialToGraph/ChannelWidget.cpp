@@ -317,7 +317,7 @@ void ChannelWidget::FillLastValueText(double value)
     m_lastValueText = strValue;
 }
 
-Qt::PenStyle ChannelWidget::GetPenStyle()
+Qt::PenStyle ChannelWidget::GetPenStyle() const
 {
     return m_penStyle;
 }
@@ -328,7 +328,7 @@ void ChannelWidget::SetPenStyle(Qt::PenStyle penStyle)
     m_plot->SetPenStyle(m_channelGraph, penStyle);
 }
 
-unsigned ChannelWidget::GetShapeIndex()
+unsigned ChannelWidget::GetShapeIndex() const
 {
     return m_channelGraph->GetShapeIndex();
 }
@@ -357,7 +357,7 @@ void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
     }
 }
 
-ChannelGraph *ChannelWidget::GetChannelGraph()
+ChannelGraph *ChannelWidget::GetChannelGraph() const
 {
     return m_channelGraph;
 }
@@ -384,12 +384,12 @@ void ChannelWidget::UpdateWidgetVisiblity()
     setVisible(m_isVisible && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
-bool ChannelWidget::isVisible()
+bool ChannelWidget::isVisible() const
 {
     return m_isVisible;
 }
 
-bool ChannelWidget::IsDrawable()
+bool ChannelWidget::IsDrawable() const
 {
     return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }

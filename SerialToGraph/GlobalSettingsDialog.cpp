@@ -195,7 +195,7 @@ bool GlobalSettingsDialog::BeforeAccept()
         m_settings.SetHideAllChannels(m_hideAllChannels->isChecked());
 
         foreach (Measurement *m, m_context.m_measurements)
-            m->GetWidget()->replaceDisplays();
+            m->GetGC()->replaceDisplays();
     }
 
     if (m_settings.GetLimitDir() != m_limitDirLine->text())

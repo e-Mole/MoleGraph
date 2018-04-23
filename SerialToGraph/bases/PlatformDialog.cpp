@@ -11,7 +11,7 @@ PlatformDialog::PlatformDialog(QWidget *parent, QString const &title) :
     m_viewport(NULL)
 {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
+    setMinimumSize(100,30); //to don't be shown a warning "Unable to set geometry ..."
 #if defined(Q_OS_ANDROID)
     Q_UNUSED(title);
     QGridLayout *baseLayout = new QGridLayout(this);

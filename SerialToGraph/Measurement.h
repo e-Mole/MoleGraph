@@ -149,7 +149,7 @@ private:
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
-    GraphicsContainer *GetWidget();
+    GraphicsContainer *GetGC();
     void SerializeColections(QDataStream &out);
     void DeserializeColections(QDataStream &in, unsigned collectionVersion);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too

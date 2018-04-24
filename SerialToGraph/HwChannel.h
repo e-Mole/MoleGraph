@@ -47,7 +47,7 @@ public:
     virtual void AddValue(double value);
     void AddValue(double original, double current);
 
-    int GetHwIndex() { return m_hwIndex; }
+    int GetHwIndex() const { return m_hwIndex; }
     double GetOriginalValue(int index);
     void ChangeValue(int index, double newValue);
     virtual ChannelBase::ValueType GetValueType(unsigned index);

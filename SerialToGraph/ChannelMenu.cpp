@@ -78,6 +78,7 @@ void ChannelMenu::FillGrid()
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
     m_gridLayout->addWidget(addGhostChannel, row, 0);
+    addGhostChannel->resize(addGhostChannel->sizeHint().width(), addGhostChannel->sizeHint().height());
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
@@ -162,6 +163,7 @@ void ChannelMenu::remove()
     FillGrid();
 
     m_graphicsContainer->RecalculateSliderMaximum();
+    adjustSize();
 }
 
 void ChannelMenu::ActivateChannel(ChannelProxyBase *channelProxy, bool checked)

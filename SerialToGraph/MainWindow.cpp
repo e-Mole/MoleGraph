@@ -778,6 +778,7 @@ void MainWindow::addGhostChannel()
     m_ghostCreating = true;
     destGc->editChannel(ghostProxy);
     m_channelMenu->ReinitGrid(); //to be changed name or color
+    m_channelMenu->adjustSize();
 }
 
 void MainWindow::showPanelMenu(Measurement *m)

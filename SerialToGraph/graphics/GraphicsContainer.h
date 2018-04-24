@@ -167,6 +167,7 @@ public:
     bool ReplaceChannelProxy(ChannelProxyBase *oldProxy, ChannelProxyBase *newProxy);
     bool ContainsAnyData();
     void RefillHorizontalChannelMapping();
+    void SortChannels();
 signals:
     void resized();
     void editChannel(ChannelProxyBase *channelProxy);

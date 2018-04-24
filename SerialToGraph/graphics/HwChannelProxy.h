@@ -26,6 +26,7 @@ public:
     void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
     double GetOriginalValue(int index);
     HwChannel *GetChannel() const;
+    int GetHwIndex() const;
 };
 
 #endif // HWCHANNELPROPERTIES_H

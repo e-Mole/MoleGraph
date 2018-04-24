@@ -270,7 +270,7 @@ void ChannelProxyBase::SetVisible(bool visible)
     m_channelWidget->SetVisible(visible);
 }
 
-bool ChannelProxyBase::IsGhost()
+bool ChannelProxyBase::IsGhost() const
 {
     return m_channelWidget->IsGhost();
 }

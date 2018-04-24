@@ -75,7 +75,7 @@ public:
     void SetForeColor(const QColor &color);
     bool isVisible();
     void SetVisible(bool visible);
-    bool IsGhost();
+    bool IsGhost() const;
     ChannelGraph *GetChannelGraph() const;
     bool IsDrawable();
     bool IsOnHorizontalAxis();

@@ -9,6 +9,7 @@ class ChannelProperties : public QObject
 public:
     ChannelProperties(QObject *parent);
     ChannelProperties(QObject *parent, ChannelProperties *properties);
+    void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 signals:
 
 public slots:

@@ -76,3 +76,8 @@ double HwChannelProxy::GetOriginalValue(int index)
 {
     return GetChannel()->GetOriginalValue(index);
 }
+
+int HwChannelProxy::GetHwIndex() const
+{
+    return GetChannel()->GetHwIndex();
+}

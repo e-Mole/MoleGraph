@@ -103,6 +103,7 @@ private:
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _DeserializeAxis(QDataStream &in, unsigned index);
     void _ConnectHwChannel(HwChannel *channel);
+    void _InsertToChannelList(ChannelBase *channel);
 
     GraphicsContainer *m_widget;
     Context const &m_context;

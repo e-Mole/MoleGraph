@@ -595,12 +595,15 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     }
 
     //FIXME: may be later necessary just for version lower than 4. check it!
-    //Workaround. Many features has been moved to channelWidget but some left
+    //Workaround. Many features has been moved to channelWidget  and channelProperties but some others left
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
-
+    in.startTransaction();
     in >> channelProxy->GetWidget();
+    in.rollbackTransaction();
+    in >> channelProxy->GetProperties();
+
     m_channels.push_back(channel);
     if (channelProxy->IsOnHorizontalAxis())
         m_widget->SetHorizontalChannel(this, channel);
@@ -680,6 +683,20 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
         }
     }
 }
+struct ChannelComparator
+{
+    bool operator()(const ChannelBase * first, const ChannelBase *second)
+    {
+        if (dynamic_cast<const SampleChannel*>(first) != NULL)
+            return true;
+        if (dynamic_cast<const SampleChannel*>(second) != NULL)
+            return false;
+
+        const HwChannel *hwFirst = dynamic_cast<const HwChannel*>(first);
+        const HwChannel *hwSecond = dynamic_cast<const HwChannel*>(second);
+        return (hwFirst->GetHwIndex() < hwSecond->GetHwIndex());
+    }
+};
 
 void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
 {
@@ -690,8 +707,10 @@ void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
     for (int i = 0; i < channelCount; i++)
         _DeserializeChannel(in, axis);
 
+    std::sort(m_channels.begin(), m_channels.end(), ChannelComparator());
     //Now I have all channels for the axis and can display corect label
     m_widget->UpdateAxis(axis);
+    m_widget->SortChannels();
 }
 
 void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVersion)

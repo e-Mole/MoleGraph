@@ -1282,3 +1282,26 @@ bool GraphicsContainer::ContainsAnyData()
     }
     return false;
 }
+
+struct ChannelComparator
+{
+    bool operator()(const ChannelProxyBase * first, const ChannelProxyBase *second)
+    {
+        if (first->IsGhost())
+            return false;
+        if (dynamic_cast<const SampleChannelProxy*>(first) != NULL)
+            return true;
+        if (dynamic_cast<const SampleChannelProxy*>(second) != NULL)
+            return false;
+
+        const HwChannelProxy *hwFirst = dynamic_cast<const HwChannelProxy*>(first);
+        const HwChannelProxy *hwSecond = dynamic_cast<const HwChannelProxy*>(second);
+        return (hwFirst->GetHwIndex() < hwSecond->GetHwIndex());
+    }
+};
+
+void GraphicsContainer::SortChannels()
+{
+    std::sort(m_channelProxies.begin(), m_channelProxies.end(), ChannelComparator());
+
+}

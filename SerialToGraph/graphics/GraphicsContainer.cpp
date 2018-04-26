@@ -1182,8 +1182,16 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
     newProxy->SetPenStyle(Qt::DashLine);
     newProxy->SetVisible(false);
 
+    unsigned horizontalChannelIndex = _GetMainHorizontalChannelIndex();
+    if (horizontalChannelIndex == ~0)
+    {
+        qWarning() << "Wrong horizontalChannelIndex";
+        return NULL;
+    }
+
+
     m_channelProxies.append(newProxy);
-    _AddHorizontalChannelProxy(newProxy->GetChannelMeasurement(), _GetMainHorizontalChannelIndex());
+    _AddHorizontalChannelProxy(newProxy->GetChannelMeasurement(), horizontalChannelIndex);
     CalculateScrollbarRange();
     m_ghostWaitingForConfirmation = newProxy;
 
@@ -1202,7 +1210,14 @@ void GraphicsContainer::ConfirmGhostChannel()
 
 unsigned GraphicsContainer::_GetMainHorizontalChannelIndex()
 {
-    return m_horizontalChannelMapping[m_mainMeasurement]->GetChannelIndex();
+    ChannelProxyBase *proxy = m_horizontalChannelMapping[m_mainMeasurement];
+    if (proxy == NULL)
+    {
+        qWarning() << "proxy was not found. returned index ~0";
+        return ~0;
+    }
+
+    return proxy->GetChannelIndex();
 
 }
 void GraphicsContainer::_AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex)

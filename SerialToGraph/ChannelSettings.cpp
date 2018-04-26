@@ -833,6 +833,11 @@ bool ChannelSettings::BeforeAccept()
         {
             m_graphicsContainer->RefillHorizontalChannelMapping();
             m_channelProxy->UpdateTitle();
+            if (m_graphicsContainer->ContainsGhost())
+            {
+                m_graphicsContainer->GetPlot()->RefillGraphs();
+                m_graphicsContainer->GetPlot()->SetMarkerLine(m_graphicsContainer->GetCurrentIndex());
+            }
         }
 
         m_channelProxy->GetPlot()->ReplotIfNotDisabled();

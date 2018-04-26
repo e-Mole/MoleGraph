@@ -168,6 +168,7 @@ public:
     bool ContainsAnyData();
     void RefillHorizontalChannelMapping();
     void SortChannels();
+    bool ContainsGhost();
 signals:
     void resized();
     void editChannel(ChannelProxyBase *channelProxy);

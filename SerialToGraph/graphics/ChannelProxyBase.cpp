@@ -199,10 +199,10 @@ bool ChannelProxyBase::FillRangeValue(int left, int right, DisplayValue displayV
         rangeValue = _GetMinInRange(left, right);
         break;
     case DVAverage:
-        rangeValue =  _GetMeanInRange(left, right);
+        rangeValue = _GetMeanInRange(left, right);
         break;
     case DVMedian:
-        rangeValue =  _GetMedianInRange(left, right);
+        rangeValue = _GetMedianInRange(left, right);
         break;
     case DVVariance:
         rangeValue = _GetVarianceInRange(left, right);

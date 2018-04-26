@@ -163,7 +163,7 @@ ChannelProxyBase *GraphicsContainer::GetChannelProxy(unsigned channelIndex) cons
             continue;
         }
 
-        unsigned itemIndex = item->GetChannelMeasurement()->GetChannelIndex(item->GetChannel());
+        unsigned itemIndex = item->GetChannelIndex();
         if (itemIndex == channelIndex)
             return item;
     }
@@ -1200,12 +1200,13 @@ unsigned GraphicsContainer::_GetMainHorizontalChannelIndex()
 void GraphicsContainer::_AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex)
 {
     GraphicsContainer *gc = m->GetGC();
-    ChannelProxyBase *horizontalChannelProxy = gc->GetChannelProxy(mainHorizontalChannelIndex);
+    ChannelProxyBase *originalHorizontalChannelProxy = gc->GetChannelProxy(mainHorizontalChannelIndex);
+    ChannelProxyBase *newHorizontalChannelProxy = originalHorizontalChannelProxy->Clone(this, NULL);
 
-    m_horizontalChannelMapping[m] = horizontalChannelProxy;
-    for (unsigned index = 0; index < horizontalChannelProxy->GetValueCount(); ++index)
+    m_horizontalChannelMapping[m] = newHorizontalChannelProxy;
+    for (unsigned index = 0; index < newHorizontalChannelProxy->GetValueCount(); ++index)
     {
-        AddHorizontalValue(horizontalChannelProxy->GetValue(index), false);
+        AddHorizontalValue(newHorizontalChannelProxy->GetValue(index), false);
     }
 }
 
@@ -1304,4 +1305,14 @@ void GraphicsContainer::SortChannels()
 {
     std::sort(m_channelProxies.begin(), m_channelProxies.end(), ChannelComparator());
 
+}
+
+bool GraphicsContainer::ContainsGhost()
+{
+    foreach (ChannelProxyBase *item, m_channelProxies)
+    {
+        if (item->IsGhost())
+            return true;
+    }
+    return false;
 }

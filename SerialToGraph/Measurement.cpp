@@ -502,12 +502,12 @@ unsigned Measurement::GetChannelIndex(ChannelBase * channel)
     return ~0;
 }
 
-ChannelBase *Measurement::GetChannel(unsigned index)
+ChannelBase *Measurement::GetChannel(unsigned index) const
 {
     return m_channels[index];
 }
 
-unsigned Measurement::GetChannelCount()
+unsigned Measurement::GetChannelCount() const
 {
     return m_channels.count();
 }
@@ -785,12 +785,12 @@ bool Measurement::IsPlotInRangeMode()
     return m_widget->IsPlotInRangeMode();
 }
 
-GraphicsContainer *Measurement::GetGC()
+GraphicsContainer *Measurement::GetGC() const
 {
     return m_widget;
 }
 
-QString &Measurement::GetName()
+QString const &Measurement::GetName() const
 {
     return m_widget->GetName();
 }

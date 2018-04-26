@@ -662,9 +662,14 @@ ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy() const
     return NULL;
 }
 
+bool GraphicsContainer::IsHorizontalChannelProxyDefined(Measurement *measurement) const
+{
+    return m_horizontalChannelMapping.contains(measurement);
+
+}
 ChannelProxyBase *GraphicsContainer::GetHorizontalChannelProxy(Measurement *measurement) const
 {
-    if (!m_horizontalChannelMapping.contains(measurement))
+    if (!IsHorizontalChannelProxyDefined(measurement))
     {
         qWarning() << "HorizontalChannel Proxy has not been found for entered measurement";
         return NULL;
@@ -757,13 +762,16 @@ void GraphicsContainer::addNewValueSet()
     AddHorizontalValue(horizontalChannelProxy->GetLastValidValue(), true);
 }
 
-ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget)
+ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget, bool isGhost)
 {
     Axis *originalAxis = sourceChannelWidget->GetChannelGraph()->GetValuleAxis();
     unsigned originalAxisIndex = sourceContainer->GetAxisIndex(originalAxis);
     Axis *axis = NULL;
     //ti can happend in case of ghost that axis with the same title is not available
-    if (GetAxes().size() > originalAxisIndex && originalAxis->GetTitle() == GetAxis(originalAxisIndex)->GetTitle())
+    if (GetAxes().size() > originalAxisIndex &&
+        originalAxis->GetTitle() == GetAxis(originalAxisIndex)->GetTitle() &&
+        (!isGhost || !originalAxis->IsHorizontal())
+       )
         axis = GetAxis(originalAxisIndex);
     else
         axis = GetFirstVerticalAxis();
@@ -833,7 +841,7 @@ SampleChannelProxy *GraphicsContainer::CloneSampleChannelProxy(
     SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost)
 {
     GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
-    ChannelGraph *newChannelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget());
+    ChannelGraph *newChannelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget(), isGhost);
 
     ChannelWidget *newWidget = new ChannelWidget(
         this,
@@ -908,7 +916,7 @@ HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceCha
 {
     GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
     ChannelWidget * sourceChannelWidget = dynamic_cast<ChannelWidget*>(sourceChannelProxy->GetWidget());
-    ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget());
+    ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget(), isGhost);
     ChannelWidget *widget = new ChannelWidget(
         this,
         channelGraph,

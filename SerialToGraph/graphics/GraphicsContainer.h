@@ -78,7 +78,7 @@ public:
     ~GraphicsContainer();
     void SetGrid(bool grid);
     void RemoveChannelProxy(ChannelProxyBase *channelProxy);
-    QString &GetName() {return m_name; }
+    QString const &GetName() const {return m_name; }
     void SetName(QString const &name) {m_name = name; } //TODO:signal?
     Plot *GetPlot() const;
     void SetFollowMode(bool set);
@@ -119,6 +119,7 @@ public:
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
     void RescaleAxes(ChannelWidget *channelWidget);
     ChannelProxyBase *GetHorizontalChannelProxy() const;
+    bool IsHorizontalChannelProxyDefined(Measurement *measurement) const;
     ChannelProxyBase *GetHorizontalChannelProxy(Measurement *measurement) const;
     QVector<ChannelProxyBase *> &GetChannelProxies();
     unsigned GetChannelProxiesCount();
@@ -127,7 +128,7 @@ public:
     SampleChannelProxy *GetSampleChannelProxy();
     bool IsHorizontalValueSetEmpty();
     void RecalculateSliderMaximum();
-    ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget);
+    ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget, bool isGhost);
     QColor GetColorByOrder(unsigned order);
     SampleChannelProxy *CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost);
     SampleChannelProxy *CloneSampleChannelProxy(SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost);

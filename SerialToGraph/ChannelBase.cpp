@@ -52,7 +52,7 @@ void ChannelBase::AddValue( double value)
     _UpdateExtremes(value, index);
 }
 
-Measurement * ChannelBase::GetMeasurement()
+Measurement * ChannelBase::GetMeasurement() const
 {
     return m_measurement;
 }    

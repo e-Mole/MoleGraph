@@ -48,7 +48,7 @@ void ChannelProxyBase::ChangeChannel(ChannelBase *channel)
     m_channel = channel;
 }
 
-Measurement *ChannelProxyBase::GetChannelMeasurement()
+Measurement *ChannelProxyBase::GetChannelMeasurement() const
 {
     return m_channel->GetMeasurement();
 }

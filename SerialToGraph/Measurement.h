@@ -136,21 +136,21 @@ private:
 , hw::SensorManager *sensorManager);
     ~Measurement();
 
-    QString &GetName();
+    const QString &GetName() const;
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes() const;
     QVector<ChannelBase *> const & GetChannels() const;
     State GetState() { return m_state; }
-    ChannelBase *GetChannel(unsigned index);
-    unsigned GetChannelCount();
+    ChannelBase *GetChannel(unsigned index) const;
+    unsigned GetChannelCount() const;
     void Start();
     void Pause();
     void Continue();
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
-    GraphicsContainer *GetGC();
+    GraphicsContainer *GetGC() const;
     void SerializeColections(QDataStream &out);
     void DeserializeColections(QDataStream &in, unsigned collectionVersion);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too

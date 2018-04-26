@@ -71,7 +71,7 @@ public:
     unsigned GetMaxValueIndex()
     { return m_channelMaxValueIndex; }
 
-    Measurement * GetMeasurement();
+    Measurement * GetMeasurement() const;
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}

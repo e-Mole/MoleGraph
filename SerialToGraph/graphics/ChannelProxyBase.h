@@ -48,7 +48,7 @@ public:
     bool ContainsChannel(ChannelBase *channel);
     bool ContainsChannelProperties(ChannelProperties *channelProperties);
     void ChangeChannel(ChannelBase *channel);
-    Measurement *GetChannelMeasurement();
+    Measurement *GetChannelMeasurement() const;
     ChannelWidget *GetWidget();
     ChannelProperties *GetProperties();
     unsigned GetChannelIndex();

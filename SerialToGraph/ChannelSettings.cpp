@@ -301,7 +301,6 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
     Q_UNUSED(measurementComboIndex)
     Measurement *sourceMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
     GraphicsContainer *sourceGC = sourceMeasurement->GetGC();
-    _SetHorizontalChannel(sourceMeasurement);
 
     bool channelFound = false;
     for (unsigned index = 0; index < sourceMeasurement->GetChannelCount(); ++index)
@@ -358,10 +357,13 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
 
 unsigned ChannelSettings::_GetCurrentValueIndex(ChannelProxyBase *channelProxy)
 {
+    Measurement *m = channelProxy->GetChannelMeasurement();
+    if (!m_graphicsContainer->IsHorizontalChannelProxyDefined(m))
+        return ~0;
+
     double currentHorizontalValue =
         m_graphicsContainer->GetHorizontalValueBySliderPos(m_graphicsContainer->GetCurrentIndex());
-    return m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement())->
-            GetLastValueIndex(currentHorizontalValue);
+    return m_graphicsContainer->GetHorizontalChannelProxy(m)->GetLastValueIndex(currentHorizontalValue);
 }
 
 void ChannelSettings::_InitializeValueLine(HwChannelProxy *channelProxy)
@@ -397,6 +399,13 @@ void ChannelSettings::_DisconnectCurrentValueChange()
 void ChannelSettings::_FillValueLine(HwChannelProxy *channelProxy)
 {
     unsigned currentIndex = _GetCurrentValueIndex(m_channelProxy);
+    if (~0 == currentIndex) //it can happend when horizontal proxy is not deffined yet (added/changed to ghost from a new measurement)
+    {
+        m_currentValueControl->setText(channelProxy->GetNAValueString());
+        m_currentValueControl->setEnabled(false);
+        return;
+    }
+
     m_currentValueControl->setText("");
     m_currentValueControl->setEnabled(channelProxy);
     m_originlValue->setEnabled(channelProxy);

@@ -540,6 +540,10 @@ void Plot::_RefillSingleGraph(ChannelProxyBase *channelProxy)
 {
     channelProxy->GetChannelGraph()->clearData();
     ChannelProxyBase * horizontalChannelProxy = m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+    if (horizontalChannelProxy == NULL)
+    {
+        qWarning() << "horizontal channel proxy was not found for refilling graph";
+    }
     for (unsigned i = 0; i < channelProxy->GetValueCount(); i++) //untracked channels have no values
     {
         if (channelProxy->IsValueNA(i) || horizontalChannelProxy->IsValueNA(i))

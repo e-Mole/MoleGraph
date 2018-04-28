@@ -955,15 +955,38 @@ void GraphicsContainer::hwValueChanged(unsigned index)
 void GraphicsContainer::sampleChannelPropertyChanged()
 {
     SampleChannelProperties *properties = dynamic_cast<SampleChannelProperties*>(sender());
-    ChannelProxyBase *proxy = GetChannelProxy(properties);
+    SampleChannelProxy *proxy = dynamic_cast<SampleChannelProxy*>(GetChannelProxy(properties));
     proxy->SetName(SampleChannelProxy::GetSampleChannelStyleText(properties->GetStyle()));
     proxy->SetUnits(
         SampleChannelProxy::GetUnits(properties->GetStyle(), properties->GetTimeUnits(), properties->GetRealTimeFormat()));
     proxy->GetWidget()->ShowLastValueWithUnits();
-    proxy->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisName();
+    Axis *axis = proxy->GetAxis();
+    axis->UpdateGraphAxisName();
     RefillWidgets();
+
+    axis->UpdateGraphAxisStyle();
+    if (axis->IsHorizontal())
+    {
+        foreach (ChannelProxyBase *item, m_horizontalChannelMapping.values())
+        {
+            SampleChannelProxy *sampleItem = dynamic_cast<SampleChannelProxy *>(item);
+            if (sampleItem == NULL)
+            {
+                qWarning() << "mix of channelTypes on horizontal axis";
+                continue;
+            }
+            sampleItem->SetStyle(proxy->GetStyle());
+            sampleItem->SetTimeUnits(proxy->GetTimeUnits());
+            sampleItem->SetRealTimeFormat(proxy->GetRealTimeFormat());
+        }
+
+        GetPlot()->RefillGraphs();
+    }
+    else
+    {
+    GetPlot()->RescaleAxis(axis->GetGraphAxis());
+    }
     RecalculateSliderMaximum();
-    proxy->GetChannelGraph()->GetValuleAxis()->UpdateGraphAxisStyle();
 }
 
 QString GraphicsContainer::GetValueTimestamp(SampleChannelProxy *channelProxy, unsigned index)

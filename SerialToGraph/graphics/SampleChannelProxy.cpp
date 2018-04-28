@@ -172,7 +172,7 @@ QString SampleChannelProxy::GetRealTimeText(double value, bool range) const
 QString SampleChannelProxy::GetRealTimeText(unsigned index, bool range) const
 {
     SampleChannel *channel = GetChannel();
-    double value = channel->GetRawValue(index);
+    double value = GetValue(index);
     return GetRealTimeText(value, range);
 }
 

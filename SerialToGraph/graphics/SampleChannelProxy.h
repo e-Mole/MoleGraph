@@ -13,6 +13,10 @@ class SampleChannelProxy : public ChannelProxyBase
 {
     Q_OBJECT
 
+    Q_PROPERTY(SampleChannelProperties::Style style READ GetStyle WRITE SetStyle)
+    Q_PROPERTY(SampleChannelProperties::TimeUnits timeUnits READ GetTimeUnits WRITE SetTimeUnits)
+    Q_PROPERTY(SampleChannelProperties::RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE SetRealTimeFormat)
+
     static QString _FillTimeValueString(SampleChannelProperties::RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
     static QString _ConvertDateTimeToString(SampleChannelProperties::RealTimeFormat format, double seconds, bool range);
     SampleChannelProperties *_GetChannelProperties() const;

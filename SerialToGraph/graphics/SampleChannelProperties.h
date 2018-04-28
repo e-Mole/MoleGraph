@@ -37,10 +37,6 @@ public:
         mm_ss_zzz,
     };
 private:
-    Q_PROPERTY(Style style READ GetStyle WRITE SetStyle)
-    Q_PROPERTY(TimeUnits timeUnits READ GetTimeUnits WRITE SetTimeUnits)
-    Q_PROPERTY(RealTimeFormat realTimeFormat READ GetRealTimeFormat WRITE SetRealTimeFormat)
-
     Style m_style;
     TimeUnits m_timeUnits;
     RealTimeFormat m_realTimeFormat;

@@ -349,3 +349,8 @@ Axis * ChannelProxyBase::GetAxis()
 {
     return GetChannelGraph()->GetValuleAxis();
 }
+
+void ChannelProxyBase::_SetShapeIndexDepricated (unsigned index)
+{
+    return m_channelWidget->SetShapeIndexDepricated(index);
+}

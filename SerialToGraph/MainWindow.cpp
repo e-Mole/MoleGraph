@@ -843,7 +843,7 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
                                 out << chIndex;
                                 out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
                                 out << gcIndex;
-                                out << proxy->GetWidget();
+                                out << proxy;
                                 break;
                             }
                         }

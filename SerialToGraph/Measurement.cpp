@@ -553,7 +553,7 @@ void Measurement::SerializeColections(QDataStream &out)
                     (channel->GetType() == ChannelBase::Type_Hw ?
                         ((HwChannel *)channel)->GetHwIndex() : -1
                     );
-                out << GetGC()->GetChannelWidget(channel);
+                out << GetGC()->GetChannelProxy(channel);
             }
         }
     }
@@ -599,10 +599,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
-    in.startTransaction();
-    in >> channelProxy->GetWidget();
-    in.rollbackTransaction();
-    in >> channelProxy->GetProperties();
+    in >> channelProxy;
 
     m_channels.push_back(channel);
     if (channelProxy->IsOnHorizontalAxis())

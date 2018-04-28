@@ -15,6 +15,14 @@ class ChannelProxyBase : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString name READ GetName WRITE SetName)
+    Q_PROPERTY(QColor color READ GetForeColor WRITE SetForeColor)
+    Q_PROPERTY(unsigned shapeIndex WRITE _SetShapeIndexDepricated) //for depricated file format. will be never written to file
+    Q_PROPERTY(int shapeIndex2 READ GetShapeIndex WRITE SetShapeIndex)
+    Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
+    Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
+    Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
+
     double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
     double _GetMinInRange(int left, int right);
@@ -24,6 +32,8 @@ class ChannelProxyBase : public QObject
     double _GetStandardDeviation(int left, int right);
     double _CalculateSum(int left, int right);
     double _GetSumInRange(int left, int right);
+
+    void _SetShapeIndexDepricated (unsigned index);
 
 protected:
     ChannelWidget *m_channelWidget;
@@ -43,6 +53,9 @@ public:
     };
 
     ChannelProxyBase(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties);
+
+    void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
+    void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
     bool ContainsChannelWidget(ChannelWidget *channelWidget);
     bool ContainsChannel(ChannelBase *channel);

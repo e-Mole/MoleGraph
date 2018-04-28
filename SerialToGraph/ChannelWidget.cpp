@@ -414,7 +414,7 @@ Plot* ChannelWidget::GetPlot()
     return m_plot;
 }
 
-void ChannelWidget::_SetShapeIndexDepricated (unsigned index)
+void ChannelWidget::SetShapeIndexDepricated(unsigned index)
 {
     SetShapeIndex(index + 2);
 }

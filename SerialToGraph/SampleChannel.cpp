@@ -33,3 +33,8 @@ double SampleChannel::GetSampleNr(unsigned index) const
 {
     return ChannelBase::GetRawValue(index);
 }
+
+void SampleChannel::SetStartTime(QDateTime const &dateTime)
+{
+    m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch());
+}

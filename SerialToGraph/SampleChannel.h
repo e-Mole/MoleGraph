@@ -29,7 +29,7 @@ public:
 
     virtual Type GetType() { return Type_Sample; }
 
-    void SetStartTime(QDateTime const &dateTime) {m_startDateTime.setMSecsSinceEpoch(dateTime.toMSecsSinceEpoch()); }
+    void SetStartTime(QDateTime const &dateTime);
     QDateTime GetStartDateTime() const { return m_startDateTime; }
     void AddValue(double value, double timeFromStart);
     virtual double GetTimeFromStart(unsigned index) const;

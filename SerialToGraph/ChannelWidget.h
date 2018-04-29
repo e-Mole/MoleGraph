@@ -95,7 +95,7 @@ public:
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
     Plot* GetPlot();
     QKeySequence GetKeyShortcutSequence();
-    bool IsGhost() {return m_isGhost; }
+    bool IsGhost() const {return m_isGhost; }
     void SetShapeIndexDepricated (unsigned index);
 
 signals:

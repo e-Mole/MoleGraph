@@ -825,29 +825,33 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
 
         foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (proxy->IsGhost())
+            if (!proxy->IsGhost())
             {
-                ChannelBase *ch = proxy->GetChannel();
-                Measurement *m = proxy->GetChannelMeasurement();
-                for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
+                continue;
+            }
+
+            ChannelBase *ch = proxy->GetChannel();
+            Measurement *m = proxy->GetChannelMeasurement();
+            for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
+            {
+                if (m != m_measurements[mIndex])
                 {
-                    if (m == m_measurements[mIndex])
+                    continue;
+                }
+                GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
+                unsigned hChIndex =  gc->GetHorizontalChannelProxy(m)->GetChannelIndex();
+                for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
+                {
+                    if (ch != m->GetChannel(chIndex))
                     {
-                        GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
-                        unsigned hChIndex =  gc->GetHorizontalChannelProxy(m)->GetChannelIndex();
-                        for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
-                        {
-                            if (ch == m->GetChannel(chIndex))
-                            {
-                                out << mIndex;
-                                out << chIndex;
-                                out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
-                                out << gcIndex;
-                                out << proxy;
-                                break;
-                            }
-                        }
+                        continue;
                     }
+                    out << mIndex;
+                    out << chIndex;
+                    out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
+                    out << gcIndex;
+                    out << proxy;
+                    break;
                 }
             }
         }

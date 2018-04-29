@@ -911,7 +911,7 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
             qWarning() << "virtual channel was not created";
             return false;
         }
-        in >> ghostProxy->GetWidget();
+        in >> ghostProxy;
         //FIXME: just two is necessary to update (value + horizontal)
         destGC->UpdateAxes();
         destGC->replaceDisplays();

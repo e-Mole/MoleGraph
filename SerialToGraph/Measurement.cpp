@@ -599,7 +599,17 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
     in.startTransaction();
     in >> channel;
     in.rollbackTransaction();
+
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(channelProxy);
+    if (sampleChannelProxy)
+    {
+        GetGC()->UntrackSampleChannelPropertiesChanged(sampleChannelProxy);
+    }
     in >> channelProxy;
+    if (sampleChannelProxy)
+    {
+        GetGC()->TrackSampleChannelPropertiesChanged(sampleChannelProxy);
+    }
 
     m_channels.push_back(channel);
     if (channelProxy->IsOnHorizontalAxis())

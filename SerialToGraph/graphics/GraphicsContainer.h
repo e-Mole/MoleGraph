@@ -170,6 +170,9 @@ public:
     void RefillHorizontalChannelMapping();
     void SortChannels();
     bool ContainsGhost();
+    void TrackSampleChannelPropertiesChanged(SampleChannelProxy *proxy);
+    void UntrackSampleChannelPropertiesChanged(SampleChannelProxy *proxy);
+
 signals:
     void resized();
     void editChannel(ChannelProxyBase *channelProxy);

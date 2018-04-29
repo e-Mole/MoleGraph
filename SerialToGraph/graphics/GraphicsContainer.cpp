@@ -810,8 +810,18 @@ SampleChannelProxy * GraphicsContainer::_CreateSampleChannelProxy(SampleChannel 
         m_channelProxies.push_back(proxy);
         m_sampleChannelProxy = proxy;
     }
-    connect(properties, SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+    TrackSampleChannelPropertiesChanged(proxy);
     return proxy;
+}
+
+void GraphicsContainer::TrackSampleChannelPropertiesChanged(SampleChannelProxy *proxy)
+{
+    connect(proxy->GetProperties(), SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
+}
+
+void GraphicsContainer::UntrackSampleChannelPropertiesChanged(SampleChannelProxy *proxy)
+{
+    disconnect(proxy->GetProperties(), SIGNAL(propertyChanged()), this, SLOT(sampleChannelPropertyChanged()));
 }
 
 SampleChannelProxy *GraphicsContainer::CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost)

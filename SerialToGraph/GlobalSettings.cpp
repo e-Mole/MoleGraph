@@ -8,7 +8,8 @@
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", TARGET),
     m_savedState(true),
-    m_savedValues(true)
+    m_savedValues(true),
+    m_openRecentOnStartup(true)
 {
 }
 
@@ -58,6 +59,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "recent_file_paths";
     case Key_AcceptChangesByDialogClosing:
         return "accept_changes_by_dialog_closing";
+    case Key_OpenRecentFileAtStartup:
+        return "open_recent_file_at_startup";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -307,4 +310,14 @@ void GlobalSettings::SetSavedValues(bool savedValues)
         m_savedValues = savedValues;
         savedStateOrVeluesChanged();
     }
+}
+
+bool GlobalSettings::GetOpenRecentFileAtStartup() const
+{
+    return _Get(Key_OpenRecentFileAtStartup, true).toBool();
+}
+
+void GlobalSettings::SetOpenRecentFileAtStartup(bool openRecent)
+{
+    _Set(Key_OpenRecentFileAtStartup, openRecent);
 }

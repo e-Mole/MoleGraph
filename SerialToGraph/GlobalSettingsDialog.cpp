@@ -32,12 +32,14 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_limitDirButton(NULL),
     m_hideAllChannels(NULL),
     m_menuOrientation(NULL),
-    m_menuOnDemand(NULL)
+    m_menuOnDemand(NULL),
+    m_openRecentOnStartUp(NULL)
 {
     _InitializeLanguage();
     _InitializeUnitBrackets();
     _InitializeUseBluetooth();
     _InitHideAllChannels();
+    _InitializeOpenRecentAtStartup();
     _InitializeLimitDir();
     _InitializeButtonLines();
     _InitializeChannelSizeMultiplier();
@@ -81,6 +83,13 @@ void GlobalSettingsDialog::_InitHideAllChannels()
     m_hideAllChannels = new QCheckBox(this);
     m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
     m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
+}
+
+void GlobalSettingsDialog::_InitializeOpenRecentAtStartup()
+{
+    m_openRecentOnStartUp = new QCheckBox(this);
+    m_openRecentOnStartUp->setChecked(m_settings.GetOpenRecentFileAtStartup());
+    m_formLayout->addRow(tr("Open recent measurement at startup"), m_openRecentOnStartUp);
 }
 
 void GlobalSettingsDialog::_InitializeLimitDir()
@@ -224,6 +233,11 @@ bool GlobalSettingsDialog::BeforeAccept()
     if (m_settings.GetAcceptChangesByDialogClosing() != m_acceptChangesByDialogClosing->isChecked())
     {
         m_settings.SetAcceptChangesByDialogClosing(m_acceptChangesByDialogClosing->isChecked());
+    }
+
+    if (m_settings.GetOpenRecentFileAtStartup() != m_openRecentOnStartUp->isChecked())
+    {
+        m_settings.SetOpenRecentFileAtStartup(m_openRecentOnStartUp->isChecked());
     }
 
     return true;

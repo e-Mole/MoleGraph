@@ -433,5 +433,7 @@ void ButtonLine::stop()
 
 void ButtonLine::openRecentFileSlot()
 {
-    openRecentFile(m_recentFileActions[(QAction*)sender()]);
+    QString filePath = m_recentFileActions[(QAction*)sender()];
+    openRecentFile(filePath);
+    GlobalSettings::GetInstance().AddRecentFilePath(filePath); //to move it up
 }

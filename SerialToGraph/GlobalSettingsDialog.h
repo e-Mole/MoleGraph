@@ -30,6 +30,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeButtonLines();
     void _InitializeChannelSizeMultiplier();
     void _InitializeShowStoreCancelButton();
+    void _InitializeOpenRecentAtStartup();
 
     Context const &m_context;
     hw::HwSink &m_hwSink;
@@ -45,6 +46,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     QCheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
     QCheckBox *m_acceptChangesByDialogClosing;
+    QCheckBox *m_openRecentOnStartUp;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 

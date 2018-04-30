@@ -4,6 +4,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QCoreApplication>
+#include <GlobalSettings.h>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -37,6 +38,11 @@ int main(int argc, char *argv[])
         if (!arguments[0].contains(".exe")) //quick workaround for running from windows shortcut (it looks there is as first parameter used name of the .exe file)
             fileName = arguments[0];
     }
+    if (fileName.isEmpty() && GlobalSettings::GetInstance().GetOpenRecentFileAtStartup())
+    {
+         fileName = GlobalSettings::GetInstance().GetRecentFilePath(0);
+    }
+
     MainWindow w(a, fileName, parser.isSet(withoutValuesOption));
     w.show();
 

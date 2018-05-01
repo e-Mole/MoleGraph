@@ -104,6 +104,7 @@ public:
     void UpdateGraph(double xValue, double yValue, bool replot);
     void SetMinimumFontSize(unsigned sizeFactor);
     Axis *GetAxis();
+    void SetChannelGraphPenWidth(double thickness);
 };
 
 #endif // CHANNELPROPERTIESBASE_H

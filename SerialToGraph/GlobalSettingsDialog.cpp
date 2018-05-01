@@ -11,6 +11,7 @@
 #include <MyMessageBox.h>
 #include <QCheckBox>
 #include <QDebug>
+#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
@@ -33,6 +34,8 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     m_hideAllChannels(NULL),
     m_menuOrientation(NULL),
     m_menuOnDemand(NULL),
+    m_channelSizeFactor(NULL),
+    m_channelGraphPenWidth(NULL),
     m_openRecentOnStartUp(NULL)
 {
     _InitializeLanguage();
@@ -43,6 +46,7 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     _InitializeLimitDir();
     _InitializeButtonLines();
     _InitializeChannelSizeMultiplier();
+    _InitializeChannelGraphPenWidth();
     _InitializeShowStoreCancelButton();
     _InitializeShowConsole();
 }
@@ -53,18 +57,29 @@ void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
     m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
     m_formLayout->addRow(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
+void GlobalSettingsDialog::_InitializeChannelGraphPenWidth()
+{
+    m_channelGraphPenWidth = new QDoubleSpinBox();
+    m_channelGraphPenWidth->setMinimum(0.5);
+    m_channelGraphPenWidth->setMaximum(5);
+    m_channelGraphPenWidth->setDecimals(1);
+    m_channelGraphPenWidth->setSingleStep(0.1);
+    m_channelGraphPenWidth->setSuffix(" px");
+    m_channelGraphPenWidth->setValue(m_settings.GetChannelGraphPenWidth());
+    m_formLayout->addRow(tr("Channel graph pen width"), m_channelGraphPenWidth);
+}
+
 void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
 {
-    QHBoxLayout *layout = new QHBoxLayout();
-
     m_channelSizeFactor = new QSpinBox();
     m_channelSizeFactor->setMinimum(50);
     m_channelSizeFactor->setMaximum(500);
+    m_channelSizeFactor->setSingleStep(10);
+    m_channelSizeFactor->setSuffix(" %");
     m_channelSizeFactor->setValue(m_settings.GetChannelSizeFactor());
-    layout->addWidget(m_channelSizeFactor,1);
-    layout->addWidget(new QLabel("\%"));
-    m_formLayout->addRow(tr("Channel size factor"), layout);
+    m_formLayout->addRow(tr("Channel size factor"), m_channelSizeFactor);
 }
+
 void GlobalSettingsDialog::_InitializeButtonLines()
 {
     m_menuOrientation = new bases::ComboBox(this);
@@ -228,6 +243,12 @@ bool GlobalSettingsDialog::BeforeAccept()
     {
         m_settings.SetChannelSizeFactor(m_channelSizeFactor->value());
         updateChannelSizeFactor(m_channelSizeFactor->value());
+    }
+
+    if (!qFuzzyCompare(m_settings.GetChannelGraphPenWidth(), m_channelGraphPenWidth->value()))
+    {
+        m_settings.SetChannelGraphPenWidth(m_channelGraphPenWidth->value());
+        updateChannelGraphPenWidth(m_channelGraphPenWidth->value());
     }
 
     if (m_settings.GetAcceptChangesByDialogClosing() != m_acceptChangesByDialogClosing->isChecked())

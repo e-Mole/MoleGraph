@@ -29,6 +29,7 @@ class GlobalSettings : public QObject
         Key_MenuOnDemand,
         Key_MenuIsShown,
         Key_ChannelSizeFactor,
+        Key_ChannelGraphPenWidth,
         Key_RecentFilePaths,
         Key_AcceptChangesByDialogClosing,
         Key_OpenRecentFileAtStartup,
@@ -81,6 +82,8 @@ public:
     void SetMenuIsShown(bool isShown);
     int GetChannelSizeFactor();
     void SetChannelSizeFactor(int multiplier);
+    double GetChannelGraphPenWidth();
+    void SetChannelGraphPenWidth(double thickness);
     unsigned GetRecetFilePathCount();
     QString GetRecentFilePath(unsigned index);
     void AddRecentFilePath(QString const &path);

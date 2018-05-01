@@ -6,6 +6,7 @@
 #include <KeyShortcut.h>
 #include <Measurement.h>
 #include <Plot.h>
+#include <QBrush>
 #include <QDebug>
 
 ChannelProxyBase::ChannelProxyBase(
@@ -353,4 +354,9 @@ Axis * ChannelProxyBase::GetAxis()
 void ChannelProxyBase::_SetShapeIndexDepricated (unsigned index)
 {
     return m_channelWidget->SetShapeIndexDepricated(index);
+}
+
+void ChannelProxyBase::SetChannelGraphPenWidth(double thickness)
+{
+    GetChannelGraph()->SetPenWidth(thickness);
 }

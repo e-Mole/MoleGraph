@@ -705,7 +705,14 @@ void MainWindow::settings()
 {
      //to be alwais scrolled to up-left corner
     GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
-    settingsDialog->connect(settingsDialog, SIGNAL(updateChannelSizeFactor(int)), m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int)));
+    settingsDialog->connect(
+        settingsDialog, SIGNAL(updateChannelSizeFactor(int)),
+        m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int))
+    );
+    settingsDialog->connect(
+        settingsDialog, SIGNAL(updateChannelGraphPenWidth(double)),
+        m_graphicsContainerManager, SLOT(updateChannelGraphPenWidth(double))
+    );
     settingsDialog->exec();
 }
 

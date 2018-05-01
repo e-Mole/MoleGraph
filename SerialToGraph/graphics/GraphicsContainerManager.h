@@ -41,8 +41,10 @@ signals:
     void editChannelRejected();
 private slots:
     void editChannel(ChannelProxyBase *channelProxy);
+
 public slots:
     void updateChannelSizeFactor(int factor);
+    void updateChannelGraphPenWidth(double thickness);
 };
 
 #endif // GRAPHICSCONTAINERMANAGER_H

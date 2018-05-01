@@ -41,6 +41,7 @@ public:
     void AssignToAxis(Axis *axis);
     void AssignToGraphAxis(QCPAxis *graphAxis);
     void SetActive(bool active);
+    void SetPenWidth(double width);
 };
 
 #endif // CHANNELGRAPH_H

@@ -3,12 +3,25 @@
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
+#include <Plot.h>
 #include <Measurement.h>
 
 GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
     QObject(parent),
     m_currentMeasurement(NULL)
 {
+}
+
+void GraphicsContainerManager::updateChannelGraphPenWidth(double thickness)
+{
+    foreach (GraphicsContainer *gc, m_graphicsContainers)
+    {
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
+        {
+            proxy->SetChannelGraphPenWidth(thickness);
+        }
+        gc->GetPlot()->ReplotIfNotDisabled();
+    }
 }
 
 void GraphicsContainerManager::AddMeasurement(Measurement *m)

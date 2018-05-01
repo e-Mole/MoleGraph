@@ -55,6 +55,8 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "menu_is_shown";
     case Key_ChannelSizeFactor:
         return "channel_size_fctor";
+    case Key_ChannelGraphPenWidth:
+        return "channel_graph_pen_width";
     case Key_RecentFilePaths:
         return "recent_file_paths";
     case Key_AcceptChangesByDialogClosing:
@@ -230,9 +232,20 @@ int GlobalSettings::GetChannelSizeFactor()
 {
     return _Get(Key_ChannelSizeFactor, 100).toInt();
 }
+
 void GlobalSettings::SetChannelSizeFactor(int multiplier)
 {
     _Set(Key_ChannelSizeFactor, multiplier);
+}
+
+double GlobalSettings::GetChannelGraphPenWidth()
+{
+    return _Get(Key_ChannelGraphPenWidth, 1.5).toDouble();
+}
+
+void GlobalSettings::SetChannelGraphPenWidth(double thickness)
+{
+    _Set(Key_ChannelGraphPenWidth, thickness);
 }
 
 void GlobalSettings::_FillRecentFilePaths()

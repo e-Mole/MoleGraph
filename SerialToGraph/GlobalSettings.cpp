@@ -271,6 +271,12 @@ void GlobalSettings::AddRecentFilePath(QString const &path)
     _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
 }
 
+void GlobalSettings::RemoveRecentFilePath(QString const &path)
+{
+    m_recentPaths.removeOne(path);
+    _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
+}
+
 bool GlobalSettings::GetAcceptChangesByDialogClosing() const
 {
 #if defined(Q_OS_ANDROID)

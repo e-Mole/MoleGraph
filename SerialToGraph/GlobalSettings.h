@@ -84,6 +84,7 @@ public:
     unsigned GetRecetFilePathCount();
     QString GetRecentFilePath(unsigned index);
     void AddRecentFilePath(QString const &path);
+    void RemoveRecentFilePath(QString const &path);
     bool GetAcceptChangesByDialogClosing() const;
     void SetAcceptChangesByDialogClosing(bool show);
     bool IsSavedState();

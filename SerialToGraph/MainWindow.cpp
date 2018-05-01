@@ -364,12 +364,16 @@ void MainWindow::_ShowCoruptedFileMessage(QString const &fileName)
 
 void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
 {
-    _SetCurrentFileName(fileName);
+    bool sucess = true;
+
+    //to be sure that this file will not be opened again when is corrupted and is set to open at startup
+    GlobalSettings::GetInstance().RemoveRecentFilePath(fileName);
 
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly))
     {
         MyMessageBox::critical(this, tr("Selected file is not possible to open."));
+        sucess = false;
         return;
     }
     QDataStream in(&file);
@@ -382,6 +386,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         if (serializerVersion < ATOG_LOWEST_VERSION || serializerVersion > ATOG_SERIALIZER_VERSION)
         {
             MyMessageBox::critical(this, QString(tr("Unsuported file version (%1)")).arg(fileName));
+            sucess = false;
             return;
         }
 
@@ -424,16 +429,23 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             if (! _DeSerializeGhsotColections(in))
             {
                 _ShowCoruptedFileMessage(fileName);
+                sucess = false;
             }
         }
     }
     catch (...)
     {
         _ShowCoruptedFileMessage(fileName);
+        sucess = false;
     }
 
     file.close();
 
+    if (sucess)
+    {
+        _SetCurrentFileName(fileName);
+        GlobalSettings::GetInstance().AddRecentFilePath(fileName);
+    }
 }
 
 void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
@@ -567,7 +579,6 @@ void MainWindow::_OpenFile(QString const &filePath, bool values)
     if (filePath.size() == 0)
         return;
 
-    GlobalSettings::GetInstance().AddRecentFilePath(filePath);
     GlobalSettings::GetInstance().SetLastDir(QFileInfo(filePath).path());
     DeserializeMeasurements(filePath, values);
 }

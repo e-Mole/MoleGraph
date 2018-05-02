@@ -8,7 +8,6 @@
 #include <QWidget>
 
 class Axis;
-class ChannelBase;
 class ConnectivityLabel;
 class Measurement;
 class PlotContextMenu;
@@ -30,7 +29,6 @@ class ButtonLine : public QWidget
 
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(QPushButton *button);
-    void _ActivateChannel(ChannelBase *channel, bool checked);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
     void _FillRecentFileMenu();
@@ -58,7 +56,6 @@ class ButtonLine : public QWidget
 	bool m_enabledBChannels;
 
     QAction *m_graphAction;
-    QMap<ChannelBase *, QAction*> m_channelActions;
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
@@ -73,7 +70,6 @@ public:
 
 signals:
     void periodChanged(unsigned period);
-    void channelTriggered(ChannelBase *channel, bool checked);
     void axesPressed();
     void allChannelsDisplayedOrHidden();
     void measurementMenuButtonPressed();

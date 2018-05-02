@@ -92,7 +92,7 @@ void MeasurementMenu::addButtonPressed()
 {
     Measurement *m = m_context.m_mainWindow.CreateNewMeasurement(true);
 
-    MeasurementSettings dialog(this, m, m->GetWidget(), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
+    MeasurementSettings dialog(this, m, m->GetGC(), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         GlobalSettings::GetInstance().SetSavedState(false);
@@ -131,7 +131,7 @@ void MeasurementMenu::ReinitGridAndAdjustSize()
 void MeasurementMenu::editButtonPressed()
 {
     Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
-    MeasurementSettings dialog(this, measurement, measurement->GetWidget(), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
+    MeasurementSettings dialog(this, measurement, measurement->GetGC(), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {
         if (dialog.IsChanged())

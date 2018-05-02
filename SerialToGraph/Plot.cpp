@@ -1,6 +1,6 @@
 #include "Plot.h"
 #include <Axis.h>
-#include <ChannelWidget.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <qmath.h>
 #include <QColor>
@@ -44,7 +44,7 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
     m_wheelEvent(NULL),
     m_displayMode(SampleValue),
     m_markerTypeSelection(MTSSample),
-    m_markerRangeValue(ChannelBase::DVDelta)
+    m_markerRangeValue(ChannelProxyBase::DVDelta)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -453,7 +453,6 @@ QCPAxis *Plot::AddYAxis(bool onRight)
 
 void Plot::RescaleAxis(QCPAxis *axis)
 {
-
     if (axis == xAxis)
     {
         axis->rescale(true);
@@ -464,18 +463,17 @@ void Plot::RescaleAxis(QCPAxis *axis)
     double upper = -std::numeric_limits<double>::max();
 
     bool processedAtLeasOne = false;
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (!channelWidget->IsDrawable() || channelWidget->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
+        if (!channelProxy->IsDrawable() || channelProxy->GetChannelGraph()->GetValuleAxis()->GetGraphAxis() != axis)
             continue;
 
         processedAtLeasOne = true;
 
-        ChannelBase * channel = m_graphicsContainer->GetChannel(channelWidget);
-        if (channel->GetMinValue() < lower)
-            lower = channel->GetMinValue();
-        if (channel->GetMaxValue() > upper)
-            upper = channel->GetMaxValue();
+        if (channelProxy->GetMinValue() < lower)
+            lower = channelProxy->GetMinValue();
+        if (channelProxy->GetMaxValue() > upper)
+            upper = channelProxy->GetMaxValue();
     }
 
     double margin = qFabs(upper - lower) / RESCALE_MARGIN_RATIO;
@@ -538,23 +536,39 @@ void Plot::selectionChanged()
     selectedAxes().first()->grid()->setVisible(true);
 }
 
+void Plot::_RefillSingleGraph(ChannelProxyBase *channelProxy)
+{
+    channelProxy->GetChannelGraph()->clearData();
+    ChannelProxyBase * horizontalChannelProxy = m_graphicsContainer->GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+    if (horizontalChannelProxy == NULL)
+    {
+        qWarning() << "horizontal channel proxy was not found for refilling graph";
+    }
+    for (unsigned i = 0; i < channelProxy->GetValueCount(); i++) //untracked channels have no values
+    {
+        if (channelProxy->IsValueNA(i) || horizontalChannelProxy->IsValueNA(i))
+            continue;
+
+        channelProxy->GetChannelGraph()->data()->insert(
+            horizontalChannelProxy->GetValue(i),
+            QCPData(horizontalChannelProxy->GetValue(i), channelProxy->GetValue(i))
+        );
+    }
+}
+
+void Plot::RefillSingleGraph(ChannelProxyBase *channelProxy)
+{
+    _RefillSingleGraph(channelProxy);
+    QCPAxis *axis = channelProxy->GetAxis()->GetGraphAxis();
+    RescaleAxis(axis);
+    ReplotIfNotDisabled();
+}
+
 void Plot::RefillGraphs()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        channelWidget->GetChannelGraph()->clearData();
-        ChannelBase *channel = m_graphicsContainer->GetChannel(channelWidget);
-        ChannelBase * horizontalChannel = m_graphicsContainer->GetHorizontalChannel(channel->GetMeasurement());
-        for (unsigned i = 0; i < channel->GetValueCount(); i++) //untracked channels have no values
-        {
-            if (channel->IsValueNA(i) || horizontalChannel->IsValueNA(i))
-                continue;
-
-            channelWidget->GetChannelGraph()->data()->insert(
-                horizontalChannel->GetValue(i),
-                QCPData(horizontalChannel->GetValue(i), channel->GetValue(i))
-            );
-        }
+        _RefillSingleGraph(channelProxy);
     }
     RescaleAllAxes();
     ReplotIfNotDisabled();
@@ -701,8 +715,8 @@ QColor Plot::_SetMarkerLineColor(bool isSame, bool isCurrent)
 void Plot::RedrawChannelMarks(int position)
 {
     double horizontalValue = m_graphicsContainer->GetHorizontalValueBySliderPos(position);
-    foreach (ChannelWidget * channelWidget, m_graphicsContainer->GetChannelWidgets())
-        channelWidget->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
+    foreach (ChannelProxyBase * channelProxy, m_graphicsContainer->GetChannelProxies())
+        channelProxy->GetChannelGraph()->ChangeSelectedHorizontalValue(horizontalValue);
 }
 
 Axis *Plot::GetHorizontalAxis()

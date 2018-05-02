@@ -19,7 +19,7 @@ class HwChannel : public ChannelBase
 
     Q_OBJECT
 
-    Q_PROPERTY(unsigned sensorPort READ GetSensorPort WRITE _SetSensorPort)
+    Q_PROPERTY(unsigned sensorPort READ GetSensorPort WRITE SetSensorPort)
     Q_PROPERTY(unsigned sensorId READ GetSensorId WRITE sensorIdChoosen)
     Q_PROPERTY(unsigned sensorQuantityId READ GetSensorQuantityId WRITE sensorQuantityIdChoosen)
 
@@ -31,8 +31,6 @@ class HwChannel : public ChannelBase
     hw::SensorQuantity *m_sensorQuantity;
     unsigned m_sensorQuantityOrder;
 
-    void _SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
-
 public:
     HwChannel(
         Measurement *measurement,
@@ -43,11 +41,13 @@ public:
         unsigned quantityOrder=0
     );
 
+    HwChannel(Measurement *m, HwChannel *source);
+
     virtual Type GetType() { return Type_Hw; }
     virtual void AddValue(double value);
     void AddValue(double original, double current);
 
-    int GetHwIndex() { return m_hwIndex; }
+    int GetHwIndex() const { return m_hwIndex; }
     double GetOriginalValue(int index);
     void ChangeValue(int index, double newValue);
     virtual ChannelBase::ValueType GetValueType(unsigned index);
@@ -60,7 +60,7 @@ public:
     unsigned GetSensorQuantityOrder() { return m_sensorQuantityOrder; }
     void SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
     void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
-
+    void SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
 public slots:
     void setActive(bool isActive);
 signals:

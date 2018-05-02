@@ -1,6 +1,5 @@
 #include "ChannelMenu.h"
 #include <bases/ClickableLabel.h>
-#include <ChannelBase.h>
 #include <ChannelWidget.h>
 #include <ColorCheckBox.h>
 #include <GlobalSettings.h>
@@ -79,12 +78,13 @@ void ChannelMenu::FillGrid()
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
     m_gridLayout->addWidget(addGhostChannel, row, 0);
+    addGhostChannel->resize(addGhostChannel->sizeHint().width(), addGhostChannel->sizeHint().height());
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
     m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
-        _AddChannel(channelWidget);
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
+        _AddChannel(channelProxy);
 }
 
 void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
@@ -92,32 +92,32 @@ void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
     if (!shortcut.isEmpty())
         m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
 }
-void ChannelMenu::_AddChannel(ChannelWidget *channelWidget)
+void ChannelMenu::_AddChannel(ChannelProxyBase *channelProxy)
 {
     unsigned rowNr = m_gridLayout->rowCount();
-    ColorCheckBox *cb = new ColorCheckBox(channelWidget->GetName(), this);
-    cb->SetChecked(channelWidget->isVisible());
-    cb->SetColor(channelWidget->GetForeColor());
+    ColorCheckBox *cb = new ColorCheckBox(channelProxy->GetName(), this);
+    cb->SetChecked(channelProxy->isVisible());
+    cb->SetColor(channelProxy->GetForeColor());
 
-    m_channelCheckBoxes[channelWidget] = cb;
-    m_checkBoxChannels[cb] = channelWidget;
+    m_channelCheckBoxes[channelProxy] = cb;
+    m_checkBoxChannels[cb] = channelProxy;
     connect(cb, SIGNAL(clicked()), this, SLOT(channelActivatedCheckBox()));
     m_gridLayout->addWidget(cb, rowNr, 0);
 
-    _AddShortcut(rowNr, _GetChannelShortcutText(channelWidget));
+    _AddShortcut(rowNr, _GetChannelShortcutText(channelProxy));
 
     QPushButton *editButton = new QPushButton(tr("Edit"), this);
-    m_editChannels[editButton] = channelWidget;
+    m_editChannels[editButton] = channelProxy;
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(editButton, rowNr, 2);
 
-    if (channelWidget->isGhost())
+    if (channelProxy->IsGhost())
     {
         QPushButton *removeButton = new QPushButton(tr("Remove"), this);
-        m_editChannels[removeButton] = channelWidget;
+        m_editChannels[removeButton] = channelProxy;
         connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
         m_gridLayout->addWidget(removeButton, rowNr, 3);
-        m_removeButtonToChannel.insert(removeButton, channelWidget);
+        m_removeButtonToChannel.insert(removeButton, channelProxy);
     }
 
     //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
@@ -134,19 +134,19 @@ void ChannelMenu::UpdateCheckBoxes()
 }
 void ChannelMenu::edit()
 {
-    ChannelWidget *channelWidget = m_editChannels[(QPushButton*)sender()];
-    channelWidget->clicked();
+    ChannelProxyBase *channelProxy = m_editChannels[(QPushButton*)sender()];
+    channelProxy->GetWidget()->clicked();
 
-    ColorCheckBox *cb = m_channelCheckBoxes[channelWidget];
-    cb->SetText(channelWidget->GetName());
-    cb->SetColor(channelWidget->GetForeColor());
+    ColorCheckBox *cb = m_channelCheckBoxes[channelProxy];
+    cb->SetText(channelProxy->GetName());
+    cb->SetColor(channelProxy->GetForeColor());
 }
 
 void ChannelMenu::remove()
 {
-    ChannelWidget * channelWidget = m_removeButtonToChannel[(QPushButton*)sender()];
-    m_channelCheckBoxes.remove(channelWidget);
-    m_graphicsContainer->RemoveChannelWidget(channelWidget);
+    ChannelProxyBase * channelProxy = m_removeButtonToChannel[(QPushButton*)sender()];
+    m_channelCheckBoxes.remove(channelProxy);
+    m_graphicsContainer->RemoveChannelProxy(channelProxy);
 
 
     for (int row = 0; row < m_gridLayout->rowCount(); row++)
@@ -163,12 +163,13 @@ void ChannelMenu::remove()
     FillGrid();
 
     m_graphicsContainer->RecalculateSliderMaximum();
+    adjustSize();
 }
 
-void ChannelMenu::ActivateChannel(ChannelWidget *channelWidget, bool checked)
+void ChannelMenu::ActivateChannel(ChannelProxyBase *channelProxy, bool checked)
 {
-    m_channelCheckBoxes[channelWidget]->SetChecked(checked);
-    m_graphicsContainer->ActivateChannel(channelWidget, checked);
+    m_channelCheckBoxes[channelProxy]->SetChecked(checked);
+    m_graphicsContainer->ActivateChannel(channelProxy, checked);
 }
 
 void ChannelMenu::graphActivated()
@@ -180,35 +181,35 @@ void ChannelMenu::graphActivated()
 
 void ChannelMenu::noChannelsActivated()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (channelWidget->isVisible())
+        if (channelProxy->isVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channelWidget, false);
+            ActivateChannel(channelProxy, false);
         }
     }
 }
 
 void ChannelMenu::allChannelsActivated()
 {
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (!channelWidget->isVisible())
+        if (!channelProxy->isVisible())
         {
             GlobalSettings::GetInstance().SetSavedState(false);
-            ActivateChannel(channelWidget, true);
+            ActivateChannel(channelProxy, true);
         }
     }
 }
 
 
-QString ChannelMenu::_GetChannelShortcutText(ChannelWidget *channelWidget)
+QString ChannelMenu::_GetChannelShortcutText(ChannelProxyBase *channelProxy)
 {
     //only a few channels to create inverted map
     for (auto it =  m_shortcutChannels.begin(); it != m_shortcutChannels.end(); ++it)
     {
-        if (it.value() == channelWidget)
+        if (it.value() == channelProxy)
             return it.key()->GetText();
     }
 
@@ -221,15 +222,15 @@ void ChannelMenu::CreatePanelShortcuts()
     m_plotShortcut = new KeyShortcut(
         m_graphicsContainer->GetPlotKeySequence(), this, SLOT(graphActivated()));
 
-    foreach (ChannelWidget *channelWidget, m_graphicsContainer->GetChannelWidgets())
+    foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
     {
         KeyShortcut *s = new KeyShortcut(
-            m_graphicsContainer->GetChannelWidgetKeySequence(channelWidget),
+            m_graphicsContainer->GetChannelKeySequence(channelProxy),
             this,
             SLOT(channelActivatedShortcut())
         );
         if (s != NULL)
-            m_shortcutChannels[s] = channelWidget;
+            m_shortcutChannels[s] = channelProxy;
     }
 
     m_allChannelsShortcut = new KeyShortcut(
@@ -241,12 +242,12 @@ void ChannelMenu::CreatePanelShortcuts()
 
 void ChannelMenu::channelActivatedCheckBox()
 {
-    ChannelWidget * channelWidget = m_checkBoxChannels[(ColorCheckBox*)sender()];
-    ActivateChannel(channelWidget, !channelWidget->isVisible());
+    ChannelProxyBase * channelProxy = m_checkBoxChannels[(ColorCheckBox*)sender()];
+    ActivateChannel(channelProxy, !channelProxy->isVisible());
 }
 
 void ChannelMenu::channelActivatedShortcut()
 {
-    ChannelWidget *channelWidget = m_shortcutChannels[(KeyShortcut*)sender()];
-    ActivateChannel(channelWidget, !channelWidget->isVisible());
+    ChannelProxyBase *channelProxy = m_shortcutChannels[(KeyShortcut*)sender()];
+    ActivateChannel(channelProxy, !channelProxy->isVisible());
 }

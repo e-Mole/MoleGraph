@@ -1,5 +1,6 @@
 #include "ChannelGraph.h"
 #include "Axis.h"
+#include "GlobalSettings.h"
 #include "Plot.h"
 
 #define MARKER_WIDTH 2 //1.6
@@ -17,15 +18,38 @@ ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
     m_selectedHorizontalValue(-1),
     m_valueAxis(valueAxis)
 {
-    setPen(QPen(color, 1, penStyle));
-    setSelectedPen(QPen(color, SELECTED_PEN_WIDTH, penStyle));
+    double normalWidth = GlobalSettings::GetInstance().GetChannelGraphPenWidth();
+    setPen(QPen(color, normalWidth, penStyle));
+    setSelectedPen(QPen(color, normalWidth * SELECTED_PEN_WIDTH, penStyle));
 
-    mScatterStyle.setPen(QPen(color, 1));
-    mScatterStyle.setSize(MARKER_SIZE);
-    m_selectedMarkStyle.setPen(QPen(color, MARKER_WIDTH));
-    m_selectedMarkStyle.setSize(MARKER_SIZE);
+    mScatterStyle.setPen(QPen(color, normalWidth));
+    mScatterStyle.setSize(sqrt(normalWidth) * MARKER_SIZE);
+    m_selectedMarkStyle.setPen(QPen(color, normalWidth * MARKER_WIDTH));
+    m_selectedMarkStyle.setSize(sqrt(normalWidth) * MARKER_SIZE);
 
     SetMarkShape(shapeIndex);
+}
+
+void ChannelGraph::SetPenWidth(double width)
+{
+    //FIXMEL two similar definitions (constructor)
+    QPen p = pen();
+    p.setWidthF(width);
+    setPen(p);
+
+    p = selectedPen();
+    p.setWidthF(width * SELECTED_PEN_WIDTH);
+    setSelectedPen(p);
+
+    p = mScatterStyle.pen();
+    p.setWidthF(width);
+    mScatterStyle.setPen(p);
+    mScatterStyle.setSize(sqrt(width) * MARKER_SIZE);
+
+    p = m_selectedMarkStyle.pen();
+    p.setWidthF(width * MARKER_WIDTH);
+    m_selectedMarkStyle.setPen(p);
+    m_selectedMarkStyle.setSize(sqrt(width) * MARKER_SIZE);
 }
 
 void ChannelGraph::SetColor(const QColor& color)
@@ -130,7 +154,7 @@ void ChannelGraph::ShowAllMarks(bool showAllMarks)
     m_showAllMarks = showAllMarks;
 }
 
-int ChannelGraph::GetShapeIndex()
+int ChannelGraph::GetShapeIndex() const
 {
     return ((unsigned)m_selectedMarkStyle.shape());
 }

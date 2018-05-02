@@ -8,6 +8,7 @@ namespace bases { class ComboBox;}
 class Context;
 class GlobalSettings;
 class QCheckBox;
+class QDoubleSpinBox;
 class QLineEdit;
 class QPushButton;
 class QSpinBox;
@@ -28,8 +29,10 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeLimitDir();
     void _InitHideAllChannels();
     void _InitializeButtonLines();
+    void _InitializeChannelGraphPenWidth();
     void _InitializeChannelSizeMultiplier();
     void _InitializeShowStoreCancelButton();
+    void _InitializeOpenRecentAtStartup();
 
     Context const &m_context;
     hw::HwSink &m_hwSink;
@@ -44,12 +47,15 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     bases::ComboBox *m_menuOrientation;
     QCheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
+    QDoubleSpinBox *m_channelGraphPenWidth;
     QCheckBox *m_acceptChangesByDialogClosing;
+    QCheckBox *m_openRecentOnStartUp;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 
 signals:
     void updateChannelSizeFactor(int factor);
+    void updateChannelGraphPenWidth(double thickness);
 private slots:
     void limitDirClicked();
 };

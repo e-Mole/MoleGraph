@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QObject>
 
-class ChannelWidget;
 class Measurement;
 class QString;
 
@@ -33,40 +32,22 @@ private:
     QString _GetName();
 protected:
     void mousePressEvent(QMouseEvent * event);
-    double _GetDelta(int left, int right);
-    double _GetMaxInRange(int left, int right);
-    double _GetMinInRange(int left, int right);
-    double _GetMeanInRange(int left, int right);
-    double _GetMedianInRange(int left, int right);
-    double _GetVarianceInRange(int left, int right);
-    double _GetStandardDeviation(int left, int right);
-    double _CalculateSum(int left, int right);
-    double _GetSumInRange(int left, int right);
-    void _UpdateExtremes(double value);
+    void _UpdateExtremes(double value, unsigned index);
     void _RecalculateExtremes();
 
     Measurement * m_measurement;
-    ChannelWidget *m_widget;
     QVector<double> m_values;
     double m_channelMinValue;
     double m_channelMaxValue;
+    unsigned m_channelMinValueIndex;
+    unsigned m_channelMaxValueIndex;
+
 
 public:
     enum Type
     {
         Type_Sample,
         Type_Hw
-    };
-
-    enum DisplayValue{
-        DVDelta,
-        DVMax,
-        DVMin,
-        DVAverage,
-        DVMedian,
-        DVVariance,
-        DVStandDeviation,
-        DVSum
     };
 
     ChannelBase(Measurement *measurement);
@@ -76,29 +57,28 @@ public:
     virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    virtual double GetValue(unsigned index) const;
-
-    double GetLastValidValue();
+    double GetRawValue(unsigned index) const;
 
     virtual void AddValue( double value);
 
-    virtual double GetMinValue()
+    double GetMinValue()
     { return m_channelMinValue; }
-
-    virtual double GetMaxValue()
+    double GetMaxValue()
     { return m_channelMaxValue; }
 
-    Measurement * GetMeasurement();
+    unsigned GetMinValueIndex()
+    { return m_channelMinValueIndex; }
+    unsigned GetMaxValueIndex()
+    { return m_channelMaxValueIndex; }
+
+    Measurement * GetMeasurement() const;
 
     //to be compatible with measurement and would be possible to use the same serializer
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
-    bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
-    bool IsValueNA(int index) const;
     virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
     static double GetNaValue();
-    unsigned GetLastValueIndex(double value) const;
 };
 
 #endif // CHANNEL_H

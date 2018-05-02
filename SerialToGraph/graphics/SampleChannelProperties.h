@@ -1,17 +1,16 @@
 #ifndef SAMPLECHANNELPROPERTIES_H
 #define SAMPLECHANNELPROPERTIES_H
 
-#include <QObject>
-#include <QString>
+#include <graphics/ChannelProperties.h>
 
-class SampleChannel;
-class SampleChannelProperties : public QObject
+class SampleChannelProperties : public ChannelProperties
 {
     Q_OBJECT
 
     Q_ENUMS(Style)
     Q_ENUMS(TimeUnits)
     Q_ENUMS(RealTimeFormat)
+
 public:
     enum TimeUnits
     {
@@ -38,18 +37,23 @@ public:
         mm_ss_zzz,
     };
 private:
-    static QString _FillTimeValueString(RealTimeFormat format, unsigned years, unsigned months, unsigned days, unsigned hours, unsigned mins, unsigned secs, unsigned msecs);
+    Style m_style;
+    TimeUnits m_timeUnits;
+    RealTimeFormat m_realTimeFormat;
 
-    static QString _ConvertDateTimeToString(RealTimeFormat format, double seconds, bool range);
 public:
-    SampleChannelProperties(QObject *parent);
-
-    static QString GetRealTimeFormatText(RealTimeFormat realTimeFormat);
-    static QString GetUnits(Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat);
-    static QString GetSampleChannelStyleText(Style style);
-    static QString GetRealTimeText(SampleChannel *channel, double seconds, bool range);
+    SampleChannelProperties(QObject *parent, Style style, TimeUnits timeUnits, RealTimeFormat realTimeFormat);
+    SampleChannelProperties(QObject *parent, SampleChannelProperties *properties);
+    Style GetStyle() const {return m_style; }
+    void SetStyle(Style style);
+    TimeUnits GetTimeUnits() const { return m_timeUnits; }
+    void SetTimeUnits(TimeUnits units);
+    RealTimeFormat GetRealTimeFormat() { return m_realTimeFormat; }
+    void SetRealTimeFormat(RealTimeFormat format);
+    bool IsInRealtimeStyle() { return m_style == RealTime; }
 
 signals:
+    void propertyChanged();
 
 public slots:
 };

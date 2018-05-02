@@ -1,6 +1,5 @@
 #include "HwChannel.h"
 #include <Axis.h>
-#include <ChannelWidget.h>
 #include <limits>
 #include <Measurement.h>
 #include <QColor>
@@ -24,6 +23,17 @@ HwChannel::HwChannel(
     m_sensorPort(sensorPort),
     m_sensorQuantity(quantity ? quantity : sensor->GetQuantities().front()), //at least one quantity is expected
     m_sensorQuantityOrder(quantityOrder)
+{
+}
+
+HwChannel::HwChannel(Measurement *m, HwChannel *source):
+    ChannelBase(m),
+    m_hwIndex(source->m_hwIndex),
+    m_isActive(false),
+    m_sensor(source->m_sensor),
+    m_sensorPort(source->m_sensorPort),
+    m_sensorQuantity(source->m_sensorQuantity),
+    m_sensorQuantityOrder(source->m_sensorQuantityOrder)
 {
 }
 
@@ -60,7 +70,7 @@ ChannelBase::ValueType HwChannel::GetValueType(unsigned index)
     if (m_measurement->IsPlotInRangeMode())
         return ValueTypeRangeValue;
 
-    return GetValue(index) == GetOriginalValue(index) ?
+    return GetRawValue(index) == GetOriginalValue(index) ?
         ValueTypeOriginal : ValueTypeChanged;
 }
 

@@ -10,8 +10,8 @@
 
 class CentralWidget;
 class ChannelMenu;
+class ChannelProxyBase;
 class ChannelSettings;
-class ChannelWidget;
 class Console;
 class GraphicsContainer;
 class GraphicsContainerManager;
@@ -114,7 +114,7 @@ private slots:
     void removeMeasurement(Measurement *m);
     void addGhostChannel();
     void showPanelMenu(Measurement *m);
-    void editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget);
+    void editChannel(GraphicsContainer* gc, ChannelProxyBase *channelProxy);
     void channelEditingAccepted();
     void channelEditingRejected();
 };

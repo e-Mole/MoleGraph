@@ -2,7 +2,7 @@
 #define EXPORT_H
 #include <QVector>
 
-class ChannelBase;
+class ChannelProxyBase;
 class GraphicsContainer;
 class GraphicsContainerManager;
 class Measurement;
@@ -13,7 +13,7 @@ namespace file
 {
 class Export
 {
-    QString _GetValueText(GraphicsContainer *gc, ChannelBase *channel, unsigned sampleNr);
+    QString _GetValueText(GraphicsContainer *gc, ChannelProxyBase *channelProxy, unsigned sampleNr);
     void _WriteHeader(QFile &file, std::vector<GraphicsContainer *> &graphicsContainers);
     void _WriteData(QFile &file, std::vector<GraphicsContainer *> &graphicsContainers);
 public:

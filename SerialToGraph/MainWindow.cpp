@@ -4,15 +4,17 @@
 #include <ButtonLine.h>
 #include <ChannelBase.h>
 #include <ChannelMenu.h>
-#include <ChannelWidget.h>
 #include <ChannelSettings.h>
+#include <ChannelWidget.h> //because of widget serialization and signals
 #include <Console.h>
 #include <file/Export.h>
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <GlobalSettingsDialog.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/GraphicsContainerManager.h>
+#include <graphics/HwChannelProxy.h>
 #include <hw/SensorManager.h>
 #include <HwChannel.h>
 #include <Plot.h>
@@ -64,7 +66,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     setCentralWidget(m_centralWidget);
 
     m_graphicsContainerManager = new GraphicsContainerManager(m_centralWidget);
-    connect(m_graphicsContainerManager, SIGNAL(editChannel(GraphicsContainer*,ChannelWidget*)), this, SLOT(editChannel(GraphicsContainer*,ChannelWidget*)));
+    connect(m_graphicsContainerManager, SIGNAL(editChannel(GraphicsContainer*,ChannelProxyBase*)), this, SLOT(editChannel(GraphicsContainer*,ChannelProxyBase*)));
 
     m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
@@ -239,27 +241,16 @@ Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 Measurement *MainWindow::CloneCurrentMeasurement()
 {
     Measurement *currentMeasurement = GetCurrnetMeasurement();
-    GraphicsContainer* currentGC = currentMeasurement->GetWidget();
+    GraphicsContainer* currentGC = currentMeasurement->GetGC();
 
     Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true, m_sensorManager);
-    GraphicsContainer *newGC = newMeasurement->GetWidget();
+    GraphicsContainer *newGC = newMeasurement->GetGC();
 
-    foreach (ChannelWidget *w, currentGC->GetChannelWidgets())
+    foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
     {
-        if (w->isGhost())
+        if (proxy->IsGhost())
         {
-            ChannelBase * originalChannel = currentGC->GetChannel(w);
-            Measurement * originalMeasurement = originalChannel->GetMeasurement();
-            ChannelBase * originalHorizontalChannel = currentGC->GetHorizontalChannel(originalMeasurement);
-
-            newGC->AddGhost(dynamic_cast<HwChannel*>(originalChannel), currentGC, w, originalHorizontalChannel, true);
-            /*m_graphicsContainerManager->AddGhost(
-                originalMeasurement,
-                originalMeasurement->GetChannelIndex(originalChannel),
-                originalMeasurement->GetChannelIndex(originalHorizontalChannel),
-                newGC,
-                true
-            );*/
+            newGC->AddGhost(proxy, currentGC, true);
         }
     }
     return newMeasurement;
@@ -268,7 +259,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
 void MainWindow::ConfirmMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    GraphicsContainer *graphicsContainer = m->GetWidget();
+    GraphicsContainer *graphicsContainer = m->GetGC();
     m_graphicsContainerManager->AddMeasurement(m);
 
     int index = m_measurementTabs->addTab(graphicsContainer, graphicsContainer->GetName());
@@ -281,13 +272,13 @@ void MainWindow::measurementColorChanged()
 {
     Measurement * m = (Measurement*)sender();
     for (int i = 0; i < m_measurementTabs->count(); ++i)
-        if (m_measurementTabs->widget(i) == m->GetWidget())
+        if (m_measurementTabs->widget(i) == m->GetGC())
             m_measurementTabs->tabBar()->setTabTextColor(i, m->GetColor());
 }
 
 void MainWindow::SwichCurrentMeasurement(Measurement *m)
 {
-    m_measurementTabs->setCurrentWidget(m->GetWidget());
+    m_measurementTabs->setCurrentWidget(m->GetGC());
 }
 
 void MainWindow::RemoveAllMeasurements()
@@ -308,9 +299,7 @@ void MainWindow::RemoveMeasurement(Measurement *m, bool confirmed)
         m_measurements.removeOne(m);
         if (m == m_currentMeasurement)
         {
-            m_currentMeasurement = (m_measurements.size() == 0) ?
-                m_currentMeasurement = NULL : m_currentMeasurement = m_measurements[0];
-
+            m_currentMeasurement = (m_measurements.size() == 0) ? NULL : m_measurements[0];
             m_buttonLine->ChangeMeasurement(m_currentMeasurement);
         }
         m_measurementTabs->removeTab(m_measurements.indexOf(m));
@@ -324,7 +313,7 @@ void MainWindow::measurementNameChanged()
     Measurement *measurement = (Measurement*)sender();
     for(int i = 0; i < m_measurementTabs->count(); i++)
     {
-        if (m_measurementTabs->widget(i) == measurement->GetWidget())
+        if (m_measurementTabs->widget(i) == measurement->GetGC())
         {
             m_measurementTabs->setTabText(i, measurement->GetName());
             break;
@@ -345,7 +334,7 @@ void MainWindow::currentMeasurementChanged(int index)
 
     foreach (Measurement *m, m_measurements)
     {
-        if (m->GetWidget() == m_measurementTabs->widget(index))
+        if (m->GetGC() == m_measurementTabs->widget(index))
         {
 
             m_buttonLine->ChangeMeasurement(m);
@@ -362,7 +351,7 @@ void MainWindow::currentMeasurementChanged(int index)
 Measurement *MainWindow::GetCurrnetMeasurement()
 {
     foreach (Measurement *m, m_measurements)
-        if (m->GetWidget() == m_measurementTabs->currentWidget())
+        if (m->GetGC() == m_measurementTabs->currentWidget())
             return m;
 
     return NULL;
@@ -375,12 +364,16 @@ void MainWindow::_ShowCoruptedFileMessage(QString const &fileName)
 
 void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
 {
-    _SetCurrentFileName(fileName);
+    bool sucess = true;
+
+    //to be sure that this file will not be opened again when is corrupted and is set to open at startup
+    GlobalSettings::GetInstance().RemoveRecentFilePath(fileName);
 
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly))
     {
         MyMessageBox::critical(this, tr("Selected file is not possible to open."));
+        sucess = false;
         return;
     }
     QDataStream in(&file);
@@ -393,6 +386,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         if (serializerVersion < ATOG_LOWEST_VERSION || serializerVersion > ATOG_SERIALIZER_VERSION)
         {
             MyMessageBox::critical(this, QString(tr("Unsuported file version (%1)")).arg(fileName));
+            sucess = false;
             return;
         }
 
@@ -405,7 +399,7 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             Measurement *m = CreateNewMeasurement(false);
             m->SetSaveLoadValues(values);
             in >> m;
-            m->GetWidget()->RecalculateSliderMaximum();
+            m->GetGC()->RecalculateSliderMaximum();
             ConfirmMeasurement(m);
         }
 
@@ -435,16 +429,23 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
             if (! _DeSerializeGhsotColections(in))
             {
                 _ShowCoruptedFileMessage(fileName);
+                sucess = false;
             }
         }
     }
     catch (...)
     {
         _ShowCoruptedFileMessage(fileName);
+        sucess = false;
     }
 
     file.close();
 
+    if (sucess)
+    {
+        _SetCurrentFileName(fileName);
+        GlobalSettings::GetInstance().AddRecentFilePath(fileName);
+    }
 }
 
 void MainWindow::SerializeMeasurements(QString const &fileName, bool values)
@@ -578,7 +579,6 @@ void MainWindow::_OpenFile(QString const &filePath, bool values)
     if (filePath.size() == 0)
         return;
 
-    GlobalSettings::GetInstance().AddRecentFilePath(filePath);
     GlobalSettings::GetInstance().SetLastDir(QFileInfo(filePath).path());
     DeserializeMeasurements(filePath, values);
 }
@@ -697,7 +697,7 @@ void MainWindow::measurementMenuButtonPressed()
 
 void MainWindow::axisMenuButtonPressed()
 {
-    AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetWidget());
+    AxisMenu axisMenu(centralWidget(), (GraphicsContainer *)m_currentMeasurement->GetGC());
     axisMenu.exec();
 }
 
@@ -705,7 +705,14 @@ void MainWindow::settings()
 {
      //to be alwais scrolled to up-left corner
     GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
-    settingsDialog->connect(settingsDialog, SIGNAL(updateChannelSizeFactor(int)), m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int)));
+    settingsDialog->connect(
+        settingsDialog, SIGNAL(updateChannelSizeFactor(int)),
+        m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int))
+    );
+    settingsDialog->connect(
+        settingsDialog, SIGNAL(updateChannelGraphPenWidth(double)),
+        m_graphicsContainerManager, SLOT(updateChannelGraphPenWidth(double))
+    );
     settingsDialog->exec();
 }
 
@@ -782,13 +789,14 @@ void MainWindow::addGhostChannel()
     Measurement *m = channel->GetMeasurement();
     GraphicsContainer *originalGc = m_graphicsContainerManager->GetGraphicsContainer(m);
     GraphicsContainer *destGc = m_graphicsContainerManager->GetGraphicsContainer(m_currentMeasurement);
-    ChannelWidget *ghostWidget = m_graphicsContainerManager->AddGhost(
-        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannel(m)), destGc, false);
+    ChannelProxyBase *ghostProxy = m_graphicsContainerManager->AddGhost(
+        m, m->GetChannelIndex(channel), m->GetChannelIndex(originalGc->GetHorizontalChannelProxy(m)->GetChannel()), destGc, false);
 
     m_channelMenu->ReinitGrid(); //to be added
     m_ghostCreating = true;
-    ghostWidget->clicked();
+    destGc->editChannel(ghostProxy);
     m_channelMenu->ReinitGrid(); //to be changed name or color
+    m_channelMenu->adjustSize();
 }
 
 void MainWindow::showPanelMenu(Measurement *m)
@@ -800,7 +808,7 @@ void MainWindow::showPanelMenu(Measurement *m)
         return;
     }
 
-    m_channelMenu = new ChannelMenu(gc, m_graphicsContainerManager->IsGhostAddable(m));
+    m_channelMenu = new ChannelMenu(gc, m_graphicsContainerManager->IsGhostAddable());
     connect(m_channelMenu, SIGNAL(addGhostChannelActivated()), this, SLOT(addGhostChannel()));
     m_channelMenu->ReinitGrid();
     m_buttonLine->updateRunButtonsState();
@@ -816,9 +824,9 @@ unsigned MainWindow::_GetGhostCount()
     unsigned count = 0;
     foreach (GraphicsContainer *gc, m_graphicsContainerManager->GetGraphicsContainers())
     {
-        foreach (ChannelWidget *chw, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (chw->isGhost())
+            if (proxy->IsGhost())
                 ++count;
         }
     }
@@ -833,31 +841,35 @@ void MainWindow::_SerializeGhsotColections(QDataStream &out)
     {
         GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
 
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (w->isGhost())
+            if (!proxy->IsGhost())
             {
-                ChannelBase *ch = gc->GetChannel(w);
-                Measurement *m = ch->GetMeasurement();
-                for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
+                continue;
+            }
+
+            ChannelBase *ch = proxy->GetChannel();
+            Measurement *m = proxy->GetChannelMeasurement();
+            for (unsigned mIndex = 0; mIndex < m_measurements.count(); ++mIndex)
+            {
+                if (m != m_measurements[mIndex])
                 {
-                    if (m = m_measurements[mIndex])
+                    continue;
+                }
+                GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
+                unsigned hChIndex =  gc->GetHorizontalChannelProxy(m)->GetChannelIndex();
+                for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
+                {
+                    if (ch != m->GetChannel(chIndex))
                     {
-                        GraphicsContainer *gc = m_graphicsContainerManager->GetGraphicsContainer(m);
-                        unsigned hChIndex =  m->GetChannelIndex(gc->GetHorizontalChannel(m));
-                        for (unsigned chIndex = 0; chIndex < m->GetChannelCount(); ++chIndex)
-                        {
-                            if (ch == m->GetChannel(chIndex))
-                            {
-                                out << mIndex;
-                                out << chIndex;
-                                out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
-                                out << gcIndex;
-                                out << w;
-                                break;
-                            }
-                        }
+                        continue;
                     }
+                    out << mIndex;
+                    out << chIndex;
+                    out << hChIndex; //Note: now is used the same horrizintal channel as in original measurement, may be later it will be independent
+                    out << gcIndex;
+                    out << proxy;
+                    break;
                 }
             }
         }
@@ -905,24 +917,31 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
         }
 
         GraphicsContainer *destGC = m_graphicsContainerManager->GetGraphicsContainers()[gcIndex];
-        ChannelWidget *ghost = m_graphicsContainerManager->AddGhost(
+        ChannelProxyBase *ghostProxy = m_graphicsContainerManager->AddGhost(
             m_measurements[mIndex],
             chIndex,
             hchIndex,
             destGC,
             true
         );
-        in >> ghost;
+        if (ghostProxy == NULL)
+        {
+            qWarning() << "virtual channel was not created";
+            return false;
+        }
+        in >> ghostProxy;
         //FIXME: just two is necessary to update (value + horizontal)
         destGC->UpdateAxes();
+        destGC->replaceDisplays();
     }
+
 
     return true;
 }
 
-void MainWindow::editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget)
+void MainWindow::editChannel(GraphicsContainer* gc, ChannelProxyBase *channelProxy)
 {
-    ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelWidget, m_sensorManager);
+    ChannelSettings *settings = new ChannelSettings(m_measurements, gc, channelProxy, m_sensorManager);
     if (m_ghostCreating)
     {
         connect(settings, SIGNAL(accepted()), this, SLOT(channelEditingAccepted()));

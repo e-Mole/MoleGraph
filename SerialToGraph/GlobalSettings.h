@@ -29,8 +29,10 @@ class GlobalSettings : public QObject
         Key_MenuOnDemand,
         Key_MenuIsShown,
         Key_ChannelSizeFactor,
+        Key_ChannelGraphPenWidth,
         Key_RecentFilePaths,
         Key_AcceptChangesByDialogClosing,
+        Key_OpenRecentFileAtStartup,
     };
 
     GlobalSettings(); //it is private because it is called as a sigleton
@@ -44,7 +46,7 @@ class GlobalSettings : public QObject
     QStringList m_recentPaths;
     bool m_savedState;
     bool m_savedValues;
-
+    bool m_openRecentOnStartup;
 public:
     static GlobalSettings& GetInstance();
 
@@ -80,15 +82,20 @@ public:
     void SetMenuIsShown(bool isShown);
     int GetChannelSizeFactor();
     void SetChannelSizeFactor(int multiplier);
+    double GetChannelGraphPenWidth();
+    void SetChannelGraphPenWidth(double thickness);
     unsigned GetRecetFilePathCount();
     QString GetRecentFilePath(unsigned index);
     void AddRecentFilePath(QString const &path);
+    void RemoveRecentFilePath(QString const &path);
     bool GetAcceptChangesByDialogClosing() const;
     void SetAcceptChangesByDialogClosing(bool show);
     bool IsSavedState();
     void SetSavedState(bool savedState);
     bool AreSavedValues();
     void SetSavedValues(bool savedValues);
+    bool GetOpenRecentFileAtStartup() const;
+    void SetOpenRecentFileAtStartup(bool openRecent);
 
 signals:
     void hideAllCHannelsChanged(bool hideAllChannels);

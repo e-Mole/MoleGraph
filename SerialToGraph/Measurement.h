@@ -15,7 +15,6 @@
 #include <set>
 
 class Axis;
-class ChannelWidget;
 class GraphicsContainer;
 class HwChannel;
 class Plot;
@@ -72,7 +71,7 @@ private:
     bool _FillQueue();
     bool _IsCompleteSetInQueue();
     void _AdjustDrawPeriod(unsigned drawDelay);
-    void _InitializeAxesAndChanels(Measurement *sourceMeasurement);
+    void _CloneAxesAndChanels(Measurement *sourceMeasurement);
     void _InitializeAxesAndChanels();
     void _AddYChannel(unsigned order, Axis *axis);
     bool _CheckOtherMeasurementsForRun();
@@ -82,7 +81,7 @@ private:
     unsigned char _GetCheckSum(unsigned char input);
     bool _ProcessCommand(unsigned mixture, unsigned checkSum);
     bool _ProcessValueSet();
-    void _DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion);
+    void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
     void _SetName(QString &name);
@@ -102,8 +101,9 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
-    void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
+    void _DeserializeAxis(QDataStream &in, unsigned index);
     void _ConnectHwChannel(HwChannel *channel);
+    void _InsertToChannelList(ChannelBase *channel);
 
     GraphicsContainer *m_widget;
     Context const &m_context;
@@ -136,21 +136,21 @@ private:
 , hw::SensorManager *sensorManager);
     ~Measurement();
 
-    QString &GetName();
+    const QString &GetName() const;
     SampleUnits GetSampleUnits() { return m_sampleUnits; }
     unsigned GetPeriod() { return m_period; }
     QVector<Axis *> const & GetAxes() const;
     QVector<ChannelBase *> const & GetChannels() const;
     State GetState() { return m_state; }
-    ChannelBase *GetChannel(unsigned index);
-    unsigned GetChannelCount();
+    ChannelBase *GetChannel(unsigned index) const;
+    unsigned GetChannelCount() const;
     void Start();
     void Pause();
     void Continue();
     void Stop();
     void SampleRequest();
     Type GetType() { return m_type; }
-    GraphicsContainer *GetWidget();
+    GraphicsContainer *GetGC() const;
     void SerializeColections(QDataStream &out);
     void DeserializeColections(QDataStream &in, unsigned collectionVersion);
     void SetSaveLoadValues(bool saveLoadValues) //used for serialization and deserialization too
@@ -164,7 +164,7 @@ private:
     void DrawRestData();
     void RemoveWidget();
     QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
-    unsigned GetChannelIndex(ChannelBase * channel);
+    unsigned GetChannelIndex(ChannelBase *channel);
 signals:
     void stateChanged();
     void nameChanged();

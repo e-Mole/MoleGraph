@@ -56,7 +56,7 @@ ChannelWidget::ChannelWidget(
     layout->setSpacing(1);
 
     if (m_channelGraph->GetValuleAxis()->IsHorizontal())
-        ShowOrHideGraph(false);
+        ShowGraph(false);
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
@@ -68,7 +68,7 @@ void ChannelWidget::_InitTitle()
             arg(0x0).
             arg(0x00).
             arg(0x00).
-            arg(isGhost() ? GHOST_TRANSPARENCY : 0xff);
+            arg(IsGhost() ? GHOST_TRANSPARENCY : 0xff);
 
     m_title->setStyleSheet(style);
 }
@@ -317,7 +317,7 @@ void ChannelWidget::FillLastValueText(double value)
     m_lastValueText = strValue;
 }
 
-Qt::PenStyle ChannelWidget::GetPenStyle()
+Qt::PenStyle ChannelWidget::GetPenStyle() const
 {
     return m_penStyle;
 }
@@ -328,7 +328,7 @@ void ChannelWidget::SetPenStyle(Qt::PenStyle penStyle)
     m_plot->SetPenStyle(m_channelGraph, penStyle);
 }
 
-unsigned ChannelWidget::GetShapeIndex()
+unsigned ChannelWidget::GetShapeIndex() const
 {
     return m_channelGraph->GetShapeIndex();
 }
@@ -338,7 +338,7 @@ void ChannelWidget::SetShapeIndex(unsigned index)
     m_channelGraph->SetMarkShape(index);
 }
 
-void ChannelWidget::ShowOrHideGraph(bool shown)
+void ChannelWidget::ShowGraph(bool shown)
 {
     m_channelGraph->setVisible(shown);
     m_plot->RescaleAllAxes();
@@ -357,7 +357,7 @@ void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
     }
 }
 
-ChannelGraph *ChannelWidget::GetChannelGraph()
+ChannelGraph *ChannelWidget::GetChannelGraph() const
 {
     return m_channelGraph;
 }
@@ -384,12 +384,12 @@ void ChannelWidget::UpdateWidgetVisiblity()
     setVisible(m_isVisible && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
-bool ChannelWidget::isVisible()
+bool ChannelWidget::isVisible() const
 {
     return m_isVisible;
 }
 
-bool ChannelWidget::IsDrawable()
+bool ChannelWidget::IsDrawable() const
 {
     return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }
@@ -414,7 +414,7 @@ Plot* ChannelWidget::GetPlot()
     return m_plot;
 }
 
-void ChannelWidget::_SetShapeIndexDepricated (unsigned index)
+void ChannelWidget::SetShapeIndexDepricated(unsigned index)
 {
     SetShapeIndex(index + 2);
 }

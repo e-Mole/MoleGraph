@@ -53,12 +53,14 @@ void FormDialogBase::closeEvent(QCloseEvent * e)
     PlatformDialog::closeEvent(e);
 }
 
-void FormDialogBase::AddSeparator()
+QFrame * FormDialogBase::AddSeparator()
 {
     QFrame *frame = new QFrame(this);
     frame->setFrameShape(QFrame::HLine);
     frame->setFrameShadow(QFrame::Sunken);
     m_formLayout->addRow(frame);
+
+    return frame;
 }
 
 } //namespace bases

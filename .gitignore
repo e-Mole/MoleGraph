@@ -2,3 +2,12 @@ build-*
 export
 *.atog
 *.mogr
+build-SerialToGraph-Desktop_Qt_5_4_1_MinGW_32bit-Debug
+build-SerialToGraph-Desktop_Qt_5_4_1_MinGW_32bit-Release
+build-SerialToGraph-Desktop_Qt_5_7_1_MinGW_32bit2-Debug
+build-SerialToGraph-Desktop_Qt_5_7_1_MinGW_32bit2-Release
+Release
+/Arduino/MoleGraphAuto/.cproject
+/Arduino/MoleGraphAuto/.project
+/Arduino/MoleGraphAuto/.settings/org.eclipse.cdt.core.prefs
+/Arduino/MoleGraphAuto/.settings/language.settings.xml

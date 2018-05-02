@@ -111,7 +111,7 @@
     },    
     {
       "sensorId" : 3,
-      "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
+      "sensorName" : "*(Accelerometer + Magnetometer (LSM303DLHC))",
       "quantities" : [ "Acceleration", "Magnetic Field Intensity" ]
     },
     {
@@ -131,32 +131,32 @@
     },
     {
       "sensorId" : 10,
-      "sensorName" : "EKG sensor (AD8232)",
+      "sensorName" : "*(EKG sensor (AD8232))",
       "quantities" : [ "Voltage" ]
     },
     {
       "sensorId" : 11,
-      "sensorName" : "Color sensor (TCS3200)",
+      "sensorName" : "*(Color sensor (TCS3200))",
       "quantities" : [ "RAW" ]
     },                   
     {
       "sensorId" : 13,
-      "sensorName" : "UV sensor (GUVA-S12SD)",
+      "sensorName" : "*(UV sensor (GUVA-S12SD))",
       "quantities" : [ "UV Index" ]
     },
     {
       "sensorId" : 14,
-      "sensorName" : "pH sensor",
+      "sensorName" : "*(pH sensor)",
       "quantities" : [ "pH" ]
     },
     {
       "sensorId" : 15,
-      "sensorName" : "Conductivity sensor",
+      "sensorName" : "*(Conductivity sensor)",
       "quantities" : [ "Conductivity" ]
     },
     {
       "sensorId" : 16,
-      "sensorName" : "Voltage + Current sensor",
+      "sensorName" : "*(Voltage + Current sensor)",
       "quantities" : [ "Voltage", "Current" ]
     },
     {
@@ -165,11 +165,11 @@
       "quantities" : [ "Illuminace", "Trigger"  ]
     },
     {  "sensorId" : 19,
-      "sensorName" : "CO2 gas sensor (MH-Y16)",
+      "sensorName" : "*(CO2 gas sensor (MH-Y16))",
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 20,
-      "sensorName" : "O2 gas sensor (ME2-O2)",
+      "sensorName" : "*(O2 gas sensor (ME2-O2))",
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 21,
@@ -189,11 +189,11 @@
       "quantities" : [ "Humidity", "Temperature" ]
     },
     {  "sensorId" : 25,
-      "sensorName" : "Alcohol gas sensor (MQ-3)",
+      "sensorName" : "*(Alcohol gas sensor (MQ-3))",
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 26,
-      "sensorName" : "Particle/Dust sensor (DSM501)",
+      "sensorName" : "*(Particle/Dust sensor (DSM501))",
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 27,

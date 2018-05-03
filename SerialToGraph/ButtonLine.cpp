@@ -2,8 +2,8 @@
 #include <AboutDialog.h>
 #include <Axis.h>
 #include <ChannelBase.h>
-#include <ChannelWidget.h>
 #include <GlobalSettings.h>
+#include <graphics/ChannelProxyBase.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -331,10 +331,10 @@ void ButtonLine::updateRunButtonsState()
     bool hwChannelPresent = false;
     foreach (ChannelBase *channel, m_measurement->GetChannels())
     {
-       ChannelWidget *widget = m_measurement->GetWidget()->GetChannelWidget(channel);
-        if (channel->GetType() == ChannelBase::Type_Hw && widget->isVisible())
+        ChannelProxyBase *channelProxy = m_measurement->GetGC()->GetChannelProxy(channel);
+        if (channel->GetType() == ChannelBase::Type_Hw && channelProxy->isVisible())
             hwChannelPresent = true;
-        if (widget->IsOnHorizontalAxis() && (widget->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
+        if (channelProxy->IsOnHorizontalAxis() && (channelProxy->isVisible() || channel->GetType() == ChannelBase::Type_Sample))
             horizontalPreset = true;
     }
 
@@ -401,7 +401,7 @@ void ButtonLine::ChangeMeasurement(Measurement *measurement)
     m_viewMenu = NULL;
     if (NULL != measurement)
     {
-        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetWidget());
+        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetGC());
         m_viewMenu->setTitle("View");
     }
 }
@@ -433,5 +433,7 @@ void ButtonLine::stop()
 
 void ButtonLine::openRecentFileSlot()
 {
-    openRecentFile(m_recentFileActions[(QAction*)sender()]);
+    QString filePath = m_recentFileActions[(QAction*)sender()];
+    openRecentFile(filePath);
+    GlobalSettings::GetInstance().AddRecentFilePath(filePath); //to move it up
 }

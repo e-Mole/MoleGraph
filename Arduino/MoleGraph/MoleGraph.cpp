@@ -51,6 +51,7 @@ namespace
   
     TCCR1B |= (1 << WGM12);   // CTC mode
     TCCR1B |= (1 << CS12);    // 256 prescaler 
+
     interrupts();             // enable all interrupts
   }
   
@@ -91,7 +92,8 @@ namespace
     // I try to check Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE but it happend always
     // the buffer is probably less then 40 and => I could 
     
-    bool bufferIsFull = (Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE + (timestamp ? sizeof(float) : 0)); 
+//    bool bufferIsFull = (Serial.availableForWrite() < g_channelCount * MESSAGE_SIZE + (timestamp ? sizeof(float) : 0)); 
+    bool bufferIsFull = (Serial.availableForWrite() < 2 + g_channelCount * sizeof(float) + (timestamp ? sizeof(float) : 0)); 
   
     g_fullWriteBufferDetected |= bufferIsFull;
     
@@ -192,6 +194,7 @@ void MoleGraph::CheckInput()
     {
       unsigned frequency;
       FillFromSerial(frequency);
+      g_requiredTime = 0;
       
       InitTimer(); //workaround there was a 1s lag after start when there had been set 1 Hz period and user set 200 Hz period   
       OCR1A = 62500/frequency;            // compare match register 16MHz/256/2Hz
@@ -214,19 +217,19 @@ void MoleGraph::CheckInput()
     break;
     case INS_START:
       Start();
-      g_measurementStartedCallback();
+      if (g_measurementStartedCallback != NULL) g_measurementStartedCallback();
     break;
     case INS_STOP:
       Stop();
-      g_measurementStoppedCallback();
+      if (g_measurementStoppedCallback != NULL) g_measurementStoppedCallback();
     break;
     case INS_CONTINUE:
       Start();
-      g_measurementContinuedCallback();
+      if (g_measurementContinuedCallback != NULL) g_measurementContinuedCallback();
     break;
     case INS_PAUSE:
       Stop();
-      g_measurementPausedCallback();
+      if (g_measurementPausedCallback != NULL) g_measurementPausedCallback();
     break;
     case INS_SET_TYPE:
       unsigned char type;

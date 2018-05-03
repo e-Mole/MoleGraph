@@ -1,7 +1,7 @@
 #ifndef PLOT_H
 #define PLOT_H
 
-#include <ChannelBase.h>
+#include <graphics/ChannelProxyBase.h>
 #include <ChannelGraph.h>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
@@ -11,7 +11,6 @@
 #include <QPair>
 #include <QMap>
 
-class ChannelWidget;
 class GraphicsContainer;
 class QColor;
 class QEvent;
@@ -60,6 +59,7 @@ private:
     QCPItemLine *_AddMarkerLine(QCPItemLine *markerLine, int position, const QColor color);
     QColor _SetMarkerLineColor(bool isSame, bool isCurrent);
     QCPItemRect *_DrawOutRect(bool isLeft, int position);
+    void _RefillSingleGraph(ChannelProxyBase *channelProxy);
 
     GraphicsContainer *m_graphicsContainer;
     bool m_disabled;
@@ -75,7 +75,7 @@ private:
     QPoint m_mouseReleasePosition;
     DisplayMode m_displayMode;
     MarkerTypeSelection m_markerTypeSelection;
-    ChannelBase::DisplayValue m_markerRangeValue;
+    ChannelProxyBase::DisplayValue m_markerRangeValue;
     //FIXME: currently unused but should be
     QList<ChannelGraph *> m_channelGraphs;
 
@@ -111,16 +111,17 @@ public:
     void ContinueDrawing();
     void SetDrawingInProcess(bool set);
     void WaitForDrawingIsFinished();
-    void RemoveGraph(ChannelGraph *graph);
+    void RefillSingleGraph(ChannelProxyBase *channelProxy);
     void RefillGraphs();
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
     void Zoom(const QPointF &pos, int delta);
-    void ZoomToFit();
+    void ZoomToFit(QPoint pos);
     DisplayMode GetDisplayMode() { return m_displayMode; }
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }
     void RedrawChannelMarks(int position);
+    Axis *GetHorizontalAxis();
 
     ChannelGraph *AddChannelGraph(QCPAxis *keyAxis, Axis *valueAxis, const QColor &color,
         unsigned shapeIndex,
@@ -129,7 +130,8 @@ public:
 
     QPair<int, int>& GetMarkerPositions() { return m_markerPositions; }
     MarkerTypeSelection GetMarkerTypeSelection() { return m_markerTypeSelection; }
-    ChannelBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
+    ChannelProxyBase::DisplayValue GetMarkerRangeValue() { return  m_markerRangeValue; }
+    void UpdateHorizontalAxisName();
 
 signals:
     void markerLinePositionChanged(int xIndex);

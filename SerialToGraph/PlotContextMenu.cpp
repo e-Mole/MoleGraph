@@ -1,10 +1,8 @@
 #include "PlotContextMenu.h"
 #include <QAction>
 #include <QActionGroup>
-#include <ChannelBase.h>
 #include <QMenu>
 #include <QWidget>
-#include <SampleChannel.h>
 
 PlotContextMenu::PlotContextMenu(QWidget *parent,  GraphicsContainer *graphicsContainer):
     QMenu(parent),
@@ -34,8 +32,7 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->addAction(tr("Zoom in"), this, SLOT(zoomInSelected()));
     menu->addAction(tr("Zoom out"), this, SLOT(zoomOutSelected()));
-    menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->
-        setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
+    menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->setEnabled(m_graphicsContainer->ContainsAnyData());
     menu->addSeparator();
     menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
     menu->addSeparator();
@@ -51,14 +48,14 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
 
     menu->addSeparator();
 
-    m_deltaValue = InitMarkerRangeValue(menu, tr("Delta"), ChannelBase::DVDelta);
-    m_maxValue = InitMarkerRangeValue(menu, tr("Maximum"), ChannelBase::DVMax);
-    m_minValue = InitMarkerRangeValue(menu, tr("Minimum"), ChannelBase::DVMin);
-    m_averageValue = InitMarkerRangeValue(menu, tr("Mean"), ChannelBase::DVAverage);
-    m_medianValue = InitMarkerRangeValue(menu, tr("Median"), ChannelBase::DVMedian);
-    m_varianceValue = InitMarkerRangeValue(menu, tr("Variance"), ChannelBase::DVVariance);
-    m_standardDeviation = InitMarkerRangeValue(menu, tr("Standard Deviation"), ChannelBase::DVStandDeviation);
-    m_sumValue = InitMarkerRangeValue(menu, tr("Sum"), ChannelBase::DVSum);
+    m_deltaValue = InitMarkerRangeValue(menu, tr("Delta"), ChannelProxyBase::DVDelta);
+    m_maxValue = InitMarkerRangeValue(menu, tr("Maximum"), ChannelProxyBase::DVMax);
+    m_minValue = InitMarkerRangeValue(menu, tr("Minimum"), ChannelProxyBase::DVMin);
+    m_averageValue = InitMarkerRangeValue(menu, tr("Mean"), ChannelProxyBase::DVAverage);
+    m_medianValue = InitMarkerRangeValue(menu, tr("Median"), ChannelProxyBase::DVMedian);
+    m_varianceValue = InitMarkerRangeValue(menu, tr("Variance"), ChannelProxyBase::DVVariance);
+    m_standardDeviation = InitMarkerRangeValue(menu, tr("Standard Deviation"), ChannelProxyBase::DVStandDeviation);
+    m_sumValue = InitMarkerRangeValue(menu, tr("Sum"), ChannelProxyBase::DVSum);
     menu->popup(clickPosition);
 }
 
@@ -71,12 +68,12 @@ QAction * PlotContextMenu::InitMarkerTypeSelection(
         m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection);
 
     //FIXME: will not work with ghosts
-    action->setEnabled(m_graphicsContainer->GetSampleChannel()->GetValueCount() > 0);
+    action->setEnabled(m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0);
     return action;
 }
 
 QAction * PlotContextMenu::InitMarkerRangeValue(
-    QMenu *menu, QString const &label, ChannelBase::DisplayValue markerRangeValue)
+    QMenu *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue)
 {
     Plot *plot = m_graphicsContainer->GetPlot();
     QAction *action = menu->addAction(label, this, SLOT(valueSelectionSended()));
@@ -98,7 +95,7 @@ void PlotContextMenu::zoomOutSelected()
 
 void PlotContextMenu::zoomToFitSelected()
 {
-    m_graphicsContainer->GetPlot()->ZoomToFit();
+    m_graphicsContainer->GetPlot()->ZoomToFit(clickPosition);
 }
 
 void PlotContextMenu::FollowMode()
@@ -141,21 +138,21 @@ void PlotContextMenu::valueSelectionSended()
     Plot *plot = m_graphicsContainer->GetPlot();
     QAction *action = (QAction*)sender();
     if (action == m_deltaValue)
-        plot->m_markerRangeValue = ChannelBase::DVDelta;
+        plot->m_markerRangeValue = ChannelProxyBase::DVDelta;
     else if (action == m_maxValue)
-        plot->m_markerRangeValue = ChannelBase::DVMax;
+        plot->m_markerRangeValue = ChannelProxyBase::DVMax;
     else if (action == m_minValue)
-        plot->m_markerRangeValue = ChannelBase::DVMin;
+        plot->m_markerRangeValue = ChannelProxyBase::DVMin;
     else if (action == m_averageValue)
-        plot->m_markerRangeValue = ChannelBase::DVAverage;
+        plot->m_markerRangeValue = ChannelProxyBase::DVAverage;
     else if (action == m_medianValue)
-        plot->m_markerRangeValue = ChannelBase::DVMedian;
+        plot->m_markerRangeValue = ChannelProxyBase::DVMedian;
     else if (action == m_varianceValue)
-        plot->m_markerRangeValue = ChannelBase::DVVariance;
+        plot->m_markerRangeValue = ChannelProxyBase::DVVariance;
     else if (action == m_standardDeviation)
-        plot->m_markerRangeValue = ChannelBase::DVStandDeviation;
+        plot->m_markerRangeValue = ChannelProxyBase::DVStandDeviation;
     else if (action == m_sumValue)
-        plot->m_markerRangeValue = ChannelBase::DVSum;
+        plot->m_markerRangeValue = ChannelProxyBase::DVSum;
 
     m_graphicsContainer->RedrawChannelValues();
 }

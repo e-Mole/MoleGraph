@@ -14,18 +14,12 @@ class ChannelWidget : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ GetName WRITE SetName)
-    Q_PROPERTY(QColor color READ GetForeColor WRITE SetForeColor)
-    Q_PROPERTY(unsigned shapeIndex READ GetShapeIndex WRITE SetShapeIndex)
-    Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
-    Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
-    Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
-
     class ValueLabel : public QLabel
     {
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
         QColor m_foreColor;
+
     public:
         ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, QColor const &backColor, QColor const &foreColor);
         void SetMimimumFontSize(unsigned sizeFactor);
@@ -40,7 +34,7 @@ class ChannelWidget : public QWidget
     virtual void mousePressEvent(QMouseEvent * event);
     virtual void resizeEvent(QResizeEvent * event);
     QColor _GetBackColorFromType(ChannelBase::ValueType type);
-
+    void _InitTitle();
     QString m_name;
     QLabel * m_title;
     ValueLabel *m_valueLabel;
@@ -64,7 +58,7 @@ public:
         Qt::PenStyle penStyle,
         ChannelBase::ValueType valueType,
         Plot *plot,
-        bool isGhost
+        bool IsGhost
     );
 
     void setTitle(QString const &title);
@@ -73,26 +67,27 @@ public:
     QSize GetMinimumSize();
     void SetForeColor(QColor const &color);
     void SetMinimumFontSize(unsigned sizeFactor) {m_valueLabel->SetMinimumFontSize(sizeFactor); }
-    void SetTransparent(bool transparent);
     QString GetName();
     void SetName(QString const &name);
     void UpdateTitle();
     static QString GetNAValueString();
     void DisplayNAValue(ChannelBase::ValueType type);
-    QColor &GetForeColor() { return m_valueLabel->GetForeColor(); }
+    QColor &GetForeColor() const { return m_valueLabel->GetForeColor(); }
+    void FillLastValueText(const QString &text);
     void FillLastValueText(double value);
-    Qt::PenStyle GetPenStyle();
+    Qt::PenStyle GetPenStyle() const;
     void SetPenStyle(Qt::PenStyle penStyle);
-    unsigned GetShapeIndex();
+    unsigned GetShapeIndex() const;
     void SetShapeIndex(unsigned index);
-    void ShowOrHideGraph(bool shown);
+    void ShowGraph(bool shown);
     void UpdateGraph(double xValue, double yValue, bool replot);
-    ChannelGraph * GetChannelGraph();
+    ChannelGraph * GetChannelGraph() const;
     bool IsOnHorizontalAxis();
     QString GetUnits();
     void SetUnits(QString const &units);
     void UpdateWidgetVisiblity();
-    bool isVisible();
+    bool isVisible() const;
+    bool IsDrawable() const;
     void SetVisible(bool visible);
 
     //to be compatible with measurement and would be possible to use the same serializer
@@ -100,7 +95,9 @@ public:
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
     Plot* GetPlot();
     QKeySequence GetKeyShortcutSequence();
-    bool isGhost() {return m_isGhost; }
+    bool IsGhost() const {return m_isGhost; }
+    void SetShapeIndexDepricated (unsigned index);
+
 signals:
     void clicked();
     void sizeChanged();

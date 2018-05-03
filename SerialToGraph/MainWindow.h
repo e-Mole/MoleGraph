@@ -10,7 +10,8 @@
 
 class CentralWidget;
 class ChannelMenu;
-class ChannelWidget;
+class ChannelProxyBase;
+class ChannelSettings;
 class Console;
 class GraphicsContainer;
 class GraphicsContainerManager;
@@ -47,6 +48,7 @@ class MainWindow : public QMainWindow
     MeasurementMenu *m_measurementMenu;
     ChannelMenu *m_channelMenu;
     hw::SensorManager *m_sensorManager;
+    bool m_ghostCreating;
 
     void _SetCurrentFileName(QString const &fileName);
     void _WriteUnsupportedFileVersion();
@@ -66,6 +68,7 @@ class MainWindow : public QMainWindow
     bool _DeSerializeGhsotColections(QDataStream &in);
     void _ShowCoruptedFileMessage(const QString &fileName);
     unsigned _GetGhostCount();
+    void _DisconnectChannelSettings(ChannelSettings *settings);
 
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
@@ -111,7 +114,9 @@ private slots:
     void removeMeasurement(Measurement *m);
     void addGhostChannel();
     void showPanelMenu(Measurement *m);
-    void editChannel(GraphicsContainer* gc, ChannelWidget *channelWidget);
+    void editChannel(GraphicsContainer* gc, ChannelProxyBase *channelProxy);
+    void channelEditingAccepted();
+    void channelEditingRejected();
 };
 
 #endif // MAINWINDOW_H

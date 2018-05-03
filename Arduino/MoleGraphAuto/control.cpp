@@ -72,8 +72,9 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
       case SENSOR_LUX:      		sensor[_port] = new Lux(_period, _port); break;
       case SENSOR_TIMER:    		sensor[_port] = new Timer(_period, _port); break;
       case SENSOR_LED:      		sensor[_port] = new LedBlink(_period, _port); break;
-      case SENSOR_MAGNETOMETR:  sensor[_port] = new Magnetometr(_period, _port); break;
-      case SENSOR_SOUNDMETER:   sensor[_port] = new Soundmeter(_period, _port); break;
+      case SENSOR_MAGNETOMETR:  	sensor[_port] = new Magnetometr(_period, _port); break;
+      case SENSOR_SOUNDMETER:   	sensor[_port] = new Soundmeter(_period, _port); break;
+      case SENSOR_BME280:   		sensor[_port] = new BME280(_period, _port); break;
     }
     DEBUG_PRINT("Creating sensor on port: "); DEBUG_PRINTLN(_port);
   }

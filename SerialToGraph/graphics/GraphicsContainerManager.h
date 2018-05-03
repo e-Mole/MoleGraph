@@ -5,10 +5,11 @@
 #include <map>
 #include <vector>
 
+class HwChannelProxy;
 class Measurement;
 class GraphicsContainer;
 class ChannelBase;
-class ChannelWidget;
+class ChannelProxyBase;
 
 class GraphicsContainerManager : public QObject
 {
@@ -26,22 +27,24 @@ public:
     GraphicsContainer *GetGraphicsContainer(Measurement *m);
     std::vector<GraphicsContainer *> &GetGraphicsContainers() {return m_graphicsContainers;}
     void ChangeMeasurement(Measurement *m);
-    ChannelWidget *AddGhost(
-        Measurement *sourceMeasurement,
+    ChannelProxyBase *AddGhost(Measurement *sourceMeasurement,
         unsigned sourceValueChannelIndex,
         unsigned sourceHorizontalChannelIndex,
         GraphicsContainer *destGraphicsContainer
-     );
+     , bool confirmed);
     bool HaveMeasurementGhosts(Measurement *m);
     void RemoveGhosts(Measurement *m);
-    bool IsGhostAddable(Measurement *m);
+    bool IsGhostAddable();
     ChannelBase *GetChannelForGhost(Measurement *m);
 signals:
-    void editChannel(GraphicsContainer *gc, ChannelWidget *channelWidget);
+    void editChannel(GraphicsContainer *gc, ChannelProxyBase *channelProxy);
+    void editChannelRejected();
 private slots:
-    void editChannel(ChannelWidget *channelWidget);
+    void editChannel(ChannelProxyBase *channelProxy);
+
 public slots:
     void updateChannelSizeFactor(int factor);
+    void updateChannelGraphPenWidth(double thickness);
 };
 
 #endif // GRAPHICSCONTAINERMANAGER_H

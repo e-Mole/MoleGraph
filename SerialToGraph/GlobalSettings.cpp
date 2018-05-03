@@ -8,7 +8,8 @@
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", TARGET),
     m_savedState(true),
-    m_savedValues(true)
+    m_savedValues(true),
+    m_openRecentOnStartup(true)
 {
 }
 
@@ -54,10 +55,14 @@ QString GlobalSettings::_GetStringKey(Key key) const
         return "menu_is_shown";
     case Key_ChannelSizeFactor:
         return "channel_size_fctor";
+    case Key_ChannelGraphPenWidth:
+        return "channel_graph_pen_width";
     case Key_RecentFilePaths:
         return "recent_file_paths";
     case Key_AcceptChangesByDialogClosing:
         return "accept_changes_by_dialog_closing";
+    case Key_OpenRecentFileAtStartup:
+        return "open_recent_file_at_startup";
     default:
         qWarning("unsuported setting key");
         return "";
@@ -227,9 +232,20 @@ int GlobalSettings::GetChannelSizeFactor()
 {
     return _Get(Key_ChannelSizeFactor, 100).toInt();
 }
+
 void GlobalSettings::SetChannelSizeFactor(int multiplier)
 {
     _Set(Key_ChannelSizeFactor, multiplier);
+}
+
+double GlobalSettings::GetChannelGraphPenWidth()
+{
+    return _Get(Key_ChannelGraphPenWidth, 1.5).toDouble();
+}
+
+void GlobalSettings::SetChannelGraphPenWidth(double thickness)
+{
+    _Set(Key_ChannelGraphPenWidth, thickness);
 }
 
 void GlobalSettings::_FillRecentFilePaths()
@@ -265,6 +281,12 @@ void GlobalSettings::AddRecentFilePath(QString const &path)
 
         m_recentPaths.push_front(path);
     }
+    _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
+}
+
+void GlobalSettings::RemoveRecentFilePath(QString const &path)
+{
+    m_recentPaths.removeOne(path);
     _Set(Key_RecentFilePaths, m_recentPaths.join(RECENT_FILE_SEPARATOR));
 }
 
@@ -307,4 +329,14 @@ void GlobalSettings::SetSavedValues(bool savedValues)
         m_savedValues = savedValues;
         savedStateOrVeluesChanged();
     }
+}
+
+bool GlobalSettings::GetOpenRecentFileAtStartup() const
+{
+    return _Get(Key_OpenRecentFileAtStartup, true).toBool();
+}
+
+void GlobalSettings::SetOpenRecentFileAtStartup(bool openRecent)
+{
+    _Set(Key_OpenRecentFileAtStartup, openRecent);
 }

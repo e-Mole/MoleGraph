@@ -1,8 +1,9 @@
 #include "GraphicsContainerManager.h"
-#include "HwChannel.h"
 #include <ChannelSettings.h>
-#include <ChannelWidget.h>
+#include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/HwChannelProxy.h>
+#include <Plot.h>
 #include <Measurement.h>
 
 GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
@@ -11,20 +12,33 @@ GraphicsContainerManager::GraphicsContainerManager(QObject *parent) :
 {
 }
 
+void GraphicsContainerManager::updateChannelGraphPenWidth(double thickness)
+{
+    foreach (GraphicsContainer *gc, m_graphicsContainers)
+    {
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
+        {
+            proxy->SetChannelGraphPenWidth(thickness);
+        }
+        gc->GetPlot()->ReplotIfNotDisabled();
+    }
+}
+
 void GraphicsContainerManager::AddMeasurement(Measurement *m)
 {
     m_measurements.push_back(m);
-    m_mapping[m] = m->GetWidget();
-    m_graphicsContainers.push_back(m->GetWidget());
+    m_mapping[m] = m->GetGC();
+    m_graphicsContainers.push_back(m->GetGC());
 
-    connect(m->GetWidget(), SIGNAL(editChannel(ChannelWidget*)), this, SLOT(editChannel(ChannelWidget*)));
+    connect(m->GetGC(), SIGNAL(editChannel(ChannelProxyBase*)), this, SLOT(editChannel(ChannelProxyBase*)));
+    //connect(m->GetWidget(), SIGNAL(edit))
 }
 
 void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
 {
     for (auto it = m_graphicsContainers.begin(); it != m_graphicsContainers.end(); ++it)
     {
-        if ((*it) ==  m->GetWidget())
+        if ((*it) ==  m->GetGC())
         {
             m_graphicsContainers.erase(it);
             break;
@@ -46,8 +60,8 @@ void GraphicsContainerManager::RemoveMeasurement(Measurement *m)
 void GraphicsContainerManager::updateChannelSizeFactor(int factor)
 {
     foreach (GraphicsContainer *gc, m_graphicsContainers)
-        foreach (ChannelWidget *channelWidget, gc->GetChannelWidgets())
-            channelWidget->SetMinimumFontSize(factor);
+        foreach (ChannelProxyBase *channelProxy, gc->GetChannelProxies())
+            channelProxy->SetMinimumFontSize(factor);
 }
 
 GraphicsContainer *GraphicsContainerManager::GetGraphicsContainer(Measurement *m)
@@ -68,11 +82,12 @@ void GraphicsContainerManager::ChangeMeasurement(Measurement *m)
     m_currentMeasurement = m;
 }
 
-ChannelWidget * GraphicsContainerManager::AddGhost(
+ChannelProxyBase * GraphicsContainerManager::AddGhost(
     Measurement *sourceMeasurement,
     unsigned sourceValueChannelIndex,
     unsigned sourceHorizontalChannelIndex,
-    GraphicsContainer *destGraphicsContainer
+    GraphicsContainer *destGraphicsContainer,
+    bool confirmed
 )
 {
     GraphicsContainer *sourceGraphicsContainer = m_mapping[sourceMeasurement];
@@ -84,26 +99,26 @@ ChannelWidget * GraphicsContainerManager::AddGhost(
         return NULL;
     }
 
+    ChannelBase *sourceChannel = sourceMeasurement->GetChannel(sourceValueChannelIndex);
     return destGraphicsContainer->AddGhost(
-        dynamic_cast<HwChannel *>(sourceMeasurement->GetChannel(sourceValueChannelIndex)),
+        sourceGraphicsContainer->GetChannelProxy(sourceChannel),
         sourceGraphicsContainer,
-        sourceGraphicsContainer->GetChannelWidget(sourceValueChannelIndex),
-        sourceMeasurement->GetChannel(sourceHorizontalChannelIndex)
+        confirmed
     );
 }
 
-void GraphicsContainerManager::editChannel(ChannelWidget *channelWidget)
+void GraphicsContainerManager::editChannel(ChannelProxyBase *channelProxy)
 {
-    editChannel((GraphicsContainer*)sender(), channelWidget);
+    editChannel(dynamic_cast<GraphicsContainer*>(sender()), channelProxy);
 }
 
 bool GraphicsContainerManager::HaveMeasurementGhosts(Measurement *m)
 {
     foreach (GraphicsContainer* gc, m_graphicsContainers)
     {
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            if (proxy->IsGhost() && proxy->GetChannelMeasurement() == m)
             {
                 return true;
             }
@@ -116,17 +131,17 @@ void GraphicsContainerManager::RemoveGhosts(Measurement *m)
 {
     foreach (GraphicsContainer* gc, m_graphicsContainers)
     {
-        foreach (ChannelWidget *w, gc->GetChannelWidgets())
+        foreach (ChannelProxyBase *proxy, gc->GetChannelProxies())
         {
-            if (w->isGhost() && gc->GetChannel(w)->GetMeasurement() == m)
+            if (proxy->IsGhost() && proxy->GetChannelMeasurement() == m)
             {
-                gc->RemoveChannelWidget(w);
+                gc->RemoveChannelProxy(proxy);
             }
         }
     }
 }
 
-bool GraphicsContainerManager::IsGhostAddable(Measurement *m)
+bool GraphicsContainerManager::IsGhostAddable()
 {
     return m_measurements.size() > 1; //ghost can be added only when are present another measurements then current
 }

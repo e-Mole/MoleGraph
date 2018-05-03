@@ -4,8 +4,7 @@
 #include <bases/MenuDialogBase.h>
 #include <QMap>
 class ButtonLine;
-class ChannelBase;
-class ChannelWidget;
+class ChannelProxyBase;
 class ColorCheckBox;
 class GraphicsContainer;
 class QLabel;
@@ -18,23 +17,23 @@ class ChannelMenu : public bases::MenuDialogBase
 {
     Q_OBJECT
 
-    void _AddChannel(ChannelWidget *channelWidget);
+    void _AddChannel(ChannelProxyBase *channelProxy);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(unsigned row, QString const &shortcut);
     void FillGrid();
-    QString _GetChannelShortcutText(ChannelWidget *channelWidget);
+    QString _GetChannelShortcutText(ChannelProxyBase *channelProxy);
 
     GraphicsContainer *m_graphicsContainer;
     ButtonLine *m_buttonLine;
     ColorCheckBox *m_graphCheckBox;
-    QMap<ChannelWidget*, ColorCheckBox*> m_channelCheckBoxes;
-    QMap<ColorCheckBox*, ChannelWidget*> m_checkBoxChannels;
-    QMap<QPushButton*, ChannelWidget*> m_editChannels;
-    QMap<QPushButton*, ChannelWidget *> m_removeButtonToChannel;
+    QMap<ChannelProxyBase*, ColorCheckBox*> m_channelCheckBoxes;
+    QMap<ColorCheckBox*, ChannelProxyBase*> m_checkBoxChannels;
+    QMap<QPushButton*, ChannelProxyBase*> m_editChannels;
+    QMap<QPushButton*, ChannelProxyBase *> m_removeButtonToChannel;
     void _SetGraph(bool checked);
     KeyShortcut *m_plotShortcut;
-    QMap<KeyShortcut*, ChannelWidget*> m_shortcutChannels;
+    QMap<KeyShortcut*, ChannelProxyBase*> m_shortcutChannels;
     KeyShortcut *m_allChannelsShortcut;
     KeyShortcut *m_noChannelsShortcut;
     bool m_isGhostAddable;
@@ -42,11 +41,11 @@ class ChannelMenu : public bases::MenuDialogBase
 public:
     ChannelMenu(GraphicsContainer *graphicsContainer, bool isGhostAddable);
     ~ChannelMenu();
-    void ActivateChannel(ChannelWidget *channelWidget, bool checked);
+    void ActivateChannel(ChannelProxyBase *channelProxy, bool checked);
     void UpdateCheckBoxes();
     void CreatePanelShortcuts();
 signals:
-    //addGhostChannelActivated();
+    void addGhostChannelActivated();
 public slots:
     void channelActivatedCheckBox();
     void channelActivatedShortcut();

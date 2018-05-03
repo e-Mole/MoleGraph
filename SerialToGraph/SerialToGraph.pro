@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-#versionTarget.target = GitVersion.h
-#versionTarget.depends = FORCE
-#versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
-#PRE_TARGETDEPS += GitVersion.h
-#QMAKE_EXTRA_TARGETS += versionTarget
+versionTarget.target = GitVersion.h
+versionTarget.depends = FORCE
+versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
+PRE_TARGETDEPS += GitVersion.h
+QMAKE_EXTRA_TARGETS += versionTarget
 
 TARGET = MoleGraph
 DEFINES += TARGET=\\\"$$TARGET\\\"
@@ -19,6 +19,8 @@ QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = $$TARGET
 QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
+QMAKE_CXXFLAGS += -Werror=return-type
+QMAKE_CXXFLAGS += -Wno-sign-compare
 
 QT       += core gui bluetooth widgets printsupport
 
@@ -75,7 +77,12 @@ SOURCES += main.cpp\
     graphics/GraphicsContainer.cpp \
     hw/Sensor.cpp \
     hw/SensorManager.cpp \
-    hw/SensorQuantity.cpp
+    hw/SensorQuantity.cpp \
+    graphics/ChannelProxyBase.cpp \
+    graphics/SampleChannelProxy.cpp \
+    graphics/HwChannelProxy.cpp \
+    graphics/ChannelProperties.cpp \
+    graphics/SampleChannelProperties.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -130,7 +137,12 @@ HEADERS  += MainWindow.h \
     graphics/GraphicsContainer.h \
     hw/Sensor.h \
     hw/SensorManager.h \
-    hw/SensorQuantity.h
+    hw/SensorQuantity.h \
+    graphics/ChannelProxyBase.h \
+    graphics/HwChannelProxy.h \
+    graphics/SampleChannelProxy.h \
+    graphics/ChannelProperties.h \
+    graphics/SampleChannelProperties.h
 
 CONFIG += mobility
 CONFIG += c++11
@@ -152,8 +164,8 @@ win32:RC_ICONS += MoleGraph.ico
 ICON = MoleGraph.icns # icons for Mac OS X
 
 RESOURCES += \
-    translations.qrc
-
+    translations.qrc \
+    sensors/sensors.json
 
 android{
 DISTFILES += \
@@ -167,3 +179,4 @@ DISTFILES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
+

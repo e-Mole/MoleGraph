@@ -12,6 +12,7 @@
 
 #define PADDING 0
 #define BORDER 1
+#define GHOST_TRANSPARENCY 0x80
 ChannelWidget::ChannelWidget(
     QWidget* parent,
     ChannelGraph *channelGraph,
@@ -47,6 +48,7 @@ ChannelWidget::ChannelWidget(
 {
     connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
 
+    _InitTitle();
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(1);
     layout->addWidget(m_title);
@@ -54,23 +56,26 @@ ChannelWidget::ChannelWidget(
     layout->setSpacing(1);
 
     if (m_channelGraph->GetValuleAxis()->IsHorizontal())
-        ShowOrHideGraph(false);
+        ShowGraph(false);
 
     SetVisible(m_isVisible);
     DisplayNAValue(valueType);
-    SetTransparent(isGhost);
+}
+
+void ChannelWidget::_InitTitle()
+{
+    QString style = QString("color : rgba(%1, %2, %3, %4);").
+            arg(0x0).
+            arg(0x00).
+            arg(0x00).
+            arg(IsGhost() ? GHOST_TRANSPARENCY : 0xff);
+
+    m_title->setStyleSheet(style);
 }
 
 QKeySequence ChannelWidget::GetKeyShortcutSequence()
 {
     return m_shortcutOrder != -1 ? QKeySequence(Qt::ALT + Qt::Key_0 + m_shortcutOrder) : QKeySequence();
-}
-
-void ChannelWidget::SetTransparent(bool transparent)
-{
-    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);
-    effect->setOpacity(transparent ? 0.6 : 1);
-    setGraphicsEffect(effect);
 }
 
 ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, const QColor &backColor, const QColor &foreColor
@@ -134,10 +139,11 @@ void ChannelWidget::ValueLabel::SetForeColor(const QColor &color)
 {
     m_foreColor = color;
     QString style;
-    style = QString("QLabel { background-color : rgb(%1, %2, %3);").
+    style = QString("QLabel { background-color : rgba(%1, %2, %3, %4);").
             arg(m_backColor.red()).
             arg(m_backColor.green()).
-            arg(m_backColor.blue());
+            arg(m_backColor.blue()).
+            arg(m_backColor.alpha());
 
     style += QString("border: %1px solid #c0c0c0;").
             arg(BORDER);
@@ -232,13 +238,13 @@ QColor ChannelWidget::_GetBackColorFromType(ChannelBase::ValueType type)
     switch (type)
     {
     case ChannelBase::ValueTypeSample:
-        return QColor(0xd0, 0xd0, 0xd0);
+        return QColor(0xd0, 0xd0, 0xd0); //It can't be ghost
     case ChannelBase::ValueTypeChanged:
-        return QColor(0xff, 0xd0, 0xd0);
+        return QColor(0xff, 0xd0, 0xd0, m_isGhost ? GHOST_TRANSPARENCY : 0xff);
     case ChannelBase::ValueTypeUnknown:
     case ChannelBase::ValueTypeOriginal:
     case ChannelBase::ValueTypeRangeValue:
-        return QColor(0xff, 0xff, 0xff);
+        return QColor(0xff, 0xff, 0xff, m_isGhost ? GHOST_TRANSPARENCY : 0xff);
     default:
         qDebug() << "wrong ValueType";
         return QColor();
@@ -283,6 +289,11 @@ void ChannelWidget::DisplayNAValue(ChannelBase::ValueType type)
     ShowLastValueWithUnits(type);
 }
 
+void ChannelWidget::FillLastValueText(QString const &text)
+{
+    m_lastValueText = text;
+}
+
 void ChannelWidget::FillLastValueText(double value)
 {
     if (value == ChannelBase::GetNaValue())
@@ -306,7 +317,7 @@ void ChannelWidget::FillLastValueText(double value)
     m_lastValueText = strValue;
 }
 
-Qt::PenStyle ChannelWidget::GetPenStyle()
+Qt::PenStyle ChannelWidget::GetPenStyle() const
 {
     return m_penStyle;
 }
@@ -317,7 +328,7 @@ void ChannelWidget::SetPenStyle(Qt::PenStyle penStyle)
     m_plot->SetPenStyle(m_channelGraph, penStyle);
 }
 
-unsigned ChannelWidget::GetShapeIndex()
+unsigned ChannelWidget::GetShapeIndex() const
 {
     return m_channelGraph->GetShapeIndex();
 }
@@ -327,7 +338,7 @@ void ChannelWidget::SetShapeIndex(unsigned index)
     m_channelGraph->SetMarkShape(index);
 }
 
-void ChannelWidget::ShowOrHideGraph(bool shown)
+void ChannelWidget::ShowGraph(bool shown)
 {
     m_channelGraph->setVisible(shown);
     m_plot->RescaleAllAxes();
@@ -346,7 +357,7 @@ void ChannelWidget::UpdateGraph(double xValue, double yValue, bool replot)
     }
 }
 
-ChannelGraph *ChannelWidget::GetChannelGraph()
+ChannelGraph *ChannelWidget::GetChannelGraph() const
 {
     return m_channelGraph;
 }
@@ -373,9 +384,14 @@ void ChannelWidget::UpdateWidgetVisiblity()
     setVisible(m_isVisible && !GlobalSettings::GetInstance().GetHideAllChannels());
 }
 
-bool ChannelWidget::isVisible()
+bool ChannelWidget::isVisible() const
 {
     return m_isVisible;
+}
+
+bool ChannelWidget::IsDrawable() const
+{
+    return isVisible() && (GetShapeIndex() != 0 || GetPenStyle() != Qt::NoPen);
 }
 
 void ChannelWidget::SetVisible(bool visible)
@@ -396,4 +412,9 @@ void ChannelWidget::hideAllCHannelsChanged(bool hideAllChannels)
 Plot* ChannelWidget::GetPlot()
 {
     return m_plot;
+}
+
+void ChannelWidget::SetShapeIndexDepricated(unsigned index)
+{
+    SetShapeIndex(index + 2);
 }

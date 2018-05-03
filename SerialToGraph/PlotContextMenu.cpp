@@ -95,7 +95,7 @@ void PlotContextMenu::zoomOutSelected()
 
 void PlotContextMenu::zoomToFitSelected()
 {
-    m_graphicsContainer->GetPlot()->ZoomToFit();
+    m_graphicsContainer->GetPlot()->ZoomToFit(clickPosition);
 }
 
 void PlotContextMenu::FollowMode()

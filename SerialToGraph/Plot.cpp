@@ -165,7 +165,7 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     )
     {
         //I dont want to catch mouseDoubleClickEvent because mouseReleaseEvent come after it and cause problems
-        ZoomToFit();
+        ZoomToFit(event->pos());
         event->accept();
         return;
     }
@@ -194,11 +194,11 @@ void Plot::MyMouseReleaseEvent(QMouseEvent *event)
     ReplotIfNotDisabled();
 }
 
-void Plot::ZoomToFit()
+void Plot::ZoomToFit(QPoint pos)
 {
     qDebug() << "zoom to fit";
     QVariant details;
-    QCPLayerable *clickedLayerable = layerableAt(QPointF(), false, &details);
+    QCPLayerable *clickedLayerable = layerableAt(pos, false, &details);
 
     if (QCPAxis *ax = qobject_cast<QCPAxis*>(clickedLayerable))
         RescaleAxis(ax);

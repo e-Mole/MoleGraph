@@ -116,7 +116,7 @@ public:
     void SetAxisStyle(QCPAxis *axis, bool dateTime, QString const &format);
     void SetMarkerLine(int position);
     void Zoom(const QPointF &pos, int delta);
-    void ZoomToFit();
+    void ZoomToFit(QPoint pos);
     DisplayMode GetDisplayMode() { return m_displayMode; }
     void SetDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     bool IsInRangeMode() { return m_markerTypeSelection != MTSSample; }

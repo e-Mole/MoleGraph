@@ -21,6 +21,7 @@
 #include "soundmeter.h"
 #include "silomer.h"
 #include "bme280.h"
+#include "mhz16.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //

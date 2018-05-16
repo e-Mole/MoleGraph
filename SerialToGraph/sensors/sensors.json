@@ -85,7 +85,16 @@
     {
       "quantityId" : 20,
       "quantityName" : "Dewpoint"
-    }                        
+    },
+    {
+      "quantityId" : 21,
+      "quantityName" : "Concentration (ppm)"
+    },
+    {
+      "quantityId" : 22,
+      "quantityName" : "Concentration (%)"
+    }          
+                           
   ],
   "sensors":
   [
@@ -165,8 +174,8 @@
       "quantities" : [ "Illuminace", "Trigger"  ]
     },
     {  "sensorId" : 19,
-      "sensorName" : "*(CO2 gas sensor (MH-Y16))",
-      "quantities" : [ "Concentration" ]
+      "sensorName" : "CO2 gas sensor (MH-Z16)",
+      "quantities" : [ "Concentration (ppm)", "Concentration (%)"  ]
     },
     {  "sensorId" : 20,
       "sensorName" : "*(O2 gas sensor (ME2-O2))",

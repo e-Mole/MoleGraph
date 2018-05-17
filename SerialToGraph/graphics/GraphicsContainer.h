@@ -69,6 +69,7 @@ class GraphicsContainer : public QWidget
     void _DisplayChannelValue(ChannelProxyBase *channelProxy);
     bool _IsTracked(Measurement *m);
     SampleChannelProxy *_CreateSampleChannelProxy(SampleChannel *channel, ChannelWidget *widget, SampleChannelProperties *properties, bool isGhost);
+    void _ConnectSetMeasuredToAddNewValueSet(Measurement *measurement);
     HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost);
     unsigned _GetMainHorizontalChannelIndex();
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);

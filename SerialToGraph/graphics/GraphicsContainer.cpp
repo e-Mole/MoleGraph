@@ -110,6 +110,7 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
 
     setAutoFillBackground(true);
     connect(this, SIGNAL(resized()), this, SLOT(replaceDisplays()));
+    _ConnectSetMeasuredToAddNewValueSet(m_mainMeasurement);
 }
 
 GraphicsContainer::~GraphicsContainer()
@@ -760,6 +761,7 @@ void GraphicsContainer::addNewValueSet()
         }
     }
     AddHorizontalValue(horizontalChannelProxy->GetLastValidValue(), true);
+
 }
 
 ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceContainer,  ChannelWidget *sourceChannelWidget, bool isGhost)
@@ -880,12 +882,16 @@ SampleChannelProxy *GraphicsContainer::CloneSampleChannelProxy(
     return _CreateSampleChannelProxy(channel, newWidget, properties, isGhost);
 }
 
+void GraphicsContainer::_ConnectSetMeasuredToAddNewValueSet(Measurement *measurement)
+{
+    connect(measurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
+}
 HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost)
 {
     Measurement *sourceMeasurement = channel->GetMeasurement();
     if (!_IsTracked(sourceMeasurement))
     {
-        connect(sourceMeasurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
+        _ConnectSetMeasuredToAddNewValueSet(sourceMeasurement);
     }
 
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
@@ -1180,7 +1186,7 @@ bool GraphicsContainer::_IsTracked(Measurement *m)
 {
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        if (channelProxy->IsGhost() && channelProxy->GetChannelMeasurement() == m)
+        if (channelProxy->GetChannelMeasurement() == m)
         {
             return true;
         }

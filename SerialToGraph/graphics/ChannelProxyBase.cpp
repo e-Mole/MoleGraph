@@ -85,7 +85,7 @@ unsigned ChannelProxyBase::GetLastValueIndex(double value)
         if (qFuzzyCompare(GetValue(index), value))
             return index;
     }
-    return -1;
+    return ~0;
 }
 
 unsigned ChannelProxyBase::GetChannelIndex()

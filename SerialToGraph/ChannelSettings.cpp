@@ -427,7 +427,14 @@ void ChannelSettings::setOriginalValue(bool checked)
     //this method is called just in a case the original value box is  enabled and
     //it is just in the case index is in range of this channel
     QLocale locale(QLocale::system());
-    double currentValue = ((HwChannelProxy*)m_channelProxy)->GetOriginalValue(_GetCurrentValueIndex(m_channelProxy));
+    unsigned currentValueIndex = _GetCurrentValueIndex(m_channelProxy);
+    if (currentValueIndex == ~0)
+    {
+        qWarning("index for original value has not been found.");
+        return;
+    }
+
+    double currentValue = ((HwChannelProxy*)m_channelProxy)->GetOriginalValue(currentValueIndex);
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :

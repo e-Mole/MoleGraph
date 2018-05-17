@@ -208,6 +208,10 @@
     {  "sensorId" : 27,
       "sensorName" : "Sound sensor (microphone)",
       "quantities" : [ "RAW", "Voltage", "Trigger" ]
-    }    
+    },
+    {  "sensorId" : 105,
+      "sensorName" : "Laser ranging sensor‎ (VL53L0X)",
+      "quantities" : [ "Distance" ]
+    }     
   ]
 }

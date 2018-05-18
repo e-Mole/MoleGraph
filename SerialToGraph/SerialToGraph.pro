@@ -82,7 +82,8 @@ SOURCES += main.cpp\
     graphics/SampleChannelProxy.cpp \
     graphics/HwChannelProxy.cpp \
     graphics/ChannelProperties.cpp \
-    graphics/SampleChannelProperties.cpp
+    graphics/SampleChannelProperties.cpp \
+    graphics/HwChannelProperties.cpp
 
 HEADERS  += MainWindow.h \
     bases/ClickableLabel.h \
@@ -142,7 +143,8 @@ HEADERS  += MainWindow.h \
     graphics/HwChannelProxy.h \
     graphics/SampleChannelProxy.h \
     graphics/ChannelProperties.h \
-    graphics/SampleChannelProperties.h
+    graphics/SampleChannelProperties.h \
+    graphics/HwChannelProperties.h
 
 CONFIG += mobility
 CONFIG += c++11

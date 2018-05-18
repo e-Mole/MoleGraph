@@ -1,12 +1,12 @@
 #include "HwChannelProxy.h"
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <graphics/ChannelProperties.h>
+#include <graphics/HwChannelProperties.h>
 #include <hw/Sensor.h>
 #include <hw/SensorQuantity.h>
 #include <HwChannel.h>
 
-HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties) :
+HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, HwChannelProperties *properties) :
     ChannelProxyBase(parent, channel, channelWidget, properties)
 {
 
@@ -14,7 +14,7 @@ HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWid
 
 double HwChannelProxy::GetValue(unsigned index) const
 {
-    return m_channel->GetRawValue(index);
+    return m_channel->GetRawValue(index) * GetProperties()->GetMultiplier();
 }
 
 void HwChannelProxy::ChangeValue(int index, double newValue)
@@ -24,7 +24,7 @@ void HwChannelProxy::ChangeValue(int index, double newValue)
 
 HwChannelProxy *HwChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
 {
-    ChannelProperties *newProperties = new ChannelProperties(parent, _GetChannelProperties());
+    HwChannelProperties *newProperties = new HwChannelProperties(parent, GetProperties());
     return new HwChannelProxy(parent, m_channel, newWidget, newProperties);
 }
 
@@ -33,10 +33,11 @@ HwChannel *HwChannelProxy::GetChannel() const
     return dynamic_cast<HwChannel*>(m_channel);
 }
 
-ChannelProperties *HwChannelProxy::_GetChannelProperties()
+HwChannelProperties *HwChannelProxy::GetProperties() const
 {
-    return dynamic_cast<ChannelProperties*>(m_properties);
+    return dynamic_cast<HwChannelProperties*>(m_properties);
 }
+
 bool HwChannelProxy::IsActive()
 {
     return GetChannel()->IsActive();
@@ -80,4 +81,24 @@ double HwChannelProxy::GetOriginalValue(int index)
 int HwChannelProxy::GetHwIndex() const
 {
     return GetChannel()->GetHwIndex();
+}
+
+double HwChannelProxy::GetMultiplier() const
+{
+    return GetProperties()->GetMultiplier();
+}
+
+void HwChannelProxy::SetMultiplier(double multiplier)
+{
+    GetProperties()->SetMultiplier(multiplier);
+}
+
+double HwChannelProxy::GetMinValue()
+{
+    return m_channel->GetMinValue() * GetMultiplier();
+}
+
+double HwChannelProxy::GetMaxValue()
+{
+    return m_channel->GetMaxValue() * GetMultiplier();
 }

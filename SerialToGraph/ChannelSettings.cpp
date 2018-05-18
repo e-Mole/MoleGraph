@@ -7,6 +7,7 @@
 #include <GlobalSettings.h>
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
@@ -65,6 +66,8 @@ ChannelSettings::ChannelSettings(
     m_currentValueControl(new QLineEdit(this)),
     m_name(new QLineEdit(m_channelProxy->GetName(), this)),
     m_units(new QLineEdit(m_channelProxy->GetUnits(), this)),
+    m_multiplierCombo(new bases::ComboBox(this)),
+    m_offsetCombo(new bases::ComboBox(this)),
     m_sourceMeasurementCombo(new bases::ComboBox(this)),
     m_sourceChannelCombo(new bases::ComboBox(this)),
     m_shapeComboBox(new bases::ComboBox(this)),
@@ -98,9 +101,9 @@ ChannelSettings::ChannelSettings(
 
     if (dynamic_cast<HwChannelProxy*>(channelProxy) || m_channelProxy->IsGhost())
     {
-
-        _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
-        _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
+        HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(channelProxy);
+        _InitializeValueLine(hwChannelProxy);
+        _InitializeSensorItems(hwChannelProxy);
         AddSeparator();
 
         m_name->setVisible(true);
@@ -108,12 +111,60 @@ ChannelSettings::ChannelSettings(
         m_units->setVisible(true);
         m_units->setEnabled(dynamic_cast<HwChannelProxy*>(channelProxy));
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
-
+        _InitializeMultiplierCombo(hwChannelProxy);
     }
     AddColorButtonRow(channelProxy->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelProxy);
     _InitializePenStyle(channelProxy->GetPenStyle());
+}
+
+bool ChannelSettings::_IsMultiplierAndOffsetEnablable()
+{
+    bool isHw = dynamic_cast<HwChannelProxy*>(m_channelProxy) != NULL;
+    return isHw && (_GetSensorNameOrder() < 1 || _GetSensorNameOrder() == 101); //not filled or generic
+}
+
+void ChannelSettings::_InitializeOfsetCombo(HwChannelProxy *proxy)
+{
+    m_offsetCombo->setVisible(true);
+    m_offsetCombo->setEditable(_IsMultiplierAndOffsetEnablable());
+    m_formLayout->addRow(new QLabel(tr("Offset"), this), m_offsetCombo);
+
+    if (!proxy)
+        return;
+
+}
+void ChannelSettings::_InitializeMultiplierCombo(HwChannelProxy *proxy)
+{
+    m_multiplierCombo->setVisible(true);
+    m_multiplierCombo->setEditable(_IsMultiplierAndOffsetEnablable());
+    m_formLayout->addRow(new QLabel(tr("Multiplier"), this), m_multiplierCombo);
+
+    if (!proxy)
+        return;
+    double current = proxy->GetProperties()->GetMultiplier();
+    _AddMultiplierToCombo(1000000000, current);
+    _AddMultiplierToCombo(1000000, current);
+    _AddMultiplierToCombo(1000, current);
+    _AddMultiplierToCombo(100, current);
+    _AddMultiplierToCombo(10, current);
+    _AddMultiplierToCombo(1, current);
+    _AddMultiplierToCombo(0.1, current);
+    _AddMultiplierToCombo(0.01, current);
+    _AddMultiplierToCombo(0.001, current);
+    _AddMultiplierToCombo(0.000001, current);
+    _AddMultiplierToCombo(0.000000001, current);
+}
+
+void ChannelSettings::_AddMultiplierToCombo(double multiplier, double current)
+{
+    QLocale locale(QLocale::system());
+    m_multiplierCombo->addItem(locale.toString(multiplier), multiplier);
+    if (qFuzzyCompare(multiplier, current))
+    {
+        m_multiplierCombo->setCurrentIndex(m_multiplierCombo->count()-1);
+    }
 }
 
 void ChannelSettings::_HideAllOptional()
@@ -183,11 +234,19 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
     m_sensorNameComboBox->setEnabled(channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
 }
 
+int ChannelSettings::_GetSensorNameOrder()
+{
+    if (m_sensorNameComboBox->count() == 0)
+        return -1;
+
+    return m_sensorNameComboBox->currentData().toInt();
+}
+
 void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
 {
     hw::SensorQuantity *currentSensorQuanity = channelProxy->GetSensorQuantity();
     m_sensorQuantityComboBox->clear();
-    unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
+    unsigned currentSensorOrder = _GetSensorNameOrder();
 
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
@@ -255,7 +314,12 @@ void ChannelSettings::sensorNameChanged(int index)
 {
     Q_UNUSED(index)
     if (index != -1)
+    {
         _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+    }
+    m_offsetCombo->setEnabled(_IsMultiplierAndOffsetEnablable());
+    m_multiplierCombo->setEnabled(_IsMultiplierAndOffsetEnablable());
+
 }
 
 void ChannelSettings::sensorQualityChanged(int index)
@@ -704,6 +768,8 @@ bool ChannelSettings::BeforeAccept()
     }
 
     HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
+    SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_channelProxy);
+
     if (hwChannelProxy && m_currentValueChanged)
     {
         QLocale locale(QLocale::system());
@@ -738,9 +804,8 @@ bool ChannelSettings::BeforeAccept()
 
     }
 
-    if (dynamic_cast<SampleChannelProxy*>(m_channelProxy))
+    if (sampleChannelProxy)
     {
-        SampleChannelProxy *sampleChannelProxy = dynamic_cast<SampleChannelProxy*>(m_channelProxy);
         if ((int)sampleChannelProxy->GetTimeUnits() != m_timeUnits->currentIndex())
         {
             changed = true;
@@ -769,6 +834,14 @@ bool ChannelSettings::BeforeAccept()
         {
             changed = true;
             m_channelProxy->SetUnits(m_units->text());
+        }
+
+        if (!qFuzzyCompare(hwChannelProxy->GetMultiplier(), m_multiplierCombo->currentData().toDouble()))
+        {
+            hwChannelProxy->SetMultiplier(m_multiplierCombo->currentData().toDouble());
+            m_graphicsContainer->GetPlot()->RefillSingleGraph(hwChannelProxy);
+            rescaleAxis = true;
+            changed = true;
         }
     }
 
@@ -814,7 +887,7 @@ bool ChannelSettings::BeforeAccept()
             //returns false when it is a new ghost - in this case it will be processed by a confirmation process
             if (m_graphicsContainer->ReplaceChannelProxy(m_originalProxy, m_channelProxy))
             {
-                m_graphicsContainer->GhostManipupationPostProcess(m_channelProxy);
+                m_graphicsContainer->GhostManipulationPostProcess(m_channelProxy);
             }
 
             changed = true;
@@ -860,6 +933,6 @@ void ChannelSettings::BeforeReject()
     if (m_channelProxy != m_originalProxy)
     {
         delete m_channelProxy;
-        m_graphicsContainer->GhostManipupationPostProcess(m_originalProxy);
+        m_graphicsContainer->GhostManipulationPostProcess(m_originalProxy);
     }
 }

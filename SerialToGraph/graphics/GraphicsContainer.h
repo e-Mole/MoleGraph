@@ -17,6 +17,7 @@ class ChannelGraph;
 class ChannelProxyBase;
 class ChannelWidget;
 class HwChannel;
+class HwChannelProperties;
 class HwChannelProxy;
 class KeyShortcut;
 class Measurement;
@@ -27,6 +28,7 @@ class QHBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
+class SampleChannelProperties;
 
 class GraphicsContainer : public QWidget
 {
@@ -69,7 +71,7 @@ class GraphicsContainer : public QWidget
     void _DisplayChannelValue(ChannelProxyBase *channelProxy);
     bool _IsTracked(Measurement *m);
     SampleChannelProxy *_CreateSampleChannelProxy(SampleChannel *channel, ChannelWidget *widget, SampleChannelProperties *properties, bool isGhost);
-    HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost);
+    HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, HwChannelProperties *properties, bool isGhost);
     unsigned _GetMainHorizontalChannelIndex();
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
 
@@ -132,7 +134,7 @@ public:
     QColor GetColorByOrder(unsigned order);
     SampleChannelProxy *CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost);
     SampleChannelProxy *CloneSampleChannelProxy(SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost);
-    void GhostManipupationPostProcess(ChannelProxyBase *ghostProxy);
+    void GhostManipulationPostProcess(ChannelProxyBase *ghostProxy);
 
     HwChannelProxy *CreateHwChannelProxy(HwChannel *channel,
         Axis *valueAxis,

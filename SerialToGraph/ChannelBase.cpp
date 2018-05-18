@@ -10,7 +10,6 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QLocale>
 #include <QPalette>
 #include <QPen>
 #include <QString>

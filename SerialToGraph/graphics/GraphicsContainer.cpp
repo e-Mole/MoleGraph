@@ -2,6 +2,7 @@
 #include <Axis.h>
 #include <GlobalSettings.h>
 #include <graphics/ChannelProxyBase.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
 #include <graphics/SampleChannelProperties.h>
@@ -880,7 +881,7 @@ SampleChannelProxy *GraphicsContainer::CloneSampleChannelProxy(
     return _CreateSampleChannelProxy(channel, newWidget, properties, isGhost);
 }
 
-HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost)
+HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, HwChannelProperties *properties, bool isGhost)
 {
     Measurement *sourceMeasurement = channel->GetMeasurement();
     if (!_IsTracked(sourceMeasurement))
@@ -919,7 +920,7 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
         isGhost
     );
 
-    return _CreateHwCannelProxy(channel, widget, new ChannelProperties(this), isGhost);
+    return _CreateHwCannelProxy(channel, widget, new HwChannelProperties(this, 1), isGhost);
 }
 
 HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
@@ -941,7 +942,8 @@ HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceCha
         isGhost
     );
 
-    return _CreateHwCannelProxy(channel, widget, new ChannelProperties(this), isGhost);
+    return _CreateHwCannelProxy(
+        channel, widget, new HwChannelProperties(this, sourceChannelProxy->GetMultiplier()), isGhost);
 }
 
 void GraphicsContainer::hwValueChanged(unsigned index)
@@ -1237,7 +1239,7 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
 void GraphicsContainer::ConfirmGhostChannel()
 {
     m_ghostWaitingForConfirmation->SetVisible(true);
-    GhostManipupationPostProcess(m_ghostWaitingForConfirmation);
+    GhostManipulationPostProcess(m_ghostWaitingForConfirmation);
     m_ghostWaitingForConfirmation = NULL;
 }
 
@@ -1295,7 +1297,7 @@ void GraphicsContainer::RefillHorizontalChannelMapping()
     CalculateScrollbarRange();
 }
 
-void GraphicsContainer::GhostManipupationPostProcess(ChannelProxyBase *ghostProxy)
+void GraphicsContainer::GhostManipulationPostProcess(ChannelProxyBase *ghostProxy)
 {
     RefillHorizontalChannelMapping();
     replaceDisplays();

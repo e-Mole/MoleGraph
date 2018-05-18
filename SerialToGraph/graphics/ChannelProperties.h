@@ -6,6 +6,8 @@
 class ChannelProperties : public QObject
 {
     Q_OBJECT
+
+
 public:
     ChannelProperties(QObject *parent);
     ChannelProperties(QObject *parent, ChannelProperties *properties);

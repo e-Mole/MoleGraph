@@ -51,6 +51,10 @@ class ChannelSettings : public bases::FormDialogColor
     void _SetHorizontalChannel(Measurement *m);
     void _ConnectCurrentValueChange();
     void _DisconnectCurrentValueChange();
+    void _AddMultiplierToCombo(double multiplier, double current);
+    void _InitializeMultiplierCombo(HwChannelProxy *proxy);
+    int _GetSensorNameOrder();
+    bool _IsMultiplierAndOffsetEnablable();
     virtual bool BeforeAccept();
     virtual void BeforeReject();
 
@@ -61,6 +65,8 @@ class ChannelSettings : public bases::FormDialogColor
     QLineEdit *m_currentValueControl;
     QLineEdit * m_name;
 	QLineEdit * m_units;
+    bases::ComboBox * m_multiplierCombo;
+    bases::ComboBox * m_offsetCombo;
     bases::ComboBox * m_sourceMeasurementCombo;
     bases::ComboBox * m_sourceChannelCombo;
     bases::ComboBox * m_shapeComboBox;

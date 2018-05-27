@@ -67,7 +67,6 @@ ChannelSettings::ChannelSettings(
     m_name(new QLineEdit(m_channelProxy->GetName(), this)),
     m_units(new QLineEdit(m_channelProxy->GetUnits(), this)),
     m_multiplierCombo(new bases::ComboBox(this)),
-    m_offsetCombo(new bases::ComboBox(this)),
     m_sourceMeasurementCombo(new bases::ComboBox(this)),
     m_sourceChannelCombo(new bases::ComboBox(this)),
     m_shapeComboBox(new bases::ComboBox(this)),
@@ -111,7 +110,12 @@ ChannelSettings::ChannelSettings(
         m_units->setVisible(true);
         m_units->setEnabled(dynamic_cast<HwChannelProxy*>(channelProxy));
         m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
-        _InitializeMultiplierCombo(hwChannelProxy);
+
+        _InitializeMultiplierRow(hwChannelProxy);
+    }
+    else
+    {
+        m_multiplierCombo->setVisible(false);
     }
     AddColorButtonRow(channelProxy->GetForeColor());
     _InitializeAxisCombo();
@@ -119,26 +123,10 @@ ChannelSettings::ChannelSettings(
     _InitializePenStyle(channelProxy->GetPenStyle());
 }
 
-bool ChannelSettings::_IsMultiplierAndOffsetEnablable()
-{
-    bool isHw = dynamic_cast<HwChannelProxy*>(m_channelProxy) != NULL;
-    return isHw && (_GetSensorNameOrder() < 1 || _GetSensorNameOrder() == 101); //not filled or generic
-}
-
-void ChannelSettings::_InitializeOfsetCombo(HwChannelProxy *proxy)
-{
-    m_offsetCombo->setVisible(true);
-    m_offsetCombo->setEditable(_IsMultiplierAndOffsetEnablable());
-    m_formLayout->addRow(new QLabel(tr("Offset"), this), m_offsetCombo);
-
-    if (!proxy)
-        return;
-
-}
-void ChannelSettings::_InitializeMultiplierCombo(HwChannelProxy *proxy)
+void ChannelSettings::_InitializeMultiplierRow(HwChannelProxy *proxy)
 {
     m_multiplierCombo->setVisible(true);
-    m_multiplierCombo->setEditable(_IsMultiplierAndOffsetEnablable());
+    m_multiplierCombo->setEnabled(proxy != NULL);
     m_formLayout->addRow(new QLabel(tr("Multiplier"), this), m_multiplierCombo);
 
     if (!proxy)
@@ -317,9 +305,6 @@ void ChannelSettings::sensorNameChanged(int index)
     {
         _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     }
-    m_offsetCombo->setEnabled(_IsMultiplierAndOffsetEnablable());
-    m_multiplierCombo->setEnabled(_IsMultiplierAndOffsetEnablable());
-
 }
 
 void ChannelSettings::sensorQualityChanged(int index)

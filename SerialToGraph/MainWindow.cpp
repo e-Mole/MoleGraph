@@ -359,7 +359,7 @@ Measurement *MainWindow::GetCurrnetMeasurement()
 
 void MainWindow::_ShowCoruptedFileMessage(QString const &fileName)
 {
-    MyMessageBox::critical(this, QString(tr("File %1 is corrupted.")).arg(fileName));
+    MyMessageBox::critical(this, QString(tr("Selected file %1 is corrupted. All data must not be available.")).arg(fileName));
 }
 
 void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
@@ -386,7 +386,6 @@ void MainWindow::DeserializeMeasurements(QString const &fileName, bool values)
         if (serializerVersion < ATOG_LOWEST_VERSION || serializerVersion > ATOG_SERIALIZER_VERSION)
         {
             MyMessageBox::critical(this, QString(tr("Unsuported file version (%1)")).arg(fileName));
-            sucess = false;
             return;
         }
 

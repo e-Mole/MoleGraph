@@ -303,7 +303,7 @@ void HwSink::readyRead()
     {
         MyMessageBox::warning(
             (QWidget*)parent(),
-            tr("Selected port doesn't responding as expected. Please, check port read/write permitions.")
+            tr("The selected port isn't responding as expected. Please, check port read/write permitions.")
         );
 
         _ConnectionFailed();

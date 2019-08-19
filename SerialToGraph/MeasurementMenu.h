@@ -7,7 +7,7 @@
 namespace bases{ class ClickableLabel; }
 class Measurement;
 class QPushButton;
-class QRadioButton;
+class RadioButton;
 class QWidget;
 struct Context;
 
@@ -21,7 +21,7 @@ class MeasurementMenu : public bases::MenuDialogBase
     Context const &m_context;
     QMap<QPushButton*, Measurement*> m_removeButtonToItem;
     QMap<QPushButton*, Measurement*> m_editButtonToItem;
-    QMap<QRadioButton*,Measurement*> m_radioButtonToItem;
+    QMap<RadioButton*,Measurement*> m_radioButtonToItem;
     QMap<bases::ClickableLabel*,Measurement*> m_nameToItem;
 public:
     MeasurementMenu(QWidget *parent, const Context &context);

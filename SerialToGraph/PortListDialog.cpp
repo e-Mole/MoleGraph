@@ -8,7 +8,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QProgressBar>
-#include <QRadioButton>
+#include <bases/RadioButton.h>
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -76,7 +76,7 @@ void PortListDialog::startSearching()
 
 void PortListDialog::workDisconnected()
 {
-    foreach (QRadioButton *rb, m_radioToInfo.keys())
+    foreach (RadioButton *rb, m_radioToInfo.keys())
         if (rb->isChecked())
             _UncheckRadioButton(rb);
 
@@ -94,7 +94,7 @@ void PortListDialog::refresh()
 void PortListDialog::addPort(hw::PortInfo const &item)
 {
     unsigned rowNumber = m_portLayout->rowCount();
-    QRadioButton *rb = new QRadioButton(item.m_id, m_portWidget);
+    RadioButton *rb = new RadioButton(item.m_id, m_portWidget);
     m_radioToInfo[rb] = item;
 
     //I have to call it queued to be finish dialog painting
@@ -113,7 +113,7 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     repaint();
 }
 
-void PortListDialog::_UncheckRadioButton(QRadioButton *rb)
+void PortListDialog::_UncheckRadioButton(RadioButton *rb)
 {
     if (NULL == rb)
         return;
@@ -125,7 +125,7 @@ void PortListDialog::_UncheckRadioButton(QRadioButton *rb)
 }
 void PortListDialog::portRadioButtonReleased()
 {
-    m_selectedRadioButton = (QRadioButton*)sender();
+    m_selectedRadioButton = (RadioButton*)sender();
     hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
     m_hwSink.OpenPort(portInfo);
     GlobalSettings::GetInstance().SetForcedOffline(false);
@@ -140,7 +140,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
         case  hw::HwSink::Connected:
         {
             QString connectedId = GlobalSettings::GetInstance().GetLastSerialPortId();
-            foreach (QRadioButton *rb, m_radioToInfo.keys())
+            foreach (RadioButton *rb, m_radioToInfo.keys())
                 if (rb->text() == connectedId)
                     rb->setChecked(true);
 

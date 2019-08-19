@@ -20,7 +20,6 @@
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <bases/ComboBox.h>
-#include <QCheckBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>

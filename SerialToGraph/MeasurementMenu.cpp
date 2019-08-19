@@ -13,7 +13,7 @@
 #include <QMap>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QRadioButton>
+#include <bases/RadioButton.h>
 #include <QWidget>
 #include <QScrollArea>
 #include <QString>
@@ -50,7 +50,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     m_removeButtonToItem.insert(removeButton, measurement);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()), Qt::DirectConnection);
 
-    QRadioButton *rb = new QRadioButton(this);
+    RadioButton *rb = new RadioButton(this);
     rb->setChecked(measurement == m_context.m_mainWindow.GetCurrnetMeasurement());
     connect(rb, SIGNAL(clicked()), this, SLOT(radioButtonClicked()));
     m_radioButtonToItem[rb] = measurement;
@@ -156,5 +156,5 @@ void MeasurementMenu::nameClicked()
 
 void MeasurementMenu::radioButtonClicked()
 {
-     m_context.m_mainWindow.SwichCurrentMeasurement(m_radioButtonToItem[(QRadioButton*)sender()]);
+     m_context.m_mainWindow.SwichCurrentMeasurement(m_radioButtonToItem[(RadioButton*)sender()]);
 }

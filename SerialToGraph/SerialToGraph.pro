@@ -26,12 +26,14 @@ QT       += core gui bluetooth widgets printsupport
 
 SOURCES += main.cpp\
     MainWindow.cpp \
+    bases/CheckBox.cpp \
     bases/ClickableLabel.cpp \
     bases/ClickableWidget.cpp \
     bases/FormDialogBase.cpp \
     bases/FormDialogColor.cpp \
     bases/MenuDialogBase.cpp \
     bases/PlatformDialog.cpp \
+    bases/RadioButton.cpp \
     hw/Bluetooth.cpp \
     hw/HwSink.cpp \
     hw/PortBase.cpp \
@@ -85,12 +87,14 @@ SOURCES += main.cpp\
     graphics/SampleChannelProperties.cpp
 
 HEADERS  += MainWindow.h \
+    bases/CheckBox.h \
     bases/ClickableLabel.h \
     bases/ClickableWidget.h \
     bases/FormDialogBase.h \
     bases/FormDialogColor.h \
     bases/MenuDialogBase.h \
     bases/PlatformDialog.h \
+    bases/RadioButton.h \
     hw/Bluetooth.h \
     hw/HwSink.h \
     hw/PortBase.h \

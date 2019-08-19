@@ -12,7 +12,7 @@ class QGridLayout;
 class QLabel;
 class QProgressBar;
 class QPushButton;
-class QRadioButton;
+class RadioButton;
 class QWidget;
 
 class PortListDialog : public bases::PlatformDialog
@@ -20,7 +20,7 @@ class PortListDialog : public bases::PlatformDialog
     Q_OBJECT
 
     void closeEvent(QCloseEvent *event);
-    void _UncheckRadioButton(QRadioButton *rb);
+    void _UncheckRadioButton(RadioButton *rb);
 
     hw::HwSink &m_hwSink;
     QProgressBar *m_progress;
@@ -29,8 +29,8 @@ class PortListDialog : public bases::PlatformDialog
     QLabel *m_description;
     QWidget * m_portWidget;
     QGridLayout *m_portLayout;
-    QMap<QRadioButton *, hw::PortInfo> m_radioToInfo;
-    QRadioButton * m_selectedRadioButton;
+    QMap<RadioButton *, hw::PortInfo> m_radioToInfo;
+    RadioButton * m_selectedRadioButton;
     bool m_autoConnect;
 public:
     PortListDialog(QWidget *parent, hw::HwSink &hwSink);

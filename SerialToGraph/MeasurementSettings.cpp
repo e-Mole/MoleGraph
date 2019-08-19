@@ -4,7 +4,7 @@
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <bases/ComboBox.h>
-#include <QCheckBox>
+#include <bases/CheckBox.h>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -49,7 +49,7 @@ MeasurementSettings::MeasurementSettings(
 
     AddColorButtonRow(m_measurement->m_color);
 
-    m_marksShown = new QCheckBox(this);
+    m_marksShown = new CheckBox(this);
     m_marksShown->setChecked(m_graphicsContainer->GetMarksShown());
     m_formLayout->addRow(new QLabel(tr("Show Marks")), m_marksShown);
 

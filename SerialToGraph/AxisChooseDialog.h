@@ -6,7 +6,7 @@
 class Axis;
 class ChannelProxyBase;
 class GraphicsContainer;
-class QRadioButton;
+class RadioButton;
 class QString;
 class QWidget;
 class AxisChooseDialog : public QDialog
@@ -17,8 +17,8 @@ class AxisChooseDialog : public QDialog
     ChannelProxyBase *m_originalHorizontalChannelProxy;
     ChannelProxyBase *m_newHorizontalChannelProxy;
     bool m_isOriginalChannelRealTime;
-    QRadioButton *m_newAxis;
-    QMap<QRadioButton *, Axis*> m_axes;
+    RadioButton *m_newAxis;
+    QMap<RadioButton *, Axis*> m_axes;
 
 
 public:

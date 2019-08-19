@@ -5,9 +5,9 @@
 
 namespace bases { class ComboBox;}
 
+class CheckBox;
 class Context;
 class GlobalSettings;
-class QCheckBox;
 class QDoubleSpinBox;
 class QLineEdit;
 class QPushButton;
@@ -39,17 +39,17 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     GlobalSettings &m_settings;
     bases::ComboBox *m_languages;
     bases::ComboBox *m_brackets;
-    QCheckBox *m_useBluetooth;
-    QCheckBox *m_showConsole;
+    CheckBox *m_useBluetooth;
+    CheckBox *m_showConsole;
     QLineEdit *m_limitDirLine;
     QPushButton *m_limitDirButton;
-    QCheckBox *m_hideAllChannels;
+    CheckBox *m_hideAllChannels;
     bases::ComboBox *m_menuOrientation;
-    QCheckBox *m_menuOnDemand;
+    CheckBox *m_menuOnDemand;
     QSpinBox *m_channelSizeFactor;
     QDoubleSpinBox *m_channelGraphPenWidth;
-    QCheckBox *m_acceptChangesByDialogClosing;
-    QCheckBox *m_openRecentOnStartUp;
+    CheckBox *m_acceptChangesByDialogClosing;
+    CheckBox *m_openRecentOnStartUp;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 

@@ -5,11 +5,11 @@
 #include <file/FileDialog.h>
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
+#include <bases/CheckBox.h>
 #include <hw/HwSink.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
-#include <QCheckBox>
 #include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
@@ -53,7 +53,7 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
 
 void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
 {
-    m_acceptChangesByDialogClosing = new QCheckBox(this);
+    m_acceptChangesByDialogClosing = new CheckBox(this);
     m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
     m_formLayout->addRow(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
@@ -88,21 +88,21 @@ void GlobalSettingsDialog::_InitializeButtonLines()
     m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
     m_formLayout->addRow(tr("Menu Orientation"), m_menuOrientation);
 
-    m_menuOnDemand = new QCheckBox(this);
+    m_menuOnDemand = new CheckBox(this);
     m_menuOnDemand->setChecked(m_settings.GetMenuOnDemand());
     m_formLayout->addRow(tr("Menu on Demand"), m_menuOnDemand);
 }
 
 void GlobalSettingsDialog::_InitHideAllChannels()
 {
-    m_hideAllChannels = new QCheckBox(this);
+    m_hideAllChannels = new CheckBox(this);
     m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
     m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
 }
 
 void GlobalSettingsDialog::_InitializeOpenRecentAtStartup()
 {
-    m_openRecentOnStartUp = new QCheckBox(this);
+    m_openRecentOnStartUp = new CheckBox(this);
     m_openRecentOnStartUp->setChecked(m_settings.GetOpenRecentFileAtStartup());
     m_formLayout->addRow(tr("Open recent measurement at startup"), m_openRecentOnStartUp);
 }
@@ -139,14 +139,14 @@ void GlobalSettingsDialog::limitDirClicked()
 }
 void GlobalSettingsDialog::_InitializeShowConsole()
 {
-    m_showConsole = new QCheckBox(this);
+    m_showConsole = new CheckBox(this);
     m_showConsole->setChecked(m_settings.GetConsole());
     m_formLayout->addRow(tr("Show Debug Window"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
 {
-    m_useBluetooth = new QCheckBox(this);
+    m_useBluetooth = new CheckBox(this);
     m_useBluetooth->setChecked(m_settings.GetUseBluetooth());
     m_formLayout->addRow(tr("Use Bluetooth"), m_useBluetooth);
 }

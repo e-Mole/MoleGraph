@@ -5,9 +5,11 @@
 #include <QCommandLineOption>
 #include <QCoreApplication>
 #include <GlobalSettings.h>
+#include <QStyleFactory>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setFont(QApplication::font("QMenu")); //workaround - it seems that QMenu take font size from system opposite to QLabel
     a.setApplicationName(TARGET);
     a.setApplicationVersion("1");
 #ifdef __linux__
@@ -43,6 +45,7 @@ int main(int argc, char *argv[])
          fileName = GlobalSettings::GetInstance().GetRecentFilePath(0);
     }
 
+    //QApplication::setStyle(QStyleFactory::create("fusion"));
     MainWindow w(a, fileName, parser.isSet(withoutValuesOption));
     w.show();
 

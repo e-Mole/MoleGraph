@@ -1,15 +1,16 @@
 #include "ColorCheckBox.h"
 #include <bases/ClickableLabel.h>
 #include <QHBoxLayout>
-#include <QCheckBox>
+#include <bases/CheckBox.h>
 #include <QString>
 
 ColorCheckBox::ColorCheckBox(const QString &text, QWidget *parent):
     QWidget(parent),
-    m_checkBox(new QCheckBox(this)),
+    m_checkBox(new CheckBox(this)),
     m_label(new bases::ClickableLabel(text, this))
 {
-    m_checkBox->setStyleSheet("padding=0");
+    QString style = m_checkBox->styleSheet();
+    m_checkBox->setStyleSheet(style + "padding=0;");
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(0);

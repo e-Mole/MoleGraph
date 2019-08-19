@@ -6,7 +6,7 @@
 namespace bases { class ComboBox; }
 class Measurement;
 class GraphicsContainer;
-class QCheckBox;
+class CheckBox;
 
 class QLineEdit;
 class QWidget;
@@ -20,7 +20,7 @@ class MeasurementSettings  : public bases::FormDialogColor
     bases::ComboBox *m_type;
     QLineEdit *m_period;
     bases::ComboBox *m_sampleUnits;
-    QCheckBox *m_marksShown;
+    CheckBox *m_marksShown;
 
     bool BeforeAccept();
 public:

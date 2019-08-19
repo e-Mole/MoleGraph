@@ -4,7 +4,6 @@
 #include <Measurement.h>
 #include <Plot.h>
 #include <QBoxLayout>
-#include <QCheckBox>
 #include <QColor>
 #include <qcustomplot/qcustomplot.h>
 #include <QDebug>

@@ -15,7 +15,6 @@ class GraphicsContainer;
 class HwChannelProxy;
 class Measurement;
 class SampleChannel;
-class QCheckBox;
 class QFormLayout;
 class QFrame;
 class QLineEdit;

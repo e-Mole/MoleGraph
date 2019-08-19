@@ -9,7 +9,7 @@
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <QLabel>
-#include <QRadioButton>
+#include <bases/RadioButton.h>
 #include <QString>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -45,7 +45,7 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
     label->setWordWrap(true);
     layout->addWidget(label);
 
-    m_newAxis = new QRadioButton(tr("New Axis..."), this);
+    m_newAxis = new RadioButton(tr("New Axis..."), this);
     connect(m_newAxis, SIGNAL(clicked()), this, SLOT(newAxisSelected()));
     layout->addWidget(m_newAxis);
 
@@ -57,7 +57,7 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
         if (m_isOriginalChannelRealTime && !axis->IsEmptyExcept(m_newHorizontalChannelProxy))
             continue;
 
-        QRadioButton *rb = new QRadioButton(axis->GetTitle(), this);
+        RadioButton *rb = new RadioButton(axis->GetTitle(), this);
 
         m_axes.insert(rb, axis);
         connect(rb, SIGNAL(clicked()), this, SLOT(axisSelected()));
@@ -84,7 +84,7 @@ void AxisChooseDialog::axisSelected()
 {
     for (auto it = m_axes.begin(); it != m_axes.end(); ++it)
     {
-        if (it.key() == (QRadioButton *)sender())
+        if (it.key() == (RadioButton *)sender())
         {
             ChannelGraph *channelGraph = m_originalHorizontalChannelProxy->GetChannelGraph();
             channelGraph->AssignToAxis(it.value());

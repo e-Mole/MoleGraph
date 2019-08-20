@@ -55,9 +55,6 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     connect(rb, SIGNAL(clicked()), this, SLOT(radioButtonClicked()));
     m_radioButtonToItem[rb] = measurement;
 
-    //workaround for android there is huge margin around radiobutton image which cause big gap between lines - I dont know why
-    rb->setMaximumHeight(editButton->sizeHint().height());
-
     unsigned row = m_gridLayout->rowCount();
     m_gridLayout->addWidget(rb, row, 0);
     m_gridLayout->addWidget(name, row, 1, Qt::AlignLeft);

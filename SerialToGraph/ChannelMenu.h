@@ -20,7 +20,7 @@ class ChannelMenu : public bases::MenuDialogBase
     void _AddChannel(ChannelProxyBase *channelProxy);
     void _ChangeAllChannels(bool checked);
     QLabel* _GetShortcutLabel(const QString &shortcut);
-    void _AddShortcut(unsigned row, QString const &shortcut);
+    void _AddShortcut(int row, QString const &shortcut);
     void FillGrid();
     QString _GetChannelShortcutText(ChannelProxyBase *channelProxy);
 

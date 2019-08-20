@@ -45,7 +45,7 @@ QLabel* ChannelMenu::_GetShortcutLabel(QString const &shortcut)
 
 void ChannelMenu::FillGrid()
 {
-    unsigned row = 0;
+    int row = 0;
 
     m_graphCheckBox = new ColorCheckBox(tr("Graph"), this);
     m_graphCheckBox->SetChecked(m_graphicsContainer->IsPlotVisible());
@@ -60,7 +60,7 @@ void ChannelMenu::FillGrid()
     ++row;
     QPushButton *showAllButton = new QPushButton(tr("All Channels"), this);
     connect(showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
-    m_gridLayout->addWidget(showAllButton, row, 0);
+    m_gridLayout->addWidget(showAllButton, row, 0, 1, 2);
     if (m_allChannelsShortcut)
     {
         _AddShortcut(row, m_allChannelsShortcut->GetText());
@@ -68,7 +68,7 @@ void ChannelMenu::FillGrid()
     ++row;
     QPushButton *showNoneButton = new QPushButton(tr("No Channels"), this);
     connect(showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
-    m_gridLayout->addWidget(showNoneButton, row, 0);
+    m_gridLayout->addWidget(showNoneButton, row, 0, 1, 2);
     if (m_noChannelsShortcut)
     {
         _AddShortcut(row, m_noChannelsShortcut->GetText());
@@ -77,21 +77,19 @@ void ChannelMenu::FillGrid()
     QPushButton *addGhostChannel = new QPushButton(tr("Add Virtual Channel"), this);
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
-    m_gridLayout->addWidget(addGhostChannel, row, 0);
+    m_gridLayout->addWidget(addGhostChannel, row, 0, 1, 2);
     addGhostChannel->resize(addGhostChannel->sizeHint().width(), addGhostChannel->sizeHint().height());
-
-    //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
-    m_graphCheckBox->setMaximumHeight(showAllButton->sizeHint().height()); 
 
     foreach (ChannelProxyBase *channelProxy, m_graphicsContainer->GetChannelProxies())
         _AddChannel(channelProxy);
 }
 
-void ChannelMenu::_AddShortcut(unsigned row, QString const &shortcut)
+void ChannelMenu::_AddShortcut(int row, QString const &shortcut)
 {
     if (!shortcut.isEmpty())
-        m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 1);
+        m_gridLayout->addWidget(_GetShortcutLabel(shortcut), row, 3);
 }
+
 void ChannelMenu::_AddChannel(ChannelProxyBase *channelProxy)
 {
     unsigned rowNr = m_gridLayout->rowCount();
@@ -109,19 +107,16 @@ void ChannelMenu::_AddChannel(ChannelProxyBase *channelProxy)
     QPushButton *editButton = new QPushButton(tr("Edit"), this);
     m_editChannels[editButton] = channelProxy;
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
-    m_gridLayout->addWidget(editButton, rowNr, 2);
+    m_gridLayout->addWidget(editButton, rowNr, 1);
 
     if (channelProxy->IsGhost())
     {
         QPushButton *removeButton = new QPushButton(tr("Remove"), this);
         m_editChannels[removeButton] = channelProxy;
         connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
-        m_gridLayout->addWidget(removeButton, rowNr, 3);
+        m_gridLayout->addWidget(removeButton, rowNr, 2);
         m_removeButtonToChannel.insert(removeButton, channelProxy);
     }
-
-    //workaround for android there is huge margin around checkbox image which cause big gap between lines - I dont know why
-    cb->setMaximumHeight(editButton->sizeHint().height());
 }
 
 void ChannelMenu::UpdateCheckBoxes()

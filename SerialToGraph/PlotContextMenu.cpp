@@ -1,23 +1,28 @@
 #include "PlotContextMenu.h"
 #include <QAction>
 #include <QActionGroup>
-#include <QMenu>
-#include <QWidget>
+#include <bases/MenuBase.h>
+
+#if defined(Q_OS_ANDROID)
+#   include <MenuAndroid.h>
+#else
+#   include <MenuDesktop.h>
+#endif
 
 PlotContextMenu::PlotContextMenu(QWidget *parent,  GraphicsContainer *graphicsContainer):
-    QMenu(parent),
+    QObject (parent),
     m_graphicsContainer(graphicsContainer),
-    m_sampleValue(NULL),
-    m_rangeAutoBorder(NULL),
-    m_rangeLeftBorder(NULL),
-    m_rangeRightBorder(NULL),
-    m_maxValue(NULL),
-    m_minValue(NULL),
-    m_averageValue(NULL),
-    m_medianValue(NULL),
-    m_varianceValue(NULL),
-    m_standardDeviation(NULL),
-    m_sumValue(NULL)
+    m_sampleValue(nullptr),
+    m_rangeAutoBorder(nullptr),
+    m_rangeLeftBorder(nullptr),
+    m_rangeRightBorder(nullptr),
+    m_maxValue(nullptr),
+    m_minValue(nullptr),
+    m_averageValue(nullptr),
+    m_medianValue(nullptr),
+    m_varianceValue(nullptr),
+    m_standardDeviation(nullptr),
+    m_sumValue(nullptr)
 {
 }
 
@@ -28,13 +33,20 @@ void PlotContextMenu::contextMenuRequestRelativePos(QPoint pos)
 void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
 {
     clickPosition = pos;
-    QMenu *menu = new QMenu(m_graphicsContainer->GetPlot());
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-    menu->addAction(tr("Zoom in"), this, SLOT(zoomInSelected()));
-    menu->addAction(tr("Zoom out"), this, SLOT(zoomOutSelected()));
-    menu->addAction(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()))->setEnabled(m_graphicsContainer->ContainsAnyData());
+
+#if defined(Q_OS_ANDROID)
+    MenuAndroid *menu = new MenuAndroid(m_graphicsContainer->GetPlot(), "");
+#else
+    MenuDesktop *menu = new MenuDesktop(m_graphicsContainer->GetPlot(), "");
+#endif
+
+    //TODO
+    //menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->addItem(tr("Zoom in"), this, SLOT(zoomInSelected()));
+    menu->addItem(tr("Zoom out"), this, SLOT(zoomOutSelected()));
+    menu->addItem(tr("Zoom to fit"), this, SLOT(zoomToFitSelected()), false, false, m_graphicsContainer->ContainsAnyData());
     menu->addSeparator();
-    menu->addAction(tr("Follow Mode"), this, SLOT(FollowMode()));
+    menu->addItem(tr("Follow Mode"), this, SLOT(FollowMode()));
     menu->addSeparator();
 
     m_sampleValue = InitMarkerTypeSelection(
@@ -59,28 +71,35 @@ void PlotContextMenu::contextMenuRequestGlobalPos(QPoint pos)
     menu->popup(clickPosition);
 }
 
-QAction * PlotContextMenu::InitMarkerTypeSelection(
-    QMenu *menu, QString const &label, Plot::MarkerTypeSelection markerTypeSelection)
+QObject * PlotContextMenu::InitMarkerTypeSelection(
+    bases::MenuBase *menu, QString const &label, Plot::MarkerTypeSelection markerTypeSelection)
 {
-    QAction *action = menu->addAction(label, this, SLOT(markerTypeSelected()));
-    action->setCheckable(true);
-    action->setChecked(
-        m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection);
+    QObject *item = menu->addItem(
+        label,
+        this,
+        SLOT(markerTypeSelected()),
+        true,
+        m_graphicsContainer->GetPlot()->m_markerTypeSelection == markerTypeSelection,
+        m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0
+    );
 
-    //FIXME: will not work with ghosts
-    action->setEnabled(m_graphicsContainer->GetSampleChannelProxy()->GetValueCount() > 0);
-    return action;
+    return item;
 }
 
-QAction * PlotContextMenu::InitMarkerRangeValue(
-    QMenu *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue)
+QObject * PlotContextMenu::InitMarkerRangeValue(
+    bases::MenuBase *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue)
 {
     Plot *plot = m_graphicsContainer->GetPlot();
-    QAction *action = menu->addAction(label, this, SLOT(valueSelectionSended()));
-    action->setCheckable(true);
-    action->setChecked(plot->m_markerRangeValue == markerRangeValue);
-    action->setEnabled(plot->m_markerTypeSelection != Plot::MTSSample);
-    return action;
+    QObject *item = menu->addItem(
+        label,
+        this,
+        SLOT(valueSelectionSended()),
+        true,
+        plot->m_markerRangeValue == markerRangeValue,
+        plot->m_markerTypeSelection != Plot::MTSSample
+    );
+
+    return item;
 }
 
 void PlotContextMenu::zoomInSelected()
@@ -104,7 +123,7 @@ void PlotContextMenu::FollowMode()
     m_graphicsContainer->SetFollowMode(true);
 }
 
-void PlotContextMenu::_SetMarkerType(QAction * action)
+void PlotContextMenu::_SetMarkerType(QObject * action)
 {
     Plot *plot = m_graphicsContainer->GetPlot();
     Plot::MarkerTypeSelection lastSelection = plot->m_markerTypeSelection;

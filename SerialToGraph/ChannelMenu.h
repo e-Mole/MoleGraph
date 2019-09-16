@@ -7,8 +7,8 @@ class ButtonLine;
 class ChannelProxyBase;
 class ColorCheckBox;
 class GraphicsContainer;
-class QLabel;
-class QPushButton;
+class Label;
+class PushButton;
 class KeyShortcut;
 
 namespace bases { class ClickableLabel; }
@@ -19,7 +19,7 @@ class ChannelMenu : public bases::MenuDialogBase
 
     void _AddChannel(ChannelProxyBase *channelProxy);
     void _ChangeAllChannels(bool checked);
-    QLabel* _GetShortcutLabel(const QString &shortcut);
+    Label* _GetShortcutLabel(const QString &shortcut);
     void _AddShortcut(int row, QString const &shortcut);
     void FillGrid();
     QString _GetChannelShortcutText(ChannelProxyBase *channelProxy);
@@ -29,8 +29,8 @@ class ChannelMenu : public bases::MenuDialogBase
     ColorCheckBox *m_graphCheckBox;
     QMap<ChannelProxyBase*, ColorCheckBox*> m_channelCheckBoxes;
     QMap<ColorCheckBox*, ChannelProxyBase*> m_checkBoxChannels;
-    QMap<QPushButton*, ChannelProxyBase*> m_editChannels;
-    QMap<QPushButton*, ChannelProxyBase *> m_removeButtonToChannel;
+    QMap<PushButton*, ChannelProxyBase*> m_editChannels;
+    QMap<PushButton*, ChannelProxyBase *> m_removeButtonToChannel;
     void _SetGraph(bool checked);
     KeyShortcut *m_plotShortcut;
     QMap<KeyShortcut*, ChannelProxyBase*> m_shortcutChannels;

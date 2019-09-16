@@ -8,7 +8,7 @@
 #include <ChannelGraph.h>
 #include <MainWindow.h>
 #include <Measurement.h>
-#include <QLabel>
+#include <bases/Label.h>
 #include <bases/RadioButton.h>
 #include <QString>
 #include <QVBoxLayout>
@@ -41,7 +41,7 @@ AxisChooseDialog::AxisChooseDialog(QWidget *parent, GraphicsContainer *graphicsC
                 arg(originalHorizontalChannelProxy->GetName());
     }
 
-    QLabel *label = new QLabel(text, this);
+    Label *label = new Label(text, this);
     label->setWordWrap(true);
     layout->addWidget(label);
 

@@ -3,14 +3,13 @@
 
 #include <QWidget>
 
-namespace bases { class ClickableLabel; }
-class CheckBox;
+namespace bases { class ClickableLabel; class CheckBox; }
 class QString;
 class ColorCheckBox: public QWidget
 {
     Q_OBJECT
 
-    CheckBox * m_checkBox;
+    bases::CheckBox * m_checkBox;
     bases::ClickableLabel * m_label;
 public:
     ColorCheckBox(QString const &text, QWidget *parent);

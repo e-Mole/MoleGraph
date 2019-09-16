@@ -4,7 +4,7 @@
 #include <bases/FormDialogBase.h>
 
 class GlobalSEttings;
-class QLineEdit;
+class LineEdit;
 
 namespace file
 {
@@ -15,7 +15,7 @@ class AddDirDialog : public bases::FormDialogBase
 
     bool BeforeAccept(){ return true; }
 
-    QLineEdit *m_dirName;
+    LineEdit *m_dirName;
 
 public:
     AddDirDialog(QWidget *parent, bool acceptChangesByDialogClosing);

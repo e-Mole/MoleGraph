@@ -4,8 +4,8 @@
 #include <QColor>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
+#include <bases/Label.h>
+#include <bases/PushButton.h>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
 #include <ColorPickerDialog.h>
@@ -22,7 +22,7 @@ FormDialogColor::FormDialogColor(QWidget *parent,  const QString &title, bool ac
 
 void FormDialogColor::AddColorButtonRow(const QColor &color)
 {
-    QPushButton * colorButton = new QPushButton("", this);
+    PushButton * colorButton = new PushButton("", this);
     QHBoxLayout *layout = new QHBoxLayout(colorButton);
     layout->setMargin(colorButton->physicalDpiY() / 12);
     m_colorButtonWidget = new QWidget(colorButton);
@@ -30,7 +30,7 @@ void FormDialogColor::AddColorButtonRow(const QColor &color)
     layout->addWidget(m_colorButtonWidget);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(colorButtonClicked()));
 
-    m_formLayout->addRow(new QLabel(tr("Color"), this), colorButton);
+    m_formLayout->addRow(new Label(tr("Color"), this), colorButton);
 }
 
 void FormDialogColor::colorButtonClicked()

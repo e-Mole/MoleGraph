@@ -28,7 +28,7 @@ ChannelWidget::ChannelWidget(
 ) :
     QWidget(parent),
     m_name(name),
-    m_title(new QLabel(name, this)),
+    m_title(new Label(name, this)),
     m_valueLabel(
         new ValueLabel(
             "",
@@ -80,7 +80,7 @@ QKeySequence ChannelWidget::GetKeyShortcutSequence()
 
 ChannelWidget::ValueLabel::ValueLabel(const QString &text, QWidget *parent, unsigned sizeFactor, const QColor &backColor, const QColor &foreColor
 ):
-    QLabel(text, parent),
+    Label(text, parent),
     m_backColor(backColor),
     m_foreColor(foreColor)
 {
@@ -139,7 +139,7 @@ void ChannelWidget::ValueLabel::SetForeColor(const QColor &color)
 {
     m_foreColor = color;
     QString style;
-    style = QString("QLabel { background-color : rgba(%1, %2, %3, %4);").
+    style = QString("Label { background-color : rgba(%1, %2, %3, %4);").
             arg(m_backColor.red()).
             arg(m_backColor.green()).
             arg(m_backColor.blue()).

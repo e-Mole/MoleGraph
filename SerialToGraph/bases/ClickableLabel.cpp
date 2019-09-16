@@ -1,12 +1,12 @@
 #include "ClickableLabel.h"
 #include <QWidget>
 #include <QColor>
-
+#include <bases/Label.h>
 namespace bases
 {
 
 ClickableLabel::ClickableLabel(QString const& text, QWidget *parent):
-    QLabel(text, parent)
+    Label(text, parent)
 {
 }
 

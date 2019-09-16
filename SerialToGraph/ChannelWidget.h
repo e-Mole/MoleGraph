@@ -2,7 +2,7 @@
 #define CLICKABLEGROUPBOX_H
 
 #include <QColor>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QWidget>
 #include <ChannelBase.h>
 #include <QKeySequence>
@@ -14,7 +14,7 @@ class ChannelWidget : public QWidget
 {
     Q_OBJECT
 
-    class ValueLabel : public QLabel
+    class ValueLabel : public Label
     {
         virtual void resizeEvent(QResizeEvent * event);
         QColor m_backColor;
@@ -36,7 +36,7 @@ class ChannelWidget : public QWidget
     QColor _GetBackColorFromType(ChannelBase::ValueType type);
     void _InitTitle();
     QString m_name;
-    QLabel * m_title;
+    Label * m_title;
     ValueLabel *m_valueLabel;
     ChannelGraph *m_channelGraph;
     Plot *m_plot;

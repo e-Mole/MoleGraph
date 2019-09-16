@@ -4,6 +4,7 @@
 
 #define MAX_RECENT_FILE_COUNT 10
 #define RECENT_FILE_SEPARATOR '\n'
+#define WIDGET_HEIGHT_DIVIDER 5.0
 
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", TARGET),
@@ -339,4 +340,10 @@ bool GlobalSettings::GetOpenRecentFileAtStartup() const
 void GlobalSettings::SetOpenRecentFileAtStartup(bool openRecent)
 {
     _Set(Key_OpenRecentFileAtStartup, openRecent);
+}
+
+
+double GlobalSettings::getWidgetHeightDivider()
+{
+    return WIDGET_HEIGHT_DIVIDER;
 }

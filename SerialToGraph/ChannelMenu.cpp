@@ -10,9 +10,9 @@
 #include <Measurement.h>
 #include <Plot.h>
 #include <QGridLayout>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QPalette>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QSizePolicy>
 #include <QShortcut>
 
@@ -38,9 +38,9 @@ ChannelMenu::~ChannelMenu()
         delete ks;
 }
 
-QLabel* ChannelMenu::_GetShortcutLabel(QString const &shortcut)
+Label* ChannelMenu::_GetShortcutLabel(QString const &shortcut)
 {
-    return new QLabel(shortcut + " ", this);
+    return new Label(shortcut + " ", this);
 }
 
 void ChannelMenu::FillGrid()
@@ -58,7 +58,7 @@ void ChannelMenu::FillGrid()
     }
 
     ++row;
-    QPushButton *showAllButton = new QPushButton(tr("All Channels"), this);
+    PushButton *showAllButton = new PushButton(tr("All Channels"), this);
     connect(showAllButton, SIGNAL(clicked()), this, SLOT(allChannelsActivated()));
     m_gridLayout->addWidget(showAllButton, row, 0, 1, 2);
     if (m_allChannelsShortcut)
@@ -66,7 +66,7 @@ void ChannelMenu::FillGrid()
         _AddShortcut(row, m_allChannelsShortcut->GetText());
     }
     ++row;
-    QPushButton *showNoneButton = new QPushButton(tr("No Channels"), this);
+    PushButton *showNoneButton = new PushButton(tr("No Channels"), this);
     connect(showNoneButton, SIGNAL(clicked()), this, SLOT(noChannelsActivated()));
     m_gridLayout->addWidget(showNoneButton, row, 0, 1, 2);
     if (m_noChannelsShortcut)
@@ -74,7 +74,7 @@ void ChannelMenu::FillGrid()
         _AddShortcut(row, m_noChannelsShortcut->GetText());
     }
     ++row;
-    QPushButton *addGhostChannel = new QPushButton(tr("Add Virtual Channel"), this);
+    PushButton *addGhostChannel = new PushButton(tr("Add Virtual Channel"), this);
     addGhostChannel->setEnabled(m_isGhostAddable);
     connect(addGhostChannel, SIGNAL(clicked()), this, SIGNAL(addGhostChannelActivated()));
     m_gridLayout->addWidget(addGhostChannel, row, 0, 1, 2);
@@ -104,14 +104,14 @@ void ChannelMenu::_AddChannel(ChannelProxyBase *channelProxy)
 
     _AddShortcut(rowNr, _GetChannelShortcutText(channelProxy));
 
-    QPushButton *editButton = new QPushButton(tr("Edit"), this);
+    PushButton *editButton = new PushButton(tr("Edit"), this);
     m_editChannels[editButton] = channelProxy;
     connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
     m_gridLayout->addWidget(editButton, rowNr, 1);
 
     if (channelProxy->IsGhost())
     {
-        QPushButton *removeButton = new QPushButton(tr("Remove"), this);
+        PushButton *removeButton = new PushButton(tr("Remove"), this);
         m_editChannels[removeButton] = channelProxy;
         connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
         m_gridLayout->addWidget(removeButton, rowNr, 2);
@@ -129,7 +129,7 @@ void ChannelMenu::UpdateCheckBoxes()
 }
 void ChannelMenu::edit()
 {
-    ChannelProxyBase *channelProxy = m_editChannels[(QPushButton*)sender()];
+    ChannelProxyBase *channelProxy = m_editChannels[(PushButton*)sender()];
     channelProxy->GetWidget()->clicked();
 
     ColorCheckBox *cb = m_channelCheckBoxes[channelProxy];
@@ -139,7 +139,7 @@ void ChannelMenu::edit()
 
 void ChannelMenu::remove()
 {
-    ChannelProxyBase * channelProxy = m_removeButtonToChannel[(QPushButton*)sender()];
+    ChannelProxyBase * channelProxy = m_removeButtonToChannel[(PushButton*)sender()];
     m_channelCheckBoxes.remove(channelProxy);
     m_graphicsContainer->RemoveChannelProxy(channelProxy);
 

@@ -6,8 +6,8 @@
 #include <bases/ComboBox.h>
 #include <bases/CheckBox.h>
 #include <QFormLayout>
-#include <QLabel>
-#include <QLineEdit>
+#include <bases/Label.h>
+#include <bases/LineEdit.h>
 #include <QWidget>
 
 MeasurementSettings::MeasurementSettings(
@@ -21,37 +21,37 @@ MeasurementSettings::MeasurementSettings(
     m_sampleUnits(NULL),
     m_marksShown(NULL)
 {
-    m_name = new QLineEdit(graphicsContainer->GetName(), this);
-    m_formLayout->addRow(new QLabel(tr("Name"), this), m_name);
+    m_name = new LineEdit(graphicsContainer->GetName(), this);
+    m_formLayout->addRow(new Label(tr("Name"), this), m_name);
 
     m_type = new bases::ComboBox(this);
     m_type->addItem(tr("Periodical"));
     m_type->addItem(tr("On Demand"));
     m_type->setCurrentIndex((int)m_measurement->m_type);
     m_type->setEnabled(m_measurement->m_state == Measurement::Ready);
-    m_formLayout->addRow(new QLabel(tr("Type"), this), m_type);
+    m_formLayout->addRow(new Label(tr("Type"), this), m_type);
     connect(m_type, SIGNAL(currentIndexChanged(int)), this, SLOT(disablePeriodAndUnits(int)));
 
     bool enablePeriodItems =
         m_measurement->m_type == Measurement::Periodical &&
         m_measurement->m_state == Measurement::Ready;
 
-    m_period = new QLineEdit(QString("%1").arg(measurement->m_period), this);
+    m_period = new LineEdit(QString("%1").arg(measurement->m_period), this);
     m_period->setEnabled(enablePeriodItems);
-    m_formLayout->addRow(new QLabel(tr("Period"), this), m_period);
+    m_formLayout->addRow(new Label(tr("Period"), this), m_period);
 
     m_sampleUnits = new bases::ComboBox(this);
     m_sampleUnits->addItem(tr("Hz"));
     m_sampleUnits->addItem(tr("Sec", "seconds"));
     m_sampleUnits->setCurrentIndex((unsigned)measurement->m_sampleUnits);
     m_sampleUnits->setEnabled(enablePeriodItems);
-    m_formLayout->addRow(new QLabel(tr("Units"), this), m_sampleUnits);
+    m_formLayout->addRow(new Label(tr("Units"), this), m_sampleUnits);
 
     AddColorButtonRow(m_measurement->m_color);
 
-    m_marksShown = new CheckBox(this);
+    m_marksShown = new bases::CheckBox(this);
     m_marksShown->setChecked(m_graphicsContainer->GetMarksShown());
-    m_formLayout->addRow(new QLabel(tr("Show Marks")), m_marksShown);
+    m_formLayout->addRow(new Label(tr("Show Marks")), m_marksShown);
 
 }
 

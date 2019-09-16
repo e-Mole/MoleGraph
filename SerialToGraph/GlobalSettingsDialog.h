@@ -3,15 +3,14 @@
 
 #include <bases/FormDialogBase.h>
 
-namespace bases { class ComboBox;}
+namespace bases { class ComboBox; class CheckBox;}
 
-class CheckBox;
 class Context;
 class GlobalSettings;
-class QDoubleSpinBox;
-class QLineEdit;
-class QPushButton;
-class QSpinBox;
+class DoubleSpinBox;
+class LineEdit;
+class PushButton;
+class SpinBox;
 
 namespace hw { class HwSink; }
 
@@ -39,17 +38,17 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     GlobalSettings &m_settings;
     bases::ComboBox *m_languages;
     bases::ComboBox *m_brackets;
-    CheckBox *m_useBluetooth;
-    CheckBox *m_showConsole;
-    QLineEdit *m_limitDirLine;
-    QPushButton *m_limitDirButton;
-    CheckBox *m_hideAllChannels;
+    bases::CheckBox *m_useBluetooth;
+    bases::CheckBox *m_showConsole;
+    LineEdit *m_limitDirLine;
+    PushButton *m_limitDirButton;
+    bases::CheckBox *m_hideAllChannels;
     bases::ComboBox *m_menuOrientation;
-    CheckBox *m_menuOnDemand;
-    QSpinBox *m_channelSizeFactor;
-    QDoubleSpinBox *m_channelGraphPenWidth;
-    CheckBox *m_acceptChangesByDialogClosing;
-    CheckBox *m_openRecentOnStartUp;
+    bases::CheckBox *m_menuOnDemand;
+    SpinBox *m_channelSizeFactor;
+    DoubleSpinBox *m_channelGraphPenWidth;
+    bases::CheckBox *m_acceptChangesByDialogClosing;
+    bases::CheckBox *m_openRecentOnStartUp;
 public:
     GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink);
 

@@ -5,8 +5,8 @@
 #include <QDebug>
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
+#include <bases/Label.h>
+#include <bases/PushButton.h>
 #include <QProgressBar>
 #include <bases/RadioButton.h>
 #include <QShortcut>
@@ -30,7 +30,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
     setLayout(layout);
 
     //m_description->setHidden(true);
-    m_description = new QLabel(this);
+    m_description = new Label(this);
     m_description->setText(tr("Please, select a comatible device port."));
     layout->addWidget(m_description);
 
@@ -44,14 +44,14 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
     m_progress->setTextVisible(false);
     layout->addWidget(m_progress);
 
-    m_progressText = new QLabel(this);
+    m_progressText = new Label(this);
     m_progressText->setAlignment(Qt::AlignHCenter);
     layout->addWidget(m_progressText);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     layout->addLayout(buttonLayout);
 
-    m_refresh = new QPushButton(this);
+    m_refresh = new PushButton(this);
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
     connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
@@ -60,7 +60,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
     m_refresh->setText(tr("Refresh"));
     buttonLayout->addWidget(m_refresh);
 
-    QPushButton *skip = new QPushButton(tr("Work Offline"), this);
+    PushButton *skip = new PushButton(tr("Work Offline"), this);
     connect(skip, SIGNAL(clicked(bool)), this, SLOT(workDisconnected()));
     buttonLayout->addWidget(skip);
 
@@ -101,8 +101,8 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     connect(rb, SIGNAL(released()), this, SLOT(portRadioButtonReleased()), Qt::QueuedConnection);
 
     m_portLayout->addWidget(rb, rowNumber, 0);
-    m_portLayout->addWidget(new QLabel(item.GetStatusText(), m_portWidget), rowNumber, 1);
-    m_portLayout->addWidget(new QLabel(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
+    m_portLayout->addWidget(new Label(item.GetStatusText(), m_portWidget), rowNumber, 1);
+    m_portLayout->addWidget(new Label(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
 
     if (m_autoConnect &&
         !GlobalSettings::GetInstance().GetForcedOffline() &&

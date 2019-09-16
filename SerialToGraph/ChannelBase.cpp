@@ -8,7 +8,7 @@
 #include <qcustomplot/qcustomplot.h>
 #include <QDebug>
 #include <QHBoxLayout>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QLocale>
 #include <QPalette>
 #include <QPen>
@@ -54,7 +54,7 @@ void ChannelBase::AddValue( double value)
 Measurement * ChannelBase::GetMeasurement() const
 {
     return m_measurement;
-}    
+}
 
 double ChannelBase::GetRawValue(unsigned index) const
 {

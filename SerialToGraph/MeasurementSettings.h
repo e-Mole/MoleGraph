@@ -3,12 +3,11 @@
 
 #include <bases/FormDialogColor.h>
 
-namespace bases { class ComboBox; }
+namespace bases { class ComboBox; class CheckBox; }
 class Measurement;
 class GraphicsContainer;
-class CheckBox;
 
-class QLineEdit;
+class LineEdit;
 class QWidget;
 class MeasurementSettings  : public bases::FormDialogColor
 {
@@ -16,11 +15,11 @@ class MeasurementSettings  : public bases::FormDialogColor
 
     Measurement * m_measurement;
     GraphicsContainer * m_graphicsContainer;
-    QLineEdit *m_name;
+    LineEdit *m_name;
     bases::ComboBox *m_type;
-    QLineEdit *m_period;
+    LineEdit *m_period;
     bases::ComboBox *m_sampleUnits;
-    CheckBox *m_marksShown;
+    bases::CheckBox *m_marksShown;
 
     bool BeforeAccept();
 public:

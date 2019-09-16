@@ -3,10 +3,10 @@
 
 #include <bases/PlatformDialog.h>
 class GlobalSettings;
-class QLabel;
-class QLineEdit;
+class Label;
+class LineEdit;
 class QListView;
-class QPushButton;
+class PushButton;
 class QString;
 class QWidget;
 
@@ -30,14 +30,14 @@ private:
     void _CheckUpButton();
     void _ChangeDir(const QModelIndex &index);
 
-    QLineEdit *m_fileName;
+    LineEdit *m_fileName;
     FileModel *m_model;
     QString m_dir;
-    QLabel *m_extension;
-    QPushButton *m_actionButton;
+    Label *m_extension;
+    PushButton *m_actionButton;
     QListView *m_view;
     Type m_type;
-    QPushButton *m_upButton;
+    PushButton *m_upButton;
     bool m_acceptChangesByDialogClosing;
     QString const &m_limitDir;
 

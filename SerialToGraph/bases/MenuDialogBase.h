@@ -4,7 +4,7 @@
 #include <bases/PlatformDialog.h>
 class QGridLayout;
 class QMouseEvent;
-class QScrollArea;
+class QString;
 
 namespace bases
 {

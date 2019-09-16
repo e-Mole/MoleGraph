@@ -14,10 +14,11 @@ class ChannelProxyBase;
 class GraphicsContainer;
 class HwChannelProxy;
 class Measurement;
+class PushButton;
 class SampleChannel;
 class QFormLayout;
 class QFrame;
-class QLineEdit;
+class LineEdit;
 class QString;
 class SampleChannelProxy;
 
@@ -57,9 +58,9 @@ class ChannelSettings : public bases::FormDialogColor
     GraphicsContainer *m_graphicsContainer;
     ChannelProxyBase *m_channelProxy;
     ChannelProxyBase * m_originalProxy;
-    QLineEdit *m_currentValueControl;
-    QLineEdit * m_name;
-	QLineEdit * m_units;
+    LineEdit *m_currentValueControl;
+    LineEdit * m_name;
+	LineEdit * m_units;
     bases::ComboBox * m_sourceMeasurementCombo;
     bases::ComboBox * m_sourceChannelCombo;
     bases::ComboBox * m_shapeComboBox;
@@ -71,8 +72,8 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_sensorQuantityComboBox;
     bases::ComboBox * m_sensorNameComboBox;
     bases::ComboBox * m_sensorPortComboBox;
-    QPushButton *m_originlValue;
-    QPushButton *m_naValue;
+    PushButton *m_originlValue;
+    PushButton *m_naValue;
 
     bool m_currentValueChanged;
     double m_currentValue;

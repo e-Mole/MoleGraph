@@ -18,6 +18,7 @@ class GraphicsContainerManager;
 class Measurement;
 class MeasurementMenu;
 class PortListDialog;
+class PushButton;
 class QApplication;
 class QDataStream;
 class QGridLayout;
@@ -41,7 +42,7 @@ class MainWindow : public QMainWindow
     Console *m_console;
     bool m_savedValues;
     QGridLayout *m_mainLayout;
-    QPushButton *m_menuButton;
+    PushButton *m_menuButton;
     QWidget *m_centralWidget;
     bool m_storedValues;
     GraphicsContainerManager *m_graphicsContainerManager;

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QVector>
 #include <QColor>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QObject>
 
 class Measurement;

@@ -22,10 +22,10 @@
 #include <bases/ComboBox.h>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
+#include <bases/Label.h>
+#include <bases/LineEdit.h>
 #include <QLocale>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QSettings>
 #include <QString>
 #include <SampleChannel.h>
@@ -61,9 +61,9 @@ ChannelSettings::ChannelSettings(
     m_graphicsContainer(graphicsContainer),
     m_channelProxy(channelProxy),
     m_originalProxy(channelProxy),
-    m_currentValueControl(new QLineEdit(this)),
-    m_name(new QLineEdit(m_channelProxy->GetName(), this)),
-    m_units(new QLineEdit(m_channelProxy->GetUnits(), this)),
+    m_currentValueControl(new LineEdit(this)),
+    m_name(new LineEdit(m_channelProxy->GetName(), this)),
+    m_units(new LineEdit(m_channelProxy->GetUnits(), this)),
     m_sourceMeasurementCombo(new bases::ComboBox(this)),
     m_sourceChannelCombo(new bases::ComboBox(this)),
     m_shapeComboBox(new bases::ComboBox(this)),
@@ -75,8 +75,8 @@ ChannelSettings::ChannelSettings(
     m_sensorQuantityComboBox(new bases::ComboBox(this)),
     m_sensorNameComboBox(new bases::ComboBox(this)),
     m_sensorPortComboBox(new bases::ComboBox(this)),
-    m_originlValue(new QPushButton(tr("Original"), this)),
-    m_naValue(new QPushButton(tr("n/a"), this)),
+    m_originlValue(new PushButton(tr("Original"), this)),
+    m_naValue(new PushButton(tr("n/a"), this)),
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
     m_sensorManager(sensorManager)
@@ -103,10 +103,10 @@ ChannelSettings::ChannelSettings(
         AddSeparator();
 
         m_name->setVisible(true);
-        m_formLayout->addRow(new QLabel(tr("Title"), this), m_name);
+        m_formLayout->addRow(new Label(tr("Title"), this), m_name);
         m_units->setVisible(true);
         m_units->setEnabled(dynamic_cast<HwChannelProxy*>(channelProxy));
-        m_formLayout->addRow(new QLabel(tr("Units"), this), m_units);
+        m_formLayout->addRow(new Label(tr("Units"), this), m_units);
 
     }
     AddColorButtonRow(channelProxy->GetForeColor());
@@ -134,7 +134,7 @@ void ChannelSettings::_HideAllOptional()
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox *item, QString const &label, const char* slot)
 {
     item->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
-    m_formLayout->addRow(new QLabel(label, this), item);
+    m_formLayout->addRow(new Label(label, this), item);
     connect(item, SIGNAL(currentIndexChanged(int)), this, slot);
 }
 
@@ -267,8 +267,8 @@ void ChannelSettings::_InitializeGhostCombos()
 {
     m_sourceMeasurementCombo->setVisible(true);
     m_sourceChannelCombo->setVisible(true);
-    m_formLayout->addRow(new QLabel(tr("Source Measurement"), this), m_sourceMeasurementCombo);
-    m_formLayout->addRow(new QLabel(tr("Source Channel"), this), m_sourceChannelCombo);
+    m_formLayout->addRow(new Label(tr("Source Measurement"), this), m_sourceMeasurementCombo);
+    m_formLayout->addRow(new Label(tr("Source Channel"), this), m_sourceChannelCombo);
     AddSeparator();
     _FillMeasurementCombo();
 }
@@ -376,7 +376,7 @@ void ChannelSettings::_InitializeValueLine(HwChannelProxy *channelProxy)
     curValLayout->addWidget(m_originlValue);
     connect(m_naValue, SIGNAL(clicked(bool)), this, SLOT(setNaValue(bool)));
     curValLayout->addWidget(m_naValue);
-    m_formLayout->addRow(new QLabel(tr("Current Value"), this), curValLayout);
+    m_formLayout->addRow(new Label(tr("Current Value"), this), curValLayout);
     AddSeparator();
 
     _FillValueLine(channelProxy);
@@ -468,7 +468,7 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
     m_penStyle->addItem(tr("Dash Dot Dot Line"));
     m_penStyle->setCurrentIndex((int)selected);
 
-    m_formLayout->addRow(new QLabel(tr("Pen Style"), this), m_penStyle);
+    m_formLayout->addRow(new Label(tr("Pen Style"), this), m_penStyle);
 }
 
 void ChannelSettings::_FillTimeFeatures(SampleChannelProxy *channelProxy)
@@ -511,9 +511,9 @@ void ChannelSettings::_InitializeTimeFeatures(SampleChannelProxy *channelProxy)
     m_style->setVisible(true);
     m_timeUnits->setVisible(true);
     m_format->setVisible(true);
-    m_formLayout->addRow(new QLabel(tr("Style"), this), m_style);
-    m_formLayout->addRow(new QLabel(tr("Units"), this), m_timeUnits);
-    m_formLayout->addRow(new QLabel(tr("Format"), this), m_format);
+    m_formLayout->addRow(new Label(tr("Style"), this), m_style);
+    m_formLayout->addRow(new Label(tr("Units"), this), m_timeUnits);
+    m_formLayout->addRow(new Label(tr("Format"), this), m_format);
     AddSeparator();
     _FillTimeFeatures(channelProxy);
     connect(m_style, SIGNAL(currentIndexChanged(int)), this, SLOT(styleChanged(int)));
@@ -593,7 +593,7 @@ void ChannelSettings::_InitializeShapeCombo(ChannelProxyBase *channelProxy)
     }
 
     m_shapeComboBox->setEnabled(!channelProxy->IsOnHorizontalAxis());
-    m_formLayout->addRow(new QLabel(tr("Shape"), this), m_shapeComboBox);
+    m_formLayout->addRow(new Label(tr("Shape"), this), m_shapeComboBox);
 }
 
 void ChannelSettings::_RefillAxisCombo()
@@ -635,7 +635,7 @@ void ChannelSettings::_InitializeAxisCombo()
         m_axisComboBox->setEnabled(false);
     else
         m_axisComboBox->setEnabled(true);
-    m_formLayout->addRow(new QLabel(tr("Axis"), this), m_axisComboBox);
+    m_formLayout->addRow(new Label(tr("Axis"), this), m_axisComboBox);
 }
 
 void ChannelSettings::axisChanged(int index)

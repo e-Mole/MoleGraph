@@ -7,7 +7,7 @@
 class Axis;
 class GraphicsContainer;
 class Plot;
-class QPushButton;
+class PushButton;
 class QWidget;
 class AxisMenu : public bases::MenuDialogBase
 {
@@ -17,8 +17,8 @@ class AxisMenu : public bases::MenuDialogBase
     void _AddRowWithEditAndRemove(Axis *axis);
 
     GraphicsContainer * m_graphicsContainer;
-    QMap<QPushButton*, Axis*> m_removeButtontoAxis;
-    QMap<QPushButton*, Axis*> m_editButtontoAxis;
+    QMap<PushButton*, Axis*> m_removeButtontoAxis;
+    QMap<PushButton*, Axis*> m_editButtontoAxis;
 public:
     AxisMenu(QWidget *parent, GraphicsContainer *graphicsContainer);
 

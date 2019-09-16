@@ -7,7 +7,7 @@
 namespace bases{ class ComboBox; }
 class AxisCopy;
 class QColor;
-class QLineEdit;
+class LineEdit;
 class QMouseQMouseEvent;
 class QString;
 class QWidget;
@@ -17,7 +17,7 @@ class AxisSettings : public bases::FormDialogColor
 
     virtual bool BeforeAccept();
     Axis * m_axis;
-    QLineEdit* m_name;
+    LineEdit* m_name;
     bases::ComboBox *m_side;
     bases::ComboBox *m_display;
 

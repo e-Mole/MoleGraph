@@ -1,13 +1,13 @@
 #ifndef CLICKABLELABEL_H
 #define CLICKABLELABEL_H
-#include <QLabel>
+#include <bases/Label.h>
 
 class QString;
 class QWidget;
 
 namespace bases
 {
-class ClickableLabel : public QLabel
+class ClickableLabel : public Label
 {
     Q_OBJECT
 

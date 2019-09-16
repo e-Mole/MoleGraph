@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <AxisMenu.h>
 #include <Axis.h>
+#include <bases/PushButton.h>
 #include <ButtonLine.h>
 #include <ChannelBase.h>
 #include <ChannelMenu.h>
@@ -110,7 +111,9 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     m_measurementTabs = new QTabWidget(m_centralWidget);
 
-    m_menuButton = new QPushButton(tr("Menu"), this);
+    const int tabsHeight = m_measurementTabs->physicalDpiX() / 4;
+    m_menuButton = new PushButton(tr("Menu"), this);
+    //m_menuButton->setFixedHeight(tabsHeight);
     connect(m_menuButton, SIGNAL(clicked()), this, SLOT(menuButtonClicked()));
     ShowMenuButton(GlobalSettings::GetInstance().GetMenuOnDemand());
     m_mainLayout = new QGridLayout();
@@ -118,8 +121,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
 #if defined(Q_OS_ANDROID)
     m_measurementTabs->setStyleSheet(
-        QString("QTabBar::tab { height: %1px; } QTabBar::scroller { width: %2px; }").
-            arg(m_measurementTabs->physicalDpiX() / 4).
+        QString("QTabBar::tab { height: %1px; } QTabBar::scroller { width: %2px; } QTabWidget::left-corner {top: -10px; height: %1}").
+            arg(tabsHeight).
             arg(m_measurementTabs->physicalDpiX() / 3)
     );
 #endif

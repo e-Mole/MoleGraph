@@ -8,7 +8,6 @@
 #include <QGesture>
 #include <QGestureEvent>
 #include <limits>
-#include <QMessageBox>
 #include <QPinchGesture>
 #include <QTime>
 #include <QWheelEvent>

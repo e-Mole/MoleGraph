@@ -1,6 +1,6 @@
 #include "FormDialogBase.h"
 #include <QFormLayout>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QString>
 #include <GlobalSettings.h>
 #include <QFrame>
@@ -23,11 +23,11 @@ FormDialogBase::FormDialogBase(QWidget *parent, const QString &title, bool accep
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     mainLayout->addLayout(buttonLayout);
 
-    QPushButton *store = new QPushButton(tr("Store"), this);
+    PushButton *store = new PushButton(tr("Store"), this);
     buttonLayout->addWidget(store);
     connect(store, SIGNAL(clicked(bool)), this, SLOT(storeAndAccept()));
 
-    QPushButton *cancel = new QPushButton(tr("Cancel"), this);
+    PushButton *cancel = new PushButton(tr("Cancel"), this);
     buttonLayout->addWidget(cancel);
     connect(cancel, SIGNAL(clicked(bool)), this, SLOT(reject()));
 }

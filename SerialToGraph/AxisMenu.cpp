@@ -7,12 +7,12 @@
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <QFormLayout>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QLayoutItem>
 #include <QPalette>
 #include <QMap>
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QString>
 #include <QWidget>
 
@@ -30,18 +30,18 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
     buttonLayout->setMargin(0);
     rowWidget->setLayout(buttonLayout);
 
-    QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
+    PushButton * editButton = new PushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtontoAxis.insert(editButton, axis);
     connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()));
 
-    QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
+    PushButton * removeButton = new PushButton(tr("Remove"), rowWidget);
     removeButton->setEnabled(axis->IsRemovable());
     buttonLayout->addWidget(removeButton);
     m_removeButtontoAxis.insert(removeButton, axis);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeButtonPressed()));
 
-    QLabel *label = new QLabel(axis->GetTitle(), this);
+    Label *label = new Label(axis->GetTitle(), this);
     QPalette palette(label->palette());
     palette.setColor(QPalette::Foreground, axis->GetColor());
     label->setPalette(palette);
@@ -55,10 +55,10 @@ void AxisMenu::FillGrid()
     foreach (Axis *axis, m_graphicsContainer->GetAxes())
         _AddRowWithEditAndRemove(axis);
 
-    QPushButton * addbutton = new QPushButton(tr("Add New"), this);
+    PushButton * addbutton = new PushButton(tr("Add New"), this);
 
     unsigned row = m_gridLayout->rowCount();
-    m_gridLayout->addWidget(new QLabel("", this), row, 0);
+    m_gridLayout->addWidget(new Label("", this), row, 0);
     m_gridLayout->addWidget(addbutton, row, 1);
     connect(addbutton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
     m_gridLayout->setColumnStretch(1, 1);
@@ -79,7 +79,7 @@ void AxisMenu::addButtonPressed()
 
 void AxisMenu::removeButtonPressed()
 {
-    Axis *axis = m_removeButtontoAxis.find((QPushButton*)sender()).value();
+    Axis *axis = m_removeButtontoAxis.find((PushButton*)sender()).value();
     Axis *firstVertical = NULL;
     foreach (Axis * axis, m_graphicsContainer->GetAxes())
     {
@@ -128,7 +128,7 @@ void AxisMenu::removeButtonPressed()
 
 void AxisMenu::editButtonPressed()
 {
-    Axis *axis = m_editButtontoAxis.find((QPushButton*)sender()).value();
+    Axis *axis = m_editButtontoAxis.find((PushButton*)sender()).value();
     AxisSettings dialog(this, axis, GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {

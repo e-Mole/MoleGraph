@@ -14,13 +14,13 @@ class PlotContextMenu;
 class QDialog;
 class QGridLayout;
 class QKeySequence;
-class QLabel;
-class QLineEdit;
-class QMenu;
+class Label;
+class LineEdit;
 class QPoint;
-class QPushButton;
+class PushButton;
 class QShortcut;
 
+namespace bases { class MenuBase;}
 namespace hw { class HwSink; }
 
 class ButtonLine : public QWidget
@@ -28,30 +28,27 @@ class ButtonLine : public QWidget
     Q_OBJECT
 
     void _InitializeMenu();
-    QPoint _GetGlobalMenuPosition(QPushButton *button);
+    QPoint _GetGlobalMenuPosition(PushButton *button);
     void _SetConnectivityState(const QString &stateString, hw::HwSink::State state);
     QString _GetRootDir();
     void _FillRecentFileMenu();
-    void _SetMenuStyle(QMenu *menu);
     QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
     QKeySequence _GetKey(QShortcut *shortcut);
 
     QGridLayout *m_mainLayout;
-    QPushButton *m_startButton;
-    QPushButton *m_sampleRequestButton;
-    //QAction *m_sampleRequestAction;
-    QPushButton *m_pauseContinueButton;
-    //QAction *m_pauseContinueAction;
-    QPushButton *m_stopButton;
-    QPushButton *m_connectivityButton;
-    QPushButton * m_fileMenuButton;
-    QPushButton * m_panelMenuButton;
-    QPushButton * m_axisMenuButton;
-    QPushButton * m_measurementButton;
-    QPushButton * m_viewButton;
-    QMenu *m_fileMenu;
+    PushButton *m_startButton;
+    PushButton *m_sampleRequestButton;
+    PushButton *m_pauseContinueButton;
+    PushButton *m_stopButton;
+    PushButton *m_connectivityButton;
+    PushButton * m_fileMenuButton;
+    PushButton * m_panelMenuButton;
+    PushButton * m_axisMenuButton;
+    PushButton * m_measurementButton;
+    PushButton * m_viewButton;
+    bases::MenuBase *m_fileMenu;
     PlotContextMenu *m_viewMenu;
-    QMenu *m_recentFilesMenu;
+    bases::MenuBase *m_recentFilesMenu;
 	bool m_connected;
 	bool m_enabledBChannels;
 
@@ -62,7 +59,7 @@ class ButtonLine : public QWidget
     hw::HwSink &m_hwSink;
     Measurement *m_measurement;
     QWidget* m_space;
-    QMap<QAction*, QString> m_recentFileActions;
+    QMap<QObject*, QString> m_recentFileActions;
 public:
     ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);

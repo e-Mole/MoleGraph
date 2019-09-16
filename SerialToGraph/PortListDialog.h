@@ -9,9 +9,9 @@
 class GlobalSettings;
 class QCloseEvent;
 class QGridLayout;
-class QLabel;
+class Label;
 class QProgressBar;
-class QPushButton;
+class PushButton;
 class RadioButton;
 class QWidget;
 
@@ -24,9 +24,9 @@ class PortListDialog : public bases::PlatformDialog
 
     hw::HwSink &m_hwSink;
     QProgressBar *m_progress;
-    QLabel *m_progressText;
-    QPushButton *m_refresh;
-    QLabel *m_description;
+    Label *m_progressText;
+    PushButton *m_refresh;
+    Label *m_description;
     QWidget * m_portWidget;
     QGridLayout *m_portLayout;
     QMap<RadioButton *, hw::PortInfo> m_radioToInfo;

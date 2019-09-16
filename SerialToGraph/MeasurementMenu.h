@@ -6,7 +6,7 @@
 
 namespace bases{ class ClickableLabel; }
 class Measurement;
-class QPushButton;
+class PushButton;
 class RadioButton;
 class QWidget;
 struct Context;
@@ -19,8 +19,8 @@ class MeasurementMenu : public bases::MenuDialogBase
     void FillGrid();
 
     Context const &m_context;
-    QMap<QPushButton*, Measurement*> m_removeButtonToItem;
-    QMap<QPushButton*, Measurement*> m_editButtonToItem;
+    QMap<PushButton*, Measurement*> m_removeButtonToItem;
+    QMap<PushButton*, Measurement*> m_editButtonToItem;
     QMap<RadioButton*,Measurement*> m_radioButtonToItem;
     QMap<bases::ClickableLabel*,Measurement*> m_nameToItem;
 public:

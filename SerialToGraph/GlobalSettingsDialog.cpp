@@ -11,14 +11,14 @@
 #include <Measurement.h>
 #include <MyMessageBox.h>
 #include <QDebug>
-#include <QDoubleSpinBox>
+#include <bases/DoubleSpinBox.h>
 #include <QHBoxLayout>
 #include <QFormLayout>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QLocale>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QSpinBox>
+#include <bases/LineEdit.h>
+#include <bases/PushButton.h>
+#include <bases/SpinBox.h>
 
 GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwSink &hwSink):
     bases::FormDialogBase(parent, tr("Settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
@@ -53,13 +53,13 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
 
 void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
 {
-    m_acceptChangesByDialogClosing = new CheckBox(this);
+    m_acceptChangesByDialogClosing = new bases::CheckBox(this);
     m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
     m_formLayout->addRow(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
 void GlobalSettingsDialog::_InitializeChannelGraphPenWidth()
 {
-    m_channelGraphPenWidth = new QDoubleSpinBox();
+    m_channelGraphPenWidth = new DoubleSpinBox();
     m_channelGraphPenWidth->setMinimum(0.5);
     m_channelGraphPenWidth->setMaximum(5);
     m_channelGraphPenWidth->setDecimals(1);
@@ -71,7 +71,7 @@ void GlobalSettingsDialog::_InitializeChannelGraphPenWidth()
 
 void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
 {
-    m_channelSizeFactor = new QSpinBox();
+    m_channelSizeFactor = new SpinBox();
     m_channelSizeFactor->setMinimum(50);
     m_channelSizeFactor->setMaximum(500);
     m_channelSizeFactor->setSingleStep(10);
@@ -88,21 +88,21 @@ void GlobalSettingsDialog::_InitializeButtonLines()
     m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
     m_formLayout->addRow(tr("Menu Orientation"), m_menuOrientation);
 
-    m_menuOnDemand = new CheckBox(this);
+    m_menuOnDemand = new bases::CheckBox(this);
     m_menuOnDemand->setChecked(m_settings.GetMenuOnDemand());
     m_formLayout->addRow(tr("Menu on Demand"), m_menuOnDemand);
 }
 
 void GlobalSettingsDialog::_InitHideAllChannels()
 {
-    m_hideAllChannels = new CheckBox(this);
+    m_hideAllChannels = new bases::CheckBox(this);
     m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
     m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
 }
 
 void GlobalSettingsDialog::_InitializeOpenRecentAtStartup()
 {
-    m_openRecentOnStartUp = new CheckBox(this);
+    m_openRecentOnStartUp = new bases::CheckBox(this);
     m_openRecentOnStartUp->setChecked(m_settings.GetOpenRecentFileAtStartup());
     m_formLayout->addRow(tr("Open recent measurement at startup"), m_openRecentOnStartUp);
 }
@@ -110,12 +110,12 @@ void GlobalSettingsDialog::_InitializeOpenRecentAtStartup()
 void GlobalSettingsDialog::_InitializeLimitDir()
 {
     QHBoxLayout *layout = new QHBoxLayout();
-    m_limitDirLine = new QLineEdit(this);
+    m_limitDirLine = new LineEdit(this);
     m_limitDirLine->setText(m_settings.GetLimitDir());
     m_limitDirLine->setReadOnly(true);
     layout->addWidget(m_limitDirLine, 1);
 
-    m_limitDirButton = new QPushButton("...", this);
+    m_limitDirButton = new PushButton("...", this);
     connect(m_limitDirButton, SIGNAL(clicked()), this, SLOT(limitDirClicked()));
     layout->addWidget(m_limitDirButton);
     m_formLayout->addRow(tr("Preferred Directory"), layout);
@@ -139,14 +139,14 @@ void GlobalSettingsDialog::limitDirClicked()
 }
 void GlobalSettingsDialog::_InitializeShowConsole()
 {
-    m_showConsole = new CheckBox(this);
+    m_showConsole = new bases::CheckBox(this);
     m_showConsole->setChecked(m_settings.GetConsole());
     m_formLayout->addRow(tr("Show Debug Window"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
 {
-    m_useBluetooth = new CheckBox(this);
+    m_useBluetooth = new bases::CheckBox(this);
     m_useBluetooth->setChecked(m_settings.GetUseBluetooth());
     m_formLayout->addRow(tr("Use Bluetooth"), m_useBluetooth);
 }

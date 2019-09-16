@@ -21,13 +21,17 @@
 #include <QFont>
 #include <QGridLayout>
 #include <QKeySequence>
-#include <QLabel>
-#include <QLineEdit>
+#include <bases/Label.h>
+#include <bases/LineEdit.h>
 #include <QListWidget>
 #include <QMetaMethod>
-#include <QMenu>
+#if defined(Q_OS_ANDROID)
+#   include <MenuAndroid.h>
+#else
+#   include <MenuDesktop.h>
+#endif
 #include <QPoint>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QShortcut>
 #include <QWidget>
 
@@ -42,74 +46,73 @@
 ButtonLine::ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation):
     QWidget(parent),
     m_mainLayout(new QGridLayout()),
-    m_startButton(NULL),
-    m_sampleRequestButton(NULL),
-    m_pauseContinueButton(NULL),
-    m_stopButton(NULL),
-    m_connectivityButton(NULL),
-    m_fileMenuButton(NULL),
-    m_axisMenuButton(NULL),
-    m_measurementButton(NULL),
-    m_viewButton(NULL),
-    m_fileMenu(NULL),
-    m_viewMenu(NULL),
-    m_recentFilesMenu(NULL),
+    m_startButton(nullptr),
+    m_sampleRequestButton(nullptr),
+    m_pauseContinueButton(nullptr),
+    m_stopButton(nullptr),
+    m_connectivityButton(nullptr),
+    m_fileMenuButton(nullptr),
+    m_axisMenuButton(nullptr),
+    m_measurementButton(nullptr),
+    m_viewButton(nullptr),
+    m_fileMenu(nullptr),
+    m_viewMenu(nullptr),
+    m_recentFilesMenu(nullptr),
     m_connected(false),
     m_enabledBChannels(false),
-    m_graphAction(NULL),
-    m_allAction(NULL),
-    m_noneAction(NULL),
-    m_afterLastChannelSeparator(NULL),
+    m_graphAction(nullptr),
+    m_allAction(nullptr),
+    m_noneAction(nullptr),
+    m_afterLastChannelSeparator(nullptr),
     m_hwSink(hwSink),
-    m_measurement(NULL),
+    m_measurement(nullptr),
     m_space(new QWidget())
 {
     m_mainLayout->setMargin(1);
     setLayout(m_mainLayout);
 
-    m_fileMenuButton = new QPushButton(tr("File"), this);
+    m_fileMenuButton = new PushButton(tr("File"), this);
     connect(m_fileMenuButton, SIGNAL(clicked()), this, SLOT(fileMenuButtonPressed()));
 
-    m_measurementButton = new QPushButton(tr("Measurements"), this);
+    m_measurementButton = new PushButton(tr("Measurements"), this);
     connect(m_measurementButton, SIGNAL(clicked()), this, SIGNAL(measurementMenuButtonPressed()));
 
-    m_viewButton = new QPushButton(tr("View"), this);
+    m_viewButton = new PushButton(tr("View"), this);
     connect(m_viewButton, SIGNAL(clicked()), this, SLOT(viewMenuButtonPressed()));
 
-    m_panelMenuButton = new QPushButton(tr("Panels"), this);
+    m_panelMenuButton = new PushButton(tr("Panels"), this);
     connect(m_panelMenuButton, SIGNAL(clicked()), this, SLOT(panelMenuButtonPressed()));
 
-    m_axisMenuButton = new QPushButton(tr("Axes"), this);
+    m_axisMenuButton = new PushButton(tr("Axes"), this);
     connect(m_axisMenuButton, SIGNAL(clicked()), this, SIGNAL(axisMenuButtonPressed()));
 
-    m_startButton = new QPushButton(tr("Start"), this);
+    m_startButton = new PushButton(tr("Start"), this);
     m_startButton->setDisabled(true);
     connect(m_startButton, SIGNAL(clicked()), this, SLOT(start()));
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(shortcut, SIGNAL(activated()), m_startButton, SLOT(animateClick()));
 
-    m_sampleRequestButton = new QPushButton(tr("Sample"), this);
+    m_sampleRequestButton = new PushButton(tr("Sample"), this);
     m_sampleRequestButton->setDisabled(true);
     connect(m_sampleRequestButton, SIGNAL(clicked()), this, SLOT(sampleRequest()));
 
-    m_pauseContinueButton = new QPushButton(tr("Pause"), this);
+    m_pauseContinueButton = new PushButton(tr("Pause"), this);
     m_pauseContinueButton->setDisabled(true);
     connect(m_pauseContinueButton, SIGNAL(clicked()), this, SLOT(pauseContinue()));
 
-    m_stopButton = new QPushButton(tr("Stop"), this);
+    m_stopButton = new PushButton(tr("Stop"), this);
     m_stopButton->setDisabled(true);
     connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
 
     m_space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
-    m_connectivityButton = new QPushButton(this);
+    m_connectivityButton = new PushButton(this);
     connect(m_connectivityButton, SIGNAL(released()), this, SIGNAL(connectivityButtonReleased()));
     _SetConnectivityState(m_hwSink.GetStateString(), m_hwSink.GetState());
 
     ReplaceButtons(orientation);
-    _InitializeMenu();
 }
 
 void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
@@ -121,7 +124,7 @@ void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
     }
 
     bool v = orientation == Qt::Vertical;
-    unsigned i = 0;
+    int i = 0;
     m_mainLayout->addWidget(m_fileMenuButton, (v ? i :0) ,(v ? 0 : i));
     i++;
     m_mainLayout->addWidget(m_measurementButton, v ? i :0 ,v ? 0 : i);
@@ -145,7 +148,7 @@ void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
     m_mainLayout->addWidget(m_connectivityButton, v ? i :0 ,v ? 0 : i);
 }
 
-QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
+QPoint ButtonLine::_GetGlobalMenuPosition(PushButton *button)
 {
     return
         QWidget::mapToGlobal(
@@ -153,30 +156,13 @@ QPoint ButtonLine::_GetGlobalMenuPosition(QPushButton *button)
         );
 }
 
-void ButtonLine::_SetMenuStyle(QMenu *menu)
-{
-    //setFontPointF doesn't work properly on android
-    //as same as logicalDPI one one device qos phisical 254 and logical 108
-    QFont font = menu->font();
-    unsigned fontSize = physicalDpiY() / FONT_DPI_FACTOR;
-    //FIXME: fast solution. In big monitor it looks too small, should be solved by a diffrent way
-    font.setPixelSize(fontSize < 15 ? 15 : fontSize);
-    menu->setFont(font);
-    menu->setStyleSheet(
-        QString(
-            "QMenu { menu-scrollable: 1; selection-background-color: LightBlue; selection-color: black;} "
-            "QMenu::scroller { height: %1px; background-color: red;} "
-        ).arg(physicalDpiY() / 4)
-    );
-}
-
 void ButtonLine::fileMenuButtonPressed()
 {
-    _SetMenuStyle(m_fileMenu);
+    if (m_fileMenu != nullptr){
+        delete m_fileMenu;
+    }
+    _InitializeMenu();
     _FillRecentFileMenu();
-#if defined(Q_OS_ANDROID)
-    m_fileMenu->showMaximized();
-#endif
     m_fileMenu->exec(_GetGlobalMenuPosition(m_fileMenuButton));
 }
 
@@ -189,10 +175,7 @@ void ButtonLine::panelMenuButtonPressed()
 void ButtonLine::viewMenuButtonPressed()
 {
     qDebug() << "View menu button pressed";
-    _SetMenuStyle(m_viewMenu);
-#if defined(Q_OS_ANDROID)
-    m_viewMenu->showMaximized();
-#endif
+    m_viewMenu = new PlotContextMenu(this, dynamic_cast<GraphicsContainer *>(m_measurement->GetGC()));
     m_viewMenu->contextMenuRequestGlobalPos(_GetGlobalMenuPosition(m_viewButton));
 }
 void ButtonLine::_FillRecentFileMenu()
@@ -201,7 +184,7 @@ void ButtonLine::_FillRecentFileMenu()
     m_recentFileActions.clear();
 
     unsigned count = GlobalSettings::GetInstance().GetRecetFilePathCount();
-    m_recentFilesMenu->setDisabled(0 == count);
+    m_recentFilesMenu->setDisabled(true);//0 == count);
     for (unsigned i = 0; i < count; i++)
     {
         QString text = GlobalSettings::GetInstance().GetRecentFilePath(i);
@@ -214,12 +197,11 @@ void ButtonLine::_FillRecentFileMenu()
             text = "..." + text;
         }
 
-        QAction *action =
-            m_recentFilesMenu->addAction(text, this, SLOT(openRecentFileSlot()));
-        m_recentFileActions[action] = GlobalSettings::GetInstance().GetRecentFilePath(i);
+        QObject *item = m_recentFilesMenu->addItem(text, this, SLOT(openRecentFileSlot()));
+        m_recentFileActions[item] = GlobalSettings::GetInstance().GetRecentFilePath(i);
     }
 
-    _SetMenuStyle(m_recentFilesMenu);
+    //_SetMenuStyle(m_recentFilesMenu);
 }
 
 QShortcut * ButtonLine::_CreateShortcut(
@@ -239,34 +221,37 @@ QShortcut * ButtonLine::_CreateShortcut(
 
 QKeySequence ButtonLine::_GetKey(QShortcut * shortcut)
 {
-    return (shortcut == NULL ? QKeySequence() : shortcut->key());
+    return (shortcut == nullptr ? QKeySequence() : shortcut->key());
 }
 
 void ButtonLine::_InitializeMenu()
 {
-    m_fileMenu = new QMenu(this);
-    m_fileMenu->setTitle("File");
+#if defined(Q_OS_ANDROID)
+    m_fileMenu = new MenuAndroid(this, "File");
+#else
+    m_fileMenu = new MenuDesktop(this, "File");
+#endif
 
     QShortcut *newShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SIGNAL(openNewFile()));
-    m_fileMenu->addAction(tr("New"), this, SIGNAL(openNewFile()), _GetKey(newShortcut));
+    m_fileMenu->addItem(tr("New"), this, SIGNAL(openNewFile()), _GetKey(newShortcut));
 
     QShortcut *openShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SIGNAL(openFileValues()));
-    m_fileMenu->addAction(tr("Open..."), this, SIGNAL(openFileValues()), _GetKey(openShortcut));
-    m_fileMenu->addAction(tr("Open without Values..."), this, SIGNAL(openFileNoValues()));
+    m_fileMenu->addItem(tr("Open..."), this, SIGNAL(openFileValues()), _GetKey(openShortcut));
+    m_fileMenu->addItem(tr("Open without Values..."), this, SIGNAL(openFileNoValues()));
     m_recentFilesMenu = m_fileMenu->addMenu(tr("Recently Used Files"));
 
     QShortcut *saveShortcut = _CreateShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SIGNAL(saveFile()));
-    m_fileMenu->addAction(tr("Save"), this, SIGNAL(saveFile()), _GetKey(saveShortcut));
+    m_fileMenu->addItem(tr("Save"), this, SIGNAL(saveFile()), _GetKey(saveShortcut));
 
-    m_fileMenu->addAction(tr("Save As..."), this, SIGNAL(saveAsFile()));
-    m_fileMenu->addAction(tr("Save without Values As..."), this, SIGNAL(saveWithoutValuesAsFile()));
+    m_fileMenu->addItem(tr("Save As..."), this, SIGNAL(saveAsFile()));
+    m_fileMenu->addItem(tr("Save without Values As..."), this, SIGNAL(saveWithoutValuesAsFile()));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Export to PNG..."), this, SIGNAL(exportPng()));
-    m_fileMenu->addAction(tr("Export Current Measurement to CSV..."), this, SIGNAL(exportCsv()));
-    m_fileMenu->addAction(tr("Export All Measurements to CSV..."), this, SIGNAL(exportAllCsv()));
+    m_fileMenu->addItem(tr("Export to PNG..."), this, SIGNAL(exportPng()));
+    m_fileMenu->addItem(tr("Export Current Measurement to CSV..."), this, SIGNAL(exportCsv()));
+    m_fileMenu->addItem(tr("Export All Measurements to CSV..."), this, SIGNAL(exportAllCsv()));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(tr("Settings..."), this, SIGNAL(settings()));
-    m_fileMenu->addAction(tr("About..."), this, SLOT(about()));
+    m_fileMenu->addItem(tr("Settings..."), this, SIGNAL(settings()));
+    m_fileMenu->addItem(tr("About..."), this, SLOT(about()));
 }
 
 void ButtonLine::about()
@@ -277,7 +262,7 @@ void ButtonLine::about()
 
 void ButtonLine::updateRunButtonsState()
 {
-    if (NULL == m_measurement)
+    if (nullptr == m_measurement)
     {
         m_startButton->setEnabled(false);
         m_stopButton->setEnabled(false);
@@ -392,18 +377,10 @@ void ButtonLine::measurementStateChanged()
 void ButtonLine::ChangeMeasurement(Measurement *measurement)
 {
     m_measurement = measurement;
-    m_viewButton->setEnabled(m_measurement != NULL);
-    m_panelMenuButton->setEnabled(m_measurement != NULL);
-    m_axisMenuButton->setEnabled(m_measurement != NULL);
+    m_viewButton->setEnabled(m_measurement != nullptr);
+    m_panelMenuButton->setEnabled(m_measurement != nullptr);
+    m_axisMenuButton->setEnabled(m_measurement != nullptr);
     updateRunButtonsState();
-
-    delete m_viewMenu;
-    m_viewMenu = NULL;
-    if (NULL != measurement)
-    {
-        m_viewMenu = new PlotContextMenu(this, (GraphicsContainer *)m_measurement->GetGC());
-        m_viewMenu->setTitle("View");
-    }
 }
 
 void ButtonLine::start()
@@ -433,7 +410,7 @@ void ButtonLine::stop()
 
 void ButtonLine::openRecentFileSlot()
 {
-    QString filePath = m_recentFileActions[(QAction*)sender()];
+    QString filePath = m_recentFileActions[dynamic_cast<QAction*>(sender())];
     openRecentFile(filePath);
     GlobalSettings::GetInstance().AddRecentFilePath(filePath); //to move it up
 }

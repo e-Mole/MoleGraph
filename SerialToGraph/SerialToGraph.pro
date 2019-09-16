@@ -29,11 +29,16 @@ SOURCES += main.cpp\
     bases/CheckBox.cpp \
     bases/ClickableLabel.cpp \
     bases/ClickableWidget.cpp \
+    bases/DoubleSpinBox.cpp \
     bases/FormDialogBase.cpp \
     bases/FormDialogColor.cpp \
+    bases/Label.cpp \
+    bases/LineEdit.cpp \
     bases/MenuDialogBase.cpp \
     bases/PlatformDialog.cpp \
+    bases/PushButton.cpp \
     bases/RadioButton.cpp \
+    bases/SpinBox.cpp \
     hw/Bluetooth.cpp \
     hw/HwSink.cpp \
     hw/PortBase.cpp \
@@ -86,15 +91,25 @@ SOURCES += main.cpp\
     graphics/ChannelProperties.cpp \
     graphics/SampleChannelProperties.cpp
 
+
+    SOURCES += MenuAndroid.cpp
+    SOURCES += MenuDesktop.cpp
+
 HEADERS  += MainWindow.h \
     bases/CheckBox.h \
     bases/ClickableLabel.h \
     bases/ClickableWidget.h \
+    bases/DoubleSpinBox.h \
     bases/FormDialogBase.h \
     bases/FormDialogColor.h \
+    bases/Label.h \
+    bases/LineEdit.h \
+    bases/MenuBase.h \
     bases/MenuDialogBase.h \
     bases/PlatformDialog.h \
+    bases/PushButton.h \
     bases/RadioButton.h \
+    bases/SpinBox.h \
     hw/Bluetooth.h \
     hw/HwSink.h \
     hw/PortBase.h \
@@ -147,6 +162,9 @@ HEADERS  += MainWindow.h \
     graphics/SampleChannelProxy.h \
     graphics/ChannelProperties.h \
     graphics/SampleChannelProperties.h
+
+    HEADERS += MenuAndroid.h
+    HEADERS += MenuDesktop.h
 
 CONFIG += mobility
 CONFIG += c++11

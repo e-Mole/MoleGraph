@@ -40,14 +40,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="Label" name="label">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Size of plot&lt;br/&gt;in document:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="sbWidth">
+         <widget class="SpinBox" name="sbWidth">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -66,14 +66,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="Label" name="label_2">
           <property name="text">
            <string>x</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="sbHeight">
+         <widget class="SpinBox" name="sbHeight">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>

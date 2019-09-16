@@ -6,6 +6,7 @@
 class RadioButton : public QRadioButton
 {
     Q_OBJECT
+    void setStyle();
 public:
     explicit RadioButton(QWidget *parent = nullptr);
     explicit RadioButton(const QString &text, QWidget *parent = nullptr);

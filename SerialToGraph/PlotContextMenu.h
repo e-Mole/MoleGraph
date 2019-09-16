@@ -3,39 +3,38 @@
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <Plot.h>
-#include <QMenu>
 #include <QPoint>
 
 class QAction;
 class QWidget;
-class PlotContextMenu : public QMenu
+namespace bases { class MenuBase; }
+
+class PlotContextMenu : public QObject
 {
     Q_OBJECT
+    QObject * InitMarkerTypeSelection(
+        bases::MenuBase *menu, QString const &label, Plot::MarkerTypeSelection markerTypeSelection);
+    QObject * InitMarkerRangeValue(
+        bases::MenuBase *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue);
 
-    QAction * InitMarkerTypeSelection(
-        QMenu *menu, QString const &label, Plot::MarkerTypeSelection markerTypeSelection);
-    QAction * InitMarkerRangeValue(
-        QMenu *menu, QString const &label, ChannelProxyBase::DisplayValue markerRangeValue);
-
-    void _SetMarkerType(QAction * action);
+    void _SetMarkerType(QObject * action);
 
     QPoint clickPosition;
     GraphicsContainer *m_graphicsContainer;
 
-    QAction *m_sampleValue;
-    QAction *m_rangeAutoBorder;
-    QAction *m_rangeLeftBorder;
-    QAction *m_rangeRightBorder;
+    QObject *m_sampleValue;
+    QObject *m_rangeAutoBorder;
+    QObject *m_rangeLeftBorder;
+    QObject *m_rangeRightBorder;
 
-
-    QAction *m_deltaValue;
-    QAction *m_maxValue;
-    QAction *m_minValue;
-    QAction *m_averageValue;
-    QAction *m_medianValue;
-    QAction *m_varianceValue;
-    QAction *m_standardDeviation;
-    QAction *m_sumValue;
+    QObject *m_deltaValue;
+    QObject *m_maxValue;
+    QObject *m_minValue;
+    QObject *m_averageValue;
+    QObject *m_medianValue;
+    QObject *m_varianceValue;
+    QObject *m_standardDeviation;
+    QObject *m_sumValue;
 
 public:
     PlotContextMenu(QWidget *parent, GraphicsContainer *graphicsContainer);

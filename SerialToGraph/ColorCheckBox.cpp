@@ -6,7 +6,7 @@
 
 ColorCheckBox::ColorCheckBox(const QString &text, QWidget *parent):
     QWidget(parent),
-    m_checkBox(new CheckBox(this)),
+    m_checkBox(new bases::CheckBox(this)),
     m_label(new bases::ClickableLabel(text, this))
 {
     QString style = m_checkBox->styleSheet();

@@ -65,43 +65,14 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
 #if defined(Q_OS_ANDROID)
-    unsigned height = m_scrollBar->physicalDpiY() / 5;
+    unsigned height = m_scrollBar->physicalDpiY() / GlobalSettings::GetInstance().getWidgetHeightDivider();
     m_scrollBar->setStyleSheet(
-        QString(
+          QString(
             "QScrollBar:horizontal {"
-                    "border: 1px solid white;"
-                    "height: %1px;"
-                    "margin: 0px %1px 0px %1px;"
-                "}"
-            "QScrollBar::handle:horizontal {"
-                    "min-width: %2px;"
-                    "background: Silver;"
-                "}"
-            "QScrollBar::add-line:horizontal {"
-                    "width: %2px;"
-                    "background: LightGray;"
-                    "subcontrol-position: right;"
-                    "subcontrol-origin: margin;"
-                    "border: 1px solid white;"
-                "}"
-            "QScrollBar::sub-line:horizontal {"
-                    "width: %2px;"
-                    "background: LightGray;"
-                    "subcontrol-position: left;"
-                    "subcontrol-origin: margin;"
-                    "position: absolute;"
-                    "border: 1px solid white;"
-                "}"
-            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
-                    "background: none;"
-                "}"
-            "QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal {"
-                    "border: 1px solid Silver;"
-                    "width: %3px;"
-                    "height: %3px;"
-                    "background: white;"
-                "}"
-        ).arg(height+1).arg(height).arg(height/9)
+            "     height: %1px;"
+            "     background: silver;"
+            "}"
+          ).arg(height)
     );
 #endif
     connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));

@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setFont(QApplication::font("QMenu")); //workaround - it seems that QMenu take font size from system opposite to QLabel
+    a.setFont(QApplication::font("QMenu")); //workaround - it seems that QMenu take font size from system opposite to Label
     a.setApplicationName(TARGET);
     a.setApplicationVersion("1");
 #ifdef __linux__

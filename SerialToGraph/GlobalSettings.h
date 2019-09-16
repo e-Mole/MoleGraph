@@ -96,6 +96,7 @@ public:
     void SetSavedValues(bool savedValues);
     bool GetOpenRecentFileAtStartup() const;
     void SetOpenRecentFileAtStartup(bool openRecent);
+    double getWidgetHeightDivider();
 
 signals:
     void hideAllCHannelsChanged(bool hideAllChannels);

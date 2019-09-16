@@ -8,14 +8,13 @@
 #include <MyMessageBox.h>
 #include <QFont>
 #include <QFormLayout>
-#include <QLabel>
+#include <bases/Label.h>
 #include <QLayoutItem>
 #include <QMap>
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <bases/RadioButton.h>
 #include <QWidget>
-#include <QScrollArea>
 #include <QString>
 #include <QWidget>
 
@@ -39,12 +38,12 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
     connect(name, SIGNAL(clicked()), this, SLOT(nameClicked()));
     m_nameToItem[name] = measurement;
 
-    QPushButton * editButton = new QPushButton(tr("Edit"), rowWidget);
+    PushButton * editButton = new PushButton(tr("Edit"), rowWidget);
     buttonLayout->addWidget(editButton);
     m_editButtonToItem.insert(editButton, measurement);
     connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonPressed()), Qt::DirectConnection);
 
-    QPushButton * removeButton = new QPushButton(tr("Remove"), rowWidget);
+    PushButton * removeButton = new PushButton(tr("Remove"), rowWidget);
     removeButton->setEnabled(true);
     buttonLayout->addWidget(removeButton);
     m_removeButtonToItem.insert(removeButton, measurement);
@@ -70,14 +69,14 @@ void MeasurementMenu::FillGrid()
     foreach (Measurement *measurement, m_context.m_measurements)
         _AddRowWithEditAndRemove(measurement);
 
-    QPushButton * addButton = new QPushButton(tr("Add New"), this);
+    PushButton * addButton = new PushButton(tr("Add New"), this);
     unsigned row = m_gridLayout->rowCount();
-    //m_gridLayout->addWidget(new QLabel("", this), row, 0);
+    //m_gridLayout->addWidget(new Label("", this), row, 0);
     m_gridLayout->addWidget(addButton, row, 2);
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonPressed()));
 
-    QPushButton * cloneButton = new QPushButton(tr("Clone Selected"), this);
-    //m_gridLayout->addWidget(new QLabel("", this), row+1, 0);
+    PushButton * cloneButton = new PushButton(tr("Clone Selected"), this);
+    //m_gridLayout->addWidget(new Label("", this), row+1, 0);
     m_gridLayout->addWidget(cloneButton, row+1, 2);
     cloneButton->setEnabled(m_context.m_measurements.size() > 0);
     connect(cloneButton, SIGNAL(clicked()), this, SLOT(cloneButtonPressed()));
@@ -112,7 +111,7 @@ void MeasurementMenu::cloneButtonPressed()
 void MeasurementMenu::removeButtonPressed()
 {
     Measurement *m =
-        m_removeButtonToItem.find((QPushButton*)sender()).value();
+        m_removeButtonToItem.find((PushButton*)sender()).value();
 
     removeMeasurementRequest(m);
 }
@@ -127,7 +126,7 @@ void MeasurementMenu::ReinitGridAndAdjustSize()
 
 void MeasurementMenu::editButtonPressed()
 {
-    Measurement *measurement = m_editButtonToItem.find((QPushButton*)sender()).value();
+    Measurement *measurement = m_editButtonToItem.find((PushButton*)sender()).value();
     MeasurementSettings dialog(this, measurement, measurement->GetGC(), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing());
     if (QDialog::Accepted == dialog.exec())
     {

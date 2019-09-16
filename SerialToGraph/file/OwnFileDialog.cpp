@@ -11,11 +11,11 @@
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
+#include <bases/Label.h>
+#include <bases/LineEdit.h>
 #include <QListView>
 #include <QModelIndex>
-#include <QPushButton>
+#include <bases/PushButton.h>
 #include <QScroller>
 #include <QString>
 #include <QStringList>
@@ -41,11 +41,11 @@ OwnFileDialog::OwnFileDialog(QWidget *parent,
     QString const &limitDir
 ):
     bases::PlatformDialog(parent, caption),
-    m_fileName(new QLineEdit(this)),
+    m_fileName(new LineEdit(this)),
     m_model(new FileModel(this)),
     m_dir(dir),
-    m_extension(new QLabel(filter.mid(filter.lastIndexOf(".")), this)),
-    m_actionButton(new QPushButton(_GetActionButtonText(type), this)),
+    m_extension(new Label(filter.mid(filter.lastIndexOf(".")), this)),
+    m_actionButton(new PushButton(_GetActionButtonText(type), this)),
     m_view(new QListView(this)),
     m_type(type),
     m_upButton(NULL),
@@ -59,14 +59,14 @@ OwnFileDialog::OwnFileDialog(QWidget *parent,
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     layout->addLayout(buttonLayout);
     m_upButton =
-            new QPushButton(style.standardIcon(QStyle::SP_FileDialogToParent), tr("Go Up"), this);
+            new PushButton(style.standardIcon(QStyle::SP_FileDialogToParent), tr("Go Up"), this);
 
     _CheckUpButton();
     buttonLayout->addWidget(m_upButton);
     connect(m_upButton, SIGNAL(released()), this, SLOT(goUp()));
 
-    QPushButton *newFolderButton =
-            new QPushButton(style.standardIcon(QStyle::SP_FileDialogNewFolder), tr("Add Directory"), this);
+    PushButton *newFolderButton =
+            new PushButton(style.standardIcon(QStyle::SP_FileDialogNewFolder), tr("Add Directory"), this);
     newFolderButton->setDisabled(type == Type_OpenFile);
     buttonLayout->addWidget(newFolderButton);
     connect(newFolderButton, SIGNAL(released()), this, SLOT(createFolder()));

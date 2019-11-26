@@ -76,6 +76,10 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
       case SENSOR_SOUNDMETER:   sensor[_port] = new Soundmeter(_period, _port); break;
       case SENSOR_BME280:       sensor[_port] = new BME280(_period, _port); break;
       case SENSOR_CO2:          sensor[_port] = new MHZ16(_period, _port); break;
+	  case SENSOR_DCV25:        sensor[_port] = new VOLT25(_period, _port); break;
+      case SENSOR_DCA5:         sensor[_port] = new AMP5(_period, _port); break;
+	  case SENSOR_DCA30:        sensor[_port] = new AMP30(_period, _port); break;
+	  
     }
     DEBUG_PRINT("Creating sensor on port: "); DEBUG_PRINTLN(_port);
   }
@@ -100,6 +104,3 @@ void deleteSensor(uint8_t _port) {
     }      
   }
 }
-
-
-

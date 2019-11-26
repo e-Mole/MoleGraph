@@ -22,6 +22,9 @@
 #include "silomer.h"
 #include "bme280.h"
 #include "mhz16.h"
+#include "volt25.h"
+#include "amp5.h"
+#include "amp30.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //
@@ -47,6 +50,9 @@ enum SensorType {
   SENSOR_MQ3          = 25,   // A025 Cidlo alkoholu (plyn) MQ-3
   SENSOR_DSM501       = 26,   // A026 Cidlo prachovych castic DSM501
   SENSOR_SOUNDMETER   = 27,   // A027 Cidlo intenzity zvuku (mikrofon)
+  SENSOR_DCV25        = 28,   // A028 Cidlo DC napeti 0-25 V (klasicky delic)
+  SENSOR_DCA5         = 29,   // A029 Cidlo DC proudu 0-5 A  (s ACS712)
+  SENSOR_DCA30        = 30,   // A030 Cidlo DC proudu 0-30 A (s ACS712)
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu

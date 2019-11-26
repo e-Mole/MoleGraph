@@ -27,11 +27,11 @@ bool SRF04::process() {
       pulsePositive[port] = 0;     
       sei();
       if (x != 0) {
-        value_2 = value_1;
-        value_1 = value;
         value = x * (0.5f * 0.00017315f);
         velocity = (value - value_1) / (period * 0.001f);
         acceleration = (value - 2 * value_1 + value_2) / (period * period * 1e-6f);
+        value_2 = value_1;
+        value_1 = value;        
       }
       active = 0; 
       delta  = period; 
@@ -50,6 +50,3 @@ float SRF04::read(uint8_t _spec) {
   }
   return result;
 }
-
-
-

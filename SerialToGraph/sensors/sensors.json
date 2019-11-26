@@ -93,7 +93,11 @@
     {
       "quantityId" : 22,
       "quantityName" : "Concentration (%)"
-    }          
+    },
+    {
+      "quantityId" : 23,
+      "quantityName" : "UV Intensity"
+    }
                            
   ],
   "sensors":
@@ -135,7 +139,7 @@
     },
     {
       "sensorId" : 7,
-      "sensorName" : "Force sensor",
+      "sensorName" : "Force sensor (HX711)",
       "quantities" : [ "Force" ]
     },
     {
@@ -154,9 +158,14 @@
       "quantities" : [ "UV Index" ]
     },
     {
+      "sensorId" : 31,
+      "sensorName" : "UV sensor (VEML6070)",
+      "quantities" : [ "UV Intensity" ]
+    },
+    {
       "sensorId" : 14,
-      "sensorName" : "*(pH sensor)",
-      "quantities" : [ "pH" ]
+      "sensorName" : "pH sensor",
+      "quantities" : [ "pH", "Voltage", "RAW" ]
     },
     {
       "sensorId" : 15,
@@ -194,7 +203,7 @@
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 21,
-      "sensorName" : "Motion sensor (SR-04)",
+      "sensorName" : "Ultrasonic motion sensor (SR-04)",
       "quantities" : [ "Distance", "Velocity", "Acceleration" ]
     },
     {  "sensorId" : 22,
@@ -210,8 +219,8 @@
       "quantities" : [ "Humidity", "Temperature" ]
     },
     {  "sensorId" : 25,
-      "sensorName" : "*(Alcohol gas sensor (MQ-3))",
-      "quantities" : [ "Concentration" ]
+      "sensorName" : "Alcohol gas sensor (MQ-3)",
+      "quantities" : [ "Concentration (ppm)", "Concentration (%)", "Voltage", "RAW", "Trigger" ]
     },
     {  "sensorId" : 26,
       "sensorName" : "*(Particle/Dust sensor (DSM501))",

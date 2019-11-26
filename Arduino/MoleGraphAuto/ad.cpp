@@ -22,4 +22,3 @@ float AD::read(uint8_t _spec) {
   }
   return result;
 }
-

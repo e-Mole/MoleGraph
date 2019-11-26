@@ -129,6 +129,3 @@ float DHT11::read(uint8_t _spec) {
 //  }
   return result;
 }
-
-
-

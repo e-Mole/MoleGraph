@@ -163,6 +163,18 @@
       "sensorName" : "*(Conductivity sensor)",
       "quantities" : [ "Conductivity" ]
     },
+    {  "sensorId" : 28,
+      "sensorName" : "DC Voltage sensor 0-25 V (voltage divider)",
+      "quantities" : [ "Voltage", "RAW" ]
+    },
+    {  "sensorId" : 29,
+      "sensorName" : "AC/DC Current sensor 0-5 A (ACS712)",
+      "quantities" : [ "Current", "RAW" ]
+    },
+    {  "sensorId" : 30,
+      "sensorName" : "AC/DC Current sensor 0-30 A (ACS712)",
+      "quantities" : [ "Current", "RAW" ]
+    },
     {
       "sensorId" : 16,
       "sensorName" : "*(Voltage + Current sensor)",
@@ -208,7 +220,7 @@
     {  "sensorId" : 27,
       "sensorName" : "Sound sensor (microphone)",
       "quantities" : [ "RAW", "Voltage", "Trigger" ]
-    },
+    },		
     {  "sensorId" : 105,
       "sensorName" : "Laser ranging sensor‎ (VL53L0X)",
       "quantities" : [ "Distance" ]

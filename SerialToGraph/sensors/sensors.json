@@ -165,7 +165,7 @@
     {
       "sensorId" : 14,
       "sensorName" : "pH sensor",
-      "quantities" : [ "pH", "Voltage", "RAW" ]
+      "quantities" : [ "pH", "Voltage", "RAW", "Trigger" ]
     },
     {
       "sensorId" : 15,

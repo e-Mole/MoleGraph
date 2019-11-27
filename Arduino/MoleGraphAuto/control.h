@@ -28,6 +28,7 @@
 #include "veml6070.h"
 #include "mq3.h"
 #include "ph.h"
+#include "luxbh1750.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //
@@ -57,6 +58,7 @@ enum SensorType {
   SENSOR_DCA5         = 29,   // A029 Cidlo DC proudu 0-5 A  (s ACS712)
   SENSOR_DCA30        = 30,   // A030 Cidlo DC proudu 0-30 A (s ACS712)
   SENSOR_VEML6070     = 31,   // I031 Cidlo UV zareni (s VEML6070)
+  SENSOR_LUXBH1750    = 32,   // I032 Cidlo intenzity svetla (BH1750) - hodnota v luxech
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu

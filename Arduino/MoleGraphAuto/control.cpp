@@ -83,6 +83,7 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
 	  case SENSOR_VEML6070:        sensor[_port] = new VEML6070(_period, _port); break;
 	  case SENSOR_MQ3:          sensor[_port] = new MQ3(_period, _port); break;
 	  case SENSOR_PH:           sensor[_port] = new PH(_period, _port); break;
+	  case SENSOR_LUXBH1750:    sensor[_port] = new LUXBH1750(_period, _port); break;
     }
     DEBUG_PRINT("Creating sensor on port: "); DEBUG_PRINTLN(_port);
   }

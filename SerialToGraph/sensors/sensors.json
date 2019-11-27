@@ -194,6 +194,11 @@
       "sensorName" : "Light sensor (photoresistor)",
       "quantities" : [ "Illuminace", "Trigger"  ]
     },
+    {
+      "sensorId" : 32,
+      "sensorName" : "Light sensor (BH1750 luxmeter)",
+      "quantities" : [ "Illuminace" ]
+    },
     {  "sensorId" : 19,
       "sensorName" : "CO2 gas sensor (MH-Z16)",
       "quantities" : [ "Concentration (ppm)", "Concentration (%)"  ]

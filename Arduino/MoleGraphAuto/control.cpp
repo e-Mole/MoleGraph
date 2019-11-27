@@ -66,6 +66,7 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
       case SENSOR_FORCE:    		sensor[_port] = new Silomer(_period, _port); break;
       case SENSOR_HX711:    		sensor[_port] = new HX711(_period, _port); break;
       case SENSOR_DHT11:    		sensor[_port] = new DHT11(_period, _port); break;
+	  //case SENSOR_DHT11:    		sensor[_port] = new DHT11MG(_period, _port); break;
       case SENSOR_MLX90614: 		sensor[_port] = new MLX90614(_period, _port); break;
       case SENSOR_MPX5700DP:		sensor[_port] = new MPX5700DP(_period, _port); break;
       case SENSOR_SRF04:    		sensor[_port] = new SRF04(_period, _port); break;
@@ -79,7 +80,9 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
 	  case SENSOR_DCV25:        sensor[_port] = new VOLT25(_period, _port); break;
       case SENSOR_DCA5:         sensor[_port] = new AMP5(_period, _port); break;
 	  case SENSOR_DCA30:        sensor[_port] = new AMP30(_period, _port); break;
-	  
+	  case SENSOR_VEML6070:        sensor[_port] = new VEML6070(_period, _port); break;
+	  case SENSOR_MQ3:          sensor[_port] = new MQ3(_period, _port); break;
+	  case SENSOR_PH:           sensor[_port] = new PH(_period, _port); break;
     }
     DEBUG_PRINT("Creating sensor on port: "); DEBUG_PRINTLN(_port);
   }

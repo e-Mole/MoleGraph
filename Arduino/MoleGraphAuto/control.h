@@ -12,7 +12,7 @@
 #include "srf04.h"
 #include "vl53l0x.h"
 #include "force.h"
-#include "dht11.h"
+#include "dht11.h" //"dht11mg.h"
 #include "mlx90614.h"
 #include "mpx5700dp.h"
 #include "lux.h"
@@ -25,6 +25,9 @@
 #include "volt25.h"
 #include "amp5.h"
 #include "amp30.h"
+#include "veml6070.h"
+#include "mq3.h"
+#include "ph.h"
 
 enum SensorType {
   SENSOR_NONE         = 0,    //
@@ -53,6 +56,7 @@ enum SensorType {
   SENSOR_DCV25        = 28,   // A028 Cidlo DC napeti 0-25 V (klasicky delic)
   SENSOR_DCA5         = 29,   // A029 Cidlo DC proudu 0-5 A  (s ACS712)
   SENSOR_DCA30        = 30,   // A030 Cidlo DC proudu 0-30 A (s ACS712)
+  SENSOR_VEML6070     = 31,   // I031 Cidlo UV zareni (s VEML6070)
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu

@@ -97,7 +97,43 @@
     {
       "quantityId" : 23,
       "quantityName" : "UV Intensity"
-    }
+    },
+    {
+      "quantityId" : 24,
+      "quantityName" : "Accel X"
+    }, 
+    {
+      "quantityId" : 25,
+      "quantityName" : "Accel Y"
+    }, 
+    {
+      "quantityId" : 26,
+      "quantityName" : "Accel Z"
+    }, 
+    {
+      "quantityId" : 27,
+      "quantityName" : "Mag X"
+    }, 
+    {
+      "quantityId" : 28,
+      "quantityName" : "Mag Y"
+    }, 	
+    {
+      "quantityId" : 29,
+      "quantityName" : "Mag Z"
+    },
+    {
+      "quantityId" : 30,
+      "quantityName" : "Heading"
+    }, 	
+    {
+      "quantityId" : 31,
+      "quantityName" : "Roll"
+    }, 	
+    {
+      "quantityId" : 32,
+      "quantityName" : "Pitch"
+    } 	 	
                            
   ],
   "sensors":
@@ -124,7 +160,7 @@
     },    
     {
       "sensorId" : 3,
-      "sensorName" : "*(Accelerometer + Magnetometer (LSM303DLHC))",
+      "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
       "quantities" : [ "Acceleration", "Magnetic Field Intensity" ]
     },
     {

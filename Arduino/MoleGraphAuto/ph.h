@@ -13,7 +13,7 @@ class PH : public Sensor {
   protected:
     uint8_t pin, pin_digi;
   private:
-    float value, value2;	
+    float value2;	
 };
 
 

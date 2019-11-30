@@ -64,8 +64,8 @@ bool newSensor(SensorType _type, uint32_t _period, uint8_t _port, uint8_t _spec)
       case SENSOR_AD:       		sensor[_port] = new AD(_period, _port); break;
       case SENSOR_VL53L0X:  		sensor[_port] = new VL53L0X(_period, _port); break;
       case SENSOR_FORCE:    		sensor[_port] = new Silomer(_period, _port); break;
-      case SENSOR_HX711:    		sensor[_port] = new HX711(_period, _port); break;
-      case SENSOR_DHT11:    		sensor[_port] = new DHT11(_period, _port); break;
+    //case SENSOR_HX711:    		sensor[_port] = new HX711(_period, _port); break;
+    //case SENSOR_DHT11:    		sensor[_port] = new DHT11(_period, _port); break;
 	  //case SENSOR_DHT11:    		sensor[_port] = new DHT11MG(_period, _port); break;
       case SENSOR_MLX90614: 		sensor[_port] = new MLX90614(_period, _port); break;
       case SENSOR_MPX5700DP:		sensor[_port] = new MPX5700DP(_period, _port); break;

@@ -13,8 +13,8 @@ class LSM303DLHC : public Sensor {
   protected:
     uint8_t pin, pin_digi;
   private:
-    float value, value_2, aX, aY, aZ, mX, mY, mZ; //, heading;
-	  //double fXg, fYg, fZg, pitch, roll;
+    float value2, aX, aY, aZ, mX, mY, mZ, heading;
+	  double fXg, fYg, fZg, pitch, roll;
 };
 
 #endif

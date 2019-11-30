@@ -10,10 +10,12 @@ class MQ3 : public Sensor {
     MQ3(uint32_t, uint8_t);
     virtual bool process();
     virtual float read(uint8_t);
+    virtual void calibrate();
   protected:
     uint8_t pin, pin_digi;
   private:
-    float value2;	
+    float value2;
+    int32_t   offset = 0;	
 };
 
 

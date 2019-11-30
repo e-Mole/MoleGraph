@@ -57,7 +57,7 @@ void serialProcess() {
           getSample();
           break;    
     case INS_INITIALIZE: //when desktop application crash, this stay in sending data
-          stop();   // doplnit uvolneni vset portu a kanalu
+          stop();   // doplnit uvolneni vsech portu a kanalu
           break;
     case INS_SET_SENSOR:
           setChannel();

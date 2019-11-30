@@ -13,7 +13,7 @@ class BME280 : public Sensor {
   protected:
     uint8_t pin, pin_digi;
   private:
-    float value, value2, value3;
+    float value2, value3;
     virtual float calcAltitude();
     virtual float calcDewPoint();
 };

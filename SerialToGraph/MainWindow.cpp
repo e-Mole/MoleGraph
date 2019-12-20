@@ -103,8 +103,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(settings()), this, SLOT(settings()));
     connect(m_buttonLine, SIGNAL(panelMenuButtonPressed(Measurement*)), this, SLOT(showPanelMenu(Measurement*)));
 
-    connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
-            m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwSink::State)));
+    connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwConnector::State)),
+            m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwConnector::State)));
     connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
     connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     connect(&GlobalSettings::GetInstance(), SIGNAL(savedStateOrVeluesChanged()), this, SLOT(updateWindowTitle()));

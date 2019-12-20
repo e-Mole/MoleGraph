@@ -40,7 +40,7 @@ SOURCES += main.cpp\
     bases/RadioButton.cpp \
     bases/SpinBox.cpp \
     hw/Bluetooth.cpp \
-    hw/HwSink.cpp \
+    hw/HwConnector.cpp \
     hw/PortBase.cpp \
     qcustomplot/qcustomplot.cpp \
     Axis.cpp \
@@ -111,7 +111,7 @@ HEADERS  += MainWindow.h \
     bases/RadioButton.h \
     bases/SpinBox.h \
     hw/Bluetooth.h \
-    hw/HwSink.h \
+    hw/HwConnector.h \
     hw/PortBase.h \
     qcustomplot/qcustomplot.h \
     Axis.h \

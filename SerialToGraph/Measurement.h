@@ -24,7 +24,7 @@ class QTimer;
 class SampleChannel;
 struct Context;
 
-namespace hw { class HwSink; class SensorManager;}
+namespace hw { class HwConnector; class SensorManager;}
 
 class Measurement : public QObject
 {
@@ -101,7 +101,7 @@ private:
 
     GraphicsContainer *m_widget;
     Context const &m_context;
-    hw::HwSink &m_hwSink;
+    hw::HwConnector &m_hwSink;
     SampleUnits m_sampleUnits;
     unsigned m_period;
     State m_state;
@@ -123,7 +123,7 @@ private:
  public:
     Measurement(QWidget *parent,
         Context &context,
-        hw::HwSink &hwSink,
+        hw::HwConnector &hwSink,
         Measurement *source,
         bool initializeAxiesAndChannels
 , hw::SensorManager *sensorManager);

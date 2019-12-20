@@ -3,7 +3,7 @@
 
 #include <ButtonLine.h>
 #include <Context.h>
-#include <hw/HwSink.h>
+#include <hw/HwConnector.h>
 #include <QMainWindow>
 #include <QString>
 #include <QVector>
@@ -29,7 +29,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    hw::HwSink m_hwSink;
+    hw::HwConnector m_hwSink;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
     Context m_context;

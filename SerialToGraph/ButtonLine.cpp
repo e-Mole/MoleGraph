@@ -43,7 +43,7 @@
 #   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, hw::HwSink &hwSink, Qt::Orientation orientation):
+ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwSink, Qt::Orientation orientation):
     QWidget(parent),
     m_mainLayout(new QGridLayout()),
     m_startButton(nullptr),
@@ -326,15 +326,15 @@ void ButtonLine::updateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::State state)
+void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwConnector::State state)
 {
     QColor color;
     switch (state)
     {
-        case hw::HwSink::Offline:
+        case hw::HwConnector::Offline:
             color = Qt::red;
         break;
-        case hw::HwSink::Connected:
+        case hw::HwConnector::Connected:
             color = Qt::darkGreen;
         break;
         default:
@@ -361,9 +361,9 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwSink::S
     repaint();
 }
 
-void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwSink::State state)
+void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwConnector::State state)
 {
-    m_connected = (state == hw::HwSink::Connected);
+    m_connected = (state == hw::HwConnector::Connected);
     _SetConnectivityState(stateText, state);
 
     updateRunButtonsState();

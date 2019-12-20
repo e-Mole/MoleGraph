@@ -13,7 +13,7 @@
 class QString;
 namespace hw
 {
-class HwSink;
+class HwConnector;
 class SerialPort : public PortBase
 {
     Q_OBJECT
@@ -22,11 +22,11 @@ class SerialPort : public PortBase
 
 
     QSerialPort m_serialPort;
-    HwSink *m_hwSink;
+    HwConnector *m_hwSink;
     QMap<QString, QSerialPortInfo> m_idToInfo;
 public:
 
-    SerialPort(HwSink *hwSink);
+    SerialPort(HwConnector *hwSink);
     ~SerialPort();
 
 

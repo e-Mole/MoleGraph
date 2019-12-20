@@ -1,5 +1,5 @@
-#ifndef HWSINK_H
-#define HWSINK_H
+#ifndef HWCONNECTOR_H
+#define HWCONNECTOR_H
 
 #include <QObject>
 #include <QQueue>
@@ -15,7 +15,7 @@ class Bluetooth;
 class PortBase;
 class SerialPort;
 
-class HwSink : public QObject
+class HwConnector : public QObject
 {
     Q_OBJECT
 
@@ -79,8 +79,8 @@ public:
       bool anySampleMissed = false;
     };
 
-    HwSink(QWidget *parent);
-    ~HwSink();
+    HwConnector(QWidget *parent);
+    ~HwConnector();
 
     bool SetFrequency(unsigned frequency);
     bool SetTime(unsigned time);
@@ -109,14 +109,14 @@ public:
     void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
     void FillValueSet(QVector<float> values);
     bool IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount);
-    bool ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, HwSink::ValueSet *returnedValueSet);
+    bool ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, HwConnector::ValueSet *returnedValueSet);
 signals:
     void StartCommandDetected();
     void StopCommandDetected();
     void connectivityChanged(bool connected);
     void portFound(hw::PortInfo const &portInfo);
     void portOpened();
-    void stateChanged(QString const &stateString, hw::HwSink::State state);
+    void stateChanged(QString const &stateString, hw::HwConnector::State state);
 public slots:
     void portOpeningFinished();
 private slots:
@@ -125,4 +125,4 @@ private slots:
 
 };
 } //namespace hw
-#endif // HWSINK_H
+#endif // HWCONNECTOR_H

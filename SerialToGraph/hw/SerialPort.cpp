@@ -6,14 +6,14 @@
 #include <QString>
 #include <QTimer>
 #include <string>
-#include <hw/HwSink.h>
+#include <hw/HwConnector.h>
 
 #define RESPONSE_WAITING 200 //100 ms was not enough
 
 namespace hw
 {
 
-SerialPort::SerialPort(HwSink *hwSink) :
+SerialPort::SerialPort(HwConnector *hwSink) :
     PortBase(hwSink),
     m_hwSink(hwSink)
 {

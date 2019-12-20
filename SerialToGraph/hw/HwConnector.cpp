@@ -1,4 +1,4 @@
-#include "HwSink.h"
+#include "HwConnector.h"
 #include <QDebug>
 #include <GlobalSettings.h>
 #if not defined(Q_OS_ANDROID)
@@ -28,7 +28,7 @@
 
 namespace hw
 {
-HwSink::HwSink(QWidget *parent) :
+HwConnector::HwConnector(QWidget *parent) :
     QObject((QObject*)parent),
     m_port(NULL),
     m_bluetooth(NULL),
@@ -42,53 +42,53 @@ HwSink::HwSink(QWidget *parent) :
 
 }
 
-HwSink::~HwSink()
+HwConnector::~HwConnector()
 {
     if (m_port != NULL && m_port->IsOpen())
         Stop();
 }
 
-bool HwSink::SetFrequency(unsigned frequency)
+bool HwConnector::SetFrequency(unsigned frequency)
 {
     return _WriteInstruction(INS_SET_FREQUENCY, frequency, 2);
 }
 
-bool HwSink::SetTime(unsigned time)
+bool HwConnector::SetTime(unsigned time)
 {
     return _WriteInstruction(INS_SET_TIME, time, 2);
 }
 
-bool HwSink::SetType(unsigned type)
+bool HwConnector::SetType(unsigned type)
 {
     return _WriteInstruction(INS_SET_TYPE, type, 1);
 }
 
-bool HwSink::Start()
+bool HwConnector::Start()
 {
     return _WriteInstruction(INS_START);
 }
 
-bool HwSink::Stop()
+bool HwConnector::Stop()
 {
     return _WriteInstruction(INS_STOP);
 }
 
-bool HwSink::Pause()
+bool HwConnector::Pause()
 {
     return _WriteInstruction(INS_PAUSE);
 }
 
-bool HwSink::Continue()
+bool HwConnector::Continue()
 {
     return _WriteInstruction(INS_CONTINUE);
 }
 
-bool HwSink::SampleRequest()
+bool HwConnector::SampleRequest()
 {
     return _WriteInstruction(INS_GET_SAMLPE);
 }
 
-bool HwSink::Initialize()
+bool HwConnector::Initialize()
 {
     bool retValue = _WriteInstruction(INS_INITIALIZE);
 
@@ -101,19 +101,19 @@ bool HwSink::Initialize()
     return retValue;
 }
 
-bool HwSink::GetVersion()
+bool HwConnector::GetVersion()
 {
     return _WriteInstruction(INS_GET_VERSION);
 }
 
-void HwSink::SetSelectedChannels(unsigned char channels)
+void HwConnector::SetSelectedChannels(unsigned char channels)
 {
     std::string tmp;
     tmp.append((char const *)&channels, 1);
     _WriteInstruction(INS_ENABLED_CHANNELS, tmp);
 }
 
-void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex)
+void HwConnector::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex)
 {
     if (m_legacyFirmwareVersion)
         return;
@@ -130,7 +130,7 @@ void HwSink::SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, un
 }
 
 
-bool HwSink::IsDeviceConnected()
+bool HwConnector::IsDeviceConnected()
 {
     if (m_port == NULL || !m_port->IsOpen())
     {
@@ -140,7 +140,7 @@ bool HwSink::IsDeviceConnected()
     return true;
 }
 
-bool HwSink::FillQueue()
+bool HwConnector::FillQueue()
 {
     QByteArray array;
     m_port->ReadData(array);
@@ -151,7 +151,7 @@ bool HwSink::FillQueue()
     return !m_queue.empty();
 }
 
-bool HwSink::IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount)
+bool HwConnector::IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount)
 {
     if (m_queue.size() == 0)
         return false;
@@ -167,12 +167,12 @@ bool HwSink::IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount)
     return (unsigned)m_queue.size() >= size;
 }
 
-bool HwSink::IsCommand(unsigned char mixture)
+bool HwConnector::IsCommand(unsigned char mixture)
 {
     return INS_NONE != (mixture & COMMAND_MASK);
 }
 
-bool HwSink::_FillArrayFromQueue(unsigned length, QList<uint8_t>& list)
+bool HwConnector::_FillArrayFromQueue(unsigned length, QList<uint8_t>& list)
 {
     for (int index = 0; index < length; ++index) {
         if (m_queue.isEmpty())
@@ -184,7 +184,7 @@ bool HwSink::_FillArrayFromQueue(unsigned length, QList<uint8_t>& list)
 
 }
 
-bool HwSink::_ProcessDebugMessage(uint8_t &checkSum)
+bool HwConnector::_ProcessDebugMessage(uint8_t &checkSum)
 {
     QList<uint8_t> list;
     //queue does not have to contain while message
@@ -219,19 +219,19 @@ bool HwSink::_ProcessDebugMessage(uint8_t &checkSum)
     return false;
 }
 
-void HwSink::_ChangeState(State status)
+void HwConnector::_ChangeState(State status)
 {
     m_state = status;
     stateChanged(GetStateString(), m_state);
 }
 
-void HwSink::_StopSearching()
+void HwConnector::_StopSearching()
 {
     if (m_bluetooth != NULL)
         m_bluetooth->StopPortSearching();
 }
 
-void HwSink::WorkOffline()
+void HwConnector::WorkOffline()
 {
     if (m_port != NULL && m_port->IsOpen())
         m_port->Close();
@@ -244,7 +244,7 @@ void HwSink::WorkOffline()
         _ChangeState(Offline);
 }
 
-void HwSink::PortIssueSolver()
+void HwConnector::PortIssueSolver()
 {
     if (!m_knownIssue)
     {
@@ -256,7 +256,7 @@ void HwSink::PortIssueSolver()
     }
 }
 
-void HwSink::ClosePort()
+void HwConnector::ClosePort()
 {
     if (m_port != NULL &&  m_port->IsOpen())
     {
@@ -266,7 +266,7 @@ void HwSink::ClosePort()
     }
 }
 
-void HwSink::OpenPort(PortInfo const &info)
+void HwConnector::OpenPort(PortInfo const &info)
 {
     if (m_port != NULL && m_port->IsOpen() && info.m_id == m_openedPortInfo.m_id)
         return; //already opened
@@ -292,7 +292,7 @@ void HwSink::OpenPort(PortInfo const &info)
     m_port->OpenPort(info.m_id);
 }
 
-void HwSink::initialized()
+void HwConnector::initialized()
 {
     delete m_initializeTimer;
     m_initializeTimer = 0;
@@ -307,7 +307,7 @@ void HwSink::initialized()
     m_protocolIdTimer->start(100); //it should be enough to get response
 }
 
-void HwSink::portOpeningFinished()
+void HwConnector::portOpeningFinished()
 {
     if (m_port->IsOpen())
     {
@@ -333,14 +333,14 @@ void HwSink::portOpeningFinished()
     }
 }
 
-void HwSink::_ConnectionFailed()
+void HwConnector::_ConnectionFailed()
 {
     ClosePort();//if it was oppened;
     m_knownIssue = true; //will be displayed message about it
     _ChangeState(m_bluetooth && m_bluetooth->IsActive() ? Scanning : Offline);
 }
 
-void HwSink::readyRead()
+void HwConnector::readyRead()
 {
     if (m_state != Verification)
         return;
@@ -381,7 +381,7 @@ void HwSink::readyRead()
     connectivityChanged(true);
 }
 
-void HwSink::InitializeBluetooth()
+void HwConnector::InitializeBluetooth()
 {
     if (!GlobalSettings::GetInstance().GetUseBluetooth())
         return;
@@ -397,7 +397,7 @@ void HwSink::InitializeBluetooth()
     _ChangeState(Scanning);
 }
 
-void HwSink::TerminateBluetooth()
+void HwConnector::TerminateBluetooth()
 {
     delete m_bluetooth;
     m_bluetooth = NULL;
@@ -407,7 +407,7 @@ void HwSink::TerminateBluetooth()
 
 }
 
-void HwSink::StartSearching()
+void HwConnector::StartSearching()
 {
     m_port = NULL;
 
@@ -431,12 +431,12 @@ void HwSink::StartSearching()
     InitializeBluetooth();
 }
 
-void HwSink::ClearCache()
+void HwConnector::ClearCache()
 {
     m_port->ClearCache();
 }
 
-bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data)
+bool HwConnector::_WriteInstruction(Instructions instruction, std::string const &data)
 {
     if (!m_port->IsOpen())
         return false;
@@ -461,7 +461,7 @@ bool HwSink::_WriteInstruction(Instructions instruction, std::string const &data
     return true;
 }
 
-bool HwSink::_WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
+bool HwConnector::_WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
 {
     if (!m_port->IsOpen())
         return false;
@@ -471,12 +471,12 @@ bool HwSink::_WriteInstruction(Instructions instruction, unsigned parameter, uns
     return _WriteInstruction(instruction, tmp);
 }
 
-bool HwSink::_WriteInstruction(Instructions instruction)
+bool HwConnector::_WriteInstruction(Instructions instruction)
 {
     return _WriteInstruction(instruction, "");
 }
 
-QString HwSink::GetStateString()
+QString HwConnector::GetStateString()
 {
     switch(m_state)
     {
@@ -496,7 +496,7 @@ QString HwSink::GetStateString()
     }
 }
 
-bool HwSink::ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, ValueSet *returnedValueSet)
+bool HwConnector::ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, ValueSet *returnedValueSet)
 {
     if (m_queue.isEmpty())
         return false;
@@ -537,7 +537,7 @@ bool HwSink::ProcessData(bool onDemand, unsigned valueSetCount, double period, d
     return !returnedValueSet->values.empty();
 }
 
-unsigned char HwSink::_GetCheckSum(unsigned char input)
+unsigned char HwConnector::_GetCheckSum(unsigned char input)
 {
     unsigned char output = 0;
     for (unsigned char i = 0; i < 8; ++i)
@@ -548,7 +548,7 @@ unsigned char HwSink::_GetCheckSum(unsigned char input)
     return output;
 }
 
-bool HwSink::_ProcessCommand(unsigned mixture, unsigned char &checkSum)
+bool HwConnector::_ProcessCommand(unsigned mixture, unsigned char &checkSum)
 {
     unsigned char command = mixture & COMMAND_MASK; //filter out any_sample_missed
     switch (command)
@@ -570,7 +570,7 @@ bool HwSink::_ProcessCommand(unsigned mixture, unsigned char &checkSum)
     }
 }
 
-float HwSink::_DequeueFloat(unsigned char &checkSum)
+float HwConnector::_DequeueFloat(unsigned char &checkSum)
 {
     char value[4];
 

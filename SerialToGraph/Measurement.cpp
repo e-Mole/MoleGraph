@@ -9,7 +9,7 @@
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
 #include <HwChannel.h>
-#include <hw/HwSink.h>
+#include <hw/HwConnector.h>
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
@@ -39,7 +39,7 @@ using namespace atog;
 Measurement::Measurement(
     QWidget *parent,
     Context &context,
-    hw::HwSink &hwSink,
+    hw::HwConnector &hwSink,
     Measurement *source,
     bool initializeAxiesAndChannels,
     hw::SensorManager *sensorManager
@@ -129,7 +129,7 @@ void Measurement::draw()
     {
         while (true)
         {
-            hw::HwSink::ValueSet valueSet;
+            hw::HwConnector::ValueSet valueSet;
             bool pocessingResult = m_hwSink.ProcessData(
                 m_type == OnDemand,
                 m_valueSetCount,

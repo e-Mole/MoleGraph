@@ -1,6 +1,6 @@
 #include "PortListDialog.h"
 #include <GlobalSettings.h>
-#include <hw/HwSink.h>
+#include <hw/HwConnector.h>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QGridLayout>
@@ -13,7 +13,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
+PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
     bases::PlatformDialog(parent, tr("Device connecting")),
     m_hwSink(hwSink),
     m_progress(NULL),
@@ -64,8 +64,8 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwSink &hwSink) :
     connect(skip, SIGNAL(clicked(bool)), this, SLOT(workDisconnected()));
     buttonLayout->addWidget(skip);
 
-    connect(&hwSink, SIGNAL(stateChanged(QString,hw::HwSink::State)),
-            this, SLOT(stateChanged(QString,hw::HwSink::State)));
+    connect(&hwSink, SIGNAL(stateChanged(QString,hw::HwConnector::State)),
+            this, SLOT(stateChanged(QString,hw::HwConnector::State)));
     connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
 }
 
@@ -131,13 +131,13 @@ void PortListDialog::portRadioButtonReleased()
     GlobalSettings::GetInstance().SetForcedOffline(false);
 }
 
-void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State state)
+void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::State state)
 {
     m_progressText->setText(stateString);
     m_progressText->repaint();
     switch (state)
     {
-        case  hw::HwSink::Connected:
+        case  hw::HwConnector::Connected:
         {
             QString connectedId = GlobalSettings::GetInstance().GetLastSerialPortId();
             foreach (RadioButton *rb, m_radioToInfo.keys())
@@ -151,7 +151,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
             m_progress->repaint();
         }
         break;
-        case hw::HwSink::Offline:
+        case hw::HwConnector::Offline:
             //to progess stop mooving and display emprt state
             m_progress->setMaximum(1);
             m_progress->setValue(0);
@@ -164,7 +164,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwSink::State 
             m_progress->setEnabled(true);
     }
 
-    if (state != hw::HwSink::Connected)
+    if (state != hw::HwConnector::Connected)
         _UncheckRadioButton(m_selectedRadioButton);
 }
 

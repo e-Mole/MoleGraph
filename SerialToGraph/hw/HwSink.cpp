@@ -16,10 +16,16 @@
 #include <QQueue>
 #include <QTimer>
 #include <QWidget>
+#include <QList>
+
 #define PROTOCOL_ID "ATG_5"
+#define COMMAND_MASK 0x7F
+#define CHANNEL_DATA_SIZE 4
+#define TIMESTAMP_SIZE 4
 
 //FIXME: workaround
 #define LEGACY_PROTOCOL_ID "ATG_4"
+
 namespace hw
 {
 HwSink::HwSink(QWidget *parent) :
@@ -134,37 +140,83 @@ bool HwSink::IsDeviceConnected()
     return true;
 }
 
-bool HwSink::FillQueue(QQueue<unsigned char> &queue)
+bool HwSink::FillQueue()
 {
     QByteArray array;
     m_port->ReadData(array);
 
-    if (array.size() == 0)
-        return false; //nothing to fill
-
     for (int i = 0; i< array.size(); i++)
-         queue.enqueue(array[i]);
+         m_queue.enqueue(array[i]);
 
-    return true;
+    return !m_queue.empty();
 }
 
-bool HwSink::IsCommand(unsigned char command)
+bool HwSink::IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount)
 {
-    return INS_NONE != command;
+    if (m_queue.size() == 0)
+        return false;
+
+    if ((m_queue[0] & COMMAND_MASK) != 0) //a command present
+        return m_queue.size() > 1;
+
+    unsigned size = 1 + trackedHwChannelCount * CHANNEL_DATA_SIZE + 1; //Header + tracked channels data + checksum
+    if (onDemand)
+        size += TIMESTAMP_SIZE;
+
+    //qDebug() << "queue size: " << m_queue.size() << ", expected size: " << size;
+    return (unsigned)m_queue.size() >= size;
 }
-void HwSink::ProcessCommand(unsigned char command)
+
+bool HwSink::IsCommand(unsigned char mixture)
 {
-    switch (command)
-    {
-    case INS_NONE:
-    break;
-    case INS_START:
-        StartCommandDetected();
-    break;
-    case INS_STOP:
-        StopCommandDetected();
-    break;
+    return INS_NONE != (mixture & COMMAND_MASK);
+}
+
+bool HwSink::_FillArrayFromQueue(unsigned length, QList<uint8_t>& list)
+{
+    for (int index = 0; index < length; ++index) {
+        if (m_queue.isEmpty())
+            return false;
+        uint8_t value = m_queue.dequeue();
+        list.append(value);
     }
+    return true;
+
+}
+
+bool HwSink::_ProcessDebugMessage(uint8_t &checkSum)
+{
+    QList<uint8_t> list;
+    //queue does not have to contain while message
+    if (!m_queue.isEmpty())
+    {
+        uint8_t length = m_queue.dequeue();
+        list.append(length);
+
+        if (_FillArrayFromQueue(length, list) and m_queue.size() > 0) //checksum must left in queue
+        {
+            QString message;
+            for (int index = 0; index < list.size(); ++index)
+            {
+                checkSum += _GetCheckSum(list[index]);
+                if (index > 0) //length
+                {
+                    message.append(char(list[index]));
+                }
+            }
+
+            qDebug() << "HW debug msg: " + message;
+            return true;
+        }
+    }
+
+    //message is not complete have to return what was read
+    m_queue.enqueue(INS_DEBUG);
+    foreach (uint8_t item, list)
+    {
+           m_queue.enqueue(item);
+    }
+    return false;
 }
 
 void HwSink::_ChangeState(State status)
@@ -443,5 +495,98 @@ QString HwSink::GetStateString()
             return "";
     }
 }
+
+bool HwSink::ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, ValueSet *returnedValueSet)
+{
+    if (m_queue.isEmpty())
+        return false;
+
+    uint8_t header = m_queue.head();
+    returnedValueSet->anySampleMissed |= header >> 7;
+    unsigned char checkSum = _GetCheckSum(header);
+
+    if (IsCommand(header))
+    {
+        if (!_ProcessCommand(header, checkSum))
+            return false;
+    }
+    else
+    {
+        if (!IsCompleteSetInQueue(onDemand, trackedHwChannelsCount))
+           return false;
+
+        header = m_queue.dequeue(); //will not be used any more just to move to next item
+        //values processing
+        if (onDemand)
+            returnedValueSet->offset = _DequeueFloat(checkSum);
+        else
+            returnedValueSet->offset = (double)valueSetCount * period + secondsInPause;
+
+        for (int i = 0; i < trackedHwChannelsCount; ++i)
+            returnedValueSet->values.push_back(_DequeueFloat(checkSum));
+    }
+
+    unsigned expectedChecksum = m_queue.dequeue();
+    if (checkSum != expectedChecksum)
+    {
+        qDebug() << "checksum does not match:" << checkSum << ", " << expectedChecksum;
+        returnedValueSet->anyCheckSumDoesntMatch = true;
+        return false;
+    }
+
+    return !returnedValueSet->values.empty();
+}
+
+unsigned char HwSink::_GetCheckSum(unsigned char input)
+{
+    unsigned char output = 0;
+    for (unsigned char i = 0; i < 8; ++i)
+    {
+      if (input & (1 << i))
+        output++;
+    }
+    return output;
+}
+
+bool HwSink::_ProcessCommand(unsigned mixture, unsigned char &checkSum)
+{
+    unsigned char command = mixture & COMMAND_MASK; //filter out any_sample_missed
+    switch (command)
+    {
+    case INS_START:
+        m_queue.dequeue();
+        StartCommandDetected();
+        return true;
+    case INS_STOP:
+        m_queue.dequeue();
+        StopCommandDetected();
+        return true;
+    case INS_DEBUG:
+        m_queue.dequeue();
+        return _ProcessDebugMessage(checkSum);
+    default:
+        qDebug() << "Unsupported command " << "command";
+        return false;
+    }
+}
+
+float HwSink::_DequeueFloat(unsigned char &checkSum)
+{
+    char value[4];
+
+    value[0] = m_queue.dequeue();
+    value[1] = m_queue.dequeue();
+    value[2] = m_queue.dequeue();
+    value[3] = m_queue.dequeue();
+
+    checkSum += _GetCheckSum(value[0]);
+    checkSum += _GetCheckSum(value[1]);
+    checkSum += _GetCheckSum(value[2]);
+    checkSum += _GetCheckSum(value[3]);
+
+    return *((float*)value);
+}
+
+
 
 } //namespace hw

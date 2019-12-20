@@ -19,8 +19,8 @@ float VOLT25::read(uint8_t _spec) {
   //value = NO_DATA;
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value*(26.0f/1024); value = NO_DATA; break;      // DC napeti V (max 25 V)
-    case 1: result = value; value = NO_DATA; break;                   // RAW
+    case 0: result = value*(26.0f/1024); break;      // DC napeti V (max 25 V)
+    case 1: result = value; break;                   // RAW
   }
   return result;
 }

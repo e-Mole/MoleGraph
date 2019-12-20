@@ -6,7 +6,7 @@ BH1750 luxMeter;
 
 LUXBH1750::LUXBH1750(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
 	//BH1750 settings
-	luxMeter.begin();;  
+	luxMeter.begin();;
 }
 
 bool LUXBH1750::process() {
@@ -24,7 +24,7 @@ bool LUXBH1750::process() {
 float LUXBH1750::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; /* value = NO_DATA; */ break; 			    //UV intensity
+    case 0: result = value; break; 			    //UV intensity
   }
   return result;
 }

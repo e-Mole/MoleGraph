@@ -17,8 +17,8 @@ bool AD::process() {
 float AD::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; value = NO_DATA; break;        // RAW
-    case 1: result = value*(5.0f/1024); value = NO_DATA; break;  // voltage
+    case 0: result = value; break; // RAW
+    case 1: result = value*(5.0f/1024); break; // voltage
   }
   return result;
 }

@@ -34,10 +34,7 @@
 using namespace atog;
 
 #define INITIAL_DRAW_PERIOD 50
-#define CHANNEL_DATA_SIZE 4
-#define TIMESTAMP_SIZE 4
 #define CHANNEL_COUNT 8
-#define COMMAND_MASK 0x7F
 
 Measurement::Measurement(
     QWidget *parent,
@@ -105,38 +102,6 @@ void Measurement::portConnectivityChanged(bool connected)
     }
 }
 
-float Measurement::_DequeueFloat(unsigned char &checkSum)
-{
-    char value[4];
-
-    value[0] = m_queue.dequeue();
-    value[1] = m_queue.dequeue();
-    value[2] = m_queue.dequeue();
-    value[3] = m_queue.dequeue();
-
-    checkSum += _GetCheckSum(value[0]);
-    checkSum += _GetCheckSum(value[1]);
-    checkSum += _GetCheckSum(value[2]);
-    checkSum += _GetCheckSum(value[3]);
-
-    return *((float*)value);
-}
-
-bool Measurement::_IsCompleteSetInQueue()
-{
-    if (m_queue.size() == 0)
-        return false;
-
-    if ((m_queue[0] & COMMAND_MASK) != 0) //a command present
-        return m_queue.size() > 1;
-
-    unsigned size = 1 + m_trackedHwChannels.size() * CHANNEL_DATA_SIZE + 1; //Header + tracked channels data + checksum
-    if (m_type == OnDemand)
-        size += TIMESTAMP_SIZE;
-
-    return (unsigned)m_queue.size() >= size;
-}
-
 void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
 {
     if (m_drawPeriod >= 20 && drawDelay < m_drawPeriod /2) //20 ms - I guess the program will not use a dog
@@ -156,93 +121,54 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
 }
 
-unsigned char Measurement::_GetCheckSum(unsigned char input)
-{
-    unsigned char output = 0;
-    for (unsigned char i = 0; i < 8; ++i)
-    {
-      if (input & (1 << i))
-        output++;
-    }
-    return output;
-}
-
-bool Measurement::_ProcessCommand(unsigned mixture, unsigned checkSum)
-{
-    unsigned char command = mixture & COMMAND_MASK;
-
-    if (!m_hwSink.IsCommand(command))
-        return false;
-
-    if (checkSum != m_queue.dequeue())
-        MyMessageBox::critical(m_widget, tr("Command with wrong checksum recieved."));
-    else
-        m_hwSink.ProcessCommand(command);
-
-    return true;
-}
-
-bool Measurement::_ProcessValueSet()
-{
-    unsigned mixture = m_queue.dequeue();
-    m_anySampleMissed |= mixture >> 7;
-    unsigned char checkSum = _GetCheckSum(mixture);
-
-    if (_ProcessCommand(mixture, checkSum))
-        return false; //message is a command
-
-    double offset = 0;
-    if (m_type == OnDemand)
-        offset = _DequeueFloat(checkSum);
-    else
-        offset =
-            (double)m_valueSetCount *
-            ((m_sampleUnits == SampleUnits::Sec) ?  (double)m_period  : 1.0/(double)m_period ) +
-            m_secondsInPause;
-
-    m_valueSetCount++;
-    QVector<float> values;
-    for (int i = 0; i < m_trackedHwChannels.count(); ++i)
-        values.push_back(_DequeueFloat(checkSum));
-
-    unsigned char expectedChecksum = m_queue.dequeue();
-    if (checkSum != expectedChecksum)
-    {
-        qDebug() << "checksum doesnt match:" << checkSum << ", " << expectedChecksum;
-        m_anyCheckSumDoesntMatch = true;
-        return false;
-    }
-
-    m_sampleChannel->AddValue(m_valueSetCount, offset);
-
-    unsigned i = 0;
-    foreach (ChannelBase *channel, m_trackedHwChannels.values())
-        channel->AddValue(values[i++]);
-
-    //im sure I have a horizontal value and may start to draw
-    valueSetMeasured();
-    return true;
-}
-
 void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (m_hwSink.FillQueue(m_queue) && _IsCompleteSetInQueue())
+    if (m_hwSink.FillQueue())
     {
-        do
+        while (true)
         {
-            GlobalSettings::GetInstance().SetSavedValues(false);
-            if (!_ProcessValueSet())
-                goto FINISH_DRAW;
-        } while (_IsCompleteSetInQueue());
+            hw::HwSink::ValueSet valueSet;
+            bool pocessingResult = m_hwSink.ProcessData(
+                m_type == OnDemand,
+                m_valueSetCount,
+                (m_sampleUnits == SampleUnits::Sec) ?  double(m_period)  : 1.0/double(m_period),
+                m_secondsInPause,
+                unsigned(m_trackedHwChannels.count()),
+                &valueSet
+            );
+            m_anySampleMissed |= valueSet.anySampleMissed;
+            m_anyCheckSumDoesntMatch |= valueSet.anyCheckSumDoesntMatch;
+            if (!pocessingResult)
+                break;
 
-        m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannelProxy(this)->GetLastValidValue());
-        _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
+            GlobalSettings::GetInstance().SetSavedValues(false);
+            m_valueSetCount++;
+            m_sampleChannel->AddValue(m_valueSetCount, valueSet.offset);
+
+            int i = 0;
+            foreach (ChannelBase *channel, m_trackedHwChannels.values())
+            {
+                float value = valueSet.values[i++];
+                float deleteme = fabs(value - std::numeric_limits<float>::max());
+                if (fabs(value - std::numeric_limits<float>::max()) < std::numeric_limits<float>::epsilon()){
+                    value = channel->GetNaValue();
+                }
+                channel->AddValue(value);
+            }
+            //I am sure that have a horizontal value and may start to draw
+            valueSetMeasured();
+        }
+
     }
 
-FINISH_DRAW: if (m_startNewDraw)
+    m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannelProxy(this)->GetLastValidValue());
+    _AdjustDrawPeriod((unsigned)(QDateTime::currentMSecsSinceEpoch() - startTime));
+
+    if (m_startNewDraw){
         m_drawTimer->start(m_drawPeriod);
+    }
 }
 
 void Measurement::DrawRestData()
@@ -286,6 +212,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
 
 bool Measurement::_SetModeWithPeriod()
 {
+    //It is expected that this message will be send before each measurement start as a first message (befor settings channels and sensors)
     if (!m_hwSink.SetType(m_type))
         return false;
 
@@ -309,6 +236,7 @@ bool Measurement::_SetModeWithPeriod()
 void Measurement::_ProcessActiveChannels()
 {
     unsigned selectedChannels = 0;
+    m_trackedHwChannels.clear();
     foreach (ChannelBase *channel, m_channels)
     {
         HwChannel *hwChannel = dynamic_cast<HwChannel *>(channel);

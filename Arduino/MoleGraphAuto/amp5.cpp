@@ -18,7 +18,7 @@ float AMP5::read(uint8_t _spec) {
   //float result = value;
   //value = NO_DATA;
   float result = NO_DATA;
-    
+
     // Measuring Current Using ACS712
     int mVperAmp = 185; // use 100 for 20A Module and 66 for 30A Module
     int ACSoffset = 2500;
@@ -26,10 +26,10 @@ float AMP5::read(uint8_t _spec) {
     double Amps = 0;
     Voltage = value*(5000.0f/1024); // Gets you mV
     Amps = ((Voltage - ACSoffset) / mVperAmp);
-  
+
   switch (_spec) {
-    case 0: result = Amps; value = NO_DATA; break;       // AC/DC proud (max 5 A)
-    case 1: result = value; value = NO_DATA; break;      // RAW
+    case 0: result = Amps; break;       // AC/DC proud (max 5 A)
+    case 1: result = value; break;      // RAW
   }
   return result;
 }

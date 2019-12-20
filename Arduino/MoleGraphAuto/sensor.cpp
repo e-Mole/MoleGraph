@@ -9,19 +9,15 @@ uint8_t PORTS[MAX_PORTS][4] = {
   { 17,  8, 4, PCINT11}
 };
 
-uint8_t sensorMask = 0;
-Sensor* sensor[MAX_PORTS];
-
 Sensor::Sensor(uint32_t _period, uint8_t _port) {
   period = _period;
   port = _port;
-  channelCount = 0;
 }
 
 Sensor::~Sensor() {
-  pinMode(PORTS[port][0], INPUT);  
-  pinMode(PORTS[port][1], INPUT);  
-  pinMode(PORTS[port][2], INPUT);  
+  pinMode(PORTS[port][0], INPUT);
+  pinMode(PORTS[port][1], INPUT);
+  pinMode(PORTS[port][2], INPUT);
 }
 
 void Sensor::start(uint32_t now) {
@@ -32,20 +28,21 @@ void Sensor::stop() {
   time = 0;
 }
 
+void Sensor::processData(){
+  dataReady = process();
+}
+
 bool Sensor::process() {
-//  if (Millis() - time >= period) {
   if (Action(period)) {
     time += period;
     value = NO_DATA;
-    return 1;
+    return true;
   }
-  return 0;
+  return false;
 }
 
 float Sensor::read(uint8_t _spec) {
-  float result = value;
-  value = NO_DATA;
-  return result;
+  return value;
 }
 
 void Sensor::calibrate() {
@@ -79,7 +76,7 @@ uint16_t I2C_ReadData16BE(uint8_t addr, uint8_t reg) {
   while (Wire.available() < 2);
   d[0] = Wire.read();
   d[1] = Wire.read();
-  return (uint16_t)d[0] << 8 | d[1]; 
+  return (uint16_t)d[0] << 8 | d[1];
 }
 
 uint16_t I2C_ReadData16LE(uint8_t addr, uint8_t reg) {
@@ -89,5 +86,5 @@ uint16_t I2C_ReadData16LE(uint8_t addr, uint8_t reg) {
   while (Wire.available() < 2);
   d[0] = Wire.read();
   d[1] = Wire.read();
-  return (uint16_t)d[1] << 8 | d[0]; 
+  return (uint16_t)d[1] << 8 | d[0];
 }

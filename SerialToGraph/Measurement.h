@@ -6,7 +6,6 @@
 #include <QMetaProperty>
 #include <QColor>
 #include <QObject>
-#include <QQueue>
 #include <QSize>
 #include <QString>
 #include <QTime>
@@ -69,7 +68,6 @@ private:
     friend class MeasurementSettings;
 
     bool _FillQueue();
-    bool _IsCompleteSetInQueue();
     void _AdjustDrawPeriod(unsigned drawDelay);
     void _CloneAxesAndChanels(Measurement *sourceMeasurement);
     void _InitializeAxesAndChanels();
@@ -77,10 +75,6 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessActiveChannels();
-    float _DequeueFloat(unsigned char &checkSum);
-    unsigned char _GetCheckSum(unsigned char input);
-    bool _ProcessCommand(unsigned mixture, unsigned checkSum);
-    bool _ProcessValueSet();
     void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
@@ -116,7 +110,6 @@ private:
     QMap<unsigned, ChannelBase *> m_trackedHwChannels; //used just during measurement
     unsigned m_drawPeriod;
     QTimer *m_drawTimer;
-    QQueue<unsigned char> m_queue;
     SampleChannel *m_sampleChannel;
     QVector<ChannelBase*> m_channels;
     bool m_startNewDraw;

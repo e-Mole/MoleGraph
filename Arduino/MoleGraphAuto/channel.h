@@ -3,20 +3,20 @@
 
 #include "sensor.h"
 
-#define MAX_CHANNELS    8
-
 class Channel {
-  public:
-    Channel(uint8_t _type, uint8_t _port, uint8_t _spec = 0);
-    float   read();
-    uint8_t type;
-    uint8_t port = 255;
-    uint8_t spec;  
-  protected:
-};
+    Sensor * sensor;
+    uint8_t spec;
+    float lastData;
+    bool enabled;
 
-extern uint8_t  channelCount;
-extern uint8_t  channelMask;
-extern Channel* channel[MAX_CHANNELS];
+  public:
+    Channel();
+    void Reset();
+    void Enable() { enabled = true; }
+    bool IsEnabled() { return enabled; }
+    void AssignSensor(Sensor* sensor, uint8_t spec);
+    void CollectData();
+    float GetLastValue() {return lastData;}
+};
 
 #endif

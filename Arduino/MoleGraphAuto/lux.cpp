@@ -22,8 +22,8 @@ bool Lux::process() {
 float Lux::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value;  value = NO_DATA; break;             // pseudo lux
-    case 1: result = value2; value2 = NO_DATA; break;            // trigger 0/1
+    case 0: result = value; break;             // pseudo lux
+    case 1: result = value2; break;            // trigger 0/1
   }
   return result;
 }

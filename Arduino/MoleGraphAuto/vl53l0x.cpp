@@ -13,7 +13,7 @@
 #define VL53L0X_REG_RESULT_DISTANCE                 0x1E
 
 VL53L0X::VL53L0X(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
-  delta  = period; 
+  delta  = period;
   active = 0;
 }
 
@@ -53,7 +53,7 @@ bool VL53L0X::process() {
     if (active == 0) {
       write_byte_data_at(VL53L0X_REG_SYSRANGE_START, 0x01);
       active = 1;
-      time += period; 
+      time += period;
       delta = VL53L0X_WAIT;
   } else {
       uint8_t  val = read_byte_data_at(VL53L0X_REG_RESULT_RANGE_STATUS);
@@ -66,10 +66,10 @@ bool VL53L0X::process() {
       } else {
         value = NO_DATA;
       }
-      active = 0; 
-      delta  = period; 
+      active = 0;
+      delta  = period;
       return 1;
-    } 
+    }
   }
-  return 0; 
+  return 0;
 }

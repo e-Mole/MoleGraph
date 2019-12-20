@@ -31,11 +31,11 @@ bool BME280::process() {
 float BME280::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; /* value = NO_DATA; */ break; 			    // pressure
-    case 1: result = value2; /* value2 = NO_DATA; */ break;			    // temperature
-    case 2: result = value3; /* value3 = NO_DATA; */ break;			    // humidity
-    case 3: result = calcAltitude(); /* value4 = NO_DATA; */ break; // altitude m
-    case 4: result = calcDewPoint(); /* value5 = NO_DATA; */ break; // dewpoint °C    
+    case 0: result = value; break; 			    // pressure
+    case 1: result = value2; break;			    // temperature
+    case 2: result = value3; break;			    // humidity
+    case 3: result = calcAltitude(); break; // altitude m
+    case 4: result = calcDewPoint(); break; // dewpoint °C
   }
   return result;
 }

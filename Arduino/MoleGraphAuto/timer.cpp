@@ -60,7 +60,7 @@ ISR (PC_INT) {
       countRise[index]++;
       pulseNegative[index] = temp - timeFall[index];
       periodRise[index] = temp - timeRise[index];
-      timeRise[index] = temp;    
+      timeRise[index] = temp;
     }
   }
   lastState = a;
@@ -70,11 +70,11 @@ TimerAbstract::TimerAbstract(uint32_t _period, uint8_t _port) : Sensor(_period, 
   pin = PORTS[port][0];
   pinMode(pin, INPUT_PULLUP);
   maskPC |= (1 << (pin % 0x07));
-  PC_MSK |= (1 << PORTS[port][3]);  
+  PC_MSK |= (1 << PORTS[port][3]);
 }
 
 TimerAbstract::~TimerAbstract() {
-  PC_MSK &= ~(1 << PORTS[port][3]);      
+  PC_MSK &= ~(1 << PORTS[port][3]);
 }
 
 void TimerAbstract::start(uint32_t now) {
@@ -92,17 +92,17 @@ bool Timer::process() {
     uint32_t x0, x1, x2, x3, x4, x5;
     cli();
     x0 = pulsePositive[port];
-    pulsePositive[port] = 0;     
+    pulsePositive[port] = 0;
     x1 = pulseNegative[port];
-    pulseNegative[port] = 0;     
+    pulseNegative[port] = 0;
     x2 = periodRise[port];
-    periodRise[port] = 0;     
+    periodRise[port] = 0;
     x3 = periodFall[port];
-    periodFall[port] = 0;     
+    periodFall[port] = 0;
     x4 = countRise[port];
-    countRise[port] = 0;     
+    countRise[port] = 0;
     x5 = countFall[port];
-    countFall[port] = 0;     
+    countFall[port] = 0;
     sei();
     if (x0 != 0) value  = x0 * (0.5e-6);
     if (x1 != 0) value1 = x1 * (0.5e-6);
@@ -119,12 +119,12 @@ bool Timer::process() {
 float Timer::read(uint8_t _spec) {
   float result = value;
   switch (_spec) {
-    case 0: result = value;  value  = NO_DATA; break;
-    case 1: result = value1; value1 = NO_DATA; break;
-    case 2: result = value2; value2 = NO_DATA; break;
-    case 3: result = value3; value3 = NO_DATA; break;
-    case 4: result = value4; value4 = NO_DATA; break;
-    case 5: result = value5; value5 = NO_DATA; break;
+    case 0: result = value; break;
+    case 1: result = value1; break;
+    case 2: result = value2; break;
+    case 3: result = value3; break;
+    case 4: result = value4; break;
+    case 5: result = value5; break;
   }
   return result;
 }

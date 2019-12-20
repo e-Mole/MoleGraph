@@ -2,6 +2,7 @@
 #define HWSINK_H
 
 #include <QObject>
+#include <QQueue>
 #include <hw/PortInfo.h>
 #include <QList>
 #include <QString>
@@ -43,7 +44,8 @@ private:
         INS_PAUSE = 9,
         INS_CONTINUE = 10,
         INS_INITIALIZE = 11,
-        INS_SET_SENSOR = 12
+        INS_SET_SENSOR = 12,
+        INS_DEBUG = 127,
     };
 
     bool _WriteInstruction(Instructions instruction, std::string const &data);
@@ -52,6 +54,11 @@ private:
     void _ChangeState(State status);
     void _StopSearching();
     void _ConnectionFailed();
+    bool _ProcessDebugMessage(uint8_t &checkSum);
+    unsigned char _GetCheckSum(unsigned char input);
+    bool _ProcessCommand(unsigned mixture, unsigned char &checkSum);
+    float _DequeueFloat(unsigned char &checkSum);
+    bool _FillArrayFromQueue(unsigned length, QList<uint8_t> &list);
 
     PortBase * m_port;
     Bluetooth * m_bluetooth;
@@ -63,7 +70,15 @@ private:
     QTimer *m_protocolIdTimer;
     QTimer *m_initializeTimer;
     bool m_legacyFirmwareVersion;
+    QQueue<unsigned char> m_queue;
 public:
+    struct ValueSet{
+      double offset = 0;
+      QVector<float> values;
+      bool anyCheckSumDoesntMatch = false;
+      bool anySampleMissed = false;
+    };
+
     HwSink(QWidget *parent);
     ~HwSink();
 
@@ -80,9 +95,8 @@ public:
     void SetSelectedChannels(unsigned char channels);
     bool IsDeviceConnected();
     void PortIssueSolver();
-    bool FillQueue(QQueue<unsigned char> &queue);
-    bool IsCommand(unsigned char command);
-    void ProcessCommand(unsigned char command);
+    bool FillQueue();
+    bool IsCommand(unsigned char mixture);
     void WorkOffline();
     void ClosePort();
     void OpenPort(const PortInfo &info);
@@ -93,7 +107,9 @@ public:
     void InitializeBluetooth();
     void TerminateBluetooth();
     void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
-
+    void FillValueSet(QVector<float> values);
+    bool IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount);
+    bool ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, HwSink::ValueSet *returnedValueSet);
 signals:
     void StartCommandDetected();
     void StopCommandDetected();

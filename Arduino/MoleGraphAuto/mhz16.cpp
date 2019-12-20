@@ -1,6 +1,6 @@
 #include "mhz16.h"
 
-#define  RECEIVE_TIMEOUT  (100) 
+#define  RECEIVE_TIMEOUT  (100)
 
 uint8_t MHZ16::cmd_measure[9]       = {0xFF,0x01,0x9C,0x00,0x00,0x00,0x00,0x00,0x63};
 uint8_t MHZ16::cmd_calibrateZero[9] = {0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78};
@@ -24,7 +24,7 @@ void MHZ16::measure()
   uint8_t buf[9];
   uint32_t start = millis();
   value = NO_DATA;
-  
+
   serial.flush();
 
   for (i=0; i<9; i++) {
@@ -66,8 +66,8 @@ uint8_t MHZ16::parse(uint8_t *pbuf) {
 float MHZ16::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value ; value  = NO_DATA; break;  // ppm
-    case 1: result = value2; value2 = NO_DATA; break;  // %
+    case 0: result = value ; break;  // ppm
+    case 1: result = value2; break;  // %
     }
   return result;
-} 
+}

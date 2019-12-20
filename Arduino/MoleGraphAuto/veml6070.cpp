@@ -24,7 +24,7 @@ bool VEML6070::process() {
 float VEML6070::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; /* value = NO_DATA; */ break; 			    //UV intensity
+    case 0: result = value; break; 			    //UV intensity
   }
   return result;
 }

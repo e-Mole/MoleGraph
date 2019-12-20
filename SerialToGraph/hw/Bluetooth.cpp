@@ -116,6 +116,11 @@ void Bluetooth::ReadData(QByteArray &array)
     array = m_socket->readAll();
 }
 
+void Bluetooth::ClearCache(){
+    QByteArray array;
+    ReadData(array);
+}
+
 qint64 Bluetooth::Write(char const *data, unsigned size)
 {
     return m_socket->write(data, size);

@@ -27,7 +27,7 @@ public:
     void StopPortSearching();
     virtual void ReadData(QByteArray &array, unsigned maxLength);
     virtual void ReadData(QByteArray &array);
-    virtual void ClearCache() {}
+    virtual void ClearCache();
     qint64 Write(char const *data, unsigned size);
     bool WaitForBytesWritten();
     virtual bool IsOpen();

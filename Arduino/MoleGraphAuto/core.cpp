@@ -31,54 +31,31 @@ void clean(){
 
 Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
   switch (_type) {
-    case SENSOR_DS18B20:
-      return new DS18B20(_period, _port);
-    case SENSOR_AD:
-      return new AD(_period, _port);
-    case SENSOR_VL53L0X:
-      return new VL53L0X(_period, _port);
-    case SENSOR_FORCE:
-      return new Silomer(_period, _port);
-    case SENSOR_HX711:
-      return new HX711(_period, _port);
-    case SENSOR_DHT11:
-      return new DHT11(_period, _port);
-    //case SENSOR_DHT11:
-    //  return new DHT11MG(_period, _port);
-    case SENSOR_MLX90614:
-      return new MLX90614(_period, _port);
-    case SENSOR_MPX5700DP:
-      return new MPX5700DP(_period, _port);
-    case SENSOR_SRF04:
-      return new SRF04(_period, _port);
-    case SENSOR_LUX:
-      return new Lux(_period, _port);
-    case SENSOR_TIMER:
-      return new Timer(_period, _port);
-    case SENSOR_LED:
-      return new LedBlink(_period, _port);
-    case SENSOR_MAGNETOMETR:
-      return new Magnetometr(_period, _port);
-    case SENSOR_SOUNDMETER:
-      return new Soundmeter(_period, _port);
-    case SENSOR_BME280:
-      return new BME280(_period, _port);
-    case SENSOR_CO2:
-      return new MHZ16(_period, _port);
-	  case SENSOR_DCV25:
-      return new VOLT25(_period, _port);
-    case SENSOR_DCA5:
-      return new AMP5(_period, _port);
-	  case SENSOR_DCA30:
-      return new AMP30(_period, _port);
-	  case SENSOR_VEML6070:
-      return new VEML6070(_period, _port);
-	  case SENSOR_MQ3:
-      return new MQ3(_period, _port);
-	  case SENSOR_PH:
-      return new PH(_period, _port);
-	  case SENSOR_LUXBH1750:
-      return new LUXBH1750(_period, _port);
+    case SENSOR_DS18B20: return new DS18B20(_period, _port);
+    case SENSOR_AD: return new AD(_period, _port);
+    case SENSOR_VL53L0X: return new VL53L0X(_period, _port);
+    case SENSOR_FORCE: return new Silomer(_period, _port);
+    //case SENSOR_HX711: return new HX711(_period, _port);
+    //case SENSOR_DHT11: return new DHT11(_period, _port);
+    //case SENSOR_DHT11: return new DHT11MG(_period, _port);
+    case SENSOR_MLX90614: return new MLX90614(_period, _port);
+    case SENSOR_MPX5700DP: return new MPX5700DP(_period, _port);
+    case SENSOR_SRF04: return new SRF04(_period, _port);
+    case SENSOR_LUX: return new Lux(_period, _port);
+    case SENSOR_TIMER: return new Timer(_period, _port);
+    case SENSOR_LED: return new LedBlink(_period, _port);
+    case SENSOR_MAGNETOMETR: return new Magnetometr(_period, _port);
+    case SENSOR_SOUNDMETER: return new Soundmeter(_period, _port);
+    case SENSOR_BME280: return new BME280(_period, _port);
+    case SENSOR_CO2: return new MHZ16(_period, _port);
+	  case SENSOR_DCV25: return new VOLT25(_period, _port);
+    case SENSOR_DCA5: return new AMP5(_period, _port);
+	  case SENSOR_DCA30: return new AMP30(_period, _port);
+	  case SENSOR_VEML6070: return new VEML6070(_period, _port);
+	  case SENSOR_MQ3: return new MQ3(_period, _port);
+	  case SENSOR_PH: return new PH(_period, _port);
+	  case SENSOR_LUXBH1750: return new LUXBH1750(_period, _port);
+    case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
   }
 }
 

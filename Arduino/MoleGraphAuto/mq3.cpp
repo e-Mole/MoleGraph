@@ -5,6 +5,7 @@ MQ3::MQ3(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin_digi  = PORTS[_port][1];
   pinMode(pin, INPUT);
   pinMode(pin_digi, INPUT);
+  offset = 0; 
 }
 
 bool MQ3::process() {
@@ -29,7 +30,7 @@ float MQ3::read(uint8_t _spec) {
     float R0;
     int R2 = 1000; //1000
 
-    voltage = value*(5.0f/1024);; // Gets you V
+    voltage = (value - offset)*(5.0f/1024);; // Gets you V
     RS_gas = ((5.0 * R2)/voltage) - R2;
     //R0 = RS_gas / 60;	 //R0 = 110
 	  R0 = 11000;
@@ -45,4 +46,9 @@ float MQ3::read(uint8_t _spec) {
     case 4: result = value2; break;    // trigger 0/1
   }
   return result;
+}
+
+void MQ3::calibrate() {
+  //offset = value;
+  offset = analogRead(pin);
 }

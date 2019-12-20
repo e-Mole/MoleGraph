@@ -12,8 +12,6 @@ class LUXBH1750 : public Sensor {
     virtual float read(uint8_t);
   protected:
     uint8_t pin, pin_digi;
-  private:
-    float value;
 };
 
 #endif

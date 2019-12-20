@@ -97,7 +97,67 @@
     {
       "quantityId" : 23,
       "quantityName" : "UV Intensity"
-    }
+    },
+    {
+      "quantityId" : 24,
+      "quantityName" : "Accel X"
+    }, 
+    {
+      "quantityId" : 25,
+      "quantityName" : "Accel Y"
+    }, 
+    {
+      "quantityId" : 26,
+      "quantityName" : "Accel Z"
+    }, 
+    {
+      "quantityId" : 27,
+      "quantityName" : "Mag X"
+    }, 
+    {
+      "quantityId" : 28,
+      "quantityName" : "Mag Y"
+    }, 	
+    {
+      "quantityId" : 29,
+      "quantityName" : "Mag Z"
+    },
+    {
+      "quantityId" : 30,
+      "quantityName" : "Heading"
+    }, 	
+    {
+      "quantityId" : 31,
+      "quantityName" : "Roll"
+    }, 	
+    {
+      "quantityId" : 32,
+      "quantityName" : "Pitch"
+    }, 	
+    {
+      "quantityId" : 33,
+      "quantityName" : "T0"
+    } , 	
+    {
+      "quantityId" : 34,
+      "quantityName" : "T1"
+    } , 	
+    {
+      "quantityId" : 35,
+      "quantityName" : "T2"
+    } , 	
+    {
+      "quantityId" : 36,
+      "quantityName" : "T3"
+    } , 	
+    {
+      "quantityId" : 37,
+      "quantityName" : "T4"
+    } , 	
+    {
+      "quantityId" : 38,
+      "quantityName" : "T5"
+    }  	 	
                            
   ],
   "sensors":
@@ -124,8 +184,8 @@
     },    
     {
       "sensorId" : 3,
-      "sensorName" : "*(Accelerometer + Magnetometer (LSM303DLHC))",
-      "quantities" : [ "Acceleration", "Magnetic Field Intensity" ]
+      "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
+      "quantities" : [ "Acceleration", "Magnetic Field Intensity", "Accel X", "Accel Y", "Accel Z", "Mag X", "Mag Y", "Mag Z", "Heading", "Roll", "Pitch" ]
     },
     {
       "sensorId" : 5,
@@ -186,7 +246,7 @@
     },
     {
       "sensorId" : 16,
-      "sensorName" : "*(Voltage + Current sensor)",
+      "sensorName" : "*(Voltage + Current sensor (HX711))",
       "quantities" : [ "Voltage", "Current" ]
     },
     {
@@ -238,6 +298,10 @@
     {  "sensorId" : 105,
       "sensorName" : "Laser ranging sensor‎ (VL53L0X)",
       "quantities" : [ "Distance" ]
-    }     
+    },		
+    {  "sensorId" : 103,
+      "sensorName" : "Timer",
+      "quantities" : [ "T0", "T1", "T2", "T3", "T4", "T5" ]
+    }      
   ]
 }

@@ -26,10 +26,10 @@ bool LSM303DLHC::process() {
       /* Get a new sensor event */
       sensors_event_t event1;
       accel.getEvent(&event1);
-      
+
       sensors_event_t event2;
       mag.getEvent(&event2);
-    
+
       aX = event1.acceleration.x;
       aY = event1.acceleration.y;
       aZ = event1.acceleration.z;
@@ -37,31 +37,31 @@ bool LSM303DLHC::process() {
       mX = event2.magnetic.x;
       mY = event2.magnetic.y;
       mZ = event2.magnetic.z;
-	  
+
 	    value = sqrt(aX * aX + aY * aY + aZ * aZ); //total acceleration
 	    value2 = sqrt(mX * mX + mY * mY + mZ * mZ); //total magnetic field
-      
-      
+
+
       //calculate compass heading
-      float Pi = 3.14159; 
+      float Pi = 3.14159;
       // Calculate the angle of the vector y,x
-      heading = (atan2(mY, mX) * 180) / Pi;      
+      heading = (atan2(mY, mX) * 180) / Pi;
       // Normalize to 0-360
       if (heading < 0)
       {
         heading = 360 + heading;
       }
-      
+
       //calculate roll and pitch
       //Low Pass Filter
       fXg = aX * alpha + (fXg * (1.0 - alpha));
       fYg = aY * alpha + (fYg * (1.0 - alpha));
       fZg = aZ * alpha + (fZg * (1.0 - alpha));
-  
+
       //Roll & Pitch Equations
       roll  = (atan2(-fYg, fZg)*180.0)/M_PI;
-      pitch = (atan2(fXg, sqrt(fYg*fYg + fZg*fZg))*180.0)/M_PI;  
-      
+      pitch = (atan2(fXg, sqrt(fYg*fYg + fZg*fZg))*180.0)/M_PI;
+
     time += period;
     return 1;
   }
@@ -71,19 +71,17 @@ bool LSM303DLHC::process() {
 float LSM303DLHC::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-  case 0: result = value; value = NO_DATA; break; //accel total
-  case 1: result = value2; value2 = NO_DATA; break; //mag total
-	case 2: result = aX; aX = NO_DATA; break; //accel X
-	case 3: result = aY; aY = NO_DATA; break; //accel Y
-	case 4: result = aZ; aZ = NO_DATA; break; //accel Z
-	case 5: result = mX; mX = NO_DATA; break; //mag X
-	case 6: result = mY; mY = NO_DATA; break; //mag Y
-	case 7: result = mZ; mZ = NO_DATA; break; //mag Z
-	case 8: result = heading; heading = NO_DATA; break; //heading
-	case 9: result = roll; roll = NO_DATA; break; //roll
-	case 10: result = pitch; pitch = NO_DATA; break; //pitch
-  
-	
+  case 0: result = value; break; //accel total
+  case 1: result = value2; break; //mag total
+	case 2: result = aX;; break; //accel X
+	case 3: result = aY; break; //accel Y
+	case 4: result = aZ; break; //accel Z
+	case 5: result = mX; break; //mag X
+	case 6: result = mY; break; //mag Y
+	case 7: result = mZ; break; //mag Z
+	case 8: result = heading; break; //heading
+	case 9: result = roll; break; //roll
+	case 10: result = pitch; break; //pitch
   }
   return result;
 }

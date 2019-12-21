@@ -100,6 +100,13 @@ void SerialPort::ReadData(QByteArray &array)
     array = m_serialPort.readAll();
 }
 
+void SerialPort::ClearCache()
+{
+    QByteArray array;
+    ReadData(array); //for bluetooth serial port
+    m_serialPort.clear();
+}
+
 void SerialPort::Close()
 {
     if (m_serialPort.isOpen())

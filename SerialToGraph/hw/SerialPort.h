@@ -36,7 +36,7 @@ public:
     bool WaitForBytesWritten();
     void ReadData(QByteArray &array, unsigned maxLength);
     void ReadData(QByteArray &array);
-    void ClearCache() { m_serialPort.clear(); }
+    void ClearCache();
     bool IsOpen();
     void Close();
 

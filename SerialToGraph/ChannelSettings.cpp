@@ -32,18 +32,79 @@
 
 QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
 {
+
     if (quantity->GetName() == "")
         return "";
-    if (quantity->GetName() == "Current")
-        return tr("Current");
-    if (quantity->GetName() == "Humidity")
-        return tr("Humidity");
-    if (quantity->GetName() == "Pressure")
-        return tr("Pressure");
     if (quantity->GetName() == "Temperature")
         return tr("Temperature");
     if (quantity->GetName() == "Voltage")
         return tr("Voltage");
+    if (quantity->GetName() == "Current")
+        return tr("Current");
+    if (quantity->GetName() == "Pressure")
+        return tr("Pressure");
+    if (quantity->GetName() == "Humidity")
+        return tr("Humidity");
+
+    if (quantity->GetName() == "RAW")
+        return tr("RAW");
+    if (quantity->GetName() == "Acceleration")
+        return tr("Acceleration");
+    if (quantity->GetName() == "Magnetic Field Intensity")
+        return tr("Magnetic Field Intensity");
+    if (quantity->GetName() == "Force")
+        return tr("Force");
+    if (quantity->GetName() == "UV Index")
+        return tr("UV Index");
+
+    if (quantity->GetName() == "pH")
+        return tr("pH");
+    if (quantity->GetName() == "Conductivity")
+        return tr("Conductivity");
+    if (quantity->GetName() == "Illuminace")
+        return tr("Illuminace");
+    if (quantity->GetName() == "Concentration")
+        return tr("Concentration");
+    if (quantity->GetName() == "Distance")
+        return tr("Distance");
+
+    if (quantity->GetName() == "Velocity")
+        return tr("Velocity");
+    if (quantity->GetName() == "Trigger")
+        return tr("Trigger");
+    if (quantity->GetName() == "Sound intensity level")
+        return tr("Sound intensity level");
+    if (quantity->GetName() == "Altitude")
+        return tr("Altitude");
+    if (quantity->GetName() == "Dewpoint")
+        return tr("Dewpoint");
+
+    if (quantity->GetName() == "Concentration (ppm)")
+        return tr("Concentration (ppm)");
+    if (quantity->GetName() == "Concentration (%)")
+        return tr("Concentration (%)");
+    if (quantity->GetName() == "UV Intensity")
+        return tr("UV Intensity");
+    if (quantity->GetName() == "Accel X")
+        return tr("Accel X");
+    if (quantity->GetName() == "Accel Y")
+        return tr("Accel Y");
+
+    if (quantity->GetName() == "Accel Z")
+        return tr("Accel Z");
+    if (quantity->GetName() == "Mag X")
+        return tr("Mag X");
+    if (quantity->GetName() == "Mag Y")
+        return tr("Mag Y");
+    if (quantity->GetName() == "Mag Z")
+        return tr("Mag Z");
+    if (quantity->GetName() == "Heading")
+        return tr("Heading");
+
+    if (quantity->GetName() == "Roll")
+        return tr("Roll");
+    if (quantity->GetName() == "Pitch")
+        return tr("Pitch");
 
     return quantity->GetName(); //TODO: TFs mod: Remove!!!
 

@@ -6,6 +6,7 @@
 #include <hw/PortInfo.h>
 #include <QList>
 #include <QString>
+#include <QVector>
 
 class QWidget;
 class QTimer;

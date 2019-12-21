@@ -8,7 +8,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-
 #define JSON_FILE_NAME ":/sensors/sensors.json"
 namespace hw
 {
@@ -45,6 +44,7 @@ namespace hw
 
             unsigned quantityId = quantityObject["quantityId"].toInt();
             QString quantityName = quantityObject["quantityName"].toString();
+
             m_quantities.push_back(new SensorQuantity(this, quantityId, quantityName));
         }
 
@@ -55,6 +55,16 @@ namespace hw
 
             unsigned sensorId = sensorObject["sensorId"].toInt();
             QString sensorName = sensorObject["sensorName"].toString();
+
+            /*
+            //TODO: TFs: pokus který nefunguje
+            if (sensorName == "Generic (AD 10bit)")
+                sensorName = tr("Generic (AD 10bit)");
+            if (sensorName == "Thermometer (DS18B20)")
+                sensorName = tr("Thermometer (DS18B20)");
+            */
+
+            //sensorName = tr("Thermometer (DS18B20)");
 
             Sensor *sensor = new Sensor(this, sensorName, sensorId);
             QJsonArray jsonSensorQuantities = sensorObject["quantities"].toArray();

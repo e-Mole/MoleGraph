@@ -28,7 +28,7 @@ namespace hw
     }
 
     QString Sensor::GetName() const
-    {
+    {      
         return m_name;
     }
 

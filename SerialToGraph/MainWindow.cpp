@@ -60,7 +60,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     m_graphicsContainerManager(NULL),
     m_measurementMenu(NULL),
     m_channelMenu(NULL),
-    m_sensorManager(new hw::SensorManager(this)),
+    m_sensorManager(NULL),
     m_ghostCreating(false)
 {
     m_centralWidget = new QWidget(this);
@@ -126,6 +126,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
             arg(m_measurementTabs->physicalDpiX() / 3)
     );
 #endif
+
+    m_sensorManager = new hw::SensorManager(this); //must be initialized before a measurement is created
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 

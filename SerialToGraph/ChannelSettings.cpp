@@ -378,9 +378,8 @@ void ChannelSettings::fillChannelCombos(int measurementComboIndex)
     if (!channelFound)
     {
         m_sourceChannelCombo->setCurrentIndex(1); //skip samples
+        loadFromOriginalWidget(m_sourceChannelCombo->currentIndex());
     }
-    //it must not be here to it doesnt be filled after each openning of the window
-    //loadFromOriginalWidget(m_sourceChannelCombo->currentIndex());
 }
 
 void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
@@ -915,6 +914,7 @@ bool ChannelSettings::BeforeAccept()
                 m_graphicsContainer->GetPlot()->SetMarkerLine(m_graphicsContainer->GetCurrentIndex());
             }
         }
+
 
         m_channelProxy->GetPlot()->ReplotIfNotDisabled();
     }

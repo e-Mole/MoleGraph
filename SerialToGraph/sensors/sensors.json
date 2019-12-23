@@ -157,9 +157,87 @@
     {
       "quantityId" : 38,
       "quantityName" : "T5"
-    }  	 	
-                           
+    }  	 	                           
   ],
+  "units":
+  [
+    {
+      "unitId" : 0,
+      "unitName" : ""
+    },
+    {
+      "unitId" : 1,
+      "unitName" : "°C"
+    },
+    {
+      "unitId" : 2,
+      "unitName" : "V"
+    },
+    {
+      "unitId" : 3,
+      "unitName" : "A"
+    },
+    {
+      "unitId" : 4,
+      "unitName" : "Pa"
+    },
+    {
+      "unitId" : 5,
+      "unitName" : "%"
+    },
+    {
+      "unitId" : 6,
+      "unitName" : "m/s^2"
+    },
+    {
+      "unitId" : 7,
+      "unitName" : "N"
+    }, 
+    {
+      "unitId" : 8,
+      "unitName" : "S/m"
+    }, 
+    {
+      "unitId" : 9,
+      "unitName" : "mol/l"
+    }, 
+    {
+      "unitId" : 10,
+      "unitName" : "ppm"
+    },
+    {
+      "unitId" : 11,
+      "unitName" : "cm"
+    },
+    {
+      "unitId" : 12,
+      "unitName" : "cm/s"
+    },
+    {
+      "unitId" : 13,
+      "unitName" : "cm/s^2"
+    } ,
+    {
+      "unitId" : 14,
+      "unitName" : "lux"
+    } ,
+    {
+      "unitId" : 15,
+      "unitName" : "m"
+    } ,
+    {
+      "unitId" : 16,
+      "unitName" : "°"
+    },
+    {
+      "unitId" : 17,
+      "unitName" : "dB"
+    },
+    {
+      "unitId" : 18,
+      "unitName" : "μT"
+    }          
+  ],  
   "sensors":
   [
     {
@@ -170,134 +248,163 @@
     {
       "sensorId" : 101,
       "sensorName" : "Generic (AD 10bit)",
-      "quantities" : ["RAW", "Voltage" ]
+      "quantities" : ["RAW", "Voltage" ],
+      "units" : ["", "V" ]
     },   
     {
       "sensorId" : 1,
       "sensorName" : "Thermometer (DS18B20)",
-      "quantities" : [ "Temperature" ]
+      "quantities" : [ "Temperature" ],
+      "units" : ["°C"]      
     },
     {
       "sensorId" : 2,
       "sensorName" : "Pressure + Thermometer + Hygrometer (BME280)",
-      "quantities" : [ "Pressure", "Temperature", "Humidity", "Altitude", "Dewpoint" ]
+      "quantities" : [ "Pressure", "Temperature", "Humidity", "Altitude", "Dewpoint" ],
+      "units" : [ "Pa", "°C", "%", "m", "°C" ]      
     },    
     {
       "sensorId" : 3,
       "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
-      "quantities" : [ "Acceleration", "Magnetic Field Intensity", "Accel X", "Accel Y", "Accel Z", "Mag X", "Mag Y", "Mag Z", "Heading", "Roll", "Pitch" ]
+      "quantities" : [ "Acceleration", "Magnetic Field Intensity", "Accel X", "Accel Y", "Accel Z", "Mag X", "Mag Y", "Mag Z", "Heading", "Roll", "Pitch" ],
+      "units" : [ "m/s^2", "μT", "m/s^2", "m/s^2", "m/s^2", "μT", "μT", "μT", "°", "°", "°" ]      
     },
     {
       "sensorId" : 5,
       "sensorName" : "IR Thermometer (MLX90614)",
-      "quantities" : [ "Temperature", "Temperature" ]
+      "quantities" : [ "Temperature", "Temperature" ],
+      "units" : [ "°C", "°C" ] 
     },    
     {
       "sensorId" : 6,
       "sensorName" : "Pressure sensor (MPX5700DP)",
-      "quantities" : [ "Pressure" ]
+      "quantities" : [ "Pressure" ],
+      "units" : [ "Pa" ] 
     },
     {
       "sensorId" : 7,
       "sensorName" : "Force sensor (HX711)",
-      "quantities" : [ "Force" ]
+      "quantities" : [ "Force" ],
+      "units" : [ "N" ] 
     },
     {
       "sensorId" : 10,
       "sensorName" : "*(EKG sensor (AD8232))",
-      "quantities" : [ "Voltage" ]
+      "quantities" : [ "Voltage" ],
+      "units" : [ "V" ]
     },
     {
       "sensorId" : 11,
       "sensorName" : "*(Color sensor (TCS3200))",
-      "quantities" : [ "RAW" ]
+      "quantities" : [ "RAW" ],
+      "units" : [ "" ]
     },                   
     {
       "sensorId" : 13,
       "sensorName" : "*(UV sensor (GUVA-S12SD))",
-      "quantities" : [ "UV Index" ]
+      "quantities" : [ "UV Index" ],
+      "units" : [ "" ]      
     },
     {
       "sensorId" : 31,
       "sensorName" : "UV sensor (VEML6070)",
-      "quantities" : [ "UV Intensity" ]
+      "quantities" : [ "UV Intensity" ],
+      "units" : [ "" ]      
     },
     {
       "sensorId" : 14,
       "sensorName" : "pH sensor",
-      "quantities" : [ "pH", "Voltage", "RAW", "Trigger" ]
+      "quantities" : [ "pH", "Voltage", "RAW", "Trigger" ],
+      "units" : [ "", "V", "", "" ]
     },
     {
       "sensorId" : 15,
       "sensorName" : "*(Conductivity sensor)",
-      "quantities" : [ "Conductivity" ]
+      "quantities" : [ "Conductivity" ],
+      "units" : [ "S/m" ]
     },
     {  "sensorId" : 28,
       "sensorName" : "DC Voltage sensor 0-25 V (voltage divider)",
-      "quantities" : [ "Voltage", "RAW" ]
+      "quantities" : [ "Voltage", "RAW" ],
+      "units" : [ "V", "" ]
     },
     {  "sensorId" : 29,
       "sensorName" : "AC/DC Current sensor 0-5 A (ACS712)",
-      "quantities" : [ "Current", "RAW" ]
+      "quantities" : [ "Current", "RAW" ],
+      "units" : [ "A", "" ]
     },
     {  "sensorId" : 30,
       "sensorName" : "AC/DC Current sensor 0-30 A (ACS712)",
-      "quantities" : [ "Current", "RAW" ]
+      "quantities" : [ "Current", "RAW" ],
+      "units" : [ "A", "" ]
     },
     {
       "sensorId" : 16,
       "sensorName" : "*(Voltage + Current sensor (HX711))",
-      "quantities" : [ "Voltage", "Current" ]
+      "quantities" : [ "Voltage", "Current" ],
+      "units" : [ "V", "A" ]
     },
     {
       "sensorId" : 18,
       "sensorName" : "Light sensor (photoresistor)",
-      "quantities" : [ "Illuminace", "Trigger"  ]
+      "quantities" : [ "Illuminace", "Trigger"  ],
+      "units" : [ "", "" ]
     },
     {
       "sensorId" : 32,
       "sensorName" : "Light sensor (BH1750 luxmeter)",
-      "quantities" : [ "Illuminace" ]
+      "quantities" : [ "Illuminace" ],
+      "units" : [ "lux" ]
     },
     {  "sensorId" : 19,
       "sensorName" : "CO2 gas sensor (MH-Z16)",
-      "quantities" : [ "Concentration (ppm)", "Concentration (%)"  ]
+      "quantities" : [ "Concentration (ppm)", "Concentration (%)" ],
+      "units" : [ "ppm", "%" ]
     },
     {  "sensorId" : 20,
       "sensorName" : "*(O2 gas sensor (ME2-O2))",
-      "quantities" : [ "Concentration" ]
+      "quantities" : [ "Concentration (ppm)", "Concentration (%)" ],
+      "units" : [ "ppm", "%" ]
     },
     {  "sensorId" : 21,
       "sensorName" : "Ultrasonic motion sensor (SR-HC04)",
-      "quantities" : [ "Distance", "Velocity", "Acceleration" ]
+      "quantities" : [ "Distance", "Velocity", "Acceleration" ],
+      "units" : [ "cm", "cm/s", "cm/s^2" ]
     },
     {  "sensorId" : 22,
       "sensorName" : "Heart rate sensor (simple)",
-      "quantities" : [ "Voltage" ]
+      "quantities" : [ "Voltage" ],
+      "units" : [ "V" ]
     },
     {  "sensorId" : 23,
       "sensorName" : "Magnetic field sensor",
-      "quantities" : [ "RAW", "Voltage", "Trigger" ]
+      "quantities" : [ "RAW", "Voltage", "Trigger" ],
+      "units" : [ "", "V", "" ]
     },
     {  "sensorId" : 24,
       "sensorName" : "Thermometer + Hygrometer (DHT11)",
-      "quantities" : [ "Humidity", "Temperature" ]
+      "quantities" : [ "Humidity", "Temperature" ],
+      "units" : [ "%", "°C" ]
     },
     {  "sensorId" : 25,
       "sensorName" : "Alcohol gas sensor (MQ-3)",
-      "quantities" : [ "Concentration (ppm)", "Concentration (%)", "Voltage", "RAW", "Trigger" ]
+      "quantities" : [ "Concentration (ppm)", "Concentration (%)", "Voltage", "RAW", "Trigger" ],
+      "units" : [ "ppm", "%", "V", "", "" ]
     },
     {  "sensorId" : 26,
       "sensorName" : "*(Particle/Dust sensor (DSM501))",
-      "quantities" : [ "Concentration" ]
+      "quantities" : [ "Concentration" ],
+      "units" : [ "ppm" ]
     },
     {  "sensorId" : 27,
       "sensorName" : "Sound sensor (microphone)",
-      "quantities" : [ "RAW", "Voltage", "Trigger" ]
+      "quantities" : [ "RAW", "Voltage", "Trigger" ],
+      "units" : [ "", "V", "" ]
     },		
     {  "sensorId" : 105,
       "sensorName" : "Laser ranging sensor‎ (VL53L0X)",
-      "quantities" : [ "Distance" ]
+      "quantities" : [ "Distance" ],
+      "units" : [ "m" ]      
     },		
     {  "sensorId" : 103,
       "sensorName" : "Timer",

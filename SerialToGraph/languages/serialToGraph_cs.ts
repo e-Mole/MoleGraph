@@ -508,7 +508,7 @@
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="170"/>
-        <location filename="../ChannelSettings.cpp" line="576"/>
+        <location filename="../ChannelSettings.cpp" line="575"/>
         <source>Units</source>
         <translation>Jednotky</translation>
     </message>
@@ -525,12 +525,12 @@
         <translation type="vanished">Zruš</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="657"/>
+        <location filename="../ChannelSettings.cpp" line="656"/>
         <source>Shape</source>
         <translation>Tvar</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="633"/>
+        <location filename="../ChannelSettings.cpp" line="632"/>
         <source>Cross</source>
         <translation>Kříž</translation>
     </message>
@@ -567,47 +567,47 @@
         <translation type="vanished">Reálný čas</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="524"/>
+        <location filename="../ChannelSettings.cpp" line="523"/>
         <source>No Line</source>
         <translation>Žádná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="525"/>
+        <location filename="../ChannelSettings.cpp" line="524"/>
         <source>Solid Line</source>
         <translation>Plná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="526"/>
+        <location filename="../ChannelSettings.cpp" line="525"/>
         <source>Dash Line</source>
         <translation>Přerušovaná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="527"/>
+        <location filename="../ChannelSettings.cpp" line="526"/>
         <source>Dot Line</source>
         <translation>Tečkovaná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="528"/>
+        <location filename="../ChannelSettings.cpp" line="527"/>
         <source>Dash Dot Line</source>
         <translation>Přerušovaná tečkovaná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="529"/>
+        <location filename="../ChannelSettings.cpp" line="528"/>
         <source>Dash Dot Dot Line</source>
         <translation>Přerušovaná dvojitě tečkovaná čára</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="532"/>
+        <location filename="../ChannelSettings.cpp" line="531"/>
         <source>Pen Style</source>
         <translation>Styl pera</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="575"/>
+        <location filename="../ChannelSettings.cpp" line="574"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="554"/>
+        <location filename="../ChannelSettings.cpp" line="553"/>
         <source>Microseconds</source>
         <translation>Mikrosekundy</translation>
     </message>
@@ -813,152 +813,152 @@
         <translation>Zdrojový kanál</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="440"/>
+        <location filename="../ChannelSettings.cpp" line="439"/>
         <source>Current Value</source>
         <translation>Aktuální hodnota</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="555"/>
+        <location filename="../ChannelSettings.cpp" line="554"/>
         <source>Miliseconds</source>
         <translation>Milisekundy</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="556"/>
+        <location filename="../ChannelSettings.cpp" line="555"/>
         <source>Seconds</source>
         <translation>Sekundy</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="557"/>
+        <location filename="../ChannelSettings.cpp" line="556"/>
         <source>Minuts</source>
         <translation>Minuty</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="558"/>
+        <location filename="../ChannelSettings.cpp" line="557"/>
         <source>Hours</source>
         <translation>Hodiny</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="559"/>
+        <location filename="../ChannelSettings.cpp" line="558"/>
         <source>Days</source>
         <translation>Dny</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="563"/>
+        <location filename="../ChannelSettings.cpp" line="562"/>
         <source>day.month.year</source>
         <translation>den.měsíc.rok</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="564"/>
+        <location filename="../ChannelSettings.cpp" line="563"/>
         <source>day.month.hour:minute</source>
         <translation>den.měsíc.hodina:minuta</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="565"/>
+        <location filename="../ChannelSettings.cpp" line="564"/>
         <source>hour:minute:second</source>
         <translation>hodina:minuta:sekunda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="566"/>
+        <location filename="../ChannelSettings.cpp" line="565"/>
         <source>minute:second.milisecond</source>
         <translation>minuta:sekunda.milisekunda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="577"/>
+        <location filename="../ChannelSettings.cpp" line="576"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="599"/>
+        <location filename="../ChannelSettings.cpp" line="598"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
         <translation>Kanál s časovým formátem musí být umístěm na samostatnou osu.Prosím, vyberte jednu z dostupných.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="632"/>
+        <location filename="../ChannelSettings.cpp" line="631"/>
         <source>None</source>
         <translation>Žádný</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="634"/>
+        <location filename="../ChannelSettings.cpp" line="633"/>
         <source>Plus</source>
         <translation>Plus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="635"/>
+        <location filename="../ChannelSettings.cpp" line="634"/>
         <source>Circle</source>
         <translation>Kružnice</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="636"/>
+        <location filename="../ChannelSettings.cpp" line="635"/>
         <source>Disc</source>
         <translation>Kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="637"/>
+        <location filename="../ChannelSettings.cpp" line="636"/>
         <source>Square</source>
         <translation>Čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="638"/>
+        <location filename="../ChannelSettings.cpp" line="637"/>
         <source>Diamond</source>
         <translation>Diamant</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="639"/>
+        <location filename="../ChannelSettings.cpp" line="638"/>
         <source>Star</source>
         <translation>Hvězda</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="640"/>
+        <location filename="../ChannelSettings.cpp" line="639"/>
         <source>Triangle</source>
         <translation>Trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="641"/>
+        <location filename="../ChannelSettings.cpp" line="640"/>
         <source>Inverted Triangle</source>
         <translation>Obrácený trojúhelník</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="642"/>
+        <location filename="../ChannelSettings.cpp" line="641"/>
         <source>Cross and Square</source>
         <translation>Kříž a čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="643"/>
+        <location filename="../ChannelSettings.cpp" line="642"/>
         <source>Plus and Square</source>
         <translation>Plus a čtverec</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="644"/>
+        <location filename="../ChannelSettings.cpp" line="643"/>
         <source>Cross and Circle</source>
         <translation>Kříž a kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="645"/>
+        <location filename="../ChannelSettings.cpp" line="644"/>
         <source>Plus and Circle</source>
         <translation>Plus a kruh</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="646"/>
+        <location filename="../ChannelSettings.cpp" line="645"/>
         <source>Peace</source>
         <translation>Mír</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="664"/>
+        <location filename="../ChannelSettings.cpp" line="663"/>
         <source>New Axis...</source>
         <translation>Nová osa...</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="699"/>
+        <location filename="../ChannelSettings.cpp" line="698"/>
         <source>Axis</source>
         <translation>Osa</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="728"/>
+        <location filename="../ChannelSettings.cpp" line="727"/>
         <source>Port %1</source>
         <translation>Port %1</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="781"/>
+        <location filename="../ChannelSettings.cpp" line="780"/>
         <source>Current value is not a number.</source>
         <translation>Aktuální hodnota není číselná.</translation>
     </message>
@@ -1278,7 +1278,7 @@
         <translation type="vanished">Vybraný soubor nebyl otevřen.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="378"/>
+        <location filename="../MainWindow.cpp" line="380"/>
         <source>Selected file is not possible to open.</source>
         <translation>Vybraný soubor není možné otevřít.</translation>
     </message>
@@ -1291,74 +1291,74 @@
         <translation type="vanished">Soubor %1 je poškozen.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="365"/>
+        <location filename="../MainWindow.cpp" line="367"/>
         <source>Selected file %1 is corrupted. All data must not be available.</source>
         <translation>Soubor %1 je poškozený. Nemusí být čitelná všechna data.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="391"/>
+        <location filename="../MainWindow.cpp" line="393"/>
         <source>Unsuported file version (%1)</source>
         <translation>Nepodporovaná verze souboru (%1)</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="525"/>
+        <location filename="../MainWindow.cpp" line="527"/>
         <source>Continue</source>
         <translation>Pokračovat</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="574"/>
+        <location filename="../MainWindow.cpp" line="576"/>
         <source>Just template without values has been stored.</source>
         <translation>Byla uložena pouze šablona bez naměřených hodnot.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="631"/>
+        <location filename="../MainWindow.cpp" line="633"/>
         <source>Open with values?</source>
         <translation>Otevřít s naměřenými hodnotami?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="631"/>
+        <location filename="../MainWindow.cpp" line="633"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="631"/>
+        <location filename="../MainWindow.cpp" line="633"/>
         <source>No</source>
         <translation>Ne</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="648"/>
+        <location filename="../MainWindow.cpp" line="650"/>
         <source>Gui and value changes were not saved. Realy exit?</source>
         <translation>Změny v prostředí ani v hodnotách nebyly uloženy. Přesto odejít?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="650"/>
+        <location filename="../MainWindow.cpp" line="652"/>
         <source>Gui changes were not saved. Realy exit?</source>
         <translation>Změny v prostředí nebyly uloženy. Přesto odejít?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="652"/>
+        <location filename="../MainWindow.cpp" line="654"/>
         <source>Value changes were not saved. Realy exit?</source>
         <translation>Změny v hodnotách nebyly uloženy. Přesto odejít?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="726"/>
+        <location filename="../MainWindow.cpp" line="728"/>
         <source>The measurement &apos;%1&apos; is in progress.</source>
         <translation>Měření &apos;%1&apos; stále probíhá.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="730"/>
+        <location filename="../MainWindow.cpp" line="732"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
         <translation>Měření &apos;%1&apos; již obsahuje data. Opravdu ho chcete odstranit?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="735"/>
+        <location filename="../MainWindow.cpp" line="737"/>
         <source>Ghost displayed in another measurements will be removed too.</source>
         <translatorcomment>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translatorcomment>
         <translation>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="753"/>
-        <location filename="../MainWindow.cpp" line="767"/>
+        <location filename="../MainWindow.cpp" line="755"/>
+        <location filename="../MainWindow.cpp" line="769"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
@@ -1379,12 +1379,12 @@
         <translation type="vanished">Změny hodnot nebyly uloženy.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="663"/>
+        <location filename="../MainWindow.cpp" line="665"/>
         <source>Realy exit?</source>
         <translation>Opravdu ukončit?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="666"/>
+        <location filename="../MainWindow.cpp" line="668"/>
         <source>Exit</source>
         <translation>Ukončit</translation>
     </message>
@@ -2048,14 +2048,158 @@
 <context>
     <name>hw::SensorManager</name>
     <message>
-        <location filename="../hw/SensorManager.cpp" line="61"/>
+        <location filename="../hw/SensorManager.cpp" line="62"/>
         <source>Generic (AD 10bit)</source>
-        <translation>Obecný (AD 10bit)</translation>
+        <translation>Obecné čidlo (převodník A/D 10bit)</translation>
     </message>
     <message>
-        <location filename="../hw/SensorManager.cpp" line="63"/>
+        <location filename="../hw/SensorManager.cpp" line="64"/>
         <source>Thermometer (DS18B20)</source>
-        <translation>Teploměr (DS18B20)</translation>
+        <translation>Teploměr digitální (DS18B20)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="66"/>
+        <source>Pressure + Thermometer + Hygrometer (BME280)</source>
+        <translation>Tlak + teplota + vlhkost (BME280)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="68"/>
+        <source>Accelerometer + Magnetometer (LSM303DLHC)</source>
+        <translation>Akcelerometr + magnetometr (LSM303DLHC)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="70"/>
+        <source>IR Thermometer (MLX90614)</source>
+        <translation>IR teploměr (MLX90614)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="72"/>
+        <source>Pressure sensor (MPX5700DP)</source>
+        <translation>Čidlo tlaku (MPX5700DP)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="74"/>
+        <source>Force sensor (HX711)</source>
+        <translation>Siloměr (HX711)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="76"/>
+        <source>EKG sensor (AD8232)</source>
+        <translation>EKG čidlo (AD8232)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="78"/>
+        <source>Color sensor (TCS3200)</source>
+        <translation>Čidlo barev (TCS3200)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="80"/>
+        <source>UV sensor (GUVA-S12SD)</source>
+        <translation>UV záření (GUVA-S12SD)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="82"/>
+        <source>UV sensor (VEML6070)</source>
+        <translation>UV záření (VEML6070)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="84"/>
+        <source>pH sensor</source>
+        <translation>pH čidlo</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="86"/>
+        <source>Conductivity sensor</source>
+        <translation>Čidlo vodivosti</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="88"/>
+        <source>DC Voltage sensor 0-25 V (voltage divider)</source>
+        <translation>DC el. napětí 0-25 V (napěťový dělič)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="90"/>
+        <source>AC/DC Current sensor 0-5 A (ACS712)</source>
+        <translation>AC/DC el. proud 0-5 A (ACS712)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="92"/>
+        <source>AC/DC Current sensor 0-30 A (ACS712)</source>
+        <translation>AC/DC el. proud 0-30 A (ACS712)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="94"/>
+        <source>Voltage + Current sensor (HX711)</source>
+        <translation>Napětí + proud (HX711)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="96"/>
+        <source>Light sensor (photoresistor)</source>
+        <translation>Čidlo intenzity světla (fotorezistor)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="98"/>
+        <source>Light sensor (BH1750 luxmeter)</source>
+        <translation>Čidlo světla -luxmetr (BH1750)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="100"/>
+        <source>CO2 gas sensor (MH-Z16)</source>
+        <translation>Čidlo plynu - CO2 (MH-Z16)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="102"/>
+        <source>O2 gas sensor (ME2-O2)</source>
+        <translation>Čidlo plynu - O2 (ME2-O2)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="104"/>
+        <source>Ultrasonic motion sensor (SR-HC04)</source>
+        <translation>Ultrazvukové čidlo vzdálenosti a pohybu (SR-HC04)</translation>
+    </message>
+    <message>
+        <source>Ultrasonic motion sensor (SR-04)</source>
+        <translation type="vanished">Ultrazvukové čidlo vzdálenosti a pohybu (SR-HC04)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="106"/>
+        <source>Heart rate sensor (simple)</source>
+        <translation>Srdeční tep (jednoduché čidlo)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="108"/>
+        <source>Magnetic field sensor</source>
+        <translation>Intenzita magnetického pole</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="110"/>
+        <source>Thermometer + Hygrometer (DHT11)</source>
+        <translation>Teploměr + vlhkoměr (DHT11)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="112"/>
+        <source>Alcohol gas sensor (MQ-3)</source>
+        <translation>Čidlo plynu - alkoholy (MQ-3)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="114"/>
+        <source>Particle/Dust sensor (DSM501)</source>
+        <translation>Čidlo prachových částic (DSM501)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="116"/>
+        <source>Sound sensor (microphone)</source>
+        <translation>Čidlo zvuku (mikrofon)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="118"/>
+        <source>Laser ranging sensor‎ (VL53L0X)</source>
+        <translation>Laserový dálkoměr‎ (VL53L0X)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="120"/>
+        <source>Timer</source>
+        <translation>Časovač</translation>
     </message>
 </context>
 <context>

@@ -268,7 +268,7 @@
       "quantities" : [ "Concentration" ]
     },
     {  "sensorId" : 21,
-      "sensorName" : "Ultrasonic motion sensor (SR-04)",
+      "sensorName" : "Ultrasonic motion sensor (SR-HC04)",
       "quantities" : [ "Distance", "Velocity", "Acceleration" ]
     },
     {  "sensorId" : 22,

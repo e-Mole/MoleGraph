@@ -237,178 +237,226 @@
       "unitId" : 18,
       "unitName" : "μT"
     }          
-  ],  
+  ],
+  "corrections":
+  [
+    {
+      "corrId" : 0,
+      "corrName" : ""
+    },
+    {
+      "corrId" : 1,
+      "corrName" : "offset (one point)"
+    },
+    {
+      "corrId" : 2,
+      "corrName" : "slope + offset (two point linear)"
+    }         
+  ],    
   "sensors":
   [
     {
       "sensorId" : 0,
       "sensorName" : "",
-      "quantities" : [ "" ]
+      "quantities" : [ "" ],
+      "units" : [ "" ],
+      "corrections" : [ "" ]
     },
     {
       "sensorId" : 101,
       "sensorName" : "Generic (AD 10bit)",
       "quantities" : ["RAW", "Voltage" ],
-      "units" : ["", "V" ]
+      "units" : [ "", "V" ],
+      "corrections" : [ "", "slope + offset (two point linear)" ]      
     },   
     {
       "sensorId" : 1,
       "sensorName" : "Thermometer (DS18B20)",
       "quantities" : [ "Temperature" ],
-      "units" : ["°C"]      
+      "units" : [ "°C" ],
+      "corrections" : [ "slope + offset (two point linear)" ]        
     },
     {
       "sensorId" : 2,
       "sensorName" : "Pressure + Thermometer + Hygrometer (BME280)",
       "quantities" : [ "Pressure", "Temperature", "Humidity", "Altitude", "Dewpoint" ],
-      "units" : [ "Pa", "°C", "%", "m", "°C" ]      
+      "units" : [ "Pa", "°C", "%", "m", "°C" ],
+      "corrections" : [ "offset (one point)", "slope + offset (two point linear)", "offset (one point)", "offset (one point)", "slope + offset (two point linear)" ]               
     },    
     {
       "sensorId" : 3,
       "sensorName" : "Accelerometer + Magnetometer (LSM303DLHC)",
       "quantities" : [ "Acceleration", "Magnetic Field Intensity", "Accel X", "Accel Y", "Accel Z", "Mag X", "Mag Y", "Mag Z", "Heading", "Roll", "Pitch" ],
-      "units" : [ "m/s^2", "μT", "m/s^2", "m/s^2", "m/s^2", "μT", "μT", "μT", "°", "°", "°" ]      
+      "units" : [ "m/s^2", "μT", "m/s^2", "m/s^2", "m/s^2", "μT", "μT", "μT", "°", "°", "°" ],
+      "corrections" : [ "", "offset (one point)", "", "", "", "offset (one point)", "offset (one point)", "offset (one point)", "", "", "" ]
     },
     {
       "sensorId" : 5,
       "sensorName" : "IR Thermometer (MLX90614)",
       "quantities" : [ "Temperature", "Temperature" ],
-      "units" : [ "°C", "°C" ] 
+      "units" : [ "°C", "°C" ],
+      "corrections" : [ "slope + offset (two point linear)", "slope + offset (two point linear)" ] 
     },    
     {
       "sensorId" : 6,
       "sensorName" : "Pressure sensor (MPX5700DP)",
       "quantities" : [ "Pressure" ],
-      "units" : [ "Pa" ] 
+      "units" : [ "Pa" ],
+      "corrections" : [ "offset (one point)" ]
     },
     {
       "sensorId" : 7,
       "sensorName" : "Force sensor (HX711)",
       "quantities" : [ "Force" ],
-      "units" : [ "N" ] 
+      "units" : [ "N" ],
+      "corrections" : [ "offset (one point)" ] 
     },
     {
       "sensorId" : 10,
       "sensorName" : "*(EKG sensor (AD8232))",
       "quantities" : [ "Voltage" ],
-      "units" : [ "V" ]
+      "units" : [ "V" ],
+      "corrections" : [ "" ]
     },
     {
       "sensorId" : 11,
       "sensorName" : "*(Color sensor (TCS3200))",
       "quantities" : [ "RAW" ],
-      "units" : [ "" ]
+      "units" : [ "" ],
+      "corrections" : [ "" ]
     },                   
     {
       "sensorId" : 13,
       "sensorName" : "*(UV sensor (GUVA-S12SD))",
       "quantities" : [ "UV Index" ],
-      "units" : [ "" ]      
+      "units" : [ "" ],
+      "corrections" : [ "" ]      
     },
     {
       "sensorId" : 31,
       "sensorName" : "UV sensor (VEML6070)",
       "quantities" : [ "UV Intensity" ],
-      "units" : [ "" ]      
+      "units" : [ "" ],
+      "corrections" : [ "" ]      
     },
     {
       "sensorId" : 14,
       "sensorName" : "pH sensor",
       "quantities" : [ "pH", "Voltage", "RAW", "Trigger" ],
-      "units" : [ "", "V", "", "" ]
+      "units" : [ "", "V", "", "" ],
+      "corrections" : [ "slope + offset (two point linear)", "", "", "" ]
     },
     {
       "sensorId" : 15,
       "sensorName" : "*(Conductivity sensor)",
-      "quantities" : [ "Conductivity" ],
-      "units" : [ "S/m" ]
+      "quantities" : [ "Conductivity", "Voltage", "RAW" ],
+      "units" : [ "S/m", "V", "" ],
+      "corrections" : [ "slope + offset (two point linear)", "", ""]
     },
-    {  "sensorId" : 28,
+    { "sensorId" : 28,
       "sensorName" : "DC Voltage sensor 0-25 V (voltage divider)",
       "quantities" : [ "Voltage", "RAW" ],
-      "units" : [ "V", "" ]
+      "units" : [ "V", "" ],
+      "corrections" : [ "offset (one point)", "" ]
     },
-    {  "sensorId" : 29,
+    { "sensorId" : 29,
       "sensorName" : "AC/DC Current sensor 0-5 A (ACS712)",
       "quantities" : [ "Current", "RAW" ],
-      "units" : [ "A", "" ]
+      "units" : [ "A", "" ],
+      "corrections" : [ "offset (one point)", "" ]
     },
-    {  "sensorId" : 30,
+    { "sensorId" : 30,
       "sensorName" : "AC/DC Current sensor 0-30 A (ACS712)",
       "quantities" : [ "Current", "RAW" ],
-      "units" : [ "A", "" ]
+      "units" : [ "A", "" ],
+      "corrections" : [ "offset (one point)", "" ]
     },
     {
       "sensorId" : 16,
       "sensorName" : "*(Voltage + Current sensor (HX711))",
       "quantities" : [ "Voltage", "Current" ],
-      "units" : [ "V", "A" ]
+      "units" : [ "V", "A" ],
+      "corrections" : [ "slope + offset (two point linear)", "slope + offset (two point linear)" ]
     },
     {
       "sensorId" : 18,
       "sensorName" : "Light sensor (photoresistor)",
       "quantities" : [ "Illuminace", "Trigger"  ],
-      "units" : [ "", "" ]
+      "units" : [ "", "" ],
+      "corrections" : [ "", "" ]
     },
     {
       "sensorId" : 32,
       "sensorName" : "Light sensor (BH1750 luxmeter)",
       "quantities" : [ "Illuminace" ],
-      "units" : [ "lux" ]
+      "units" : [ "lux" ],
+      "corrections" : [ "offset (one point)" ]
     },
-    {  "sensorId" : 19,
+    { "sensorId" : 19,
       "sensorName" : "CO2 gas sensor (MH-Z16)",
       "quantities" : [ "Concentration (ppm)", "Concentration (%)" ],
-      "units" : [ "ppm", "%" ]
+      "units" : [ "ppm", "%" ],
+      "corrections" : [ "offset (one point)", "offset (one point)" ]
     },
-    {  "sensorId" : 20,
+    { "sensorId" : 20,
       "sensorName" : "*(O2 gas sensor (ME2-O2))",
       "quantities" : [ "Concentration (ppm)", "Concentration (%)" ],
-      "units" : [ "ppm", "%" ]
+      "units" : [ "ppm", "%" ],
+      "corrections" : [ "offset (one point)", "offset (one point)" ]
     },
-    {  "sensorId" : 21,
+    { "sensorId" : 21,
       "sensorName" : "Ultrasonic motion sensor (SR-HC04)",
       "quantities" : [ "Distance", "Velocity", "Acceleration" ],
-      "units" : [ "cm", "cm/s", "cm/s^2" ]
+      "units" : [ "cm", "cm/s", "cm/s^2" ],
+      "corrections" : [ "slope + offset (two point linear)", "", "" ]
     },
-    {  "sensorId" : 22,
+    { "sensorId" : 22,
       "sensorName" : "Heart rate sensor (simple)",
       "quantities" : [ "Voltage" ],
-      "units" : [ "V" ]
+      "units" : [ "V" ],
+      "corrections" : [ "" ]
     },
-    {  "sensorId" : 23,
+    { "sensorId" : 23,
       "sensorName" : "Magnetic field sensor",
       "quantities" : [ "RAW", "Voltage", "Trigger" ],
-      "units" : [ "", "V", "" ]
+      "units" : [ "", "V", "" ],
+      "corrections" : [ "", "", "" ]
     },
-    {  "sensorId" : 24,
+    { "sensorId" : 24,
       "sensorName" : "Thermometer + Hygrometer (DHT11)",
       "quantities" : [ "Humidity", "Temperature" ],
-      "units" : [ "%", "°C" ]
+      "units" : [ "%", "°C" ],
+      "corrections" : [ "offset (one point)", "offset (one point)" ]
     },
-    {  "sensorId" : 25,
+    { "sensorId" : 25,
       "sensorName" : "Alcohol gas sensor (MQ-3)",
       "quantities" : [ "Concentration (ppm)", "Concentration (%)", "Voltage", "RAW", "Trigger" ],
-      "units" : [ "ppm", "%", "V", "", "" ]
+      "units" : [ "ppm", "%", "V", "", "" ],
+      "corrections" : [ "offset (one point)", "offset (one point)", "", "", "" ]
     },
-    {  "sensorId" : 26,
+    { "sensorId" : 26,
       "sensorName" : "*(Particle/Dust sensor (DSM501))",
       "quantities" : [ "Concentration" ],
-      "units" : [ "ppm" ]
+      "units" : [ "ppm" ],
+      "corrections" : [ "offset (one point)" ]
     },
-    {  "sensorId" : 27,
+    { "sensorId" : 27,
       "sensorName" : "Sound sensor (microphone)",
       "quantities" : [ "RAW", "Voltage", "Trigger" ],
-      "units" : [ "", "V", "" ]
+      "units" : [ "", "V", "" ],
+      "corrections" : [ "", "", "" ]
     },		
-    {  "sensorId" : 105,
+    { "sensorId" : 105,
       "sensorName" : "Laser ranging sensor‎ (VL53L0X)",
       "quantities" : [ "Distance" ],
-      "units" : [ "m" ]      
+      "units" : [ "m" ],
+      "corrections" : [ "offset (one point)" ]      
     },		
-    {  "sensorId" : 103,
+    { "sensorId" : 103,
       "sensorName" : "Timer",
-      "quantities" : [ "T0", "T1", "T2", "T3", "T4", "T5" ]
+      "quantities" : [ "T0", "T1", "T2", "T3", "T4", "T5" ],
+      "units" : [  "", "", "", "", "", ""  ],
+      "corrections" : [  "", "", "", "", "", ""  ]     
     }      
   ]
 }

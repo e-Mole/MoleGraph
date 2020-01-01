@@ -12,7 +12,6 @@ class QWidget;
 class QTimer;
 namespace hw
 {
-class Bluetooth;
 class PortBase;
 class SerialPort;
 
@@ -25,6 +24,7 @@ public:
     {
         Offline,
         Scanning,
+        ScanFinished,
         Opening,
         Verification,
         Connected
@@ -61,9 +61,9 @@ private:
     float _DequeueFloat(unsigned char &checkSum);
     bool _FillArrayFromQueue(unsigned length, QList<uint8_t> &list);
 
-    PortBase * m_port;
-    Bluetooth * m_bluetooth;
-    SerialPort * m_serialPort;
+    PortBase * m_selectedPort;
+    PortBase * m_bluetooth;
+    PortBase * m_serialPort;
     bool m_knownIssue;
     State m_state;
     QWidget *parentWidget;
@@ -99,18 +99,18 @@ public:
     bool FillQueue();
     bool IsCommand(unsigned char mixture);
     void WorkOffline();
-    void ClosePort();
+    void CloseSelectedPort();
     void OpenPort(const PortInfo &info);
     void StartSearching();
     void ClearCache();
     State GetState() {return m_state; }
     QString GetStateString();
-    void InitializeBluetooth();
     void TerminateBluetooth();
     void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
     void FillValueSet(QVector<float> values);
     bool IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount);
     bool ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, HwConnector::ValueSet *returnedValueSet);
+    void CreateHwInstances();
 signals:
     void StartCommandDetected();
     void StopCommandDetected();
@@ -120,10 +120,10 @@ signals:
     void stateChanged(QString const &stateString, hw::HwConnector::State state);
 public slots:
     void portOpeningFinished();
+
 private slots:
     void readyRead();
     void initialized();
-
 };
 } //namespace hw
 #endif // HWCONNECTOR_H

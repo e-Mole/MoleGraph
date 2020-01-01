@@ -20,6 +20,7 @@ public:
     {
         pt_none,
         pt_serialPort,
+        pt_serialOverBluetooth,
         pt_bluetooth
     } m_portType;
 

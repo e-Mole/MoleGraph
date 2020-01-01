@@ -39,7 +39,6 @@ SOURCES += main.cpp\
     bases/PushButton.cpp \
     bases/RadioButton.cpp \
     bases/SpinBox.cpp \
-    hw/Bluetooth.cpp \
     hw/HwConnector.cpp \
     hw/PortBase.cpp \
     qcustomplot/qcustomplot.cpp \
@@ -110,7 +109,6 @@ HEADERS  += MainWindow.h \
     bases/PushButton.h \
     bases/RadioButton.h \
     bases/SpinBox.h \
-    hw/Bluetooth.h \
     hw/HwConnector.h \
     hw/PortBase.h \
     qcustomplot/qcustomplot.h \
@@ -172,14 +170,25 @@ MOBILITY =
 
 TRANSLATIONS = languages/serialToGraph_cs.ts
 
-!android{
-QT += serialport
-SOURCES += hw/SerialPort.cpp
-HEADERS += hw/SerialPort.h
+win32{
+    QT += serialport
+    SOURCES += hw/SerialPort.cpp
+    HEADERS += hw/SerialPort.h
 }
 
 android{
-QT += androidextras
+    QT += androidextras
+    SOURCES += hw/BluetoothAndroid.cpp
+    HEADERS += hw/BluetoothAndroid.h
+}
+
+unix:!android{
+    QT += serialport
+    SOURCES += hw/SerialPort.cpp \
+        hw/BluetoothUnix.cpp
+    HEADERS += hw/SerialPort.h \
+        hw/BluetoothUnix.h
+
 }
 
 win32:RC_ICONS += MoleGraph.ico

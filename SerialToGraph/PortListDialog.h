@@ -22,7 +22,7 @@ class PortListDialog : public bases::PlatformDialog
     void closeEvent(QCloseEvent *event);
     void _UncheckRadioButton(RadioButton *rb);
 
-    hw::HwConnector &m_hwSink;
+    hw::HwConnector &m_hwConnector;
     QProgressBar *m_progress;
     Label *m_progressText;
     PushButton *m_refresh;

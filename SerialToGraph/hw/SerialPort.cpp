@@ -2,22 +2,20 @@
 #include <GlobalSettings.h>
 #include <hw/PortInfo.h>
 #include <QList>
+#include <QObject>
 #include <QThread>
 #include <QString>
 #include <QTimer>
 #include <string>
-#include <hw/HwConnector.h>
 
 #define RESPONSE_WAITING 200 //100 ms was not enough
 
 namespace hw
 {
 
-SerialPort::SerialPort(HwConnector *hwSink) :
-    PortBase(hwSink),
-    m_hwSink(hwSink)
+SerialPort::SerialPort(QObject *parent) :
+    PortBase(parent)
 {
-    connect(&m_serialPort, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
 }
 
 SerialPort::~SerialPort()
@@ -25,7 +23,7 @@ SerialPort::~SerialPort()
     Close();
 }
 
-bool SerialPort::_OpenPort(QSerialPortInfo const &info)
+void SerialPort::_OpenPort(QSerialPortInfo const &info)
 {
     m_serialPort.setPort(info);
     m_serialPort.setBaudRate(QSerialPort::Baud115200);
@@ -34,14 +32,14 @@ bool SerialPort::_OpenPort(QSerialPortInfo const &info)
     {
         qWarning() << "unable to open port " << info.portName();
         portOpeningFinished();
-        return false;
+        return;
     }
 
     QTimer *timer = new QTimer(this);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(portOpenTimeout()));
     timer->start(3000); //arduino is reseted after serial port connection I have to wait to be ready
-    return true;
+    return;
 }
 
 void SerialPort::portOpenTimeout()
@@ -50,13 +48,13 @@ void SerialPort::portOpenTimeout()
     return;
 }
 
-bool SerialPort::OpenPort(QString id)
+void SerialPort::OpenPort(QString id)
 {
     auto it = m_idToInfo.find(id);
     if (it == m_idToInfo.end())
-        return false;
+        return;
 
-    return _OpenPort(it.value());
+    _OpenPort(it.value());
 }
 
 bool SerialPort::IsOpen()
@@ -64,7 +62,7 @@ bool SerialPort::IsOpen()
     return m_serialPort.isOpen();
 }
 
-void SerialPort::FillPorts(QList<PortInfo> &portInfos)
+bool SerialPort::StartPortSearching()
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -74,11 +72,12 @@ void SerialPort::FillPorts(QList<PortInfo> &portInfos)
         else if (!info.manufacturer().isEmpty())
             id += " (" + info.manufacturer() + ")";
 
-        //FIXME!!!: is this costruction OK? I don't think so.
-        portInfos.push_back(PortInfo(PortInfo::pt_serialPort, id, info.manufacturer() == "wch.cn"));
-
         m_idToInfo[id] = info;
+        PortInfo::PortType type = (info.description() == "Standard Serial over Bluetooth link") ?
+            PortInfo::pt_serialOverBluetooth : PortInfo::pt_serialPort;
+        deviceFound(PortInfo(type, id, info.manufacturer() == "wch.cn"));
     }
+    return false; //searching is finished
 }
 
 qint64 SerialPort::Write(char const *data, unsigned size)

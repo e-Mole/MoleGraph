@@ -56,6 +56,7 @@ QString PortInfo::GetTypeText() const
 {
     switch (m_portType)
     {
+        case pt_serialOverBluetooth:
         case pt_bluetooth:
             return QObject::tr("Bluetooth");
         case pt_serialPort:

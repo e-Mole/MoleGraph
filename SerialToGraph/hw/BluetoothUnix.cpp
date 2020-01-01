@@ -1,4 +1,4 @@
-#include "Bluetooth.h"
+#include "BluetoothUnix.h"
 #include <GlobalSettings.h>
 #include <hw/PortInfo.h>
 #include <QBluetoothAddress>
@@ -12,7 +12,7 @@
 namespace hw
 {
 
-Bluetooth::Bluetooth(QObject *parent) :
+BluetoothUnix::BluetoothUnix(QObject *parent) :
     PortBase(parent),
     m_socket(NULL),
     m_discoveryAgent(
@@ -27,28 +27,29 @@ Bluetooth::Bluetooth(QObject *parent) :
         this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
 }
 
-Bluetooth::~Bluetooth()
+BluetoothUnix::~BluetoothUnix()
 {
     m_discoveryAgent->stop();
     Close();
 }
 
-void Bluetooth::StartPortSearching()
+bool BluetoothUnix::StartPortSearching()
 {
     m_discoveryAgent->start();
+    return true; //searching is in progress
 }
 
-void Bluetooth::StopPortSearching()
+void BluetoothUnix::StopPortSearching()
 {
     m_discoveryAgent->stop();
 }
 
-bool Bluetooth::IsActive()
+bool BluetoothUnix::IsSearchingActive()
 {
     return m_discoveryAgent->isActive();
 }
 
-void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
+void BluetoothUnix::serviceDiscovered(QBluetoothServiceInfo const &info)
 {
     //if (info.socketProtocol() != QBluetoothServiceInfo::RfcommProtocol)
     //    return; //only rfcomm can be used as serial port
@@ -63,17 +64,15 @@ void Bluetooth::serviceDiscovered(QBluetoothServiceInfo const &info)
     deviceFound(item);
 }
 
-bool Bluetooth::OpenPort(QString id)
+void BluetoothUnix::OpenPort(QString id)
 {
     m_socket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
-    connect(m_socket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
     connect(m_socket, SIGNAL(connected()), this, SLOT(connected()));
     m_socket->connectToService(m_serviceInfos[id]);
     m_timeout->start(5000);
-    return true;
 }
 
-void Bluetooth::connected()
+void BluetoothUnix::connected()
 {
     m_timeout->stop(); //really connected
 
@@ -91,12 +90,12 @@ void Bluetooth::connected()
     timer->start(1500);
 }
 
-bool Bluetooth::IsOpen()
+bool BluetoothUnix::IsOpen()
 {
     return m_socket != NULL &&  m_socket->isOpen();
 }
 
-void Bluetooth::Close()
+void BluetoothUnix::Close()
 {
     if (IsOpen())
     {
@@ -106,27 +105,27 @@ void Bluetooth::Close()
     }
 }
 
-void Bluetooth::ReadData(QByteArray &array, unsigned maxLength)
+void BluetoothUnix::ReadData(QByteArray &array, unsigned maxLength)
 {
     array = m_socket->read(maxLength);
 }
 
-void Bluetooth::ReadData(QByteArray &array)
+void BluetoothUnix::ReadData(QByteArray &array)
 {
     array = m_socket->readAll();
 }
 
-void Bluetooth::ClearCache(){
+void BluetoothUnix::ClearCache(){
     QByteArray array;
     ReadData(array);
 }
 
-qint64 Bluetooth::Write(char const *data, unsigned size)
+qint64 BluetoothUnix::Write(char const *data, unsigned size)
 {
     return m_socket->write(data, size);
 }
 
-bool Bluetooth::WaitForBytesWritten()
+bool BluetoothUnix::WaitForBytesWritten()
 {
     //WaitForBytesWritten is not implemented for bluetotth
     return true;

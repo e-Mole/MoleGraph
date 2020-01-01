@@ -15,7 +15,7 @@
 
 PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
     bases::PlatformDialog(parent, tr("Device connecting")),
-    m_hwSink(hwSink),
+    m_hwConnector(hwSink),
     m_progress(NULL),
     m_progressText(NULL),
     m_refresh(NULL),
@@ -71,7 +71,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
 
 void PortListDialog::startSearching()
 {
-    m_hwSink.StartSearching();
+    m_hwConnector.StartSearching();
 }
 
 void PortListDialog::workDisconnected()
@@ -80,7 +80,7 @@ void PortListDialog::workDisconnected()
         if (rb->isChecked())
             _UncheckRadioButton(rb);
 
-    m_hwSink.WorkOffline();
+    m_hwConnector.WorkOffline();
 
     GlobalSettings::GetInstance().SetForcedOffline(true);
 }
@@ -108,7 +108,7 @@ void PortListDialog::addPort(hw::PortInfo const &item)
         !GlobalSettings::GetInstance().GetForcedOffline() &&
         (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
     )
-       m_hwSink.OpenPort(item);
+       m_hwConnector.OpenPort(item);
 
     repaint();
 }
@@ -127,7 +127,7 @@ void PortListDialog::portRadioButtonReleased()
 {
     m_selectedRadioButton = (RadioButton*)sender();
     hw::PortInfo const &portInfo = m_radioToInfo[m_selectedRadioButton];
-    m_hwSink.OpenPort(portInfo);
+    m_hwConnector.OpenPort(portInfo);
     GlobalSettings::GetInstance().SetForcedOffline(false);
 }
 
@@ -137,7 +137,14 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::S
     m_progressText->repaint();
     switch (state)
     {
-        case  hw::HwConnector::Connected:
+        case hw::HwConnector::Opening:
+        case hw::HwConnector::Scanning:
+            //to display progess mooving
+            m_progress->setMaximum(0);
+            m_progress->setValue(0);
+            m_progress->setEnabled(true);
+        break;
+        case hw::HwConnector::Connected:
         {
             QString connectedId = GlobalSettings::GetInstance().GetLastSerialPortId();
             foreach (RadioButton *rb, m_radioToInfo.keys())
@@ -151,6 +158,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::S
             m_progress->repaint();
         }
         break;
+        case hw::HwConnector::ScanFinished:
         case hw::HwConnector::Offline:
             //to progess stop mooving and display emprt state
             m_progress->setMaximum(1);
@@ -158,10 +166,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::S
             m_progress->setEnabled(false);
         break;
         default:
-            //to display progess mooving
-            m_progress->setMaximum(0);
-            m_progress->setValue(0);
-            m_progress->setEnabled(true);
+            qWarning() << "unsupported hwConnector state";
     }
 
     if (state != hw::HwConnector::Connected)
@@ -170,7 +175,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::S
 
 void PortListDialog::_CleanPortList()
 {
-    m_hwSink.ClosePort();
+    m_hwConnector.CloseSelectedPort();
     m_selectedRadioButton = NULL;
     m_radioToInfo.clear();
 

@@ -6,25 +6,33 @@
 #include <QMap>
 #include <QString>
 
+#if defined(Q_OS_ANDROID)
+#   include <QtAndroid>
+#   include <QtAndroidExtras/QAndroidJniEnvironment>
+#   include <QtAndroidExtras/QAndroidJniObject>
+#endif
+
 class QBluetoothSocket;
 class QBluetoothServiceDiscoveryAgent;
 class QTimer;
 namespace hw
 {
 class PortInfo;
-class Bluetooth : public PortBase
+class BluetoothAndroid : public PortBase
 {
     Q_OBJECT
 
     QBluetoothSocket *m_socket;
-    QMap<QString, QBluetoothServiceInfo> m_serviceInfos;
+    QMap<QString, QString> m_foundDevices; //id + address
     QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 
+    bool checkException(const char* method, QAndroidJniObject* obj=nullptr);
 public:
-    Bluetooth(QObject *parent);
-    ~Bluetooth();
-    void StartPortSearching();
-    void StopPortSearching();
+    BluetoothAndroid(QObject *parent);
+    ~BluetoothAndroid();
+    bool StartPortSearching();
+    virtual void StopPortSearching() {}
+    virtual bool IsSearchingActive() { return false; }
     virtual void ReadData(QByteArray &array, unsigned maxLength);
     virtual void ReadData(QByteArray &array);
     virtual void ClearCache();
@@ -32,7 +40,7 @@ public:
     bool WaitForBytesWritten();
     virtual bool IsOpen();
     virtual void Close();
-    virtual bool OpenPort(QString id);
+    virtual void OpenPort(QString id);
     bool IsActive();
     QTimer *m_timeout;
 

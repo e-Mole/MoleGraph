@@ -1,10 +1,15 @@
 #include "HwConnector.h"
 #include <QDebug>
 #include <GlobalSettings.h>
-#if not defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
+#   include <hw/BluetoothAndroid.h>
+#elif not defined (Q_OS_WIN)
+#   include <hw/SerialPort.h>
+#   include <hw/BluetoothUnix.h>
+#else
 #   include <hw/SerialPort.h>
 #endif
-#include <hw/Bluetooth.h>
+
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
 #include <hw/Sensor.h>
@@ -17,6 +22,7 @@
 #include <QTimer>
 #include <QWidget>
 #include <QList>
+#include <string>
 
 #define PROTOCOL_ID "ATG_5"
 #define COMMAND_MASK 0x7F
@@ -30,7 +36,7 @@ namespace hw
 {
 HwConnector::HwConnector(QWidget *parent) :
     QObject((QObject*)parent),
-    m_port(NULL),
+    m_selectedPort(NULL),
     m_bluetooth(NULL),
     m_serialPort(NULL),
     m_knownIssue(false),
@@ -44,7 +50,7 @@ HwConnector::HwConnector(QWidget *parent) :
 
 HwConnector::~HwConnector()
 {
-    if (m_port != NULL && m_port->IsOpen())
+    if (m_selectedPort != NULL && m_selectedPort->IsOpen())
         Stop();
 }
 
@@ -132,7 +138,7 @@ void HwConnector::SetSensor(unsigned port, unsigned sensorId, unsigned quantityI
 
 bool HwConnector::IsDeviceConnected()
 {
-    if (m_port == NULL || !m_port->IsOpen())
+    if (m_selectedPort == NULL || !m_selectedPort->IsOpen())
     {
         PortIssueSolver();
         return false;
@@ -143,8 +149,8 @@ bool HwConnector::IsDeviceConnected()
 bool HwConnector::FillQueue()
 {
     QByteArray array;
-    m_port->ReadData(array);
-
+    m_selectedPort->ReadData(array);
+    qDebug() << "data " << array;
     for (int i = 0; i< array.size(); i++)
          m_queue.enqueue(array[i]);
 
@@ -227,21 +233,22 @@ void HwConnector::_ChangeState(State status)
 
 void HwConnector::_StopSearching()
 {
-    if (m_bluetooth != NULL)
+    if (m_bluetooth != nullptr)
         m_bluetooth->StopPortSearching();
 }
 
 void HwConnector::WorkOffline()
 {
-    if (m_port != NULL && m_port->IsOpen())
-        m_port->Close();
+    CloseSelectedPort();
 
+    m_selectedPort = nullptr;
     m_knownIssue = true;
-
     _StopSearching();
 
     if (m_state != Offline)
+    {
         _ChangeState(Offline);
+    }
 }
 
 void HwConnector::PortIssueSolver()
@@ -256,11 +263,11 @@ void HwConnector::PortIssueSolver()
     }
 }
 
-void HwConnector::ClosePort()
+void HwConnector::CloseSelectedPort()
 {
-    if (m_port != NULL &&  m_port->IsOpen())
+    if (m_selectedPort != NULL &&  m_selectedPort->IsOpen())
     {
-        m_port->Close();
+        m_selectedPort->Close();
         connectivityChanged(false);
         m_openedPortInfo = PortInfo();
     }
@@ -268,28 +275,28 @@ void HwConnector::ClosePort()
 
 void HwConnector::OpenPort(PortInfo const &info)
 {
-    if (m_port != NULL && m_port->IsOpen() && info.m_id == m_openedPortInfo.m_id)
+    if (m_selectedPort != NULL && m_selectedPort->IsOpen() && info.m_id == m_openedPortInfo.m_id)
         return; //already opened
 
     _ChangeState(Opening);
-    ClosePort();
+    CloseSelectedPort();
 
     switch (info.m_portType)
     {
-#if not defined(Q_OS_ANDROID)
         case PortInfo::pt_serialPort:
-            m_port = m_serialPort;
+        case PortInfo::pt_serialOverBluetooth:
+            m_selectedPort = m_serialPort;
         break;
-#endif
+
         case PortInfo::pt_bluetooth:
-            m_port = m_bluetooth;
+            m_selectedPort = m_bluetooth;
         break;
         default:
             qWarning() << "try to open unsuported port";
     }
 
     m_openedPortInfo = info;
-    m_port->OpenPort(info.m_id);
+    m_selectedPort->OpenPort(info.m_id);
 }
 
 void HwConnector::initialized()
@@ -309,7 +316,7 @@ void HwConnector::initialized()
 
 void HwConnector::portOpeningFinished()
 {
-    if (m_port->IsOpen())
+    if (m_selectedPort->IsOpen())
     {
         _ChangeState(Verification);
 
@@ -319,7 +326,7 @@ void HwConnector::portOpeningFinished()
         if (!Initialize())
         {
             qWarning() << "serial port initialization failed";
-            m_port->Close();
+            m_selectedPort->Close();
         }
     }
     else
@@ -335,9 +342,9 @@ void HwConnector::portOpeningFinished()
 
 void HwConnector::_ConnectionFailed()
 {
-    ClosePort();//if it was oppened;
+    CloseSelectedPort();//if it was oppened;
     m_knownIssue = true; //will be displayed message about it
-    _ChangeState(m_bluetooth && m_bluetooth->IsActive() ? Scanning : Offline);
+    _ChangeState(m_bluetooth && m_bluetooth->IsSearchingActive() ? Scanning : Offline);
 }
 
 void HwConnector::readyRead()
@@ -349,7 +356,7 @@ void HwConnector::readyRead()
     m_protocolIdTimer = NULL;
 
     QByteArray array;
-    m_port->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
+    m_selectedPort->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
     qDebug() << array;
     if ((array.toStdString() != PROTOCOL_ID && array.toStdString() != LEGACY_PROTOCOL_ID))
     {
@@ -381,22 +388,6 @@ void HwConnector::readyRead()
     connectivityChanged(true);
 }
 
-void HwConnector::InitializeBluetooth()
-{
-    if (!GlobalSettings::GetInstance().GetUseBluetooth())
-        return;
-
-    delete m_bluetooth;
-    m_bluetooth = new Bluetooth(this);
-    connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
-    connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-
-    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
-    //connect(m_bluetooth, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    m_bluetooth->StartPortSearching();
-    _ChangeState(Scanning);
-}
-
 void HwConnector::TerminateBluetooth()
 {
     delete m_bluetooth;
@@ -407,52 +398,95 @@ void HwConnector::TerminateBluetooth()
 
 }
 
+void HwConnector::CreateHwInstances()
+{
+#if defined(Q_OS_ANDROID)
+    delete m_bluetooth;
+    if (GlobalSettings::GetInstance().GetUseBluetooth()){
+        m_bluetooth = new BluetoothAndroid(this);
+        connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+        connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+    }
+#else
+#   if not defined (Q_OS_WIN32)
+        delete m_bluetooth;
+        if (GlobalSettings::GetInstance().GetUseBluetooth()){
+            m_bluetooth = new BluetoothUnix(this);
+            connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+            connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+        }
+#   else
+        delete m_serialPort;
+        m_serialPort = new SerialPort(this);
+        connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+        connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+#   endif
+#endif
+}
+
 void HwConnector::StartSearching()
 {
-    m_port = NULL;
+    WorkOffline();
+    CreateHwInstances();
 
-#if not defined(Q_OS_ANDROID)
-    _ChangeState(Scanning);
-    delete m_serialPort;
-    m_serialPort = new SerialPort(this);
-    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-    
-    QList<PortInfo> portInfos;
-    m_serialPort->FillPorts(portInfos);
-    foreach (PortInfo const  &item, portInfos)
-        portFound(item);
+    if (m_serialPort)
+    {
+        m_serialPort->StartPortSearching(); //searching of serial ports is always synchronous
 
-    //FIXME: i solved it just by timer because I dont want to solve partially recieved data
-    //connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    }
 
-    _ChangeState(Offline);
-#endif
+    if (m_bluetooth)
+    {
+        if (m_bluetooth->StartPortSearching())
+        {
+            _ChangeState(Scanning);
+        }
+    }
 
-    InitializeBluetooth();
+    if (m_state == State::Offline) // was not changet to scanning
+    {
+        _ChangeState(ScanFinished);
+    }
 }
 
 void HwConnector::ClearCache()
 {
-    m_port->ClearCache();
+    m_selectedPort->ClearCache();
+    m_queue.clear();
+}
+
+QString toHex(std::string const &data)
+{
+    QString out;
+    char const hex_chars[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+    for( int i = 0; i < data.length(); ++i )
+    {
+        char const byte = data[i];
+
+        out += hex_chars[ ( byte & 0xF0 ) >> 4 ];
+        out += hex_chars[ ( byte & 0x0F ) >> 0 ];
+    }
+    return out;
 }
 
 bool HwConnector::_WriteInstruction(Instructions instruction, std::string const &data)
 {
-    if (!m_port->IsOpen())
+    if (!m_selectedPort->IsOpen())
         return false;
 
     qDebug() << "written instruction:" << instruction <<
-                " data size:" << m_port->Write((char const *)&instruction , 1);
-    if (!m_port->WaitForBytesWritten())
+                " data size:" << m_selectedPort->Write((char const *)&instruction , 1);
+    if (!m_selectedPort->WaitForBytesWritten())
     {
         qWarning() << "WaitForBytesWritten returns false";
         return false;
     }
     if (data.size() > 0)
     {
-        qDebug() << "data present" << data.c_str() << " size:" << data.size();
-        m_port->Write(data.c_str(), data.size());
-        if (!m_port->WaitForBytesWritten())
+        qDebug() << "data present" << toHex(data) << " size:" << data.size();
+        m_selectedPort->Write(data.c_str(), data.size());
+        if (!m_selectedPort->WaitForBytesWritten())
         {
             qWarning() << "WaitForBytesWritten returns false";
             return false;
@@ -463,7 +497,7 @@ bool HwConnector::_WriteInstruction(Instructions instruction, std::string const 
 
 bool HwConnector::_WriteInstruction(Instructions instruction, unsigned parameter, unsigned length)
 {
-    if (!m_port->IsOpen())
+    if (!m_selectedPort->IsOpen())
         return false;
 
     std::string tmp;
@@ -484,6 +518,8 @@ QString HwConnector::GetStateString()
             return tr("Offline");
         case Scanning:
             return tr("Scanning");
+        case ScanFinished:
+        return tr("Searched");
         case Opening:
             return tr("Opening");
         case Verification:
@@ -565,7 +601,7 @@ bool HwConnector::_ProcessCommand(unsigned mixture, unsigned char &checkSum)
         m_queue.dequeue();
         return _ProcessDebugMessage(checkSum);
     default:
-        qDebug() << "Unsupported command " << "command";
+        qDebug() << "Unsupported command " << command;
         return false;
     }
 }

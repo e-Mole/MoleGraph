@@ -13,24 +13,24 @@
 class QString;
 namespace hw
 {
-class HwConnector;
 class SerialPort : public PortBase
 {
     Q_OBJECT
 
-    bool _OpenPort(QSerialPortInfo const &info);
+    void _OpenPort(QSerialPortInfo const &info);
 
 
     QSerialPort m_serialPort;
-    HwConnector *m_hwSink;
     QMap<QString, QSerialPortInfo> m_idToInfo;
 public:
 
-    SerialPort(HwConnector *hwSink);
+    SerialPort(QObject *parent);
     ~SerialPort();
 
-
-    bool OpenPort(QString id);
+    virtual bool StartPortSearching();
+    virtual void StopPortSearching() {}
+    virtual bool IsSearchingActive() { return false; }
+    void OpenPort(QString id);
     void FillPorts(QList<PortInfo> &portInfos);
     qint64 Write(char const *data, unsigned size);
     bool WaitForBytesWritten();

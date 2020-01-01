@@ -415,12 +415,11 @@ void HwConnector::CreateHwInstances()
             connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
             connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
         }
-#   else
-        delete m_serialPort;
-        m_serialPort = new SerialPort(this);
-        connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-        connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
 #   endif
+    delete m_serialPort;
+    m_serialPort = new SerialPort(this);
+    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+    connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
 #endif
 }
 

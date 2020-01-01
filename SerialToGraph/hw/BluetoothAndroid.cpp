@@ -83,7 +83,7 @@ bool BluetoothAndroid::StartPortSearching()
             qDebug() << QString("found BT device %1, %2").arg(name).arg(address);
             QString id = QString("%1 (%2)").arg(name).arg(address);
             m_foundDevices[id] = address;
-            deviceFound(PortInfo(PortInfo::pt_bluetooth, id, false));
+            deviceFound(PortInfo(PortInfo::pt_bluetooth, id, name.startsWith(BLUETOOTH_MODULE_NAME_PREFIX)));
         }
     }
     return false; //searching is finished

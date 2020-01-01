@@ -31,6 +31,7 @@ public:
     PortInfo(PortInfo const &second);
     QString GetStatusText() const;
     QString GetTypeText() const;
+    bool IsPreferred() const { return m_status == st_identified || m_status == st_recognized; }
 
 };
 } //namespace hw

@@ -5,6 +5,7 @@
 class QByteArray;
 class QSettings;
 
+#define BLUETOOTH_MODULE_NAME_PREFIX "MGA2"
 namespace hw
 {
 class PortInfo;

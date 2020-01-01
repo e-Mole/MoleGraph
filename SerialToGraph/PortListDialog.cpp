@@ -93,7 +93,7 @@ void PortListDialog::refresh()
 
 void PortListDialog::addPort(hw::PortInfo const &item)
 {
-    unsigned rowNumber = m_portLayout->rowCount();
+    unsigned rowNumber = item.IsPreferred() ? 0 : m_portLayout->rowCount();
     RadioButton *rb = new RadioButton(item.m_id, m_portWidget);
     m_radioToInfo[rb] = item;
 

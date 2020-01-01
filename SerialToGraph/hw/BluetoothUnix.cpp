@@ -57,7 +57,7 @@ void BluetoothUnix::serviceDiscovered(QBluetoothServiceInfo const &info)
     PortInfo item(
         PortInfo::pt_bluetooth,
         info.device().name() + " (" + info.serviceName() + ", " +  info.device().address().toString() + ")",
-        false
+        info.device().name().startsWith(BLUETOOTH_MODULE_NAME_PREFIX)
     );
 
     m_serviceInfos[item.m_id] = info;

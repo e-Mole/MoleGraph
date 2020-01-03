@@ -457,7 +457,7 @@
       "corrections" : [ "offset (one point)" ]      
     },		
     { "sensorId" : 103,
-      "sensorName" : "Timer",
+      "sensorName" : "Timer GPIO 02",
       "quantities" : [ "Pulse duration (On)", "Pulse duration (Off)", "Period (Rising)", "Period (Falling)", "Frequency (Rising)", "Frequency (Falling)" ],
       "units" : [  "s", "s", "s", "s", "Hz", "Hz"  ],
       "corrections" : [  "", "", "", "", "", ""  ]     

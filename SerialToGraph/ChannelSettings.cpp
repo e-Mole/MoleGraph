@@ -105,6 +105,19 @@ QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
         return tr("Roll");
     if (quantity->GetName() == "Pitch")
         return tr("Pitch");
+    if (quantity->GetName() == "Pulse duration (On)")
+        return tr("Pulse duration (On)");
+    if (quantity->GetName() == "Pulse duration (Off)")
+        return tr("Pulse duration (Off)");
+    if (quantity->GetName() == "Period (Rising)")
+        return tr("Period (Rising)");
+
+    if (quantity->GetName() == "Period (Falling)")
+        return tr("Period (Falling)");
+    if (quantity->GetName() == "Frequency (Rising)")
+        return tr("Frequency (Rising)");
+    if (quantity->GetName() == "Frequency (Falling)")
+        return tr("Frequency (Falling)");
 
     return quantity->GetName(); //TODO: TFs mod: Remove!!!
 

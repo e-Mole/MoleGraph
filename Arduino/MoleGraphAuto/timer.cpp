@@ -91,18 +91,18 @@ bool Timer::process() {
   if (Action(period)) {
     uint32_t x0, x1, x2, x3, x4, x5;
     cli();
-    x0 = pulsePositive[port];
-    pulsePositive[port] = 0;
-    x1 = pulseNegative[port];
-    pulseNegative[port] = 0;
-    x2 = periodRise[port];
-    periodRise[port] = 0;
-    x3 = periodFall[port];
-    periodFall[port] = 0;
-    x4 = countRise[port];
-    countRise[port] = 0;
-    x5 = countFall[port];
-    countFall[port] = 0;
+    x0 = pulsePositive[port]; //délka pulzu na úrovni 1 (s)
+    pulsePositive[port] = 0;  
+    x1 = pulseNegative[port]; //délka pulzu na úrovni 0 (s)   
+    pulseNegative[port] = 0;     
+    x2 = periodRise[port]; //perioda mìøená na vzestupné hranì (s)    
+    periodRise[port] = 0;     
+    x3 = periodFall[port]; //perioda mìøená na sestupné hranì (s)
+    periodFall[port] = 0;     
+    x4 = countRise[port]; //frekvence na vzestupné hranì (Hz)
+    countRise[port] = 0;     
+    x5 = countFall[port]; //frekvence na sestupné hranì (Hz)
+    countFall[port] = 0;     
     sei();
     if (x0 != 0) value  = x0 * (0.5e-6);
     if (x1 != 0) value1 = x1 * (0.5e-6);

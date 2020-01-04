@@ -136,27 +136,27 @@
     }, 	
     {
       "quantityId" : 33,
-      "quantityName" : "T0"
+      "quantityName" : "Pulse duration (On)"
     } , 	
     {
       "quantityId" : 34,
-      "quantityName" : "T1"
+      "quantityName" : "Pulse duration (Off)"
     } , 	
     {
       "quantityId" : 35,
-      "quantityName" : "T2"
+      "quantityName" : "Period (Rising)"
     } , 	
     {
       "quantityId" : 36,
-      "quantityName" : "T3"
+      "quantityName" : "Period (Falling)"
     } , 	
     {
       "quantityId" : 37,
-      "quantityName" : "T4"
+      "quantityName" : "Frequency (Rising)"
     } , 	
     {
       "quantityId" : 38,
-      "quantityName" : "T5"
+      "quantityName" : "Frequency (Falling)"
     }  	 	                           
   ],
   "units":
@@ -236,6 +236,10 @@
     {
       "unitId" : 18,
       "unitName" : "μT"
+    },
+    {
+      "unitId" : 19,
+      "unitName" : "Hz"
     }          
   ],
   "corrections":
@@ -453,9 +457,9 @@
       "corrections" : [ "offset (one point)" ]      
     },		
     { "sensorId" : 103,
-      "sensorName" : "Timer",
-      "quantities" : [ "T0", "T1", "T2", "T3", "T4", "T5" ],
-      "units" : [  "", "", "", "", "", ""  ],
+      "sensorName" : "Timer GPIO 02",
+      "quantities" : [ "Pulse duration (On)", "Pulse duration (Off)", "Period (Rising)", "Period (Falling)", "Frequency (Rising)", "Frequency (Falling)" ],
+      "units" : [  "s", "s", "s", "s", "Hz", "Hz"  ],
       "corrections" : [  "", "", "", "", "", ""  ]     
     }      
   ]

@@ -101,7 +101,7 @@ private:
 
     GraphicsContainer *m_widget;
     Context const &m_context;
-    hw::HwConnector &m_hwSink;
+    hw::HwConnector &m_hwConnector;
     SampleUnits m_sampleUnits;
     unsigned m_period;
     State m_state;
@@ -123,7 +123,7 @@ private:
  public:
     Measurement(QWidget *parent,
         Context &context,
-        hw::HwConnector &hwSink,
+        hw::HwConnector &hwConnector,
         Measurement *source,
         bool initializeAxiesAndChannels
 , hw::SensorManager *sensorManager);

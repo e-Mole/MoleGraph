@@ -34,7 +34,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeOpenRecentAtStartup();
 
     Context const &m_context;
-    hw::HwConnector &m_hwSink;
+    hw::HwConnector &m_hwConnector;
     GlobalSettings &m_settings;
     bases::ComboBox *m_languages;
     bases::ComboBox *m_brackets;
@@ -50,7 +50,7 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     bases::CheckBox *m_acceptChangesByDialogClosing;
     bases::CheckBox *m_openRecentOnStartUp;
 public:
-    GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwConnector &hwSink);
+    GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwConnector &hwConnector);
 
 signals:
     void updateChannelSizeFactor(int factor);

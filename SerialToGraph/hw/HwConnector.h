@@ -72,6 +72,8 @@ private:
     QTimer *m_initializeTimer;
     bool m_legacyFirmwareVersion;
     QQueue<unsigned char> m_queue;
+    bool m_autoConnect;
+    QList<hw::PortInfo> m_deviceList;
 public:
     struct ValueSet{
       double offset = 0;
@@ -104,26 +106,30 @@ public:
     void StartSearching();
     void ClearCache();
     State GetState() {return m_state; }
-    QString GetStateString();
+    QString GetStateString(hw::HwConnector::State state);
     void TerminateBluetooth();
     void SetSensor(unsigned port, unsigned sensorId, unsigned quantityId, unsigned quantityOrder, unsigned hwIndex);
     void FillValueSet(QVector<float> values);
     bool IsCompleteSetInQueue(bool onDemand, unsigned trackedHwChannelCount);
     bool ProcessData(bool onDemand, unsigned valueSetCount, double period, double secondsInPause, unsigned trackedHwChannelsCount, HwConnector::ValueSet *returnedValueSet);
     void CreateHwInstances();
+    void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
+    QList<hw::PortInfo> &GetDeviceList() { return m_deviceList; }
+
 signals:
     void StartCommandDetected();
     void StopCommandDetected();
     void connectivityChanged(bool connected);
     void portFound(hw::PortInfo const &portInfo);
     void portOpened();
-    void stateChanged(QString const &stateString, hw::HwConnector::State state);
+    void stateChanged(hw::HwConnector::State state);
 public slots:
     void portOpeningFinished();
 
 private slots:
     void readyRead();
     void initialized();
+    void deviceFound(hw::PortInfo const &portInfo);
 };
 } //namespace hw
 #endif // HWCONNECTOR_H

@@ -1,6 +1,5 @@
 #include "HwConnector.h"
 #include <QDebug>
-#include <GlobalSettings.h>
 #if defined(Q_OS_ANDROID)
 #   include <hw/BluetoothAndroid.h>
 #elif not defined (Q_OS_WIN)
@@ -13,6 +12,7 @@
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
 #include <hw/Sensor.h>
+#include <GlobalSettings.h>
 #include <MyMessageBox.h>
 #include <QCoreApplication>
 #include <QDebug>
@@ -43,7 +43,8 @@ HwConnector::HwConnector(QWidget *parent) :
     m_state(Offline),
     parentWidget(parent),
     m_protocolIdTimer(NULL),
-    m_legacyFirmwareVersion(false)
+    m_legacyFirmwareVersion(false),
+    m_autoConnect(true)
 {
 
 }
@@ -228,7 +229,7 @@ bool HwConnector::_ProcessDebugMessage(uint8_t &checkSum)
 void HwConnector::_ChangeState(State status)
 {
     m_state = status;
-    stateChanged(GetStateString(), m_state);
+    stateChanged(m_state);
 }
 
 void HwConnector::_StopSearching()
@@ -405,7 +406,7 @@ void HwConnector::CreateHwInstances()
     if (GlobalSettings::GetInstance().GetUseBluetooth()){
         m_bluetooth = new BluetoothAndroid(this);
         connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-        connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+        connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
     }
 #else
 #   if not defined (Q_OS_WIN32)
@@ -413,18 +414,31 @@ void HwConnector::CreateHwInstances()
         if (GlobalSettings::GetInstance().GetUseBluetooth()){
             m_bluetooth = new BluetoothUnix(this);
             connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-            connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+            connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
         }
 #   endif
     delete m_serialPort;
     m_serialPort = new SerialPort(this);
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-    connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SIGNAL(portFound(hw::PortInfo)));
+    connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
 #endif
+}
+
+void HwConnector::deviceFound(hw::PortInfo const &portInfo)
+{
+    if (m_autoConnect &&
+        !GlobalSettings::GetInstance().GetForcedOffline() &&
+        (portInfo.m_status == PortInfo::st_lastTimeUsed || portInfo.m_status == PortInfo::st_identified)
+    )
+       OpenPort(portInfo);
+
+    m_deviceList.append(portInfo);
+    emit portFound(portInfo);
 }
 
 void HwConnector::StartSearching()
 {
+    m_deviceList.clear();
     WorkOffline();
     CreateHwInstances();
 
@@ -509,24 +523,24 @@ bool HwConnector::_WriteInstruction(Instructions instruction)
     return _WriteInstruction(instruction, "");
 }
 
-QString HwConnector::GetStateString()
+QString HwConnector::GetStateString(hw::HwConnector::State state)
 {
-    switch(m_state)
+    switch(state)
     {
-        case Offline:
+        case hw::HwConnector::Offline:
             return tr("Offline");
-        case Scanning:
+        case hw::HwConnector::Scanning:
             return tr("Scanning");
-        case ScanFinished:
+        case hw::HwConnector::ScanFinished:
         return tr("Searched");
-        case Opening:
+        case hw::HwConnector::Opening:
             return tr("Opening");
-        case Verification:
+        case hw::HwConnector::Verification:
             return tr("Verification");
-        case Connected:
+        case hw::HwConnector::Connected:
             return tr("Connected");
         default:
-            qWarning("unsupported HwSink state");
+            qWarning("unsupported HwConnector state");
             return "";
     }
 }
@@ -621,7 +635,5 @@ float HwConnector::_DequeueFloat(unsigned char &checkSum)
 
     return *((float*)value);
 }
-
-
 
 } //namespace hw

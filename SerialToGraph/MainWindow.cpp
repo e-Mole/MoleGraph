@@ -47,10 +47,9 @@ using namespace atog;
 
 MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent):
     QMainWindow(parent),
-    m_hwSink(this),
+    m_hwConnector(this),
     m_context(m_measurements, *this),
     m_currentMeasurement(NULL),
-    m_portListDialog(NULL),
     m_console(new Console(this)),
     m_savedValues(true),
     m_mainLayout(NULL),
@@ -86,7 +85,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     if (translator->load(translationFileName, ":/languages"))
         application.installTranslator(translator);
 
-    m_buttonLine = new ButtonLine(this, m_hwSink, Qt::Vertical);
+    m_buttonLine = new ButtonLine(this, m_hwConnector, Qt::Vertical);
     connect(m_buttonLine, SIGNAL(connectivityButtonReleased()), this, SLOT(openSerialPort()));
     connect(m_buttonLine, SIGNAL(openNewFile()), this, SLOT(openNewFile()));
     connect(m_buttonLine, SIGNAL(openFileValues()), this, SLOT(openFileValues()));
@@ -103,10 +102,10 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(settings()), this, SLOT(settings()));
     connect(m_buttonLine, SIGNAL(panelMenuButtonPressed(Measurement*)), this, SLOT(showPanelMenu(Measurement*)));
 
-    connect(&m_hwSink, SIGNAL(stateChanged(QString,hw::HwConnector::State)),
-            m_buttonLine, SLOT(connectivityStateChanged(QString,hw::HwConnector::State)));
-    connect(&m_hwSink, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
-    connect(&m_hwSink, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
+    connect(&m_hwConnector, SIGNAL(stateChanged(hw::HwConnector::State)),
+            m_buttonLine, SLOT(connectivityStateChanged(hw::HwConnector::State)));
+    connect(&m_hwConnector, SIGNAL(StartCommandDetected()), m_buttonLine, SLOT(start()));
+    connect(&m_hwConnector, SIGNAL(StopCommandDetected()), m_buttonLine, SLOT(stop()));
     connect(&GlobalSettings::GetInstance(), SIGNAL(savedStateOrVeluesChanged()), this, SLOT(updateWindowTitle()));
 
     m_measurementTabs = new QTabWidget(m_centralWidget);
@@ -131,8 +130,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 
-    m_portListDialog = new PortListDialog(this, m_hwSink);
-    m_portListDialog->startSearching();
+    m_hwConnector.StartSearching();
 
     if (fileNameToOpen.length() != 0)
     {
@@ -214,9 +212,10 @@ QString &MainWindow::GetCurrentFileNameWithPath()
 
 void MainWindow::openSerialPort()
 {
-    m_portListDialog->SetAutoconnect(false);
-    m_portListDialog->exec();
-    m_portListDialog->SetAutoconnect(true);
+    m_hwConnector.SetAutoconnect(false);
+    PortListDialog portListDialog(this, m_hwConnector);
+    portListDialog.exec();
+    m_hwConnector.SetAutoconnect(true);
 }
 
 MainWindow::~MainWindow()
@@ -227,11 +226,6 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::RefreshHwConnection()
-{
-    m_portListDialog->refresh();
-}
-
 void MainWindow::ShowConsole(bool show)
 {
     m_console->setVisible(show);
@@ -239,7 +233,7 @@ void MainWindow::ShowConsole(bool show)
 
 Measurement *MainWindow::CreateNewMeasurement(bool initializeAxesAndChannels)
 {
-    Measurement *m = new Measurement(this, m_context, m_hwSink, NULL, initializeAxesAndChannels, m_sensorManager);
+    Measurement *m = new Measurement(this, m_context, m_hwConnector, NULL, initializeAxesAndChannels, m_sensorManager);
     return m;
 }
 
@@ -248,7 +242,7 @@ Measurement *MainWindow::CloneCurrentMeasurement()
     Measurement *currentMeasurement = GetCurrnetMeasurement();
     GraphicsContainer* currentGC = currentMeasurement->GetGC();
 
-    Measurement *newMeasurement = new Measurement(this, m_context, m_hwSink, currentMeasurement, true, m_sensorManager);
+    Measurement *newMeasurement = new Measurement(this, m_context, m_hwConnector, currentMeasurement, true, m_sensorManager);
     GraphicsContainer *newGC = newMeasurement->GetGC();
 
     foreach (ChannelProxyBase *proxy, currentGC->GetChannelProxies())
@@ -708,7 +702,7 @@ void MainWindow::axisMenuButtonPressed()
 void MainWindow::settings()
 {
      //to be alwais scrolled to up-left corner
-    GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwSink);
+    GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwConnector);
     settingsDialog->connect(
         settingsDialog, SIGNAL(updateChannelSizeFactor(int)),
         m_graphicsContainerManager, SLOT(updateChannelSizeFactor(int))

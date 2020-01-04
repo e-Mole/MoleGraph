@@ -17,7 +17,6 @@ class GraphicsContainer;
 class GraphicsContainerManager;
 class Measurement;
 class MeasurementMenu;
-class PortListDialog;
 class PushButton;
 class QApplication;
 class QDataStream;
@@ -29,7 +28,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    hw::HwConnector m_hwSink;
+    hw::HwConnector m_hwConnector;
     ButtonLine* m_buttonLine;
     QVector<Measurement*> m_measurements;
     Context m_context;
@@ -38,7 +37,6 @@ class MainWindow : public QMainWindow
     QString m_currentFileName;
     QString m_currentFileNameWithPath;
     QString m_langBcp47;
-    PortListDialog *m_portListDialog;
     Console *m_console;
     bool m_savedValues;
     QGridLayout *m_mainLayout;
@@ -85,7 +83,6 @@ public:
     void DeserializeMeasurements(QString const &fileName, bool values);
     void SerializeMeasurements(const QString &fileName, bool values);
     QString &GetCurrentFileNameWithPath();
-    void RefreshHwConnection();
     void ShowConsole(bool show);
     void TerminateBluetooth();
     bool GetSavedValues() { return m_savedValues; }

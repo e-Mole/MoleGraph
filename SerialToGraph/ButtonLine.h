@@ -29,7 +29,7 @@ class ButtonLine : public QWidget
 
     void _InitializeMenu();
     QPoint _GetGlobalMenuPosition(PushButton *button);
-    void _SetConnectivityState(const QString &stateString, hw::HwConnector::State state);
+    void _SetConnectivityState(hw::HwConnector::State state);
     QString _GetRootDir();
     void _FillRecentFileMenu();
     QShortcut * _CreateShortcut(QKeySequence const &sequence, const QObject *receiver, const char *slot);
@@ -56,12 +56,12 @@ class ButtonLine : public QWidget
     QAction *m_allAction;
     QAction *m_noneAction;
     QAction *m_afterLastChannelSeparator;
-    hw::HwConnector &m_hwSink;
+    hw::HwConnector &m_hwConnector;
     Measurement *m_measurement;
     QWidget* m_space;
     QMap<QObject*, QString> m_recentFileActions;
 public:
-    ButtonLine(QWidget *parent, hw::HwConnector &hwSink, Qt::Orientation orientation);
+    ButtonLine(QWidget *parent, hw::HwConnector &hwConnector, Qt::Orientation orientation);
     void ChangeMeasurement(Measurement *measurement);
     void ReplaceButtons(Qt::Orientation orientation);
 
@@ -91,7 +91,7 @@ private slots:
     void openRecentFileSlot();
     void panelMenuButtonPressed();
 public slots:
-    void connectivityStateChanged(QString const & stateText, hw::HwConnector::State state);
+    void connectivityStateChanged(hw::HwConnector::State state);
     void fileMenuButtonPressed();
     void viewMenuButtonPressed();
     void measurementStateChanged();

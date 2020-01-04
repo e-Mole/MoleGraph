@@ -31,22 +31,15 @@ class PortListDialog : public bases::PlatformDialog
     QGridLayout *m_portLayout;
     QMap<RadioButton *, hw::PortInfo> m_radioToInfo;
     RadioButton * m_selectedRadioButton;
-    bool m_autoConnect;
 public:
-    PortListDialog(QWidget *parent, hw::HwConnector &hwSink);
-    void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
-
+    PortListDialog(QWidget *parent, hw::HwConnector &hwConnector);
     void _CleanPortList();
-
-signals:
-public slots:
-    void refresh();
-    void startSearching();
 private slots:
     void portRadioButtonReleased();
-    void stateChanged(const QString &stateString, hw::HwConnector::State state);
+    void stateChanged(hw::HwConnector::State state);
     void addPort(const hw::PortInfo &item);
     void workDisconnected();
+    void refreshPorts();
 };
 
 #endif // PORTLISTDIALOG_H

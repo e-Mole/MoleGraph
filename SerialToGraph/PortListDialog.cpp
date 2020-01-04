@@ -13,23 +13,21 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
+PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwConnector) :
     bases::PlatformDialog(parent, tr("Device connecting")),
-    m_hwConnector(hwSink),
+    m_hwConnector(hwConnector),
     m_progress(NULL),
     m_progressText(NULL),
     m_refresh(NULL),
     m_description(NULL),
     m_portWidget(NULL),
     m_portLayout(NULL),
-    m_selectedRadioButton(NULL),
-    m_autoConnect(true)
+    m_selectedRadioButton(NULL)
 {
     setHidden(true);
     QVBoxLayout *layout = new QVBoxLayout();
     setLayout(layout);
 
-    //m_description->setHidden(true);
     m_description = new Label(this);
     m_description->setText(tr("Please, select a comatible device port."));
     layout->addWidget(m_description);
@@ -56,7 +54,7 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
     connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
     connect(shortcut, SIGNAL(activated()), m_refresh, SLOT(animateClick()));
-    connect(m_refresh, SIGNAL(released()), this, SLOT(refresh()));
+    connect(m_refresh, SIGNAL(released()), this, SLOT(refreshPorts()));
     m_refresh->setText(tr("Refresh"));
     buttonLayout->addWidget(m_refresh);
 
@@ -64,13 +62,18 @@ PortListDialog::PortListDialog(QWidget *parent, hw::HwConnector &hwSink) :
     connect(skip, SIGNAL(clicked(bool)), this, SLOT(workDisconnected()));
     buttonLayout->addWidget(skip);
 
-    connect(&hwSink, SIGNAL(stateChanged(QString,hw::HwConnector::State)),
-            this, SLOT(stateChanged(QString,hw::HwConnector::State)));
-    connect(&hwSink, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
+    connect(&hwConnector, SIGNAL(stateChanged(hw::HwConnector::State)), this, SLOT(stateChanged(hw::HwConnector::State)));
+    connect(&hwConnector, SIGNAL(portFound(hw::PortInfo)), this, SLOT(addPort(hw::PortInfo)));
+
+    foreach (hw::PortInfo const &item, m_hwConnector.GetDeviceList()) {
+        addPort(item);
+    }
+    stateChanged(m_hwConnector.GetState());
 }
 
-void PortListDialog::startSearching()
+void PortListDialog::refreshPorts()
 {
+    _CleanPortList();
     m_hwConnector.StartSearching();
 }
 
@@ -85,12 +88,6 @@ void PortListDialog::workDisconnected()
     GlobalSettings::GetInstance().SetForcedOffline(true);
 }
 
-void PortListDialog::refresh()
-{
-    _CleanPortList();
-    startSearching();
-}
-
 void PortListDialog::addPort(hw::PortInfo const &item)
 {
     unsigned rowNumber = item.IsPreferred() ? 0 : m_portLayout->rowCount();
@@ -103,13 +100,6 @@ void PortListDialog::addPort(hw::PortInfo const &item)
     m_portLayout->addWidget(rb, rowNumber, 0);
     m_portLayout->addWidget(new Label(item.GetStatusText(), m_portWidget), rowNumber, 1);
     m_portLayout->addWidget(new Label(item.GetTypeText(), m_portWidget), rowNumber, 2, Qt::AlignRight);
-
-    if (m_autoConnect &&
-        !GlobalSettings::GetInstance().GetForcedOffline() &&
-        (item.m_status == hw::PortInfo::st_lastTimeUsed || item.m_status == hw::PortInfo::st_identified)
-    )
-       m_hwConnector.OpenPort(item);
-
     repaint();
 }
 
@@ -131,9 +121,9 @@ void PortListDialog::portRadioButtonReleased()
     GlobalSettings::GetInstance().SetForcedOffline(false);
 }
 
-void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::State state)
+void PortListDialog::stateChanged(hw::HwConnector::State state)
 {
-    m_progressText->setText(stateString);
+    m_progressText->setText(m_hwConnector.GetStateString(state));
     m_progressText->repaint();
     switch (state)
     {
@@ -176,7 +166,7 @@ void PortListDialog::stateChanged(const QString &stateString, hw::HwConnector::S
 void PortListDialog::_CleanPortList()
 {
     m_hwConnector.CloseSelectedPort();
-    m_selectedRadioButton = NULL;
+    m_selectedRadioButton = nullptr;
     m_radioToInfo.clear();
 
     QList<QWidget *> widgets = m_portWidget->findChildren<QWidget *>();
@@ -194,5 +184,5 @@ void PortListDialog::_CleanPortList()
 void PortListDialog::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
-    reject();
+    hide();
 }

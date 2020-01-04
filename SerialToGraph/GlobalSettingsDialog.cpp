@@ -20,10 +20,10 @@
 #include <bases/PushButton.h>
 #include <bases/SpinBox.h>
 
-GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwConnector &hwSink):
+GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &context, hw::HwConnector &hwConnector):
     bases::FormDialogBase(parent, tr("Settings"), GlobalSettings::GetInstance().GetAcceptChangesByDialogClosing()),
     m_context(context),
-    m_hwSink(hwSink),
+    m_hwConnector(hwConnector),
     m_settings(GlobalSettings::GetInstance()),
     m_languages(NULL),
     m_brackets(NULL),
@@ -195,7 +195,7 @@ bool GlobalSettingsDialog::BeforeAccept()
 
     if (m_settings.GetUseBluetooth() != m_useBluetooth->isChecked())
     {
-        if (m_hwSink.GetState() != hw::HwConnector::Connected ||
+        if (m_hwConnector.GetState() != hw::HwConnector::Connected ||
             MyMessageBox::Yes == MyMessageBox::question(
                 this,
                 tr("Estbilished connection will be lost. Continue?"),
@@ -204,7 +204,7 @@ bool GlobalSettingsDialog::BeforeAccept()
         )
         {
             m_settings.SetUseBluetooth(m_useBluetooth->isChecked());
-            m_context.m_mainWindow.RefreshHwConnection();
+            m_hwConnector.StartSearching();
         }
     }
 

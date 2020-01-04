@@ -39,7 +39,7 @@ using namespace atog;
 Measurement::Measurement(
     QWidget *parent,
     Context &context,
-    hw::HwConnector &hwSink,
+    hw::HwConnector &hwConnector,
     Measurement *source,
     bool initializeAxiesAndChannels,
     hw::SensorManager *sensorManager
@@ -54,7 +54,7 @@ Measurement::Measurement(
         )
     ),
     m_context(context),
-    m_hwSink(hwSink),
+    m_hwConnector(hwConnector),
     m_sampleUnits(source != NULL ? source->GetSampleUnits() : Hz),
     m_period(source != NULL ? source->GetPeriod() : 1),
     m_state(Ready),
@@ -81,7 +81,7 @@ Measurement::Measurement(
         else
             _InitializeAxesAndChanels();
     }
-    connect(&m_hwSink, SIGNAL(connectivityChanged(bool)), this, SLOT(portConnectivityChanged(bool)));
+    connect(&m_hwConnector, SIGNAL(connectivityChanged(bool)), this, SLOT(portConnectivityChanged(bool)));
 }
 
 Measurement::~Measurement()
@@ -125,12 +125,12 @@ void Measurement::draw()
 {
     qint64 startTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (m_hwSink.FillQueue())
+    if (m_hwConnector.FillQueue())
     {
         while (true)
         {
             hw::HwConnector::ValueSet valueSet;
-            bool pocessingResult = m_hwSink.ProcessData(
+            bool pocessingResult = m_hwConnector.ProcessData(
                 m_type == OnDemand,
                 m_valueSetCount,
                 (m_sampleUnits == SampleUnits::Sec) ?  double(m_period)  : 1.0/double(m_period),
@@ -213,7 +213,7 @@ bool Measurement::_CheckOtherMeasurementsForRun()
 bool Measurement::_SetModeWithPeriod()
 {
     //It is expected that this message will be send before each measurement start as a first message (befor settings channels and sensors)
-    if (!m_hwSink.SetType(m_type))
+    if (!m_hwConnector.SetType(m_type))
         return false;
 
     if (m_type == OnDemand)
@@ -221,12 +221,12 @@ bool Measurement::_SetModeWithPeriod()
 
     if (m_sampleUnits == Measurement::Hz)
     {
-        if (!m_hwSink.SetFrequency(m_period))
+        if (!m_hwConnector.SetFrequency(m_period))
             return false;
     }
     else
     {
-        if (!m_hwSink.SetTime(m_period))
+        if (!m_hwConnector.SetTime(m_period))
             return false;
     }
 
@@ -252,7 +252,7 @@ void Measurement::_ProcessActiveChannels()
 
         m_trackedHwChannels.insert(hwChannel->GetHwIndex(), channel);
         selectedChannels |= 1 << hwChannel->GetHwIndex();
-        m_hwSink.SetSensor(
+        m_hwConnector.SetSensor(
             hwChannel->GetSensorPort(),
             hwChannel->GetSensor()->GetId(),
             hwChannel->GetSensorQuantity()->GetId(),
@@ -261,7 +261,7 @@ void Measurement::_ProcessActiveChannels()
         );
 
     }
-    m_hwSink.SetSelectedChannels(selectedChannels);
+    m_hwConnector.SetSelectedChannels(selectedChannels);
 }
 
 void Measurement::Start()
@@ -270,10 +270,10 @@ void Measurement::Start()
     if (_CheckOtherMeasurementsForRun())
         return;
 
-    if (!m_hwSink.IsDeviceConnected())
+    if (!m_hwConnector.IsDeviceConnected())
         return;
 
-    m_hwSink.ClearCache(); //throw buffered data avay. I want to start to listen now
+    m_hwConnector.ClearCache(); //throw buffered data avay. I want to start to listen now
     if(!_SetModeWithPeriod())
         return;
     _ProcessActiveChannels();
@@ -282,7 +282,7 @@ void Measurement::Start()
     m_secondsInPause = 0;
     m_startNewDraw = true;
     m_drawTimer->start(m_drawPeriod);
-    if (!m_hwSink.Start())
+    if (!m_hwConnector.Start())
     {
         m_drawTimer->stop();
         return;
@@ -296,7 +296,7 @@ void Measurement::Start()
 
 void Measurement::Pause()
 {
-    m_hwSink.Pause();
+    m_hwConnector.Pause();
     m_state = Paused;
     stateChanged();
     m_pauseStartTime = QTime::currentTime();
@@ -305,14 +305,14 @@ void Measurement::Pause()
 void Measurement::Continue()
 {
     m_secondsInPause += (double)m_pauseStartTime.msecsTo(QTime::currentTime()) / 1000;
-    m_hwSink.Continue();
+    m_hwConnector.Continue();
     m_state = Running;
     stateChanged();
 }
 
 void Measurement::SampleRequest()
 {
-    m_hwSink.SampleRequest();
+    m_hwConnector.SampleRequest();
 }
 
 void Measurement::Stop()
@@ -321,7 +321,7 @@ void Measurement::Stop()
     m_startNewDraw = false;
     m_drawTimer->stop();
 
-    if (!m_hwSink.Stop())
+    if (!m_hwConnector.Stop())
         qDebug() << "stop was not deliveried";
 
     DrawRestData();

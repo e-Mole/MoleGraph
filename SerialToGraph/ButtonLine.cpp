@@ -6,7 +6,6 @@
 #include <graphics/ChannelProxyBase.h>
 #include <MainWindow.h>
 #include <Measurement.h>
-#include <MyMessageBox.h>
 #include <PlotContextMenu.h>
 #include <QAction>
 #include <QHBoxLayout>
@@ -43,7 +42,7 @@
 #   define RECENT_FILE_TEXT_MAX_LENGTH 100
 #endif
 
-ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwSink, Qt::Orientation orientation):
+ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwConnector, Qt::Orientation orientation):
     QWidget(parent),
     m_mainLayout(new QGridLayout()),
     m_startButton(nullptr),
@@ -64,7 +63,7 @@ ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwSink, Qt::Orientation
     m_allAction(nullptr),
     m_noneAction(nullptr),
     m_afterLastChannelSeparator(nullptr),
-    m_hwSink(hwSink),
+    m_hwConnector(hwConnector),
     m_measurement(nullptr),
     m_space(new QWidget())
 {
@@ -110,7 +109,7 @@ ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwSink, Qt::Orientation
 
     m_connectivityButton = new PushButton(this);
     connect(m_connectivityButton, SIGNAL(released()), this, SIGNAL(connectivityButtonReleased()));
-    _SetConnectivityState(m_hwSink.GetStateString(), m_hwSink.GetState());
+    _SetConnectivityState(m_hwConnector.GetState());
 
     ReplaceButtons(orientation);
 }
@@ -326,7 +325,7 @@ void ButtonLine::updateRunButtonsState()
     m_startButton->setEnabled(hwChannelPresent && horizontalPreset);
 }
 
-void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwConnector::State state)
+void ButtonLine::_SetConnectivityState(hw::HwConnector::State state)
 {
     QColor color;
     switch (state)
@@ -357,14 +356,14 @@ void ButtonLine::_SetConnectivityState(const QString &stateString, hw::HwConnect
         );
 #endif
 
-    m_connectivityButton->setText(stateString);
+    m_connectivityButton->setText(m_hwConnector.GetStateString(state));
     repaint();
 }
 
-void ButtonLine::connectivityStateChanged(const QString &stateText, hw::HwConnector::State state)
+void ButtonLine::connectivityStateChanged(hw::HwConnector::State state)
 {
     m_connected = (state == hw::HwConnector::Connected);
-    _SetConnectivityState(stateText, state);
+    _SetConnectivityState(state);
 
     updateRunButtonsState();
 }

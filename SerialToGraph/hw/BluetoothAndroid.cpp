@@ -68,6 +68,7 @@ bool BluetoothAndroid::StartPortSearching()
     }
     jint size=pairedDevicesSet.callMethod<jint>("size");
     checkException("Set<BluetoothDevice>.size()");
+
     if (size>0) {
         QAndroidJniObject iterator=pairedDevicesSet.callObjectMethod("iterator","()Ljava/util/Iterator;"); // returns an Iterator<BluetoothDevice>
         if (checkException("Set<BluetoothDevice>.iterator()",&iterator)) {
@@ -96,12 +97,16 @@ bool BluetoothAndroid::IsActive()
 
 void BluetoothAndroid::serviceDiscovered(QBluetoothServiceInfo const &info)
 {
-    //discovered particular device => may be oppened
-    m_socket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
-    connect(m_socket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
+    if (info.serviceName() != "Serial Port Profile")
+    {
+        return; //devices can contain more services - I'm look for serial port
+    }
+
+    //discovered searched service => port can be oppened
+    m_socket = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol, this);
     connect(m_socket, SIGNAL(connected()), this, SLOT(connected()));
     m_socket->connectToService(info);
-    m_timeout->start(8000);
+    m_timeout->start(10000);
 }
 
 void BluetoothAndroid::OpenPort(QString id)
@@ -122,11 +127,15 @@ void BluetoothAndroid::OpenPort(QString id)
 void BluetoothAndroid::connected()
 {
     m_timeout->stop(); //really connected
-
     if (!m_socket->isOpen()) //timeout
     {
         portOpeningFinished();
         return;
+    }
+
+    if (m_discoveryAgent != nullptr){
+        delete m_discoveryAgent;
+        m_discoveryAgent = nullptr;
     }
 
     QTimer *timer = new QTimer(this);
@@ -134,12 +143,12 @@ void BluetoothAndroid::connected()
     connect(timer, SIGNAL(timeout()), this, SIGNAL(portOpeningFinished()));
     //there must be some while to be connection estabilished
     //when I don't wait 1 second protocol_id message is not delivered
-    timer->start(1500);
+    timer->start(2000);
 }
 
 bool BluetoothAndroid::IsOpen()
 {
-    return m_socket != NULL &&  m_socket->isOpen();
+    return m_socket != nullptr && m_socket->isOpen();
 }
 
 void BluetoothAndroid::Close()

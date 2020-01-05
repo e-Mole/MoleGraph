@@ -333,8 +333,7 @@ void ChannelSettings::sensorNameChanged(int index)
 
 void ChannelSettings::sensorQualityChanged(int index)
 {
-    Q_UNUSED(index)
-
+    m_name->setText(m_sensorQuantityComboBox->itemText(index));
 }
 
 void ChannelSettings::_InitializeGhostCombos()

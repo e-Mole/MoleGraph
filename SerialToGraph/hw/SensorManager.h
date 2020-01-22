@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <QObject>
-
+#include <hw/SensorQuantity.h>
+#include <hw/SensorComponent.h>
 namespace hw
 {
-    class SensorQuantity;
     class Sensor;
     class SensorManager : public QObject
     {
@@ -17,6 +17,7 @@ namespace hw
         void _InitializeSensors();
         QString _GetSensorsFileContent();
         void _PrepareMinimalSensorSet();
+        QString _GetSensorNameTranslation(const QString &sensorName);
 
     public:
         static unsigned const sensorPortCount = 4;
@@ -26,7 +27,8 @@ namespace hw
         const std::vector<Sensor *> GetSensors() const;
         Sensor *GetNoneSensor();
         Sensor *GetSensor(unsigned sensorId);
-        SensorQuantity *GetSensorQuantity(unsigned quantityId);
+        SensorComponent *GetSensorComponent(Sensor *sensor, unsigned quantityId);
+        SensorComponent *GetSensorComponent(Sensor *sensor, QString const &quantityName);
         SensorQuantity *GetSensorQuantity(QString const &quantityName);
     };
 

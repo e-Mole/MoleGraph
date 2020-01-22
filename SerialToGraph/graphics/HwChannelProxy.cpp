@@ -62,14 +62,14 @@ void HwChannelProxy::SetSensorPort(unsigned sensorPort)
     GetChannel()->SetSensorPort(sensorPort);
 }
 
-hw::SensorQuantity *HwChannelProxy::GetSensorQuantity()
+hw::SensorComponent *HwChannelProxy::GetSensorComponent()
 {
-    return GetChannel()->GetSensorQuantity();
+    return GetChannel()->GetSensorComponent();
 }
 
-void HwChannelProxy::SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order)
+void HwChannelProxy::SetSensorComponent(hw::SensorComponent *sensorComponent)
 {
-    GetChannel()->SetSensorQuantity(sensorQuantity, order);
+    GetChannel()->SetSensorComponet(sensorComponent);
 }
 
 double HwChannelProxy::GetOriginalValue(int index)

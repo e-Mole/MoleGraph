@@ -15,7 +15,7 @@ namespace hw
     public:
         SensorQuantity(QObject *parent, unsigned id, QString const &name);
 
-        QString GetName() {return m_name; }
+        QString const & GetName() {return m_name; }
         unsigned GetId() { return m_id; }
 
     };

@@ -8,7 +8,7 @@
 
 namespace hw
 {
-    class SensorQuantity;
+    class SensorComponent;
 
     class Sensor : public QObject
     {   
@@ -16,7 +16,7 @@ namespace hw
     private:
 
         QString m_name;
-        std::vector<SensorQuantity *> m_quantities;
+        std::vector<SensorComponent *> m_components;
         unsigned m_id;
 
     public:
@@ -24,11 +24,12 @@ namespace hw
 
         Sensor(QObject *parent);
         Sensor(QObject *parent, QString name, unsigned id);
-        Sensor * AddQuantity(SensorQuantity * quantity);
+        Sensor *AddComponent(SensorComponent *component);
 
         unsigned GetId() const;
         QString GetName() const;
-        std::vector<SensorQuantity *> const &  GetQuantities() const;
+        std::vector<SensorComponent *> const &  GetComponents() const;
+        SensorComponent * GetComponent(unsigned order) const;
     };
 } //namespace hw
 #endif // SENSOR_H

@@ -28,8 +28,7 @@ class HwChannel : public ChannelBase
     bool m_isActive;
     hw::Sensor *m_sensor;
     unsigned m_sensorPort;
-    hw::SensorQuantity *m_sensorQuantity;
-    unsigned m_sensorQuantityOrder;
+    hw::SensorComponent *m_sensorComponent;
 
 public:
     HwChannel(
@@ -37,8 +36,7 @@ public:
         int hwIndex,
         hw::Sensor *sensor,
         unsigned sensorPort=hw::SensorManager::nonePortId,
-        hw::SensorQuantity *quantity= NULL,
-        unsigned quantityOrder=0
+        hw::SensorComponent *component=nullptr
     );
 
     HwChannel(Measurement *m, HwChannel *source);
@@ -55,11 +53,11 @@ public:
     hw::Sensor *GetSensor() { return m_sensor; }
     unsigned GetSensorId() {return m_sensor->GetId(); }
     unsigned GetSensorPort() { return m_sensorPort; }
-    hw::SensorQuantity * GetSensorQuantity() { return m_sensorQuantity; }
-    unsigned GetSensorQuantityId() { return m_sensorQuantity->GetId(); }
-    unsigned GetSensorQuantityOrder() { return m_sensorQuantityOrder; }
+    unsigned GetSensorQuantityId() { return m_sensorComponent->GetQuantity()->GetId(); }
+
+    hw::SensorComponent * GetSensorComponent() { return m_sensorComponent; }
     void SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
-    void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
+    void SetSensorComponet(hw::SensorComponent *sensorComponent);
     void SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
 public slots:
     void setActive(bool isActive);

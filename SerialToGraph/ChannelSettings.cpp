@@ -11,6 +11,7 @@
 #include <graphics/SampleChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <hw/Sensor.h>
+#include <hw/SensorComponent.h>
 #include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
 #include <HwChannel.h>
@@ -30,98 +31,98 @@
 #include <QString>
 #include <SampleChannel.h>
 
-QString ChannelSettings::_GetQuantityString(hw::SensorQuantity *quantity)
+QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName)
 {
 
-    if (quantity->GetName() == "")
+    if (quantityName == "")
         return "";
-    if (quantity->GetName() == "Temperature")
+    if (quantityName == "Temperature")
         return tr("Temperature");
-    if (quantity->GetName() == "Voltage")
+    if (quantityName == "Voltage")
         return tr("Voltage");
-    if (quantity->GetName() == "Current")
+    if (quantityName == "Current")
         return tr("Current");
-    if (quantity->GetName() == "Pressure")
+    if (quantityName == "Pressure")
         return tr("Pressure");
-    if (quantity->GetName() == "Humidity")
+    if (quantityName == "Humidity")
         return tr("Humidity");
 
-    if (quantity->GetName() == "RAW")
+    if (quantityName == "RAW")
         return tr("RAW");
-    if (quantity->GetName() == "Acceleration")
+    if (quantityName == "Acceleration")
         return tr("Acceleration");
-    if (quantity->GetName() == "Magnetic Field Intensity")
+    if (quantityName == "Magnetic Field Intensity")
         return tr("Magnetic Field Intensity");
-    if (quantity->GetName() == "Force")
+    if (quantityName == "Force")
         return tr("Force");
-    if (quantity->GetName() == "UV Index")
+    if (quantityName == "UV Index")
         return tr("UV Index");
 
-    if (quantity->GetName() == "pH")
+    if (quantityName == "pH")
         return tr("pH");
-    if (quantity->GetName() == "Conductivity")
+    if (quantityName == "Conductivity")
         return tr("Conductivity");
-    if (quantity->GetName() == "Illuminace")
+    if (quantityName == "Illuminace")
         return tr("Illuminace");
-    if (quantity->GetName() == "Concentration")
+    if (quantityName == "Concentration")
         return tr("Concentration");
-    if (quantity->GetName() == "Distance")
+    if (quantityName == "Distance")
         return tr("Distance");
 
-    if (quantity->GetName() == "Velocity")
+    if (quantityName == "Velocity")
         return tr("Velocity");
-    if (quantity->GetName() == "Trigger")
+    if (quantityName == "Trigger")
         return tr("Trigger");
-    if (quantity->GetName() == "Sound intensity level")
+    if (quantityName == "Sound intensity level")
         return tr("Sound intensity level");
-    if (quantity->GetName() == "Altitude")
+    if (quantityName == "Altitude")
         return tr("Altitude");
-    if (quantity->GetName() == "Dewpoint")
+    if (quantityName == "Dewpoint")
         return tr("Dewpoint");
 
-    if (quantity->GetName() == "Concentration (ppm)")
+    if (quantityName == "Concentration (ppm)")
         return tr("Concentration (ppm)");
-    if (quantity->GetName() == "Concentration (%)")
+    if (quantityName == "Concentration (%)")
         return tr("Concentration (%)");
-    if (quantity->GetName() == "UV Intensity")
+    if (quantityName == "UV Intensity")
         return tr("UV Intensity");
-    if (quantity->GetName() == "Accel X")
+    if (quantityName == "Accel X")
         return tr("Accel X");
-    if (quantity->GetName() == "Accel Y")
+    if (quantityName == "Accel Y")
         return tr("Accel Y");
 
-    if (quantity->GetName() == "Accel Z")
+    if (quantityName == "Accel Z")
         return tr("Accel Z");
-    if (quantity->GetName() == "Mag X")
+    if (quantityName == "Mag X")
         return tr("Mag X");
-    if (quantity->GetName() == "Mag Y")
+    if (quantityName == "Mag Y")
         return tr("Mag Y");
-    if (quantity->GetName() == "Mag Z")
+    if (quantityName == "Mag Z")
         return tr("Mag Z");
-    if (quantity->GetName() == "Heading")
+    if (quantityName == "Heading")
         return tr("Heading");
 
-    if (quantity->GetName() == "Roll")
+    if (quantityName == "Roll")
         return tr("Roll");
-    if (quantity->GetName() == "Pitch")
+    if (quantityName == "Pitch")
         return tr("Pitch");
-    if (quantity->GetName() == "Pulse duration (On)")
+    if (quantityName == "Pulse duration (On)")
         return tr("Pulse duration (On)");
-    if (quantity->GetName() == "Pulse duration (Off)")
+    if (quantityName == "Pulse duration (Off)")
         return tr("Pulse duration (Off)");
-    if (quantity->GetName() == "Period (Rising)")
+    if (quantityName == "Period (Rising)")
         return tr("Period (Rising)");
 
-    if (quantity->GetName() == "Period (Falling)")
+    if (quantityName == "Period (Falling)")
         return tr("Period (Falling)");
-    if (quantity->GetName() == "Frequency (Rising)")
+    if (quantityName == "Frequency (Rising)")
         return tr("Frequency (Rising)");
-    if (quantity->GetName() == "Frequency (Falling)")
+    if (quantityName == "Frequency (Falling)")
         return tr("Frequency (Falling)");
 
-    return quantity->GetName(); //TODO: TFs mod: Remove!!!
+    return quantityName; //TODO: TFs mod: Remove!!!
 
-    qWarning() << "unknown quantity to translate " << quantity->GetName();
+    qWarning() << "unknown quantity to translate " << quantityName;
 }
 
 ChannelSettings::ChannelSettings(
@@ -258,18 +259,19 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
 
 void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
 {
-    hw::SensorQuantity *currentSensorQuanity = channelProxy->GetSensorQuantity();
+    hw::SensorComponent *currentSensorComponent = channelProxy->GetSensorComponent();
     m_sensorQuantityComboBox->clear();
-    unsigned currentSensorOrder = m_sensorNameComboBox->currentData().toInt();
+    unsigned currentSensorId = m_sensorNameComboBox->currentData().toInt();
 
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
-        if (sensor->GetId() == currentSensorOrder)
+        if (sensor->GetId() == currentSensorId)
         {
-            foreach (hw::SensorQuantity *quantity, sensor->GetQuantities())
+            foreach (hw::SensorComponent *component, sensor->GetComponents())
             {
-                m_sensorQuantityComboBox->addItem(_GetQuantityString(quantity), quantity->GetId());
-                if (currentSensorQuanity == quantity)
+                hw::SensorQuantity * quantity = component->GetQuantity();
+                m_sensorQuantityComboBox->addItem(_GetQuantityNameTranslation(quantity->GetName()), quantity->GetId());
+                if (currentSensorComponent == component)
                 {
                     m_sensorQuantityComboBox->setCurrentIndex(m_sensorQuantityComboBox->count() - 1);
                 }
@@ -290,7 +292,7 @@ void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
     m_sensorQuantityComboBox->setVisible(true);
     _InitializeSensorItem(m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
     _InitializeSensorItem(m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
-    _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQualityChanged(int)));
+    _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQuantityChanged(int)));
     _FillSensorItems(channelProxy);
 }
 
@@ -326,14 +328,27 @@ void ChannelSettings::sensorPortChanged(int index)
 
 void ChannelSettings::sensorNameChanged(int index)
 {
-    Q_UNUSED(index)
     if (index != -1)
+    {
         _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
-}
 
-void ChannelSettings::sensorQualityChanged(int index)
+    }
+}
+void ChannelSettings::sensorQuantityChanged(int index)
 {
+    if (index == -1)
+    {
+        m_name->setText("");
+        m_units->setText("");
+        return;
+    }
+
     m_name->setText(m_sensorQuantityComboBox->itemText(index));
+
+    unsigned currentSensorId = m_sensorNameComboBox->currentData().toInt();
+    hw::Sensor *sensor = m_sensorManager->GetSensor(currentSensorId);
+    hw::SensorComponent *component = sensor->GetComponent(index);
+    m_units->setText(component->GetUnit());
 }
 
 void ChannelSettings::_InitializeGhostCombos()
@@ -873,10 +888,10 @@ bool ChannelSettings::BeforeAccept()
             changed = true;
         }
 
-        hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(m_sensorQuantityComboBox->currentData().toInt());
-        if (quantity != hwChannelProxy->GetSensorQuantity())
+        hw::SensorComponent *component = m_sensorManager->GetSensorComponent(sensor, m_sensorQuantityComboBox->currentData().toInt());
+        if (component != hwChannelProxy->GetSensorComponent())
         {
-            hwChannelProxy->SetSensorQuantity(quantity, m_sensorQuantityComboBox->currentIndex());
+            hwChannelProxy->SetSensorComponent(component);
             changed = true;
         }
     }

@@ -8,21 +8,18 @@
 #include <hw/Sensor.h>
 #include <hw/SensorManager.h>
 
-HwChannel::HwChannel(
-    Measurement *measurement,
+HwChannel::HwChannel(Measurement *measurement,
     int hwIndex,
     hw::Sensor *sensor,
     unsigned sensorPort,
-    hw::SensorQuantity *quantity,
-    unsigned quantityOrder
+    hw::SensorComponent *component
 ):
     ChannelBase(measurement),
     m_hwIndex(hwIndex),
     m_isActive(false),
     m_sensor(sensor),
     m_sensorPort(sensorPort),
-    m_sensorQuantity(quantity ? quantity : sensor->GetQuantities().front()), //at least one quantity is expected
-    m_sensorQuantityOrder(quantityOrder)
+    m_sensorComponent(component != nullptr ? component : sensor->GetComponents().front()) //at least one quantity is expected
 {
 }
 
@@ -32,8 +29,7 @@ HwChannel::HwChannel(Measurement *m, HwChannel *source):
     m_isActive(false),
     m_sensor(source->m_sensor),
     m_sensorPort(source->m_sensorPort),
-    m_sensorQuantity(source->m_sensorQuantity),
-    m_sensorQuantityOrder(source->m_sensorQuantityOrder)
+    m_sensorComponent(source->m_sensorComponent)
 {
 }
 
@@ -79,8 +75,7 @@ void HwChannel::setActive(bool isActive)
     m_isActive = isActive;
 }
 
-void HwChannel::SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order)
+void HwChannel::SetSensorComponet(hw::SensorComponent *sensorComponent)
 {
-    m_sensorQuantity = sensorQuantity;
-    m_sensorQuantityOrder = order;
+    m_sensorComponent = sensorComponent;
 }

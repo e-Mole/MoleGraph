@@ -41,6 +41,7 @@ SOURCES += main.cpp\
     bases/SpinBox.cpp \
     hw/HwConnector.cpp \
     hw/PortBase.cpp \
+    hw/SensorComponent.cpp \
     qcustomplot/qcustomplot.cpp \
     Axis.cpp \
     AxisChooseDialog.cpp \
@@ -111,6 +112,7 @@ HEADERS  += MainWindow.h \
     bases/SpinBox.h \
     hw/HwConnector.h \
     hw/PortBase.h \
+    hw/SensorComponent.h \
     qcustomplot/qcustomplot.h \
     Axis.h \
     AxisChooseDialog.h \

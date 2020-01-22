@@ -45,7 +45,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _FillSensorQuanitityCB(HwChannelProxy *channelProxy);
     void _FillSensorNameCB(HwChannelProxy *channelProxy);
     void _FillSensorPortCB(HwChannelProxy *channelProxy);
-    QString _GetQuantityString(hw::SensorQuantity *quantity);
+    QString _GetQuantityNameTranslation(const QString &quantityName);
     QString _GetPortName(int port);
     void _HideAllOptional();
     void _SetHorizontalChannel(Measurement *m);
@@ -94,7 +94,7 @@ private slots:
     void setNaValue(bool);
     void fillChannelCombos(int measurementComboIndex);
     void loadFromOriginalWidget(int channelComboIndex);
-    void sensorQualityChanged(int index);
+    void sensorQuantityChanged(int index);
     void sensorNameChanged(int index);
     void sensorPortChanged(int index);
 };

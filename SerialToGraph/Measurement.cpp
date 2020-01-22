@@ -255,8 +255,8 @@ void Measurement::_ProcessActiveChannels()
         m_hwConnector.SetSensor(
             hwChannel->GetSensorPort(),
             hwChannel->GetSensor()->GetId(),
-            hwChannel->GetSensorQuantity()->GetId(),
-            hwChannel->GetSensorQuantityOrder(),
+            hwChannel->GetSensorComponent()->GetQuantity()->GetId(),
+            hwChannel->GetSensorComponent()->GetOrder(),
             hwChannel->GetHwIndex()
         );
 
@@ -755,14 +755,14 @@ void Measurement::sensorIdChoosen(unsigned sensorId)
 void Measurement::sensorQuantityIdChoosen(unsigned sensorQuantityId)
 {
     HwChannel *channel = dynamic_cast<HwChannel *>(sender());
-    hw::SensorQuantity *quantity = m_sensorManager->GetSensorQuantity(sensorQuantityId);
+    hw::SensorComponent *component = m_sensorManager->GetSensorComponent(channel->GetSensor(), sensorQuantityId);
 
     int order = 0;
-    foreach (hw::SensorQuantity *item, channel->GetSensor()->GetQuantities())
+    foreach (hw::SensorComponent *item, channel->GetSensor()->GetComponents())
     {
-        if (item == quantity)
+        if (item == component)
         {
-            channel->SetSensorQuantity(quantity, order);
+            channel->SetSensorComponet(component);
             return;
         }
         order++;

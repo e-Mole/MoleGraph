@@ -7,7 +7,7 @@ class ChannelBase;
 class ChannelWidget;
 class HwChannel;
 class QObject;
-namespace hw {class Sensor; class SensorQuantity; }
+namespace hw {class Sensor; class SensorComponent; }
 
 class HwChannelProxy : public ChannelProxyBase
 {
@@ -22,8 +22,8 @@ public:
     void SetSensor(hw::Sensor *sensor);
     unsigned GetSensorPort();
     void SetSensorPort(unsigned sensorPort);
-    hw::SensorQuantity *GetSensorQuantity();
-    void SetSensorQuantity(hw::SensorQuantity *sensorQuantity, unsigned order);
+    hw::SensorComponent *GetSensorComponent();
+    void SetSensorComponent(hw::SensorComponent *sensorComponent);
     double GetOriginalValue(int index);
     HwChannel *GetChannel() const;
     int GetHwIndex() const;

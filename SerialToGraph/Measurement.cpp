@@ -7,6 +7,7 @@
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <HwChannel.h>
 #include <hw/HwConnector.h>
@@ -482,6 +483,14 @@ void Measurement::SerializeColections(QDataStream &out)
                         ((HwChannel *)channel)->GetHwIndex() : -1
                     );
                 out << GetGC()->GetChannelProxy(channel);
+
+
+                HwChannelProxy * channelProxy = dynamic_cast<HwChannelProxy *>(GetGC()->GetChannelProxy(channel));
+                if (channelProxy != nullptr)
+                {
+                    channelProxy->GetProperties()->Serialize(out);
+                }
+
             }
         }
     }
@@ -501,7 +510,7 @@ bool SortChannels(ChannelBase *first, ChannelBase *second)
             first->GetType() < second->GetType();
 }
 
-void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
+void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion)
 {
     int hwIndex;
     in >> hwIndex;
@@ -534,6 +543,15 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis)
         GetGC()->UntrackSampleChannelPropertiesChanged(sampleChannelProxy);
     }
     in >> channelProxy;
+    if (collectionVersion > 4)
+    {
+        HwChannelProxy * hwChannelProxy = dynamic_cast<HwChannelProxy *>(channelProxy);
+        if (hwChannelProxy != nullptr)
+        {
+            hwChannelProxy->GetProperties()->Deserialize(in, m_sensorManager);
+        }
+
+    }
     if (sampleChannelProxy)
     {
         GetGC()->TrackSampleChannelPropertiesChanged(sampleChannelProxy);
@@ -615,6 +633,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
                     ((HwChannel*)channel)->AddValue(originalValue, value);
                 }
             }
+
         }
     }
 }
@@ -633,14 +652,14 @@ struct ChannelComparator
     }
 };
 
-void Measurement::_DeserializeAxis(QDataStream &in, unsigned index)
+void Measurement::_DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion)
 {
     Axis *axis = m_widget->CreateNewAxis(index);
     in >> axis;
     int channelCount;
     in >> channelCount;
     for (int i = 0; i < channelCount; i++)
-        _DeserializeChannel(in, axis);
+        _DeserializeChannel(in, axis, collectionVersion);
 
     std::sort(m_channels.begin(), m_channels.end(), ChannelComparator());
     //Now I have all channels for the axis and can display corect label
@@ -654,7 +673,7 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVers
     unsigned axisCount;
     in >> axisCount;
     for (unsigned i = 0; i < axisCount; ++i)
-        _DeserializeAxis(in, i);
+        _DeserializeAxis(in, i, collectionVersion);
 
     qSort(m_channels.begin(), m_channels.end(), SortChannels);
 

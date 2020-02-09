@@ -39,9 +39,12 @@ SOURCES += main.cpp\
     bases/PushButton.cpp \
     bases/RadioButton.cpp \
     bases/SpinBox.cpp \
+    graphics/HwChannelProperties.cpp \
     hw/HwConnector.cpp \
+    hw/NamedCollectionItem.cpp \
     hw/PortBase.cpp \
     hw/SensorComponent.cpp \
+    hw/ValueCorrection.cpp \
     qcustomplot/qcustomplot.cpp \
     Axis.cpp \
     AxisChooseDialog.cpp \
@@ -110,9 +113,12 @@ HEADERS  += MainWindow.h \
     bases/PushButton.h \
     bases/RadioButton.h \
     bases/SpinBox.h \
+    graphics/HwChannelProperties.h \
     hw/HwConnector.h \
+    hw/NamedCollectionItem.h \
     hw/PortBase.h \
     hw/SensorComponent.h \
+    hw/ValueCorrection.h \
     qcustomplot/qcustomplot.h \
     Axis.h \
     AxisChooseDialog.h \
@@ -167,7 +173,7 @@ HEADERS  += MainWindow.h \
     HEADERS += MenuDesktop.h
 
 CONFIG += mobility
-CONFIG += c++11
+CONFIG += c++14
 MOBILITY =
 
 TRANSLATIONS = languages/serialToGraph_cs.ts

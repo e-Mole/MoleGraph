@@ -42,7 +42,7 @@ class Measurement : public QObject
 
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
     //version 3 contains original values in HwChannel coolections
-    Q_PROPERTY(bool colections_from_version4 READ _PhonyGetcollections WRITE _PhonySetColections)
+    Q_PROPERTY(bool colections_from_version5 READ _PhonyGetcollections WRITE _PhonySetColections)
 
     Q_ENUMS(SampleUnits)
     Q_ENUMS(State)
@@ -75,7 +75,7 @@ private:
     bool _CheckOtherMeasurementsForRun();
     bool _SetModeWithPeriod();
     void _ProcessActiveChannels();
-    void _DeserializeChannel(QDataStream &in, Axis *valueAxis);
+    void _DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned collectionVersion);
     void _DeserializeChannelData(QDataStream &in, unsigned version);
 
     void _SetName(QString &name);
@@ -95,7 +95,7 @@ private:
     void _SetMarksShown(bool marksShown);
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
-    void _DeserializeAxis(QDataStream &in, unsigned index);
+    void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
     void _ConnectHwChannel(HwChannel *channel);
     void _InsertToChannelList(ChannelBase *channel);
 

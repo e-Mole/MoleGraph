@@ -1,7 +1,9 @@
 #include "GraphicsContainer.h"
 #include <Axis.h>
 #include <GlobalSettings.h>
+#include <hw/ValueCorrection.h>
 #include <graphics/ChannelProxyBase.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
 #include <graphics/SampleChannelProperties.h>
@@ -857,7 +859,7 @@ void GraphicsContainer::_ConnectSetMeasuredToAddNewValueSet(Measurement *measure
 {
     connect(measurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
 }
-HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, ChannelProperties *properties, bool isGhost)
+HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, HwChannelProperties *properties, bool isGhost)
 {
     Measurement *sourceMeasurement = channel->GetMeasurement();
     if (!_IsTracked(sourceMeasurement))
@@ -896,7 +898,8 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
         isGhost
     );
 
-    return _CreateHwCannelProxy(channel, widget, new ChannelProperties(this), isGhost);
+    hw::ValueCorrection * correction = new hw::ValueCorrection(this, channel->GetSensorComponent()->GetValueCorrection());
+    return _CreateHwCannelProxy(channel, widget, new HwChannelProperties(this, correction), isGhost);
 }
 
 HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
@@ -918,7 +921,7 @@ HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceCha
         isGhost
     );
 
-    return _CreateHwCannelProxy(channel, widget, new ChannelProperties(this), isGhost);
+    return _CreateHwCannelProxy(channel, widget, new HwChannelProperties(this, channel->GetSensorComponent()->GetValueCorrection()), isGhost);
 }
 
 void GraphicsContainer::hwValueChanged(unsigned index)

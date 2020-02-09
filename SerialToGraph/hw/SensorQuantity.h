@@ -1,21 +1,19 @@
 #ifndef SENSORQUANTITY_H
 #define SENSORQUANTITY_H
 
-#include <QObject>
+#include <hw/NamedCollectionItem.h>
 #include <QString>
 namespace hw
 {
-    class SensorQuantity : public QObject
+    class SensorQuantity : public NamedCollectionItem
     {
         Q_OBJECT
 
-        QString m_name;
         unsigned m_id;
 
     public:
         SensorQuantity(QObject *parent, unsigned id, QString const &name);
 
-        QString const & GetName() {return m_name; }
         unsigned GetId() { return m_id; }
 
     };

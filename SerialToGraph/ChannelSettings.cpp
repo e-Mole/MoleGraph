@@ -8,10 +8,12 @@
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
+#include <graphics/HwChannelProperties.h>
 #include <graphics/SampleChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <hw/Sensor.h>
 #include <hw/SensorComponent.h>
+#include <hw/ValueCorrection.h>
 #include <hw/SensorManager.h>
 #include <hw/SensorQuantity.h>
 #include <HwChannel.h>
@@ -21,6 +23,7 @@
 #include <MyMessageBox.h>
 #include <Plot.h>
 #include <bases/ComboBox.h>
+#include <QDoubleValidator>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <bases/Label.h>
@@ -150,11 +153,17 @@ ChannelSettings::ChannelSettings(
     m_sensorQuantityComboBox(new bases::ComboBox(this)),
     m_sensorNameComboBox(new bases::ComboBox(this)),
     m_sensorPortComboBox(new bases::ComboBox(this)),
+    m_correctionComboBox(new bases::ComboBox(this)),
+    m_correctionPoint1Orig(new LineEdit(this)),
+    m_correctionPoint1New(new LineEdit(this)),
+    m_correctionPoint2Orig(new LineEdit(this)),
+    m_correctionPoint2New(new LineEdit(this)),
     m_originlValue(new PushButton(tr("Original"), this)),
     m_naValue(new PushButton(tr("n/a"), this)),
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
-    m_sensorManager(sensorManager)
+    m_sensorManager(sensorManager),
+    m_valueCorrection(nullptr)
 {
     _HideAllOptional();
 
@@ -176,7 +185,8 @@ ChannelSettings::ChannelSettings(
         _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
         _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
         AddSeparator();
-
+        _InitializeCorrectionItems(dynamic_cast<HwChannelProxy*>(channelProxy));
+        AddSeparator();
         m_name->setVisible(true);
         m_formLayout->addRow(new Label(tr("Title"), this), m_name);
         m_units->setVisible(true);
@@ -205,9 +215,15 @@ void ChannelSettings::_HideAllOptional()
     m_sensorPortComboBox->setVisible(false);
     m_originlValue->setVisible(false);
     m_naValue->setVisible(false);
+    m_correctionComboBox->setVisible(false);
+    m_correctionPoint1Orig->setVisible(false);
+    m_correctionPoint1New->setVisible(false);
+    m_correctionPoint2Orig->setVisible(false);
+    m_correctionPoint2New->setVisible(false);;
 }
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox *item, QString const &label, const char* slot)
 {
+    item->setVisible(true);
     item->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
     m_formLayout->addRow(new Label(label, this), item);
     connect(item, SIGNAL(currentIndexChanged(int)), this, slot);
@@ -287,13 +303,129 @@ void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
 
 void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
 {
-    m_sensorPortComboBox->setVisible(true);
-    m_sensorNameComboBox->setVisible(true);
-    m_sensorQuantityComboBox->setVisible(true);
     _InitializeSensorItem(m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
     _InitializeSensorItem(m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
     _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQuantityChanged(int)));
     _FillSensorItems(channelProxy);
+}
+
+void ChannelSettings::_InitializeCorrectionPoint(QString const &label, LineEdit *origValueEdit, LineEdit *newValueEdit)
+{
+    QHBoxLayout * layout = new QHBoxLayout(this);
+    m_formLayout->addRow(label, layout);
+    layout->addWidget(origValueEdit);
+    layout->addWidget(newValueEdit);
+
+    connect(origValueEdit, SIGNAL(textChanged(QString)), this, SLOT(correctionVariableChanged(QString)));
+    connect(newValueEdit, SIGNAL(textChanged(QString)), this, SLOT(correctionVariableChanged(QString)));
+}
+
+void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
+{
+    unsigned index = 0;
+    foreach (hw::ValueCorrection *correction, m_sensorManager->GetSensorCorrections())
+    {
+        if (addItem)
+        {
+            m_correctionComboBox->addItem(
+                correction->GetName() +  " (" + correction->GetDescription() +")", correction->GetId()
+            );
+        }
+        if (id == correction->GetId())
+        {
+            if (!addItem){
+                delete m_valueCorrection;
+                m_valueCorrection = new hw::ValueCorrection(this, correction);
+            }
+            auto points = m_valueCorrection->GetPoints();
+            if (points.size() > 1)
+            {
+                m_correctionPoint1Orig->setText(QString("%1").arg(points[0].first));
+                m_correctionPoint1New->setText(QString("%1").arg(points[0].second));
+                m_correctionPoint2Orig->setText(QString("%1").arg(points[1].first));
+                m_correctionPoint2New->setText(QString("%1").arg(points[1].second));
+            }
+            else if (points.size() > 0)
+            {
+                qDebug() << "points " << points[0].first << " " << points[0].second;
+                m_correctionPoint1Orig->setText(QString("%1").arg(points[0].first));
+                m_correctionPoint1New->setText(QString("%1").arg(points[0].second));
+                m_correctionPoint2Orig->setText("");
+                m_correctionPoint2New->setText("");
+            }
+            else{
+                m_correctionPoint1Orig->setText("");
+                m_correctionPoint1New->setText("");
+                m_correctionPoint2Orig->setText("");
+                m_correctionPoint2New->setText("");
+            }
+
+            m_correctionPoint1Orig->setEnabled(points.size() > 0);
+            m_correctionPoint1New->setEnabled(points.size() > 0);
+            m_correctionPoint2Orig->setEnabled(points.size() > 1);
+            m_correctionPoint2New->setEnabled(points.size() > 1);
+
+            if (addItem){
+                m_correctionComboBox->setCurrentIndex(index);
+            }
+            else{
+                return;
+            }
+        }
+        index++;
+    }
+}
+
+void ChannelSettings::_InitializeCorrectionItems(HwChannelProxy *channelProxy)
+{
+    m_valueCorrection = new hw::ValueCorrection(this, channelProxy->GetProperties()->GetValueCorrection());
+    m_correctionComboBox->setVisible(true);
+    m_correctionComboBox->setEnabled(true);
+    m_formLayout->addRow(new Label("Correction Type", this), m_correctionComboBox);
+
+    m_correctionPoint1Orig->setVisible(true);
+    m_correctionPoint1Orig->setValidator(new QDoubleValidator(this));
+    m_correctionPoint1New->setVisible(true);
+    m_correctionPoint1New->setValidator(new QDoubleValidator(this));
+    m_correctionPoint2Orig->setVisible(true);
+    m_correctionPoint2Orig->setValidator(new QDoubleValidator(this));
+    m_correctionPoint2New->setVisible(true);
+    m_correctionPoint2New->setValidator(new QDoubleValidator(this));
+
+    QHBoxLayout * correctionHeaderLayout = new QHBoxLayout(this);
+    m_formLayout->addRow("", correctionHeaderLayout);
+    correctionHeaderLayout->addWidget(new Label(tr("Expected"), this));
+    correctionHeaderLayout->addWidget(new Label(tr("Measured"), this));
+
+    _InitializeCorrectionPoint(tr("Point 1"), m_correctionPoint1Orig, m_correctionPoint1New);
+    _InitializeCorrectionPoint(tr("Point 2"), m_correctionPoint2Orig, m_correctionPoint2New);
+
+    _FillCorrectionValues(m_valueCorrection->GetId(), true);
+    connect(m_correctionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(correctionTypeChanged(int)));
+
+}
+
+void ChannelSettings::correctionTypeChanged(int index)
+{    
+    if (index == -1)
+        return;
+
+    _FillCorrectionValues(m_correctionComboBox->itemData(index).toUInt(), false);
+}
+
+void ChannelSettings::correctionVariableChanged(QString newValue)
+{
+    if (newValue.isEmpty())
+        return;
+
+    if (sender() == m_correctionPoint1Orig)
+        m_valueCorrection->SetPoint(0, true, newValue.toDouble());
+    else if (sender() == m_correctionPoint1New)
+        m_valueCorrection->SetPoint(0, false, newValue.toDouble());
+    else if (sender() == m_correctionPoint2Orig)
+        m_valueCorrection->SetPoint(1, true, newValue.toDouble());
+    else if (sender() == m_correctionPoint2New)
+        m_valueCorrection->SetPoint(1, false, newValue.toDouble());
 }
 
 void ChannelSettings::_FillSensorItems(HwChannelProxy *channelProxy)
@@ -593,6 +725,7 @@ void ChannelSettings::_FillTimeFeatures(SampleChannelProxy *channelProxy)
     m_format->setCurrentIndex(channelProxy->GetRealTimeFormat());
     m_format->setEnabled(channelProxy->GetStyle() == SampleChannelProperties::RealTime);
 }
+
 void ChannelSettings::_InitializeTimeFeatures(SampleChannelProxy *channelProxy)
 {
     m_style->setVisible(true);
@@ -894,6 +1027,12 @@ bool ChannelSettings::BeforeAccept()
             hwChannelProxy->SetSensorComponent(component);
             changed = true;
         }
+
+        if (*hwChannelProxy->GetProperties()->GetValueCorrection() != *m_valueCorrection)
+        {
+            hwChannelProxy->GetProperties()->ReplaceValueCorrection(m_valueCorrection);
+            changed = true;
+        }
     }
 
     if (m_channelProxy->IsGhost())
@@ -941,8 +1080,6 @@ bool ChannelSettings::BeforeAccept()
                 m_graphicsContainer->GetPlot()->SetMarkerLine(m_graphicsContainer->GetCurrentIndex());
             }
         }
-
-
         m_channelProxy->GetPlot()->ReplotIfNotDisabled();
     }
 

@@ -1,12 +1,14 @@
 #include "HwChannelProxy.h"
+
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <graphics/ChannelProperties.h>
+#include <graphics/HwChannelProperties.h>
 #include <hw/Sensor.h>
 #include <hw/SensorQuantity.h>
+#include <hw/ValueCorrection.h>
 #include <HwChannel.h>
 
-HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties) :
+HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, HwChannelProperties *properties) :
     ChannelProxyBase(parent, channel, channelWidget, properties)
 {
 
@@ -24,7 +26,7 @@ void HwChannelProxy::ChangeValue(int index, double newValue)
 
 HwChannelProxy *HwChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
 {
-    ChannelProperties *newProperties = new ChannelProperties(parent, _GetChannelProperties());
+    HwChannelProperties *newProperties = new HwChannelProperties(parent, GetProperties());
     return new HwChannelProxy(parent, m_channel, newWidget, newProperties);
 }
 
@@ -33,10 +35,6 @@ HwChannel *HwChannelProxy::GetChannel() const
     return dynamic_cast<HwChannel*>(m_channel);
 }
 
-ChannelProperties *HwChannelProxy::_GetChannelProperties()
-{
-    return dynamic_cast<ChannelProperties*>(m_properties);
-}
 bool HwChannelProxy::IsActive()
 {
     return GetChannel()->IsActive();
@@ -80,4 +78,20 @@ double HwChannelProxy::GetOriginalValue(int index)
 int HwChannelProxy::GetHwIndex() const
 {
     return GetChannel()->GetHwIndex();
+}
+
+void HwChannelProxy::ReplaceValuecorrection(hw::ValueCorrection *correction)
+{
+    GetProperties()->ReplaceValueCorrection(correction);
+}
+
+HwChannelProperties *HwChannelProxy::GetProperties()
+{
+    return dynamic_cast<HwChannelProperties*>(m_properties);
+}
+
+void HwChannelProxy::_SetProperties(HwChannelProperties *properties)
+{
+    delete m_properties;
+    m_properties = properties;
 }

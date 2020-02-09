@@ -18,6 +18,8 @@ namespace atog
 #define COLECTIONS_ID "colections"
 #define COLECTIONS_FOR_VERSION3_ID "colections_for_version3"
 #define COLECTIONS_FROM_VERSION4_ID "colections_from_version4"
+#define COLECTIONS_FROM_VERSION5_ID "colections_from_version5"
+
 template <class T>
 QDataStream &operator<<(QDataStream &out, T *t)
 {
@@ -29,7 +31,8 @@ QDataStream &operator<<(QDataStream &out, T *t)
             //I was not patient to search how to serialize collections like axis or channels so I do it manually
             if (
                 t->metaObject()->property(i).name() == QString(COLECTIONS_FOR_VERSION3_ID) ||
-                (t->metaObject()->property(i).name() == QString(COLECTIONS_FROM_VERSION4_ID))
+                t->metaObject()->property(i).name() == QString(COLECTIONS_FROM_VERSION4_ID) ||
+                t->metaObject()->property(i).name() == QString(COLECTIONS_FROM_VERSION5_ID)
             )
             {
                 t->SerializeColections(out);
@@ -61,6 +64,8 @@ QDataStream &operator>>(QDataStream &in, T *t)
             t->DeserializeColections(in, 3);
         else if (propertyName == COLECTIONS_FROM_VERSION4_ID)
             t->DeserializeColections(in, 4);
+        else if (propertyName == COLECTIONS_FROM_VERSION5_ID)
+            t->DeserializeColections(in, 5);
         else
         {
             QVariant var;

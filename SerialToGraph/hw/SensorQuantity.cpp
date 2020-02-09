@@ -2,8 +2,7 @@
 namespace hw
 {
     SensorQuantity::SensorQuantity(QObject *parent, unsigned id, const QString &name):
-        QObject(parent),
-        m_name(name),
+        NamedCollectionItem(parent, name),
         m_id(id)
     {
 

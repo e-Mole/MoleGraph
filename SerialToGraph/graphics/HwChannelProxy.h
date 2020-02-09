@@ -1,5 +1,5 @@
-#ifndef HWCHANNELPROPERTIES_H
-#define HWCHANNELPROPERTIES_H
+#ifndef HWCHANNELPROXY_H
+#define HWCHANNELPROXY_H
 
 #include <graphics/ChannelProxyBase.h>
 
@@ -7,13 +7,16 @@ class ChannelBase;
 class ChannelWidget;
 class HwChannel;
 class QObject;
-namespace hw {class Sensor; class SensorComponent; }
+class HwChannelProperties;
 
+namespace hw { class Sensor; class SensorComponent; class ValueCorrection;}
 class HwChannelProxy : public ChannelProxyBase
 {
-    ChannelProperties *_GetChannelProperties();
+    Q_OBJECT
+    void _SetProperties(HwChannelProperties *properties);
+
 public:
-    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, ChannelProperties *properties);
+    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, HwChannelProperties *properties);
     virtual double GetValue(unsigned index) const;
     void ChangeValue(int index, double newValue);
     virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);
@@ -27,6 +30,8 @@ public:
     double GetOriginalValue(int index);
     HwChannel *GetChannel() const;
     int GetHwIndex() const;
+    void ReplaceValuecorrection(hw::ValueCorrection *correction);
+    HwChannelProperties *GetProperties();
 };
 
-#endif // HWCHANNELPROPERTIES_H
+#endif // HWCHANNELPROXY_H

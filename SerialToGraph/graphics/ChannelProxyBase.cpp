@@ -267,7 +267,7 @@ bool ChannelProxyBase::isVisible()
 }
 
 void ChannelProxyBase::SetVisible(bool visible)
-{
+{ 
     m_channelWidget->SetVisible(visible);
 }
 

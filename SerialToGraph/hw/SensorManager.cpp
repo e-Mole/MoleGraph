@@ -1,6 +1,7 @@
 #include "SensorManager.h"
 #include <hw/Sensor.h>
-#include <hw/SensorComponent.h>
+#include <hw/NamedCollectionItem.h>
+#include <hw/ValueCorrection.h>
 #include <MyMessageBox.h>
 #include <QDebug>
 #include <QFile>
@@ -9,6 +10,7 @@
 #include <QJsonDocument>
 
 #define JSON_FILE_NAME ":/sensors/sensors.json"
+
 namespace hw
 {
     SensorManager::SensorManager(QObject *parent):
@@ -90,7 +92,12 @@ namespace hw
     void SensorManager::_PrepareMinimalSensorSet()
     {
         m_quantities.push_back(new SensorQuantity(this, 0, ""));
-        m_sensors.push_back((new Sensor(this, "", 0))->AddComponent(new SensorComponent(this, m_quantities.at(0), "", 0)));
+        m_corrections.push_back(new ValueCorrection(this, 0, "", "", 0));
+        m_sensors.push_back(
+            (new Sensor(this, "", 0))->AddComponent(
+                new SensorComponent(this, m_quantities.at(0), m_corrections.at(0), "", 0)
+            )
+        );
     }
 
     void SensorManager::_InitializeSensors()
@@ -106,6 +113,17 @@ namespace hw
         //unsigned jsonVersion = object["version"].toInt();
         //Q_UNUSED(jsonVersion)
 
+        QJsonArray jsonCorrections = object["corrections"].toArray();
+        foreach (QJsonValue const &correctionValue, jsonCorrections)
+        {
+            QJsonObject correctionObject = correctionValue.toObject();
+            unsigned id = correctionObject["id"].toString().toUInt();
+            QString name = correctionObject["name"].toString();
+            QString description = correctionObject["description"].toString();
+            unsigned points = correctionObject["points"].toInt();
+            m_corrections.push_back(new ValueCorrection(this, id, name, description, points));
+        }
+
         QJsonArray jsonQuantities = object["quantities"].toArray();
         foreach (QJsonValue const &quantityValue, jsonQuantities)
         {
@@ -118,6 +136,7 @@ namespace hw
         }
 
         QJsonArray jsonSensors = object["sensors"].toArray();
+
         foreach (QJsonValue const &sensorValue, jsonSensors)
         {
             QJsonObject sensorObject = sensorValue.toObject();
@@ -131,16 +150,17 @@ namespace hw
             {
                 order++;
                 QJsonObject componentObject = sensorValue.toObject();
-                QString correction = componentObject["correction"].toString();
+                QString correction_name = componentObject["correction"].toString();
                 QString unit = componentObject["unit"].toString();
                 QString quantity_name = componentObject["quantity"].toString();
                 SensorQuantity * quantity = GetSensorQuantity(quantity_name);
+                ValueCorrection * correction = GetSensorCorrection(correction_name);
                 if (quantity == nullptr)
                 {
                     MyMessageBox::warning(nullptr, QString("unexpected quantity '%1' in sensors.json file").arg(quantity_name));
                     continue;
                 }
-                sensor->AddComponent(new SensorComponent(this, quantity, unit, unsigned(order)));
+                sensor->AddComponent(new SensorComponent(this, quantity, correction, unit, unsigned(order)));
             }
 
             m_sensors.push_back(sensor);
@@ -161,11 +181,6 @@ namespace hw
         content = jsonFile.readAll();
         jsonFile.close();
         return content;
-    }
-
-    std::vector<Sensor *> const SensorManager::GetSensors() const
-    {
-        return m_sensors;
     }
 
     Sensor *SensorManager::GetNoneSensor()
@@ -212,13 +227,26 @@ namespace hw
 
     SensorQuantity *SensorManager::GetSensorQuantity(QString const &quantityName)
     {
-        foreach (SensorQuantity *quantity, m_quantities)
+        SensorQuantity * quantity = dynamic_cast<SensorQuantity*>(_GetItemByName(quantityName, m_quantities));
+        if (quantity == nullptr)
         {
-            if (quantity->GetName() == quantityName)
-                return quantity;
+            qWarning() << "Sensor Quantity has not been found by name " << quantityName;
+            return nullptr;
         }
+        return quantity;
+    }
 
-        qWarning() << "Sensor Quantity has not been found by name " << quantityName;
-        return nullptr;
+    ValueCorrection * SensorManager::GetSensorCorrection(QString const &correctionName)
+    {
+        ValueCorrection * correction = dynamic_cast<ValueCorrection*>(_GetItemByName(correctionName, m_corrections));
+        if (correction == nullptr)
+        {
+            qWarning() << "Sensor Correction has not been found by name " << correctionName;
+            if (!m_corrections.isEmpty()){
+                return m_corrections.at(0); //first correction is "None"
+            }
+            return nullptr;
+        }
+        return correction;
     }
 }

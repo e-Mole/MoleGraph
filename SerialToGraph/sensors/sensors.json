@@ -2,18 +2,21 @@
 	"corrections":
 	[
 		{
-			"name": "",
-			"description": "",
+            "id": "0",
+			"name": "None",
+			"description": "y = x",
 			"points": 0
 		},
 		{
-			"name": "offset",
-			"description": "y = a + x",
+            "id": "1",
+			"name": "Offset",
+			"description": "y = x + a",
 			"points": 1
 		},
 		{
-			"name" : "linear",
-			"description": "y = a + bx",
+            "id": "2",
+			"name" : "Linear",
+			"description": "y = bx + a",
 			"points" : 2
 		}
     ],

@@ -8,7 +8,7 @@
 #include <hw/Sensor.h>
 
 namespace bases { class ComboBox; }
-namespace hw { class SensorManager; class SensorQuantity; }
+namespace hw { class SensorManager; class SensorQuantity; class ValueCorrection; }
 class Axis;
 class ChannelProxyBase;
 class GraphicsContainer;
@@ -40,6 +40,9 @@ class ChannelSettings : public bases::FormDialogColor
     void _InitializeGhostCombos();
     void _FillMeasurementCombo();
     void _InitializeSensorItems(HwChannelProxy *channelProxy);
+    void _InitializeCorrectionPoint(QString const &label, LineEdit *origValueEdit, LineEdit *newValueEdit);
+    void _FillCorrectionValues(unsigned id, bool addItem);
+    void _InitializeCorrectionItems(HwChannelProxy *channelProxy);
     void _FillSensorItems(HwChannelProxy *channelProxy);
     void _InitializeSensorItem(bases::ComboBox *item, const QString &label, const char *slot);
     void _FillSensorQuanitityCB(HwChannelProxy *channelProxy);
@@ -72,12 +75,18 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_sensorQuantityComboBox;
     bases::ComboBox * m_sensorNameComboBox;
     bases::ComboBox * m_sensorPortComboBox;
+    bases::ComboBox * m_correctionComboBox;
+    LineEdit * m_correctionPoint1Orig;
+    LineEdit * m_correctionPoint1New;
+    LineEdit * m_correctionPoint2Orig;
+    LineEdit * m_correctionPoint2New;
     PushButton *m_originlValue;
     PushButton *m_naValue;
 
     bool m_currentValueChanged;
     double m_currentValue;
     hw::SensorManager *m_sensorManager;
+    hw::ValueCorrection *m_valueCorrection;
 public:
     ChannelSettings(QVector<Measurement *> measurements,
         GraphicsContainer *graphicsContainer,
@@ -97,6 +106,8 @@ private slots:
     void sensorQuantityChanged(int index);
     void sensorNameChanged(int index);
     void sensorPortChanged(int index);
+    void correctionTypeChanged(int index);
+    void correctionVariableChanged(QString newValue);
 };
 
 #endif // CHANNELSETTINGS_H

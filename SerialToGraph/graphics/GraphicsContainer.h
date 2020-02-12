@@ -16,7 +16,7 @@ class ChannelGraph;
 class ChannelProxyBase;
 class ChannelWidget;
 class HwChannel;
-class HwChannelProperties;
+class ChannelProperties;
 class HwChannelProxy;
 class KeyShortcut;
 class Measurement;
@@ -70,7 +70,7 @@ class GraphicsContainer : public QWidget
     bool _IsTracked(Measurement *m);
     SampleChannelProxy *_CreateSampleChannelProxy(SampleChannel *channel, ChannelWidget *widget, SampleChannelProperties *properties, bool isGhost);
     void _ConnectSetMeasuredToAddNewValueSet(Measurement *measurement);
-    HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, HwChannelProperties *properties, bool isGhost);
+    HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, bool isGhost);
     unsigned _GetMainHorizontalChannelIndex();
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
 

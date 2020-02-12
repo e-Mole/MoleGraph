@@ -54,7 +54,7 @@ Measurement *ChannelProxyBase::GetChannelMeasurement() const
     return m_channel->GetMeasurement();
 }
 
-ChannelBase::ValueType ChannelProxyBase::GetValueType(unsigned index)
+ChannelBase::ValueType ChannelProxyBase::GetValueType(int index)
 {
     return m_channel->GetValueType(index);
 }
@@ -82,7 +82,7 @@ unsigned ChannelProxyBase::GetLastValueIndex(double value)
     //here must be int because when count is equal zero first index is less than 0
     for (int index = GetValueCount()-1; index >=0; --index)
     {
-        if (qFuzzyCompare(GetValue(index), value))
+        if (ChannelBase::IsEqual(GetValue(index), value))
             return index;
     }
     return ~0;

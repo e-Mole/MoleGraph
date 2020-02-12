@@ -3,7 +3,6 @@
 #include <GlobalSettings.h>
 #include <hw/ValueCorrection.h>
 #include <graphics/ChannelProxyBase.h>
-#include <graphics/HwChannelProperties.h>
 #include <graphics/HwChannelProxy.h>
 #include <graphics/SampleChannelProxy.h>
 #include <graphics/SampleChannelProperties.h>
@@ -859,7 +858,7 @@ void GraphicsContainer::_ConnectSetMeasuredToAddNewValueSet(Measurement *measure
 {
     connect(measurement, SIGNAL(valueSetMeasured()), this, SLOT(addNewValueSet()));
 }
-HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, HwChannelProperties *properties, bool isGhost)
+HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, bool isGhost)
 {
     Measurement *sourceMeasurement = channel->GetMeasurement();
     if (!_IsTracked(sourceMeasurement))
@@ -869,7 +868,7 @@ HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, Chan
 
     connect(widget, SIGNAL(clicked()), this, SLOT(editChannel()));
 
-    HwChannelProxy *proxy = new HwChannelProxy(this, channel, widget, properties);
+    HwChannelProxy *proxy = new HwChannelProxy(this, channel, widget);
     if (!isGhost)
     {
         m_channelProxies.push_back(proxy);
@@ -898,8 +897,7 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
         isGhost
     );
 
-    hw::ValueCorrection * correction = new hw::ValueCorrection(this, channel->GetSensorComponent()->GetValueCorrection());
-    return _CreateHwCannelProxy(channel, widget, new HwChannelProperties(this, correction), isGhost);
+    return _CreateHwCannelProxy(channel, widget, isGhost);
 }
 
 HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
@@ -921,7 +919,7 @@ HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceCha
         isGhost
     );
 
-    return _CreateHwCannelProxy(channel, widget, new HwChannelProperties(this, channel->GetSensorComponent()->GetValueCorrection()), isGhost);
+    return _CreateHwCannelProxy(channel, widget, isGhost);
 }
 
 void GraphicsContainer::hwValueChanged(unsigned index)

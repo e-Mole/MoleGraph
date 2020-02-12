@@ -7,17 +7,17 @@ class ChannelBase;
 class ChannelWidget;
 class HwChannel;
 class QObject;
-class HwChannelProperties;
 
 namespace hw { class Sensor; class SensorComponent; class ValueCorrection;}
 class HwChannelProxy : public ChannelProxyBase
 {
     Q_OBJECT
-    void _SetProperties(HwChannelProperties *properties);
 
 public:
-    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, HwChannelProperties *properties);
-    virtual double GetValue(unsigned index) const;
+    HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
+    double GetValueWithCorrection(double value, hw::ValueCorrection *correction) const;
+    double GetValueWithCorrection(double value) const;
+    virtual double GetValue(int index) const;
     void ChangeValue(int index, double newValue);
     virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);
     bool IsActive();
@@ -26,12 +26,12 @@ public:
     unsigned GetSensorPort();
     void SetSensorPort(unsigned sensorPort);
     hw::SensorComponent *GetSensorComponent();
-    void SetSensorComponent(hw::SensorComponent *sensorComponent);
-    double GetOriginalValue(int index);
+    void SetSensorComponent(hw::SensorComponent *component);
+    double GetOriginalValue(int index) const;
     HwChannel *GetChannel() const;
     int GetHwIndex() const;
-    void ReplaceValuecorrection(hw::ValueCorrection *correction);
-    HwChannelProperties *GetProperties();
+    hw::ValueCorrection *GetValueCorrection();
+    void SetValueCorrection(hw::ValueCorrection *correction);
 };
 
 #endif // HWCHANNELPROXY_H

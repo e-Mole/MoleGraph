@@ -206,7 +206,7 @@ double SampleChannelProxy::_GetTimeOffsetValue(double timeFromStart) const
     qWarning("unknown time unit");
     return ChannelBase::GetNaValue();
 }
-double SampleChannelProxy::GetValue(unsigned index) const
+double SampleChannelProxy::GetValue(int index) const
 {
     if (index == ~0)
         return ChannelBase::GetNaValue();

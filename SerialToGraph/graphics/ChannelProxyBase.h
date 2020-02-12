@@ -68,9 +68,9 @@ public:
     unsigned GetLastValueIndex(double value);
     double GetLastValidValue();
     unsigned GetValueCount() const;
-    virtual double GetValue(unsigned index) const = 0;
+    virtual double GetValue(int index) const = 0;
     virtual ChannelProxyBase *Clone(QObject *parent, ChannelWidget * newWidget) = 0;
-    ChannelBase::ValueType GetValueType(unsigned index);
+    ChannelBase::ValueType GetValueType(int index);
     bool FillRangeValue(int left, int right, DisplayValue displayValue, double &rangeValue);
     virtual double GetMinValue();
     virtual double GetMaxValue();

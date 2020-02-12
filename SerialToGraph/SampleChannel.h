@@ -36,7 +36,7 @@ public:
     double GetTimeFromStart(unsigned index);
     double GetSampleNr(unsigned index) const;
     QString GetTimestamp(double timeInMs);
-    virtual ChannelBase::ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeSample; }
+    virtual ChannelBase::ValueType GetValueType(int index) { Q_UNUSED(index); return ValueTypeSample; }
 
 public slots:
 

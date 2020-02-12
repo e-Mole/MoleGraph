@@ -48,7 +48,7 @@ void ChannelBase::AddValue( double value)
     if (value == GetNaValue())
         return;
 
-    _UpdateExtremes(value, index);
+    _UpdateExtremes(GetValueWithCorrection(index), index);
 }
 
 Measurement * ChannelBase::GetMeasurement() const
@@ -56,9 +56,9 @@ Measurement * ChannelBase::GetMeasurement() const
     return m_measurement;
 }
 
-double ChannelBase::GetRawValue(unsigned index) const
+double ChannelBase::GetRawValue(int index) const
 {
-    if (index >= m_values.count())
+    if (index < 0 || index >= m_values.count())
     {
         return GetNaValue();
     }
@@ -72,7 +72,7 @@ void ChannelBase::_RecalculateExtremes()
 
     for (unsigned i = 0; i < GetValueCount(); i++)
     {
-        _UpdateExtremes(m_values[i], i);
+        _UpdateExtremes(GetValueWithCorrection(i), i);
     }
 }
 
@@ -81,3 +81,10 @@ double ChannelBase::GetNaValue()
     return std::numeric_limits<double>::infinity();
 }
 
+bool ChannelBase::IsEqual(double first, double second){
+    if (qIsInf(first) && qIsInf(second))
+        return true;
+    if (qIsNull(first) && qIsNull(second))
+        return  true;
+    return qFuzzyCompare(first, second);
+}

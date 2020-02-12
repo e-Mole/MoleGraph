@@ -12,6 +12,9 @@ class Axis;
 class Measurement;
 class QColor;
 class QCustomplot;
+class QDataStream;
+
+namespace  hw { class ValueCorrection; }
 
 class HwChannel : public ChannelBase
 {
@@ -29,6 +32,7 @@ class HwChannel : public ChannelBase
     hw::Sensor *m_sensor;
     unsigned m_sensorPort;
     hw::SensorComponent *m_sensorComponent;
+    hw::ValueCorrection * m_correction;
 
 public:
     HwChannel(
@@ -48,7 +52,7 @@ public:
     int GetHwIndex() const { return m_hwIndex; }
     double GetOriginalValue(int index);
     void ChangeValue(int index, double newValue);
-    virtual ChannelBase::ValueType GetValueType(unsigned index);
+    virtual ChannelBase::ValueType GetValueType(int index);
     bool IsActive() {return m_isActive; }
     hw::Sensor *GetSensor() { return m_sensor; }
     unsigned GetSensorId() {return m_sensor->GetId(); }
@@ -59,6 +63,14 @@ public:
     void SetSensor(hw::Sensor *sensor) {m_sensor = sensor; }
     void SetSensorComponet(hw::SensorComponent *sensorComponent);
     void SetSensorPort(unsigned sensorPort) {m_sensorPort = sensorPort; }
+    hw::ValueCorrection * GetValueCorrection();
+    void SetValueCorrection(hw::ValueCorrection *correction);
+    bool IsValueChanged(int index);
+    static double GetValueWithCorrection(double value, hw::ValueCorrection *correction);
+    virtual double GetValueWithCorrection(int index);
+    void SerializeValueCorrection(QDataStream &out);
+    void DeserializeValueCorrection(QDataStream &in, hw::SensorManager *sensorManager);
+
 public slots:
     void setActive(bool isActive);
 signals:

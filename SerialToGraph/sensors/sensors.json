@@ -18,7 +18,7 @@
 			"name" : "Linear",
 			"description": "y = bx + a",
 			"points" : 2
-		}
+        }
     ],
     "quantities":
   [

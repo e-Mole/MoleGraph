@@ -8,7 +8,6 @@
 #include <graphics/ChannelProxyBase.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
-#include <graphics/HwChannelProperties.h>
 #include <graphics/SampleChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <hw/Sensor.h>
@@ -158,6 +157,8 @@ ChannelSettings::ChannelSettings(
     m_correctionPoint1New(new LineEdit(this)),
     m_correctionPoint2Orig(new LineEdit(this)),
     m_correctionPoint2New(new LineEdit(this)),
+    m_correctionPoint3Orig(new LineEdit(this)),
+    m_correctionPoint3New(new LineEdit(this)),
     m_originlValue(new PushButton(tr("Original"), this)),
     m_naValue(new PushButton(tr("n/a"), this)),
     m_currentValueChanged(false),
@@ -181,7 +182,6 @@ ChannelSettings::ChannelSettings(
 
     if (dynamic_cast<HwChannelProxy*>(channelProxy) || m_channelProxy->IsGhost())
     {
-
         _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
         _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
         AddSeparator();
@@ -219,7 +219,9 @@ void ChannelSettings::_HideAllOptional()
     m_correctionPoint1Orig->setVisible(false);
     m_correctionPoint1New->setVisible(false);
     m_correctionPoint2Orig->setVisible(false);
-    m_correctionPoint2New->setVisible(false);;
+    m_correctionPoint2New->setVisible(false);
+    m_correctionPoint3Orig->setVisible(false);
+    m_correctionPoint3New->setVisible(false);
 }
 void ChannelSettings::_InitializeSensorItem(bases::ComboBox *item, QString const &label, const char* slot)
 {
@@ -338,12 +340,23 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
                 m_valueCorrection = new hw::ValueCorrection(this, correction);
             }
             auto points = m_valueCorrection->GetPoints();
-            if (points.size() > 1)
+            if (points.size() > 2)
             {
                 m_correctionPoint1Orig->setText(QString("%1").arg(points[0].first));
                 m_correctionPoint1New->setText(QString("%1").arg(points[0].second));
                 m_correctionPoint2Orig->setText(QString("%1").arg(points[1].first));
                 m_correctionPoint2New->setText(QString("%1").arg(points[1].second));
+                m_correctionPoint3Orig->setText(QString("%1").arg(points[2].first));
+                m_correctionPoint3New->setText(QString("%1").arg(points[2].second));
+            }
+            else if (points.size() > 1)
+            {
+                m_correctionPoint1Orig->setText(QString("%1").arg(points[0].first));
+                m_correctionPoint1New->setText(QString("%1").arg(points[0].second));
+                m_correctionPoint2Orig->setText(QString("%1").arg(points[1].first));
+                m_correctionPoint2New->setText(QString("%1").arg(points[1].second));
+                m_correctionPoint3Orig->setText("");
+                m_correctionPoint3New->setText("");
             }
             else if (points.size() > 0)
             {
@@ -352,18 +365,24 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
                 m_correctionPoint1New->setText(QString("%1").arg(points[0].second));
                 m_correctionPoint2Orig->setText("");
                 m_correctionPoint2New->setText("");
+                m_correctionPoint3Orig->setText("");
+                m_correctionPoint3New->setText("");
             }
             else{
                 m_correctionPoint1Orig->setText("");
                 m_correctionPoint1New->setText("");
                 m_correctionPoint2Orig->setText("");
                 m_correctionPoint2New->setText("");
+                m_correctionPoint3Orig->setText("");
+                m_correctionPoint3New->setText("");
             }
 
             m_correctionPoint1Orig->setEnabled(points.size() > 0);
             m_correctionPoint1New->setEnabled(points.size() > 0);
             m_correctionPoint2Orig->setEnabled(points.size() > 1);
             m_correctionPoint2New->setEnabled(points.size() > 1);
+            m_correctionPoint3Orig->setEnabled(points.size() > 2);
+            m_correctionPoint3New->setEnabled(points.size() > 2);
 
             if (addItem){
                 m_correctionComboBox->setCurrentIndex(index);
@@ -377,8 +396,8 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
 }
 
 void ChannelSettings::_InitializeCorrectionItems(HwChannelProxy *channelProxy)
-{
-    m_valueCorrection = new hw::ValueCorrection(this, channelProxy->GetProperties()->GetValueCorrection());
+{ 
+    m_valueCorrection = new hw::ValueCorrection(this, channelProxy->GetValueCorrection());
     m_correctionComboBox->setVisible(true);
     m_correctionComboBox->setEnabled(true);
     m_formLayout->addRow(new Label("Correction Type", this), m_correctionComboBox);
@@ -391,18 +410,22 @@ void ChannelSettings::_InitializeCorrectionItems(HwChannelProxy *channelProxy)
     m_correctionPoint2Orig->setValidator(new QDoubleValidator(this));
     m_correctionPoint2New->setVisible(true);
     m_correctionPoint2New->setValidator(new QDoubleValidator(this));
+    m_correctionPoint3Orig->setVisible(false);
+    m_correctionPoint3Orig->setValidator(new QDoubleValidator(this));
+    m_correctionPoint3New->setVisible(false);
+    m_correctionPoint3New->setValidator(new QDoubleValidator(this));
 
     QHBoxLayout * correctionHeaderLayout = new QHBoxLayout(this);
     m_formLayout->addRow("", correctionHeaderLayout);
-    correctionHeaderLayout->addWidget(new Label(tr("Expected"), this));
     correctionHeaderLayout->addWidget(new Label(tr("Measured"), this));
+    correctionHeaderLayout->addWidget(new Label(tr("Expected"), this));
 
     _InitializeCorrectionPoint(tr("Point 1"), m_correctionPoint1Orig, m_correctionPoint1New);
     _InitializeCorrectionPoint(tr("Point 2"), m_correctionPoint2Orig, m_correctionPoint2New);
+    _InitializeCorrectionPoint(tr("Point 3"), m_correctionPoint3Orig, m_correctionPoint3New);
 
     _FillCorrectionValues(m_valueCorrection->GetId(), true);
     connect(m_correctionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(correctionTypeChanged(int)));
-
 }
 
 void ChannelSettings::correctionTypeChanged(int index)
@@ -426,6 +449,10 @@ void ChannelSettings::correctionVariableChanged(QString newValue)
         m_valueCorrection->SetPoint(1, true, newValue.toDouble());
     else if (sender() == m_correctionPoint2New)
         m_valueCorrection->SetPoint(1, false, newValue.toDouble());
+    else if (sender() == m_correctionPoint3Orig)
+        m_valueCorrection->SetPoint(2, true, newValue.toDouble());
+    else if (sender() == m_correctionPoint3New)
+        m_valueCorrection->SetPoint(2, false, newValue.toDouble());
 }
 
 void ChannelSettings::_FillSensorItems(HwChannelProxy *channelProxy)
@@ -645,14 +672,17 @@ void ChannelSettings::setOriginalValue(bool checked)
     //this method is called just in a case the original value box is  enabled and
     //it is just in the case index is in range of this channel
     QLocale locale(QLocale::system());
-    unsigned currentValueIndex = _GetCurrentValueIndex(m_channelProxy);
-    if (currentValueIndex == ~0)
+    int currentValueIndex = _GetCurrentValueIndex(m_channelProxy);
+    if (currentValueIndex == -1)
     {
         qWarning("index for original value has not been found.");
         return;
     }
 
-    double currentValue = ((HwChannelProxy*)m_channelProxy)->GetOriginalValue(currentValueIndex);
+    HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
+    double originalValue = hwChannelProxy->GetOriginalValue(currentValueIndex);
+    double currentValue =  hwChannelProxy->GetValueWithCorrection(originalValue, m_valueCorrection);
+
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
@@ -660,7 +690,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     );
 
     //was changed in currentValueChanged
-    m_currentValue = currentValue;
+    m_currentValue = originalValue;
 }
 
 void ChannelSettings::setNaValue(bool)
@@ -897,6 +927,29 @@ void ChannelSettings::_SetHorizontalChannel(Measurement *m)
     m_graphicsContainer->SetHorizontalChannel(m, m->GetGC()->GetHorizontalChannelProxy(m)->GetChannel());
 }
 
+bool ChannelSettings::_CheckCorrectionPointsValidity()
+{
+    auto points = m_valueCorrection->GetPoints();
+
+    switch (static_cast<hw::ValueCorrection::CorrectionType>(m_valueCorrection->GetId())) {
+    case hw::ValueCorrection::CorrectionType::None:
+        return true;
+    case hw::ValueCorrection::CorrectionType::Offset:
+        return true;
+    case hw::ValueCorrection::CorrectionType::Linear:
+        if (ChannelBase::IsEqual(points[0].first, points[1].first) && !ChannelBase::IsEqual(points[0].second, points[1].second))
+        {
+            MyMessageBox::critical(this, tr("Entered different expected values for one meassured."));
+            return false;
+        }
+        return true;
+
+    default:
+        qDebug() << "usuported correction id " << m_valueCorrection->GetId();
+        return false;
+    }
+}
+
 bool ChannelSettings::BeforeAccept()
 {
     if (!_AxisCheckForRealTimeMode())
@@ -1028,10 +1081,18 @@ bool ChannelSettings::BeforeAccept()
             changed = true;
         }
 
-        if (*hwChannelProxy->GetProperties()->GetValueCorrection() != *m_valueCorrection)
+        if (*hwChannelProxy->GetValueCorrection() != *m_valueCorrection)
         {
-            hwChannelProxy->GetProperties()->ReplaceValueCorrection(m_valueCorrection);
+            if (!_CheckCorrectionPointsValidity())
+            {
+                return false;
+            }
+            hwChannelProxy->SetValueCorrection(m_valueCorrection);
             changed = true;
+            for (int i = 0; i < hwChannelProxy->GetValueCount(); ++i)
+            {
+                hwChannelProxy->GetChannel()->valueChanged(i);
+            }
         }
     }
 

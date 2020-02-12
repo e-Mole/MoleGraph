@@ -57,7 +57,7 @@ public:
     virtual unsigned GetValueCount() const
     { return m_values.size();}
 
-    double GetRawValue(unsigned index) const;
+    double GetRawValue(int index) const;
 
     virtual void AddValue( double value);
 
@@ -77,8 +77,10 @@ public:
     void SerializeColections(QDataStream &out) {Q_UNUSED(out);}
     void DeserializeColections(QDataStream &in, bool version) {Q_UNUSED(in); Q_UNUSED(version);}
 
-    virtual ValueType GetValueType(unsigned index) { Q_UNUSED(index); return ValueTypeUnknown; }
+    virtual ValueType GetValueType(int index) { Q_UNUSED(index); return ValueTypeUnknown; }
     static double GetNaValue();
+    static bool IsEqual(double first, double second);
+    virtual double GetValueWithCorrection(int index) {return m_values[index]; }
 };
 
 #endif // CHANNEL_H

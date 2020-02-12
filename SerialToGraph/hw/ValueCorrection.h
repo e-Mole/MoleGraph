@@ -14,6 +14,12 @@ class ValueCorrection : public NamedCollectionItem
     QVector<QPair<double, double>> m_points;
 
 public:
+    enum CorrectionType {
+        None = 0,
+        Offset = 1,
+        Linear =2
+    };
+
     ValueCorrection(QObject *parent, unsigned id, QString const &name, QString const &description, unsigned pointCount);
     ValueCorrection(QObject *parent, ValueCorrection *original);
 
@@ -24,6 +30,8 @@ public:
     bool operator!=(ValueCorrection const &second) const;
 
     void SetPoint(int order, bool orig, double value);
+    double GetValueWithCorrection(double value);
+    bool IsValid();
 signals:
 
 };

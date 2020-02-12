@@ -39,7 +39,6 @@ SOURCES += main.cpp\
     bases/PushButton.cpp \
     bases/RadioButton.cpp \
     bases/SpinBox.cpp \
-    graphics/HwChannelProperties.cpp \
     hw/HwConnector.cpp \
     hw/NamedCollectionItem.cpp \
     hw/PortBase.cpp \
@@ -113,7 +112,6 @@ HEADERS  += MainWindow.h \
     bases/PushButton.h \
     bases/RadioButton.h \
     bases/SpinBox.h \
-    graphics/HwChannelProperties.h \
     hw/HwConnector.h \
     hw/NamedCollectionItem.h \
     hw/PortBase.h \

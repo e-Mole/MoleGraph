@@ -1,5 +1,6 @@
 #include <QDebug>
 #include "ValueCorrection.h"
+#include <ChannelBase.h>
 
 namespace hw{
     ValueCorrection::ValueCorrection(
@@ -58,4 +59,41 @@ namespace hw{
             m_points[order].second = value;
         }
     }
+
+    double ValueCorrection::GetValueWithCorrection(double value)
+    {
+        if (qIsInf(value))
+            return value;
+
+        switch (static_cast<CorrectionType>(m_id)) {
+        case CorrectionType::None:
+            return value;
+        case CorrectionType::Offset:
+            /*
+             * yn = xn + y1 - x1
+             */
+        {    double y = value + (m_points[0].second - m_points[0].first);
+            qDebug() << "value with correction: " << y;
+            return y;
+        }
+        case CorrectionType::Linear:
+            /*
+             * y = bx + a
+             * b = (y2 - y1)/(x2-x1)
+             * a = y1 - x1((y2-y1)/(x2-x1))
+             * yn = ((y2-y1)/(x2-x1))(xn - x1) + y1
+             */
+            if (ChannelBase::IsEqual(m_points[0].first, m_points[1].first))
+            {
+                qDebug() << "orig points are the same";
+                return value;
+            }
+            return ((m_points[1].second - m_points[0].second) / (m_points[1].first - m_points[0].first)) * (value - m_points[0].first)  + m_points[0].second;
+        default:
+            qDebug() << "usuported correction id " << m_id;
+            return value;
+        }
+    }
+
+
 }

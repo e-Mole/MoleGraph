@@ -2,21 +2,21 @@
 
 #include <ChannelBase.h>
 #include <ChannelWidget.h>
-#include <graphics/HwChannelProperties.h>
+#include <graphics/ChannelProperties.h>
 #include <hw/Sensor.h>
 #include <hw/SensorQuantity.h>
 #include <hw/ValueCorrection.h>
 #include <HwChannel.h>
 
-HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget, HwChannelProperties *properties) :
-    ChannelProxyBase(parent, channel, channelWidget, properties)
+HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
+    ChannelProxyBase(parent, channel, channelWidget, nullptr)
 {
 
 }
 
-double HwChannelProxy::GetValue(unsigned index) const
+double HwChannelProxy::GetValue(int index) const
 {
-    return m_channel->GetRawValue(index);
+    return GetChannel()->GetValueWithCorrection(index);
 }
 
 void HwChannelProxy::ChangeValue(int index, double newValue)
@@ -26,8 +26,7 @@ void HwChannelProxy::ChangeValue(int index, double newValue)
 
 HwChannelProxy *HwChannelProxy::Clone(QObject *parent, ChannelWidget * newWidget)
 {
-    HwChannelProperties *newProperties = new HwChannelProperties(parent, GetProperties());
-    return new HwChannelProxy(parent, m_channel, newWidget, newProperties);
+    return new HwChannelProxy(parent, m_channel, newWidget);
 }
 
 HwChannel *HwChannelProxy::GetChannel() const
@@ -65,12 +64,12 @@ hw::SensorComponent *HwChannelProxy::GetSensorComponent()
     return GetChannel()->GetSensorComponent();
 }
 
-void HwChannelProxy::SetSensorComponent(hw::SensorComponent *sensorComponent)
+void HwChannelProxy::SetSensorComponent(hw::SensorComponent *component)
 {
-    GetChannel()->SetSensorComponet(sensorComponent);
+    GetChannel()->SetSensorComponet(component);
 }
 
-double HwChannelProxy::GetOriginalValue(int index)
+double HwChannelProxy::GetOriginalValue(int index) const
 {
     return GetChannel()->GetOriginalValue(index);
 }
@@ -80,18 +79,17 @@ int HwChannelProxy::GetHwIndex() const
     return GetChannel()->GetHwIndex();
 }
 
-void HwChannelProxy::ReplaceValuecorrection(hw::ValueCorrection *correction)
+hw::ValueCorrection *HwChannelProxy::GetValueCorrection()
 {
-    GetProperties()->ReplaceValueCorrection(correction);
+    return GetChannel()->GetValueCorrection();
 }
 
-HwChannelProperties *HwChannelProxy::GetProperties()
+double HwChannelProxy::GetValueWithCorrection(double value, hw::ValueCorrection *correction) const
 {
-    return dynamic_cast<HwChannelProperties*>(m_properties);
+    return GetChannel()->GetValueWithCorrection(value, correction);
 }
 
-void HwChannelProxy::_SetProperties(HwChannelProperties *properties)
+void HwChannelProxy::SetValueCorrection(hw::ValueCorrection *correction)
 {
-    delete m_properties;
-    m_properties = properties;
+    GetChannel()->SetValueCorrection(correction);
 }

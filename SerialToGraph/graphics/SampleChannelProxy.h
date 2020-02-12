@@ -34,7 +34,7 @@ public:
     QString GetRealTimeText(double value, bool range) const;
     SampleChannelProperties::Style GetStyle() const;
     void SetStyle(SampleChannelProperties::Style style);
-    virtual double GetValue(unsigned index) const;
+    virtual double GetValue(int index) const;
     virtual SampleChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);
     SampleChannelProperties::TimeUnits GetTimeUnits() const;
     void SetTimeUnits(SampleChannelProperties::TimeUnits units);

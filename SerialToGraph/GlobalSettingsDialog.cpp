@@ -245,7 +245,7 @@ bool GlobalSettingsDialog::BeforeAccept()
         updateChannelSizeFactor(m_channelSizeFactor->value());
     }
 
-    if (!qFuzzyCompare(m_settings.GetChannelGraphPenWidth(), m_channelGraphPenWidth->value()))
+    if (!ChannelBase::IsEqual(m_settings.GetChannelGraphPenWidth(), m_channelGraphPenWidth->value()))
     {
         m_settings.SetChannelGraphPenWidth(m_channelGraphPenWidth->value());
         updateChannelGraphPenWidth(m_channelGraphPenWidth->value());

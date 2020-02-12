@@ -7,7 +7,7 @@
 #include <GlobalSettings.h>
 #include <graphics/GraphicsContainer.h>
 #include <graphics/HwChannelProxy.h>
-#include <graphics/HwChannelProperties.h>
+#include <graphics/ChannelProperties.h>
 #include <graphics/SampleChannelProxy.h>
 #include <HwChannel.h>
 #include <hw/HwConnector.h>
@@ -449,6 +449,11 @@ void Measurement::_SerializeChannelValues(ChannelBase *channel, QDataStream &out
         );
 
     out << channel;
+    HwChannel *hwChannel = dynamic_cast<HwChannel*>(channel);
+    if (hwChannel != nullptr)
+    {
+        hwChannel->SerializeValueCorrection(out);
+    }
     unsigned valueCount = ((m_saveLoadValues) ? channel->GetValueCount() : 0);
     out << valueCount;
     for (unsigned i = 0; i < valueCount; ++i)
@@ -488,7 +493,7 @@ void Measurement::SerializeColections(QDataStream &out)
                 HwChannelProxy * channelProxy = dynamic_cast<HwChannelProxy *>(GetGC()->GetChannelProxy(channel));
                 if (channelProxy != nullptr)
                 {
-                    channelProxy->GetProperties()->Serialize(out);
+                    //channelProxy->GetProperties()->Serialize(out);
                 }
 
             }
@@ -498,8 +503,12 @@ void Measurement::SerializeColections(QDataStream &out)
     _SerializeChannelValues(m_sampleChannel, out);
     out << m_channels.size()-1;
     foreach (ChannelBase *channel, m_channels)
+    {
         if (channel->GetType() == ChannelBase::Type_Hw)
+        {
             _SerializeChannelValues(channel, out);
+        }
+    }
 }
 
 bool SortChannels(ChannelBase *first, ChannelBase *second)
@@ -543,15 +552,7 @@ void Measurement::_DeserializeChannel(QDataStream &in, Axis *valueAxis, unsigned
         GetGC()->UntrackSampleChannelPropertiesChanged(sampleChannelProxy);
     }
     in >> channelProxy;
-    if (collectionVersion > 4)
-    {
-        HwChannelProxy * hwChannelProxy = dynamic_cast<HwChannelProxy *>(channelProxy);
-        if (hwChannelProxy != nullptr)
-        {
-            hwChannelProxy->GetProperties()->Deserialize(in, m_sensorManager);
-        }
 
-    }
     if (sampleChannelProxy)
     {
         GetGC()->TrackSampleChannelPropertiesChanged(sampleChannelProxy);
@@ -601,6 +602,16 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
         in >> channel;
     }
 
+    if (collectionVersion > 4)
+    {
+        qDebug() << "value correction will be deserialized";
+        HwChannel *hwChannel = dynamic_cast<HwChannel *>(channel);
+        if (hwChannel != nullptr)
+        {
+            hwChannel->DeserializeValueCorrection(in, m_sensorManager);
+        }
+    }
+
     unsigned valueCount;
     in >> valueCount;
     double value;
@@ -637,6 +648,7 @@ void Measurement::_DeserializeChannelData(QDataStream &in, unsigned collectionVe
         }
     }
 }
+
 struct ChannelComparator
 {
     bool operator()(const ChannelBase * first, const ChannelBase *second)
@@ -695,7 +707,6 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVers
         m_anyCheckSumDoesntMatch = false;
         m_valueSetCount = 0;
     }
-
 
     m_widget->RefillWidgets();
     m_widget->replaceDisplays();//false

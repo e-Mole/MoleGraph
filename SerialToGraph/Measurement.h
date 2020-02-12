@@ -87,6 +87,7 @@ private:
     void _SetAnySampleMissed(bool missed) {m_anySampleMissed = missed; }
     void _SetType(Type type);
     ChannelBase *_FindChannel(int hwIndex);
+
     void _SerializeChannelValues(ChannelBase *channel, QDataStream &out);
     void _PhonySetColections(bool unused) {Q_UNUSED(unused); }
     bool _PhonyGetcollections() { return false; }

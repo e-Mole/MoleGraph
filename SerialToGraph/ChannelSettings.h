@@ -54,6 +54,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _SetHorizontalChannel(Measurement *m);
     void _ConnectCurrentValueChange();
     void _DisconnectCurrentValueChange();
+    bool _CheckCorrectionPointsValidity();
     virtual bool BeforeAccept();
     virtual void BeforeReject();
 
@@ -80,6 +81,8 @@ class ChannelSettings : public bases::FormDialogColor
     LineEdit * m_correctionPoint1New;
     LineEdit * m_correctionPoint2Orig;
     LineEdit * m_correctionPoint2New;
+    LineEdit * m_correctionPoint3Orig;
+    LineEdit * m_correctionPoint3New;
     PushButton *m_originlValue;
     PushButton *m_naValue;
 

@@ -38,7 +38,9 @@ class Measurement : public QObject
     Q_PROPERTY(bool anyChecksumDoesntMatch READ _GetAnyChecksumDoesntMatchForSerialization WRITE _SetAnyChecksumDoesntMatch)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
     Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
-    Q_PROPERTY(bool marksShown READ GetMarksShown WRITE _SetMarksShown)
+
+    //for the back comparibility
+    //Q_PROPERTY(bool marksShown WRITE _SetMarksShown)
 
     //I was not patient to search how to serialize collections like axis or channels so I do it manually
     //version 3 contains original values in HwChannel coolections
@@ -93,7 +95,7 @@ private:
     bool _PhonyGetcollections() { return false; }
     State _GetStateForSerialization();
     void _SetColor(QColor const &color);
-    void _SetMarksShown(bool marksShown);
+
     bool _GetAnyChecksumDoesntMatchForSerialization() { return m_saveLoadValues ? m_anyCheckSumDoesntMatch : false; }
     void _SetAnyChecksumDoesntMatch(bool doesntMatch) { m_anyCheckSumDoesntMatch = doesntMatch; }
     void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
@@ -152,13 +154,13 @@ private:
 
     SampleChannel *GetSampleChannel() {return m_sampleChannel; }
     QColor &GetColor() { return m_color; }
-    bool GetMarksShown();
     bool IsPlotInRangeMode();
     int GetCurrentIndex();
     void DrawRestData();
     void RemoveWidget();
     QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
     unsigned GetChannelIndex(ChannelBase *channel);
+    void SetAllMarksShown(bool marksShown);
 signals:
     void stateChanged();
     void nameChanged();

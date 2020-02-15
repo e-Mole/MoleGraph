@@ -32,7 +32,7 @@ public:
 
     void SetMarkShape(unsigned shapeIndex);
     void ChangeSelectedHorizontalValue(double horizontalValue);
-    void ShowAllMarks(bool showAllMarks);
+    void SetAllMarksShown(bool showAllMarks);
     void SetColor(const QColor& color);
     void SetPenStyle(Qt::PenStyle penStyle);
     int GetShapeIndex() const;
@@ -42,6 +42,7 @@ public:
     void AssignToGraphAxis(QCPAxis *graphAxis);
     void SetActive(bool active);
     void SetPenWidth(double width);
+    bool AreAllMarksShown() { return m_showAllMarks; }
 };
 
 #endif // CHANNELGRAPH_H

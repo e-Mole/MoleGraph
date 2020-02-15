@@ -47,7 +47,6 @@ class GraphicsContainer : public QWidget
     double m_lastMeasuredHorizontalValue;
     QVector<Axis*> m_axes;
 
-    bool m_marksShown;
     ChannelWidget *m_sampleChannelWidget;
     SampleChannelProxy *m_sampleChannelProxy;
     KeyShortcut *m_plotKeyShortcut;
@@ -75,7 +74,7 @@ class GraphicsContainer : public QWidget
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
 
 public:
-    GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name, bool markShown);
+    GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name);
     ~GraphicsContainer();
     void SetGrid(bool grid);
     void RemoveChannelProxy(ChannelProxyBase *channelProxy);
@@ -107,7 +106,6 @@ public:
     int GetAxisIndex(Axis *axis);
     Axis * GetFirstVerticalAxis();
     void CloneAxes(QVector<Axis *> const &sourceAxes);
-    bool GetMarksShown();
     void SetMarksShown(bool marksShown);
     ChannelGraph *AddChannelGraph(Axis *valueAxis);
     Axis *InitializeHorizontalAxis();
@@ -115,8 +113,7 @@ public:
     void UpdateAxisNames();
     void UpdateAxis(Axis *axis);
     void UpdateAxes();
-    ChannelGraph * AddBlackChannelGraph(Axis *valueAxis);
-    ChannelGraph * AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle);
+    ChannelGraph * AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, bool marksShown, Qt::PenStyle penStyle);
     void SetAxisStyle(Axis *axis, bool dateTime, QString const &format);
     void RescaleAxes(ChannelWidget *channelWidget);
     ChannelProxyBase *GetHorizontalChannelProxy() const;

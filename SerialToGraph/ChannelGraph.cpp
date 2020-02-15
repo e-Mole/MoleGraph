@@ -149,7 +149,7 @@ void ChannelGraph::ChangeSelectedHorizontalValue(double horizontalValue)
     m_selectedHorizontalValue = horizontalValue;
 }
 
-void ChannelGraph::ShowAllMarks(bool showAllMarks)
+void ChannelGraph::SetAllMarksShown(bool showAllMarks)
 {
     m_showAllMarks = showAllMarks;
 }

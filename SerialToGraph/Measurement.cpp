@@ -50,8 +50,7 @@ Measurement::Measurement(
         new GraphicsContainer(
             parent,
             this,
-            tr("Measurement %1").arg(context.m_measurements.size() + 1),
-            source != NULL ? source->GetMarksShown() :false
+            tr("Measurement %1").arg(context.m_measurements.size() + 1)
         )
     ),
     m_context(context),
@@ -729,14 +728,13 @@ void Measurement::_SetColor(QColor const &color)
     colorChanged();
 }
 
-bool Measurement::GetMarksShown()
+void Measurement::SetAllMarksShown(bool marksShown)
 {
-    return m_widget->GetMarksShown();
-}
-
-void Measurement::_SetMarksShown(bool marksShown)
-{
-    m_widget->SetMarksShown(marksShown);
+    foreach (ChannelProxyBase *channelProxy, m_widget->GetChannelProxies())
+    {
+        channelProxy->SetAllMarksShown(marksShown);
+    }
+    m_widget->GetPlot()->ReplotIfNotDisabled();
 }
 
 void Measurement::_SetType(Type type)

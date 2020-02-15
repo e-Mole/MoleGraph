@@ -20,7 +20,8 @@ class MeasurementSettings  : public bases::FormDialogColor
     LineEdit *m_period;
     bases::ComboBox *m_sampleUnits;
     bases::CheckBox *m_marksShown;
-
+    Qt::CheckState m_marksShownCheckState;
+    Qt::CheckState _PrepareMarksShownState();
     bool BeforeAccept();
 public:
     MeasurementSettings(QWidget *parent, Measurement *measurement, GraphicsContainer *graphicsContainer, bool acceptChangesByDialogClosing);

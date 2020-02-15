@@ -1,5 +1,5 @@
-#ifndef CHANNELPROPERTIESBASE_H
-#define CHANNELPROPERTIESBASE_H
+#ifndef CHANNELPROXYBASE_H
+#define CHANNELPROXYBASE_H
 
 #include <QObject>
 #include <ChannelBase.h>
@@ -22,6 +22,7 @@ class ChannelProxyBase : public QObject
     Q_PROPERTY(Qt::PenStyle penStyle READ GetPenStyle WRITE SetPenStyle)
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
     Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
+    Q_PROPERTY(bool allMarksShown READ AreAllMarksShown WRITE SetAllMarksShown)
 
     double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
@@ -105,6 +106,8 @@ public:
     void SetMinimumFontSize(unsigned sizeFactor);
     Axis *GetAxis();
     void SetChannelGraphPenWidth(double thickness);
+    bool AreAllMarksShown();
+    void SetAllMarksShown(bool shown);
 };
 
-#endif // CHANNELPROPERTIESBASE_H
+#endif // CHANNELPROXYBASE_H

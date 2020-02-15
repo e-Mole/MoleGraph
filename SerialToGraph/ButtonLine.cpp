@@ -183,7 +183,7 @@ void ButtonLine::_FillRecentFileMenu()
     m_recentFileActions.clear();
 
     unsigned count = GlobalSettings::GetInstance().GetRecetFilePathCount();
-    m_recentFilesMenu->setDisabled(true);//0 == count);
+    m_recentFilesMenu->setDisabled(0 == count);
     for (unsigned i = 0; i < count; i++)
     {
         QString text = GlobalSettings::GetInstance().GetRecentFilePath(i);

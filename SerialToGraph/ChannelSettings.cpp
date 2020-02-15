@@ -27,6 +27,7 @@
 #include <QHBoxLayout>
 #include <bases/Label.h>
 #include <bases/LineEdit.h>
+#include <bases/CheckBox.h>
 #include <QLocale>
 #include <bases/PushButton.h>
 #include <QSettings>
@@ -164,7 +165,9 @@ ChannelSettings::ChannelSettings(
     m_currentValueChanged(false),
     m_currentValue(ChannelBase::GetNaValue()),
     m_sensorManager(sensorManager),
-    m_valueCorrection(nullptr)
+    m_valueCorrection(nullptr),
+    m_sensorPropertiesInitialized(false),
+    m_showAllMarks(new bases::CheckBox(this))
 {
     _HideAllOptional();
 
@@ -197,6 +200,7 @@ ChannelSettings::ChannelSettings(
     AddColorButtonRow(channelProxy->GetForeColor());
     _InitializeAxisCombo();
     _InitializeShapeCombo(channelProxy);
+    _InitializeShowAllMarks(channelProxy->AreAllMarksShown());
     _InitializePenStyle(channelProxy->GetPenStyle());
 }
 
@@ -309,6 +313,7 @@ void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
     _InitializeSensorItem(m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
     _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQuantityChanged(int)));
     _FillSensorItems(channelProxy);
+    m_sensorPropertiesInitialized = true;
 }
 
 void ChannelSettings::_InitializeCorrectionPoint(QString const &label, LineEdit *origValueEdit, LineEdit *newValueEdit)
@@ -490,11 +495,13 @@ void ChannelSettings::sensorNameChanged(int index)
     if (index != -1)
     {
         _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
-
     }
 }
 void ChannelSettings::sensorQuantityChanged(int index)
 {
+    if (!m_sensorPropertiesInitialized)
+        return; //changed by pre-filling
+
     if (index == -1)
     {
         m_name->setText("");
@@ -718,6 +725,12 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
     m_penStyle->setCurrentIndex((int)selected);
 
     m_formLayout->addRow(new Label(tr("Pen Style"), this), m_penStyle);
+}
+
+void ChannelSettings::_InitializeShowAllMarks(bool show)
+{
+    m_showAllMarks->setChecked(show);
+    m_formLayout->addRow(new Label(tr("Show all marks"), this), m_showAllMarks);
 }
 
 void ChannelSettings::_FillTimeFeatures(SampleChannelProxy *channelProxy)
@@ -1056,6 +1069,12 @@ bool ChannelSettings::BeforeAccept()
         changed = true;
         m_channelProxy->SetPenStyle((Qt::PenStyle)m_penStyle->currentIndex());
         rescaleAxis = true;
+    }
+
+    if (m_showAllMarks->isChecked() != m_channelProxy->AreAllMarksShown())
+    {
+        m_channelProxy->SetAllMarksShown(m_showAllMarks->isChecked());
+        changed = true;
     }
 
     if (hwChannelProxy)

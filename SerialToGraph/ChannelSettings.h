@@ -21,6 +21,7 @@ class QFrame;
 class LineEdit;
 class QString;
 class SampleChannelProxy;
+namespace bases {class CheckBox; }
 
 class ChannelSettings : public bases::FormDialogColor
 {
@@ -33,6 +34,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _RefillAxisCombo();
     bool _AxisCheckForRealTimeMode();
     void _InitializePenStyle(Qt::PenStyle selected);
+    void _InitializeShowAllMarks(bool show);
     unsigned _GetCurrentValueIndex(ChannelProxyBase *channelProxy);
     void _InitializeValueLine(HwChannelProxy *channelProxy);
     void _FillValueLine(HwChannelProxy *channelProxy);
@@ -85,11 +87,13 @@ class ChannelSettings : public bases::FormDialogColor
     LineEdit * m_correctionPoint3New;
     PushButton *m_originlValue;
     PushButton *m_naValue;
+    bases::CheckBox *m_showAllMarks;
 
     bool m_currentValueChanged;
     double m_currentValue;
     hw::SensorManager *m_sensorManager;
     hw::ValueCorrection *m_valueCorrection;
+    bool m_sensorPropertiesInitialized;
 public:
     ChannelSettings(QVector<Measurement *> measurements,
         GraphicsContainer *graphicsContainer,

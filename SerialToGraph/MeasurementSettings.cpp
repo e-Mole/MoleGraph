@@ -1,5 +1,6 @@
 #include "MeasurementSettings.h"
 #include <graphics/GraphicsContainer.h>
+#include <graphics/ChannelProxyBase.h>
 #include <MainWindow.h>
 #include <Measurement.h>
 #include <MyMessageBox.h>
@@ -50,9 +51,28 @@ MeasurementSettings::MeasurementSettings(
     AddColorButtonRow(m_measurement->m_color);
 
     m_marksShown = new bases::CheckBox(this);
-    m_marksShown->setChecked(m_graphicsContainer->GetMarksShown());
-    m_formLayout->addRow(new Label(tr("Show Marks")), m_marksShown);
 
+    m_marksShownCheckState = _PrepareMarksShownState();
+    m_marksShown->setCheckState(m_marksShownCheckState);
+    m_formLayout->addRow(new Label(tr("Show Marks")), m_marksShown);
+}
+
+Qt::CheckState MeasurementSettings::_PrepareMarksShownState()
+{
+    bool foundChecked = false;
+    bool foundUnchecked = false;
+    foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
+    {
+        if (proxy->AreAllMarksShown())
+            foundChecked = true;
+        else
+            foundUnchecked = true;
+    }
+    if (foundChecked & foundUnchecked)
+        return Qt::PartiallyChecked;
+    if (foundChecked)
+        return Qt::Checked;
+    return  Qt::Unchecked;
 }
 
 void MeasurementSettings::disablePeriodAndUnits(int disabled)
@@ -95,10 +115,10 @@ bool MeasurementSettings::BeforeAccept()
         m_measurement->_SetColor(m_color);
     }
 
-    if (m_measurement->GetMarksShown() != m_marksShown->isChecked())
+    if (m_marksShownCheckState != m_marksShown->checkState() && m_marksShown->checkState() != Qt::PartiallyChecked)
     {
         changed = true;
-        m_measurement->_SetMarksShown(m_marksShown->isChecked());
+        m_measurement->SetAllMarksShown(m_marksShown->checkState() == Qt::Checked);
     }
 
     m_changed = changed;

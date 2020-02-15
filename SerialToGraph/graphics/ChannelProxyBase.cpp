@@ -360,3 +360,13 @@ void ChannelProxyBase::SetChannelGraphPenWidth(double thickness)
 {
     GetChannelGraph()->SetPenWidth(thickness);
 }
+
+bool ChannelProxyBase::AreAllMarksShown()
+{
+    return m_channelWidget->GetChannelGraph()->AreAllMarksShown();
+}
+
+void ChannelProxyBase::SetAllMarksShown(bool shown)
+{
+    return m_channelWidget->GetChannelGraph()->SetAllMarksShown(shown);
+}

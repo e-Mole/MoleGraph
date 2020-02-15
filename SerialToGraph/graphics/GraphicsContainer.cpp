@@ -33,7 +33,7 @@
 
 using namespace atog;
 
-GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, const QString &name, bool markShown) :
+GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, const QString &name) :
     QWidget(parent),
     m_mainMeasurement(mainMeasurement),
     m_mainLayout(NULL),
@@ -47,7 +47,6 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_currentIndex(-1),
     m_followMode(true),
     m_lastMeasuredHorizontalValue(std::numeric_limits<double>::infinity()),
-    m_marksShown(markShown),
     m_sampleChannelWidget(NULL),
     m_sampleChannelProxy(NULL),
     m_plotKeyShortcut(NULL),
@@ -538,36 +537,20 @@ void GraphicsContainer::CloneAxes(QVector<Axis *> const &sourceAxes)
     }
 }
 
-bool GraphicsContainer::GetMarksShown()
-{
-    return m_marksShown;
-}
-
 void GraphicsContainer::SetMarksShown(bool marksShown)
 {
-    m_marksShown = marksShown;
-
     foreach (ChannelProxyBase *channelProxy, m_channelProxies)
     {
-        channelProxy->GetChannelGraph()->ShowAllMarks(m_marksShown);
+        channelProxy->SetAllMarksShown(marksShown);
     }
     m_plot->ReplotIfNotDisabled();
 }
 
-ChannelGraph * GraphicsContainer::AddBlackChannelGraph(Axis * valueAxis)
-{
-    QCPAxis *keyAxis = (valueAxis->GetGraphAxis() == m_plot->xAxis) ?
-        m_plot->yAxis : m_plot->xAxis;
-    return m_plot->AddChannelGraph(
-        keyAxis, valueAxis, Qt::black, 2/*ssCross*/, GetMarksShown(), Qt::SolidLine);
-
-}
-
-ChannelGraph * GraphicsContainer::AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, Qt::PenStyle penStyle)
+ChannelGraph * GraphicsContainer::AddChannelGraph(Axis *valueAxis, QColor const &color, unsigned shapeIndex, bool marksShown, Qt::PenStyle penStyle)
 {
     QCPAxis *keyAxis = (valueAxis->GetGraphAxis() == GetPlot()->xAxis) ?
         GetPlot()->yAxis : GetPlot()->xAxis;
-    return m_plot->AddChannelGraph(keyAxis, valueAxis, color, shapeIndex, GetMarksShown(), penStyle);
+    return m_plot->AddChannelGraph(keyAxis, valueAxis, color, shapeIndex, marksShown, penStyle);
 }
 
 
@@ -754,6 +737,7 @@ ChannelGraph* GraphicsContainer::CloneChannelGraph(GraphicsContainer *sourceCont
         axis,
         sourceChannelWidget->GetForeColor(),
         sourceChannelWidget->GetChannelGraph()->GetShapeIndex(),
+        sourceChannelWidget->GetChannelGraph()->AreAllMarksShown(),
         sourceChannelWidget->GetPenStyle()
     );
 }
@@ -800,7 +784,7 @@ void GraphicsContainer::UntrackSampleChannelPropertiesChanged(SampleChannelProxy
 
 SampleChannelProxy *GraphicsContainer::CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost)
 {   
-    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 2/*ssCross*/, Qt::SolidLine);
+    ChannelGraph *channelGraph = AddChannelGraph(valueAxis, Qt::black, 2/*ssCross*/, false, Qt::SolidLine);
     SampleChannelProperties *properties = new SampleChannelProperties(
         this, SampleChannelProperties::Samples, SampleChannelProperties::Sec, SampleChannelProperties::hh_mm_ss);
 
@@ -882,7 +866,7 @@ HwChannelProxy *GraphicsContainer::_CreateHwCannelProxy(HwChannel *channel, Chan
 HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
     HwChannel *channel, Axis *valueAxis, unsigned shortcutOrder, QString const name, QColor const &color, bool visible, QString const & units, bool isGhost)
 {
-    ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 2/*ssCross*/, Qt::SolidLine);
+    ChannelGraph * channelGraph = AddChannelGraph(valueAxis, color, 2/*ssCross*/, false, Qt::SolidLine);
     ChannelWidget *widget = new ChannelWidget(
         this,
         channelGraph,

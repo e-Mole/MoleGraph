@@ -18,7 +18,13 @@
 			"name" : "Linear",
 			"description": "y = bx + a",
 			"points" : 2
-        }
+        },
+        {
+            "id": "3",
+			"name" : "Quadratic",
+			"description": "y = cx^2 + bx + a",
+			"points" : 3
+		}
     ],
     "quantities":
   [

@@ -120,8 +120,8 @@ namespace hw
             unsigned id = correctionObject["id"].toString().toUInt();
             QString name = correctionObject["name"].toString();
             QString description = correctionObject["description"].toString();
-            unsigned points = correctionObject["points"].toInt();
-            m_corrections.push_back(new ValueCorrection(this, id, name, description, points));
+            unsigned pointCount = correctionObject["points"].toInt();
+            m_corrections.push_back(new ValueCorrection(this, id, name, description, pointCount));
         }
 
         QJsonArray jsonQuantities = object["quantities"].toArray();

@@ -130,7 +130,7 @@ double HwChannel::GetValueWithCorrection(int index)
 void HwChannel::SerializeValueCorrection(QDataStream &out)
 {
     out << m_correction->GetId();
-    out << m_correction->GetPoints().size();
+    out << m_correction->GetPointCount();
     foreach (auto pair, m_correction->GetPoints())
     {
         out << QString().number(pair.first);

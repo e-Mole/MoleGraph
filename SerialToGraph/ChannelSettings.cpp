@@ -122,6 +122,8 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Frequency (Rising)");
     if (quantityName == "Frequency (Falling)")
         return tr("Frequency (Falling)");
+    if (quantityName == "Frequency")
+        return tr("Frequency");
 
     return quantityName; //TODO: TFs mod: Remove!!!
 

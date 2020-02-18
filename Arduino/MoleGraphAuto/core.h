@@ -30,6 +30,9 @@
 #include "ph.h"
 #include "luxbh1750.h"
 #include "lsm303dlhc.h"
+#include "pulse.h"
+#include "max6675t.h"
+
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG
 
@@ -81,6 +84,7 @@ enum SensorType {
   SENSOR_VEML6070     = 31,   // I031 Cidlo UV zareni (s VEML6070)
   SENSOR_LUXBH1750    = 32,   // I032 Cidlo intenzity svetla (BH1750) - hodnota v luxech
   SENSOR_SHOCKKY31    = 33,   // D033 Cidlo narazu - hodnota 0/1
+  SENSOR_MAX6675      = 34,   // D034 Cidlo teploty - MAX6675 + Termoclanek typu K
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu

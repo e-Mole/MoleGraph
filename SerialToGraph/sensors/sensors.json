@@ -183,6 +183,10 @@
     {
       "id" : 38,
       "name" : "Frequency (Falling)"
+    },
+    {
+      "id" : 39,
+      "name" : "Frequency"
     }
   ],
 	"sensors": [
@@ -227,6 +231,45 @@
         {
             "components": [
                 {
+                    "correction": "Linear",
+                    "quantity": "Temperature",
+                    "unit": "°C"
+                }
+            ],
+            "id": 34,
+            "name": "Thermometer (K-Type, MAX6675)",
+            "note": "Measuring range -200..+1200°C. Resolution 0.25°C, accuracy around ±2°C. Maximum sampling rate 4Hz. Error state (no thermocouple) send value -500."
+        },
+        {
+            "components": [
+                {
+                    "correction": "Linear",
+                    "quantity": "Temperature",
+                    "unit": "°C"
+                },
+                {
+                    "correction": "Linear",
+                    "quantity": "Temperature",
+                    "unit": "°C"
+                }
+            ],
+            "id": 5,
+            "name": "IR Thermometer (MLX90614)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "offset",
+                    "quantity": "Pressure",
+                    "unit": "Pa"
+                }
+            ],
+            "id": 6,
+            "name": "Pressure sensor (MPX5700DP)"
+        },
+        {
+            "components": [
+                {
                     "correction": "offset",
                     "quantity": "Pressure",
                     "unit": "Pa"
@@ -254,6 +297,17 @@
             ],
             "id": 2,
             "name": "Pressure + Thermometer + Hygrometer (BME280)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "offset",
+                    "quantity": "Force",
+                    "unit": "N"
+                }
+            ],
+            "id": 7,
+            "name": "Force sensor (HX711)"
         },
         {
             "components": [
@@ -315,44 +369,6 @@
             ],
             "id": 3,
             "name": "Accelerometer + Magnetometer (LSM303DLHC)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "Linear",
-                    "quantity": "Temperature",
-                    "unit": "°C"
-                },
-                {
-                    "correction": "Linear",
-                    "quantity": "Temperature",
-                    "unit": "°C"
-                }
-            ],
-            "id": 5,
-            "name": "IR Thermometer (MLX90614)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "offset",
-                    "quantity": "Pressure",
-                    "unit": "Pa"
-                }
-            ],
-            "id": 6,
-            "name": "Pressure sensor (MPX5700DP)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "offset",
-                    "quantity": "Force",
-                    "unit": "N"
-                }
-            ],
-            "id": 7,
-            "name": "Force sensor (HX711)"
         },
         {
             "components": [
@@ -514,7 +530,7 @@
                 {
                     "correction": "",
                     "quantity": "Illuminace",
-                    "unit": ""
+                    "unit": "RAW"
                 },
                 {
                     "correction": "",
@@ -593,8 +609,18 @@
             "components": [
                 {
                     "correction": "",
-                    "quantity": "Voltage",
-                    "unit": "V"
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "",
+                    "quantity": "Frequency",
+                    "unit": "BPM"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Trigger",
+                    "unit": ""
                 }
             ],
             "id": 22,

@@ -31,6 +31,8 @@ namespace hw
             return tr("Thermometer (DS18B20)");
         if (sensorName == "Pressure + Thermometer + Hygrometer (BME280)")
             return tr("Pressure + Thermometer + Hygrometer (BME280)");
+        if (sensorName == "Thermometer (K-Type, MAX6675)")
+            return tr("Thermometer (K-Type, MAX6675)");
         if (sensorName == "Accelerometer + Magnetometer (LSM303DLHC)")
             return tr("Accelerometer + Magnetometer (LSM303DLHC)");
         if (sensorName == "IR Thermometer (MLX90614)")

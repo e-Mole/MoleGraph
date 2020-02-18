@@ -188,7 +188,7 @@ ChannelSettings::ChannelSettings(
         _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
         _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
         AddSeparator();
-        _InitializeCorrectionItems(dynamic_cast<HwChannelProxy*>(channelProxy));
+        _InitializeCorrectionItems((dynamic_cast<HwChannelProxy*>(channelProxy))->GetValueCorrection());
         AddSeparator();
         m_name->setVisible(true);
         m_formLayout->addRow(new Label(tr("Title"), this), m_name);
@@ -307,6 +307,16 @@ void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
     );
 }
 
+void ChannelSettings::sensorQuantityIndexChanged(int index)
+{
+    if (index == -1)
+        return;
+
+    unsigned currentSensorId = m_sensorNameComboBox->currentData().toInt();
+    hw::SensorComponent *component = m_sensorManager->GetSensor(currentSensorId)->GetComponent(index);
+    hw::ValueCorrection * correction = component->GetValueCorrection();
+    m_correctionComboBox->setCurrentIndex(correction->GetId());
+}
 void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
 {
     _InitializeSensorItem(m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
@@ -404,11 +414,11 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
     }
 }
 
-void ChannelSettings::_InitializeCorrectionItems(HwChannelProxy *channelProxy)
+void ChannelSettings::_InitializeCorrectionItems(hw::ValueCorrection * originalCorrection)
 { 
-    m_valueCorrection = new hw::ValueCorrection(this, channelProxy->GetValueCorrection());
+    m_valueCorrection = new hw::ValueCorrection(this, originalCorrection);
     m_correctionComboBox->setVisible(true);
-    m_correctionComboBox->setEnabled(true);
+     m_correctionComboBox->setEnabled(true);
     m_formLayout->addRow(new Label("Correction Type", this), m_correctionComboBox);
 
     m_correctionPoint1Orig->setVisible(true);
@@ -481,6 +491,7 @@ void ChannelSettings::_FillSensorItems(HwChannelProxy *channelProxy)
         _FillSensorPortCB(channelProxy);
         _FillSensorNameCB(channelProxy);
         _FillSensorQuanitityCB(channelProxy);
+        connect(m_sensorQuantityComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sensorQuantityIndexChanged(int)));
     }
 }
 

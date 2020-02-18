@@ -44,7 +44,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _InitializeSensorItems(HwChannelProxy *channelProxy);
     void _InitializeCorrectionPoint(QString const &label, LineEdit *origValueEdit, LineEdit *newValueEdit);
     void _FillCorrectionValues(unsigned id, bool addItem);
-    void _InitializeCorrectionItems(HwChannelProxy *channelProxy);
+    void _InitializeCorrectionItems(hw::ValueCorrection *originalCorrection);
     void _FillSensorItems(HwChannelProxy *channelProxy);
     void _InitializeSensorItem(bases::ComboBox *item, const QString &label, const char *slot);
     void _FillSensorQuanitityCB(HwChannelProxy *channelProxy);
@@ -115,6 +115,7 @@ private slots:
     void sensorPortChanged(int index);
     void correctionTypeChanged(int index);
     void correctionVariableChanged(QString newValue);
+    void sensorQuantityIndexChanged(int index);
 };
 
 #endif // CHANNELSETTINGS_H

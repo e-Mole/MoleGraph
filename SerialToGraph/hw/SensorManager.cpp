@@ -110,8 +110,6 @@ namespace hw
         }
         QJsonDocument document = QJsonDocument::fromJson(jsonData.toUtf8());
         QJsonObject object = document.object();
-        //unsigned jsonVersion = object["version"].toInt();
-        //Q_UNUSED(jsonVersion)
 
         QJsonArray jsonCorrections = object["corrections"].toArray();
         foreach (QJsonValue const &correctionValue, jsonCorrections)

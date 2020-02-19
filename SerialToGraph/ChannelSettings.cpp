@@ -34,6 +34,21 @@
 #include <QString>
 #include <SampleChannel.h>
 
+QString ChannelSettings::_GetValueCorrectionTranslation(QString const &correctionName)
+{
+    if (correctionName == "None")
+        return tr("None");
+    if (correctionName == "Offset")
+        return tr("Offset");
+    if (correctionName == "Linear")
+        return tr("Linear");
+    if (correctionName == "Quadratic")
+        return tr("Quadratic");
+
+    qWarning() << "unknown correction to translate: " << correctionName;
+    return  correctionName;
+}
+
 QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName)
 {
 
@@ -125,9 +140,8 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
     if (quantityName == "Frequency")
         return tr("Frequency");
 
+    qWarning() << "unknown quantity to translate: " << quantityName;
     return quantityName; //TODO: TFs mod: Remove!!!
-
-    qWarning() << "unknown quantity to translate " << quantityName;
 }
 
 ChannelSettings::ChannelSettings(
@@ -347,7 +361,7 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
         if (addItem)
         {
             m_correctionComboBox->addItem(
-                correction->GetName() +  " (" + correction->GetDescription() +")", correction->GetId()
+                _GetValueCorrectionTranslation(correction->GetName()) +  " (" + correction->GetDescription() +")", correction->GetId()
             );
         }
         if (id == correction->GetId())

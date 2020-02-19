@@ -421,7 +421,7 @@ void ChannelSettings::_InitializeCorrectionItems(hw::ValueCorrection * originalC
     m_valueCorrection = new hw::ValueCorrection(this, originalCorrection);
     m_correctionComboBox->setVisible(true);
      m_correctionComboBox->setEnabled(true);
-    m_formLayout->addRow(new Label("Correction Type", this), m_correctionComboBox);
+    m_formLayout->addRow(new Label(tr("Correction Type"), this), m_correctionComboBox);
 
     m_correctionPoint1Orig->setVisible(true);
     m_correctionPoint1Orig->setValidator(new QDoubleValidator(this));

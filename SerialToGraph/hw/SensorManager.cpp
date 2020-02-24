@@ -140,7 +140,9 @@ namespace hw
         foreach (QJsonValue const &sensorValue, jsonSensors)
         {
             QJsonObject sensorObject = sensorValue.toObject();
-
+            bool isEnabled = sensorObject["enabled"].toBool();
+            if (!isEnabled)
+                continue;
             unsigned sensorId = unsigned(sensorObject["id"].toInt());
             QString sensorName = _GetSensorNameTranslation(sensorObject["name"].toString());
             Sensor *sensor = new Sensor(this, sensorName, sensorId);

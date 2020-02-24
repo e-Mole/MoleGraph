@@ -783,7 +783,11 @@ void Measurement::sensorIdChoosen(unsigned sensorId)
 void Measurement::sensorQuantityIdChoosen(unsigned sensorQuantityId)
 {
     HwChannel *channel = dynamic_cast<HwChannel *>(sender());
-    hw::SensorComponent *component = m_sensorManager->GetSensorComponent(channel->GetSensor(), sensorQuantityId);
+    hw::Sensor *sensor = channel->GetSensor();
+    if (sensor == nullptr)
+        return; //sensor is not part of sensors.json or has been disabled
+
+    hw::SensorComponent *component = m_sensorManager->GetSensorComponent(sensor, sensorQuantityId);
 
     int order = 0;
     foreach (hw::SensorComponent *item, channel->GetSensor()->GetComponents())

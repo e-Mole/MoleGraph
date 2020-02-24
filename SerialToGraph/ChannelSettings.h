@@ -50,6 +50,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _FillSensorQuanitityCB(HwChannelProxy *channelProxy);
     void _FillSensorNameCB(HwChannelProxy *channelProxy);
     void _FillSensorPortCB(HwChannelProxy *channelProxy);
+    QString _GetValueCorrectionTranslation(QString const &correctionName);
     QString _GetQuantityNameTranslation(const QString &quantityName);
     QString _GetPortName(int port);
     void _HideAllOptional();

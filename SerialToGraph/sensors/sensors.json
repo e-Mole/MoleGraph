@@ -198,6 +198,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 0,
             "name": ""
         },
@@ -214,6 +215,7 @@
                     "unit": "V"
                 }
             ],
+            "enabled": true,
             "id": 101,
             "name": "Generic (AD 10bit)"
         },
@@ -225,6 +227,7 @@
                     "unit": "°C"
                 }
             ],
+            "enabled": true,
             "id": 1,
             "name": "Thermometer (DS18B20)"
         },
@@ -236,6 +239,7 @@
                     "unit": "°C"
                 }
             ],
+            "enabled": true,
             "id": 34,
             "name": "Thermometer (K-Type, MAX6675)",
             "note": "Measuring range -200..+1200°C. Resolution 0.25°C, accuracy around ±2°C. Maximum sampling rate 4Hz. Error state (no thermocouple) send value -500."
@@ -253,6 +257,7 @@
                     "unit": "°C"
                 }
             ],
+            "enabled": true,
             "id": 5,
             "name": "IR Thermometer (MLX90614)"
         },
@@ -264,6 +269,7 @@
                     "unit": "Pa"
                 }
             ],
+            "enabled": true,
             "id": 6,
             "name": "Pressure sensor (MPX5700DP)"
         },
@@ -295,6 +301,7 @@
                     "unit": "°C"
                 }
             ],
+            "enabled": true,
             "id": 2,
             "name": "Pressure + Thermometer + Hygrometer (BME280)"
         },
@@ -306,6 +313,7 @@
                     "unit": "N"
                 }
             ],
+            "enabled": true,
             "id": 7,
             "name": "Force sensor (HX711)"
         },
@@ -367,6 +375,7 @@
                     "unit": "°"
                 }
             ],
+            "enabled": true,
             "id": 3,
             "name": "Accelerometer + Magnetometer (LSM303DLHC)"
         },
@@ -378,6 +387,7 @@
                     "unit": "V"
                 }
             ],
+            "enabled": true,
             "id": 10,
             "name": "*(EKG sensor (AD8232))"
         },
@@ -389,6 +399,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 11,
             "name": "*(Color sensor (TCS3200))"
         },
@@ -400,6 +411,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 13,
             "name": "*(UV sensor (GUVA-S12SD))"
         },
@@ -411,6 +423,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 31,
             "name": "UV sensor (VEML6070)"
         },
@@ -437,6 +450,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 14,
             "name": "pH sensor"
         },
@@ -458,6 +472,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 15,
             "name": "*(Conductivity sensor)"
         },
@@ -474,6 +489,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 28,
             "name": "DC Voltage sensor 0-25 V (voltage divider)"
         },
@@ -490,6 +506,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 29,
             "name": "AC/DC Current sensor 0-5 A (ACS712)"
         },
@@ -506,6 +523,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 30,
             "name": "AC/DC Current sensor 0-30 A (ACS712)"
         },
@@ -522,6 +540,7 @@
                     "unit": "A"
                 }
             ],
+            "enabled": true,
             "id": 16,
             "name": "*(Voltage + Current sensor (HX711))"
         },
@@ -538,6 +557,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 18,
             "name": "Light sensor (photoresistor)"
         },
@@ -549,6 +569,7 @@
                     "unit": "lux"
                 }
             ],
+            "enabled": true,
             "id": 32,
             "name": "Light sensor (BH1750 luxmeter)"
         },
@@ -565,6 +586,7 @@
                     "unit": "%"
                 }
             ],
+            "enabled": true,
             "id": 19,
             "name": "CO2 gas sensor (MH-Z16)"
         },
@@ -581,6 +603,7 @@
                     "unit": "%"
                 }
             ],
+            "enabled": true,
             "id": 20,
             "name": "*(O2 gas sensor (ME2-O2))"
         },
@@ -602,6 +625,7 @@
                     "unit": "cm/s^2"
                 }
             ],
+            "enabled": true,
             "id": 21,
             "name": "Ultrasonic motion sensor (SR-HC04)"
         },
@@ -623,6 +647,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 22,
             "name": "Heart rate sensor (simple)"
         },
@@ -644,6 +669,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 23,
             "name": "Magnetic field sensor"
         },
@@ -660,6 +686,7 @@
                     "unit": "°C"
                 }
             ],
+            "enabled": true,
             "id": 24,
             "name": "Thermometer + Hygrometer (DHT11)"
         },
@@ -691,6 +718,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 25,
             "name": "Alcohol gas sensor (MQ-3)"
         },
@@ -702,6 +730,7 @@
                     "unit": "ppm"
                 }
             ],
+            "enabled": true,
             "id": 26,
             "name": "*(Particle/Dust sensor (DSM501))"
         },
@@ -723,6 +752,7 @@
                     "unit": ""
                 }
             ],
+            "enabled": true,
             "id": 27,
             "name": "Sound sensor (microphone)"
         },
@@ -734,6 +764,7 @@
                     "unit": "m"
                 }
             ],
+            "enabled": true,
             "id": 105,
             "name": "Laser ranging sensor (VL53L0X)"
         },
@@ -770,6 +801,7 @@
                     "unit": "Hz"
                 }
             ],
+            "enabled": true,
             "id": 103,
             "name": "Timer GPIO 02"
         }

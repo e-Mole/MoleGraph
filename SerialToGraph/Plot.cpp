@@ -61,7 +61,6 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
 
     yAxis->setVisible(false);
     xAxis->setSelectableParts(QCPAxis::spAxis | QCPAxis::spTickLabels | QCPAxis::spAxisLabel);
-    //setNoAntialiasingOnDrag(true);
 
     connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
     selectionChanged(); //initialize zoom and drag according current selection (nothing is selected)
@@ -69,6 +68,7 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
     setAttribute( Qt::WA_AcceptTouchEvents );
     grabGesture( Qt::PinchGesture );
     setContextMenuPolicy(Qt::CustomContextMenu);
+    //DisableAntialising();
 }
 
 

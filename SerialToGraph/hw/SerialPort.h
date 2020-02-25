@@ -22,6 +22,8 @@ class SerialPort : public PortBase
 
     QSerialPort m_serialPort;
     QMap<QString, QSerialPortInfo> m_idToInfo;
+
+    void _FillPorts(QList<PortInfo> &portInfos);
 public:
 
     SerialPort(QObject *parent);
@@ -29,16 +31,17 @@ public:
 
     virtual bool StartPortSearching();
     virtual void StopPortSearching() {}
-    virtual bool IsSearchingActive() { return false; }
-    void OpenPort(QString id);
-    void FillPorts(QList<PortInfo> &portInfos);
-    qint64 Write(char const *data, unsigned size);
-    bool WaitForBytesWritten();
-    void ReadData(QByteArray &array, unsigned maxLength);
-    void ReadData(QByteArray &array);
-    void ClearCache();
-    bool IsOpen();
-    void Close();
+
+    bool IsSearchingActive() { return false; }
+
+    virtual void OpenPort(QString id);
+    virtual qint64 Write(char const *data, unsigned size);
+    virtual bool WaitForBytesWritten();
+    virtual void ReadData(QByteArray &array, unsigned maxLength);
+    virtual void ReadData(QByteArray &array);
+    virtual void ClearCache();
+    virtual bool IsOpen();
+    virtual void Close();
 
 signals:
 

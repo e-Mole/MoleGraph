@@ -34,6 +34,7 @@
 
 using namespace atog;
 
+#define MAX_DRAW_DELAY 500
 #define INITIAL_DRAW_PERIOD 50
 #define CHANNEL_COUNT 8
 
@@ -111,10 +112,13 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
     else if (drawDelay > m_drawPeriod)
     {
-        if (drawDelay > 500) //delay will be still longer, I have to stop drawing for this run
+        if (drawDelay > MAX_DRAW_DELAY) //delay will be still longer, I have to stop drawing for this run
             m_widget->GetPlot()->SetDisabled(true);
         else
         {
+            if (drawDelay > MAX_DRAW_DELAY / 3)
+                SetChannelGraphPenWidth(1);
+
             m_drawPeriod *= 2;
             //qDebug() << "draw period increased to:" << m_drawPeriod;
         }
@@ -151,7 +155,6 @@ void Measurement::draw()
             foreach (ChannelBase *channel, m_trackedHwChannels.values())
             {
                 float value = valueSet.values[i++];
-                float deleteme = fabs(value - std::numeric_limits<float>::max());
                 if (fabs(value - std::numeric_limits<float>::max()) < std::numeric_limits<float>::epsilon()){
                     value = channel->GetNaValue();
                 }
@@ -160,7 +163,6 @@ void Measurement::draw()
             //I am sure that have a horizontal value and may start to draw
             valueSetMeasured();
         }
-
     }
 
     m_widget->ReadingValuesPostProcess(m_widget->GetHorizontalChannelProxy(this)->GetLastValidValue());
@@ -325,6 +327,7 @@ void Measurement::Stop()
         qDebug() << "stop was not deliveried";
 
     DrawRestData();
+    //SetChannelGraphPenWidth(GlobalSettings::GetInstance().GetChannelGraphPenWidth()); //could be changed in case of a performance issue
 
     m_state = Finished;
     stateChanged();
@@ -735,6 +738,15 @@ void Measurement::SetAllMarksShown(bool marksShown)
         channelProxy->SetAllMarksShown(marksShown);
     }
     m_widget->GetPlot()->ReplotIfNotDisabled();
+}
+
+void Measurement::SetChannelGraphPenWidth(double width)
+{
+    foreach (ChannelProxyBase *channelProxy, m_widget->GetChannelProxies())
+    {
+        channelProxy->SetChannelGraphPenWidth(width);
+    }
+    //m_widget->GetPlot()->ReplotIfNotDisabled();
 }
 
 void Measurement::_SetType(Type type)

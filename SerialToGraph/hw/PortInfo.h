@@ -21,7 +21,8 @@ public:
         pt_none,
         pt_serialPort,
         pt_serialOverBluetooth,
-        pt_bluetooth
+        pt_bluetooth,
+        pt_phony
     } m_portType;
 
     QString m_id;

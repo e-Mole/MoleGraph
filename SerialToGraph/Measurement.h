@@ -161,6 +161,7 @@ private:
     QMap<unsigned, ChannelBase *> GetTrackedHwChannels() {return m_trackedHwChannels; }
     unsigned GetChannelIndex(ChannelBase *channel);
     void SetAllMarksShown(bool marksShown);
+    void SetChannelGraphPenWidth(double width);
 signals:
     void stateChanged();
     void nameChanged();

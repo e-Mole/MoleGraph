@@ -45,7 +45,6 @@ void SerialPort::_OpenPort(QSerialPortInfo const &info)
 void SerialPort::portOpenTimeout()
 {
     portOpeningFinished();
-    return;
 }
 
 void SerialPort::OpenPort(QString id)

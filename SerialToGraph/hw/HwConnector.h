@@ -14,6 +14,7 @@ namespace hw
 {
 class PortBase;
 class SerialPort;
+class PhonySerialPort;
 
 class HwConnector : public QObject
 {
@@ -30,7 +31,6 @@ public:
         Connected
     };
 
-private:
     enum Instructions
     {
         INS_NONE = 0,
@@ -48,7 +48,7 @@ private:
         INS_SET_SENSOR = 12,
         INS_DEBUG = 127,
     };
-
+private:
     bool _WriteInstruction(Instructions instruction, std::string const &data);
     bool _WriteInstruction(Instructions instruction);
     bool _WriteInstruction(Instructions instruction, unsigned parameter, unsigned length);
@@ -64,6 +64,7 @@ private:
     PortBase * m_selectedPort;
     PortBase * m_bluetooth;
     PortBase * m_serialPort;
+    PhonySerialPort * m_phonyPort;
     bool m_knownIssue;
     State m_state;
     QWidget *parentWidget;

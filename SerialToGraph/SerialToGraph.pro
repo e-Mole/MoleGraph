@@ -41,6 +41,7 @@ SOURCES += main.cpp\
     bases/SpinBox.cpp \
     hw/HwConnector.cpp \
     hw/NamedCollectionItem.cpp \
+    hw/PhonySerialPort.cpp \
     hw/PortBase.cpp \
     hw/SensorComponent.cpp \
     hw/ValueCorrection.cpp \
@@ -114,6 +115,7 @@ HEADERS  += MainWindow.h \
     bases/SpinBox.h \
     hw/HwConnector.h \
     hw/NamedCollectionItem.h \
+    hw/PhonySerialPort.h \
     hw/PortBase.h \
     hw/SensorComponent.h \
     hw/ValueCorrection.h \

@@ -8,6 +8,9 @@
 #else
 #   include <hw/SerialPort.h>
 #endif
+#if defined(QT_DEBUG)
+#   include <hw/PhonySerialPort.h>
+#endif
 
 #include <hw/PortBase.h>
 #include <hw/PortInfo.h>
@@ -39,6 +42,7 @@ HwConnector::HwConnector(QWidget *parent) :
     m_selectedPort(NULL),
     m_bluetooth(NULL),
     m_serialPort(NULL),
+    m_phonyPort(NULL),
     m_knownIssue(false),
     m_state(Offline),
     parentWidget(parent),
@@ -288,7 +292,9 @@ void HwConnector::OpenPort(PortInfo const &info)
         case PortInfo::pt_serialOverBluetooth:
             m_selectedPort = m_serialPort;
         break;
-
+        case PortInfo::pt_phony:
+            m_selectedPort = m_phonyPort;
+        break;
         case PortInfo::pt_bluetooth:
             m_selectedPort = m_bluetooth;
         break;
@@ -422,6 +428,12 @@ void HwConnector::CreateHwInstances()
     connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
     connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
 #endif
+#if defined (QT_DEBUG)
+    delete m_phonyPort;
+    m_phonyPort = new PhonySerialPort(this);
+    connect(m_phonyPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+    connect(m_phonyPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
+#endif
 }
 
 void HwConnector::deviceFound(hw::PortInfo const &portInfo)
@@ -445,7 +457,11 @@ void HwConnector::StartSearching()
     if (m_serialPort)
     {
         m_serialPort->StartPortSearching(); //searching of serial ports is always synchronous
+    }
 
+    if (m_phonyPort)
+    {
+        m_phonyPort->StartPortSearching();
     }
 
     if (m_bluetooth)

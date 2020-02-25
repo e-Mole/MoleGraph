@@ -387,9 +387,9 @@
                     "unit": "V"
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 10,
-            "name": "*(EKG sensor (AD8232))"
+            "name": "EKG sensor (AD8232)"
         },
         {
             "components": [
@@ -399,9 +399,9 @@
                     "unit": ""
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 11,
-            "name": "*(Color sensor (TCS3200))"
+            "name": "Color sensor (TCS3200)"
         },
         {
             "components": [
@@ -411,9 +411,9 @@
                     "unit": ""
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 13,
-            "name": "*(UV sensor (GUVA-S12SD))"
+            "name": "UV sensor (GUVA-S12SD)"
         },
         {
             "components": [
@@ -472,9 +472,9 @@
                     "unit": ""
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 15,
-            "name": "*(Conductivity sensor)"
+            "name": "Conductivity sensor"
         },
         {
             "components": [
@@ -540,9 +540,9 @@
                     "unit": "A"
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 16,
-            "name": "*(Voltage + Current sensor (HX711))"
+            "name": "Voltage + Current sensor (HX711)"
         },
         {
             "components": [
@@ -603,9 +603,9 @@
                     "unit": "%"
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 20,
-            "name": "*(O2 gas sensor (ME2-O2))"
+            "name": "O2 gas sensor (ME2-O2)"
         },
         {
             "components": [
@@ -686,7 +686,7 @@
                     "unit": "°C"
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 24,
             "name": "Thermometer + Hygrometer (DHT11)"
         },
@@ -730,9 +730,9 @@
                     "unit": "ppm"
                 }
             ],
-            "enabled": true,
+            "enabled": false,
             "id": 26,
-            "name": "*(Particle/Dust sensor (DSM501))"
+            "name": "Particle/Dust sensor (DSM501)"
         },
         {
             "components": [

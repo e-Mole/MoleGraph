@@ -131,8 +131,12 @@ void HwChannel::SerializeValueCorrection(QDataStream &out)
 {
     out << m_correction->GetId();
     out << m_correction->GetPointCount();
+    int i = 0;
     foreach (auto pair, m_correction->GetPoints())
     {
+        if (i >= m_correction->GetPointCount())
+            break;
+        i++;
         out << QString().number(pair.first);
         out << QString().number(pair.second);
     }

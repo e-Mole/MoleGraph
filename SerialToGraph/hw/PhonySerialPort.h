@@ -1,10 +1,10 @@
 #ifndef PHONYSERIALPORT_H
 #define PHONYSERIALPORT_H
 
-#include <hw/SerialPort.h>
+#include <hw/PortBase.h>
 #include <string>
 namespace hw{
-    class PhonySerialPort : public SerialPort
+    class PhonySerialPort : public PortBase
     {
         Q_OBJECT
         std::string m_dataToRead;
@@ -19,6 +19,9 @@ namespace hw{
 
     public:
         PhonySerialPort(QObject *parent);
+        virtual ~PhonySerialPort() {}
+        virtual void StopPortSearching() {}
+        virtual bool IsSearchingActive() { return false; }
 
         virtual bool StartPortSearching();
         virtual void OpenPort(QString id);

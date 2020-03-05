@@ -292,9 +292,11 @@ void HwConnector::OpenPort(PortInfo const &info)
         case PortInfo::pt_serialOverBluetooth:
             m_selectedPort = m_serialPort;
         break;
+#if defined(QT_DEBUG)
         case PortInfo::pt_phony:
             m_selectedPort = m_phonyPort;
         break;
+#endif
         case PortInfo::pt_bluetooth:
             m_selectedPort = m_bluetooth;
         break;
@@ -458,12 +460,12 @@ void HwConnector::StartSearching()
     {
         m_serialPort->StartPortSearching(); //searching of serial ports is always synchronous
     }
-
+#if defined(QT_DEBUG)
     if (m_phonyPort)
     {
         m_phonyPort->StartPortSearching();
     }
-
+#endif
     if (m_bluetooth)
     {
         if (m_bluetooth->StartPortSearching())

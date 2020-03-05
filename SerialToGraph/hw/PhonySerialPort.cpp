@@ -4,11 +4,12 @@
 #include <string>
 #include <QThread>
 #include <QtMath>
+#include <QDebug>
 
 namespace hw{
 static HwConnector::Instructions s_lastInstruction;
     PhonySerialPort::PhonySerialPort(QObject *parent) :
-        SerialPort(parent),
+        PortBase(parent),
         m_expected_data_legth(0),
         m_frequency(0),
         m_channelMask(0),

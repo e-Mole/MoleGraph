@@ -31,8 +31,7 @@ public:
 
     virtual bool StartPortSearching();
     virtual void StopPortSearching() {}
-
-    bool IsSearchingActive() { return false; }
+    virtual bool IsSearchingActive() { return false; }
 
     virtual void OpenPort(QString id);
     virtual qint64 Write(char const *data, unsigned size);

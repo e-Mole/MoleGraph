@@ -38,6 +38,7 @@ class Measurement : public QObject
     Q_PROPERTY(bool anyChecksumDoesntMatch READ _GetAnyChecksumDoesntMatchForSerialization WRITE _SetAnyChecksumDoesntMatch)
     Q_PROPERTY(Type type READ GetType WRITE _SetType)
     Q_PROPERTY(QColor color READ GetColor WRITE _SetColor)
+    Q_PROPERTY(bool reduceGraphWidth READ _IsGraphWidthReduced WRITE _SetGraphWidthReduced)
 
     //for the back comparibility
     //Q_PROPERTY(bool marksShown WRITE _SetMarksShown)
@@ -101,6 +102,8 @@ private:
     void _DeserializeAxis(QDataStream &in, unsigned index, unsigned collectionVersion);
     void _ConnectHwChannel(HwChannel *channel);
     void _InsertToChannelList(ChannelBase *channel);
+    bool _IsGraphWidthReduced() { return m_graphWidthReduced; }
+    void _SetGraphWidthReduced(bool reduced) { m_graphWidthReduced = reduced; }
 
     GraphicsContainer *m_widget;
     Context const &m_context;
@@ -123,6 +126,7 @@ private:
     QTime m_pauseStartTime;
     unsigned m_valueSetCount;
     hw::SensorManager *m_sensorManager;
+    bool m_graphWidthReduced;
  public:
     Measurement(QWidget *parent,
         Context &context,

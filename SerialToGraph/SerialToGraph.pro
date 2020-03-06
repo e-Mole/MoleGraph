@@ -188,6 +188,7 @@ android{
     QT += androidextras
     SOURCES += hw/BluetoothAndroid.cpp
     HEADERS += hw/BluetoothAndroid.h
+    QMAKE_LINK += -nostdlib++
 }
 
 unix:!android{

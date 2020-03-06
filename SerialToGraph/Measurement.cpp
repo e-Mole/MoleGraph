@@ -63,21 +63,22 @@ Measurement::Measurement(
     m_anyCheckSumDoesntMatch(false),
     m_drawPeriod(INITIAL_DRAW_PERIOD),
     m_drawTimer(new QTimer(this)),
-    m_sampleChannel(NULL),
+    m_sampleChannel(nullptr),
     m_startNewDraw(false),
-    m_type(source != NULL ? source->m_type : Periodical),
+    m_type(source != nullptr ? source->m_type : Periodical),
     m_saveLoadValues(false),
-    m_color(source != NULL ? source->GetColor() : Qt::black),
+    m_color(source != nullptr ? source->GetColor() : Qt::black),
     m_secondsInPause(0),
     m_valueSetCount(0),
-    m_sensorManager(sensorManager)
+    m_sensorManager(sensorManager),
+    m_graphWidthReduced(false)
 {
     m_drawTimer->setSingleShot(true); //will be started from timeout slot
     connect(m_drawTimer, SIGNAL(timeout()), this, SLOT(draw()));
 
     if (initializeAxiesAndChannels)
     {
-        if (source != NULL)
+        if (source != nullptr)
             _CloneAxesAndChanels(source);
         else
             _InitializeAxesAndChanels();
@@ -112,13 +113,16 @@ void Measurement::_AdjustDrawPeriod(unsigned drawDelay)
     }
     else if (drawDelay > m_drawPeriod)
     {
+        if (drawDelay > MAX_DRAW_DELAY / 3 && !m_graphWidthReduced)
+        {
+            SetChannelGraphPenWidth(1);
+            m_graphWidthReduced = true;
+        }
+
         if (drawDelay > MAX_DRAW_DELAY) //delay will be still longer, I have to stop drawing for this run
             m_widget->GetPlot()->SetDisabled(true);
         else
         {
-            if (drawDelay > MAX_DRAW_DELAY / 3)
-                SetChannelGraphPenWidth(1);
-
             m_drawPeriod *= 2;
             //qDebug() << "draw period increased to:" << m_drawPeriod;
         }
@@ -708,6 +712,11 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVers
         m_anySampleMissed = false;
         m_anyCheckSumDoesntMatch = false;
         m_valueSetCount = 0;
+    }
+
+    //property is set before channels are filled
+    if (m_graphWidthReduced){
+        SetChannelGraphPenWidth(1);
     }
 
     m_widget->RefillWidgets();

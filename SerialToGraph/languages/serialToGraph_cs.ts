@@ -1503,12 +1503,12 @@
 <context>
     <name>Measurement</name>
     <message>
-        <location filename="../Measurement.cpp" line="53"/>
+        <location filename="../Measurement.cpp" line="54"/>
         <source>Measurement %1</source>
         <translation>Měření %1</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="99"/>
+        <location filename="../Measurement.cpp" line="101"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
         <translation>Měření &apos;%1&apos; bylo ukončeno kvůli problému se spojením.</translation>
     </message>
@@ -1517,12 +1517,12 @@
         <translation type="vanished">Přijat příkaz s chybným kontrolním součtem.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="202"/>
+        <location filename="../Measurement.cpp" line="208"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
         <translation>Měření &apos;%1&apos; právě probíhá. Ukončit toto měření?</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="203"/>
+        <location filename="../Measurement.cpp" line="209"/>
         <source>Terminate</source>
         <translation>Ukončit</translation>
     </message>
@@ -1531,12 +1531,12 @@
         <translation type="vanished">Zruš</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="184"/>
+        <location filename="../Measurement.cpp" line="190"/>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
         <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="189"/>
+        <location filename="../Measurement.cpp" line="195"/>
         <source>Some values was wrongly transfered and has not been stored.</source>
         <translation>Některé hodnoty byly špatně přeneseny a nebyly uloženy.</translation>
     </message>
@@ -1553,7 +1553,7 @@
         <translation type="vanished">Vzorky</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="405"/>
+        <location filename="../Measurement.cpp" line="412"/>
         <source>Channel %1</source>
         <translation>Kanál %1</translation>
     </message>
@@ -2052,52 +2052,52 @@
 <context>
     <name>hw::HwConnector</name>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="262"/>
+        <location filename="../hw/HwConnector.cpp" line="266"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartujte aplikaci.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="337"/>
+        <location filename="../hw/HwConnector.cpp" line="345"/>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
         <translation>Vybraný port nemůže být otevřen. Je používán jiným procesem nebo je zařízení odpojeno.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="366"/>
+        <location filename="../hw/HwConnector.cpp" line="374"/>
         <source>The selected port isn&apos;t responding as expected. Please, check port read/write permitions.</source>
         <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte oprávnění přístupu k portu  pro čtení a zápis.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="377"/>
+        <location filename="../hw/HwConnector.cpp" line="385"/>
         <source>Detected an old firmware version. Sensor settings will not be supported.</source>
         <translation>Byl rozpoznán starší firmware. Nastavení portů a sensorů pomocí dialogu nebude k dispozici.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="531"/>
+        <location filename="../hw/HwConnector.cpp" line="549"/>
         <source>Offline</source>
         <translation>Odpojeno</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="533"/>
+        <location filename="../hw/HwConnector.cpp" line="551"/>
         <source>Scanning</source>
         <translation>Skenování</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="535"/>
+        <location filename="../hw/HwConnector.cpp" line="553"/>
         <source>Searched</source>
         <translation>Prohledáno</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="537"/>
+        <location filename="../hw/HwConnector.cpp" line="555"/>
         <source>Opening</source>
         <translation>Otevírání</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="539"/>
+        <location filename="../hw/HwConnector.cpp" line="557"/>
         <source>Verification</source>
         <translation>Ověřování</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="541"/>
+        <location filename="../hw/HwConnector.cpp" line="559"/>
         <source>Connected</source>
         <translation>Připojeno</translation>
     </message>
@@ -2184,8 +2184,12 @@
         <translation>Siloměr (HX711)</translation>
     </message>
     <message>
-        <location filename="../hw/SensorManager.cpp" line="45"/>
         <source>EKG sensor (AD8232)</source>
+        <translation type="vanished">EKG čidlo (AD8232)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="45"/>
+        <source>ECG sensor (AD8232)</source>
         <translation>EKG čidlo (AD8232)</translation>
     </message>
     <message>

@@ -32,6 +32,7 @@
 #include "lsm303dlhc.h"
 #include "pulse.h"
 #include "max6675t.h"
+#include "ad8232.h"
 
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG

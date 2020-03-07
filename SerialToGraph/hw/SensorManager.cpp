@@ -41,8 +41,8 @@ namespace hw
             return tr("Pressure sensor (MPX5700DP)");
         if (sensorName == "Force sensor (HX711)")
             return tr("Force sensor (HX711)");
-        if (sensorName == "EKG sensor (AD8232)")
-            return tr("EKG sensor (AD8232)");
+        if (sensorName == "ECG sensor (AD8232)")
+            return tr("ECG sensor (AD8232)");
         if (sensorName == "Color sensor (TCS3200)")
             return tr("Color sensor (TCS3200)");
         if (sensorName == "UV sensor (GUVA-S12SD)")

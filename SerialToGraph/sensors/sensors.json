@@ -385,11 +385,21 @@
                     "correction": "",
                     "quantity": "Voltage",
                     "unit": "V"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Frequency",
+                    "unit": "BPM"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Trigger",
+                    "unit": ""
                 }
             ],
-            "enabled": false,
+            "enabled": true,
             "id": 10,
-            "name": "EKG sensor (AD8232)"
+            "name": "ECG sensor (AD8232)"
         },
         {
             "components": [

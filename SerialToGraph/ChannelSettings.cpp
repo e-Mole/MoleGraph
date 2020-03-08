@@ -139,6 +139,8 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Frequency (Falling)");
     if (quantityName == "Frequency")
         return tr("Frequency");
+    if (quantityName == "Length")
+        return tr("Length");
 
     qWarning() << "unknown quantity to translate: " << quantityName;
     return quantityName; //TODO: TFs mod: Remove!!!

@@ -42,11 +42,14 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
     case SENSOR_MLX90614: return new MLX90614(_period, _port);
     case SENSOR_MPX5700DP: return new MPX5700DP(_period, _port);
     case SENSOR_SRF04: return new SRF04(_period, _port);
-    case SENSOR_LUX: return new Lux(_period, _port);
+//    case SENSOR_LUX: return new Lux(_period, _port); // replaced with universal AD
+    case SENSOR_LUX: return new AD(_period, _port);
     case SENSOR_TIMER: return new Timer(_period, _port);
     case SENSOR_LED: return new LedBlink(_period, _port);
-    case SENSOR_MAGNETOMETR: return new Magnetometr(_period, _port);
-    case SENSOR_SOUNDMETER: return new Soundmeter(_period, _port);
+//    case SENSOR_MAGNETOMETR: return new Magnetometr(_period, _port); // replaced with universal AD
+    case SENSOR_MAGNETOMETR: return new AD(_period, _port);
+//    case SENSOR_SOUNDMETER: return new Soundmeter(_period, _port); // replaced with universal AD
+    case SENSOR_SOUNDMETER: return new AD(_period, _port);
     case SENSOR_BME280: return new BME280(_period, _port);
     case SENSOR_CO2: return new MHZ16(_period, _port);
 	  case SENSOR_DCV25: return new VOLT25(_period, _port);
@@ -59,6 +62,7 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
     case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
 	  case SENSOR_MAX6675: return new MAX6675(_period, _port);
 	  case SENSOR_AD8232: return new AD8232(_period, _port);
+    case SENSOR_CALIPER: return new CALIPER(_period, _port);	  
   }
 }
 

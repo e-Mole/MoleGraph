@@ -87,6 +87,8 @@ namespace hw
             return tr("Laser ranging sensor (VL53L0X)");
         if (sensorName == "Timer GPIO 02")
             return tr("Timer GPIO 02");
+        if (sensorName == "Length sensor (Caliper)")
+            return tr("Length sensor (Caliper)");
         qWarning() << QString("unsupported sensor name %1").arg(sensorName);
         return sensorName;
     }

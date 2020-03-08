@@ -11,7 +11,9 @@ class AD : public Sensor {
     virtual bool process();
     virtual float read(uint8_t);
   protected:
-    uint8_t   pin;
+    uint8_t pin, pin_digi;
+  private:
+    float value2;
 };
 
 

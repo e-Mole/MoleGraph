@@ -764,7 +764,7 @@ void ChannelSettings::_InitializePenStyle(Qt::PenStyle selected)
 void ChannelSettings::_InitializeShowAllMarks(bool show)
 {
     m_showAllMarks->setChecked(show);
-    m_formLayout->addRow(new Label(tr("Show all marks"), this), m_showAllMarks);
+    m_formLayout->addRow(new Label(tr("All Marks"), this), m_showAllMarks);
 }
 
 void ChannelSettings::_FillTimeFeatures(SampleChannelProxy *channelProxy)

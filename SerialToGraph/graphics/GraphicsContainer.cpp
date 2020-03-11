@@ -28,7 +28,7 @@
 #include <SampleChannel.h> 
 #include <Serializer.h>
 #include <sstream>
-
+#include <QMessageBox>
 #define VERTIACAL_MAX 3
 
 using namespace atog;
@@ -84,6 +84,16 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     _ConnectSetMeasuredToAddNewValueSet(m_mainMeasurement);
 }
 
+void GraphicsContainer::resizeEvent(QResizeEvent *)
+{
+    if (IsPlotVisible() && ((height() > width()) != (dynamic_cast<QVBoxLayout*>(m_mainLayout) != nullptr)))
+    {
+        _CreateMainLayout();
+    }
+
+    resized();
+}
+
 GraphicsContainer::~GraphicsContainer()
 {
     delete m_plotKeyShortcut;
@@ -97,22 +107,36 @@ void GraphicsContainer::SetGrid(bool grid)
     replaceDisplays();
 }
 
-void GraphicsContainer::_InitializeLayouts()
+void GraphicsContainer::_CreateMainLayout()
 {
-    m_mainLayout = new QHBoxLayout(this);
+    qDebug() << "main layout recreated";
+    if (m_mainLayout != nullptr)
+    {
+        m_mainLayout->removeItem(m_plotAndSliderLayout);
+        m_mainLayout->removeItem(m_displaysAndSliderLayout);
+        delete m_mainLayout;
+    }
+    if (IsPlotVisible() && height() > width())
+        m_mainLayout = new QVBoxLayout(this);
+    else
+        m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setMargin(1);
-
+    m_mainLayout->insertLayout(0, m_plotAndSliderLayout, 1);
+    m_mainLayout->insertLayout(1, m_displaysAndSliderLayout, 0);
+    _SetDisplaysGrid();
+}
+void GraphicsContainer::_InitializeLayouts()
+{    
     m_plotAndSliderLayout = new QVBoxLayout();
     m_plotAndSliderLayout->setMargin(0);
-    m_mainLayout->insertLayout(0, m_plotAndSliderLayout, 1);
 
     m_displaysAndSliderLayout = new QVBoxLayout();
     m_displaysAndSliderLayout->setMargin(0);
-    m_mainLayout->insertLayout(1, m_displaysAndSliderLayout, 0);
 
     m_displayLayout = new QGridLayout();
-
     m_displaysAndSliderLayout->insertLayout(0, m_displayLayout, 0);
+
+    _CreateMainLayout();
 }
 
 ChannelProxyBase *GraphicsContainer::GetChannelProxy(ChannelWidget *widget) const
@@ -211,6 +235,7 @@ void GraphicsContainer::replaceDisplays()
     if (verticalMax == 0)
         verticalMax = m_channelProxies.size();
 
+    verticalMax = _AdjustVerticalMax(verticalMax);
     foreach (ChannelProxyBase * channelProxy, m_channelProxies)
     {
         if (!channelProxy->isVisible())
@@ -226,6 +251,24 @@ void GraphicsContainer::replaceDisplays()
     }
 
     m_displayLayout->setRowStretch(100, m_grid ? 0 : 1); //100 - just a huge number
+}
+
+unsigned GraphicsContainer::_AdjustVerticalMax(unsigned originalVerticalMax)
+{
+    //it shouls xolve cases when originalVerticalMax == 3 and number of visible channels == 4 => will be returned 2
+    unsigned visibleChannels = 0;
+
+    foreach (ChannelProxyBase * channelProxy, m_channelProxies)
+    {
+        if (channelProxy->isVisible())
+            visibleChannels++;
+    }
+    unsigned columns = visibleChannels / originalVerticalMax + (visibleChannels % originalVerticalMax != 0 ? 1 : 0);
+    if (columns == 0)
+        return visibleChannels; //probably 0
+    unsigned rows = visibleChannels / columns + (visibleChannels % columns != 0 ? 1 : 0);
+    qDebug() << "visibleChannels:" << visibleChannels << " columns:" << columns << " rows:" << rows;
+    return rows;
 }
 
 Plot *GraphicsContainer::GetPlot() const
@@ -338,9 +381,14 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
     m_plot->ReplotIfNotDisabled();
 }
 
+void GraphicsContainer::_SetDisplaysGrid()
+{
+    m_grid = !IsPlotVisible() || dynamic_cast<QVBoxLayout*>(m_mainLayout) != nullptr;
+}
+
 void GraphicsContainer::ShowGraph(bool show)
 {
-    m_grid = !show;
+    _SetDisplaysGrid();
     if (show)
         m_plotAndSliderLayout->insertWidget(1, m_scrollBar, 0);
     else

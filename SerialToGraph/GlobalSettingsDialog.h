@@ -32,6 +32,8 @@ class GlobalSettingsDialog : public bases::FormDialogBase
     void _InitializeChannelSizeMultiplier();
     void _InitializeShowStoreCancelButton();
     void _InitializeOpenRecentAtStartup();
+    void _AddRowToLayout(QString const &labelText, QObject *object);
+
 
     Context const &m_context;
     hw::HwConnector &m_hwConnector;

@@ -701,7 +701,6 @@ void MainWindow::axisMenuButtonPressed()
 
 void MainWindow::settings()
 {
-     //to be alwais scrolled to up-left corner
     GlobalSettingsDialog *settingsDialog = new GlobalSettingsDialog(this, m_context, m_hwConnector);
     settingsDialog->connect(
         settingsDialog, SIGNAL(updateChannelSizeFactor(int)),
@@ -712,6 +711,7 @@ void MainWindow::settings()
         m_graphicsContainerManager, SLOT(updateChannelGraphPenWidth(double))
     );
     settingsDialog->exec();
+    delete settingsDialog;
 }
 
 QString MainWindow::_DisplayMeasurementRemoveMessage(Measurement *m, bool isInProgress, bool alreadyMeasured, bool haveGhosts)
@@ -794,7 +794,9 @@ void MainWindow::addGhostChannel()
     m_ghostCreating = true;
     destGc->editChannel(ghostProxy);
     m_channelMenu->ReinitGrid(); //to be changed name or color
+#if !defined(Q_OS_ANDROID)
     m_channelMenu->adjustSize();
+#endif
 }
 
 void MainWindow::showPanelMenu(Measurement *m)

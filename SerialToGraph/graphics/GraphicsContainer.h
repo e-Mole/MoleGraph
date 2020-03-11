@@ -23,7 +23,7 @@ class Measurement;
 class Plot;
 class QColor;
 class QCPAxis;
-class QHBoxLayout;
+class QBoxLayout;
 class QGridLayout;
 class QScrollBar;
 class QVBoxLayout;
@@ -32,7 +32,7 @@ class GraphicsContainer : public QWidget
 {
     Q_OBJECT
     Measurement *m_mainMeasurement;
-    QHBoxLayout *m_mainLayout;
+    QBoxLayout *m_mainLayout;
     QVBoxLayout *m_plotAndSliderLayout;
     QVBoxLayout *m_displaysAndSliderLayout;
     QGridLayout *m_displayLayout;
@@ -56,7 +56,7 @@ class GraphicsContainer : public QWidget
     QMap<Measurement*, ChannelProxyBase*> m_horizontalChannelMapping;
     ChannelProxyBase *m_ghostWaitingForConfirmation;
 
-    virtual void resizeEvent(QResizeEvent *){ resized(); }
+    virtual void resizeEvent(QResizeEvent *);
     virtual QSize sizeHint() const { return QSize(800,700); }
 
     void _InitializeLayouts();
@@ -72,6 +72,9 @@ class GraphicsContainer : public QWidget
     HwChannelProxy *_CreateHwCannelProxy(HwChannel *channel, ChannelWidget *widget, bool isGhost);
     unsigned _GetMainHorizontalChannelIndex();
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
+    void _CreateMainLayout();
+    void _SetDisplaysGrid();
+    unsigned _AdjustVerticalMax(unsigned originalVerticalMax);
 
 public:
     GraphicsContainer(QWidget *parent, Measurement *mainMeasurement, QString const &name);

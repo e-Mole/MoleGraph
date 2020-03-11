@@ -61,6 +61,8 @@ QString PortInfo::GetTypeText() const
             return QObject::tr("Bluetooth");
         case pt_serialPort:
             return QObject::tr("Serial Port");
+        case pt_phony:
+            return "Phony"; //for debuging only - doesn't have to be translated
         default:
             qWarning() << "unsuported port type";
             return "";

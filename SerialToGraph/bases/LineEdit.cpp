@@ -14,6 +14,9 @@ LineEdit::LineEdit(const QString & text, QWidget *parent) :
 void LineEdit::setSize()
 {
 #if defined(Q_OS_ANDROID)
+    int width = int(double(physicalDpiX()) / GlobalSettings::GetInstance().getWidgetMinimalWidthDivider());
+    setMinimumWidth(width);
+
     setFixedHeight((int)((double)physicalDpiY() / GlobalSettings::GetInstance().getWidgetHeightDivider()));
     setStyleSheet(QString("QLineEdit::disabled {background-color: #C0C0C0; color: #FFFFFF;}"));
 #endif

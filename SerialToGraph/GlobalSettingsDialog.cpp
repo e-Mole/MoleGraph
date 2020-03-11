@@ -51,11 +51,22 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget *parent, Context const &conte
     _InitializeShowConsole();
 }
 
+void GlobalSettingsDialog::_AddRowToLayout(QString const &labelText, QObject *object)
+{
+    QLabel *label = new Label(labelText, this);
+    QWidget * widget = dynamic_cast<QWidget*>(object);
+    QLayout * layout = dynamic_cast<QLayout*>(object);
+    if (widget)
+        m_formLayout->addRow(label, widget);
+    else
+        m_formLayout->addRow(label, layout);
+}
+
 void GlobalSettingsDialog::_InitializeShowStoreCancelButton()
 {
     m_acceptChangesByDialogClosing = new bases::CheckBox(this);
     m_acceptChangesByDialogClosing->setChecked(m_settings.GetAcceptChangesByDialogClosing());
-    m_formLayout->addRow(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
+    _AddRowToLayout(tr("Apply Changes by a Dialog Closing"), m_acceptChangesByDialogClosing);
 }
 void GlobalSettingsDialog::_InitializeChannelGraphPenWidth()
 {
@@ -66,7 +77,7 @@ void GlobalSettingsDialog::_InitializeChannelGraphPenWidth()
     m_channelGraphPenWidth->setSingleStep(0.1);
     m_channelGraphPenWidth->setSuffix(" px");
     m_channelGraphPenWidth->setValue(m_settings.GetChannelGraphPenWidth());
-    m_formLayout->addRow(tr("Channel graph pen width"), m_channelGraphPenWidth);
+    _AddRowToLayout(tr("Channel graph pen width"), m_channelGraphPenWidth);
 }
 
 void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
@@ -77,7 +88,7 @@ void GlobalSettingsDialog::_InitializeChannelSizeMultiplier()
     m_channelSizeFactor->setSingleStep(10);
     m_channelSizeFactor->setSuffix(" %");
     m_channelSizeFactor->setValue(m_settings.GetChannelSizeFactor());
-    m_formLayout->addRow(tr("Channel size factor"), m_channelSizeFactor);
+    _AddRowToLayout(tr("Channel size factor"), m_channelSizeFactor);
 }
 
 void GlobalSettingsDialog::_InitializeButtonLines()
@@ -86,25 +97,25 @@ void GlobalSettingsDialog::_InitializeButtonLines()
     m_menuOrientation->addItem(tr("Horizontal"), Qt::Horizontal);
     m_menuOrientation->addItem(tr("Vertical"), Qt::Vertical);
     m_menuOrientation->setCurrentIndex(((int)m_settings.GetMenuOrientation()) - 1);
-    m_formLayout->addRow(tr("Menu Orientation"), m_menuOrientation);
+    _AddRowToLayout(tr("Menu Orientation"), m_menuOrientation);
 
     m_menuOnDemand = new bases::CheckBox(this);
     m_menuOnDemand->setChecked(m_settings.GetMenuOnDemand());
-    m_formLayout->addRow(tr("Menu on Demand"), m_menuOnDemand);
+    _AddRowToLayout(tr("Menu on Demand"), m_menuOnDemand);
 }
 
 void GlobalSettingsDialog::_InitHideAllChannels()
 {
     m_hideAllChannels = new bases::CheckBox(this);
     m_hideAllChannels->setChecked(m_settings.GetHideAllChannels());
-    m_formLayout->addRow(tr("Hide All Channels"), m_hideAllChannels);
+    _AddRowToLayout(tr("Hide All Channels"), m_hideAllChannels);
 }
 
 void GlobalSettingsDialog::_InitializeOpenRecentAtStartup()
 {
     m_openRecentOnStartUp = new bases::CheckBox(this);
     m_openRecentOnStartUp->setChecked(m_settings.GetOpenRecentFileAtStartup());
-    m_formLayout->addRow(tr("Open recent measurement at startup"), m_openRecentOnStartUp);
+    _AddRowToLayout(tr("Open recent measurement at startup"), m_openRecentOnStartUp);
 }
 
 void GlobalSettingsDialog::_InitializeLimitDir()
@@ -118,7 +129,7 @@ void GlobalSettingsDialog::_InitializeLimitDir()
     m_limitDirButton = new PushButton("...", this);
     connect(m_limitDirButton, SIGNAL(clicked()), this, SLOT(limitDirClicked()));
     layout->addWidget(m_limitDirButton);
-    m_formLayout->addRow(tr("Preferred Directory"), layout);
+    _AddRowToLayout(tr("Preferred Directory"), layout);
 }
 
 void GlobalSettingsDialog::limitDirClicked()
@@ -141,14 +152,14 @@ void GlobalSettingsDialog::_InitializeShowConsole()
 {
     m_showConsole = new bases::CheckBox(this);
     m_showConsole->setChecked(m_settings.GetConsole());
-    m_formLayout->addRow(tr("Show Debug Window"), m_showConsole);
+    _AddRowToLayout(tr("Show Debug Window"), m_showConsole);
 }
 
 void GlobalSettingsDialog::_InitializeUseBluetooth()
 {
     m_useBluetooth = new bases::CheckBox(this);
     m_useBluetooth->setChecked(m_settings.GetUseBluetooth());
-    m_formLayout->addRow(tr("Use Bluetooth"), m_useBluetooth);
+    _AddRowToLayout(tr("Use Bluetooth"), m_useBluetooth);
 }
 void GlobalSettingsDialog::_InitializeLanguage()
 {
@@ -166,7 +177,7 @@ void GlobalSettingsDialog::_InitializeLanguage()
         }
     }
 
-    m_formLayout->addRow(tr("Language"), m_languages);
+    _AddRowToLayout(tr("Language"), m_languages);
 }
 
 void GlobalSettingsDialog::_InitializeUnitBrackets()
@@ -175,7 +186,7 @@ void GlobalSettingsDialog::_InitializeUnitBrackets()
     m_brackets->addItem("()");
     m_brackets->addItem("[]");
     m_brackets->setCurrentText(m_settings.GetUnitBrackets());
-    m_formLayout->addRow(tr("Unit Brackets"), m_brackets);
+    _AddRowToLayout(tr("Unit Brackets"), m_brackets);
 }
 bool GlobalSettingsDialog::BeforeAccept()
 {

@@ -11,7 +11,6 @@ class Label;
 class PushButton;
 class KeyShortcut;
 
-namespace bases { class ClickableLabel; }
 struct Context;
 class ChannelMenu : public bases::MenuDialogBase
 {

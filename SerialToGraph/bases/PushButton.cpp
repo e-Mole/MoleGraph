@@ -8,24 +8,24 @@
 PushButton::PushButton(QWidget *parent) :
     QPushButton(parent)
 {
-    setHeight();
+    setSize();
 }
 
 PushButton::PushButton(const QString &text, QWidget *parent) :
     QPushButton(text, parent)
 {
-    setHeight();
+    setSize();
     setStyle();
 }
 
 PushButton::PushButton(const QIcon& icon, const QString &text, QWidget *parent):
     QPushButton(icon, text, parent)
 {
-    setHeight();
+    setSize();
     setStyle();
 }
 
-void PushButton::setHeight()
+void PushButton::setSize()
 {
 #if defined(Q_OS_ANDROID)
     setFixedHeight((int)((double)physicalDpiY() / GlobalSettings::GetInstance().getWidgetHeightDivider()));

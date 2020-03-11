@@ -7,7 +7,7 @@ class PushButton : public QPushButton
 {
     Q_OBJECT
 
-    void setHeight();
+    void setSize();
     void setStyle();
 public:
     PushButton(QWidget *parent = nullptr);

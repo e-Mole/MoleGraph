@@ -5,7 +5,7 @@
 #define MAX_RECENT_FILE_COUNT 10
 #define RECENT_FILE_SEPARATOR '\n'
 #define WIDGET_HEIGHT_DIVIDER 5.0
-
+#define WIDGET_MINIMAL_WIDTH_DIVIDER 2
 GlobalSettings::GlobalSettings() :
     m_settings("eMole", TARGET),
     m_savedState(true),
@@ -122,7 +122,7 @@ void GlobalSettings::SetUnitBrackets(QString const &brackets)
 
 bool GlobalSettings::GetUseBluetooth()
 {
-    return _Get(Key_UseBluetooth, false).toBool();
+    return _Get(Key_UseBluetooth, true).toBool();
 }
 void GlobalSettings::SetUseBluetooth(bool use)
 {
@@ -346,4 +346,9 @@ void GlobalSettings::SetOpenRecentFileAtStartup(bool openRecent)
 double GlobalSettings::getWidgetHeightDivider()
 {
     return WIDGET_HEIGHT_DIVIDER;
+}
+
+double GlobalSettings::getWidgetMinimalWidthDivider()
+{
+    return WIDGET_MINIMAL_WIDTH_DIVIDER;
 }

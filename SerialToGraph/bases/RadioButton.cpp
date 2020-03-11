@@ -16,10 +16,13 @@ RadioButton::RadioButton(const QString &text, QWidget *parent) :
 void RadioButton::setStyle()
 {
 #if defined(Q_OS_ANDROID)
-    const double divider = GlobalSettings::GetInstance().getWidgetHeightDivider();
-    int width = int(double(physicalDpiX()) / divider);
-    int height = int(double(physicalDpiY()) / divider);
+    //int width = int(double(physicalDpiX()) / GlobalSettings::GetInstance().getWidgetMinimalWidthDivider());
+    //setMaximumWidth(width);
 
-    setStyleSheet(QString("QRadioButton::indicator { width:%1px; height: %2px;}").arg(width).arg(height));
+    const double divider = GlobalSettings::GetInstance().getWidgetHeightDivider();
+    int indWidth = int(double(physicalDpiX()) / divider);
+    int indHeight = int(double(physicalDpiY()) / divider);
+
+    setStyleSheet(QString("QRadioButton::indicator { width:%1px; height: %2px;}").arg(indWidth).arg(indHeight));
 #endif
 }

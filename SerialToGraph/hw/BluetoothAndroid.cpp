@@ -55,15 +55,18 @@ bool BluetoothAndroid::checkException(const char* method, QAndroidJniObject* obj
 
 bool BluetoothAndroid::StartPortSearching()
 {
+    qWarning() << "Start Bluetooth searching";
     delete m_discoveryAgent;
     m_discoveryAgent = nullptr;
 
     QAndroidJniObject adapter=QAndroidJniObject::callStaticObjectMethod("android/bluetooth/BluetoothAdapter","getDefaultAdapter","()Landroid/bluetooth/BluetoothAdapter;"); // returns a BluetoothAdapter
     if (checkException("BluetoothAdapter.getDefaultAdapter()",&adapter)) {
+        qWarning() << "BluetoothAdapter.getDefaultAdapter() failed";
         return false;
     }
     QAndroidJniObject pairedDevicesSet=adapter.callObjectMethod("getBondedDevices","()Ljava/util/Set;"); // returns a Set<BluetoothDevice>
     if (checkException("BluetoothAdapter.getBondedDevices()",&pairedDevicesSet)) {
+        qWarning() << "BluetoothAdapter.getBondedDevices() failed";
         return false;
     }
     jint size=pairedDevicesSet.callMethod<jint>("size");
@@ -72,6 +75,7 @@ bool BluetoothAndroid::StartPortSearching()
     if (size>0) {
         QAndroidJniObject iterator=pairedDevicesSet.callObjectMethod("iterator","()Ljava/util/Iterator;"); // returns an Iterator<BluetoothDevice>
         if (checkException("Set<BluetoothDevice>.iterator()",&iterator)) {
+            qWarning() << "Set<BluetoothDevice>.iterator() failed";
             return false;
         }
         for (int i=0; i<size; i++) {
@@ -87,6 +91,7 @@ bool BluetoothAndroid::StartPortSearching()
             deviceFound(PortInfo(PortInfo::pt_bluetooth, id, name.startsWith(BLUETOOTH_MODULE_NAME_PREFIX)));
         }
     }
+    qInfo() << "Bluetooth searching finished";
     return false; //searching is finished
 }
 

@@ -7,6 +7,9 @@ namespace bases
 ComboBox::ComboBox(QWidget *parent) : QComboBox(parent)
 {
 #if defined(Q_OS_ANDROID)
+    int width = int(double(physicalDpiX()) / GlobalSettings::GetInstance().getWidgetMinimalWidthDivider());
+    setMinimumWidth(width);
+
     int height =  int(double(physicalDpiY()) / GlobalSettings::GetInstance().getWidgetHeightDivider());
     setFixedHeight(height);
 

@@ -97,6 +97,7 @@ public:
     bool GetOpenRecentFileAtStartup() const;
     void SetOpenRecentFileAtStartup(bool openRecent);
     double getWidgetHeightDivider();
+    double getWidgetMinimalWidthDivider();
 
 signals:
     void hideAllCHannelsChanged(bool hideAllChannels);

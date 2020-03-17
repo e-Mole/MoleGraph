@@ -41,8 +41,8 @@ namespace hw
             return tr("Pressure sensor (MPX5700DP)");
         if (sensorName == "Force sensor (HX711)")
             return tr("Force sensor (HX711)");
-        if (sensorName == "EKG sensor (AD8232)")
-            return tr("EKG sensor (AD8232)");
+        if (sensorName == "ECG sensor (AD8232)")
+            return tr("ECG sensor (AD8232)");
         if (sensorName == "Color sensor (TCS3200)")
             return tr("Color sensor (TCS3200)");
         if (sensorName == "UV sensor (GUVA-S12SD)")
@@ -87,6 +87,8 @@ namespace hw
             return tr("Laser ranging sensor (VL53L0X)");
         if (sensorName == "Timer GPIO 02")
             return tr("Timer GPIO 02");
+        if (sensorName == "Length sensor (Caliper)")
+            return tr("Length sensor (Caliper)");
         qWarning() << QString("unsupported sensor name %1").arg(sensorName);
         return sensorName;
     }

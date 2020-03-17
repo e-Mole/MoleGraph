@@ -15,10 +15,10 @@
 //#include "dht11.h" //"dht11mg.h"
 #include "mlx90614.h"
 #include "mpx5700dp.h"
-#include "lux.h"
+//#include "lux.h" // replaced with universal AD
 //#include "hx711.h"
-#include "magnetometr.h"
-#include "soundmeter.h"
+//#include "magnetometr.h" // replaced with universal AD
+//#include "soundmeter.h" // replaced with universal AD
 #include "silomer.h"
 #include "bme280.h"
 #include "mhz16.h"
@@ -32,6 +32,8 @@
 #include "lsm303dlhc.h"
 #include "pulse.h"
 #include "max6675t.h"
+#include "ad8232.h"
+#include "caliper.h"
 
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG
@@ -85,6 +87,7 @@ enum SensorType {
   SENSOR_LUXBH1750    = 32,   // I032 Cidlo intenzity svetla (BH1750) - hodnota v luxech
   SENSOR_SHOCKKY31    = 33,   // D033 Cidlo narazu - hodnota 0/1
   SENSOR_MAX6675      = 34,   // D034 Cidlo teploty - MAX6675 + Termoclanek typu K
+  SENSOR_CALIPER      = 35,   // D035 Cidlo "delky" - suplera cinska levna alias length sensor
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V
   SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120
   SENSOR_TIMER        = 103,  // D103 Mereni delky pulsu, periody a frekvence digitalniho signalu

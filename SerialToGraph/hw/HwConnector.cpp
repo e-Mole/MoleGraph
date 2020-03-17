@@ -9,7 +9,7 @@
 #   include <hw/SerialPort.h>
 #endif
 #if defined(QT_DEBUG)
-#   include <hw/PhonySerialPort.h>
+   include <hw/PhonySerialPort.h>
 #endif
 
 #include <hw/PortBase.h>
@@ -294,7 +294,7 @@ void HwConnector::OpenPort(PortInfo const &info)
         break;
 #if defined(QT_DEBUG)
         case PortInfo::pt_phony:
-            m_selectedPort = m_phonyPort;
+            //m_selectedPort = m_phonyPort;
         break;
 #endif
         case PortInfo::pt_bluetooth:
@@ -463,7 +463,7 @@ void HwConnector::StartSearching()
 #if defined(QT_DEBUG)
     if (m_phonyPort)
     {
-        m_phonyPort->StartPortSearching();
+        //m_phonyPort->StartPortSearching();
     }
 #endif
     if (m_bluetooth)

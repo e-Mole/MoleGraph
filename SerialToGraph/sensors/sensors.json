@@ -187,6 +187,10 @@
     {
       "id" : 39,
       "name" : "Frequency"
+    },
+    {
+      "id" : 40,
+      "name" : "Length"
     }
   ],
 	"sensors": [
@@ -385,11 +389,21 @@
                     "correction": "",
                     "quantity": "Voltage",
                     "unit": "V"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Frequency",
+                    "unit": "BPM"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Trigger",
+                    "unit": ""
                 }
             ],
-            "enabled": false,
+            "enabled": true,
             "id": 10,
-            "name": "EKG sensor (AD8232)"
+            "name": "ECG sensor (AD8232)"
         },
         {
             "components": [
@@ -550,6 +564,11 @@
                     "correction": "",
                     "quantity": "Illuminace",
                     "unit": "RAW"
+                },
+                {
+                    "correction": "",
+                    "quantity": "Voltage",
+                    "unit": "V"
                 },
                 {
                     "correction": "",
@@ -759,7 +778,7 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "",
                     "quantity": "Distance",
                     "unit": "m"
                 }
@@ -767,6 +786,18 @@
             "enabled": true,
             "id": 105,
             "name": "Laser ranging sensor (VL53L0X)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "",
+                    "quantity": "Length",
+                    "unit": "mm"
+                }
+            ],
+            "enabled": true,
+            "id": 35,
+            "name": "Length sensor (Caliper)"
         },
         {
             "components": [

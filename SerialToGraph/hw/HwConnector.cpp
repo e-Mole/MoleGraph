@@ -9,7 +9,7 @@
 #   include <hw/SerialPort.h>
 #endif
 #if defined(QT_DEBUG)
-   include <hw/PhonySerialPort.h>
+   #include <hw/PhonySerialPort.h>
 #endif
 
 #include <hw/PortBase.h>

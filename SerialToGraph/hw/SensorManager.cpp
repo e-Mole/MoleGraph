@@ -9,7 +9,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#define JSON_FILE_NAME ":/sensors/sensors.json"
+#define RES_JSON_FILE_NAME ":/sensors/sensors.json"
+#define REAL_JSON_FILE_NAME "sensors/sensors.json"
 
 namespace hw
 {
@@ -175,7 +176,7 @@ namespace hw
     {
         QString content;
         QFile jsonFile;
-        jsonFile.setFileName(JSON_FILE_NAME);
+        jsonFile.setFileName(QFile::exists(REAL_JSON_FILE_NAME) ? REAL_JSON_FILE_NAME : RES_JSON_FILE_NAME);
         if (!jsonFile.exists())
         {
             qWarning() << "Sensor file has not been found";

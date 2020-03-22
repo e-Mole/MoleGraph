@@ -17,7 +17,7 @@
    <item>
     <widget class="QCheckBox" name="RegisterFileCheckBox">
      <property name="text">
-      <string>Register example file extension: </string>
+      <string>Register MoleGraph file extension: </string>
      </property>
      <property name="checked">
       <bool>true</bool>

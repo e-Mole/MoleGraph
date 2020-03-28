@@ -11,7 +11,7 @@ class SampleChannel : public ChannelBase
 
     Q_PROPERTY(QDateTime startDateTime READ GetStartDateTime WRITE SetStartTime)
 
-    void AddValue(double value) { ChannelBase::AddValue(value); } //values to ChannelWithTime should be added through method with time
+    void AddValue(double value); //values to ChannelWithTime should be added through method with time
 public:
 
 

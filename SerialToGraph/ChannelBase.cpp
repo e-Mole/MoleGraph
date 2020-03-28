@@ -47,8 +47,6 @@ void ChannelBase::AddValue( double value)
 
     if (value == GetNaValue())
         return;
-
-    _UpdateExtremes(GetValueWithCorrection(index), index);
 }
 
 Measurement * ChannelBase::GetMeasurement() const

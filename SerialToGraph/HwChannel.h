@@ -26,8 +26,11 @@ class HwChannel : public ChannelBase
     Q_PROPERTY(unsigned sensorId READ GetSensorId WRITE sensorIdChoosen)
     Q_PROPERTY(unsigned sensorQuantityId READ GetSensorQuantityId WRITE sensorQuantityIdChoosen)
 
+    double _CalculateValueWithCorrection(int index);
+
     int m_hwIndex;
     QVector<double> m_originalValues;
+    QVector<double> m_valuesWithCorection;
     bool m_isActive;
     hw::Sensor *m_sensor;
     unsigned m_sensorPort;
@@ -66,11 +69,9 @@ public:
     hw::ValueCorrection * GetValueCorrection();
     void SetValueCorrection(hw::ValueCorrection *correction);
     bool IsValueChanged(int index);
-    static double GetValueWithCorrection(double value, hw::ValueCorrection *correction);
-    virtual double GetValueWithCorrection(int index);
     void SerializeValueCorrection(QDataStream &out);
     void DeserializeValueCorrection(QDataStream &in, hw::SensorManager *sensorManager);
-
+    virtual double GetValueWithCorrection(int index);
 public slots:
     void setActive(bool isActive);
 signals:

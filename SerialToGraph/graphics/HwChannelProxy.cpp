@@ -7,7 +7,7 @@
 #include <hw/SensorQuantity.h>
 #include <hw/ValueCorrection.h>
 #include <HwChannel.h>
-
+#include <Plot.h>
 HwChannelProxy::HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget) :
     ChannelProxyBase(parent, channel, channelWidget, nullptr)
 {
@@ -82,11 +82,6 @@ int HwChannelProxy::GetHwIndex() const
 hw::ValueCorrection *HwChannelProxy::GetValueCorrection()
 {
     return GetChannel()->GetValueCorrection();
-}
-
-double HwChannelProxy::GetValueWithCorrection(double value, hw::ValueCorrection *correction) const
-{
-    return GetChannel()->GetValueWithCorrection(value, correction);
 }
 
 void HwChannelProxy::SetValueCorrection(hw::ValueCorrection *correction)

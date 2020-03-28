@@ -20,6 +20,7 @@ HwChannel::HwChannel(
     m_sensorPort(sensorPort),
     m_sensorComponent(component != nullptr ? component : sensor->GetComponents().front()), //at least one quantity is expected
     m_correction(new hw::ValueCorrection(this, m_sensorComponent->GetValueCorrection()))
+
 {
 }
 
@@ -36,14 +37,17 @@ HwChannel::HwChannel(Measurement *m, HwChannel *source):
 
 void HwChannel::AddValue(double value)
 {
-    m_originalValues.push_back(value);
-    ChannelBase::AddValue(value);
+    AddValue(value, value);
 }
 
 void HwChannel::AddValue(double original, double current)
 {
     m_originalValues.push_back(original);
     ChannelBase::AddValue(current);
+    unsigned lastIndex = m_originalValues.size() - 1;
+    m_valuesWithCorection.push_back(_CalculateValueWithCorrection(lastIndex));
+    _UpdateExtremes(m_valuesWithCorection[lastIndex], lastIndex);
+
 }
 
 double HwChannel::GetOriginalValue(int index)
@@ -54,6 +58,7 @@ double HwChannel::GetOriginalValue(int index)
 void HwChannel::ChangeValue(int index, double newValue)
 {
     m_values[index] = newValue;
+    m_valuesWithCorection[index] = _CalculateValueWithCorrection(index);
     _RecalculateExtremes();
     valueChanged(index);
 }
@@ -97,10 +102,12 @@ void HwChannel::SetValueCorrection(hw::ValueCorrection *correction)
 {
     delete m_correction;
     m_correction = new hw::ValueCorrection(this, correction);
-    _RecalculateExtremes();
+
     for (int i = 0; i < m_values.size(); ++i){
+        m_valuesWithCorection[i] = _CalculateValueWithCorrection(i);
         valueChanged(i);
     }
+    _RecalculateExtremes();
 }
 
 bool HwChannel::IsValueChanged(int index)
@@ -111,9 +118,15 @@ bool HwChannel::IsValueChanged(int index)
     return !IsEqual(m_originalValues[index], m_values[index]);
 }
 
-double HwChannel::GetValueWithCorrection(double value, hw::ValueCorrection *correction)
+double HwChannel::_CalculateValueWithCorrection(int index)
 {
-    return correction->GetValueWithCorrection(value);
+    if (index == -1 || index >= m_values.size())
+        return GetNaValue();
+
+    if (IsValueChanged(index))
+        return m_values[index];
+    else
+        return m_correction->GetValueWithCorrection(GetOriginalValue(index));
 }
 
 double HwChannel::GetValueWithCorrection(int index)
@@ -121,11 +134,9 @@ double HwChannel::GetValueWithCorrection(int index)
     if (index == -1 || index >= m_values.size())
         return GetNaValue();
 
-    if (IsValueChanged(index))
-        return m_values[index];
-
-    return GetValueWithCorrection(GetOriginalValue(index), m_correction);
+    return m_valuesWithCorection[index];
 }
+
 
 void HwChannel::SerializeValueCorrection(QDataStream &out)
 {

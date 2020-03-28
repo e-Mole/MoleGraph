@@ -15,8 +15,7 @@ class HwChannelProxy : public ChannelProxyBase
 
 public:
     HwChannelProxy(QObject *parent, ChannelBase *channel, ChannelWidget *channelWidget);
-    double GetValueWithCorrection(double value, hw::ValueCorrection *correction) const;
-    double GetValueWithCorrection(double value) const;
+    double GetValueWithCorrection(int index) { return m_channel->GetValueWithCorrection(index); }
     virtual double GetValue(int index) const;
     void ChangeValue(int index, double newValue);
     virtual HwChannelProxy *Clone(QObject *parent, ChannelWidget *newWidget);

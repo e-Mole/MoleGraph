@@ -16,6 +16,13 @@ void  SampleChannel::AddValue(double value, double timeFromStart)
     AddValue(value);
 }
 
+void SampleChannel::AddValue(double value)
+{
+    ChannelBase::AddValue(value);
+    unsigned lastIndex = m_values.size() - 1;
+    _UpdateExtremes(m_values[lastIndex], lastIndex);
+}
+
 double SampleChannel::GetTimeFromStart(unsigned index) const
 {
     if (index == ~0)

@@ -724,7 +724,7 @@ void ChannelSettings::setOriginalValue(bool checked)
 
     HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
     double originalValue = hwChannelProxy->GetOriginalValue(currentValueIndex);
-    double currentValue =  hwChannelProxy->GetValueWithCorrection(originalValue, m_valueCorrection);
+    double currentValue =  hwChannelProxy->GetValueWithCorrection(currentValueIndex);
 
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
@@ -1011,6 +1011,7 @@ bool ChannelSettings::_CheckCorrectionPointsValidity()
 
 bool ChannelSettings::BeforeAccept()
 {
+    m_channelProxy->GetPlot()->SetDisabled(true);
     if (!_AxisCheckForRealTimeMode())
         return false;
 
@@ -1208,8 +1209,10 @@ bool ChannelSettings::BeforeAccept()
                 m_graphicsContainer->GetPlot()->SetMarkerLine(m_graphicsContainer->GetCurrentIndex());
             }
         }
+        m_channelProxy->GetPlot()->SetDisabled(false);
         m_channelProxy->GetPlot()->ReplotIfNotDisabled();
     }
+    m_channelProxy->GetPlot()->SetDisabled(false);
 
     return true;
 }

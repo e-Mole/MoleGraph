@@ -92,6 +92,8 @@ namespace hw{
         case CorrectionType::None:
             return value;
         case CorrectionType::Offset:
+            if (x1 == y1)
+                return value;
             /*
              * yn = xn + a
              * a = y1 - x1
@@ -99,6 +101,8 @@ namespace hw{
              */
             return value + y1 - x1;
         case CorrectionType::Linear:
+            if (x1 == y1 && x2 == y2)
+                return value;
             /*
              * y = b * x + a
              * b = (y2 - y1)/(x2-x1)
@@ -113,6 +117,8 @@ namespace hw{
             return ((y2 - y1) / (x2 - x1)) * (value - x1)  + y1;
         case CorrectionType::Quadratic:
         {
+            if (x1 == y1 && x2 == y2 && x3 == y3)
+                return value;
             /*
              * yn = c * xn^2 + b * xn + a
              */

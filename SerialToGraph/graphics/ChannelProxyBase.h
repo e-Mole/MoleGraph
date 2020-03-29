@@ -23,6 +23,7 @@ class ChannelProxyBase : public QObject
     Q_PROPERTY(QString units READ GetUnits WRITE SetUnits)
     Q_PROPERTY(bool isVisible READ isVisible WRITE SetVisible)
     Q_PROPERTY(bool allMarksShown READ AreAllMarksShown WRITE SetAllMarksShown)
+    Q_PROPERTY(QString axisTitle READ GetAxisTitle WRITE _SetAxisTitle)
 
     double _GetDelta(int left, int right);
     double _GetMaxInRange(int left, int right);
@@ -36,11 +37,14 @@ class ChannelProxyBase : public QObject
 
     void _SetShapeIndexDepricated (unsigned index);
 
+    void _SetAxisTitle(QString const &title) { m_axisTitle = title;}
+
 protected:
     ChannelWidget *m_channelWidget;
     ChannelBase *m_channel;
     ChannelProperties *m_properties;
     KeyShortcut* m_keyShortcut;
+    QString m_axisTitle; //to be possible to deserialize to the corrent axes
 public:
     enum DisplayValue{
         DVDelta,
@@ -105,9 +109,11 @@ public:
     void UpdateGraph(double xValue, double yValue, bool replot);
     void SetMinimumFontSize(unsigned sizeFactor);
     Axis *GetAxis();
+    void AssignToAxis(Axis *axis);
     void SetChannelGraphPenWidth(double thickness);
     bool AreAllMarksShown();
     void SetAllMarksShown(bool shown);
+    QString GetAxisTitle() { return m_axisTitle; }
 };
 
 #endif // CHANNELPROXYBASE_H

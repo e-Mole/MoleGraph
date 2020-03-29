@@ -5,6 +5,7 @@
 #include <graphics/ChannelProperties.h>
 #include <KeyShortcut.h>
 #include <Measurement.h>
+#include <Axis.h>
 #include <Plot.h>
 #include <QBrush>
 #include <QDebug>
@@ -349,6 +350,12 @@ void ChannelProxyBase::SetMinimumFontSize(unsigned sizeFactor)
 Axis * ChannelProxyBase::GetAxis()
 {
     return GetChannelGraph()->GetValuleAxis();
+}
+
+void ChannelProxyBase::AssignToAxis(Axis *axis)
+{
+    _SetAxisTitle(axis->GetTitle());
+    GetChannelGraph()->AssignToAxis(axis);
 }
 
 void ChannelProxyBase::_SetShapeIndexDepricated (unsigned index)

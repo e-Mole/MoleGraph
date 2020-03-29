@@ -930,8 +930,22 @@ bool MainWindow::_DeSerializeGhsotColections(QDataStream &in)
             return false;
         }
         in >> ghostProxy;
+
+        foreach (Axis * axis, destGC->GetAxes())
+        {
+            if (axis->GetTitle() == ghostProxy->GetAxisTitle())
+            {
+                Axis * lastAxis = ghostProxy->GetAxis();
+                ghostProxy->AssignToAxis(axis);
+                lastAxis->UpdateGraphAxisName();
+                lastAxis->UpdateGraphAxisStyle();
+                lastAxis->UpdateVisiblility();
+            }
+        }
+
         //FIXME: just two is necessary to update (value + horizontal)
         destGC->UpdateAxes();
+        destGC->RescaleAxes(ghostProxy->GetWidget());
         destGC->replaceDisplays();
     }
 
@@ -961,7 +975,7 @@ void MainWindow::channelEditingAccepted()
 {
     ChannelSettings *settings = (ChannelSettings *) sender();
     _DisconnectChannelSettings(settings);
-    settings->GetGraphicsContainer()->ConfirmGhostChannel();
+    settings->GetGraphicsContainer()->ConfirmGhostChannel(true);
 }
 
 void MainWindow::channelEditingRejected()

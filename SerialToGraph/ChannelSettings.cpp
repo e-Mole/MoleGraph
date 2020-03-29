@@ -1031,8 +1031,8 @@ bool ChannelSettings::BeforeAccept()
             changedHorizontal = true;
         }
 
-        Axis *lastAxis = m_channelProxy->GetChannelGraph()->GetValuleAxis();
-        m_channelProxy->GetChannelGraph()->AssignToAxis(axis);
+        Axis *lastAxis = m_channelProxy->GetAxis();
+        m_channelProxy->AssignToAxis(axis);
         lastAxis->UpdateGraphAxisName();
         lastAxis->UpdateGraphAxisStyle();
         lastAxis->UpdateVisiblility();

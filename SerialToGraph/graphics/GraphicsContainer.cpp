@@ -935,17 +935,16 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
 HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
 {
     GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
-    ChannelWidget * sourceChannelWidget = dynamic_cast<ChannelWidget*>(sourceChannelProxy->GetWidget());
     ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget(), isGhost);
     ChannelWidget *widget = new ChannelWidget(
         this,
         channelGraph,
         sourceChannelProxy->GetChannelIndex(),
-        sourceChannelWidget->GetName(),
-        sourceChannelWidget->GetForeColor(),
-        sourceChannelWidget->isVisible(),
-        sourceChannelWidget->GetUnits(),
-        sourceChannelWidget->GetPenStyle(),
+        sourceChannelProxy->GetName(),
+        sourceChannelProxy->GetForeColor(),
+        sourceChannelProxy->isVisible(),
+        sourceChannelProxy->GetUnits(),
+        sourceChannelProxy->GetPenStyle(),
         ChannelBase::ValueTypeUnknown,
         GetPlot(),
         isGhost
@@ -1223,6 +1222,7 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
 
     newProxy->SetName(GetGhostName(sourceGraphicsContainer, newProxy));
     newProxy->SetPenStyle(Qt::DashLine);
+    bool confirmVisible = newProxy->isVisible();
     newProxy->SetVisible(false);
 
     unsigned horizontalChannelIndex = _GetMainHorizontalChannelIndex();
@@ -1239,14 +1239,14 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
     m_ghostWaitingForConfirmation = newProxy;
 
     if (confirmed)
-        ConfirmGhostChannel();
+        ConfirmGhostChannel(confirmVisible);
 
     return newProxy;
 }
 
-void GraphicsContainer::ConfirmGhostChannel()
+void GraphicsContainer::ConfirmGhostChannel(bool setVisible)
 {
-    m_ghostWaitingForConfirmation->SetVisible(true);
+    m_ghostWaitingForConfirmation->SetVisible(setVisible);
     GhostManipupationPostProcess(m_ghostWaitingForConfirmation);
     m_ghostWaitingForConfirmation = NULL;
 }

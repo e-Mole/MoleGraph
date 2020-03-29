@@ -73,7 +73,7 @@ void AxisChooseDialog::newAxisSelected()
     if (QDialog::Accepted == dialog.exec())
     {
         GlobalSettings::GetInstance().SetSavedState(false);
-        m_originalHorizontalChannelProxy->GetChannelGraph()->AssignToAxis(newAxis);
+        m_originalHorizontalChannelProxy->AssignToAxis(newAxis);
         accept();
     }
     else
@@ -86,8 +86,7 @@ void AxisChooseDialog::axisSelected()
     {
         if (it.key() == (RadioButton *)sender())
         {
-            ChannelGraph *channelGraph = m_originalHorizontalChannelProxy->GetChannelGraph();
-            channelGraph->AssignToAxis(it.value());
+            m_originalHorizontalChannelProxy->AssignToAxis(it.value());
             break;
         }
     }

@@ -112,8 +112,8 @@ void AxisMenu::removeButtonPressed()
 
     foreach (ChannelProxyBase *proxy, m_graphicsContainer->GetChannelProxies())
     {
-        if (axis == proxy->GetChannelGraph()->GetValuleAxis())
-            proxy->GetChannelGraph()->AssignToAxis(firstVertical);
+        if (axis == proxy->GetAxis())
+            proxy->AssignToAxis(firstVertical);
     }
     m_graphicsContainer->RemoveAxis(axis);
     GlobalSettings::GetInstance().SetSavedState(false);

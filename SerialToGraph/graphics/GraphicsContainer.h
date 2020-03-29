@@ -159,7 +159,7 @@ public:
         bool confirmed);
 
     static QString GetGhostName(GraphicsContainer * sourceGraphicsContainer, ChannelProxyBase *channelProxy);
-    void ConfirmGhostChannel();
+    void ConfirmGhostChannel(bool setVisible);
     void RejectGhostChannel();
     ChannelProxyBase *GetChannelProxy(unsigned channelIndex) const;
     ChannelProxyBase *GetChannelProxy(ChannelBase *channel) const ;

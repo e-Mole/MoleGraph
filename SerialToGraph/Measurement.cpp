@@ -281,7 +281,11 @@ void Measurement::Start()
 
     m_hwConnector.ClearCache(); //throw buffered data avay. I want to start to listen now
     if(!_SetModeWithPeriod())
+    {
+        qDebug() << "It seems that Arduino is not connected";
+        m_hwConnector.PortIssueSolver();
         return;
+    }
     _ProcessActiveChannels();
 
     m_widget->SetFollowMode(true);

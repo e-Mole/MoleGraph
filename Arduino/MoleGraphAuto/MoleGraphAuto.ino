@@ -61,11 +61,15 @@ void loop() {
 
   if (StartStop) {
     if (running) {
-      update();
+      bool dataReady = update();
       if (scanType == PERIODICAL) {
         //DEBUG_MSG("scanType == PERIODICAL: %d, %d", newTime - time, period)
-        if (newTime - time >= period) {
-          time += period;
+        if ((firstSample && dataReady) || newTime - time >= period) {
+          firstSample = false;
+          if (newTime - time >= period){
+            time += period;
+          }
+
           scan();
           sendValues();
         }

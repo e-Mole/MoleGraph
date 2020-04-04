@@ -8,7 +8,7 @@
 
 uint32_t time, startTime;
 uint32_t period = PERIOD;
-
+bool firstSample = false;
 bool running = 0;
 uint8_t dataReady = 0;
 
@@ -112,6 +112,7 @@ void start() {
 
     time = Millis();
     startTime = time;
+    firstSample = true;
     for (uint8_t i = 0; i < MAX_PORTS; i++) {
       if (sensors[i] != NULL) {
         sensors[i]->start(time);
@@ -128,12 +129,14 @@ void stop() {
 }
 
 // update all connected sensor values
-void update() {
+bool update() {
+  bool ready = true;
   for (uint8_t i = 0; i < MAX_PORTS; i++) {
     if (sensors[i] != NULL) {
-      sensors[i]->processData();
+      ready &= sensors[i]->processData();
     }
   }
+  return ready;
 }
 
 void scan() {

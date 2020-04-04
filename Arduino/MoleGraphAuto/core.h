@@ -105,13 +105,14 @@ enum ScanType
 extern bool running;
 extern ScanType scanType;
 extern uint32_t time;
+extern bool firstSample;
 extern uint32_t period;
 extern uint8_t  dataReady;
 
 void enableChannels();
 void start();
 void stop();
-void update();
+bool update();
 void sendCommand(uint8_t command, const char* format_msg, ...);
 void sendValues();
 void assignPort(uint8_t, uint8_t);

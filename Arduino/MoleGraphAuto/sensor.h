@@ -20,7 +20,7 @@ class Sensor {
     virtual  ~Sensor();
     void start(uint32_t);
     void stop();
-    void processData();
+    bool processData();
     bool isDataReady() { return dataReady; } //will be set/reset in processData method
     virtual float read(uint8_t);
     virtual void  calibrate();

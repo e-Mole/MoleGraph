@@ -28,8 +28,9 @@ void Sensor::stop() {
   time = 0;
 }
 
-void Sensor::processData(){
+bool Sensor::processData(){
   dataReady = process();
+  return dataReady;
 }
 
 bool Sensor::process() {

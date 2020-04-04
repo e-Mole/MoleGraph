@@ -78,7 +78,7 @@ private:
     ChannelProxyBase::DisplayValue m_markerRangeValue;
     //FIXME: currently unused but should be
     QList<ChannelGraph *> m_channelGraphs;
-
+    bool m_gestureInProgress;
     virtual void wheelEvent(QWheelEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);

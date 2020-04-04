@@ -43,7 +43,8 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
     m_wheelEvent(NULL),
     m_displayMode(SampleValue),
     m_markerTypeSelection(MTSSample),
-    m_markerRangeValue(ChannelProxyBase::DVDelta)
+    m_markerRangeValue(ChannelProxyBase::DVDelta),
+    m_gestureInProgress(false)
 {
      //remove originally created axis rect
     plotLayout()->clear();
@@ -93,8 +94,10 @@ bool Plot::event(QEvent *event)
             QGestureEvent *gestureEve = static_cast<QGestureEvent*>(event);
             if( QGesture *pinch = gestureEve->gesture(Qt::PinchGesture) )
             {
+                m_gestureInProgress = true;
                 QPinchGesture *pinchEve = static_cast<QPinchGesture *>(pinch);
                 qreal scaleFactor = pinchEve->lastScaleFactor( );
+                qDebug() << "pinch with factor: " << scaleFactor << " last center: " << pinchEve->lastCenterPoint();
                 Zoom(pinchEve->lastCenterPoint(), (scaleFactor > 1.0) ? scaleFactor * 10 : -10 / scaleFactor);
                 event->accept();
                 return true;
@@ -104,28 +107,36 @@ bool Plot::event(QEvent *event)
         case QEvent::TouchUpdate:
         case QEvent::TouchEnd:
         {
-            QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
-            if(touchEvent->touchPoints( ).count( ) == 1)
+            if (!m_gestureInProgress)
             {
-                QMouseEvent mouseEve(
-                    //FIXME type
-                    QEvent::MouseButtonPress,
-                    touchEvent->touchPoints().first().pos(),
-                    Qt::LeftButton,
-                    Qt::LeftButton,
-                    Qt::NoModifier);
-                switch (touchEvent->touchPointStates())
+                QTouchEvent *touchEvent = static_cast<QTouchEvent *>( event );
+                if(touchEvent->touchPoints( ).count( ) == 1)
                 {
-                    case Qt::TouchPointPressed:
-                        this->MyMousePressEvent(&mouseEve);
-                    break;
-                    case Qt::TouchPointMoved:
-                        this->MyMouseMoveEvent(&mouseEve);
-                    break;
-                    case Qt::TouchPointReleased:
-                        this->MyMouseReleaseEvent(&mouseEve);
-                    break;
+                    qDebug() << "EventType: " << event->type();
+                    QMouseEvent mouseEve(
+                        //FIXME type
+                        QEvent::MouseButtonPress,
+                        touchEvent->touchPoints().first().pos(),
+                        Qt::LeftButton,
+                        Qt::LeftButton,
+                        Qt::NoModifier);
+                    switch (touchEvent->touchPointStates())
+                    {
+                        case Qt::TouchPointPressed:
+                            this->MyMousePressEvent(&mouseEve);
+                        break;
+                        case Qt::TouchPointMoved:
+                            this->MyMouseMoveEvent(&mouseEve);
+                        break;
+                        case Qt::TouchPointReleased:
+                            this->MyMouseReleaseEvent(&mouseEve);
+                        break;
+                    }
                 }
+            }
+            else if (event->type() == QEvent::TouchEnd)
+            {
+                m_gestureInProgress = false;
             }
             return true;
         }

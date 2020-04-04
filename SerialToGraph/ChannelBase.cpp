@@ -27,13 +27,13 @@ ChannelBase::ChannelBase(Measurement *measurement):
 
 void ChannelBase::_UpdateExtremes(double value, unsigned index)
 {
-    if (value < m_channelMinValue)
+    if (value < m_channelMinValue && !IsEqual(value, -std::numeric_limits<double>::infinity()))
     {
         m_channelMinValue = value;
         m_channelMinValueIndex = index;
     }
 
-    if (value > m_channelMaxValue)
+    if (value > m_channelMaxValue && !IsEqual(value, -std::numeric_limits<double>::infinity()))
     {
         m_channelMaxValue = value;
         m_channelMaxValueIndex = index;

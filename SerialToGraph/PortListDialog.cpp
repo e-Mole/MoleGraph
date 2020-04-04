@@ -208,7 +208,7 @@ void PortListDialog::_CleanPortList()
     m_hwConnector.CloseSelectedPort();
     m_selectedRadioButton = nullptr;
     m_radioToInfo.clear();
-
+    m_labelToRb.clear();
     QList<QWidget *> widgets = m_portWidget->findChildren<QWidget *>();
     foreach(QWidget * widget, widgets)
     {

@@ -729,7 +729,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     m_currentValueControl->setText(
         (currentValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
-            locale.toString(currentValue)
+            locale.toString(originalValue)
     );
 
     //was changed in currentValueChanged

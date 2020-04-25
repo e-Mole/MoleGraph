@@ -203,15 +203,17 @@ ChannelSettings::ChannelSettings(
 
     if (dynamic_cast<HwChannelProxy*>(channelProxy) || m_channelProxy->IsGhost())
     {
-        _InitializeValueLine(dynamic_cast<HwChannelProxy*>(channelProxy));
-        _InitializeSensorItems(dynamic_cast<HwChannelProxy*>(channelProxy));
+        HwChannelProxy * hwProxy = dynamic_cast<HwChannelProxy*>(channelProxy);
+        _InitializeValueLine(hwProxy);
+        _InitializeSensorItems(hwProxy);
         AddSeparator();
-        _InitializeCorrectionItems((dynamic_cast<HwChannelProxy*>(channelProxy))->GetValueCorrection());
-        AddSeparator();
-        m_name->setVisible(true);
+        if (hwProxy != nullptr){
+            _InitializeCorrectionItems(hwProxy->GetValueCorrection());
+            AddSeparator();
+        }m_name->setVisible(true);
         m_formLayout->addRow(new Label(tr("Title"), this), m_name);
         m_units->setVisible(true);
-        m_units->setEnabled(dynamic_cast<HwChannelProxy*>(channelProxy));
+        m_units->setEnabled(hwProxy);
         m_formLayout->addRow(new Label(tr("Units"), this), m_units);
 
     }

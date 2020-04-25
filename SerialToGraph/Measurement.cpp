@@ -360,7 +360,7 @@ void Measurement::_CloneAxesAndChanels(Measurement *sourceMeasurement)
             HwChannelProxy *sourceChannelProxy = dynamic_cast<HwChannelProxy*>(sourceGraphiscContainer->GetChannelProxy(sourceChannel));
             HwChannel *newChannel = new HwChannel(this, hwChannel);
             _ConnectHwChannel(newChannel);
-            m_widget->CloneHwChannelProxy(sourceChannelProxy, newChannel, sourceChannelProxy->IsGhost());
+            m_widget->CloneHwChannelProxy(sourceChannelProxy, sourceGraphiscContainer, newChannel, sourceChannelProxy->IsGhost());
             m_channels.push_back(newChannel);
 
         }
@@ -370,7 +370,7 @@ void Measurement::_CloneAxesAndChanels(Measurement *sourceMeasurement)
             SampleChannelProxy *sourceChannelProxy =
                 dynamic_cast<SampleChannelProxy*>(sourceGraphiscContainer->GetChannelProxy(sourceChannel));
             SampleChannelProxy *newChannelProxy =
-                m_widget->CloneSampleChannelProxy(sourceChannelProxy, m_sampleChannel, sourceChannelProxy->IsGhost());
+                m_widget->CloneSampleChannelProxy(sourceChannelProxy, sourceGraphiscContainer, m_sampleChannel, sourceChannelProxy->IsGhost());
 
             m_channels.push_back(m_sampleChannel);
             m_widget->SetAxisStyle(

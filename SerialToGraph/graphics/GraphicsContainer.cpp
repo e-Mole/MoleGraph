@@ -854,10 +854,9 @@ SampleChannelProxy *GraphicsContainer::CreateSampleChannelProxy(SampleChannel *c
 }
 
 SampleChannelProxy *GraphicsContainer::CloneSampleChannelProxy(
-    SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost)
+    SampleChannelProxy *sourceChannelProxy, GraphicsContainer *sourceContainer, SampleChannel *channel, bool isGhost)
 {
-    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
-    ChannelGraph *newChannelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget(), isGhost);
+    ChannelGraph *newChannelGraph = CloneChannelGraph(sourceContainer, sourceChannelProxy->GetWidget(), isGhost);
 
     ChannelWidget *newWidget = new ChannelWidget(
         this,
@@ -932,10 +931,9 @@ HwChannelProxy *GraphicsContainer::CreateHwChannelProxy(
     return _CreateHwCannelProxy(channel, widget, isGhost);
 }
 
-HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost)
+HwChannelProxy *GraphicsContainer::CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, GraphicsContainer *sourceContainer, HwChannel *channel, bool isGhost)
 {
-    GraphicsContainer *sourceGraphicsContainer = sourceChannelProxy->GetChannelMeasurement()->GetGC();
-    ChannelGraph *channelGraph = CloneChannelGraph(sourceGraphicsContainer, sourceChannelProxy->GetWidget(), isGhost);
+    ChannelGraph *channelGraph = CloneChannelGraph(sourceContainer, sourceChannelProxy->GetWidget(), isGhost);
     ChannelWidget *widget = new ChannelWidget(
         this,
         channelGraph,
@@ -1199,7 +1197,10 @@ bool GraphicsContainer::_IsTracked(Measurement *m)
 
 QString GraphicsContainer::GetGhostName(GraphicsContainer * sourceGraphicsContainer, ChannelProxyBase *channelProxy)
 {
-    return sourceGraphicsContainer->GetName() + "." + channelProxy->GetName();
+    if (channelProxy->IsGhost())
+        return channelProxy->GetName(); //ghost from ghost probably already contains the name of the original measurement if nor was adjusted by user and is probably unique
+    else
+        return sourceGraphicsContainer->GetName() + "." + channelProxy->GetName();
 }
 
 ChannelProxyBase * GraphicsContainer::AddGhost(
@@ -1212,12 +1213,12 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
     if (dynamic_cast<HwChannelProxy*>(sourceChannelProxy))
     {
         HwChannelProxy *sourceHwChannelProxy = dynamic_cast<HwChannelProxy*>(sourceChannelProxy);
-        newProxy = CloneHwChannelProxy(sourceHwChannelProxy, sourceHwChannelProxy->GetChannel(), true);
+        newProxy = CloneHwChannelProxy(sourceHwChannelProxy, sourceGraphicsContainer, sourceHwChannelProxy->GetChannel(), true);
     }
     else
     {
         SampleChannelProxy *sourceSampleChannelProxy = dynamic_cast<SampleChannelProxy*>(sourceChannelProxy);
-        newProxy = CloneSampleChannelProxy(sourceSampleChannelProxy, sourceSampleChannelProxy->GetChannel(), true);
+        newProxy = CloneSampleChannelProxy(sourceSampleChannelProxy, sourceGraphicsContainer, sourceSampleChannelProxy->GetChannel(), true);
     }
 
     newProxy->SetName(GetGhostName(sourceGraphicsContainer, newProxy));

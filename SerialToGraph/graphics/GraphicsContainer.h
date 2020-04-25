@@ -132,7 +132,7 @@ public:
     ChannelGraph* CloneChannelGraph(GraphicsContainer *sourceContainer, ChannelWidget *sourceChannelWidget, bool isGhost);
     QColor GetColorByOrder(unsigned order);
     SampleChannelProxy *CreateSampleChannelProxy(SampleChannel *channel, Axis *valueAxis, bool isGhost);
-    SampleChannelProxy *CloneSampleChannelProxy(SampleChannelProxy *sourceChannelProxy, SampleChannel *channel, bool isGhost);
+    SampleChannelProxy *CloneSampleChannelProxy(SampleChannelProxy *sourceChannelProxy, GraphicsContainer *sourceContainer, SampleChannel *channel, bool isGhost);
     void GhostManipupationPostProcess(ChannelProxyBase *ghostProxy);
 
     HwChannelProxy *CreateHwChannelProxy(HwChannel *channel,
@@ -144,7 +144,7 @@ public:
         QString const & units,
         bool isGhost);
 
-    HwChannelProxy *CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, HwChannel *channel, bool isGhost);
+    HwChannelProxy *CloneHwChannelProxy(HwChannelProxy *sourceChannelProxy, GraphicsContainer *sourceContainer, HwChannel *channel, bool isGhost);
     QString GetValueTimestamp(SampleChannelProxy *channelProxy, unsigned index);
     void Activate();
     void Deactivate();

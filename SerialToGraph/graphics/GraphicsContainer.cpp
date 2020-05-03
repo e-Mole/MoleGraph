@@ -1221,7 +1221,7 @@ ChannelProxyBase * GraphicsContainer::AddGhost(
         newProxy = CloneSampleChannelProxy(sourceSampleChannelProxy, sourceGraphicsContainer, sourceSampleChannelProxy->GetChannel(), true);
     }
 
-    newProxy->SetName(GetGhostName(sourceGraphicsContainer, newProxy));
+    newProxy->SetName(GetGhostName(sourceGraphicsContainer, sourceChannelProxy));
     newProxy->SetPenStyle(Qt::DashLine);
     bool confirmVisible = newProxy->isVisible();
     newProxy->SetVisible(false);

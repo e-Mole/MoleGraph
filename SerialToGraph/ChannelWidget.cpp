@@ -43,7 +43,7 @@ ChannelWidget::ChannelWidget(
     m_penStyle(penStyle),
     m_units(units),
     m_isVisible(isActive),
-    m_shortcutOrder(shortcutOrder),
+    m_shortcutOrder(isGhost ? ~0 : shortcutOrder),
     m_isGhost(isGhost)
 {
     connect(&GlobalSettings::GetInstance(), SIGNAL(hideAllCHannelsChanged(bool)), this, SLOT(hideAllCHannelsChanged(bool)));
@@ -59,6 +59,7 @@ ChannelWidget::ChannelWidget(
         ShowGraph(false);
 
     SetVisible(m_isVisible);
+    UpdateTitle();
     DisplayNAValue(valueType);
 }
 

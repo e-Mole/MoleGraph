@@ -28,11 +28,6 @@ void Sensor::stop() {
   time = 0;
 }
 
-bool Sensor::processData(){
-  dataReady = process();
-  return dataReady;
-}
-
 bool Sensor::process() {
   if (Action(period)) {
     time += period;

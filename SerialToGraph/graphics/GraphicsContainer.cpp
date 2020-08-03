@@ -963,12 +963,14 @@ void GraphicsContainer::hwValueChanged(unsigned index)
     ChannelWidget *widget = channelProxy->GetWidget();
     double newValue = channelProxy->GetValue(index);
 
-    widget->FillLastValueText(newValue);
-    widget->ShowLastValueWithUnits(channelProxy->GetValueType(index));
-    ChannelProxyBase *horizontalChanelProxy = GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
-    widget->UpdateGraph(horizontalChanelProxy->GetValue(index), newValue, true);
+    if (index == m_currentIndex)
+    {
+        widget->FillLastValueText(newValue);
+        widget->ShowLastValueWithUnits(channelProxy->GetValueType(index));
+        ChannelProxyBase *horizontalChanelProxy = GetHorizontalChannelProxy(channelProxy->GetChannelMeasurement());
+        widget->UpdateGraph(horizontalChanelProxy->GetValue(index), newValue, true);
+    }
 }
-
 void GraphicsContainer::sampleChannelPropertyChanged()
 {
     SampleChannelProperties *properties = dynamic_cast<SampleChannelProperties*>(sender());

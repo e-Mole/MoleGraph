@@ -236,7 +236,7 @@ void ChannelWidget::resizeEvent(QResizeEvent * event)
 
 QColor ChannelWidget::_GetBackColorFromType(ChannelBase::ValueType type)
 {
-    qDebug() << "type: " << type;
+    //qDebug() << "type: " << type;
     switch (type)
     {
     case ChannelBase::ValueTypeSample:

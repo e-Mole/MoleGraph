@@ -572,7 +572,7 @@ void ChannelSettings::_InitializeGhostCombos()
 void ChannelSettings::_FillMeasurementCombo()
 {
     Measurement *originalMeasurement = m_channelProxy->GetChannelMeasurement();
-
+    m_sourceMeasurementCombo->clear();
     unsigned comboIndex = 0;
     unsigned measurementIndex = ~0;
     foreach (Measurement *item, m_measurements)
@@ -594,6 +594,7 @@ void ChannelSettings::_FillMeasurementCombo()
 void ChannelSettings::fillChannelCombos(int measurementComboIndex)
 {
     Q_UNUSED(measurementComboIndex)
+    m_sourceChannelCombo->clear();
     Measurement *sourceMeasurement = m_measurements[m_sourceMeasurementCombo->currentData().toInt()];
     GraphicsContainer *sourceGC = sourceMeasurement->GetGC();
 
@@ -1169,6 +1170,19 @@ bool ChannelSettings::BeforeAccept()
             if (!_CheckCorrectionPointsValidity())
             {
                 return false;
+            }
+
+            if (hwChannelProxy->IsGhost())
+            {
+                if (MyMessageBox::No == MyMessageBox::question(
+                    this,
+                    tr("Value correction changes performed on a virtual channel are applied to the original channel as well. Continue?"),
+                    tr("Continue")
+                ))
+                {
+                    return false;
+                }
+
             }
             hwChannelProxy->SetValueCorrection(m_valueCorrection);
             changed = true;

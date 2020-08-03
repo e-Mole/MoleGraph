@@ -72,14 +72,14 @@ ChannelBase::ValueType HwChannel::GetValueType(int index)
     }
     if (m_measurement->IsPlotInRangeMode())
     {
-        qDebug() << "ValueTypeRangeValue on index:" << index;
+        //qDebug() << "ValueTypeRangeValue on index:" << index;
         return ValueTypeRangeValue;
     }
-    qDebug() << "GetRawValue:" << GetRawValue(index) << " GetOriginalValue:" <<GetOriginalValue(index);
+    //qDebug() << "GetRawValue:" << GetRawValue(index) << " GetOriginalValue:" <<GetOriginalValue(index);
     ChannelBase::ValueType type = IsEqual(GetRawValue(index), GetOriginalValue(index)) ?
         ValueTypeOriginal : ValueTypeChanged;
 
-    qDebug() << "type:" << type << " on index:" << index;
+    //qDebug() << "type:" << type << " on index:" << index;
     return type;
 }
 

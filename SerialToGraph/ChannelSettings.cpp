@@ -357,6 +357,56 @@ void ChannelSettings::_InitializeCorrectionPoint(QString const &label, LineEdit 
     connect(newValueEdit, SIGNAL(textChanged(QString)), this, SLOT(correctionVariableChanged(QString)));
 }
 
+void ChannelSettings::_FillCorrectionPoints()
+{
+    QLocale locale = QLocale(QLocale::system());
+
+    unsigned pointCount = m_valueCorrection->GetPointCount();
+    auto points = m_valueCorrection->GetPoints();
+    if (pointCount > 2)
+    {
+        m_correctionPoint1Orig->setText(locale.toString(points[0].first));
+        m_correctionPoint1New->setText(locale.toString(points[0].second));
+        m_correctionPoint2Orig->setText(locale.toString(points[1].first));
+        m_correctionPoint2New->setText(locale.toString(points[1].second));
+        m_correctionPoint3Orig->setText(locale.toString(points[2].first));
+        m_correctionPoint3New->setText(locale.toString(points[2].second));
+    }
+    else if (pointCount > 1)
+    {
+        m_correctionPoint1Orig->setText(locale.toString(points[0].first));
+        m_correctionPoint1New->setText(locale.toString(points[0].second));
+        m_correctionPoint2Orig->setText(locale.toString(points[1].first));
+        m_correctionPoint2New->setText(locale.toString(points[1].second));
+        m_correctionPoint3Orig->setText("");
+        m_correctionPoint3New->setText("");
+    }
+    else if (pointCount > 0)
+    {
+        qDebug() << "points " << points[0].first << " " << points[0].second;
+        m_correctionPoint1Orig->setText(locale.toString(points[0].first));
+        m_correctionPoint1New->setText(locale.toString(points[0].second));
+        m_correctionPoint2Orig->setText("");
+        m_correctionPoint2New->setText("");
+        m_correctionPoint3Orig->setText("");
+        m_correctionPoint3New->setText("");
+    }
+    else{
+        m_correctionPoint1Orig->setText("");
+        m_correctionPoint1New->setText("");
+        m_correctionPoint2Orig->setText("");
+        m_correctionPoint2New->setText("");
+        m_correctionPoint3Orig->setText("");
+        m_correctionPoint3New->setText("");
+    }
+
+    m_correctionPoint1Orig->setEnabled(pointCount > 0);
+    m_correctionPoint1New->setEnabled(pointCount > 0);
+    m_correctionPoint2Orig->setEnabled(pointCount > 1);
+    m_correctionPoint2New->setEnabled(pointCount > 1);
+    m_correctionPoint3Orig->setEnabled(pointCount > 2);
+    m_correctionPoint3New->setEnabled(pointCount > 2);
+}
 void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
 {
     unsigned index = 0;
@@ -370,58 +420,13 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
         }
         if (id == correction->GetId())
         {
-            QLocale locale = QLocale(QLocale::system());
             if (!addItem){
                 hw::ValueCorrection * temp = new hw::ValueCorrection(this, correction);
                 temp->CopyPoints(m_valueCorrection);
                 delete m_valueCorrection;
                 m_valueCorrection = temp;
             }
-            unsigned pointCount = m_valueCorrection->GetPointCount();
-            auto points = m_valueCorrection->GetPoints();
-            if (pointCount > 2)
-            {
-                m_correctionPoint1Orig->setText(locale.toString(points[0].first));
-                m_correctionPoint1New->setText(locale.toString(points[0].second));
-                m_correctionPoint2Orig->setText(locale.toString(points[1].first));
-                m_correctionPoint2New->setText(locale.toString(points[1].second));
-                m_correctionPoint3Orig->setText(locale.toString(points[2].first));
-                m_correctionPoint3New->setText(locale.toString(points[2].second));
-            }
-            else if (pointCount > 1)
-            {
-                m_correctionPoint1Orig->setText(locale.toString(points[0].first));
-                m_correctionPoint1New->setText(locale.toString(points[0].second));
-                m_correctionPoint2Orig->setText(locale.toString(points[1].first));
-                m_correctionPoint2New->setText(locale.toString(points[1].second));
-                m_correctionPoint3Orig->setText("");
-                m_correctionPoint3New->setText("");
-            }
-            else if (pointCount > 0)
-            {
-                qDebug() << "points " << points[0].first << " " << points[0].second;
-                m_correctionPoint1Orig->setText(locale.toString(points[0].first));
-                m_correctionPoint1New->setText(locale.toString(points[0].second));
-                m_correctionPoint2Orig->setText("");
-                m_correctionPoint2New->setText("");
-                m_correctionPoint3Orig->setText("");
-                m_correctionPoint3New->setText("");
-            }
-            else{
-                m_correctionPoint1Orig->setText("");
-                m_correctionPoint1New->setText("");
-                m_correctionPoint2Orig->setText("");
-                m_correctionPoint2New->setText("");
-                m_correctionPoint3Orig->setText("");
-                m_correctionPoint3New->setText("");
-            }
-
-            m_correctionPoint1Orig->setEnabled(pointCount > 0);
-            m_correctionPoint1New->setEnabled(pointCount > 0);
-            m_correctionPoint2Orig->setEnabled(pointCount > 1);
-            m_correctionPoint2New->setEnabled(pointCount > 1);
-            m_correctionPoint3Orig->setEnabled(pointCount > 2);
-            m_correctionPoint3New->setEnabled(pointCount > 2);
+            _FillCorrectionPoints();
 
             if (addItem){
                 m_correctionComboBox->setCurrentIndex(index);
@@ -627,11 +632,20 @@ void ChannelSettings::loadFromOriginalWidget(int channelComboIndex)
         m_channelProxy = originalChannelProxy->Clone(m_graphicsContainer, m_channelProxy->GetWidget());
     }
     _FillSensorItems(dynamic_cast<HwChannelProxy*>(m_channelProxy));
+
+    if (dynamic_cast<HwChannelProxy*>(m_channelProxy) != nullptr)
+    {
+        HwChannelProxy *hwProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
+        m_valueCorrection = new hw::ValueCorrection(this, hwProxy->GetValueCorrection());
+        m_correctionComboBox->setCurrentIndex(m_valueCorrection->GetId());
+        _FillCorrectionPoints();
+    }
+
     _FillValueLine(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     _FillTimeFeatures(dynamic_cast<SampleChannelProxy*>(m_channelProxy));
     m_name->setText(m_graphicsContainer->GetGhostName(originalGC, originalChannelProxy));
 
-    m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy) != NULL);
+    m_units->setEnabled(dynamic_cast<HwChannelProxy*>(m_channelProxy) != nullptr);
     m_units->setText(originalChannelProxy->GetUnits());
 
     if (m_colorButtonWidget) //it is created thgether with add color button

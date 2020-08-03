@@ -43,6 +43,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _FillMeasurementCombo();
     void _InitializeSensorItems(HwChannelProxy *channelProxy);
     void _InitializeCorrectionPoint(QString const &label, LineEdit *origValueEdit, LineEdit *newValueEdit);
+    void _FillCorrectionPoints();
     void _FillCorrectionValues(unsigned id, bool addItem);
     void _InitializeCorrectionItems(hw::ValueCorrection *originalCorrection);
     void _FillSensorItems(HwChannelProxy *channelProxy);

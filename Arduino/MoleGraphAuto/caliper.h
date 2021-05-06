@@ -1,8 +1,7 @@
-﻿#ifndef CALIPER_h
+#ifndef CALIPER_h
 #define CALIPER_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class CALIPER : public Sensor {

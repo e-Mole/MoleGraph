@@ -2,7 +2,6 @@
 #define Force_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "hx711.h"
 
 class Force : public HX711 {

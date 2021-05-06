@@ -2,7 +2,7 @@
 #define PULSE_h
 
 #include <Arduino.h>
-#include "systick.h"
+#include "timer.h"
 #include "Sensor.h"
 
 class PULSE : public Sensor {

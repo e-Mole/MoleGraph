@@ -1,8 +1,7 @@
-﻿#ifndef LSM303DLHC_h
+#ifndef LSM303DLHC_h
 #define LSM303DLHC_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class LSM303DLHC : public Sensor {

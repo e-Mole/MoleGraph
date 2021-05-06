@@ -1,8 +1,7 @@
-﻿#ifndef LUXBH1750_h
+#ifndef LUXBH1750_h
 #define LUXBH1750_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class LUXBH1750 : public Sensor {

@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <OneWire.h> 
-#include "systick.h"
 #include "Sensor.h"
 
 class DS18B20 : public Sensor {

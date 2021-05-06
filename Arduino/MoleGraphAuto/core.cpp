@@ -2,7 +2,7 @@
 #include "channel.h"
 #include "sensor.h"
 
-#define PERIOD  1000
+#define PERIOD  (1000 * TICK_PER_MS)
 #define DEBUG_MSG_MAX_SIZE 100
 #define MAX_CHANNELS    8
 
@@ -110,7 +110,7 @@ void start() {
       }
     }
 
-    time = Millis();
+    time = getTime();
     startTime = time;
     firstSample = true;
     for (uint8_t i = 0; i < MAX_PORTS; i++) {
@@ -119,7 +119,7 @@ void start() {
       }
     }
 //    time -= period;
-    time -= 5;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
+    time -= 5 * TICK_PER_MS;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
   }
 }
 
@@ -242,10 +242,10 @@ void setPeriod(bool f) {
   uint16_t x;
   Serial.readBytes((uint8_t*)&x, 2);
   if (f == 0) {
-    period = (uint32_t)x * 1000;    // nastaveni periody vzorkovani v ms [zadano v s]
+    period = (uint32_t)x * (1000 * TICK_PER_MS);    // nastaveni periody vzorkovani v 0.5 us [zadano v s] 
     DEBUG_MSG("period = %d [s]", period)
   } else {
-    period = (uint32_t)1000 / x;    // nastaveni periody vzorkovani v ms [zadano v Hz]
+    period = (uint32_t)((1 / TIME_BASE) / x);    // nastaveni periody vzorkovani v 0.5 us [zadano v Hz] 
     DEBUG_MSG("period = %d [Hz]", period)
   }
 }

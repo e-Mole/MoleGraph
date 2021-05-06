@@ -1,7 +1,6 @@
 #ifndef Core_h
 #define Core_h
 
-#include "systick.h"
 #include "hw.h"
 #include "sensor.h"
 #include "channel.h"
@@ -36,7 +35,7 @@
 #include "caliper.h"
 
 // Uncomment to enable printing out nice debug messages.
-//#define DEBUG
+///#define DEBUG
 
 enum Instructions
 {

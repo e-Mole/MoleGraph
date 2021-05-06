@@ -1,6 +1,7 @@
 #include "ds18b20.h"
+#include "timer.h"
 
-#define DS18B20_WAIT  800
+#define DS18B20_WAIT  (800 * TICK_PER_MS)
 
 DS18B20::DS18B20(uint32_t _period, uint8_t _port, uint8_t _resolution) : Sensor(_period, _port) {
   pin = PORTS[port][0];
@@ -66,7 +67,3 @@ bool DS18B20::process() {
   }
   return 0; 
 }
-
-
-
-

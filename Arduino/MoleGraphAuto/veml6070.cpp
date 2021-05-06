@@ -1,4 +1,4 @@
-﻿#include "veml6070.h"
+#include "veml6070.h"
 #include "Adafruit_VEML6070.h"
 
 // Create VEML6070 object

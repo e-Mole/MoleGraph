@@ -2,7 +2,6 @@
 #define Silomer_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class Silomer : public Sensor {

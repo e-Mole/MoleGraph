@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include <Wire.h>
-#include "systick.h"
 
 #define MAX_PORTS 4
 #define NO_DATA 3.4028235E+38        //-1.0e-8f
@@ -11,7 +10,7 @@
 extern volatile uint32_t newTime;
 extern uint8_t PORTS[MAX_PORTS][4];
 
-#define Action(x) (newTime - time >= x)
+#define Action(x) ((uint32_t)newTime - time >= x)
 
 class Sensor {
   bool dataReady = false;

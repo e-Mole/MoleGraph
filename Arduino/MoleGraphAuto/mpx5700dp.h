@@ -2,7 +2,6 @@
 #define MPX5700DP_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class MPX5700DP : public Sensor {

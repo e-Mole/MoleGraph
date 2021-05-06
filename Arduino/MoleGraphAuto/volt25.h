@@ -2,7 +2,6 @@
 #define VOLT25_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class VOLT25 : public Sensor {

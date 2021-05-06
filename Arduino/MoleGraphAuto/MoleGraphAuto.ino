@@ -51,13 +51,12 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
 
-  SysTick_Init();
   Timer_Init();
   SystemInit();
 }
 
 void loop() {
-  newTime = Millis();
+  newTime = getTime();
 
   if (StartStop) {
     if (running) {

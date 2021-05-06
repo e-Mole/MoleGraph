@@ -2,7 +2,6 @@
 #define HX711_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class HX711 : public Sensor {

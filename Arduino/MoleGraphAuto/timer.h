@@ -45,6 +45,11 @@ inline static uint32_t getTime() {
   return result;
 } 
 
+inline uint32_t Millis() {
+  uint32_t result = getTime();  
+  return result / TICK_PER_MS;
+}
+ 
 #include "Sensor.h"
 
 inline void delay_us(uint16_t x) {

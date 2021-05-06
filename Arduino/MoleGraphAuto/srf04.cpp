@@ -1,6 +1,6 @@
 #include "srf04.h"
 
-#define SRF04_WAIT  75
+#define SRF04_WAIT  (75 * TICK_PER_MS)
 
 SRF04::SRF04(uint32_t _period, uint8_t _port) : TimerAbstract(_period, _port) {
   trigger = PORTS[port][0];
@@ -29,9 +29,9 @@ bool SRF04::process() {
       if (x != 0) {
         value_2 = value_1;
         value_1 = value;
-        value = x * (0.5f * 0.00017315f);
-        velocity = (value - value_1) / (period * 0.001f);
-        acceleration = (value - 2 * value_1 + value_2) / (period * period * 1e-6f);
+        value = x * (TIME_BASE * 173.15f);
+        velocity = (value - value_1) / (period * TIME_BASE);
+        acceleration = (value - 2 * value_1 + value_2) / (period * period * TIME_BASE * TIME_BASE);
       }
       active = 0; 
       delta  = period; 

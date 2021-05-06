@@ -2,7 +2,6 @@
 #define Magnetometr_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class Magnetometr : public Sensor {

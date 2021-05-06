@@ -1,8 +1,7 @@
-﻿#ifndef PH_h
+#ifndef PH_h
 #define PH_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class PH : public Sensor {

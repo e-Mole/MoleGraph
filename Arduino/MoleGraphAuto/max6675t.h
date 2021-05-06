@@ -2,7 +2,6 @@
 #define MAX6675_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class MAX6675 : public Sensor {

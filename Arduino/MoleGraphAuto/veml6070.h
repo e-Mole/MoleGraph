@@ -1,8 +1,7 @@
-﻿#ifndef VEML6070_h
+#ifndef VEML6070_h
 #define VEML6070_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class VEML6070 : public Sensor {

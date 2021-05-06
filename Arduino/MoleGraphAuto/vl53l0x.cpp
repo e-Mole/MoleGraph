@@ -1,6 +1,7 @@
 #include "vl53l0x.h"
+#include "timer.h"
 
-#define VL53L0X_WAIT  55
+#define VL53L0X_WAIT  (55 * TICK_PER_MS)
 #define VL53L0X_ADDR  (0x52 >> 1)
 
 #define VL53L0X_REG_IDENTIFICATION_MODEL_ID         0xc0

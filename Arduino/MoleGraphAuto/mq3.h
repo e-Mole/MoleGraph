@@ -1,8 +1,7 @@
-﻿#ifndef MQ3_h
+#ifndef MQ3_h
 #define MQ3_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class MQ3 : public Sensor {

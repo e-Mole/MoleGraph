@@ -2,7 +2,6 @@
 #define DHT11_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "timer.h"
 #include "Sensor.h"
 

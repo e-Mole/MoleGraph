@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <Wire.h> 
-#include "systick.h"
 #include "Sensor.h"
 
 class MLX90614 : public Sensor {

@@ -2,7 +2,7 @@
 #define AD8232_h
 
 #include <Arduino.h>
-#include "systick.h"
+#include "timer.h"
 #include "Sensor.h"
 
 class AD8232 : public Sensor {

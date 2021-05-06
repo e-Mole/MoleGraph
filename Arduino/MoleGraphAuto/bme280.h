@@ -2,7 +2,6 @@
 #define BME280_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class BME280 : public Sensor {

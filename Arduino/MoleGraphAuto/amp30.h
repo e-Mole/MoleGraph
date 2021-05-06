@@ -1,8 +1,7 @@
-﻿#ifndef AMP30_h
+#ifndef AMP30_h
 #define AMP30_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class AMP30 : public Sensor {

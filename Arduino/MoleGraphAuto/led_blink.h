@@ -2,7 +2,6 @@
 #define LedBlink_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class LedBlink : public Sensor {

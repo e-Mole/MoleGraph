@@ -2,8 +2,7 @@
 #define SRF04_h
 
 #include <Arduino.h>
-#include "systick.h"
-#include "Timer.h"
+#include "timer.h"
 
 class SRF04 : public TimerAbstract {
   public:

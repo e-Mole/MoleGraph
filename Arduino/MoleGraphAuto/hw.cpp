@@ -1,7 +1,7 @@
 #include "hw.h"
 
 bool      StartStop  = 0;
-uint16_t  systemTime = 0;
+uint32_t  systemTime = 0;
 uint8_t   button     = 0;
 
 void SystemInit() {
@@ -28,8 +28,8 @@ inline uint8_t getBtn() {
   return result;  
 }
 
-void SystemProcess(uint16_t t) {
-  if (t - systemTime >= PERIOD_SYSTEM) {
+void SystemProcess(uint32_t t) {
+  if ((uint32_t)(t - systemTime) >= PERIOD_SYSTEM) {
     systemTime += PERIOD_SYSTEM;
     if (StartStop) {
       digitalWrite(LED_STATUS, 1);

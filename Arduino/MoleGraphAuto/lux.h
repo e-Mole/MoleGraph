@@ -2,7 +2,6 @@
 #define LUX_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class Lux : public Sensor {

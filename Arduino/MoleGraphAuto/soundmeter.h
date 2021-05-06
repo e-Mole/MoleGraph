@@ -2,7 +2,6 @@
 #define Sound_h
 
 #include <Arduino.h>
-#include "systick.h"
 #include "Sensor.h"
 
 class Soundmeter : public Sensor {

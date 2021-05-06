@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h> 
-#include "Sensor.h"
+#include "timer.h"
 
 class VL53L0X : public Sensor {
   public:

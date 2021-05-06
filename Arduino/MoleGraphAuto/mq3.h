@@ -2,7 +2,7 @@
 #define MQ3_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class MQ3 : public Sensor {
   public:

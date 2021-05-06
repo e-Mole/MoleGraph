@@ -2,7 +2,7 @@
 #define LedBlink_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class LedBlink : public Sensor {
   public:

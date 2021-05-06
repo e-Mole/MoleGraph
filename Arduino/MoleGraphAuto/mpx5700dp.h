@@ -2,7 +2,7 @@
 #define MPX5700DP_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class MPX5700DP : public Sensor {
   public:

@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include "timer.h"
-#include "Sensor.h"
 
 class AD8232 : public Sensor {
   public:

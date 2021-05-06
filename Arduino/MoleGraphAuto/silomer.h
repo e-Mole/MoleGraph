@@ -2,7 +2,7 @@
 #define Silomer_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class Silomer : public Sensor {
   public:

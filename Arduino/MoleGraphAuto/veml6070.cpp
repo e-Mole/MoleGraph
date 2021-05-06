@@ -1,5 +1,5 @@
 #include "veml6070.h"
-#include "Adafruit_VEML6070.h"
+#include "Adafruit_VEML6070/Adafruit_VEML6070.h"
 
 // Create VEML6070 object
 Adafruit_VEML6070 uv = Adafruit_VEML6070();

@@ -2,7 +2,7 @@
 #define Sound_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class Soundmeter : public Sensor {
   public:

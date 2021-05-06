@@ -2,7 +2,7 @@
 #define LUXBH1750_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class LUXBH1750 : public Sensor {
   public:

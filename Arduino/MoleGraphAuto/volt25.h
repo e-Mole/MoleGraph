@@ -2,7 +2,7 @@
 #define VOLT25_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class VOLT25 : public Sensor {
   public:

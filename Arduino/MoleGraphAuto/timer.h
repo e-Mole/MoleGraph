@@ -50,7 +50,7 @@ inline uint32_t Millis() {
   return result / TICK_PER_MS;
 }
  
-#include "Sensor.h"
+#include "sensor.h"
 
 inline void delay_us(uint16_t x) {
   uint16_t t = TCNT1;

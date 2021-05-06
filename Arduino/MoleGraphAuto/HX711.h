@@ -2,7 +2,7 @@
 #define HX711_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class HX711 : public Sensor {
   public:

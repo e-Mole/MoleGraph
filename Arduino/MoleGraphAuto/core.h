@@ -2,7 +2,7 @@
 #define Core_h
 
 #include "hw.h"
-#include "sensor.h"
+//#include "sensor.h"
 #include "channel.h"
 #include "timer.h"
 #include "led_blink.h"
@@ -35,7 +35,7 @@
 #include "caliper.h"
 
 // Uncomment to enable printing out nice debug messages.
-///#define DEBUG
+//#define DEBUG
 
 enum Instructions
 {

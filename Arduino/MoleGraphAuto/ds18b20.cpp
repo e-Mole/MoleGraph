@@ -1,5 +1,4 @@
 #include "ds18b20.h"
-#include "timer.h"
 
 #define DS18B20_WAIT  (800 * TICK_PER_MS)
 
@@ -67,3 +66,7 @@ bool DS18B20::process() {
   }
   return 0; 
 }
+
+
+
+

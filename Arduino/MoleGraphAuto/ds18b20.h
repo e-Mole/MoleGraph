@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <OneWire.h> 
-#include "Sensor.h"
+#include "timer.h"
 
 class DS18B20 : public Sensor {
   public:

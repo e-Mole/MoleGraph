@@ -2,7 +2,7 @@
 #define LSM303DLHC_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class LSM303DLHC : public Sensor {
   public:

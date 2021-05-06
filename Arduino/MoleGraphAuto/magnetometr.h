@@ -2,7 +2,7 @@
 #define Magnetometr_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class Magnetometr : public Sensor {
   public:

@@ -1,5 +1,5 @@
 #include "LUXBH1750.h"
-#include "BH1750.h"
+#include "BH1750/BH1750.h"
 
 // Create BH1750 object
 BH1750 luxMeter;

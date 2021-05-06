@@ -2,7 +2,7 @@
 #define BME280_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class BME280 : public Sensor {
   public:

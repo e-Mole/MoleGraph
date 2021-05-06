@@ -2,7 +2,7 @@
 #define LUX_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class Lux : public Sensor {
   public:

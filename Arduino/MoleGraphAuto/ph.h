@@ -2,7 +2,7 @@
 #define PH_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class PH : public Sensor {
   public:

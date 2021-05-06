@@ -1,5 +1,5 @@
 #include "bme280.h"
-#include "cactus_io_BME280_I2C.h"
+#include "cactus_io_BME280_I2C/cactus_io_BME280_I2C.h"
 
 #define BME280_ADDR  0x76
 #define SEALEVELPRESSURE_HPA (1013.25)

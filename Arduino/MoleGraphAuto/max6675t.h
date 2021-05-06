@@ -2,7 +2,7 @@
 #define MAX6675_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class MAX6675 : public Sensor {
   public:

@@ -2,7 +2,7 @@
 #define VEML6070_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class VEML6070 : public Sensor {
   public:

@@ -2,7 +2,7 @@
 #define AMP30_h
 
 #include <Arduino.h>
-#include "Sensor.h"
+#include "timer.h"
 
 class AMP30 : public Sensor {
   public:

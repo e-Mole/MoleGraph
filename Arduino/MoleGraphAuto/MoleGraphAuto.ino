@@ -63,9 +63,9 @@ void loop() {
       bool dataReady = update();
       if (scanType == PERIODICAL) {
         //DEBUG_MSG("scanType == PERIODICAL: %d, %d", newTime - time, period)
-        if ((firstSample && dataReady) || newTime - time >= period) {
+        if ((firstSample && dataReady) || (uint32_t)(newTime - time) >= period) {
           firstSample = false;
-          if (newTime - time >= period){
+          if ((uint32_t)(newTime - time) >= period){
             time += period;
           }
 

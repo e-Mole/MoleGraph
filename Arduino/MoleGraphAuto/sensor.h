@@ -10,7 +10,7 @@
 extern volatile uint32_t newTime;
 extern uint8_t PORTS[MAX_PORTS][4];
 
-#define Action(x) ((uint32_t)newTime - time >= x)
+#define Action(x) ((uint32_t)(newTime - time) >= x)
 
 class Sensor {
   bool dataReady = false;

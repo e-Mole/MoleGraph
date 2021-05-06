@@ -198,7 +198,7 @@ void sendValues() {
   data[0] = WriteHeader(0);
 
   if (scanType == ONDEMAND) {
-    float timeStamp = (newTime - startTime) * 0.001f;
+    float timeStamp = (newTime - startTime) * TIME_BASE;
     *(float*)(&data[index]) = timeStamp;
     index += sizeof(float);
   }

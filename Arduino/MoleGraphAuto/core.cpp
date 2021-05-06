@@ -51,7 +51,7 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
 //    case SENSOR_SOUNDMETER: return new Soundmeter(_period, _port); // replaced with universal AD
     case SENSOR_SOUNDMETER: return new AD(_period, _port);
     case SENSOR_BME280: return new BME280(_period, _port);
-    case SENSOR_CO2: return new MHZ16(_period, _port);
+//    case SENSOR_CO2: return new MHZ16(_period, _port);
 	  case SENSOR_DCV25: return new VOLT25(_period, _port);
     case SENSOR_DCA5: return new AMP5(_period, _port);
 	  case SENSOR_DCA30: return new AMP30(_period, _port);

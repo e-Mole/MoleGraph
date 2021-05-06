@@ -1,9 +1,9 @@
 #include "Timer.h"
 
-#define PC_PINS   PINC
-#define PC_IEx    PCIE1
-#define PC_MSK    PCMSK1
-#define PC_INT    PCINT1_vect
+#define PC_PINS   PINB
+#define PC_IEx    PCIE0
+#define PC_MSK    PCMSK0
+#define PC_INT    PCINT0_vect
 
 const uint8_t PC[4] = {(1 << PORTS[0][3]), (1 << PORTS[1][3]), (1 << PORTS[2][3]), (1 << PORTS[3][3])};
 
@@ -18,12 +18,14 @@ volatile uint8_t  lastState;
 
 void Timer_Init()
 {
-  TCCR1A = (0<<WGM21) | (0<<WGM20);	// Normal mode
-  TCCR1B = (0<<WGM22) | (0<<CS12) | (1<<CS11) | (0<<CS10);	// CTC, predelicka 8, 2 MHz
+  //TIMSK0 &= ~(1<<TOIE0);            // zakazani preruseni pri preteceni casovace CTC0 (otestovat)
+
+  TCCR1A = (0<<WGM11) | (0<<WGM10);	// Normal mode
+  TCCR1B = (0<<WGM12) | (0<<CS12) | (1<<CS11) | (0<<CS10);	// CTC, predelicka 8, 2 MHz, casova zakladna 0,5 us
   TIMSK1 |= (1<<TOIE1);            // povoleni preruseni pri preteceni
 
-  PC_MSK  = 0;                     // Zakazani preruseni od zmeny pinu PC0..PC3
-  PCICR  |= (1<<PC_IEx);           // Povoleni preruseni od zmeny na portu C
+  PC_MSK  = 0;                     // Zakazani preruseni od zmeny pinu PB0..PB3
+  PCICR  |= (1<<PC_IEx);           // Povoleni preruseni od zmeny na portu B
 
   lastState = PC_PINS & maskPC;
 }
@@ -32,23 +34,16 @@ ISR (TIMER1_OVF_vect) {
   tick++;
 }
 
-inline uint32_t getTimer() {
-  cli();
-  uint32_t result =  TCNT1 | (uint32_t)tick << 16;
-  sei();
-  return result;
-}
-
 ISR (PC_INT) {
-  uint32_t temp =  TCNT1 | (uint32_t)tick << 16;
+  uint32_t temp =  getCTC();
   uint8_t  a = PC_PINS & maskPC;
   uint8_t  b = a ^ lastState;
 
   if (b != 0) {
-    uint8_t index = -1;
+    uint8_t index = 4;
     uint8_t c = a & b;
     while (b != 0) {
-      index++;
+      index--;
       b = b >> 1;
     }
     if (c == 0) { // sestupna hrana
@@ -60,21 +55,21 @@ ISR (PC_INT) {
       countRise[index]++;
       pulseNegative[index] = temp - timeFall[index];
       periodRise[index] = temp - timeRise[index];
-      timeRise[index] = temp;
+      timeRise[index] = temp;    
     }
   }
   lastState = a;
 }
 
 TimerAbstract::TimerAbstract(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
-  pin = PORTS[port][0];
+  pin = PORTS[port][1];
   pinMode(pin, INPUT_PULLUP);
-  maskPC |= (1 << (pin % 0x07));
-  PC_MSK |= (1 << PORTS[port][3]);
+  maskPC |= (1 << (pin & 0x07));
+  PC_MSK |= (1 << PORTS[port][3]);  
 }
 
 TimerAbstract::~TimerAbstract() {
-  PC_MSK &= ~(1 << PORTS[port][3]);
+  PC_MSK &= ~(1 << PORTS[port][3]);      
 }
 
 void TimerAbstract::start(uint32_t now) {
@@ -104,12 +99,12 @@ bool Timer::process() {
     x5 = countFall[port]; //frekvence na sestupné hranì (Hz)
     countFall[port] = 0;     
     sei();
-    if (x0 != 0) value  = x0 * (0.5e-6);
-    if (x1 != 0) value1 = x1 * (0.5e-6);
-    if (x2 != 0) value2 = x2 * (0.5e-6);
-    if (x3 != 0) value3 = x3 * (0.5e-6);
-    value4 = x4 * (1000.0f / period);
-    value5 = x5 * (1000.0f / period);
+    if (x0 != 0) value  = x0 * TIME_BASE;
+    if (x1 != 0) value1 = x1 * TIME_BASE;
+    if (x2 != 0) value2 = x2 * TIME_BASE;
+    if (x3 != 0) value3 = x3 * TIME_BASE;
+    value4 = x4 * (1 / TIME_BASE / period);
+    value5 = x5 * (1 / TIME_BASE / period);
     time += period;
     return 1;
   }
@@ -128,5 +123,3 @@ float Timer::read(uint8_t _spec) {
   }
   return result;
 }
-
-

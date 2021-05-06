@@ -21,7 +21,7 @@
 //#include "soundmeter.h" // replaced with universal AD
 #include "silomer.h"
 #include "bme280.h"
-#include "mhz16.h"
+//#include "mhz16.h"
 #include "volt25.h"
 #include "amp5.h"
 #include "amp30.h"

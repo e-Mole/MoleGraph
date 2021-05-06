@@ -20,17 +20,18 @@ class Sensor {
     virtual  ~Sensor();
     void start(uint32_t);
     void stop();
+    bool processData();
+    bool isDataReady() { return dataReady; } //will be set/reset in processData method
     virtual float read(uint8_t);
     virtual void  calibrate();
 
     uint32_t  period;
   protected:
+    virtual bool  process();
 
     uint32_t  time;
     uint8_t   port;
     float     value = NO_DATA;
-  public:
-    virtual bool  process();
 };
 
 void      I2C_WriteByte(uint8_t addr, uint8_t data);

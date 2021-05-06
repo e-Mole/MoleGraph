@@ -3,21 +3,25 @@
 volatile uint32_t newTime;
 
 uint8_t PORTS[MAX_PORTS][4] = {
-  { 14, 11, 7, PCINT8 },
-  { 15, 10, 6, PCINT9 },
-  { 16,  9, 5, PCINT10},
-  { 17,  8, 4, PCINT11}
+  { 14, 11, 7, PCINT3 },
+  { 15, 10, 6, PCINT2 },
+  { 16,  9, 5, PCINT1 },
+  { 17,  8, 4, PCINT0 }
 };
+
+uint8_t sensorMask = 0;
+Sensor* sensor[MAX_PORTS];
 
 Sensor::Sensor(uint32_t _period, uint8_t _port) {
   period = _period;
   port = _port;
+  //channelCount = 0;
 }
 
 Sensor::~Sensor() {
-  pinMode(PORTS[port][0], INPUT);
-  pinMode(PORTS[port][1], INPUT);
-  pinMode(PORTS[port][2], INPUT);
+  pinMode(PORTS[port][0], INPUT);  
+  pinMode(PORTS[port][1], INPUT);  
+  pinMode(PORTS[port][2], INPUT);  
 }
 
 void Sensor::start(uint32_t now) {
@@ -26,6 +30,11 @@ void Sensor::start(uint32_t now) {
 
 void Sensor::stop() {
   time = 0;
+}
+
+bool Sensor::processData(){
+  dataReady = process();
+  return dataReady;
 }
 
 bool Sensor::process() {
@@ -72,7 +81,7 @@ uint16_t I2C_ReadData16BE(uint8_t addr, uint8_t reg) {
   while (Wire.available() < 2);
   d[0] = Wire.read();
   d[1] = Wire.read();
-  return (uint16_t)d[0] << 8 | d[1];
+  return (uint16_t)d[0] << 8 | d[1]; 
 }
 
 uint16_t I2C_ReadData16LE(uint8_t addr, uint8_t reg) {
@@ -82,5 +91,5 @@ uint16_t I2C_ReadData16LE(uint8_t addr, uint8_t reg) {
   while (Wire.available() < 2);
   d[0] = Wire.read();
   d[1] = Wire.read();
-  return (uint16_t)d[1] << 8 | d[0];
+  return (uint16_t)d[1] << 8 | d[0]; 
 }

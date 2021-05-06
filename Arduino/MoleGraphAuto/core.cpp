@@ -62,7 +62,7 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
     case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
 	  case SENSOR_MAX6675: return new MAX6675(_period, _port);
 	  case SENSOR_AD8232: return new AD8232(_period, _port);
-    case SENSOR_CALIPER: return new CALIPER(_period, _port);	  
+    case SENSOR_CALIPER: return new CALIPER(_period, _port);
   }
 }
 
@@ -133,7 +133,7 @@ bool update() {
   bool ready = true;
   for (uint8_t i = 0; i < MAX_PORTS; i++) {
     if (sensors[i] != NULL) {
-      ready &= sensors[i]->processData();
+      ready &= sensors[i]->process();
     }
   }
   return ready;

@@ -70,6 +70,14 @@ Plot::Plot(GraphicsContainer *graphicsContainer) :
     grabGesture( Qt::PinchGesture );
     setContextMenuPolicy(Qt::CustomContextMenu);
     //DisableAntialising();
+    //setNotAntialiasedElements(QCP::aeAll); //TFs Mod
+    /*customPlot->setNotAntialiasedElements(QCP::aeAll);
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    customPlot->xAxis->setTickLabelFont(font);
+    customPlot->yAxis->setTickLabelFont(font);
+    customPlot->legend->setFont(font);
+    */
 }
 
 

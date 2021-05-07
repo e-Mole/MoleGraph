@@ -4,7 +4,7 @@
 #include "Plot.h"
 
 #define MARKER_WIDTH 2 //1.6
-#define SELECTED_PEN_WIDTH 2.5
+#define SELECTED_PEN_WIDTH 1.0 //2.5 //TFs Mod: for fast selecting and manipulating graph curve
 #define MARKER_SIZE 8
 ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
     Axis *valueAxis,
@@ -20,6 +20,8 @@ ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
 {
     double normalWidth = GlobalSettings::GetInstance().GetChannelGraphPenWidth();
     setPen(QPen(color, normalWidth, penStyle));
+    //TFs Mod: selected graph curve Qt::DashLine - not working
+    //setSelectedPen(QPen(Qt::darkMagenta, normalWidth * SELECTED_PEN_WIDTH, Qt::DashLine));
     setSelectedPen(QPen(color, normalWidth * SELECTED_PEN_WIDTH, penStyle));
 
     mScatterStyle.setPen(QPen(color, normalWidth));

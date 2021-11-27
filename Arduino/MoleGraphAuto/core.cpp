@@ -198,7 +198,7 @@ void sendValues() {
   data[0] = WriteHeader(0);
 
   if (scanType == ONDEMAND) {
-    float timeStamp = (newTime - startTime) * TIME_BASE;
+    float timeStamp = (float)(newTime - startTime) * TIME_BASE;
     *(float*)(&data[index]) = timeStamp;
     index += sizeof(float);
   }
@@ -238,16 +238,16 @@ void setScanType() {
 }
 
 void setPeriod(bool f) {
-  DEBUG_MSG("setPeriod %d", f)
-  uint16_t x;
+  uint32_t x = 0;
   Serial.readBytes((uint8_t*)&x, 2);
   if (f == 0) {
-    period = (uint32_t)x * (1000 * TICK_PER_MS);    // nastaveni periody vzorkovani v 0.5 us [zadano v s] 
-    DEBUG_MSG("period = %d [s]", period)
+    period = 1000 * (uint32_t)TICK_PER_MS * x;    // nastaveni periody vzorkovani v 0.5 us [zadano v s]
+    DEBUG_MSG("setPeriod %u [s]", x)
   } else {
-    period = (uint32_t)((1 / TIME_BASE) / x);    // nastaveni periody vzorkovani v 0.5 us [zadano v Hz] 
-    DEBUG_MSG("period = %d [Hz]", period)
+    period = 1000 * (uint32_t)TICK_PER_MS / x;    // nastaveni periody vzorkovani v 0.5 us [zadano v Hz]
+    DEBUG_MSG("setFreq = %u [Hz]", x)
   }
+  DEBUG_MSG("period = %lu [0,5us]", period)
 }
 
 void calibrate(uint8_t button){

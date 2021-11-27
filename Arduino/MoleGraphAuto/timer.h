@@ -13,11 +13,13 @@ extern volatile uint16_t countRise[4], countFall[4];
 extern volatile uint32_t pulsePositive[4], pulseNegative[4];
 extern volatile uint32_t periodRise[4], periodFall[4];
 
+extern volatile uint16_t tick;
+
 void Timer_Init();
 
 inline static uint32_t getCTC() {
   uint32_t result;
-  asm(
+  asm volatile(
     "lds %C0, tick" "\n\t"
     "lds %D0, tick+1" "\n\t"
     "lds %A0, %1" "\n\t"

@@ -6,11 +6,13 @@
 #define DEBUG_MSG_MAX_SIZE 100
 #define MAX_CHANNELS    8
 
+bool missedSamples = false;
 uint32_t time, startTime;
 uint32_t period = PERIOD;
 bool firstSample = false;
 bool running = 0;
 uint8_t dataReady = 0;
+uint16_t timeOverflowCounter = 0;
 
 ScanType scanType = PERIODICAL;
 
@@ -111,6 +113,7 @@ void start() {
     }
 
     time = getTime();
+    missedSamples = false;
     startTime = time;
     firstSample = true;
     for (uint8_t i = 0; i < MAX_PORTS; i++) {
@@ -167,10 +170,6 @@ uint8_t getCheckSum(uint8_t* data, uint8_t size) {
   return result;
 }
 
-uint8_t WriteHeader(uint8_t x) {
-  return x;
-}
-
 void sendCommand(uint8_t command, const char *format_msg, ...) {
   char data[DEBUG_MSG_MAX_SIZE + 3]; // + command + length + checksum
   data[0] = command;
@@ -193,12 +192,12 @@ void sendCommand(uint8_t command, const char *format_msg, ...) {
 void sendValues() {
   //DEBUG_MSG("sendValues")
   uint8_t data[2 + (MAX_CHANNELS) * sizeof(float)];
+  data[0] = missedSamples ? (1 << 7) : 0;
+  
   uint8_t index = 1; //skip header
-
-  data[0] = WriteHeader(0);
-
   if (scanType == ONDEMAND) {
-    float timeStamp = (float)(newTime - startTime) * TIME_BASE;
+    //time stamp is expected in sec. internal timer overflows every ~36 min with time step 0.5 us and uint32 counter.
+    float timeStamp = (float)(newTime - startTime) * TIME_BASE + (float)timeOverflowCounter * ((float)0xffffffff * TIME_BASE);
     *(float*)(&data[index]) = timeStamp;
     index += sizeof(float);
   }
@@ -211,8 +210,14 @@ void sendValues() {
   }
   //DEBUG_MSG("checksum = %d, index =  %d", getCheckSum(data, index), index)
   data[index] = getCheckSum(data, index);
-  Serial.write(data, index+1);
-}
+  
+  bool full = Serial.availableForWrite() <= index + 1; 
+  missedSamples |= full;
+  if (! full){
+    Serial.write(data, index + 1);
+    missedSamples = false; //just processed
+  }
+} 
 
 struct SensorSetting {
   uint8_t channel;

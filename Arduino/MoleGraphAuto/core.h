@@ -101,12 +101,14 @@ enum ScanType
   ONDEMAND = 1
 };
 
+extern bool missedSamples;
 extern bool running;
 extern ScanType scanType;
 extern uint32_t time;
 extern bool firstSample;
 extern uint32_t period;
 extern uint8_t  dataReady;
+extern uint16_t timeOverflowCounter; //when the overflow happen each ~35 sec it will take 4 years to this vaiable overflow as well (if it is uint16) it takes 10 bytes FLASH more in whole program opositie to uint8
 
 void enableChannels();
 void start();

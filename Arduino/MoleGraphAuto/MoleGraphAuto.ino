@@ -4,6 +4,8 @@
 
 #define VERSION "ATG_5" //arduino to graph version
 
+uint32_t oldTime = 0;
+
 void serialProcess() {
   uint8_t instruction = Serial.read();
 
@@ -57,6 +59,11 @@ void setup() {
 
 void loop() {
   newTime = getTime();
+  if (newTime < oldTime){
+    timeOverflowCounter++; //with time step 0.5 us it happen once every ~36 min
+    DEBUG_MSG("timeOverflowCounter increased %u", timeOverflowCounter)
+  }
+  oldTime = newTime;
 
   if (StartStop) {
     if (running) {
@@ -68,14 +75,18 @@ void loop() {
           if ((uint32_t)(newTime - time) >= period){
             time += period;
           }
-
           scan();
           sendValues();
+          while ((uint32_t)(newTime - time) >= period) { // in some cases can "update" and another processing take longer time that is reqiured period it is necessary to increase time properly and inform the App
+            time += period;
+            missedSamples = true;
+          }
         }
-      } else {
-          running = 0;
-          scan();
-          sendValues();
+      }
+      else if (dataReady){
+        running = 0;
+        scan();
+        sendValues();
       }
     }
   }

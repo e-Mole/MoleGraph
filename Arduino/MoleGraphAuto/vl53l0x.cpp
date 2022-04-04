@@ -57,12 +57,21 @@ bool VL53L0X::process() {
       delta = VL53L0X_WAIT;
   } else {
       uint8_t  val = read_byte_data_at(VL53L0X_REG_RESULT_RANGE_STATUS);
-//Serial.println(val, HEX);
       if ((val & 0x01) == 0) return 0;
 
       if ((val & 0x78) == (11 << 3)) {
         uint16_t x = read_word_data_at(VL53L0X_REG_RESULT_DISTANCE);
+        value_2 = value_1;
+        value_1 = value;
         value = x * (0.001f);
+        position = value;
+        if (value_1 != NO_DATA) {
+          float dT = period * TIME_BASE;
+          velocity = (value - value_1) / dT;
+          if (value_2 != NO_DATA) {
+            acceleration = (value - 2 * value_1 + value_2) / (dT * dT);
+          }
+        }
       } else {
         value = NO_DATA;
       }
@@ -72,4 +81,20 @@ bool VL53L0X::process() {
     }
   }
   return 0;
+}
+
+float VL53L0X::read(uint8_t _spec) {
+  float result = NO_DATA;
+  switch (_spec) {
+    case 0: result = position; position = NO_DATA; break;  // poloha
+    case 1: result = velocity; velocity = NO_DATA; break;  // rychlost
+    case 2: result = acceleration; acceleration = NO_DATA; break;  // zrychleni
+  }
+  return result;
+}
+
+void VL53L0X::start(uint32_t now) {
+  Sensor::start(now);
+  delta  = period; 
+  active = 0;
 }

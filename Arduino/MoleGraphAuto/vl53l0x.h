@@ -9,9 +9,13 @@ class VL53L0X : public Sensor {
   public:
     VL53L0X(uint32_t, uint8_t);
     virtual bool process();
+    virtual float read(uint8_t);
+    virtual void start(uint32_t);
   private:
     bool      active;
-    uint16_t  delta;
+    uint32_t  delta;
+    float     value_1, value_2;
+    float     position, velocity, acceleration;
 };
 
 

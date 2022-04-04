@@ -209,12 +209,12 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 }
@@ -226,7 +226,7 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -238,7 +238,7 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -251,12 +251,12 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 },
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -268,7 +268,7 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Pressure",
                     "unit": "Pa"
                 }
@@ -280,27 +280,27 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Pressure",
                     "unit": "Pa"
                 },
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Humidity",
                     "unit": "%"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Altitude",
                     "unit": "m"
                 },
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Dewpoint",
                     "unit": "°C"
                 }
@@ -312,7 +312,7 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Force",
                     "unit": "N"
                 }
@@ -324,57 +324,57 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Acceleration",
                     "unit": "m/s^2"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Magnetic Field Intensity",
                     "unit": "μT"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Accel X",
                     "unit": "m/s^2"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Accel Y",
                     "unit": "m/s^2"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Accel Z",
                     "unit": "m/s^2"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Mag X",
                     "unit": "μT"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Mag Y",
                     "unit": "μT"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Mag Z",
                     "unit": "μT"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Heading",
                     "unit": "°"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Roll",
                     "unit": "°"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Pitch",
                     "unit": "°"
                 }
@@ -386,17 +386,17 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Frequency",
                     "unit": "BPM"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -408,7 +408,7 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 }
@@ -420,7 +420,7 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "UV Index",
                     "unit": ""
                 }
@@ -432,7 +432,7 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "UV Intensity",
                     "unit": ""
                 }
@@ -444,22 +444,22 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "pH",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -471,17 +471,17 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Conductivity",
                     "unit": "S/m"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 }
@@ -493,12 +493,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 }
@@ -510,12 +510,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Current",
                     "unit": "A"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 }
@@ -527,12 +527,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Current",
                     "unit": "A"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 }
@@ -544,12 +544,12 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Current",
                     "unit": "A"
                 }
@@ -561,17 +561,17 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Illuminace",
                     "unit": "RAW"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -583,7 +583,7 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Illuminace",
                     "unit": "lux"
                 }
@@ -595,12 +595,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (ppm)",
                     "unit": "ppm"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (%)",
                     "unit": "%"
                 }
@@ -612,12 +612,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (ppm)",
                     "unit": "ppm"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (%)",
                     "unit": "%"
                 }
@@ -629,19 +629,19 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Distance",
-                    "unit": "cm"
+                    "unit": "m"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Velocity",
-                    "unit": "cm/s"
+                    "unit": "m/s"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Acceleration",
-                    "unit": "cm/s^2"
+                    "unit": "m/s^2"
                 }
             ],
             "enabled": true,
@@ -651,17 +651,17 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Frequency",
                     "unit": "BPM"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -673,17 +673,17 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -695,12 +695,12 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Humidity",
                     "unit": "%"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -712,27 +712,27 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (ppm)",
                     "unit": "ppm"
                 },
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration (%)",
                     "unit": "%"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -744,7 +744,7 @@
         {
             "components": [
                 {
-                    "correction": "offset",
+                    "correction": "None",
                     "quantity": "Concentration",
                     "unit": "ppm"
                 }
@@ -756,17 +756,17 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Trigger",
                     "unit": ""
                 }
@@ -778,9 +778,19 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Distance",
                     "unit": "m"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Velocity",
+                    "unit": "m/s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Acceleration",
+                    "unit": "m/s^2"
                 }
             ],
             "enabled": true,
@@ -790,7 +800,7 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Length",
                     "unit": "mm"
                 }
@@ -802,32 +812,32 @@
         {
             "components": [
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Pulse duration (On)",
                     "unit": "s"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Pulse duration (Off)",
                     "unit": "s"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Period (Rising)",
                     "unit": "s"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Period (Falling)",
                     "unit": "s"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Frequency (Rising)",
                     "unit": "Hz"
                 },
                 {
-                    "correction": "",
+                    "correction": "None",
                     "quantity": "Frequency (Falling)",
                     "unit": "Hz"
                 }

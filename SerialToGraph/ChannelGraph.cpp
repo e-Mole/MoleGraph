@@ -4,7 +4,7 @@
 #include "Plot.h"
 
 #define MARKER_WIDTH 2 //1.6
-#define SELECTED_PEN_WIDTH 1.0 //2.5 //TFs Mod: for fast selecting and manipulating graph curve
+#define SELECTED_PEN_WIDTH 2.0 //1.0 //1.0 //2.5 //TFs Mod: for fast selecting and manipulating graph curve 1.0 px only
 #define MARKER_SIZE 8
 ChannelGraph::ChannelGraph(QCPAxis *keyAxis,
     Axis *valueAxis,

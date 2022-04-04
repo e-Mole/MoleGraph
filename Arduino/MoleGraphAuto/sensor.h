@@ -6,6 +6,7 @@
 
 #define MAX_PORTS 4
 #define NO_DATA 3.4028235E+38        //-1.0e-8f
+//#define NO_DATA 0
 
 extern volatile uint32_t newTime;
 extern uint8_t PORTS[MAX_PORTS][4];
@@ -17,7 +18,7 @@ class Sensor {
   public:
     Sensor(uint32_t, uint8_t);
     virtual  ~Sensor();
-    void start(uint32_t);
+    virtual void start(uint32_t);
     void stop();
     bool processData();
     bool isDataReady() { return dataReady; } //will be set/reset in processData method

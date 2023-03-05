@@ -191,6 +191,10 @@
     {
       "id" : 40,
       "name" : "Length"
+    },
+    {
+      "id" : 41,
+      "name" : "Pulse count (Rising)"
     }
   ],
 	"sensors": [
@@ -845,6 +849,11 @@
                     "correction": "None",
                     "quantity": "Frequency (Falling)",
                     "unit": "Hz"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Pulse count (Rising)",
+                    "unit": ""
                 }
             ],
             "enabled": true,

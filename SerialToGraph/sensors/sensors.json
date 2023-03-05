@@ -217,6 +217,11 @@
                     "correction": "None",
                     "quantity": "Voltage",
                     "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
                 }
             ],
             "enabled": true,
@@ -844,7 +849,7 @@
             ],
             "enabled": true,
             "id": 103,
-            "name": "Timer GPIO 02"
+            "name": "Timer GPIO 01"
         }
     ],
     "version": 2

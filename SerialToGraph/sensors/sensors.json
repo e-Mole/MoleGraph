@@ -247,7 +247,7 @@
         {
             "components": [
                 {
-                    "correction": "None",
+                    "correction": "Linear",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -255,7 +255,7 @@
             "enabled": true,
             "id": 34,
             "name": "Thermometer (K-Type, MAX6675)",
-            "note": "Measuring range -200..+1200°C. Resolution 0.25°C, accuracy around ±2°C. Maximum sampling rate 4Hz. Error state (no thermocouple) send value -500."
+            "note": "Measuring range -200..+1200°C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
         },
         {
             "components": [
@@ -604,19 +604,22 @@
         {
             "components": [
                 {
-                    "correction": "None",
+                    "correction": "Linear",
                     "quantity": "Concentration (ppm)",
+                    "points": ["0.01","400","1.002","50000","0","0"],
                     "unit": "ppm"
                 },
                 {
-                    "correction": "None",
+                    "correction": "Linear",
                     "quantity": "Concentration (%)",
+                    "points": ["0.01","0.04","1.002","5","0","0"],
                     "unit": "%"
                 }
             ],
             "enabled": true,
             "id": 19,
-            "name": "CO2 gas sensor (MH-Z16)"
+            "name": "CO2 gas sensor (MH-Z16)",
+            "note": "Measuring range 0..50 000 ppm. Resolution 0.05 ppm, accuracy around ±50 ppm. Maximum sampling rate 0.5 Hz."
         },
         {
             "components": [

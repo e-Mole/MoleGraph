@@ -188,7 +188,6 @@ android{
     QT += androidextras
     SOURCES += hw/BluetoothAndroid.cpp
     HEADERS += hw/BluetoothAndroid.h
-    QMAKE_LINK += -nostdlib++
 }
 
 unix:!android{
@@ -212,11 +211,15 @@ DISTFILES += \
     android/AndroidManifest.xml \
     android/res/values/libs.xml \
     android/build.gradle \
+    android/gradle.properties \
     android/gradle/wrapper/gradle-wrapper.jar \
     android/gradlew \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat
 
+
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
+
+
 

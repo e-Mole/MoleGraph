@@ -123,7 +123,7 @@ void GraphicsContainer::_CreateMainLayout()
     m_mainLayout->setMargin(1);
     m_mainLayout->insertLayout(0, m_plotAndSliderLayout, 1);
     m_mainLayout->insertLayout(1, m_displaysAndSliderLayout, 0);
-    _SetDisplaysGrid();
+    _SetDisplaysGrid(this->IsPlotVisible());
 }
 void GraphicsContainer::_InitializeLayouts()
 {    
@@ -381,14 +381,15 @@ void GraphicsContainer::ReadingValuesPostProcess(double lastHorizontalValue)
     m_plot->ReplotIfNotDisabled();
 }
 
-void GraphicsContainer::_SetDisplaysGrid()
+void GraphicsContainer::_SetDisplaysGrid(bool plotVisible)
 {
-    m_grid = !IsPlotVisible() || dynamic_cast<QVBoxLayout*>(m_mainLayout) != nullptr;
+    qDebug() << " IsPlotVisible" << IsPlotVisible() << "m_mainLayout" << (dynamic_cast<QVBoxLayout*>(m_mainLayout) != nullptr);
+    m_grid = !plotVisible || dynamic_cast<QVBoxLayout*>(m_mainLayout) != nullptr;
 }
 
 void GraphicsContainer::ShowGraph(bool show)
 {
-    _SetDisplaysGrid();
+    _SetDisplaysGrid(show);
     if (show)
         m_plotAndSliderLayout->insertWidget(1, m_scrollBar, 0);
     else

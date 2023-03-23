@@ -73,7 +73,7 @@ class GraphicsContainer : public QWidget
     unsigned _GetMainHorizontalChannelIndex();
     void _AddHorizontalChannelProxy(Measurement *m, unsigned mainHorizontalChannelIndex);
     void _CreateMainLayout();
-    void _SetDisplaysGrid();
+    void _SetDisplaysGrid(bool plotVisible);
     unsigned _AdjustVerticalMax(unsigned originalVerticalMax);
 
 public:

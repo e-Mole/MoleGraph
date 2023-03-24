@@ -93,7 +93,7 @@ bool MeasurementSettings::BeforeAccept()
     m_measurement->m_sampleUnits = (Measurement::SampleUnits)m_sampleUnits->currentIndex();
     if (m_period->text().toInt() <= 0)
     {
-        MyMessageBox::critical(this, tr("Period must be a positive number.") );
+        MyMessageBox::critical(this, tr("Period must be a positive integer.") );
         return false;
     }
 

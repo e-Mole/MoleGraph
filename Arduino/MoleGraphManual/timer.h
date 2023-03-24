@@ -56,7 +56,7 @@ inline void delay_us(uint16_t x) {
 class Servo {
   public:
     void attach(uint8_t port);
-    void dettach();
+    void detach();
     void write(uint16_t);
     uint16_t read();
   private:

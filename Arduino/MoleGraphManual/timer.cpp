@@ -36,7 +36,7 @@ void Servo::attach(uint8_t port) {
   *reg = position;
 }
 
-void Servo::dettach() {
+void Servo::detach() {
   if (pin != 9 && pin != 10) return;
   if (pin == 10) { // servo na portu 2
   	TCCR1A &= ~(1<<COM1B1); // zakazani generovani PWM na vystupu 

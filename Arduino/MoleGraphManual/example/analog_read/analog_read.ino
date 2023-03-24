@@ -1,7 +1,6 @@
 #include <molegraphmanual.h>
-#include <Servo.h>
 
-MoleGraph moleGraph;
+MoleGraphManual moleGraph;
 
 //#define AD PORT_1A
 

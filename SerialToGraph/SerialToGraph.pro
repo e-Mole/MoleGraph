@@ -176,7 +176,7 @@ CONFIG += mobility
 CONFIG += c++14
 MOBILITY =
 
-TRANSLATIONS = languages/serialToGraph_cs.ts
+TRANSLATIONS += languages/serialToGraph_cs.ts
 
 win32{
     QT += serialport

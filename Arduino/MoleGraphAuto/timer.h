@@ -76,7 +76,7 @@ class Timer : public TimerAbstract {
     virtual void calibrate();
   protected:
     float     value1, value2, value3, value4, value5;
-    uint32_t  counter;
+    uint32_t  counter = 0;
 };
 
 #endif

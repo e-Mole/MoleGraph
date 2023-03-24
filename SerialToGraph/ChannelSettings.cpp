@@ -139,10 +139,10 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Frequency (Falling)");
     if (quantityName == "Frequency")
         return tr("Frequency");
+    if (quantityName == "Pulse count (Rising)")
+        return tr("Pulse count (Rising)");
     if (quantityName == "Length")
         return tr("Length");
-    if (quantityName == "Count")
-        return tr("Count");
 
     qWarning() << "unknown quantity to translate: " << quantityName;
     return quantityName; //TODO: TFs mod: Remove!!!

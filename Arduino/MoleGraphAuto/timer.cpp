@@ -76,6 +76,9 @@ void TimerAbstract::start(uint32_t now) {
   uint32_t temp =  TCNT1 | (uint32_t)tick << 16;
   timeRise[port] = temp;
   timeFall[port] = temp;
+  countFall[port] = 0;
+  countRise[port] = 0;  
+  //counter = 0;
   Sensor::start(now);
 }
 
@@ -86,18 +89,18 @@ bool Timer::process() {
   if (Action(period)) {
     uint32_t x0, x1, x2, x3, x4, x5;
     cli();
-    x0 = pulsePositive[port]; //délka pulzu na ·rovni 1 (s)
+    x0 = pulsePositive[port]; //dÃ©lka pulzu na Ãºrovni 1 (s)
     pulsePositive[port] = 0;  
-    x1 = pulseNegative[port]; //délka pulzu na ·rovni 0 (s)   
+    x1 = pulseNegative[port]; //dÃ©lka pulzu na Ãºrovni 0 (s)   
     pulseNegative[port] = 0;     
-    x2 = periodRise[port]; //perioda mìøená na vzestupné hranì (s)    
+    x2 = periodRise[port]; //perioda mÄ›Å™enÃ¡ na vzestupnÃ© hranÄ› (s)    
     periodRise[port] = 0;     
-    x3 = periodFall[port]; //perioda mìøená na sestupné hranì (s)
+    x3 = periodFall[port]; //perioda mÄ›Å™enÃ¡ na sestupnÃ© hranÄ› (s)
     periodFall[port] = 0;     
     counter += countRise[port]; // pulse counter
-    x4 = countRise[port]; //frekvence na vzestupné hranì (Hz)
+    x4 = countRise[port]; //frekvence na vzestupnÃ© hranÄ› (Hz)
     countRise[port] = 0;     
-    x5 = countFall[port]; //frekvence na sestupné hranì (Hz)
+    x5 = countFall[port]; //frekvence na sestupnÃ© hranÄ› (Hz)
     countFall[port] = 0;     
     sei();
     if (x0 != 0) value  = x0 * TIME_BASE;

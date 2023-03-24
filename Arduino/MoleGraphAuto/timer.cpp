@@ -15,7 +15,6 @@ volatile uint32_t pulsePositive[4], pulseNegative[4];
 volatile uint32_t periodRise[4], periodFall[4];
 volatile uint8_t  maskPC = 0;
 volatile uint8_t  lastState;
-volatile uint32_t myCounter;
 
 void Timer_Init()
 {
@@ -77,7 +76,6 @@ void TimerAbstract::start(uint32_t now) {
   uint32_t temp =  TCNT1 | (uint32_t)tick << 16;
   timeRise[port] = temp;
   timeFall[port] = temp;
-  myCounter = 0; //reset counter
   Sensor::start(now);
 }
 
@@ -88,18 +86,18 @@ bool Timer::process() {
   if (Action(period)) {
     uint32_t x0, x1, x2, x3, x4, x5;
     cli();
-    x0 = pulsePositive[port]; //dÃ©lka pulzu na Ãºrovni 1 (s)
+    x0 = pulsePositive[port]; //délka pulzu na ·rovni 1 (s)
     pulsePositive[port] = 0;  
-    x1 = pulseNegative[port]; //dÃ©lka pulzu na Ãºrovni 0 (s)   
+    x1 = pulseNegative[port]; //délka pulzu na ·rovni 0 (s)   
     pulseNegative[port] = 0;     
-    x2 = periodRise[port]; //perioda mÄ›Å™enÃ¡ na vzestupnÃ© hranÄ› (s)    
+    x2 = periodRise[port]; //perioda mìøená na vzestupné hranì (s)    
     periodRise[port] = 0;     
-    x3 = periodFall[port]; //perioda mÄ›Å™enÃ¡ na sestupnÃ© hranÄ› (s)
+    x3 = periodFall[port]; //perioda mìøená na sestupné hranì (s)
     periodFall[port] = 0;     
-    myCounter = myCounter + countRise[port]; // pulse counter
-    x4 = countRise[port]; //frekvence na vzestupnÃ© hranÄ› (Hz)
+    counter += countRise[port]; // pulse counter
+    x4 = countRise[port]; //frekvence na vzestupné hranì (Hz)
     countRise[port] = 0;     
-    x5 = countFall[port]; //frekvence na sestupnÃ© hranÄ› (Hz)
+    x5 = countFall[port]; //frekvence na sestupné hranì (Hz)
     countFall[port] = 0;     
     sei();
     if (x0 != 0) value  = x0 * TIME_BASE;
@@ -108,7 +106,6 @@ bool Timer::process() {
     if (x3 != 0) value3 = x3 * TIME_BASE;
     value4 = x4 * (1 / TIME_BASE / period);
     value5 = x5 * (1 / TIME_BASE / period);
-    counter = myCounter;
     time += period;
     return 1;
   }
@@ -130,5 +127,5 @@ float Timer::read(uint8_t _spec) {
 }
 
 void Timer::calibrate() {
-  myCounter = 0; //reset counter
+  counter = 0; //reset counter
 }

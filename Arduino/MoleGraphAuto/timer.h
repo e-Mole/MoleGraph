@@ -63,20 +63,20 @@ class TimerAbstract : public Sensor {
   public:
     TimerAbstract(uint32_t, uint8_t);
     virtual ~TimerAbstract();
-    virtual void start(uint32_t);               
+    virtual void start(uint32_t);
   protected:
-    uint8_t   pin;     
+    uint8_t   pin;
 };
 
 class Timer : public TimerAbstract {
   public:
     Timer(uint32_t, uint8_t);
     virtual bool process();
-    virtual float read(uint8_t); 
+    virtual float read(uint8_t);
     virtual void calibrate();
   protected:
-    float     value1, value2, value3, value4, value5;   
-    uint32_t  counter;      
+    float     value1, value2, value3, value4, value5;
+    uint32_t  counter;
 };
 
 #endif

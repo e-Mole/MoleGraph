@@ -1,9 +1,11 @@
 #ifndef Timer_h
 #define Timer_h
 
-#include <inttypes.h> 
-#include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <inttypes.h> 
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
+
+#include <Arduino.h>
 
 #define TIME_BASE 0.5e-6f
 #define TICK_PER_US 2
@@ -50,5 +52,17 @@ inline void delay_us(uint16_t x) {
   uint16_t t = TCNT1;
   while ((uint16_t)(TCNT1 - t) < x * TICK_PER_US);    
 }
+
+class Servo {
+  public:
+    void attach(uint8_t port);
+    void dettach();
+    void write(uint16_t);
+    uint16_t read();
+  private:
+    uint8_t   pin;
+    volatile uint16_t* reg;
+    uint16_t  position; 
+};
 
 #endif

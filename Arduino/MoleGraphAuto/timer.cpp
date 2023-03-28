@@ -15,7 +15,6 @@ volatile uint32_t pulsePositive[4], pulseNegative[4];
 volatile uint32_t periodRise[4], periodFall[4];
 volatile uint8_t  maskPC = 0;
 volatile uint8_t  lastState;
-volatile uint32_t myCounter;
 
 void Timer_Init()
 {
@@ -77,7 +76,9 @@ void TimerAbstract::start(uint32_t now) {
   uint32_t temp =  TCNT1 | (uint32_t)tick << 16;
   timeRise[port] = temp;
   timeFall[port] = temp;
-  myCounter = 0; //reset counter
+  countFall[port] = 0;
+  countRise[port] = 0;  
+  //counter = 0;
   Sensor::start(now);
 }
 
@@ -96,7 +97,7 @@ bool Timer::process() {
     periodRise[port] = 0;     
     x3 = periodFall[port]; //perioda měřená na sestupné hraně (s)
     periodFall[port] = 0;     
-    myCounter = myCounter + countRise[port]; // pulse counter
+    counter += countRise[port]; // pulse counter
     x4 = countRise[port]; //frekvence na vzestupné hraně (Hz)
     countRise[port] = 0;     
     x5 = countFall[port]; //frekvence na sestupné hraně (Hz)
@@ -108,7 +109,6 @@ bool Timer::process() {
     if (x3 != 0) value3 = x3 * TIME_BASE;
     value4 = x4 * (1 / TIME_BASE / period);
     value5 = x5 * (1 / TIME_BASE / period);
-    counter = myCounter;
     time += period;
     return 1;
   }
@@ -130,5 +130,5 @@ float Timer::read(uint8_t _spec) {
 }
 
 void Timer::calibrate() {
-  myCounter = 0; //reset counter
+  counter = 0; //reset counter
 }

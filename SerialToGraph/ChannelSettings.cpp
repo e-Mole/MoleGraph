@@ -139,6 +139,8 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Frequency (Falling)");
     if (quantityName == "Frequency")
         return tr("Frequency");
+    if (quantityName == "Pulse count (Rising)")
+        return tr("Pulse count (Rising)");
     if (quantityName == "Length")
         return tr("Length");
 

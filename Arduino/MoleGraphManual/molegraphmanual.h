@@ -51,7 +51,7 @@ enum ScanType {
   ONDEMAND = 1
 };
 
-class MoleGraph {
+class MoleGraphManual {
   public:
     void     init();
     void     process();
@@ -104,7 +104,7 @@ class MoleGraph {
     void    (*measurementContinuedCallback)(void);
 };
 
-extern MoleGraph moleGraph;
+extern MoleGraphManual moleGraph;
 
 // Setup debug printing macros.
 #ifdef DEBUG

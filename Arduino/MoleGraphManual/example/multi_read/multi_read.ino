@@ -6,7 +6,7 @@
 #define trig PORT_3A
 #define echo PORT_3D
 
-MoleGraph moleGraph;
+MoleGraphManual moleGraph;
 
 // Create BME280 object
 BME280_I2C bme(0x76); // I2C using address 0x76

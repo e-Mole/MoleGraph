@@ -3,19 +3,19 @@
 #define DEBUG_MSG_MAX_SIZE 100
 
 System runtem;
-//MoleGraph moleGraph;
+//MoleGraphManual moleGraph;
 
 const uint8_t PINS_DIGITAL[] = {PORT_1D, PORT_2D, PORT_3D, PORT_4D};
 const uint8_t PINS_ANALOG[]  = {PORT_1A, PORT_2A, PORT_3A, PORT_4A};
 const uint8_t PINS_PULLUP[]  = {PORT_1U, PORT_2U, PORT_3U, PORT_4U};
  
-void MoleGraph::init() {
+void MoleGraphManual::init() {
   Serial.begin(115200);
   timerInit();
   runtem.init();
 }
 
-bool MoleGraph::getButton(uint8_t index) {
+bool MoleGraphManual::getButton(uint8_t index) {
   bool result = 0;
   if (index > 0 && index <= 4) {
     result = runtem.getBtn() & (1 << (index - 1)); 
@@ -23,12 +23,12 @@ bool MoleGraph::getButton(uint8_t index) {
   return result;
 }
 
-uint8_t MoleGraph::getBattery() {
+uint8_t MoleGraphManual::getBattery() {
   uint8_t result = runtem.getBatt();  
   return result;
 }
 
-void MoleGraph::setPullup(uint8_t index, bool pull) {
+void MoleGraphManual::setPullup(uint8_t index, bool pull) {
   if (index > 0 && index <= 4) {
     if (pull) {
       pinMode(PINS_PULLUP[index-1], OUTPUT);
@@ -40,7 +40,7 @@ void MoleGraph::setPullup(uint8_t index, bool pull) {
 }
 
 // measurement start/continue
-void MoleGraph::startMeasurement(bool restart) {
+void MoleGraphManual::startMeasurement(bool restart) {
   DEBUG_MSG("starting\n");
   if (measurementInProgress == 0) {
     fullWriteBufferDetected = 0;
@@ -58,7 +58,7 @@ void MoleGraph::startMeasurement(bool restart) {
 }
 
 // measurement stop/pause
-void MoleGraph::stopMeasurement(bool pause) {
+void MoleGraphManual::stopMeasurement(bool pause) {
   DEBUG_MSG("stoping\n");
   if (measurementInProgress == 1) {
     measurementInProgress = 0;
@@ -70,7 +70,7 @@ void MoleGraph::stopMeasurement(bool pause) {
   }
 }
 
-void MoleGraph::process() {
+void MoleGraphManual::process() {
   if (Serial.available()) {   
     uint8_t instruction = Serial.read();
     switch (instruction) {
@@ -94,13 +94,13 @@ void MoleGraph::process() {
   runtem.process(actualTime, measurementInProgress);
 }
 
-bool MoleGraph::setChannelValue(uint8_t channel, float value) {
+bool MoleGraphManual::setChannelValue(uint8_t channel, float value) {
   if (channel >= 1 && channel <= MAX_CHANNELS) {
     channels[channel - 1] = value;
   }
 }
 
-float MoleGraph::getChannelValue(uint8_t channel) {
+float MoleGraphManual::getChannelValue(uint8_t channel) {
   float value = 0;
   if (channel >= 1 && channel <= MAX_CHANNELS) {
     channels[channel - 1] = value;
@@ -108,11 +108,11 @@ float MoleGraph::getChannelValue(uint8_t channel) {
   return value;
 }
   
-bool  MoleGraph::isMeasurementInProgress() {
+bool  MoleGraphManual::isMeasurementInProgress() {
   return measurementInProgress;
 }
  
-void MoleGraph::update() {
+void MoleGraphManual::update() {
   if (measurementInProgress) {
     if (scanType == PERIODICAL) {
       if (actualTime - time >= period) {
@@ -130,14 +130,14 @@ void MoleGraph::update() {
   }
 }
 
-void MoleGraph::sampleRequest() {
+void MoleGraphManual::sampleRequest() {
   DEBUG_MSG("sample ask\n")
   if (measurementInProgress == 1) {
     sampleRequestFlag = 1;
   }
 }
 
-uint8_t MoleGraph::getCheckSum(uint8_t* data, uint8_t size) {
+uint8_t MoleGraphManual::getCheckSum(uint8_t* data, uint8_t size) {
   uint8_t result = 0;
   for (uint8_t i = 0; i < size; i++) {
     uint8_t x = data[i];
@@ -149,11 +149,11 @@ uint8_t MoleGraph::getCheckSum(uint8_t* data, uint8_t size) {
   return result;
 }
 
-uint8_t MoleGraph::writeHeader(uint8_t x) {
+uint8_t MoleGraphManual::writeHeader(uint8_t x) {
   return x;
 }
 
-void MoleGraph::sendCommand(uint8_t command, const char *format_msg, ...) {
+void MoleGraphManual::sendCommand(uint8_t command, const char *format_msg, ...) {
   char data[DEBUG_MSG_MAX_SIZE + 3]; // + command + length + checksum
   data[0] = command;
 
@@ -171,7 +171,7 @@ void MoleGraph::sendCommand(uint8_t command, const char *format_msg, ...) {
   Serial.write((uint8_t*)data, length + 3);
 }
 
-void MoleGraph::sendData() {
+void MoleGraphManual::sendData() {
   DEBUG_MSG("sendValues\n")
   uint8_t data[2 + (MAX_CHANNELS) * sizeof(float)];
   uint8_t index = 1; //skip header
@@ -195,12 +195,12 @@ void MoleGraph::sendData() {
   Serial.write(data, index+1);
 }
 
-void MoleGraph::setScanType() {
+void MoleGraphManual::setScanType() {
   DEBUG_MSG("setScanType\n")
   Serial.readBytes((uint8_t*)&scanType, 1);
 }
 
-void MoleGraph::setPeriod(bool f) {
+void MoleGraphManual::setPeriod(bool f) {
   uint16_t x;
   Serial.readBytes((uint8_t*)&x, 2);
   if (f == 0) {
@@ -213,7 +213,7 @@ void MoleGraph::setPeriod(bool f) {
   DEBUG_MSG("period = %d [0,5us]\n", period)
 }
 
-void MoleGraph::enableChannels() {
+void MoleGraphManual::enableChannels() {
   DEBUG_MSG("setEnableChannels\n")
   Serial.readBytes((uint8_t*)&enabledChannels, 1);
   channelCount = 0;
@@ -222,22 +222,22 @@ void MoleGraph::enableChannels() {
   }  
 }
 
-void MoleGraph::setSendingCallback(void (*function)(void)) {
+void MoleGraphManual::setSendingCallback(void (*function)(void)) {
   updateFunction = function;
 }
 
-void MoleGraph::setMeasurementStartedCallback(void (*function)(void)) {
+void MoleGraphManual::setMeasurementStartedCallback(void (*function)(void)) {
   measurementStartedCallback = function;
 }
 
-void MoleGraph::setMeasurementStoppedCallback(void (*function)(void)) {
+void MoleGraphManual::setMeasurementStoppedCallback(void (*function)(void)) {
   measurementStoppedCallback = function;
 }
 
-void MoleGraph::setMeasurementPausedCallback(void (*function)(void)) {
+void MoleGraphManual::setMeasurementPausedCallback(void (*function)(void)) {
   measurementPausedCallback = function;
 }
 
-void MoleGraph::setMeasurementContinuedCallback(void (*function)(void)) {
+void MoleGraphManual::setMeasurementContinuedCallback(void (*function)(void)) {
   measurementContinuedCallback = function;
 }

@@ -266,10 +266,14 @@ void ChannelSettings::_FillSensorPortCB(HwChannelProxy *channelProxy)
     for (unsigned i = 1; i <= hw::SensorManager::sensorPortCount; ++i)
     {
         m_sensorPortComboBox->addItem(_GetPortName(i), i);
-        if (i == channelProxy->GetSensorPort())
+        if (i == channelProxy->GetSensorPort() && !channelProxy->GetChannelMeasurement()->IsLegacyFirmwareVersion()){
             m_sensorPortComboBox->setCurrentIndex(m_sensorPortComboBox->count() - 1);
+        }
     }
-    m_sensorPortComboBox->setEnabled(channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
+    m_sensorPortComboBox->setEnabled(
+        channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready &&
+        !channelProxy->GetChannelMeasurement()->IsLegacyFirmwareVersion()
+    );
 }
 
 void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
@@ -1189,10 +1193,7 @@ bool ChannelSettings::BeforeAccept()
             hwChannelProxy->SetValueCorrection(m_valueCorrection);
             changed = true;
             rescaleAxis = true;
-            for (int i = 0; i < hwChannelProxy->GetValueCount(); ++i)
-            {
-                hwChannelProxy->GetChannel()->valueChanged(i);
-            }
+            changeStyle = true; //to be re-displayed all channel values
         }
     }
 

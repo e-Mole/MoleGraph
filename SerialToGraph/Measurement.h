@@ -166,6 +166,7 @@ private:
     unsigned GetChannelIndex(ChannelBase *channel);
     void SetAllMarksShown(bool marksShown);
     void SetChannelGraphPenWidth(double width);
+    bool IsLegacyFirmwareVersion();
 signals:
     void stateChanged();
     void nameChanged();

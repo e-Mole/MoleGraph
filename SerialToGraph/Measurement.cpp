@@ -825,3 +825,7 @@ void Measurement::sensorQuantityIdChoosen(unsigned sensorQuantityId)
         order++;
     }
 }
+
+ bool Measurement::IsLegacyFirmwareVersion() {
+     return m_hwConnector.IsLegacyFirmwareVersion();
+ }

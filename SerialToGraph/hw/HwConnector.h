@@ -116,6 +116,7 @@ public:
     void CreateHwInstances();
     void SetAutoconnect(bool autoconnect) { m_autoConnect = autoconnect; }
     QList<hw::PortInfo> &GetDeviceList() { return m_deviceList; }
+    bool IsLegacyFirmwareVersion() { return m_legacyFirmwareVersion; }
 
 signals:
     void StartCommandDetected();

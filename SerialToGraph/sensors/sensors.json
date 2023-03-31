@@ -607,7 +607,9 @@
             ],
             "enabled": true,
             "id": 19,
-            "name": "CO2 gas sensor (MH-Z16)"
+            "name": "CO2 gas sensor (MH-Z16)",
+            "note": "Measuring range -200..+1200°C. Resolution 0.25°C, accuracy around ±2°C. Maximum sampling rate 4Hz. Error state (no thermocouple) send value -500."
+
         },
         {
             "components": [

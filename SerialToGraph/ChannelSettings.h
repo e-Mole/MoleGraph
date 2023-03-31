@@ -4,6 +4,7 @@
 #include <bases/FormDialogColor.h>
 #include <QColor>
 #include <QVector>
+#include <QLabel>
 #include <memory>
 #include <hw/Sensor.h>
 
@@ -47,7 +48,8 @@ class ChannelSettings : public bases::FormDialogColor
     void _FillCorrectionValues(unsigned id, bool addItem);
     void _InitializeCorrectionItems(hw::ValueCorrection *originalCorrection);
     void _FillSensorItems(HwChannelProxy *channelProxy);
-    void _InitializeSensorItem(bases::ComboBox *item, const QString &label, const char *slot);
+    void _InitializeSensorNameItem();
+    void _InitializeSensorItem(QWidget *item, const QString &label, const char *slot);
     void _FillSensorQuanitityCB(HwChannelProxy *channelProxy);
     void _FillSensorNameCB(HwChannelProxy *channelProxy);
     void _FillSensorPortCB(HwChannelProxy *channelProxy);
@@ -59,6 +61,7 @@ class ChannelSettings : public bases::FormDialogColor
     void _ConnectCurrentValueChange();
     void _DisconnectCurrentValueChange();
     bool _CheckCorrectionPointsValidity();
+    QString _GetNote(int index) const;
     virtual bool BeforeAccept();
     virtual void BeforeReject();
 
@@ -79,6 +82,7 @@ class ChannelSettings : public bases::FormDialogColor
     bases::ComboBox * m_penStyle;
     bases::ComboBox * m_sensorQuantityComboBox;
     bases::ComboBox * m_sensorNameComboBox;
+    QPushButton * m_sensorNoteButton;
     bases::ComboBox * m_sensorPortComboBox;
     bases::ComboBox * m_correctionComboBox;
     LineEdit * m_correctionPoint1Orig;
@@ -114,6 +118,7 @@ private slots:
     void loadFromOriginalWidget(int channelComboIndex);
     void sensorQuantityChanged(int index);
     void sensorNameChanged(int index);
+    void sensorNote();
     void sensorPortChanged(int index);
     void correctionTypeChanged(int index);
     void correctionVariableChanged(QString newValue);

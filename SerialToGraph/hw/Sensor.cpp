@@ -10,10 +10,11 @@ namespace hw
     {
     }
 
-    Sensor::Sensor(QObject *parent, QString name, unsigned id):
+    Sensor::Sensor(QObject *parent, QString name, unsigned id, QString note):
         QObject(parent),
         m_name(name),
-        m_id(id)
+        m_id(id),
+        m_note(note)
     {
     }
 
@@ -31,6 +32,11 @@ namespace hw
     QString Sensor::GetName() const
     {      
         return m_name;
+    }
+
+    QString Sensor::GetNote() const
+    {
+        return m_note;
     }
 
     const std::vector<SensorComponent *> &Sensor::GetComponents() const

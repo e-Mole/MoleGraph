@@ -172,6 +172,7 @@ ChannelSettings::ChannelSettings(
     m_penStyle(new bases::ComboBox(this)),
     m_sensorQuantityComboBox(new bases::ComboBox(this)),
     m_sensorNameComboBox(new bases::ComboBox(this)),
+    m_sensorNoteButton(new QPushButton(tr("info"), this)),
     m_sensorPortComboBox(new bases::ComboBox(this)),
     m_correctionComboBox(new bases::ComboBox(this)),
     m_correctionPoint1Orig(new LineEdit(this)),
@@ -238,6 +239,7 @@ void ChannelSettings::_HideAllOptional()
     m_format->setVisible(false);
     m_sensorQuantityComboBox->setVisible(false);
     m_sensorNameComboBox->setVisible(false);
+    m_sensorNoteButton->setVisible(false);
     m_sensorPortComboBox->setVisible(false);
     m_originlValue->setVisible(false);
     m_naValue->setVisible(false);
@@ -249,12 +251,29 @@ void ChannelSettings::_HideAllOptional()
     m_correctionPoint3Orig->setVisible(false);
     m_correctionPoint3New->setVisible(false);
 }
-void ChannelSettings::_InitializeSensorItem(bases::ComboBox *item, QString const &label, const char* slot)
+void ChannelSettings::_InitializeSensorItem(QWidget *item, QString const &label, const char* slot)
 {
     item->setVisible(true);
     item->setEnabled(m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
     m_formLayout->addRow(new Label(label, this), item);
     connect(item, SIGNAL(currentIndexChanged(int)), this, slot);
+}
+
+void ChannelSettings::_InitializeSensorNameItem(){
+    m_sensorNameComboBox->setVisible(true);
+    m_sensorNoteButton->setVisible(true);
+
+    bool enable = m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready;
+    m_sensorNameComboBox->setEnabled(enable);
+    m_sensorNoteButton->setEnabled(enable);
+
+    QHBoxLayout * layout = new QHBoxLayout(this);
+    layout->addWidget(m_sensorNameComboBox, 1);
+    layout->addWidget(m_sensorNoteButton);
+
+    m_formLayout->addRow(new Label(tr("Sensor Name"), this), layout);
+    connect(m_sensorNameComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sensorNameChanged(int)));
+    connect(m_sensorNoteButton, SIGNAL(clicked()), this, SLOT(sensorNote()));
 }
 
 void ChannelSettings::_FillSensorPortCB(HwChannelProxy *channelProxy)
@@ -289,6 +308,7 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
             {
                 m_sensorNameComboBox->addItem(sensor->GetName(), sensor->GetId());
                 m_sensorNameComboBox->setEnabled(false);
+                m_sensorNoteButton->setEnabled(false);
                 return;
             }
         }
@@ -302,7 +322,8 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
             m_sensorNameComboBox->setCurrentIndex(m_sensorNameComboBox->count() - 1);
         }
     }
-    m_sensorNameComboBox->setEnabled(channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready);
+    bool enable = channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready;
+    m_sensorNameComboBox->setEnabled(enable);
 }
 
 void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
@@ -313,7 +334,7 @@ void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
 
     foreach (hw::Sensor *sensor, m_sensorManager->GetSensors())
     {
-        if (sensor->GetId() == currentSensorId)
+        if (sensor->GetId() == currentSensorId && sensor->GetName() != "")
         {
             foreach (hw::SensorComponent *component, sensor->GetComponents())
             {
@@ -331,6 +352,9 @@ void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
         m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready &&
         m_sensorQuantityComboBox->count() > 1
     );
+
+    qDebug() << m_sensorNameComboBox->currentData().toInt();
+    m_sensorNoteButton->setEnabled(m_sensorNameComboBox->isEnabled() && !this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
 }
 
 void ChannelSettings::sensorQuantityIndexChanged(int index)
@@ -343,10 +367,11 @@ void ChannelSettings::sensorQuantityIndexChanged(int index)
     hw::ValueCorrection * correction = component->GetValueCorrection();
     m_correctionComboBox->setCurrentIndex(correction->GetId());
 }
+
 void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
 {
     _InitializeSensorItem(m_sensorPortComboBox, tr("Sensor Port"), SLOT(sensorPortChanged(int)));
-    _InitializeSensorItem(m_sensorNameComboBox, tr("Sensor Name"), SLOT(sensorNameChanged(int)));
+    _InitializeSensorNameItem();
     _InitializeSensorItem(m_sensorQuantityComboBox, tr("Sensor Quantity"), SLOT(sensorQuantityChanged(int)));
     _FillSensorItems(channelProxy);
     m_sensorPropertiesInitialized = true;
@@ -515,7 +540,7 @@ void ChannelSettings::_FillSensorItems(HwChannelProxy *channelProxy)
 
     m_sensorPortComboBox->setEnabled(channelProxy);
     m_sensorNameComboBox->setEnabled(channelProxy);
-    m_sensorNameComboBox->setEnabled(channelProxy);
+    m_sensorNoteButton->setEnabled(channelProxy);
 
     if (channelProxy)
     {
@@ -545,6 +570,17 @@ void ChannelSettings::sensorNameChanged(int index)
         _FillSensorQuanitityCB(dynamic_cast<HwChannelProxy*>(m_channelProxy));
     }
 }
+
+QString ChannelSettings::_GetNote(int index) const{
+    return m_sensorManager->GetSensor(index)->GetNote();
+}
+
+void ChannelSettings::sensorNote()
+{
+    QString message = this->_GetNote(m_sensorNameComboBox->currentData().toInt());
+    MyMessageBox::information(this, message);
+}
+
 void ChannelSettings::sensorQuantityChanged(int index)
 {
     if (!m_sensorPropertiesInitialized)

@@ -99,7 +99,7 @@ namespace hw
         m_quantities.push_back(new SensorQuantity(this, 0, ""));
         m_corrections.push_back(new ValueCorrection(this, 0, "", "", 0));
         m_sensors.push_back(
-            (new Sensor(this, "", 0))->AddComponent(
+            (new Sensor(this, "", 0, ""))->AddComponent(
                 new SensorComponent(this, m_quantities.at(0), m_corrections.at(0), "", 0)
             )
         );
@@ -148,7 +148,8 @@ namespace hw
                 continue;
             unsigned sensorId = unsigned(sensorObject["id"].toInt());
             QString sensorName = _GetSensorNameTranslation(sensorObject["name"].toString());
-            Sensor *sensor = new Sensor(this, sensorName, sensorId);
+            QString sensorNote = _GetSensorNameTranslation(sensorObject["note"].toString());
+            Sensor *sensor = new Sensor(this, sensorName, sensorId, sensorNote);
             QJsonArray jsonSensorComponents = sensorObject["components"].toArray();
             int order = -1;
             foreach (QJsonValue const &sensorValue, jsonSensorComponents)

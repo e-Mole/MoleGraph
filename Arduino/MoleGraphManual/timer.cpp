@@ -49,7 +49,7 @@ void Servo::detach() {
 void Servo::write(uint16_t x) {
   position = x;
   if (position < 200) {
-    position = (position - 90) * 100 / 9 + 1500;
+  position = (position - 90) * 100 / 9 + 1500;
   }
   *reg = position * 2;
 }

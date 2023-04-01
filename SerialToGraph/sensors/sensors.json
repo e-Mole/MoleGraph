@@ -606,13 +606,13 @@
                 {
                     "correction": "Linear",
                     "quantity": "Concentration (ppm)",
-                    "points": ["0.01","400","1.002","50000","0","0"],
+                    "points": [[0.01,400],[1.002,50000]],
                     "unit": "ppm"
                 },
                 {
                     "correction": "Linear",
                     "quantity": "Concentration (%)",
-                    "points": ["0.01","0.04","1.002","5","0","0"],
+                    "points": [[0.01,0.04],[1.002,5]],
                     "unit": "%"
                 }
             ],

@@ -366,6 +366,7 @@ void ChannelSettings::sensorQuantityIndexChanged(int index)
     hw::SensorComponent *component = m_sensorManager->GetSensor(currentSensorId)->GetComponent(index);
     hw::ValueCorrection * correction = component->GetValueCorrection();
     m_correctionComboBox->setCurrentIndex(correction->GetId());
+    _FillCorrectionValues(correction->GetId(), false);
 }
 
 void ChannelSettings::_InitializeSensorItems(HwChannelProxy *channelProxy)
@@ -452,10 +453,30 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
         if (id == correction->GetId())
         {
             if (!addItem){
-                hw::ValueCorrection * temp = new hw::ValueCorrection(this, correction);
-                temp->CopyPoints(m_valueCorrection);
-                delete m_valueCorrection;
-                m_valueCorrection = temp;
+                bool assigned = false;
+                foreach (hw::Sensor * sensor, m_sensorManager->GetSensors()){
+                    if (sensor->GetId() == m_sensorNameComboBox->currentData().toInt()){
+                        foreach ( hw::SensorComponent * component, sensor->GetComponents()){
+                            hw::SensorQuantity * quantity = component->GetQuantity();
+                            if (quantity->GetId() == m_sensorQuantityComboBox->currentData().toInt()){
+                                hw::ValueCorrection * correction = component->GetValueCorrection();
+                                if (correction->GetId() == id){
+                                    hw::ValueCorrection * temp = new hw::ValueCorrection(this, correction);
+                                    delete m_valueCorrection;
+                                    m_valueCorrection = temp;
+                                    assigned = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!assigned){
+                    hw::ValueCorrection * temp = new hw::ValueCorrection(this, correction);
+                    temp->CopyPoints(m_valueCorrection);
+                    delete m_valueCorrection;
+                    m_valueCorrection = temp;
+                }
             }
             _FillCorrectionPoints();
 
@@ -471,7 +492,7 @@ void ChannelSettings::_FillCorrectionValues(unsigned id, bool addItem)
 }
 
 void ChannelSettings::_InitializeCorrectionItems(hw::ValueCorrection * originalCorrection)
-{ 
+{
     m_valueCorrection = new hw::ValueCorrection(this, originalCorrection);
     m_correctionComboBox->setVisible(true);
      m_correctionComboBox->setEnabled(true);
@@ -504,7 +525,7 @@ void ChannelSettings::_InitializeCorrectionItems(hw::ValueCorrection * originalC
 }
 
 void ChannelSettings::correctionTypeChanged(int index)
-{    
+{
     if (index == -1)
         return;
 

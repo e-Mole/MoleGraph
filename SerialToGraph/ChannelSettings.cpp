@@ -324,6 +324,8 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
     }
     bool enable = channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready;
     m_sensorNameComboBox->setEnabled(enable);
+    m_sensorNoteButton->setEnabled(enable && !this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
+
 }
 
 void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)

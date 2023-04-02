@@ -64,6 +64,7 @@ GraphicsContainer::GraphicsContainer(QWidget *parent, Measurement *mainMeasureme
     m_scrollBar = new QScrollBar(Qt::Horizontal, this);
     m_scrollBar->setRange(0,0);
     m_scrollBar->setFocusPolicy(Qt::StrongFocus);
+    m_scrollBar->setInvertedControls(false);
 #if defined(Q_OS_ANDROID)
     unsigned height = m_scrollBar->physicalDpiY() / GlobalSettings::GetInstance().getWidgetHeightDivider();
     m_scrollBar->setStyleSheet(

@@ -230,7 +230,8 @@
             ],
             "enabled": true,
             "id": 101,
-            "name": "Generic (AD 10bit)"
+            "name": "Generic (AD 10bit)",
+            "note": "Arduino NANO AD 10-bit convertor as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
         },
         {
             "components": [
@@ -242,12 +243,13 @@
             ],
             "enabled": true,
             "id": 1,
-            "name": "Thermometer (DS18B20)"
+            "name": "Thermometer (DS18B20)",
+            "note": "Measuring range -55..+125 °C. Output Resolution: 9-bit to 12-bit (programmable), accuracy: ±0.5 °C. Conversion time: 750 ms at 12-bit."
         },
         {
             "components": [
                 {
-                    "correction": "Linear",
+                    "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
                 }
@@ -255,7 +257,7 @@
             "enabled": true,
             "id": 34,
             "name": "Thermometer (K-Type, MAX6675)",
-            "note": "Measuring range -200..+1200°C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
+            "note": "Measuring range -200..+1200 °C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
         },
         {
             "components": [
@@ -272,7 +274,8 @@
             ],
             "enabled": true,
             "id": 5,
-            "name": "IR Thermometer (MLX90614)"
+            "name": "IR Thermometer (MLX90614)",
+            "note": "Measuring range: -40..+125 ˚C for sensor temperature and -70..+380 ˚C for object temperature. Resolution 0.02 °C, accuracy ±0.5 °C. Maximum sampling rate 1000 Hz."
         },
         {
             "components": [
@@ -284,7 +287,8 @@
             ],
             "enabled": true,
             "id": 6,
-            "name": "Pressure sensor (MPX5700DP)"
+            "name": "Pressure sensor (MPX5700DP)",
+            "note": "Measuring range: 0..750 kPa. Resolution 0.7 kPa (10-bit), accuracy ±2.5 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 125 °C."
         },
         {
             "components": [
@@ -316,7 +320,8 @@
             ],
             "enabled": true,
             "id": 2,
-            "name": "Pressure + Thermometer + Hygrometer (BME280)"
+            "name": "Pressure + Thermometer + Hygrometer (BME280)",
+            "note": "Measuring range pressure 300..1100 hPa, temperature -40..85 °C, rel. humidity 0..100 %. Resolution pressure 0.18 Pa, temperature 0,01 °C, humidity 0,008% , accuracy pressure ±1.5 hPa, humidity ±0,5 °C, humidity ±3 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 85 °C."            
         },
         {
             "components": [
@@ -606,13 +611,13 @@
                 {
                     "correction": "Linear",
                     "quantity": "Concentration (ppm)",
-                    "points": ["0.01","400","1.002","50000","0","0"],
+                    "points": [[0.01,400],[1.002,50000]],
                     "unit": "ppm"
                 },
                 {
                     "correction": "Linear",
                     "quantity": "Concentration (%)",
-                    "points": ["0.01","0.04","1.002","5","0","0"],
+                    "points": [[0.01,0.04],[1.002,5]],
                     "unit": "%"
                 }
             ],

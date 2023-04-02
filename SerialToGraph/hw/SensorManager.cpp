@@ -151,22 +151,30 @@ namespace hw
             QString sensorNote = _GetSensorNameTranslation(sensorObject["note"].toString());
             Sensor *sensor = new Sensor(this, sensorName, sensorId, sensorNote);
             QJsonArray jsonSensorComponents = sensorObject["components"].toArray();
-            int order = -1;
+            int sensorOrder = -1;
             foreach (QJsonValue const &sensorValue, jsonSensorComponents)
             {
-                order++;
+                sensorOrder++;
                 QJsonObject componentObject = sensorValue.toObject();
                 QString correction_name = componentObject["correction"].toString();
                 QString unit = componentObject["unit"].toString();
                 QString quantity_name = componentObject["quantity"].toString();
                 SensorQuantity * quantity = GetSensorQuantity(quantity_name);
-                ValueCorrection * correction = GetSensorCorrection(correction_name);
+                ValueCorrection * correction = new ValueCorrection(this, GetSensorCorrection(correction_name));
+                int pointOrder = 0;
+                QJsonArray jsonPoints = componentObject["points"].toArray();
+                foreach (QJsonValue const &jsonPointValue, jsonPoints) {
+                    QJsonArray jsonPointItems = jsonPointValue.toArray();
+                    correction->SetPoint(pointOrder, true, jsonPointItems.at(0).toDouble());
+                    correction->SetPoint(pointOrder++, false, jsonPointItems.at(1).toDouble());
+                }
+
                 if (quantity == nullptr)
                 {
                     MyMessageBox::warning(nullptr, QString("unexpected quantity '%1' in sensors.json file").arg(quantity_name));
                     continue;
                 }
-                sensor->AddComponent(new SensorComponent(this, quantity, correction, unit, unsigned(order)));
+                sensor->AddComponent(new SensorComponent(this, quantity, correction, unit, unsigned(sensorOrder)));
             }
 
             m_sensors.push_back(sensor);

@@ -159,7 +159,7 @@ void Measurement::draw()
             foreach (ChannelBase *channel, m_trackedHwChannels.values())
             {
                 float value = valueSet.values[i++];
-                if (fabs(value - std::numeric_limits<float>::max()) < std::numeric_limits<float>::epsilon()){
+                if (fabs(std::numeric_limits<float>::max() - value) < 10){ //should not be an issue to decrease range 10 times. it is still 10^37 and arduino doesn't to provide so precise number
                     value = channel->GetNaValue();
                 }
                 channel->AddValue(value);

@@ -60,6 +60,8 @@ private:
     bool _ProcessCommand(unsigned mixture, unsigned char &checkSum);
     float _DequeueFloat(unsigned char &checkSum);
     bool _FillArrayFromQueue(unsigned length, QList<uint8_t> &list);
+    bool _GrantPermissions(QString const &permissoin);
+
 
     PortBase * m_selectedPort;
     PortBase * m_bluetooth;

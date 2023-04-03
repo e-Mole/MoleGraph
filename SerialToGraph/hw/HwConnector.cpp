@@ -50,7 +50,30 @@ HwConnector::HwConnector(QWidget *parent) :
     m_legacyFirmwareVersion(false),
     m_autoConnect(true)
 {
+#if defined(Q_OS_ANDROID)
+    this->_GrantPermissions("ACCESS_FINE_LOCATION");
+    this->_GrantPermissions("BLUETOOTH");
+    this->_GrantPermissions("BLUETOOTH_ADMIN");
+    this->_GrantPermissions("ACCESS_FINE_LOCATION");
+    this->_GrantPermissions("READ_EXTERNAL_STORAGE");
+    this->_GrantPermissions("WRITE_EXTERNAL_STORAGE");
+#endif
+}
 
+bool HwConnector::_GrantPermissions(QString const &permission){
+#if defined(Q_OS_ANDROID)
+    QString permissionFull = "android.permission." + permission;
+    QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissionFull);
+    if(r == QtAndroid::PermissionResult::Denied) {
+        QtAndroid::requestPermissionsSync( QStringList() << permissionFull);
+        r = QtAndroid::checkPermission(permissionFull);
+        if(r == QtAndroid::PermissionResult::Denied) {
+            qCritical() << "permission << permission << not allowed";
+            return false;
+        }
+    }
+#endif
+    return true;
 }
 
 HwConnector::~HwConnector()

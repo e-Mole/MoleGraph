@@ -5,10 +5,11 @@
 
 // Enable MoleGraph U01 shield function
 #define SYSTEM
-#include <molegraphmanual.h> // Link MoleGraph library (www.e-mole.cz/diy/molegraph)
+#include "molegraphmanual.h"  // Link MoleGraph library (www.e-mole.cz/diy/molegraph)
 
-MoleGraphManual moleGraph; // Create MoleGraph instance
-#define AD PORT_1A
+MoleGraphManual moleGraph;
+
+#define AD A0
 
 Servo s;
 
@@ -28,6 +29,7 @@ uint32_t x = millis();
 
 void loop() {
   moleGraph.process();
+  moleGraph.getButton(1);
   if (millis() - x >= TIME) {
     x += TIME;
     s.write(s.read() == 1000 ? 2000 : 1000);

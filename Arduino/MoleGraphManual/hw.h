@@ -18,12 +18,12 @@ class System {
   public:
     void     init();
     void     process(uint32_t, bool);
-    uint8_t  getBtn();    
-	uint8_t  getBatt();   
+    uint8_t  getBtn();
+    uint8_t  getBatt();    
   private:
     uint8_t  button;
     uint8_t  lastBtn = 0;
-	uint8_t  lastBatt = 0;
+    uint8_t  lastBatt = 0;
     uint32_t systemTime = 0;   
 };
 

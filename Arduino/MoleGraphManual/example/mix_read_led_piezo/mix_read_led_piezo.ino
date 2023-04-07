@@ -1,11 +1,13 @@
+//********** MoleGraphManual ***************
+//   MoleGraph Probeware example code
+//    (www.e-mole.cz/diy/molegraph) 
+//******************************************
+
+// Enable MoleGraph U01 shield function
+#define SYSTEM
 #include <molegraphmanual.h>
-//#include <Servo.h>
 
 MoleGraphManual moleGraph;
-
-//#define AD PORT_1A
-
-//Servo SERVO;
 
 int angle = 0;
 int last_angle = 0;
@@ -22,7 +24,6 @@ void setup() {
   moleGraph.setSendingCallback(&updateGraphChannels);
   pinMode(11, OUTPUT); //OUTPUT for tone generator
   pinMode(A0, OUTPUT);
-//  SERVO.attach(9);
 }
 
 void loop() {
@@ -37,9 +38,4 @@ void loop() {
       digitalWrite(A0, LOW);
       angle = 10;
     }
-
-//    if (last_angle != angle) {
-//      SERVO.write(angle);
-//      last_angle = angle;      
-//    }
 }

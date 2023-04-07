@@ -1,3 +1,10 @@
+//********** MoleGraphManual ***************
+//   MoleGraph Probeware example code
+//    (www.e-mole.cz/diy/molegraph) 
+//******************************************
+
+// Enable MoleGraph U01 shield function
+#define SYSTEM
 #include <molegraphmanual.h> // Link MoleGraph library (www.e-mole.cz/diy/molegraph)
 
 MoleGraphManual moleGraph; // Create MoleGraph instance

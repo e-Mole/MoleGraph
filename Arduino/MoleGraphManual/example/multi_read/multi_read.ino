@@ -1,3 +1,10 @@
+//********** MoleGraphManual ***************
+//   MoleGraph Probeware example code
+//    (www.e-mole.cz/diy/molegraph) 
+//******************************************
+
+// Enable MoleGraph U01 shield function
+#define SYSTEM
 #include <Wire.h> 
 #include "molegraphmanual.h"
 #include "cactus_io_BME280_I2C.h"

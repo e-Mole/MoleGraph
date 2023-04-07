@@ -2,43 +2,8 @@
 
 #define DEBUG_MSG_MAX_SIZE 100
 
-System runtem;
 //MoleGraphManual moleGraph;
-
-const uint8_t PINS_DIGITAL[] = {PORT_1D, PORT_2D, PORT_3D, PORT_4D};
-const uint8_t PINS_ANALOG[]  = {PORT_1A, PORT_2A, PORT_3A, PORT_4A};
-const uint8_t PINS_PULLUP[]  = {PORT_1U, PORT_2U, PORT_3U, PORT_4U};
  
-void MoleGraphManual::init() {
-  Serial.begin(115200);
-  timerInit();
-  runtem.init();
-}
-
-bool MoleGraphManual::getButton(uint8_t index) {
-  bool result = 0;
-  if (index > 0 && index <= 4) {
-    result = runtem.getBtn() & (1 << (index - 1)); 
-  } 
-  return result;
-}
-
-uint8_t MoleGraphManual::getBattery() {
-  uint8_t result = runtem.getBatt();  
-  return result;
-}
-
-void MoleGraphManual::setPullup(uint8_t index, bool pull) {
-  if (index > 0 && index <= 4) {
-    if (pull) {
-      pinMode(PINS_PULLUP[index-1], OUTPUT);
-      digitalWrite(PINS_PULLUP[index-1], 1);
-    } else {
-      pinMode(PINS_PULLUP[index-1], INPUT);
-    } 
-  }   
-}
-
 // measurement start/continue
 void MoleGraphManual::startMeasurement(bool restart) {
   DEBUG_MSG("starting\n");
@@ -68,30 +33,6 @@ void MoleGraphManual::stopMeasurement(bool pause) {
       if (measurementPausedCallback != NULL) measurementPausedCallback();
     }
   }
-}
-
-void MoleGraphManual::process() {
-  if (Serial.available()) {   
-    uint8_t instruction = Serial.read();
-    switch (instruction) {
-      case INS_GET_VERSION:       Serial.write(VERSION); break;
-      case INS_SET_TIME:          setPeriod(0); break;
-      case INS_SET_FREQUENCY:     setPeriod(1); break;
-      case INS_ENABLED_CHANNELS:  enableChannels(); break;
-      case INS_START:             startMeasurement(0); break;
-      case INS_STOP:              stopMeasurement(0); break;
-      case INS_CONTINUE:          startMeasurement(1); break;
-      case INS_PAUSE:             stopMeasurement(1); break;
-      case INS_SET_TYPE:          setScanType(); break;
-      case INS_GET_SAMPLE:        sampleRequest(); break;
-      case INS_INITIALIZE:        stopMeasurement(); break;
-      defaut:                     break;
-    }
-  }
-    
-  actualTime = getTime();
-  update();
-  runtem.process(actualTime, measurementInProgress);
 }
 
 bool MoleGraphManual::setChannelValue(uint8_t channel, float value) {

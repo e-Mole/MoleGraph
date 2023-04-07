@@ -1,11 +1,13 @@
+//********** MoleGraphManual ***************
+//   MoleGraph Probeware example code
+//    (www.e-mole.cz/diy/molegraph) 
+//******************************************
+
+// Enable MoleGraph U01 shield function
+#define SYSTEM
 #include <molegraphmanual.h>
-//#include <Servo.h>
 
 MoleGraphManual moleGraph;
-
-//#define AD PORT_1A
-
-//Servo SERVO;
 
 int angle = 0;
 int last_angle = 0;

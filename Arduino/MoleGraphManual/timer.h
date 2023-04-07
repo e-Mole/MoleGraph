@@ -1,10 +1,6 @@
 #ifndef Timer_h
 #define Timer_h
 
-//#include <inttypes.h> 
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
-
 #include <Arduino.h>
 
 #define TIME_BASE 0.5e-6f

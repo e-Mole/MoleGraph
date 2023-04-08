@@ -136,6 +136,8 @@ class MoleGraphManual {
     bool  setChannelValue(uint8_t channel, float value);
     float getChannelValue(uint8_t channel);
     bool  isMeasurementInProgress();
+    void  startMeasurement(bool restart = 0);
+    void  stopMeasurement(bool pause = 0);
     
     void setSendingCallback(void (*function)(void));
     void setMeasurementStartedCallback(void (*function)(void));
@@ -163,8 +165,8 @@ class MoleGraphManual {
     void    setPeriod(bool);                // nastaveni periody mereni 0 - perioda [s], 1 - frekvence [Hz]
     void    setScanType();                  // nastaveni typu mereni
     void    sampleRequest();
-    void    startMeasurement(bool restart = 0);
-    void    stopMeasurement(bool pause = 0);
+//    void    startMeasurement(bool restart = 0);
+//    void    stopMeasurement(bool pause = 0);
     void    enableChannels();
     void    sendData();                     // odeslani dat
     void    sendCommand(uint8_t command, const char *format_msg, ...);

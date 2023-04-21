@@ -30,8 +30,8 @@ float PH::read(uint8_t _spec) {
 	//----------------------------------------------------
 	// PH_step = (voltage@PH7 - voltage@PH4) / (PH7 - PH4)
     // PH_probe = PH7 - ((voltage@PH7 - voltage@probe) / PH_step)
-	// voltage@PH7 = 2,5
-    pH_probe = 7 + ((2.5 - voltage) / 0.18);
+	// voltage@PH7 = 2.5
+    pH_probe = 7 + ((2.5 - voltage) / 0.357);
 
   switch (_spec) {
     case 0: result = pH_probe; break; // pH

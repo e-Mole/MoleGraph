@@ -1,4 +1,4 @@
-#include "MHZ16.h"
+#include "mhz16.h"
 
 MHZ16::MHZ16(uint32_t _period, uint8_t _port) : Timer(_period, _port) {
 }

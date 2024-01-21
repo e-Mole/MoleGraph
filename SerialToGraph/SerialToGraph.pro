@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-versionTarget.target = GitVersion.h
-versionTarget.depends = FORCE
-versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
-PRE_TARGETDEPS += GitVersion.h
-QMAKE_EXTRA_TARGETS += versionTarget
+#versionTarget.target = GitVersion.h
+#versionTarget.depends = FORCE
+#versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
+#PRE_TARGETDEPS += GitVersion.h
+#QMAKE_EXTRA_TARGETS += versionTarget
 
 TARGET = MoleGraph
 DEFINES += TARGET=\\\"$$TARGET\\\"
@@ -18,7 +18,7 @@ VERSION = 1
 QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = $$TARGET
 QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
-QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 

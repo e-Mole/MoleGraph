@@ -24,6 +24,7 @@
 #include "volt25.h"
 #include "amp5.h"
 #include "amp30.h"
+#include "conduct.h"
 #include "veml6070.h"
 #include "mq3.h"
 #include "ph.h"

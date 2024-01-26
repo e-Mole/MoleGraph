@@ -4,14 +4,15 @@
 #
 #-------------------------------------------------
 
-#versionTarget.target = GitVersion.h
-#versionTarget.depends = FORCE
-#versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
-#PRE_TARGETDEPS += GitVersion.h
-#QMAKE_EXTRA_TARGETS += versionTarget
+versionTarget.target = GitVersion.h
+versionTarget.depends = FORCE
+versionTarget.commands = $$PWD/getGitVersion.bat $$PWD
+PRE_TARGETDEPS += GitVersion.h
+QMAKE_EXTRA_TARGETS += versionTarget
 
 TARGET = MoleGraph
 DEFINES += TARGET=\\\"$$TARGET\\\"
+
 TEMPLATE = app
 
 VERSION = 1

@@ -52,8 +52,12 @@ namespace hw
             return tr("UV sensor (VEML6070)");
         if (sensorName == "pH sensor")
             return tr("pH sensor");
+        if (sensorName == "ORP sensor")
+            return tr("ORP sensor");
         if (sensorName == "Conductivity sensor")
             return tr("Conductivity sensor");
+        if (sensorName == "Turbidity sensor (TS-300B)")
+            return tr("Turbidity sensor (TS-300B)");
         if (sensorName == "DC Voltage sensor 0-25 V (voltage divider)")
             return tr("DC Voltage sensor 0-25 V (voltage divider)");
         if (sensorName == "AC/DC Current sensor 0-5 A (ACS712)")
@@ -70,8 +74,10 @@ namespace hw
             return tr("CO2 gas sensor (MH-Z16)");
         if (sensorName == "O2 gas sensor (ME2-O2)")
             return tr("O2 gas sensor (ME2-O2)");
-        if (sensorName == "Ultrasonic motion sensor (SR-HC04)")
-            return tr("Ultrasonic motion sensor (SR-HC04)");
+        if (sensorName == "Motion/distance US sensor (SR-HC04)")
+            return tr("Motion/distance US sensor (SR-HC04)");
+        if (sensorName == "Photogate (810H)")
+            return tr("Photogate (810H)");
         if (sensorName == "Heart rate sensor (simple)")
             return tr("Heart rate sensor (simple)");
         if (sensorName == "Magnetic field sensor")
@@ -80,12 +86,16 @@ namespace hw
             return tr("Thermometer + Hygrometer (DHT11)");
         if (sensorName == "Alcohol gas sensor (MQ-3)")
             return tr("Alcohol gas sensor (MQ-3)");
+        if (sensorName == "Smoke/Combustible Gas (MQ-2)")
+            return tr("Smoke/Combustible Gas (MQ-2)");
         if (sensorName == "Particle/Dust sensor (DSM501)")
             return tr("Particle/Dust sensor (DSM501)");
         if (sensorName == "Sound sensor (microphone)")
             return tr("Sound sensor (microphone)");
-        if (sensorName == "Laser ranging sensor (VL53L0X)")
-            return tr("Laser ranging sensor (VL53L0X)");
+        if (sensorName == "Motion/distance laser sensor (VL53L0X)")
+            return tr("Motion/distance laser sensor (VL53L0X)");
+        if (sensorName == "Output module M040")
+            return tr("Output module M040");
         if (sensorName == "Timer GPIO 01")
             return tr("Timer GPIO 01");
         if (sensorName == "Length sensor (Caliper)")

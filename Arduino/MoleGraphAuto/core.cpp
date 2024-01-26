@@ -61,6 +61,7 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
 	  case SENSOR_DCA30: return new AMP30(_period, _port);
 	  case SENSOR_VEML6070: return new VEML6070(_period, _port);
 	  case SENSOR_MQ3: return new MQ3(_period, _port);
+    case SENSOR_MQ2: return new MQ2(_period, _port);    
 	  case SENSOR_PH: return new PH(_period, _port);
 	  case SENSOR_LUXBH1750: return new LUXBH1750(_period, _port);
     case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
@@ -68,6 +69,12 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
 	  case SENSOR_AD8232: return new AD8232(_period, _port);
     case SENSOR_CALIPER: return new CALIPER(_period, _port);	
     case SENSOR_CON: return new CONDUCT(_period, _port); // conductivity and salinity 
+    case SENSOR_ORP: return new AD(_period, _port);
+    case SENSOR_TURB: return new AD(_period, _port);
+    case SENSOR_P_GATE: return new Timer(_period, _port);
+//    case SENSOR_B_BOARD //now for programming only
+//    case SENSOR_SPIRO
+//    case SENSOR_GEIGER
   }
 }
 

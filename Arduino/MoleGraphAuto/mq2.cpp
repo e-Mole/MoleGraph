@@ -1,6 +1,6 @@
-﻿#include "mq3.h"
+﻿#include "mq2.h"
 
-MQ3::MQ3(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
+MQ2::MQ2(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin       = PORTS[_port][0];
   pin_digi  = PORTS[_port][1];
   pinMode(pin, INPUT);
@@ -8,7 +8,7 @@ MQ3::MQ3(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   offset = 0; 
 }
 
-bool MQ3::process() {
+bool MQ2::process() {
   if (Action(period)) {
     value = analogRead(pin);
     value2 = digitalRead(pin_digi);
@@ -18,21 +18,21 @@ bool MQ3::process() {
   return 0;
 }
 
-float MQ3::read(uint8_t _spec) {
+float MQ2::read(uint8_t _spec) {
   float result = NO_DATA;
-
+/*
   // Measuring Using MQ-3 Alcohol sensor (sensitive to benzine too)
     #define R2  10.0     //value of resistor RL, typical 47K, 10K, 2K, 1K (this value must be determined form sensor pcb)
     #define m  -0.840    //calculated Slope
     #define b   0.605    //calculated Intercept
     #define R0  133.0    //precalculate (found) R0 value (in fresh air conditions), //R0 = 60, 130, 1, 0.6, 0.17
-/*
+*/
   // Measuring Using MQ-2 LPG, methan, hydrogen
     #define R2  10.0     //value of resistor RL, typical 47K, 10K, 2K, 1K (this value must be determined form sensor pcb)
     #define m  -0.670    //calculated Slope
     #define b   1.071    //calculated Intercept
     #define R0  49.0     //precalculate (found) R0 value (in fresh air conditions), //R0 = 60, 130, 1, 0.6, 0.17    
-*/
+
     float RS_gas;
     float voltage;
     float ratio;
@@ -58,7 +58,7 @@ float MQ3::read(uint8_t _spec) {
   return result;
 }
 
-void MQ3::calibrate() {
+void MQ2::calibrate() {
   //offset = value;
   offset = analogRead(pin);
 }

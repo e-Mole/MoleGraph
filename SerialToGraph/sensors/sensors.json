@@ -1,30 +1,30 @@
 {
-	"corrections":
-	[
-		{
+    "corrections":
+    [
+        {
             "id": "0",
-			"name": "None",
-			"description": "y = x",
-			"points": 0
-		},
-		{
+            "name": "None",
+            "description": "y = x",
+            "points": 0
+        },
+        {
             "id": "1",
-			"name": "Offset",
-			"description": "y = x + a",
-			"points": 1
-		},
-		{
+            "name": "Offset",
+            "description": "y = x + a",
+            "points": 1
+        },
+        {
             "id": "2",
-			"name" : "Linear",
-			"description": "y = bx + a",
-			"points" : 2
+            "name" : "Linear",
+            "description": "y = bx + a",
+            "points" : 2
         },
         {
             "id": "3",
-			"name" : "Quadratic",
-			"description": "y = cx^2 + bx + a",
-			"points" : 3
-		}
+            "name" : "Quadratic",
+            "description": "y = cx^2 + bx + a",
+            "points" : 3
+        }
     ],
     "quantities":
   [
@@ -199,9 +199,14 @@
     {
       "id" : 42,
       "name" : "Salinity (ppm)"
+    },
+    {
+      "id" : 43,
+      "name" : "Radioactivity (cpm)"
     }
+
   ],
-	"sensors": [
+    "sensors": [
         {
             "components": [
                 {
@@ -256,19 +261,6 @@
                     "correction": "None",
                     "quantity": "Temperature",
                     "unit": "°C"
-                }
-            ],
-            "enabled": true,
-            "id": 34,
-            "name": "Thermometer (K-Type, MAX6675)",
-            "note": "Measuring range -200..+1200 °C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "Temperature",
-                    "unit": "°C"
                 },
                 {
                     "correction": "None",
@@ -285,14 +277,31 @@
             "components": [
                 {
                     "correction": "None",
-                    "quantity": "Pressure",
-                    "unit": "Pa"
+                    "quantity": "Temperature",
+                    "unit": "°C"
                 }
             ],
             "enabled": true,
-            "id": 6,
-            "name": "Pressure sensor (MPX5700DP)",
-            "note": "Measuring range: 0..750 kPa. Resolution 0.7 kPa (10-bit), accuracy ±2.5 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 125 °C."
+            "id": 34,
+            "name": "Thermometer (K-Type, MAX6675)",
+            "note": "Measuring range -200..+1200 °C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Humidity",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Temperature",
+                    "unit": "°C"
+                }
+            ],
+            "enabled": false,
+            "id": 24,
+            "name": "Thermometer + Hygrometer (DHT11)"
         },
         {
             "components": [
@@ -325,139 +334,20 @@
             "enabled": true,
             "id": 2,
             "name": "Pressure + Thermometer + Hygrometer (BME280)",
-            "note": "Measuring range pressure 300..1100 hPa, temperature -40..85 °C, rel. humidity 0..100 %. Resolution pressure 0.18 Pa, temperature 0,01 °C, humidity 0,008% , accuracy pressure ±1.5 hPa, humidity ±0,5 °C, humidity ±3 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 85 °C."            
+            "note": "Measuring range pressure 300..1100 hPa, temperature -40..85 °C, rel. humidity 0..100 %. Resolution pressure 0.18 Pa, temperature 0,01 °C, humidity 0,008% , accuracy pressure ±1.5 hPa, humidity ±0,5 °C, humidity ±3 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 85 °C."
         },
         {
             "components": [
                 {
                     "correction": "None",
-                    "quantity": "Force",
-                    "unit": "N"
+                    "quantity": "Pressure",
+                    "unit": "Pa"
                 }
             ],
             "enabled": true,
-            "id": 7,
-            "name": "Force sensor (HX711)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "Acceleration",
-                    "unit": "m/s^2"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Magnetic Field Intensity",
-                    "unit": "μT"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Accel X",
-                    "unit": "m/s^2"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Accel Y",
-                    "unit": "m/s^2"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Accel Z",
-                    "unit": "m/s^2"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Mag X",
-                    "unit": "μT"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Mag Y",
-                    "unit": "μT"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Mag Z",
-                    "unit": "μT"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Heading",
-                    "unit": "°"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Roll",
-                    "unit": "°"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Pitch",
-                    "unit": "°"
-                }
-            ],
-            "enabled": true,
-            "id": 3,
-            "name": "Accelerometer + Magnetometer (LSM303DLHC)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "Voltage",
-                    "unit": "V"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Frequency",
-                    "unit": "BPM"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Trigger",
-                    "unit": ""
-                }
-            ],
-            "enabled": true,
-            "id": 10,
-            "name": "ECG sensor (AD8232)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "RAW",
-                    "unit": ""
-                }
-            ],
-            "enabled": false,
-            "id": 11,
-            "name": "Color sensor (TCS3200)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "UV Index",
-                    "unit": ""
-                }
-            ],
-            "enabled": false,
-            "id": 13,
-            "name": "UV sensor (GUVA-S12SD)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "UV Intensity",
-                    "unit": ""
-                }
-            ],
-            "enabled": true,
-            "id": 31,
-            "name": "UV sensor (VEML6070)"
+            "id": 6,
+            "name": "Pressure sensor (MPX5700DP)",
+            "note": "Measuring range: 0..750 kPa. Resolution 0.7 kPa (10-bit), accuracy ±2.5 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 125 °C."
         },
         {
             "components": [
@@ -485,6 +375,30 @@
             "enabled": true,
             "id": 14,
             "name": "pH sensor"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "Linear",
+                    "quantity": "Voltage",
+                    "points": [[0,-1999],[4,1999]],
+                    "unit": "mV"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 37,
+            "name": "ORP sensor",
+            "note": "Sensor range [-1999 mV to 1999 mV], calculated from output voltage [0-4 V], RAW value [0-1023], trigger [0/1]."
         },
         {
             "components": [
@@ -519,6 +433,210 @@
             "enabled": true,
             "id": 15,
             "name": "Conductivity sensor"
+        },
+        {
+            "components": [
+                {
+                    "correction": "Linear",
+                    "quantity": "Concentration (ppm)",
+                    "points": [[0.01,400],[1.002,50000]],
+                    "unit": "ppm"
+                },
+                {
+                    "correction": "Linear",
+                    "quantity": "Concentration (%)",
+                    "points": [[0.01,0.04],[1.002,5]],
+                    "unit": "%"
+                }
+            ],
+            "enabled": true,
+            "id": 19,
+            "name": "CO2 gas sensor (MH-Z16)",
+            "note": "Measuring range 0..50 000 ppm. Resolution 0.05 ppm, accuracy around ±50 ppm. Maximum sampling rate 0.5 Hz."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (ppm)",
+                    "unit": "ppm"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (%)",
+                    "unit": "%"
+                }
+            ],
+            "enabled": false,
+            "id": 20,
+            "name": "O2 gas sensor (ME2-O2)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (ppm)",
+                    "unit": "ppm"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (%)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 36,
+            "name": "Smoke/Combustible Gas (MQ-2)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (ppm)",
+                    "unit": "ppm"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Concentration (%)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 25,
+            "name": "Alcohol gas sensor (MQ-3)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 38,
+            "name": "Turbidity sensor (TS-300B)",
+            "note": "Data from AD 10-bit convertor as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Radioactivity (cpm)",
+                    "unit": "cpm"
+                }
+            ],
+            "enabled": false,
+            "id": 42,
+            "name": "Radioactivity (RadiationD v1.1)",
+            "note": "In development..."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Frequency",
+                    "unit": "BPM"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 22,
+            "name": "Heart rate sensor (simple)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Frequency",
+                    "unit": "BPM"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 10,
+            "name": "ECG sensor (AD8232)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": false,
+            "id": 41,
+            "name": "Spirometer (MPXV7002DP)",
+            "note": "In development..."
         },
         {
             "components": [
@@ -625,61 +743,26 @@
         {
             "components": [
                 {
-                    "correction": "Linear",
-                    "quantity": "Concentration (ppm)",
-                    "points": [[0.01,400],[1.002,50000]],
-                    "unit": "ppm"
-                },
-                {
-                    "correction": "Linear",
-                    "quantity": "Concentration (%)",
-                    "points": [[0.01,0.04],[1.002,5]],
-                    "unit": "%"
-                }
-            ],
-            "enabled": true,
-            "id": 19,
-            "name": "CO2 gas sensor (MH-Z16)",
-            "note": "Measuring range 0..50 000 ppm. Resolution 0.05 ppm, accuracy around ±50 ppm. Maximum sampling rate 0.5 Hz."
-        },
-        {
-            "components": [
-                {
                     "correction": "None",
-                    "quantity": "Concentration (ppm)",
-                    "unit": "ppm"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Concentration (%)",
-                    "unit": "%"
+                    "quantity": "UV Index",
+                    "unit": ""
                 }
             ],
             "enabled": false,
-            "id": 20,
-            "name": "O2 gas sensor (ME2-O2)"
+            "id": 13,
+            "name": "UV sensor (GUVA-S12SD)"
         },
         {
             "components": [
                 {
                     "correction": "None",
-                    "quantity": "Distance",
-                    "unit": "m"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Velocity",
-                    "unit": "m/s"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Acceleration",
-                    "unit": "m/s^2"
+                    "quantity": "UV Intensity",
+                    "unit": ""
                 }
             ],
             "enabled": true,
-            "id": 21,
-            "name": "Ultrasonic motion sensor (SR-HC04)"
+            "id": 31,
+            "name": "UV sensor (VEML6070)"
         },
         {
             "components": [
@@ -687,92 +770,11 @@
                     "correction": "None",
                     "quantity": "RAW",
                     "unit": ""
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Frequency",
-                    "unit": "BPM"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Trigger",
-                    "unit": ""
-                }
-            ],
-            "enabled": true,
-            "id": 22,
-            "name": "Heart rate sensor (simple)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "RAW",
-                    "unit": ""
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Voltage",
-                    "unit": "V"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Trigger",
-                    "unit": ""
-                }
-            ],
-            "enabled": true,
-            "id": 23,
-            "name": "Magnetic field sensor"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "Humidity",
-                    "unit": "%"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Temperature",
-                    "unit": "°C"
                 }
             ],
             "enabled": false,
-            "id": 24,
-            "name": "Thermometer + Hygrometer (DHT11)"
-        },
-        {
-            "components": [
-                {
-                    "correction": "None",
-                    "quantity": "Concentration (ppm)",
-                    "unit": "ppm"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Concentration (%)",
-                    "unit": "%"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Voltage",
-                    "unit": "V"
-                },
-                {
-                    "correction": "None",
-                    "quantity": "RAW",
-                    "unit": ""
-                },
-                {
-                    "correction": "None",
-                    "quantity": "Trigger",
-                    "unit": ""
-                }
-            ],
-            "enabled": true,
-            "id": 25,
-            "name": "Alcohol gas sensor (MQ-3)"
+            "id": 11,
+            "name": "Color sensor (TCS3200)"
         },
         {
             "components": [
@@ -812,6 +814,124 @@
             "components": [
                 {
                     "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Voltage",
+                    "unit": "V"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 23,
+            "name": "Magnetic field sensor"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Acceleration",
+                    "unit": "m/s^2"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Magnetic Field Intensity",
+                    "unit": "μT"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Accel X",
+                    "unit": "m/s^2"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Accel Y",
+                    "unit": "m/s^2"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Accel Z",
+                    "unit": "m/s^2"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Mag X",
+                    "unit": "μT"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Mag Y",
+                    "unit": "μT"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Mag Z",
+                    "unit": "μT"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Heading",
+                    "unit": "°"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Roll",
+                    "unit": "°"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Pitch",
+                    "unit": "°"
+                }
+            ],
+            "enabled": true,
+            "id": 3,
+            "name": "Accelerometer + Magnetometer (LSM303DLHC)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Force",
+                    "unit": "N"
+                }
+            ],
+            "enabled": true,
+            "id": 7,
+            "name": "Force sensor (HX711)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Distance",
+                    "unit": "m"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Velocity",
+                    "unit": "m/s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Acceleration",
+                    "unit": "m/s^2"
+                }
+            ],
+            "enabled": true,
+            "id": 21,
+            "name": "Motion/distance US sensor (SR-HC04)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
                     "quantity": "Distance",
                     "unit": "m"
                 },
@@ -828,7 +948,50 @@
             ],
             "enabled": true,
             "id": 105,
-            "name": "Laser ranging sensor (VL53L0X)"
+            "name": "Motion/distance laser sensor (VL53L0X)"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "Pulse duration (On)",
+                    "unit": "s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Pulse duration (Off)",
+                    "unit": "s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Period (Rising)",
+                    "unit": "s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Period (Falling)",
+                    "unit": "s"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Frequency (Rising)",
+                    "unit": "Hz"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Frequency (Falling)",
+                    "unit": "Hz"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Pulse count (Rising)",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 39,
+            "name": "Photogate (810H)",
+            "note": "Same data processing as sensor [Timer GPIO 01]. RAW value [0-1023], input voltage [0-5 V] or trigger [0/1] can be obtained after setting as [Generic (AD 10bit)] sensor."
         },
         {
             "components": [
@@ -883,6 +1046,19 @@
             "enabled": true,
             "id": 103,
             "name": "Timer GPIO 01"
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "None",
+                    "unit": ""
+                }
+            ],
+            "enabled": false,
+            "id": 40,
+            "name": "Output/input prototype breadboard",
+            "note": "Only for visual coding tests..."
         }
     ],
     "version": 2

@@ -5,11 +5,12 @@ AD::AD(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin_digi  = PORTS[_port][1];  // added trigger digital input pin
   pinMode(pin, INPUT);
   pinMode(pin_digi, INPUT);    // added trigger digital input pin
+  offset = 0;   
 }
 
 bool AD::process() {
   if (Action(period)) {
-    value = analogRead(pin);
+    value = analogRead(pin) - offset;
     value2 = digitalRead(pin_digi);  // added trigger digital input pin  
     time += period;
     return 1;
@@ -25,4 +26,9 @@ float AD::read(uint8_t _spec) {
     case 2: result = value2; break;            // trigger 0/1   // added trigger digital input pin
   }
   return result;
+}
+
+void AD::calibrate() {
+  //offset = value;
+  offset = analogRead(pin);
 }

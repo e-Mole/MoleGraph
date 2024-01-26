@@ -203,6 +203,10 @@
     {
       "id" : 43,
       "name" : "Radioactivity (cpm)"
+    },
+    {
+      "id" : 44,
+      "name" : "Turbidity"
     }
 
   ],
@@ -538,9 +542,10 @@
         {
             "components": [
                 {
-                    "correction": "None",
-                    "quantity": "RAW",
-                    "unit": ""
+                    "correction": "Linear",
+                    "quantity": "Turbidity",
+                    "points": [[732,0],[532,1000]],
+                    "unit": "NTU"
                 },
                 {
                     "correction": "None",
@@ -556,7 +561,7 @@
             "enabled": true,
             "id": 38,
             "name": "Turbidity sensor (TS-300B)",
-            "note": "Data from AD 10-bit convertor as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
+            "note": "Data from AD 10-bit convertor as NTU value [0-1000], input voltage [0-4 V] or trigger [0/1]."
         },
         {
             "components": [

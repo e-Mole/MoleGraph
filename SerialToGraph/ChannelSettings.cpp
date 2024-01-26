@@ -52,6 +52,7 @@ QString ChannelSettings::_GetValueCorrectionTranslation(QString const &correctio
 QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName)
 {
 
+    //TODO: TFs: Add new strings
     if (quantityName == "")
         return "";
     if (quantityName == "Temperature")
@@ -143,6 +144,12 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Pulse count (Rising)");
     if (quantityName == "Length")
         return tr("Length");
+    if (quantityName == "Salinity (ppm)")
+        return tr("Salinity (ppm)");
+    if (quantityName == "Radioactivity (cpm)")
+        return tr("Radioactivity (cpm)");
+    if (quantityName == "Turbidity")
+        return tr("Turbidity");
 
     qWarning() << "unknown quantity to translate: " << quantityName;
     return quantityName; //TODO: TFs mod: Remove!!!

@@ -207,8 +207,11 @@
     {
       "id" : 44,
       "name" : "Turbidity"
+    },
+    {
+      "id" : 45,
+      "name" : "Trigger count"
     }
-
   ],
     "sensors": [
         {
@@ -238,6 +241,11 @@
                 {
                     "correction": "None",
                     "quantity": "Trigger",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Trigger count",
                     "unit": ""
                 }
             ],
@@ -378,7 +386,8 @@
             ],
             "enabled": true,
             "id": 14,
-            "name": "pH sensor"
+            "name": "pH sensor",
+            "note": "Measuring range 0...14 pH. Resolution 0.02 pH (10-bit), accuracy: ±0.1. Analog output - calibration is needed!"
         },
         {
             "components": [
@@ -402,7 +411,7 @@
             "enabled": true,
             "id": 37,
             "name": "ORP sensor",
-            "note": "Sensor range [-1999 mV to 1999 mV], calculated from output voltage [0-4 V], RAW value [0-1023], trigger [0/1]."
+            "note": "Measuring range -1999...1999 mV. Resolution 5 mV (10-bit), accuracy: ±10 mV. Analog output - calibration is needed! Value calculated from output voltage [0-4 V], RAW value [0-819], trigger [0/1]."
         },
         {
             "components": [
@@ -436,7 +445,8 @@
             ],
             "enabled": true,
             "id": 15,
-            "name": "Conductivity sensor"
+            "name": "Conductivity sensor",
+            "note": "Conductivity/TDS - Total Dissolved Solids. Measuring range: conductivity 0...1650 µS/cm, salinity (TDS) 0...1000 ppm. Resolution 2 µS/cm (1 ppm) (10-bit), accuracy: ±5 %. Analog output - calibration is needed!"
         },
         {
             "components": [
@@ -505,7 +515,8 @@
             ],
             "enabled": true,
             "id": 36,
-            "name": "Smoke/Combustible Gas (MQ-2)"
+            "name": "Smoke/Combustible Gas (MQ-2)",
+            "note": "Measuring range 0..10 000 ppm. Resolution 10 ppm (10-bit), accuracy around ±15 %. Analog output - calibration is needed!"
         },
         {
             "components": [
@@ -537,7 +548,8 @@
             ],
             "enabled": true,
             "id": 25,
-            "name": "Alcohol gas sensor (MQ-3)"
+            "name": "Alcohol gas sensor (MQ-3)",
+            "note": "Measuring range 25..500 ppm. Resolution 2.5 ppm (10-bit), accuracy around ±10 ppm. Analog output - calibration is needed!"
         },
         {
             "components": [
@@ -561,7 +573,7 @@
             "enabled": true,
             "id": 38,
             "name": "Turbidity sensor (TS-300B)",
-            "note": "Data from AD 10-bit convertor as NTU value [0-1000], input voltage [0-4 V] or trigger [0/1]."
+            "note": "Measuring range 0..1000 NTU. Resolution 5 NTU (10-bit), accuracy around ±30 NTU. Analog output - calibration is needed! Data from AD 10-bit convertor as NTU value [0-1000], output voltage [0-4 V] or trigger [0/1]."
         },
         {
             "components": [
@@ -596,7 +608,8 @@
             ],
             "enabled": true,
             "id": 22,
-            "name": "Heart rate sensor (simple)"
+            "name": "Heart rate sensor (simple)",
+            "note": "Sensor detects heart pulse and calculate BPM value. The pressure with your finger on the sensor must not be too big or too small :-)."
         },
         {
             "components": [
@@ -618,7 +631,8 @@
             ],
             "enabled": true,
             "id": 10,
-            "name": "ECG sensor (AD8232)"
+            "name": "ECG sensor (AD8232)",
+            "note": "Sensor detects heart pulse signal and other biosignals. More typical electrodes placement is posible, one of the options: RA -> Red -> Right Arm, LA -> Yellow -> Left Arm, RL -> Green -> Right Leg"
         },
         {
             "components": [
@@ -658,7 +672,8 @@
             ],
             "enabled": true,
             "id": 28,
-            "name": "DC Voltage sensor 0-25 V (voltage divider)"
+            "name": "DC Voltage sensor 0-25 V (voltage divider)",
+            "note": "Measuring range 0..25 V. Resolution 25 mV (10-bit), accuracy around ±25 mV."
         },
         {
             "components": [
@@ -675,7 +690,8 @@
             ],
             "enabled": true,
             "id": 29,
-            "name": "AC/DC Current sensor 0-5 A (ACS712)"
+            "name": "AC/DC Current sensor 0-5 A (ACS712)",
+            "note": "Measuring range 0..±5 A. Resolution 10 mA (10-bit), accuracy around ±1.5 %."
         },
         {
             "components": [
@@ -692,7 +708,8 @@
             ],
             "enabled": true,
             "id": 30,
-            "name": "AC/DC Current sensor 0-30 A (ACS712)"
+            "name": "AC/DC Current sensor 0-30 A (ACS712)",
+            "note": "Measuring range 0..±30 A. Resolution 60 mA (10-bit), accuracy around ±1.5 %."
         },
         {
             "components": [
@@ -731,7 +748,8 @@
             ],
             "enabled": true,
             "id": 18,
-            "name": "Light sensor (photoresistor)"
+            "name": "Light sensor (photoresistor)",
+            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [
@@ -743,7 +761,8 @@
             ],
             "enabled": true,
             "id": 32,
-            "name": "Light sensor (BH1750 luxmeter)"
+            "name": "Light sensor (BH1750 luxmeter)",
+            "note": "Measuring range 0..65 535 lux (10-bit convertor). Resolution 1 lux, accuracy 1 lux. Measurement time is approx 120 ms."
         },
         {
             "components": [
@@ -767,7 +786,8 @@
             ],
             "enabled": true,
             "id": 31,
-            "name": "UV sensor (VEML6070)"
+            "name": "UV sensor (VEML6070)",
+            "note": "UV spectrum sensitivity: 320-410 nm (peak at 355 nm), UVA Sensitivity 5 μW/cm2/step (typical)."
         },
         {
             "components": [
@@ -813,7 +833,8 @@
             ],
             "enabled": true,
             "id": 27,
-            "name": "Sound sensor (microphone)"
+            "name": "Sound sensor (microphone)",
+            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [
@@ -835,7 +856,8 @@
             ],
             "enabled": true,
             "id": 23,
-            "name": "Magnetic field sensor"
+            "name": "Magnetic field sensor",
+            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [
@@ -897,7 +919,8 @@
             ],
             "enabled": true,
             "id": 3,
-            "name": "Accelerometer + Magnetometer (LSM303DLHC)"
+            "name": "Accelerometer + Magnetometer (LSM303DLHC)",
+            "note": "Measuring range ±16 g and ±8.1 gauss (auto sensitivity). Resolution ±2 mgauss, accuracy ±60 mg."
         },
         {
             "components": [
@@ -909,7 +932,8 @@
             ],
             "enabled": true,
             "id": 7,
-            "name": "Force sensor (HX711)"
+            "name": "Force sensor (HX711)",
+            "note": "24-Bit Analog-to-Digital Converter (ADC) for Weigh Scales. Full scale differential input range ±0.5(AVDD/GAIN) V."
         },
         {
             "components": [
@@ -931,7 +955,8 @@
             ],
             "enabled": true,
             "id": 21,
-            "name": "Motion/distance US sensor (SR-HC04)"
+            "name": "Motion/distance US sensor (SR-HC04)",
+            "note": "Measuring range 2..400 cm, measuring angle 15°. Accuracy ±3 mm. The Module automatically sends eight 40 kHz and detect whether there is a pulse signal back. Suggest to use over 60 ms measurement cycle, in order to prevent trigger signal to the echo signal."
         },
         {
             "components": [
@@ -953,7 +978,8 @@
             ],
             "enabled": true,
             "id": 105,
-            "name": "Motion/distance laser sensor (VL53L0X)"
+            "name": "Motion/distance laser sensor (VL53L0X)",
+            "note": "Measuring indoor short range 1..120 cm (long range 1..220 cm, white target), laser beam 940 nm, measuring angle 25°. Accuracy ±4 %. Typical timing budget for a range is 33 ms."
         },
         {
             "components": [
@@ -1008,7 +1034,8 @@
             ],
             "enabled": true,
             "id": 35,
-            "name": "Length sensor (Caliper)"
+            "name": "Length sensor (Caliper)",
+            "note": "The measurement range depends on the caliper used. Resolution 0.01 mm. Accuracy 0.05 mm. Maximum sampling frequency 5 Hz."
         },
         {
             "components": [
@@ -1050,7 +1077,8 @@
             ],
             "enabled": true,
             "id": 103,
-            "name": "Timer GPIO 01"
+            "name": "Timer GPIO 01",
+            "note": "Measuring range up to 2 kHz. Timer is set for GPIO 01 only."
         },
         {
             "components": [

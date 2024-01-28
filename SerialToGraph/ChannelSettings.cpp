@@ -150,6 +150,8 @@ QString ChannelSettings::_GetQuantityNameTranslation(QString const &quantityName
         return tr("Radioactivity (cpm)");
     if (quantityName == "Turbidity")
         return tr("Turbidity");
+    if (quantityName == "Trigger count")
+        return tr("Trigger count");
 
     qWarning() << "unknown quantity to translate: " << quantityName;
     return quantityName; //TODO: TFs mod: Remove!!!

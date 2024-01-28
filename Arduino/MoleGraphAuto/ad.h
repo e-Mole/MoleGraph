@@ -13,6 +13,7 @@ class AD : public Sensor {
     float value2; //now public for use in conduct.cpp
   protected:
     uint8_t pin, pin_digi;
+    uint32_t  counterTrigger = 0;
   private:
     //float value2;
     int32_t   offset = 0;      
@@ -20,18 +21,3 @@ class AD : public Sensor {
 
 
 #endif
-
-/*
- class MQ2 : public Sensor {
-  public:
-    MQ2(uint32_t, uint8_t);
-    virtual bool process();
-    virtual float read(uint8_t);
-    virtual void calibrate();
-  protected:
-    uint8_t pin, pin_digi;
-  private:
-    float value2;
-    int32_t   offset = 0;  
-};
- */

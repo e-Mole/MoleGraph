@@ -1,17 +1,24 @@
 #include "ad.h"
 
+volatile uint8_t  lastTriggerState;
+
 AD::AD(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   pin = PORTS[_port][0];
   pin_digi  = PORTS[_port][1];  // added trigger digital input pin
   pinMode(pin, INPUT);
   pinMode(pin_digi, INPUT);    // added trigger digital input pin
-  offset = 0;   
+  offset = 0;
+  counterTrigger = 0;     
 }
 
 bool AD::process() {
   if (Action(period)) {
     value = analogRead(pin) - offset;
-    value2 = digitalRead(pin_digi);  // added trigger digital input pin  
+    value2 = digitalRead(pin_digi);  // added trigger digital input pin 
+    if (value2 != lastTriggerState) { 
+      counterTrigger++;  
+    }
+    lastTriggerState = value2;
     time += period;
     return 1;
   }
@@ -21,9 +28,10 @@ bool AD::process() {
 float AD::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = value; break; // RAW
+    case 0: result = value; break;             // RAW
     case 1: result = value*(5.0f/1024); break; // voltage
     case 2: result = value2; break;            // trigger 0/1   // added trigger digital input pin
+    case 3: result = counterTrigger; break;    // experimental counter    
   }
   return result;
 }
@@ -31,4 +39,5 @@ float AD::read(uint8_t _spec) {
 void AD::calibrate() {
   //offset = value;
   offset = analogRead(pin);
+  counterTrigger = 0; //reset counter  
 }

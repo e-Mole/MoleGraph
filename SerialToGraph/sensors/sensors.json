@@ -252,7 +252,7 @@
             "enabled": true,
             "id": 101,
             "name": "Generic (AD 10bit)",
-            "note": "Arduino NANO AD 10-bit convertor as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
+            "note": "Arduino NANO AD 10-bit converter as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
         },
         {
             "components": [
@@ -573,7 +573,7 @@
             "enabled": true,
             "id": 38,
             "name": "Turbidity sensor (TS-300B)",
-            "note": "Measuring range 0..1000 NTU. Resolution 5 NTU (10-bit), accuracy around ±30 NTU. Analog output - calibration is needed! Data from AD 10-bit convertor as NTU value [0-1000], output voltage [0-4 V] or trigger [0/1]."
+            "note": "Measuring range 0..1000 NTU. Resolution 5 NTU (10-bit), accuracy around ±30 NTU. Analog output - calibration is needed! Data from AD 10-bit converter as NTU value [0-1000], output voltage [0-4 V] or trigger [0/1]."
         },
         {
             "components": [
@@ -749,7 +749,7 @@
             "enabled": true,
             "id": 18,
             "name": "Light sensor (photoresistor)",
-            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
+            "note": "Measuring range 0..5 V (10-bit converter) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [
@@ -762,7 +762,7 @@
             "enabled": true,
             "id": 32,
             "name": "Light sensor (BH1750 luxmeter)",
-            "note": "Measuring range 0..65 535 lux (10-bit convertor). Resolution 1 lux, accuracy 1 lux. Measurement time is approx 120 ms."
+            "note": "Measuring range 0..65 535 lux (16-bit converter). Resolution 1 lux, accuracy 1 lux. Measurement time is approx 120 ms."
         },
         {
             "components": [
@@ -834,7 +834,7 @@
             "enabled": true,
             "id": 27,
             "name": "Sound sensor (microphone)",
-            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
+            "note": "Measuring range 0..5 V (10-bit converter) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [
@@ -857,7 +857,7 @@
             "enabled": true,
             "id": 23,
             "name": "Magnetic field sensor",
-            "note": "Measuring range 0..5 V (10-bit convertor) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
+            "note": "Measuring range 0..5 V (10-bit converter) – output only as RAW value 0..1023, voltage 0..5 or trigger 0/1."
         },
         {
             "components": [

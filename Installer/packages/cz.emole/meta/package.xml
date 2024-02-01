@@ -2,9 +2,12 @@
 <Package>
     <DisplayName>MoleGraph</DisplayName>
     <Description>MoleGraph, accessible through a start menu entry.</Description>
-    <Version>1</Version>
-    <ReleaseDate>2016-05-05</ReleaseDate>
-    <Default>true</Default>
+    <Version>4.0.1</Version>
+    <ReleaseDate>2024-02-01</ReleaseDate>
+    <Licenses>
+        <License name="General Public License Agreement" file="LICENSE.txt" />
+    </Licenses>    
+    <Default>script</Default>
     <Script>installscript.qs</Script>
     <UserInterfaces>
         <UserInterface>registerfilecheckboxform.ui</UserInterface>

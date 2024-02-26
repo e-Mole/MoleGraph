@@ -818,7 +818,7 @@ void ChannelSettings::setOriginalValue(bool checked)
     double currentValue =  hwChannelProxy->GetValueWithCorrection(currentValueIndex);
 
     m_currentValueControl->setText(
-        (currentValue == ChannelBase::GetNaValue()) ?
+        (originalValue == ChannelBase::GetNaValue()) ?
             ChannelWidget::GetNAValueString() :
             locale.toString(originalValue)
     );

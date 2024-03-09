@@ -67,7 +67,7 @@ ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwConnector, Qt::Orient
     m_measurement(nullptr),
     m_space(new QWidget())
 {
-    m_mainLayout->setMargin(1);
+    m_mainLayout->setContentsMargins(1, 1, 1, 1);
     setLayout(m_mainLayout);
 
     m_fileMenuButton = new PushButton(tr("File"), this);
@@ -189,7 +189,7 @@ void ButtonLine::_FillRecentFileMenu()
         QString text = GlobalSettings::GetInstance().GetRecentFilePath(i);
         while (text.length() > RECENT_FILE_TEXT_MAX_LENGTH)
         {
-            int index = text.indexOf(QRegExp("[\\/]"));
+            int index = text.indexOf(QRegularExpression("[\\/]"));
             if (index == -1)
                 break;
             text = text.mid(index+1);

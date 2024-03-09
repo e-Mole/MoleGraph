@@ -24,9 +24,10 @@
 #include <QWidget>
 
 #if defined(Q_OS_ANDROID)
-#   include <QtAndroid>
-#   include <QtAndroidExtras/QAndroidJniEnvironment>
-#   include <QtAndroidExtras/QAndroidJniObject>
+#   include <QtCore/private/qandroidextras_p.h>
+#   include <QCoreApplication>
+#   include <QJniEnvironment>
+#   include <QJniObject>
 #endif
 
 namespace file
@@ -207,8 +208,8 @@ QString OwnFileDialog::_GetFilePath()
 #if defined(Q_OS_ANDROID)
 static QString GetOldStyleDirectory()
 {
-    QAndroidJniObject dir =
-        QAndroidJniObject::callStaticObjectMethod(
+    QJniObject dir =
+        QJniObject::callStaticObjectMethod(
             "android/os/Environment",
             "getExternalStorageDirectory",
             "()Ljava/io/File;"
@@ -223,13 +224,13 @@ static QString GetDir(QString const &lastDir)
 #if defined(Q_OS_ANDROID)
     if (lastDir == "./")
     {
-        QAndroidJniObject activity = QtAndroid::androidActivity();
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
         if (!activity.isValid())
         {
             qCritical() << "activity object is not valid";
             return GetOldStyleDirectory();
         }
-        QAndroidJniObject appContext =
+        QJniObject appContext =
             activity.callObjectMethod(
                 "getApplicationContext",
                 "()Landroid/content/Context;"
@@ -240,7 +241,7 @@ static QString GetDir(QString const &lastDir)
             return GetOldStyleDirectory();
         }
 
-        QAndroidJniObject storageDirectories =
+        QJniObject storageDirectories =
             appContext.callObjectMethod(
                 "getExternalFilesDirs",
                 "(Ljava/lang/String;)[Ljava/io/File;",
@@ -252,11 +253,11 @@ static QString GetDir(QString const &lastDir)
             return GetOldStyleDirectory();
         }
         jobjectArray objectArray = storageDirectories.object<jobjectArray>();
-        QAndroidJniEnvironment qjniEnv;
+        QJniEnvironment qjniEnv;
         const int n = qjniEnv->GetArrayLength(objectArray);
         for (int i = n-1; i >= 0; i--)
         {
-            QAndroidJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, i);
+            QJniObject storageDirectory = qjniEnv->GetObjectArrayElement(objectArray, i);
             if (!storageDirectory.isValid())
                 continue;
 
@@ -286,13 +287,13 @@ static void RegisterFile(QString const &path)
 {
 #if defined(Q_OS_ANDROID)
 
-        QAndroidJniObject activity = QtAndroid::androidActivity();
-        QAndroidJniEnvironment qjniEnv;
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        QJniEnvironment qjniEnv;
         jobjectArray jArray =
             (jobjectArray) qjniEnv->NewObjectArray(1, qjniEnv->FindClass("java/lang/String"), (jobject)0);
-        QAndroidJniObject jPath = QAndroidJniObject::fromString(path);
+        QJniObject jPath = QJniObject::fromString(path);
         qjniEnv->SetObjectArrayElement(jArray, 0, jPath.object<jstring>());
-        QAndroidJniObject::callStaticMethod<void>(
+        QJniObject::callStaticMethod<void>(
             "android/media/MediaScannerConnection",
             "scanFile",
             "(Landroid/content/Context;[Ljava/lang/String;[Ljava/lang/String;Landroid/media/MediaScannerConnection$OnScanCompletedListener;)V",

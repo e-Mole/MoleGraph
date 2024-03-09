@@ -7,9 +7,9 @@
 #include <QString>
 
 #if defined(Q_OS_ANDROID)
-#   include <QtAndroid>
-#   include <QtAndroidExtras/QAndroidJniEnvironment>
-#   include <QtAndroidExtras/QAndroidJniObject>
+#   include <QCoreApplication>
+#   include <QJniEnvironment>
+#   include <QJniObject>
 #endif
 
 class QBluetoothSocket;
@@ -26,7 +26,7 @@ class BluetoothAndroid : public PortBase
     QMap<QString, QString> m_foundDevices; //id + address
     QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 
-    bool checkException(const char* method, QAndroidJniObject* obj=nullptr);
+    bool checkException(const char* method, QJniObject* obj=nullptr);
 public:
     BluetoothAndroid(QObject *parent);
     ~BluetoothAndroid();

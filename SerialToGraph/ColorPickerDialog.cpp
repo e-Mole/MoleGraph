@@ -21,7 +21,7 @@ ColorPickerDialog::ColorPickerDialog(QWidget *parent, QString const &title):
                 QColor::fromHsl(i * 36, 255, (int)((double)j * 25.5));
 
             QPalette pal(palette());
-            pal.setColor(QPalette::Background, color);
+            pal.setColor(QPalette::Window, color);
             colorWidget->setAutoFillBackground(true);
             colorWidget->setPalette(pal);
 

@@ -806,13 +806,7 @@ void ChannelSettings::setOriginalValue(bool checked)
 
     HwChannelProxy *hwChannelProxy = dynamic_cast<HwChannelProxy*>(m_channelProxy);
     double originalValue = hwChannelProxy->GetOriginalValue(currentValueIndex);
-    double currentValue =  hwChannelProxy->GetValueWithCorrection(currentValueIndex);
-
-    m_currentValueControl->setText(
-        (currentValue == ChannelBase::GetNaValue()) ?
-            ChannelWidget::GetNAValueString() :
-            locale.toString(originalValue)
-    );
+    m_currentValueControl->setText(locale.toString(originalValue));
 
     //was changed in currentValueChanged
     m_currentValue = originalValue;

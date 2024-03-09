@@ -22,7 +22,7 @@ QMAKE_TARGET_COPYRIGHT = Copyright (c) 2016 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 
-QT       += core gui bluetooth widgets printsupport
+QT       += core gui bluetooth widgets printsupport core5compat
 
 SOURCES += main.cpp\
     MainWindow.cpp \
@@ -185,7 +185,7 @@ win32{
 }
 
 android{
-    QT += androidextras
+    QT += core-private
     SOURCES += hw/BluetoothAndroid.cpp
     HEADERS += hw/BluetoothAndroid.h
 }

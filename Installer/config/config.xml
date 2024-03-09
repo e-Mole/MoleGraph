@@ -6,7 +6,7 @@
     <Publisher>e-Mole</Publisher>
     <!-- Directory name is used in component.xml -->
     <StartMenuDir>MoleGraph</StartMenuDir>
-    <TargetDir>@HomeDir@/e-Mole</TargetDir>
+    <TargetDir>@ApplicationsDir@/e-Mole</TargetDir>
     <InstallerWindowIcon>molegraph</InstallerWindowIcon>
     <InstallerApplicationIcon>molegraph</InstallerApplicationIcon>
     <RunProgram>@TargetDir@/MoleGraph</RunProgram>

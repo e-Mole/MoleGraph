@@ -252,7 +252,7 @@ void GlobalSettings::SetChannelGraphPenWidth(double thickness)
 void GlobalSettings::_FillRecentFilePaths()
 {
     if (m_recentPaths.size() == 0)
-        m_recentPaths = _Get(Key_RecentFilePaths, "").toString().split(RECENT_FILE_SEPARATOR, QString::SkipEmptyParts);
+        m_recentPaths = _Get(Key_RecentFilePaths, "").toString().split(RECENT_FILE_SEPARATOR, Qt::SkipEmptyParts);
 
 }
 unsigned GlobalSettings::GetRecetFilePathCount()

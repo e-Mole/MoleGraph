@@ -50,7 +50,7 @@ ChannelWidget::ChannelWidget(
 
     _InitTitle();
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setMargin(1);
+    layout->setContentsMargins(1, 1, 1, 1);
     layout->addWidget(m_title);
     layout->addWidget(m_valueLabel, 1);
     layout->setSpacing(1);
@@ -216,8 +216,8 @@ QSize ChannelWidget::GetMinimumSize()
         (size().height() > sizeHint().height()) ? size() : sizeHint();
 
     QSize mSize = widgetSize - m_valueLabel->size() + m_valueLabel->minimumSize();
-    mSize.setHeight(mSize.height() + layout()->margin() * 2);
-    mSize.setWidth(width() + layout()->margin() * 2);
+    mSize.setHeight(mSize.height() + layout()->contentsMargins().top() + layout()->contentsMargins().bottom());
+    mSize.setWidth(width() + layout()->contentsMargins().left() + layout()->contentsMargins().right());
     return mSize;
 }
 

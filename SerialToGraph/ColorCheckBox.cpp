@@ -13,7 +13,7 @@ ColorCheckBox::ColorCheckBox(const QString &text, QWidget *parent):
     m_checkBox->setStyleSheet(style + "padding=0;");
 
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_checkBox);
     layout->addWidget(m_label);
     layout->setStretch(1,1);

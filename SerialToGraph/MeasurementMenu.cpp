@@ -30,7 +30,7 @@ void MeasurementMenu::_AddRowWithEditAndRemove(Measurement *measurement)
 {
     QWidget *rowWidget = new QWidget(this);
     QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
-    buttonLayout->setMargin(0);
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
     rowWidget->setLayout(buttonLayout);
 
     bases::ClickableLabel *name = new bases::ClickableLabel(measurement->GetName(), rowWidget);

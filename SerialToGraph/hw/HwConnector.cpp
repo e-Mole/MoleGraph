@@ -1,6 +1,9 @@
 #include "HwConnector.h"
 #include <QDebug>
 #if defined(Q_OS_ANDROID)
+#   include <QtCore>
+#   include <QPermissions>
+#   include <QtCore/private/qandroidextras_p.h>
 #   include <hw/BluetoothAndroid.h>
 #elif not defined (Q_OS_WIN)
 #   include <hw/SerialPort.h>
@@ -63,11 +66,11 @@ HwConnector::HwConnector(QWidget *parent) :
 bool HwConnector::_GrantPermissions(QString const &permission){
 #if defined(Q_OS_ANDROID)
     QString permissionFull = "android.permission." + permission;
-    QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissionFull);
-    if(r == QtAndroid::PermissionResult::Denied) {
-        QtAndroid::requestPermissionsSync( QStringList() << permissionFull);
-        r = QtAndroid::checkPermission(permissionFull);
-        if(r == QtAndroid::PermissionResult::Denied) {
+    auto r = QtAndroidPrivate::checkPermission(permissionFull).result();
+    if(r == QtAndroidPrivate::Denied) {
+        QtAndroidPrivate::requestPermissions(QStringList() << permissionFull);
+        r = QtAndroidPrivate::checkPermission(permissionFull).result();
+        if(r == QtAndroidPrivate::Denied) {
             qCritical() << "permission << permission << not allowed";
             return false;
         }

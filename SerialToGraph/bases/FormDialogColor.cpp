@@ -24,7 +24,8 @@ void FormDialogColor::AddColorButtonRow(const QColor &color)
 {
     PushButton * colorButton = new PushButton("", this);
     QHBoxLayout *layout = new QHBoxLayout(colorButton);
-    layout->setMargin(colorButton->physicalDpiY() / 12);
+    int margin = colorButton->physicalDpiY() / 12;
+    layout->setContentsMargins(margin, margin, margin, margin);
     m_colorButtonWidget = new QWidget(colorButton);
     SetColorButtonColor(color);
     layout->addWidget(m_colorButtonWidget);

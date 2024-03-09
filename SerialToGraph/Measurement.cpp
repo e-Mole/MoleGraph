@@ -697,7 +697,7 @@ void Measurement::DeserializeColections(QDataStream &in, unsigned collectionVers
     for (unsigned i = 0; i < axisCount; ++i)
         _DeserializeAxis(in, i, collectionVersion);
 
-    qSort(m_channels.begin(), m_channels.end(), SortChannels);
+    std::sort(m_channels.begin(), m_channels.end(), SortChannels);
 
     //samples
     _DeserializeChannelData(in, collectionVersion);

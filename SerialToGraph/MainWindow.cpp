@@ -70,7 +70,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
 
     m_console->setVisible(GlobalSettings::GetInstance().GetConsole());
 
-    QRect desktopRect = QApplication::desktop()->screenGeometry();
+    QRect desktopRect = QGuiApplication::primaryScreen()->geometry();
     if (desktopRect .width() > 600)
         setMinimumWidth(600);
     if (desktopRect .height() >300)
@@ -159,7 +159,7 @@ void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
     }
     delete m_mainLayout;
     m_mainLayout = new QGridLayout();
-    m_mainLayout->setMargin(1);
+    m_mainLayout->setContentsMargins(1, 1, 1, 1);
     m_centralWidget->setLayout(m_mainLayout);
 
     m_buttonLine->ReplaceButtons(menuOrientation);

@@ -27,7 +27,7 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
 {
     QWidget *rowWidget = new QWidget(this);
     QHBoxLayout * buttonLayout = new QHBoxLayout(rowWidget);
-    buttonLayout->setMargin(0);
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
     rowWidget->setLayout(buttonLayout);
 
     PushButton * editButton = new PushButton(tr("Edit"), rowWidget);
@@ -43,7 +43,7 @@ void AxisMenu::_AddRowWithEditAndRemove(Axis *axis)
 
     Label *label = new Label(axis->GetTitle(), this);
     QPalette palette(label->palette());
-    palette.setColor(QPalette::Foreground, axis->GetColor());
+    palette.setColor(QPalette::WindowText, axis->GetColor());
     label->setPalette(palette);
     unsigned row = m_gridLayout->rowCount();
     m_gridLayout->addWidget(label, row, 0);

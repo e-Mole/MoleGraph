@@ -1,7 +1,7 @@
 # MoleGraph
-School measuring system based on Arduino
+School measuring system based on Arduino for MS Windows, Linux, Android and macOS (App available for download directly here in the Releases section: https://github.com/e-Mole/MoleGraph/releases). More info on MoleGraph project web https://www.molegraph.eu. For information about the Arduino MoleGraph shield, visit https://www.e-mole.cz/diy/molegraph-shield.
 
-## Desktop app for Mac OS X
+## Desktop app for Mac OS X building instructions
 
 ### QT version
 QT version is 5.10.1 (QT Creator 4.5.1) downloaded from https://download.qt.io/new_archive/qt/5.10/5.10.1/.

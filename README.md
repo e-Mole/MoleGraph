@@ -32,7 +32,7 @@ The system is built on the **Arduino platform**, specifically utilizing the **Ar
 | **Connectivity** | Dual communication modes supporting **USB cable** (serial-to-USB) and wireless **Bluetooth SPP**. |
 | **Analog Sensors** | 0–5V range using the integrated **10-bit ADC**. |
 | **Digital Sensors** | Supports protocols like **I²C, OneWire, and PWM**. |
-| **Extensibility** | Currently supports **30+ sensor types**. Includes "universal cables" and breadboard modules for connecting any custom 0–5V sensor. |
+| **Extensibility** | Currently **`MoleGraphAuto` library** supports **30+ sensor types**. Includes "universal cables" and breadboard modules for connecting any custom 0–5V sensor. |
 
 ---
 
@@ -53,7 +53,7 @@ The system includes a powerful cross-platform application and a specialized firm
 ---
 
 ## 💻 Programming & Robotics Integration
-MoleGraph facilitates a smooth transition from basic measurements to advanced coding and engineering.
+MoleGraph facilitates a smooth transition from basic measurements (**`MoleGraphAuto` library**) to advanced coding and engineering.
 
 ### 1. Visual Programming
 Beginners can use **[Blockly@rduino](https://github.com/e-Mole/Arduino)** with a custom MoleGraph extension (and **`MoleGraphManual` library**) to build programs graphically, automatically generating standard Arduino (C++) code.

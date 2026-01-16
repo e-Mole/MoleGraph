@@ -1,5 +1,11 @@
 # MoleGraph
-School measuring system based on Arduino for MS Windows, Linux, Android and macOS (App available for download directly here in the Releases section: https://github.com/e-Mole/MoleGraph/releases). More info on MoleGraph project web https://www.molegraph.eu. For information about the Arduino MoleGraph shield, visit https://www.e-mole.cz/diy/molegraph-shield.
+School measuring system (School Probeware) based on Arduino for MS Windows, Linux, Android and macOS (App available for download directly here in the Releases section: https://github.com/e-Mole/MoleGraph/releases).
+
+<img src="http://www.e-mole.cz/sites/default/files/pictures/molegraph-var_0.jpg" alt="MoleGraph in action" />
+
+More info on MoleGraph project web https://www.molegraph.eu. For information about the Arduino MoleGraph shield, visit https://www.e-mole.cz/diy/molegraph-shield.
+
+<img src="http://www.e-mole.cz/sites/default/files/pictures/molegraph-shield_0.jpg" alt="MoleGraph shield" />
 
 ## Desktop app for Mac OS X building instructions
 

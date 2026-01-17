@@ -1,6 +1,7 @@
 #include "BluetoothWindows.h"
 #include <hw/PortInfo.h>
 #include <QBluetoothDeviceDiscoveryAgent>
+#include <QBluetoothLocalDevice>
 #include <QBluetoothSocket>
 #include <QBluetoothUuid>
 #include <QTimer>
@@ -17,6 +18,10 @@ BluetoothWindows::BluetoothWindows(QObject *parent) : PortBase(parent),
     // Nastavení Discovery Agenta
     connect(m_agent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BluetoothWindows::deviceDiscovered);
     connect(m_agent, &QBluetoothDeviceDiscoveryAgent::finished, this, &BluetoothWindows::scanFinished);
+
+    // Používáme QOverload, protože signál 'error' může být v některých verzích Qt přetížený
+    connect(m_agent, static_cast<void(QBluetoothDeviceDiscoveryAgent::*)(QBluetoothDeviceDiscoveryAgent::Error)>(&QBluetoothDeviceDiscoveryAgent::error),
+            this, &BluetoothWindows::scanError);
 
     // Nastavení Socketu
     connect(m_socket, &QBluetoothSocket::connected, this, &BluetoothWindows::socketConnected);
@@ -37,14 +42,28 @@ BluetoothWindows::~BluetoothWindows()
 
 bool BluetoothWindows::StartPortSearching()
 {
-    if (m_agent->isActive()) 
+    // 1. Zjistíme, zda systém vidí alespoň jeden Bluetooth adaptér
+    auto localDevices = QBluetoothLocalDevice::allDevices();
+
+    if (localDevices.isEmpty()) {
+        qDebug() << "Bluetooth: No adapter found (Hardware missing).";
+        return false; // Rovnou vrátíme false -> HwConnector přeskočí "Scanning"
+    }
+
+    // 2. Podíváme se na stav prvního adaptéru (obvykle výchozí)
+    QBluetoothLocalDevice device(localDevices.first().address());
+    if (device.hostMode() == QBluetoothLocalDevice::HostPoweredOff) {
+        qDebug() << "Bluetooth: Adapter is present but Powered OFF.";
+        return false; // Je vypnuto -> vrátíme false -> HwConnector přeskočí "Scanning"
+    }
+
+    if (m_agent->isActive())
         return true;
-    
+
     m_foundDevices.clear();
     m_agent->start();
 
-    // --- TIMEOUT SKENOVÁNÍ (30 sekund) ---
-    // Po 30s automaticky zastavíme skenování, aby "Scanning" nezůstalo viset věčně.
+    // Timeout 30s
     QTimer::singleShot(30000, m_agent, &QBluetoothDeviceDiscoveryAgent::stop);
 
     return true;
@@ -206,6 +225,25 @@ void BluetoothWindows::ClearCache()
 void BluetoothWindows::socketError()
 {
     qWarning() << "Bluetooth Socket Error:" << m_socket->errorString();
+}
+
+void BluetoothWindows::scanError(QBluetoothDeviceDiscoveryAgent::Error error)
+{
+    // InputOutputError na Windows často znamená jen "Bluetooth je vypnuto"
+    if (error == QBluetoothDeviceDiscoveryAgent::PoweredOffError ||
+        error == QBluetoothDeviceDiscoveryAgent::InputOutputError) {
+        qDebug() << "Bluetooth scan interrupted (Powered Off or IO Error).";
+    } else {
+        // Opravdová chyba - zalogujeme jako Warning
+        qWarning() << "Bluetooth Scan Error:" << error;
+    }
+
+    if (m_agent->isActive()) {
+        m_agent->stop();
+    }
+
+    // Asynchronně ukončíme skenování v HwConnectoru
+    QTimer::singleShot(0, this, &BluetoothWindows::scanningFinished);
 }
 
 } // namespace hw

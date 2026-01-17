@@ -7,9 +7,9 @@
 #include <QString>
 #include <QBluetoothDeviceInfo>
 #include <QBluetoothAddress>
+#include <QBluetoothDeviceDiscoveryAgent>
 
 class QBluetoothSocket;
-class QBluetoothDeviceDiscoveryAgent;
 class QTimer;
 
 namespace hw
@@ -46,6 +46,7 @@ signals:
 private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
     void scanFinished();
+    void scanError(QBluetoothDeviceDiscoveryAgent::Error error);
     void socketConnected();
     void socketError(); // Optional: pro debugování chyb
     void socketReadyRead();

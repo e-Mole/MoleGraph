@@ -274,7 +274,8 @@ void ChannelSettings::_InitializeSensorNameItem(){
 
     bool enable = m_channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready;
     m_sensorNameComboBox->setEnabled(enable);
-    m_sensorNoteButton->setEnabled(enable);
+    //m_sensorNoteButton->setEnabled(enable);
+    m_sensorNoteButton->setEnabled(false); // default state is now disabled
 
     QHBoxLayout * layout = new QHBoxLayout(this);
     layout->addWidget(m_sensorNameComboBox, 1);
@@ -333,7 +334,7 @@ void ChannelSettings::_FillSensorNameCB(HwChannelProxy *channelProxy)
     }
     bool enable = channelProxy->GetChannelMeasurement()->GetState() == Measurement::Ready;
     m_sensorNameComboBox->setEnabled(enable);
-    m_sensorNoteButton->setEnabled(enable && !this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
+    m_sensorNoteButton->setEnabled(!this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
 
 }
 
@@ -365,7 +366,7 @@ void ChannelSettings::_FillSensorQuanitityCB(HwChannelProxy *channelProxy)
     );
 
     qDebug() << m_sensorNameComboBox->currentData().toInt();
-    m_sensorNoteButton->setEnabled(m_sensorNameComboBox->isEnabled() && !this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
+    m_sensorNoteButton->setEnabled(!this->_GetNote(m_sensorNameComboBox->currentData().toInt()).isEmpty());
 }
 
 void ChannelSettings::sensorQuantityIndexChanged(int index)

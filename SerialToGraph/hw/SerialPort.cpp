@@ -65,6 +65,15 @@ bool SerialPort::StartPortSearching()
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
+        // TFs-mod: --- NOVÝ FILTR ---
+        // Pokud port v popisu nebo výrobci obsahuje slovo "Bluetooth",
+        // je to virtuální COM port, který nechceme (máme na to vlastní třídu).
+        if (info.description().contains("Bluetooth", Qt::CaseInsensitive) ||
+            info.manufacturer().contains("Bluetooth", Qt::CaseInsensitive))
+        {
+            continue; // Přeskočit tento port
+        }
+        // ------------------
         QString id = info.portName();
         if (!info.description().isEmpty())
             id += " (" + info.description() + ")";
@@ -72,6 +81,7 @@ bool SerialPort::StartPortSearching()
             id += " (" + info.manufacturer() + ")";
 
         m_idToInfo[id] = info;
+
         PortInfo::PortType type = (info.description() == "Standard Serial over Bluetooth link") ?
             PortInfo::pt_serialOverBluetooth : PortInfo::pt_serialPort;
         deviceFound(PortInfo(type, id, info.manufacturer() == "wch.cn"));

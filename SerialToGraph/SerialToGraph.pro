@@ -180,9 +180,11 @@ MOBILITY =
 TRANSLATIONS += languages/serialToGraph_cs.ts
 
 win32{
-    QT += serialport
-    SOURCES += hw/SerialPort.cpp
-    HEADERS += hw/SerialPort.h
+    QT += serialport bluetooth
+    SOURCES += hw/SerialPort.cpp \
+    hw/BluetoothWindows.cpp
+    HEADERS += hw/SerialPort.h \
+    hw/BluetoothWindows.h
 }
 
 android{

@@ -7,6 +7,7 @@
 #   include <hw/BluetoothUnix.h>
 #else
 #   include <hw/SerialPort.h>
+#   include <hw/BluetoothWindows.h>
 #endif
 #if defined(QT_DEBUG)
 #   include <hw/PhonySerialPort.h>
@@ -343,7 +344,8 @@ void HwConnector::initialized()
     m_protocolIdTimer = new QTimer(this);
     m_protocolIdTimer->setSingleShot(true);
     connect(m_protocolIdTimer, SIGNAL(timeout()), this, SLOT(readyRead()));
-    m_protocolIdTimer->start(100); //it should be enough to get response
+    //m_protocolIdTimer->start(100); //it should be enough to get response from COM
+    m_protocolIdTimer->start(1000); //TFs-mod: it should be enough to get response direct from BT socket
 }
 
 void HwConnector::portOpeningFinished()
@@ -388,8 +390,24 @@ void HwConnector::readyRead()
     m_protocolIdTimer = NULL;
 
     QByteArray array;
-    m_selectedPort->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
-    qDebug() << array;
+    //m_selectedPort->ReadData(array, 10); //it is less then 10. just safe size it id will enlarge
+    m_selectedPort->ReadData(array); //TFs-mod
+    //qDebug() << array;
+    qDebug() << "Received init sequence:" << array; // TFs-mod: Pro kontrolu v konzoli
+    if (!array.contains(PROTOCOL_ID) && !array.contains(LEGACY_PROTOCOL_ID))
+    {
+        // Pokud data nepřišla vůbec (array je prázdné) nebo jsou špatná
+        qWarning() << "Verification failed. Received:" << array;
+
+        MyMessageBox::warning(
+            (QWidget*)parent(),
+            tr("The selected port isn't responding as expected. Please, check port read/write permissions.")
+        );
+
+        _ConnectionFailed();
+        return;
+    }
+    /* original Kubas code
     if ((array.toStdString() != PROTOCOL_ID && array.toStdString() != LEGACY_PROTOCOL_ID))
     {
         MyMessageBox::warning(
@@ -400,6 +418,7 @@ void HwConnector::readyRead()
         _ConnectionFailed();
         return;
     }
+    */
 
     if (array.toStdString() == LEGACY_PROTOCOL_ID)
     {
@@ -443,6 +462,32 @@ void HwConnector::CreateHwInstances()
         connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
         connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
     }
+#elif defined(Q_OS_WIN32)
+    // --- NOVÁ LOGIKA PRO WINDOWS ---
+    // 1. Bluetooth (Nová třída)
+    if (m_bluetooth) {
+        disconnect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+        disconnect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
+        delete m_bluetooth;
+        m_bluetooth = nullptr;
+    }
+
+    if (GlobalSettings::GetInstance().GetUseBluetooth()){
+        m_bluetooth = new BluetoothWindows(this); // Použijeme naši novou třídu!
+        connect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+        connect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
+        connect(m_bluetooth, SIGNAL(scanningFinished()), this, SLOT(bluetoothScanFinished()));
+    }
+
+    // 2. Serial Port (Stará třída pro USB)
+    if (m_serialPort) {
+         disconnect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+         disconnect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
+         delete m_serialPort;
+    }
+    m_serialPort = new SerialPort(this);
+    connect(m_serialPort, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+    connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
 #else
 #   if not defined (Q_OS_WIN32)
         disconnect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
@@ -683,6 +728,16 @@ float HwConnector::_DequeueFloat(unsigned char &checkSum)
     checkSum += _GetCheckSum(value[3]);
 
     return *((float*)value);
+}
+
+void HwConnector::bluetoothScanFinished()
+{
+    // Pokud jsme stále ve stavu Scanning (uživatel mezitím nezačal připojovat),
+    // přepneme stav na ScanFinished. To změní text v dialogu na "Searched".
+    if (m_state == Scanning)
+    {
+        _ChangeState(ScanFinished);
+    }
 }
 
 } //namespace hw

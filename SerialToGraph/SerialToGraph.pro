@@ -15,10 +15,17 @@ DEFINES += TARGET=\\\"$$TARGET\\\"
 
 TEMPLATE = app
 
-VERSION = 1
+#VERSION = 4.3
+GIT_VERSION_TAG = $$system(git describe --tags --abbrev=0)
+GIT_VERSION_TAG ~= s/^v//
+isEmpty(GIT_VERSION_TAG) {
+    GIT_VERSION_TAG = 1.0.0.0
+}
+VERSION = $$GIT_VERSION_TAG
+
 QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = $$TARGET
-QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
+QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare

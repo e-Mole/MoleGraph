@@ -25,5 +25,3 @@ echo #endif //VERSION_H >> %filename%
 echo git version: %version% 
  del ".lock"
 ) 
-
-

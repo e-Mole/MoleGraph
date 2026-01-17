@@ -21,10 +21,14 @@ GIT_VERSION_TAG ~= s/^v//
 isEmpty(GIT_VERSION_TAG) {
     GIT_VERSION_TAG = 1.0.0.0
 }
+WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
+# Regulární výraz: Odstranit vše od první pomlčky dál (včetně ní)
+# Tedy z "1.2-beta" udělá "1.2", z "1.2.1-rc1" udělá "1.2.1"
+WIN_NUMERIC_VERSION ~= s/-.*//
 VERSION = $$GIT_VERSION_TAG
 
 QMAKE_TARGET_COMPANY = e-Mole
-QMAKE_TARGET_PRODUCT = $$TARGET
+QMAKE_TARGET_PRODUCT = "$$TARGET ($$GIT_VERSION_TAG)"
 QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type

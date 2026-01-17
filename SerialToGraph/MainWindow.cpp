@@ -142,6 +142,8 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
         showMaximized();
     else
         resize(GlobalSettings::GetInstance().GetMainWindowSize());
+
+    updateWindowTitle();
 }
 
 void MainWindow::menuButtonClicked()
@@ -191,12 +193,22 @@ void MainWindow::ReplaceWidgets(Qt::Orientation menuOrientation, bool showMenu)
 
 void MainWindow::updateWindowTitle()
 {
-    setWindowTitle(
-        m_currentFileName +
-        ((!GlobalSettings::GetInstance().IsSavedState() || !GlobalSettings::GetInstance().AreSavedValues()) ? "*" : "") +
-        " - " +
-        TARGET
-    );
+    QString title;
+
+    if (m_currentFileName.isEmpty()) {
+        // Pokud není otevřený žádný soubor, zobrazíme jen název a verzi
+        // Např.: "MoleGraph (4.3-beta)"
+        title = PRODUCT_NAME;
+    } else {
+        // Pokud je otevřen soubor, zobrazíme i jeho jméno a indikátor změny (*)
+        // Např.: "moje_data.mogr* - MoleGraph (4.3-beta)"
+        title = QString("%1%2 - %3")
+            .arg(m_currentFileName)
+            .arg((!GlobalSettings::GetInstance().IsSavedState() || !GlobalSettings::GetInstance().AreSavedValues()) ? "*" : "")
+            .arg(PRODUCT_NAME);
+    }
+
+    setWindowTitle(title);
 }
 void MainWindow::_SetCurrentFileName(QString const &fileName)
 {

@@ -41,6 +41,8 @@
 #include <SampleChannel.h>
 #include <Serializer.h>
 
+#include "CloudSettingsDialog.h"
+
 #define MOGR_FILE_EXTENSION "mogr"
 
 using namespace atog;
@@ -100,6 +102,7 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_buttonLine, SIGNAL(exportPng()), this, SLOT(exportPng()));
     connect(m_buttonLine, SIGNAL(axisMenuButtonPressed()), this, SLOT(axisMenuButtonPressed()));
     connect(m_buttonLine, SIGNAL(settings()), this, SLOT(settings()));
+    connect(m_buttonLine, SIGNAL(cloudSettings()), this, SLOT(openCloudSettings())); //TFsMod: CloudButton
     connect(m_buttonLine, SIGNAL(panelMenuButtonPressed(Measurement*)), this, SLOT(showPanelMenu(Measurement*)));
 
     connect(&m_hwConnector, SIGNAL(stateChanged(hw::HwConnector::State)),
@@ -201,7 +204,7 @@ void MainWindow::updateWindowTitle()
         title = PRODUCT_NAME;
     } else {
         // Pokud je otevřen soubor, zobrazíme i jeho jméno a indikátor změny (*)
-        // Např.: "moje_data.mogr* - MoleGraph (4.3-beta)"
+        // Např.: "moje_data.mogr* - MoleGraph 4.3-beta"
         title = QString("%1%2 - %3")
             .arg(m_currentFileName)
             .arg((!GlobalSettings::GetInstance().IsSavedState() || !GlobalSettings::GetInstance().AreSavedValues()) ? "*" : "")
@@ -995,4 +998,31 @@ void MainWindow::channelEditingRejected()
     ChannelSettings *settings = (ChannelSettings *) sender();
     _DisconnectChannelSettings(settings);
     settings->GetGraphicsContainer()->RejectGhostChannel();
+}
+
+void MainWindow::openCloudSettings()
+{
+    CloudSettingsDialog dlg(this);
+
+    // --- OPRAVA ZDE ---
+    // Musíme získat aktuální nastavení.
+    // Protože je zatím nemáme v GlobalSettings (viz bod 2 níže),
+    // vytvoříme si zatím prázdná/výchozí, aby kód fungoval.
+
+    CloudSettings currentSettings;
+
+    // Pokud už jsi provedl bod 2 (úprava GlobalSettings), odkomentuj tento řádek:
+    currentSettings = GlobalSettings::GetInstance().GetCloudSettings();
+
+    // Teď už proměnná existuje a můžeme ji předat
+    dlg.setSettings(currentSettings);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        CloudSettings newSettings = dlg.getSettings();
+
+        // Zde bychom je měli uložit zpět:
+        GlobalSettings::GetInstance().SetCloudSettings(newSettings);
+
+        // A pokud běží měření, aktualizovat logger (to budeme řešit později)
+    }
 }

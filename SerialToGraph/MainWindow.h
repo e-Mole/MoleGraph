@@ -115,6 +115,7 @@ private slots:
     void editChannel(GraphicsContainer* gc, ChannelProxyBase *channelProxy);
     void channelEditingAccepted();
     void channelEditingRejected();
+    void openCloudSettings();
 };
 
 #endif // MAINWINDOW_H

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVariant>
 #include <QStringList>
+#include "CloudSettings.h"
 
 class QSize;
 class GlobalSettings : public QObject
@@ -47,6 +48,8 @@ class GlobalSettings : public QObject
     bool m_savedState;
     bool m_savedValues;
     bool m_openRecentOnStartup;
+
+    CloudSettings m_cloudSettings; //TFsMod: Cloud Settings
 public:
     static GlobalSettings& GetInstance();
 
@@ -98,6 +101,8 @@ public:
     void SetOpenRecentFileAtStartup(bool openRecent);
     double getWidgetHeightDivider();
     double getWidgetMinimalWidthDivider();
+    CloudSettings GetCloudSettings() const { return m_cloudSettings; }
+    void SetCloudSettings(const CloudSettings &s) { m_cloudSettings = s; }
 
 signals:
     void hideAllCHannelsChanged(bool hideAllChannels);

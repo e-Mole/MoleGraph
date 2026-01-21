@@ -15,7 +15,6 @@ DEFINES += TARGET=\\\"$$TARGET\\\"
 
 TEMPLATE = app
 
-#VERSION = 4.3
 GIT_VERSION_TAG = $$system(git describe --tags --abbrev=0)
 GIT_VERSION_TAG ~= s/^v//
 isEmpty(GIT_VERSION_TAG) {
@@ -26,6 +25,7 @@ WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
 # Tedy z "1.2-beta" udělá "1.2", z "1.2.1-rc1" udělá "1.2.1"
 WIN_NUMERIC_VERSION ~= s/-.*//
 VERSION = $$WIN_NUMERIC_VERSION
+#VERSION = 4.3
 
 QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = "$$TARGET $$GIT_VERSION_TAG"
@@ -35,7 +35,7 @@ QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 
-QT       += core gui bluetooth widgets printsupport
+QT       += core gui bluetooth widgets printsupport network
 
 SOURCES += main.cpp\
     MainWindow.cpp \
@@ -105,8 +105,8 @@ SOURCES += main.cpp\
     graphics/SampleChannelProxy.cpp \
     graphics/HwChannelProxy.cpp \
     graphics/ChannelProperties.cpp \
-    graphics/SampleChannelProperties.cpp
-
+    graphics/SampleChannelProperties.cpp \
+    CloudSettingsDialog.cpp
 
     SOURCES += MenuAndroid.cpp
     SOURCES += MenuDesktop.cpp
@@ -180,7 +180,9 @@ HEADERS  += MainWindow.h \
     graphics/HwChannelProxy.h \
     graphics/SampleChannelProxy.h \
     graphics/ChannelProperties.h \
-    graphics/SampleChannelProperties.h
+    graphics/SampleChannelProperties.h \
+    CloudSettings.h \
+    CloudSettingsDialog.h
 
     HEADERS += MenuAndroid.h
     HEADERS += MenuDesktop.h

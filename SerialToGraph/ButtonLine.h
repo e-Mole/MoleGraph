@@ -40,6 +40,7 @@ class ButtonLine : public QWidget
     PushButton *m_sampleRequestButton;
     PushButton *m_pauseContinueButton;
     PushButton *m_stopButton;
+    PushButton *m_cloudButton;
     PushButton *m_connectivityButton;
     PushButton * m_fileMenuButton;
     PushButton * m_panelMenuButton;
@@ -83,6 +84,7 @@ signals:
     void exportAllCsv();
     void axisMenuButtonPressed();
     void settings();
+    void cloudSettings();
     void panelMenuButtonPressed(Measurement *);
 
 private slots:

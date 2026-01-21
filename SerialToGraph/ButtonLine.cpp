@@ -105,6 +105,10 @@ ButtonLine::ButtonLine(QWidget *parent, hw::HwConnector &hwConnector, Qt::Orient
     connect(m_stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(shortcut, SIGNAL(activated()), m_stopButton, SLOT(animateClick()));
 
+    //TFsMod: Add button Cloud
+    m_cloudButton = new PushButton(tr("Cloud"), this);
+    connect(m_cloudButton, SIGNAL(clicked()), this, SIGNAL(cloudSettings()));
+
     m_space->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     m_connectivityButton = new PushButton(this);
@@ -141,6 +145,8 @@ void ButtonLine::ReplaceButtons(Qt::Orientation orientation)
     m_mainLayout->addWidget(m_pauseContinueButton, v ? i :0 ,v ? 0 : i);
     i++;
     m_mainLayout->addWidget(m_stopButton, v ? i :0 ,v ? 0 : i);
+    i++;
+    m_mainLayout->addWidget(m_cloudButton, v ? i :0 ,v ? 0 : i); //TFsMod: Cloud button
     i++;
     m_mainLayout->addWidget(m_space, v ? i :0 ,v ? 0 : i);
     i++;

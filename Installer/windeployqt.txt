@@ -1,0 +1,1 @@
+Q:\Qt\5.15.2\mingw81_64\bin\windeployqt.exe --force --no-translations C:\Deployment\MoleGraph\input\MoleGraph.exe

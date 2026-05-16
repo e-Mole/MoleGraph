@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>204</x>
+      <y>0</y>
+      <w>330</w>
+      <h>1044</h>
+    </coordinates>
+    <panel_attributes>title=App to Shield Communication (ATG_5)
+autoTick=false
+overrideIds=true
+obj=App (PC/Mobile)~app | Shield (HW)~shield
+
+app:[== 1. Initialization &amp; Setup ==]
+tick=
+app-&gt;&gt;&gt;shield : INS_GET_VERSION (0x01)
+tick=
+shield.&gt;app : Protocol version response
+tick=
+app-&gt;&gt;&gt;shield : INS_INITIALIZE (0x0B) (Clear cache)
+tick=
+app-&gt;&gt;&gt;shield : INS_SET_TYPE (0x07) (0=Periodical, 1=OnDemand)
+tick=
+
+combinedFragment=opt~opt1 app shield
+	app:[If type is Periodical]
+	tick=
+	app-&gt;&gt;&gt;shield : INS_SET_TIME (0x02) or INS_SET_FREQUENCY (0x03)
+	tick=
+--=opt1
+tick=
+
+app-&gt;&gt;&gt;shield : INS_ENABLED_CHANNELS (0x04) (Active channels mask)
+tick=
+app-&gt;&gt;&gt;shield : INS_SET_SENSOR (0x0C) (Payload: hwIndex...)
+tick=2
+
+app:[== 2. Measurement (App Initiated) ==]
+tick=
+app-&gt;&gt;&gt;shield : INS_START (0x05)
+tick=
+
+combinedFragment=alt~alt1 app shield
+	app:[Periodical Measurement]
+	tick=
+	combinedFragment=loop~loop1 app shield
+		app:[Every configured interval]
+		tick=
+		shield-&gt;&gt;&gt;app : Header (INS_NONE + missed_sample) + Values + Checksum
+		tick=
+	--=loop1
+	tick=
+..
+	app:[On-demand Measurement]
+	tick=
+	app-&gt;&gt;&gt;shield : INS_GET_SAMPLE (0x08)
+	tick=
+	shield-&gt;&gt;&gt;app : Header + Timestamp + Channel values + Checksum
+	tick=
+--=alt1
+tick=2
+
+app:[== 3. Pause &amp; Resume (Optional) ==]
+tick=
+app-&gt;&gt;&gt;shield : INS_PAUSE (0x09)
+tick=
+shield:[Measurement running, no data sent]
+tick=
+app-&gt;&gt;&gt;shield : INS_CONTINUE (0x0A)
+tick=2
+
+app:[== 4. Measurement Termination ==]
+tick=
+app-&gt;&gt;&gt;shield : INS_STOP (0x06)
+tick=2
+
+shield:[== 5. Remote Control (Shield Initiated) ==]
+tick=
+shield:[Shield can start/stop measurement itself]
+tick=
+shield-&gt;&gt;&gt;app : INS_START (0x05)
+tick=
+shield-&gt;&gt;&gt;app : Measured data (INS_NONE)
+tick=
+shield-&gt;&gt;&gt;app : INS_STOP (0x06)
+tick=2
+
+shield:[== 6. Debugging ==]
+tick=
+shield-&gt;&gt;&gt;app : DEBUG (0x7F) + Length + Debug message
+tick=</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

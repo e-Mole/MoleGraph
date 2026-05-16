@@ -1,0 +1,66 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam noteBackgroundColor #FEFFDD
+skinparam activityBackgroundColor #FFFFFF
+
+title Firmware Execution Flow & Communication
+
+start
+
+:setup();
+note right: Serial.begin(115200)\nTimer_Init()\nSystemInit()
+
+repeat :loop();
+  :newTime = getTime();
+  
+  if (StartStop & running) then (yes)
+    :update() - Process sensors;
+    if (scanType == PERIODICAL) then (yes)
+      if (Is it time for next sample?) then (yes)
+        :scan() - Collect channel data;
+        :sendValues() - Build & send packet to App;
+        :Update time & check missed samples;
+      endif
+    else (ONDEMAND)
+      if (dataReady) then (yes)
+        :running = 0;
+        :scan() - Collect channel data;
+        :sendValues() - Build & send packet to App;
+      endif
+    endif
+  endif
+  
+  if (Serial.available() > 0) then (yes)
+    partition "serialProcess()" {
+      :Read 1 byte (Instruction ID);
+      switch (Instruction ID)
+        case (INS_SET_SENSOR)
+          :setSensor();
+        case (INS_SET_TYPE)
+          :setScanType();
+        case (INS_SET_TIME/FREQ)
+          :setPeriod();
+        case (INS_ENABLED_CHANNELS)
+          :enableChannels();
+        case (INS_START/CONTINUE)
+          :start();
+        case (INS_STOP/PAUSE)
+          :stop();
+        case (INS_GET_SAMPLE)
+          :getSample();
+        case (INS_GET_VERSION)
+          :Serial.write(VERSION);
+      endswitch
+    }
+  endif
+  
+  :SystemProcess(newTime);
+  note right: Handle HW buttons & Battery LED
+  
+  if (Button pressed?) then (yes)
+    :calibrate(button);
+  endif
+  
+repeat while (Infinite Loop)
+
+@enduml

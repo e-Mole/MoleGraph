@@ -1,0 +1,18 @@
+1] DIR Deployment
+2] DIR Deployment/MoleGraph
+3] COPY MoleGraph executabele to MoleGraph DIR
+4] CREATE MoleGraph.desktop FILE
+5] COPY PNG ICONE MoleGraph.png TO SMAME FOLDER
+6] linuxdeployqt in same DIR as MoleGraph DIR
+
+./linuxdeployqt-continuous-x86_64.AppImage
+
+./linuxdeployqt-continuous-x86_64.AppImage MoleGraph/MoleGraph -verbose=2
+
+If PATH problem:
+export PATH=/usr/lib/qt5/bin:$PATH
+
+./linuxdeployqt-continuous-x86_64.AppImage MoleGraph/MoleGraph -verbose=2
+
+AppImage
+./linuxdeployqt-continuous-x86_64.AppImage MoleGraph/MoleGraph -verbose=2 -appimage

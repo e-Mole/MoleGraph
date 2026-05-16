@@ -1,0 +1,159 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam noteBackgroundColor #FEFFDD
+skinparam classBackgroundColor #FFFFFF
+skinparam packageBackgroundColor #F0F0F0
+skinparam linetype ortho
+hide empty members
+
+title MoleGraph Auto (Arduino) - Complete Sensor Architecture v3
+
+package "Core Management" {
+    class Channel {
+        - sensor : Sensor*
+        - spec : uint8_t
+        + AssignSensor(sensor: Sensor*, spec: uint8_t)
+        + CollectData()
+    }
+}
+
+package "Base API" {
+    class Sensor {
+        + period : uint32_t
+        # time : uint32_t
+        # port : uint8_t
+        + read(spec: uint8_t) : float
+        + calibrate()
+        # process() : bool
+    }
+}
+
+Channel "0..8" o--> "1" Sensor : calls read(spec)
+
+package "Analog Sensors" {
+    class AD {
+        + read(spec) : float << RAW, V, trigger, count >>
+        + calibrate() << offset & count reset >>
+    }
+    class CONDUCT {
+        + read(spec) : float << cond, sal, RAW, V, trigger >>
+    }
+    class MPX5700DP {
+        + read(spec) : float << pressure >>
+        + calibrate() << set offset >>
+    }
+    class MQ2 {
+        + read(spec) : float << BAC, %, V, RAW, trig >>
+        + calibrate() << set offset >>
+    }
+    class MQ3 {
+        + read(spec) : float << BAC, %, V, RAW, trig >>
+        + calibrate() << set offset >>
+    }
+    class PH {
+        + read(spec) : float << pH, V, RAW, trig >>
+    }
+    class PULSE {
+        + read(spec) : float << RAW, BPM, trig >>
+    }
+    class AD8232 {
+        + read(spec) : float << V, BPM, trig >>
+    }
+    class VOLT25 {
+        + read(spec) : float << V, RAW >>
+    }
+    class AMP5 {
+        + read(spec) : float << A, RAW >>
+    }
+    class AMP30 {
+        + read(spec) : float << A, RAW >>
+    }
+    
+    AD -up-|> Sensor
+    CONDUCT -up-|> AD
+    MPX5700DP -up-|> Sensor
+    MQ2 -up-|> Sensor
+    MQ3 -up-|> Sensor
+    PH -up-|> Sensor
+    PULSE -up-|> Sensor
+    AD8232 -up-|> Sensor
+    VOLT25 -up-|> Sensor
+    AMP5 -up-|> Sensor
+    AMP30 -up-|> Sensor
+}
+
+package "Digital Buses & Protocols (I2C, OneWire, Serial)" {
+    class BME280 {
+        + read(spec) : float << Press, Temp, Hum, Alt, Dew >>
+    }
+    class LSM303DLHC {
+        + read(spec) : float << aTot, mTot, aX..Z, mX..Z, Head, Roll, Pitch >>
+    }
+    class VL53L0X {
+        + read(spec) : float << pos, vel, acc >>
+    }
+    class MLX90614 {
+        + read(spec) : float << Tobj, Tamb >>
+    }
+    class VEML6070 {
+        + read(spec) : float << RAW, UVI >>
+    }
+    class LUXBH1750 {
+        + read(spec) : float << Lux >>
+    }
+    class DS18B20 {
+        + read(spec) : float << Temp °C >>
+        << Uses OneWire >>
+    }
+    class HX711 {
+        + read(spec) : float << scaled force/weight >>
+        + calibrate() << tare/offset >>
+    }
+    class MAX6675 {
+        + read(spec) : float << temp - offset >>
+        + calibrate() << set offset >>
+        << Uses Custom SPI >>
+    }
+    class CALIPER {
+        + read(spec) : float << mm, inch >>
+        << Uses 2-wire Clock/Data >>
+    }
+
+    BME280 -up-|> Sensor
+    LSM303DLHC -up-|> Sensor
+    VL53L0X -up-|> Sensor
+    MLX90614 -up-|> Sensor
+    VEML6070 -up-|> Sensor
+    LUXBH1750 -up-|> Sensor
+    DS18B20 -up-|> Sensor
+    HX711 -up-|> Sensor
+    MAX6675 -up-|> Sensor
+    CALIPER -up-|> Sensor
+}
+
+package "Timers & Interrupts" {
+    class TimerAbstract {
+        # pin : uint8_t
+    }
+    class Timer {
+        + read(spec) : float << pulse+, pulse-, per_rise, per_fall, freq_rise, freq_fall, count >>
+        + calibrate() << resets counter >>
+    }
+    class MHZ16 {
+        + read(spec) : float << PWM based CO2 >>
+    }
+    class SRF04 {
+        + read(spec) : float << pos, vel, acc >>
+    }
+    class LedBlink {
+        << Output/Misc >>
+    }
+
+    TimerAbstract -up-|> Sensor
+    Timer -up-|> TimerAbstract
+    MHZ16 -up-|> Timer
+    SRF04 -up-|> TimerAbstract
+    LedBlink -up-|> Sensor
+}
+
+@enduml

@@ -10,7 +10,7 @@
 By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes soldering, 3D printing, and component sourcing—users develop deep technological literacy and critical thinking skills.
 
 ---
-<img src="http://www.e-mole.cz/sites/default/files/pictures/molegraph-release.jpg" alt="MoleGraph in action" />
+<img src="docs/img_readme/MoleGraph-intro.jpg" alt="MoleGraph in action" />
 
 ## 🏗️ Hardware Architecture & Modular Construction
 The system is built on the **Arduino platform**, specifically utilizing the **Arduino NANO** (ATmega328) microcontroller and an **HC-05 Bluetooth module** for wireless connectivity.
@@ -67,11 +67,11 @@ Highly compatible with projects like the [**"Fretka" robot**](https://www.e-mole
 
 ## Different Arduino and MoleGraph setups
 
-<img src="http://www.e-mole.cz/sites/default/files/pictures/molegraph-var_0.jpg" alt="MoleGraph in action" />
+<img src="docs/img_readme/MoleGraph-devel_in_time.jpg" alt="MoleGraph in action" />
 
 ## MoleGraph shield
 
-<img src="http://www.e-mole.cz/sites/default/files/pictures/molegraph-shield_0.jpg" alt="MoleGraph shield" />
+<img src="docs/img_readme/MoleGraph-shield.jpg" alt="MoleGraph shield" />
 
 ## Desktop app for Mac OS X building instructions
 

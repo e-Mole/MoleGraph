@@ -132,7 +132,8 @@ void start() {
       }
     }
 //    time -= period;
-    time -= 5 * TICK_PER_MS;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
+//    time -= 5 * TICK_PER_MS;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
+      time = time - period + (5 * TICK_PER_MS); // OPRAVA: První vzorek odejde za 5 ms, všechny další už s přesným rozestupem rovným periodě
   }
 }
 

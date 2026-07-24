@@ -211,7 +211,19 @@
     {
       "id" : 45,
       "name" : "Trigger count"
-    }
+    },
+    {
+      "id" : 46,
+      "name" : "Hue"
+    },
+    {
+      "id" : 47,
+      "name" : "Saturation"
+    },
+    {
+      "id" : 48,
+      "name" : "Brightness"
+    }	
   ],
     "sensors": [
         {
@@ -793,13 +805,24 @@
             "components": [
                 {
                     "correction": "None",
-                    "quantity": "RAW",
-                    "unit": ""
+                    "quantity": "Hue",
+                    "unit": "°"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Saturation",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Brightness",
+                    "unit": "%"
                 }
             ],
-            "enabled": false,
+            "enabled": true,
             "id": 11,
-            "name": "Color sensor (TCS3200)"
+            "name": "Color sensor (TCS34725)",
+			"note": "High-sensitivity color sensor with an IR-blocking filter for accurate human-eye color perception. Configured with 60x gain (low lighting conditions) and 101 ms integration time. Outputs real-time HSV (Hue, Saturation, Brightness) values. Maximum sampling rate: 10 Hz."
         },
         {
             "components": [

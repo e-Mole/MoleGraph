@@ -1,4 +1,5 @@
 #include "hw.h"
+#include "core.h" // Přidáno pro zjištění módu měření (scanType)
 
 bool      StartStop  = 0;
 uint32_t  systemTime = 0;
@@ -31,7 +32,37 @@ inline uint8_t getBtn() {
 void SystemProcess(uint32_t t) {
   if ((uint32_t)(t - systemTime) >= PERIOD_SYSTEM) {
     systemTime += PERIOD_SYSTEM;
+/* --- NEW code - HW Button active in On Demand mode --- */
+// Čteme HW tlačítko, jen pokud měření stojí, NEBO je v módu "On demand"
+    if (!StartStop || scanType == ONDEMAND) {
+      button = getBtn();
+    } else {
+      button = 0; // Při rychlém kontinuálním měření tlačítka ignorujeme
+    }
+
     if (StartStop) {
+      digitalWrite(LED_STATUS, 1);
+    } else {
+      digitalWrite(LED_STATUS, 0);
+      
+      // Baterii také čteme jen když to nebrzdí měření
+      uint8_t x = analogRead(AI_BATT) >> 2;
+      if (x > 111) {  // Battery OK ... 7V
+        digitalWrite(LED_BATT_GREEN, 1);
+        digitalWrite(LED_BATT_RED, 0);
+      } else if (x > 80) {  // Battery LOW
+        digitalWrite(LED_BATT_GREEN, 0);
+        digitalWrite(LED_BATT_RED, 1);              
+      } else {  // Battery NO
+        digitalWrite(LED_BATT_GREEN, 0);
+        digitalWrite(LED_BATT_RED, 0);              
+      }
+      
+      if (button) {
+        digitalWrite(LED_STATUS, 1); 
+      }
+/* --- OLD original code --- */
+/*    if (StartStop) {
       digitalWrite(LED_STATUS, 1);
     } else {
       digitalWrite(LED_STATUS, 0);
@@ -50,7 +81,7 @@ void SystemProcess(uint32_t t) {
         digitalWrite(LED_STATUS, 1);
 //        Serial.println(button);
       }
+*/      
     }
   }
 }
-

@@ -105,25 +105,25 @@ bool LSM303DLHC::process() {
         mY = ((float)mag_raw_y / _lsm303Mag_Gauss_LSB_XY) * SENSORS_GAUSS_TO_MICROTESLA;
         mZ = ((float)mag_raw_z / _lsm303Mag_Gauss_LSB_Z)  * SENSORS_GAUSS_TO_MICROTESLA;
       }
-      // 3. Totals
+      // 3. Totals    
       value  = sqrt(aX*aX + aY*aY + aZ*aZ); // Accel Total
       value2 = sqrt(mX*mX + mY*mY + mZ*mZ); // Mag Total
-    
+          
       // 4. Low Pass Filter
       fXg = aX * alpha + (fXg * (1.0 - alpha));
       fYg = aY * alpha + (fYg * (1.0 - alpha));
       fZg = aZ * alpha + (fZg * (1.0 - alpha));
     
-      // 5. Heading
+      // 5. Heading  
       heading = (atan2(mY, mX) * 180.0) / M_PI;
       if (heading < 0) {
         heading = 360 + heading;
       }
-    
-      // 6. Roll & Pitch
+      
+      // 6. Roll & Pitch  
       roll  = (atan2(-fYg, fZg) * 180.0) / M_PI;
       pitch = (atan2(fXg, sqrt(fYg*fYg + fZg*fZg)) * 180.0) / M_PI;
-    
+          
       time += period;
     return 1;
   }

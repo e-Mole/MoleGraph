@@ -72,6 +72,8 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
     case SENSOR_ORP: return new AD(_period, _port);
     case SENSOR_TURB: return new AD(_period, _port);
     case SENSOR_P_GATE: return new Timer(_period, _port);
+    case SENSOR_TCS34725: return new TCS34725(_period, _port);
+    
 //    case SENSOR_B_BOARD //now for programming only
 //    case SENSOR_SPIRO
 //    case SENSOR_GEIGER
@@ -131,9 +133,9 @@ void start() {
         sensors[i]->start(time);
       }
     }
-//    time -= period;
+    time -= period;
 //    time -= 5 * TICK_PER_MS;  // odesilani dat 5ms pred novym samplem, prvni data az po uplynuti periody-5
-      time = time - period + (5 * TICK_PER_MS); // OPRAVA: První vzorek odejde za 5 ms, všechny další už s přesným rozestupem rovným periodě
+//      time = time - period + (5 * TICK_PER_MS); // OPRAVA: První vzorek odejde za 5 ms, všechny další už s přesným rozestupem rovným periodě
   }
 }
 

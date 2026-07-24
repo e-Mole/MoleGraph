@@ -1,5 +1,5 @@
 #include "bme280.h"
-#include <math.h> // needed for pow() and log()
+//#include <math.h> // needed for pow() and log()
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
@@ -36,6 +36,7 @@ float BME280::read(uint8_t _spec) {
   }
   return result;
 }
+
 
 float BME280::calcAltitude() {
     // use press_hpa
@@ -82,6 +83,37 @@ void BME280::readData() {
     // Possible temp correction (in all my BME280 sensors -2 °C);
     temp_c -= 2.0; 
 
+    // 2. PRESSURE (Optimalizováno na 32 bitů)
+    int32_t adc_P = read24(BME280_REGISTER_PRESSUREDATA);
+    adc_P >>= 4;
+    
+    int32_t var1_p32, var2_p32;
+    uint32_t p32;
+    
+    var1_p32 = (((int32_t)t_fine) >> 1) - (int32_t)64000;
+    var2_p32 = (((var1_p32 >> 2) * (var1_p32 >> 2)) >> 11 ) * ((int32_t)cal_data.dig_P6);
+    var2_p32 = var2_p32 + ((var1_p32 * ((int32_t)cal_data.dig_P5)) << 1);
+    var2_p32 = (var2_p32 >> 2) + (((int32_t)cal_data.dig_P4) << 16);
+    var1_p32 = (((cal_data.dig_P3 * (((var1_p32 >> 2) * (var1_p32 >> 2)) >> 13 )) >> 3) + ((((int32_t)cal_data.dig_P2) * var1_p32) >> 1)) >> 18;
+    var1_p32 = ((((32768 + var1_p32)) * ((int32_t)cal_data.dig_P1)) >> 15);
+    
+    if (var1_p32 == 0) {
+        press_hpa = 0.0;
+    } else {
+        p32 = (((uint32_t)(((int32_t)1048576) - adc_P) - (var2_p32 >> 12))) * 3125;
+        if (p32 < 0x80000000) {
+            p32 = (p32 << 1) / ((uint32_t)var1_p32);
+        } else {
+            p32 = (p32 / (uint32_t)var1_p32) * 2;
+        }
+        var1_p32 = (((int32_t)cal_data.dig_P9) * ((int32_t)(((p32 >> 3) * (p32 >> 3)) >> 13))) >> 12;
+        var2_p32 = (((int32_t)(p32 >> 2)) * ((int32_t)cal_data.dig_P8)) >> 13;
+        p32 = (uint32_t)((int32_t)p32 + ((var1_p32 + var2_p32 + cal_data.dig_P7) >> 4));
+        
+        press_hpa = (float)p32 / 100.0; // Pa -> hPa
+    }
+    
+    /*
     // 2. PRESSURE
     int32_t adc_P = read24(BME280_REGISTER_PRESSUREDATA);
     adc_P >>= 4;
@@ -103,6 +135,7 @@ void BME280::readData() {
         p = ((p + var1_p + var2_p) >> 8) + (((int64_t)cal_data.dig_P7) << 4);
         press_hpa = (float)p / 256.0 / 100.0; // Pa -> hPa
     }
+    */
 
     // 3. HUMIDITY
     int32_t adc_H = read16(BME280_REGISTER_HUMIDDATA);

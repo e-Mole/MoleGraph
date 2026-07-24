@@ -35,6 +35,7 @@
 #include "max6675t.h"
 #include "ad8232.h"
 #include "caliper.h"
+#include "tcs34725.h"
 
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG
@@ -66,7 +67,8 @@ enum SensorType {
   SENSOR_MPX5700DP    = 6,    // A006 Tlakomer MPX5700DP                                      // OK
   SENSOR_FORCE        = 7,    // D007 Silomer s HX711                                         // OK
   SENSOR_AD8232       = 10,   // A010 EKG AD8232                                              // OK
-  SENSOR_TCS3200      = 11,   // C011 Cidlo barev TCS3200                                     // ---
+//SENSOR_TCS3200      = 11,   // C011 Cidlo barev TCS3200                                     // --- ABANDONED
+  SENSOR_TCS34725     = 11,   // I011 Cidlo barev TCS34725                                    // TEST
   SENSOR_GUVA_S12SD   = 13,   // A013 Cidlo UV zareni GUVA-S12SD                              // ---
   SENSOR_PH           = 14,   // A014 Cidlo pH                                                // OK
   SENSOR_CON          = 15,   // C015 Cidlo vodivosti                                         // OK

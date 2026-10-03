@@ -134,6 +134,7 @@ private slots:
     void readyRead();
     void initialized();
     void deviceFound(hw::PortInfo const &portInfo);
+    void bluetoothScanFinished();
 };
 } //namespace hw
 #endif // HWCONNECTOR_H

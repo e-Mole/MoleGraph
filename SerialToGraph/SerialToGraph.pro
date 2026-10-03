@@ -25,17 +25,13 @@ WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
 # Regulární výraz: Odstranit vše od první pomlčky dál (včetně ní)
 # Tedy z "1.2-beta" udělá "1.2", z "1.2.1-rc1" udělá "1.2.1"
 WIN_NUMERIC_VERSION ~= s/-.*//
-VERSION = $$GIT_VERSION_TAG
+VERSION = $$WIN_NUMERIC_VERSION
 
 QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = "$$TARGET ($$GIT_VERSION_TAG)"
-
-#VERSION = 1
-#QMAKE_TARGET_COMPANY = e-Mole
-#QMAKE_TARGET_PRODUCT = $$TARGET
-
+DEFINES += "PRODUCT_NAME=\"\\\"$$QMAKE_TARGET_PRODUCT\\\"\""
 QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
-QMAKE_TARGET_COPYRIGHT = Copyright (c) 2022 e-Mole
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 
@@ -204,9 +200,11 @@ TRANSLATIONS += \
     languages/serialToGraph_hu.ts
 
 win32{
-    QT += serialport
-    SOURCES += hw/SerialPort.cpp
-    HEADERS += hw/SerialPort.h
+    QT += serialport bluetooth
+    SOURCES += hw/SerialPort.cpp \
+    hw/BluetoothWindows.cpp
+    HEADERS += hw/SerialPort.h \
+    hw/BluetoothWindows.h
 }
 
 android{
@@ -247,10 +245,3 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
 
 ANDROID_ABIS = armeabi-v7a
-
-DISTFILES += \
-    languages/serialToGraph_de.ts \
-    languages/serialToGraph_fr.ts
-
-
-

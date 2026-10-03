@@ -3,6 +3,14 @@
 
 #include "timer.h"
 
+//**************** START - moved to config.h ************************
+/* 
+ * --- Default LED State Macro ---
+ * Set to 1 to boot up with LED ON.
+ * Set to 0 to boot up with LED OFF.
+ * Can be toggled at runtime using a double-click on the hardware button.
+ */
+//#define TCS34725_LED_DEFAULT_ON 0
 // ====================================================================
 // FIRMWARE PROFILE SWITCH
 // Uncomment exactly ONE profile below to optimize Arduino NANO memory.
@@ -12,7 +20,7 @@
  * --- MONITOR PROFILE CALIBRATION & CONTROL GUIDE ---
  * 1. LED Toggle & Undo (Double Click):
  *    - Double-click the button (two clicks within 600ms) to toggle the built-in LED state (ON/OFF) 
- *      and simultaneously trigger an UNDO action, reverting calibration coefficients to the previous state.* 
+ *      and simultaneously trigger an UNDO action, reverting calibration coefficients to the previous state.
  *      
  * 2. 2-Step Calibration (Single Click on Button):
  *    - Attention! This advanced color sensor mode requires more memory and the Arduino NANO does not have it.
@@ -22,7 +30,8 @@
  *    - Note: If more than 10 seconds pass before the second click, the state resets back to Step 1 (White).
  *   
  */
-#define PROFILE_BASIC 1   // Lightweight code (Monitor/Paper), HW Button - LED Toggle (Double Click) and White calibration (Single Click)
+//#define PROFILE_BASIC 1   // Lightweight code (Monitor/Paper), HW Button - LED Toggle (Double Click) and White calibration (Single Click)
+//**************** END - moved to config.h ************************
 
 // --- I2C Address and Registers for TCS34725 ---
 #define TCS34725_ADDRESS          0x29
@@ -55,14 +64,6 @@
  * 0x03 = 60x Gain  (For very low light conditions)
  */
 
-/* 
- * --- Default LED State Macro ---
- * Set to 1 to boot up with LED ON.
- * Set to 0 to boot up with LED OFF.
- * Can be toggled at runtime using a double-click on the hardware button.
- */
-#define TCS34725_LED_DEFAULT_ON 1
-
 class TCS34725 : public Sensor {
   public:
     TCS34725(uint32_t _period, uint8_t _port);
@@ -75,6 +76,18 @@ class TCS34725 : public Sensor {
     float sat_pct;
     float light_pct; // Used for Value (Brightness) in HSV model
 
+    // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
+    // Variables to store pure, 16-bit uncalibrated photon counts 
+    // directly from the sensor. Crucial for analytical chemistry.
+    uint16_t raw_r;
+    uint16_t raw_g;
+    uint16_t raw_b;
+    uint16_t raw_c;
+    // ------------------------------------------
+
+    //Iluminance in lux calculation
+    float rgb_illum;
+
     // White balance coefficients
     float r_coeff;
     float g_coeff;
@@ -84,9 +97,9 @@ class TCS34725 : public Sensor {
     float prev_r_coeff;
     float prev_g_coeff;
     float prev_b_coeff;
-    float prev_cmax_reference; // Backup for undo logic[cite: 4]
+    float prev_cmax_reference; // Backup for undo logic
 
-    float cmax_reference;      // Reference for 100% brightness[cite: 4]
+    float cmax_reference;      // Reference for 100% brightness
 
     #ifdef PROFILE_MONITOR
     float cmin_reference;      // Reference for 0% brightness (Black point)

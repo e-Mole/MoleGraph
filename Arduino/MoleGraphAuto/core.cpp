@@ -33,50 +33,156 @@ void clean(){
 
 Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
   switch (_type) {
-    case SENSOR_DS18B20: return new DS18B20(_period, _port);
-    case SENSOR_AD: return new AD(_period, _port);
-	  case SENSOR_PULS: return new PULSE(_period, _port);
-    case SENSOR_VL53L0X: return new VL53L0X(_period, _port);
-    case SENSOR_FORCE: return new Silomer(_period, _port);
-    //case SENSOR_HX711: return new HX711(_period, _port);
-    //case SENSOR_DHT11: return new DHT11(_period, _port);
-    //case SENSOR_DHT11: return new DHT11MG(_period, _port);
-    case SENSOR_MLX90614: return new MLX90614(_period, _port);
-    case SENSOR_MPX5700DP: return new MPX5700DP(_period, _port);
-    case SENSOR_SRF04: return new SRF04(_period, _port);
-//    case SENSOR_LUX: return new Lux(_period, _port); // replaced with universal AD
-    case SENSOR_LUX: return new AD(_period, _port);
-    case SENSOR_TIMER: return new Timer(_period, _port);
-    case SENSOR_LED: return new LedBlink(_period, _port);
-//    case SENSOR_MAGNETOMETR: return new Magnetometr(_period, _port); // replaced with universal AD
-    case SENSOR_MAGNETOMETR: return new AD(_period, _port);
-//    case SENSOR_SOUNDMETER: return new Soundmeter(_period, _port); // replaced with universal AD
-    case SENSOR_SOUNDMETER: return new AD(_period, _port);
-    case SENSOR_BME280: return new BME280(_period, _port);
-//    case SENSOR_CO2: return new MHZ16(_period, _port);
-//    case SENSOR_CO2: return new Timer(_period, _port); //replaced with TIMER sensor (read PWM)
-    case SENSOR_CO2: return new MHZ16(_period, _port); //replaced with TIMER sensor (read PWM)
-	  case SENSOR_DCV25: return new VOLT25(_period, _port);
-    case SENSOR_DCA5: return new AMP5(_period, _port);
-	  case SENSOR_DCA30: return new AMP30(_period, _port);
-	  case SENSOR_VEML6070: return new VEML6070(_period, _port);
-	  case SENSOR_MQ3: return new MQ3(_period, _port);
-    case SENSOR_MQ2: return new MQ2(_period, _port);    
-	  case SENSOR_PH: return new PH(_period, _port);
-	  case SENSOR_LUXBH1750: return new LUXBH1750(_period, _port);
-    case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
-	  case SENSOR_MAX6675: return new MAX6675(_period, _port);
-	  case SENSOR_AD8232: return new AD8232(_period, _port);
-    case SENSOR_CALIPER: return new CALIPER(_period, _port);	
-    case SENSOR_CON: return new CONDUCT(_period, _port); // conductivity and salinity 
-    case SENSOR_ORP: return new AD(_period, _port);
-    case SENSOR_TURB: return new AD(_period, _port);
-    case SENSOR_P_GATE: return new Timer(_period, _port);
-    case SENSOR_TCS34725: return new TCS34725(_period, _port);
     
-//    case SENSOR_B_BOARD //now for programming only
-//    case SENSOR_SPIRO
-//    case SENSOR_GEIGER
+    // AD is allways enabled (Arduino integrated 10bit ADC)
+    case SENSOR_AD: return new AD(_period, _port);
+    
+    // TIMER is allways enabled (Arduino integrated)
+    case SENSOR_TIMER: return new Timer(_period, _port);
+    
+    #ifdef ENABLE_DS18B20
+      case SENSOR_DS18B20: return new DS18B20(_period, _port);
+    #endif
+    
+    #ifdef ENABLE_PULS
+      case SENSOR_PULS: return new PULSE(_period, _port);
+    #endif
+
+    #ifdef ENABLE_VL53L0X
+      case SENSOR_VL53L0X: return new VL53L0X(_period, _port);
+    #endif
+
+    #ifdef ENABLE_FORCE
+      case SENSOR_FORCE: return new Silomer(_period, _port);
+    #endif
+
+    #ifdef ENABLE_HX711
+      //case SENSOR_HX711: return new HX711(_period, _port);
+    #endif
+
+    #ifdef ENABLE_DHT11
+      //case SENSOR_DHT11: return new DHT11(_period, _port);
+    #endif
+
+    #ifdef ENABLE_MLX90614
+      case SENSOR_MLX90614: return new MLX90614(_period, _port);
+    #endif
+
+    #ifdef ENABLE_MPX5700DP
+      case SENSOR_MPX5700DP: return new MPX5700DP(_period, _port);
+    #endif
+
+    #ifdef ENABLE_SRF04
+      case SENSOR_SRF04: return new SRF04(_period, _port);
+    #endif
+
+    #ifdef ENABLE_LUX
+      case SENSOR_LUX: return new AD(_period, _port);
+    #endif
+
+    #ifdef ENABLE_LED
+      case SENSOR_LED: return new LedBlink(_period, _port); //for testing sampling frequency only
+    #endif
+
+    #ifdef ENABLE_MAGNETOMETR
+      case SENSOR_MAGNETOMETR: return new AD(_period, _port);
+    #endif
+
+    #ifdef ENABLE_SOUNDMETER
+      case SENSOR_SOUNDMETER: return new AD(_period, _port);
+    #endif
+
+    #ifdef ENABLE_BME280
+      case SENSOR_BME280: return new BME280(_period, _port);
+    #endif
+
+    #ifdef ENABLE_CO2
+      case SENSOR_CO2: return new MHZ16(_period, _port); //use TIMER sensor (read PWM)
+    #endif
+
+    #ifdef ENABLE_DCV25
+      case SENSOR_DCV25: return new VOLT25(_period, _port);
+    #endif
+
+    #ifdef ENABLE_DCA5
+      case SENSOR_DCA5: return new AMP5(_period, _port);
+    #endif
+
+    #ifdef ENABLE_DCA30
+      case SENSOR_DCA30: return new AMP30(_period, _port);
+    #endif
+
+    #ifdef ENABLE_VEML6070
+      case SENSOR_VEML6070: return new VEML6070(_period, _port);
+    #endif
+
+    #ifdef ENABLE_MQ3
+      case SENSOR_MQ3: return new MQ3(_period, _port);
+    #endif
+
+    #ifdef ENABLE_MQ2
+      case SENSOR_MQ2: return new MQ2(_period, _port);    
+    #endif
+
+    #ifdef ENABLE_PH
+      case SENSOR_PH: return new PH(_period, _port);
+    #endif
+
+    #ifdef ENABLE_LUXBH1750
+      case SENSOR_LUXBH1750: return new LUXBH1750(_period, _port);
+    #endif
+
+    #ifdef ENABLE_LSM303DLHC
+      case SENSOR_LSM303DLHC: return new LSM303DLHC(_period, _port);
+    #endif
+
+    #ifdef ENABLE_MAX6675
+      case SENSOR_MAX6675: return new MAX6675(_period, _port);
+    #endif
+
+    #ifdef ENABLE_AD8232
+      case SENSOR_AD8232: return new AD8232(_period, _port);
+    #endif
+
+    #ifdef ENABLE_CALIPER
+      case SENSOR_CALIPER: return new CALIPER(_period, _port);    
+    #endif
+
+    #ifdef ENABLE_CON
+      case SENSOR_CON: return new CONDUCT(_period, _port); // conductivity and salinity 
+    #endif
+
+    #ifdef ENABLE_ORP
+      case SENSOR_ORP: return new AD(_period, _port);
+    #endif
+
+    #ifdef ENABLE_TURB
+      case SENSOR_TURB: return new AD(_period, _port);
+    #endif
+
+    #ifdef ENABLE_P_GATE
+      case SENSOR_P_GATE: return new Timer(_period, _port);
+    #endif
+
+    #ifdef ENABLE_TCS34725
+      case SENSOR_TCS34725: return new TCS34725(_period, _port);
+    #endif
+
+    #ifdef ENABLE_O2
+      case SENSOR_O2: return new Oxygen(_period, _port);    
+    #endif
+    
+    #ifdef ENABLE_B_BOARD
+      //case SENSOR_B_BOARD //now for programming only
+    #endif
+
+    #ifdef ENABLE_SPIRO
+      //case SENSOR_SPIRO
+    #endif
+
+    #ifdef ENABLE_GEIGER
+      //case SENSOR_GEIGER
+    #endif
   }
 }
 
@@ -97,6 +203,13 @@ void addChannelSensor(uint8_t _channel, SensorType _type, uint32_t _period, int8
   }
   else{
     sensors[_port] = createSensor(_type, _period, _port);
+    // --- LAZY VALIDATION CHECK - SENSOR EXIST? ---
+    if (sensors[_port] == NULL) {
+      //sensor disabled in FW
+      //TFs ToDo: send err message to app
+      return;
+    }
+    // -----------------------------    
   }
   channels[_channel].AssignSensor(sensors[_port], _spec);
 }

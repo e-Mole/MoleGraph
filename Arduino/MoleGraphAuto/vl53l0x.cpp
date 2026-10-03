@@ -1,5 +1,10 @@
 #include "vl53l0x.h"
 
+#ifndef USE_VL53L1X
+// =========================================================================
+// --- BLOCK 1: OLDER VL53L0X SENSOR (100% ORIGINAL UNTOUCHED CODE) ---
+// =========================================================================
+
 #define VL53L0X_WAIT  (55 * TICK_PER_MS)
 #define VL53L0X_ADDR  (0x52 >> 1)
 
@@ -86,9 +91,9 @@ bool VL53L0X::process() {
 float VL53L0X::read(uint8_t _spec) {
   float result = NO_DATA;
   switch (_spec) {
-    case 0: result = position; position = NO_DATA; break;  // poloha
-    case 1: result = velocity; velocity = NO_DATA; break;  // rychlost
-    case 2: result = acceleration; acceleration = NO_DATA; break;  // zrychleni
+    case 0: result = position; position = NO_DATA; break;  // position
+    case 1: result = velocity; velocity = NO_DATA; break;  // velocity
+    case 2: result = acceleration; acceleration = NO_DATA; break;  // acceleration
   }
   return result;
 }
@@ -98,3 +103,74 @@ void VL53L0X::start(uint32_t now) {
   delta  = period; 
   active = 0;
 }
+
+#else
+// =========================================================================
+// --- BLOCK 2: NEW VL53L1X SENSOR (POLOLU LIBRARY WRAPPER) ---
+// =========================================================================
+
+VL53L0X::VL53L0X(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
+  delta  = period;
+  active = 0;
+  
+  sensorL1X.setTimeout(500);
+  if (sensorL1X.init()) {
+    sensorL1X.setDistanceMode(VL53L1X::Long);
+    sensorL1X.setMeasurementTimingBudget(33000); 
+  }
+}
+
+void VL53L0X::start(uint32_t now) {
+  Sensor::start(now);
+  delta  = period; 
+  active = 0;
+  
+  uint32_t period_ms = period / TICK_PER_MS;
+  sensorL1X.startContinuous(period_ms); 
+}
+
+bool VL53L0X::process() {
+  if (Action(delta)) {
+    if (sensorL1X.dataReady()) {
+      
+      uint16_t x = sensorL1X.read(false);
+      uint8_t status = sensorL1X.ranging_data.range_status;
+      
+      bool valid_data = (status == 0 || status == 4 || status == 6 || status == 7 || status == 9);
+
+      if (valid_data) {
+        value_2 = value_1;
+        value_1 = value;
+        value = x * 0.001f;
+        position = value;
+        
+        if (value_1 != NO_DATA) {
+          float dT = period * TIME_BASE;
+          velocity = (value - value_1) / dT;
+          if (value_2 != NO_DATA) {
+            acceleration = (value - 2 * value_1 + value_2) / (dT * dT);
+          }
+        }
+      } else {
+        value = NO_DATA;
+      }
+      
+      time += period;
+      return 1;
+    } else {
+      return 0; 
+    }
+  }
+  return 0;
+}
+
+float VL53L0X::read(uint8_t _spec) {
+  float result = NO_DATA;
+  switch (_spec) {
+    case 0: result = position; position = NO_DATA; break; // position
+    case 1: result = velocity; velocity = NO_DATA; break; // velocity
+    case 2: result = acceleration; acceleration = NO_DATA; break; // acceleration
+  }
+  return result;
+}
+#endif

@@ -1,0 +1,143 @@
+#include "tcs34725.h"
+
+TCS34725::TCS34725(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
+  _i2caddr = TCS34725_ADDRESS;
+  
+  hue_deg = 0.0;
+  sat_pct = 0.0;
+  light_pct = 0.0;
+  color_temp_k = 0.0;
+  illuminance_lux = 0.0;
+
+  initSensor();
+}
+
+bool TCS34725::process() {
+  if (Action(period)) {
+    readData();
+    time += period;
+    return 1;
+  }
+  return 0;
+}
+
+float TCS34725::read(uint8_t _spec) {
+  float result = NO_DATA;
+  switch (_spec) {
+    case 0: result = hue_deg; break;         // Hue H (0 - 360 deg)
+    case 1: result = sat_pct; break;         // Saturation S (0 - 100 %)
+    case 2: result = light_pct; break;       // Lightness L (0 - 100 %)
+    case 3: result = illuminance_lux; break; // Illuminance (Lux)
+    case 4: result = color_temp_k; break;    // Color Temperature (K)
+  }
+  return result;
+}
+
+bool TCS34725::initSensor() {
+  Wire.begin();
+  
+  // Power ON
+  write8(TCS34725_ENABLE, TCS34725_ENABLE_PON);
+  delay(3); // Wait for the sensor to wake up (approx. 2.4 ms required)
+  
+  // Enable ADC
+  write8(TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
+
+  // Set Integration Time to 24 ms (0xF6)
+  write8(TCS34725_ATIME, 0xF6);
+
+  // Set Gain to 4x (0x01)
+  write8(TCS34725_CONTROL, 0x01);
+
+  return true;
+}
+
+void TCS34725::readData() {
+  uint16_t raw_c, raw_r, raw_g, raw_b;
+
+  // Request 8 bytes (C, R, G, B - Low and High bytes)
+  Wire.beginTransmission((uint8_t)_i2caddr);
+  Wire.write((uint8_t)(TCS34725_COMMAND_BIT | TCS34725_CDATAL));
+  Wire.endTransmission();
+
+  Wire.requestFrom((uint8_t)_i2caddr, (byte)8);
+  if (Wire.available() == 8) {
+    raw_c = Wire.read() | (Wire.read() << 8);
+    raw_r = Wire.read() | (Wire.read() << 8);
+    raw_g = Wire.read() | (Wire.read() << 8);
+    raw_b = Wire.read() | (Wire.read() << 8);
+  } else {
+    return;
+  }
+
+  // Prevent division by zero in complete darkness
+  if (raw_c == 0) {
+    hue_deg = 0;
+    sat_pct = 0;
+    light_pct = 0;
+    color_temp_k = 0;
+    illuminance_lux = 0;
+    return;
+  }
+
+  // --- Calculate Illuminance (Lux) and Color Temperature (Kelvin) ---
+  float X = (-0.14282 * raw_r) + (1.54924 * raw_g) - (0.95641 * raw_b);
+  float Y = (-0.32466 * raw_r) + (1.57837 * raw_g) - (0.73191 * raw_b);
+  float Z = (-0.68202 * raw_r) + (0.77073 * raw_g) + (0.56332 * raw_b);
+
+  illuminance_lux = (Y < 0) ? 0 : Y;
+
+  float xyz_sum = X + Y + Z;
+  if (xyz_sum > 0) {
+    float xc = X / xyz_sum;
+    float yc = Y / xyz_sum;
+    float n = (xc - 0.3320) / (0.1858 - yc);
+    float cct = 449.0 * (n * n * n) + 3525.0 * (n * n) + 6823.3 * n + 5520.33;
+    color_temp_k = (cct < 0) ? 0 : cct;
+  } else {
+    color_temp_k = 0;
+  }
+
+  // --- Calculate HSL ---
+  // Normalize R,G,B values against Clear channel (0.0 to 1.0)
+  float r = (float)raw_r / raw_c;
+  float g = (float)raw_g / raw_c;
+  float b = (float)raw_b / raw_c;
+
+  float cmax = max(r, max(g, b));
+  float cmin = min(r, min(g, b));
+  float delta = cmax - cmin;
+
+  float h = 0.0;
+  float s = 0.0;
+  float l = (cmax + cmin) / 2.0;
+
+  if (delta > 0.00001) { // Floating point tolerance instead of strict zero
+    s = delta / (1.0 - abs(2.0 * l - 1.0));
+
+    if (cmax == r) {
+      h = 60.0 * fmod(((g - b) / delta), 6.0);
+    } else if (cmax == g) {
+      h = 60.0 * (((b - r) / delta) + 2.0);
+    } else if (cmax == b) {
+      h = 60.0 * (((r - g) / delta) + 4.0);
+    }
+    
+    // Ensure hue is positive
+    if (h < 0.0) {
+        h += 360.0;
+    }
+  }
+
+  hue_deg = h;
+  sat_pct = s * 100.0;
+  light_pct = l * 100.0;
+}
+
+// --- I2C Helpers ---
+void TCS34725::write8(byte reg, byte value) {
+  Wire.beginTransmission((uint8_t)_i2caddr);
+  Wire.write((uint8_t)(TCS34725_COMMAND_BIT | reg));
+  Wire.write((uint8_t)value);
+  Wire.endTransmission();
+}

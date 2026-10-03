@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include <Wire.h>
+#include "config.h"
 
 #define MAX_PORTS 4
 #define NO_DATA 3.4028235E+38        //-1.0e-8f

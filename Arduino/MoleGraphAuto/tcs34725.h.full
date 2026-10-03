@@ -1,0 +1,59 @@
+#ifndef TCS34725_h
+#define TCS34725_h
+
+#include "timer.h"
+
+// --- I2C Address and Registers for TCS34725 ---
+#define TCS34725_ADDRESS          0x29
+#define TCS34725_COMMAND_BIT      0x80
+#define TCS34725_ENABLE           0x00
+#define TCS34725_ENABLE_PON       0x01 // Power ON
+#define TCS34725_ENABLE_AEN       0x02 // ADC Enable
+#define TCS34725_ATIME            0x01 // Integration time register
+#define TCS34725_CONTROL          0x0F // Gain control register
+#define TCS34725_CDATAL           0x14 // Clear channel data low byte
+
+/* 
+ * --- Integration Time (ATIME) Options ---
+ * Sets the internal integration time of the sensor.
+ * Longer times provide higher resolution and better low-light performance, 
+ * but decrease the maximum sampling rate.
+ * 
+ * 0xFF = 2.4 ms  (Fastest, lowest resolution)
+ * 0xF6 = 24 ms   (Good balance for real-time tracking)
+ * 0xD5 = 101 ms
+ * 0xC0 = 154 ms
+ * 0x00 = 700 ms  (Slowest, highest resolution)
+ * 
+ * --- Gain (CONTROL) Options ---
+ * Sets the sensitivity of the sensor.
+ * 
+ * 0x00 = 1x Gain
+ * 0x01 = 4x Gain   (Good default for normal lighting)
+ * 0x02 = 16x Gain  (Good for darker environments)
+ * 0x03 = 60x Gain  (For very low light conditions)
+ */
+
+class TCS34725 : public Sensor {
+  public:
+    TCS34725(uint32_t _period, uint8_t _port);
+    virtual bool process();
+    virtual float read(uint8_t _spec);
+
+  private:
+    float hue_deg;
+    float sat_pct;
+    float light_pct;
+    float color_temp_k;
+    float illuminance_lux;
+
+    uint8_t _i2caddr;
+
+    bool initSensor();
+    void readData();
+
+    // I2C functions
+    void write8(byte reg, byte value);
+};
+
+#endif

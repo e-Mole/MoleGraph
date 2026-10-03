@@ -1,6 +1,8 @@
 #ifndef Core_h
 #define Core_h
 
+#include "config.h" // Central configuration
+
 #include "hw.h"
 //#include "sensor.h"
 #include "channel.h"
@@ -36,6 +38,7 @@
 #include "ad8232.h"
 #include "caliper.h"
 #include "tcs34725.h"
+#include "oxygen.h"
 
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG
@@ -55,6 +58,7 @@ enum Instructions
   INS_CONTINUE = 10,
   INS_INITIALIZE = 11,
   INS_SET_SENSOR = 12,
+  INS_ERROR = 100,       // <--- SENSOR LAZY VALIDATION CHECK
   INS_DEBUG = 127,
 };
 
@@ -103,8 +107,8 @@ enum SensorType {
  // SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120                      // --- ABANDONED
   SENSOR_TIMER        = 103,  // D103 Delka pulsu, perioda a frekvence, citac signalu 0/1     // OK
   SENSOR_VL53L0X      = 105,  // I105 Dalkomer VL53L0X                                        // OK
-  SENSOR_HX711        = 107,  //
-  SENSOR_LED          = 200,
+  SENSOR_HX711        = 107,  // HX711 24bit AD converter for tensometers
+  SENSOR_LED          = 200,  // LED module for sample frequency testing 
 };
 
 enum ScanType

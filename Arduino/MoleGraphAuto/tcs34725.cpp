@@ -71,6 +71,13 @@ TCS34725::TCS34725(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   sat_pct = 0.0;
   light_pct = 0.0;
 
+  // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
+  raw_r = 0;
+  raw_g = 0;
+  raw_b = 0;
+  raw_c = 0;
+  // ------------------------------------------
+
   r_coeff = 1.0f;
   g_coeff = 1.0f;
   b_coeff = 1.0f;
@@ -83,7 +90,7 @@ TCS34725::TCS34725(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   last_calib_time = 0;
   calib_state = 0; 
   #else
-  cmax_reference = 10240.0f; // Default physical max[cite: 3]
+  cmax_reference = 10240.0f; // Default physical max
   prev_cmax_reference = 10240.0f;
   #endif
 
@@ -114,6 +121,15 @@ float TCS34725::read(uint8_t _spec) {
     case 0: result = hue_deg; break;    
     case 1: result = sat_pct; break;    
     case 2: result = light_pct; break;  
+    // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
+    // Exporting raw 16-bit values for external analytical calculations.
+    // Implicit cast to float safely preserves precision for 16-bit integers.
+    case 3: result = raw_r; break; // Raw Red
+    case 4: result = raw_g; break; // Raw Green
+    case 5: result = raw_b; break; // Raw Blue
+    case 6: result = raw_c; break; // Raw Clear (Total light)
+    case 7: result = rgb_illum; break; // Total illumination in lux from RGB values
+    // ------------------------------------------
   }
   return result;
 }
@@ -123,7 +139,7 @@ bool TCS34725::initSensor() {
   
   I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ENABLE, TCS34725_ENABLE_PON);
   
-  // Use custom delay_us() because standard Arduino delay() is broken by MoleGraph Timer0 override[cite: 3]
+  // Use custom delay_us() because standard Arduino delay() is broken by MoleGraph Timer0 override
   delay_us(3000); 
   
   I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
@@ -132,8 +148,9 @@ bool TCS34725::initSensor() {
   I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ATIME, 0xD5); // 101 ms
   I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_CONTROL, 0x03); // 60x Gain
   #else
-  I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ATIME, 0xF6); // 24 ms[cite: 3]
-  I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_CONTROL, 0x02); // 16x Gain[cite: 3]
+  //I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ATIME, 0xF6); // 24 ms
+  I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_ATIME, 0xD5); // 101 ms
+  I2C_WriteRegister(_i2caddr, TCS34725_COMMAND_BIT | TCS34725_CONTROL, 0x02); // 16x Gain
   #endif
 
   return true;
@@ -141,38 +158,38 @@ bool TCS34725::initSensor() {
 
 // Called by MoleGraph core when the hardware button is pressed
 void TCS34725::calibrate() {
-  // Use MoleGraph's custom Millis() because standard Arduino millis() is killed by Timer0 override[cite: 3]
+  // Use MoleGraph's custom Millis() because standard Arduino millis() is killed by Timer0 override
   uint32_t now = Millis();
   
   // --- SPAM SHIELD ---
-  // MoleGraph loop() calls this method thousands of times during a single 100ms button window.[cite: 3]
-  // We ignore all calls that happen within 200ms of the previous one.[cite: 3]
+  // MoleGraph loop() calls this method thousands of times during a single 100ms button window.
+  // We ignore all calls that happen within 200ms of the previous one.
   if (now - last_process_time < 200) {
       return;
   }
   last_process_time = now;
   // -------------------
 
-  // If less than 600 ms passed since the actual last click, it's a DOUBLE CLICK[cite: 3]
+  // If less than 600 ms passed since the actual last click, it's a DOUBLE CLICK
   if (last_click_time != 0 && (now - last_click_time < 600)) {
-    // 1. Toggle the LED state[cite: 3]
+    // 1. Toggle the LED state
     led_state = !led_state;
     digitalWrite(led_pin, led_state ? HIGH : LOW);
     
-    // 2. UNDO trick: Revert calibration coefficients to previous state[cite: 3]
+    // 2. UNDO trick: Revert calibration coefficients to previous state
     r_coeff = prev_r_coeff;
     g_coeff = prev_g_coeff;
     b_coeff = prev_b_coeff;
-    cmax_reference = prev_cmax_reference; // Restore brightness reference[cite: 3]
+    cmax_reference = prev_cmax_reference; // Restore brightness reference
     
     #ifdef PROFILE_MONITOR
     cmin_reference = prev_cmin_reference;
     calib_state = 0; // Cancel multi-step calibration
     #endif
 
-    last_click_time = 0; // Reset to prevent a third click acting as another double click[cite: 3]
+    last_click_time = 0; // Reset to prevent a third click acting as another double click
   } 
-  // SINGLE CLICK (or the first click of a potential double click)[cite: 3]
+  // SINGLE CLICK (or the first click of a potential double click)
   else {
     performCalibration();
     last_click_time = now;
@@ -225,10 +242,14 @@ void TCS34725::performCalibration() {
 }
 
 void TCS34725::readData() {
-  uint16_t raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); 
-  uint16_t raw_r = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x16); 
-  uint16_t raw_g = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x18); 
-  uint16_t raw_b = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x1A); 
+  // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
+  // Removed "uint16_t" local declarations so these values are stored 
+  // directly into the class member variables for external access.
+  raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); 
+  raw_r = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x16); 
+  raw_g = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x18); 
+  raw_b = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x1A); 
+  // ------------------------------------------
 
   if (raw_c == 0) {
     hue_deg = 0; sat_pct = 0; light_pct = 2.0f;
@@ -287,13 +308,13 @@ void TCS34725::readData() {
 // ====================================================================
 
 void TCS34725::performCalibration() {
-  // Save current coefficients to backup before applying new ones[cite: 3]
+  // Save current coefficients to backup before applying new ones
   prev_r_coeff = r_coeff;
   prev_g_coeff = g_coeff;
   prev_b_coeff = b_coeff;
   prev_cmax_reference = cmax_reference;
 
-  uint16_t raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); // Read Clear[cite: 3]
+  uint16_t raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); // Read Clear
   uint16_t raw_r = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x16); 
   uint16_t raw_g = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x18); 
   uint16_t raw_b = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x1A); 
@@ -303,7 +324,7 @@ void TCS34725::performCalibration() {
   if (raw_b == 0) raw_b = 1;
   if (raw_c == 0) raw_c = 1;
 
-  cmax_reference = (float)raw_c; // Set current illumination as 100%[cite: 3]
+  cmax_reference = (float)raw_c; // Set current illumination as 100%
 
   uint16_t max_val = max(raw_r, max(raw_g, raw_b));
 
@@ -313,22 +334,25 @@ void TCS34725::performCalibration() {
 }
 
 void TCS34725::readData() {
-  uint16_t raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); 
-  uint16_t raw_r = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x16); 
-  uint16_t raw_g = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x18); 
-  uint16_t raw_b = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x1A); 
+  // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
+  // Removed "uint16_t" local declarations to store values in the class scope.
+  raw_c = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x14); 
+  raw_r = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x16); 
+  raw_g = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x18); 
+  raw_b = I2C_ReadData16LE(_i2caddr, TCS34725_COMMAND_BIT | 0x1A); 
+  // ------------------------------------------
 
   if (raw_c == 0) {
     hue_deg = 0; sat_pct = 0; light_pct = 0;
     return; 
   }
 
-  // Apply white balance coefficients[cite: 3]
+  // Apply white balance coefficients
   float r = raw_r * r_coeff;
   float g = raw_g * g_coeff;
   float b = raw_b * b_coeff;
 
-  // Calculate brightness relative to calibrated reference[cite: 3]
+  // Calculate brightness relative to calibrated reference
   float v = (raw_c / cmax_reference) * 100.0f; 
   if (v > 100.0f) v = 100.0f;
 
@@ -357,5 +381,10 @@ void TCS34725::readData() {
   hue_deg = h;
   sat_pct = s * 100.0f;
   light_pct = v;
+  //illuminace in lux calc from RGB
+  rgb_illum = (-0.32466F * raw_r ) + (1.57837F * raw_g ) + (-0.73191F * raw_b );
+    if (rgb_illum < 0) {
+      rgb_illum = 0;
+    }
 }
 #endif

@@ -234,6 +234,15 @@ ChannelSettings::ChannelSettings(
     _InitializeShapeCombo(channelProxy);
     _InitializeShowAllMarks(channelProxy->AreAllMarksShown());
     _InitializePenStyle(channelProxy->GetPenStyle());
+
+#if !defined(Q_OS_ANDROID)
+    // Combobox width on Windows/Linux/Mac - all text visible (sensor name, quantity name)
+    m_sensorNameComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    m_sensorNameComboBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+    m_sensorQuantityComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    m_sensorQuantityComboBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+#endif
 }
 
 void ChannelSettings::_HideAllOptional()

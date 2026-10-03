@@ -15,11 +15,27 @@ DEFINES += TARGET=\\\"$$TARGET\\\"
 
 TEMPLATE = app
 
-VERSION = 1
+#VERSION = 4.3
+GIT_VERSION_TAG = $$system(git describe --tags --abbrev=0)
+GIT_VERSION_TAG ~= s/^v//
+isEmpty(GIT_VERSION_TAG) {
+    GIT_VERSION_TAG = 1.0.0.0
+}
+WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
+# Regulární výraz: Odstranit vše od první pomlčky dál (včetně ní)
+# Tedy z "1.2-beta" udělá "1.2", z "1.2.1-rc1" udělá "1.2.1"
+WIN_NUMERIC_VERSION ~= s/-.*//
+VERSION = $$GIT_VERSION_TAG
+
 QMAKE_TARGET_COMPANY = e-Mole
-QMAKE_TARGET_PRODUCT = $$TARGET
-QMAKE_TARGET_DESCRIPTION = "School measuring system based on Arduino"
-QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
+QMAKE_TARGET_PRODUCT = "$$TARGET ($$GIT_VERSION_TAG)"
+
+#VERSION = 1
+#QMAKE_TARGET_COMPANY = e-Mole
+#QMAKE_TARGET_PRODUCT = $$TARGET
+
+QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2022 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 
@@ -177,7 +193,15 @@ CONFIG += mobility
 CONFIG += c++14
 MOBILITY =
 
-TRANSLATIONS += languages/serialToGraph_cs.ts
+TRANSLATIONS += \
+    languages/serialToGraph_cs.ts \
+    languages/serialToGraph_de.ts \
+    languages/serialToGraph_fr.ts \
+    languages/serialToGraph_es.ts \
+    languages/serialToGraph_pl.ts \
+    languages/serialToGraph_pt.ts \
+    languages/serialToGraph_it.ts \
+    languages/serialToGraph_hu.ts
 
 win32{
     QT += serialport
@@ -223,6 +247,10 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
 
 ANDROID_ABIS = armeabi-v7a
+
+DISTFILES += \
+    languages/serialToGraph_de.ts \
+    languages/serialToGraph_fr.ts
 
 
 

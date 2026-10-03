@@ -2,5 +2,12 @@
     <qresource prefix="/">
         <file>languages/serialToGraph_cs.qm</file>
         <file>MoleGraph.png</file>
+        <file>languages/serialToGraph_de.qm</file>
+        <file>languages/serialToGraph_fr.qm</file>
+        <file>languages/serialToGraph_es.qm</file>
+        <file>languages/serialToGraph_hu.qm</file>
+        <file>languages/serialToGraph_it.qm</file>
+        <file>languages/serialToGraph_pl.qm</file>
+        <file>languages/serialToGraph_pt.qm</file>
     </qresource>
 </RCC>

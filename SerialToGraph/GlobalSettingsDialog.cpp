@@ -165,7 +165,14 @@ void GlobalSettingsDialog::_InitializeLanguage()
 {
     m_languages = new bases::ComboBox(this);
     m_languages->addItem("English", "en");
-    m_languages->addItem("čeština", "cs");
+    m_languages->addItem("Čeština", "cs");
+    m_languages->addItem("Deutsch", "de");
+    m_languages->addItem("Español", "es");
+    m_languages->addItem("Français", "fr");
+    m_languages->addItem("Italiano", "it");
+    m_languages->addItem("Magyar", "hu");
+    m_languages->addItem("Polski", "pl");
+    m_languages->addItem("Português", "pt");
 
     QString stored = m_settings.GetLanguage();
     for(int i = 0; i < m_languages->count(); ++i)

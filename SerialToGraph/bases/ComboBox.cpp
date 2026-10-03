@@ -6,6 +6,7 @@ namespace bases
 
 ComboBox::ComboBox(QWidget *parent) : QComboBox(parent)
 {
+
 #if defined(Q_OS_ANDROID)
     int width = int(double(physicalDpiX()) / GlobalSettings::GetInstance().getWidgetMinimalWidthDivider());
     setMinimumWidth(width);
@@ -21,6 +22,11 @@ ComboBox::ComboBox(QWidget *parent) : QComboBox(parent)
         QString("QComboBox::disabled {background-color: #C0C0C0; color: #FFFFFF;} QComboBox::QAbstractItemView { selection-background-color: LightBlue; selection-color: black;}"
         ).arg(height /2)
     );
+
+#else
+    // TFSmod: Not in Android (Windows etc. show long text in comboboxes)
+    //setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
 #endif
 }

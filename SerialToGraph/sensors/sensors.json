@@ -223,7 +223,23 @@
     {
       "id" : 48,
       "name" : "Brightness"
-    }	
+    },
+    {
+      "id" : 49,
+      "name" : "Red"
+    },
+    {
+      "id" : 50,
+      "name" : "Green"
+    },
+    {
+      "id" : 51,
+      "name" : "Blue"
+    },
+    {
+      "id" : 52,
+      "name" : "Clear"
+    }		
   ],
     "sensors": [
         {
@@ -817,6 +833,31 @@
                     "correction": "None",
                     "quantity": "Brightness",
                     "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Red",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Green",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Blue",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Clear",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Illuminace",
+                    "unit": "lux"
                 }
             ],
             "enabled": true,

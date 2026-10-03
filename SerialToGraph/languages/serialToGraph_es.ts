@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.1" language="es_ES">
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="../AboutDialog.cpp" line="11"/>
         <source>About</source>
-        <translation>O programu</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <location filename="../AboutDialog.cpp" line="20"/>
         <source>Version: %1</source>
-        <translation>verze: %1</translation>
+        <translation>Versión: %1</translation>
     </message>
     <message>
         <location filename="../AboutDialog.cpp" line="22"/>
         <source>Used libraries: %1, %2</source>
-        <translation>použité knihovny: %1, %2</translation>
+        <translation>Bibliotecas utilizadas: %1, %2</translation>
     </message>
 </context>
 <context>
     <name>AddDirDialog</name>
     <message>
         <source>Add Directory</source>
-        <translation type="vanished">Přidat adresář</translation>
+        <translation type="vanished">Añadir directorio</translation>
     </message>
     <message>
         <source>Directory Name</source>
-        <translation type="vanished">Název adresáře</translation>
+        <translation type="vanished">Nombre del directorio</translation>
     </message>
 </context>
 <context>
     <name>AxesDialog</name>
     <message>
         <source>Axes</source>
-        <translation type="vanished">Osy</translation>
+        <translation type="vanished">Ejes</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="vanished">Editovat</translation>
+        <translation type="vanished">Editar</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="vanished">Odstranit</translation>
+        <translation type="vanished">Eliminar</translation>
     </message>
     <message>
         <source>Add a New Axis</source>
-        <translation type="vanished">Přidat novou osu</translation>
+        <translation type="vanished">Añadir un nuevo eje</translation>
     </message>
     <message>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation type="vanished">Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny do osy &apos;%2&apos;.</translation>
+        <translation type="vanished">Todos los canales asignados al eje &apos;%1&apos; se moverán a un eje &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>Remove anyway</source>
-        <translation type="vanished">I tak odstranit</translation>
+        <translation type="vanished">Eliminar de todos modos</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
 </context>
 <context>
     <name>Axis</name>
     <message>
         <source>Axis %1</source>
-        <translation type="vanished">Osa %1</translation>
+        <translation type="vanished">Eje %1</translation>
     </message>
 </context>
 <context>
@@ -73,64 +73,64 @@
     <message>
         <location filename="../AxisChooseDialog.cpp" line="48"/>
         <source>New Axis...</source>
-        <translation>Nová osa...</translation>
+        <translation>Nuevo eje...</translation>
     </message>
     <message>
         <location filename="../AxisChooseDialog.cpp" line="34"/>
         <source>There might be just one channel on a horizontal axis. Values of a hannel &apos;%1&apos; are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.</source>
-        <translation>Na horizontální ose smí být pouze jeden kanál. Hodnoty kanálu &apos;%1&apos; jsou zobrazeny v časovém formatu a musí být přiřazen prázdné ose. Prosím vyberte prázdnou osu.</translation>
+        <translation>Solo puede haber un canal en un eje horizontal. Los valores del canal &apos;%1&apos; se muestran en formato de tiempo y, por lo tanto, deben asignarse a un eje vacío. Por favor, elija uno.</translation>
     </message>
     <message>
         <location filename="../AxisChooseDialog.cpp" line="40"/>
         <source>There might be just one channel on a horizontal axis. Please, chose a different one for a channel &apos;%1&apos;.</source>
-        <translation>Na horizontální ose smí být pouze jeden kanál. Prosím, vyberte jinou osu pro kanál &apos;%1&apos;.</translation>
+        <translation>Solo puede haber un canal en un eje horizontal. Por favor, elija otro eje para el canal &apos;%1&apos;.</translation>
     </message>
 </context>
 <context>
     <name>AxisEditDialog</name>
     <message>
         <source>Edit Axis...</source>
-        <translation type="vanished">Editovat Osy...</translation>
+        <translation type="vanished">Editar eje...</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="vanished">Typ</translation>
+        <translation type="vanished">Tipo</translation>
     </message>
     <message>
         <source>Horizontal</source>
-        <translation type="vanished">Horizontální</translation>
+        <translation type="vanished">Horizontal</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="vanished">Vertikální</translation>
+        <translation type="vanished">Vertical</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="vanished">Název</translation>
+        <translation type="vanished">Nombre</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="vanished">Barva</translation>
+        <translation type="vanished">Color</translation>
     </message>
     <message>
         <source>Left</source>
-        <translation type="vanished">Levá</translation>
+        <translation type="vanished">Izquierda</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="vanished">Pravá</translation>
+        <translation type="vanished">Derecha</translation>
     </message>
     <message>
         <source>Side</source>
-        <translation type="vanished">Strana</translation>
+        <translation type="vanished">Lado</translation>
     </message>
     <message>
         <source>Channels and Units</source>
-        <translation type="vanished">Kanály a jednotky</translation>
+        <translation type="vanished">Canales y unidades</translation>
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Zobrazit v grafu</translation>
+        <translation type="vanished">Mostrar en el gráfico</translation>
     </message>
 </context>
 <context>
@@ -138,117 +138,117 @@
     <message>
         <location filename="../AxisMenu.cpp" line="20"/>
         <source>Axes</source>
-        <translation>Osy</translation>
+        <translation>Ejes</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="33"/>
         <source>Edit</source>
-        <translation>Editovat</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="38"/>
         <source>Remove</source>
-        <translation>Odstranit</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="58"/>
         <source>Add New</source>
-        <translation>Přidat novou</translation>
+        <translation>Añadir nuevo</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="101"/>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation>Všechny kanály přiřazené ose &apos;%1&apos; budou přemístěny k ose &apos;%2&apos;.</translation>
+        <translation>Todos los canales asignados al eje &apos;%1&apos; se moverán a un eje &apos;%2&apos;.</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="103"/>
         <source>Remove anyway</source>
-        <translation>Přesto odstranit</translation>
+        <translation>Eliminar de todos modos</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
 </context>
 <context>
     <name>AxisSettings</name>
     <message>
         <source>Edit Axis...</source>
-        <translation type="obsolete">Editace Osy...</translation>
+        <translation type="obsolete">Editar eje...</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="17"/>
         <source>Axis Setting</source>
-        <translation>Nastavení osy</translation>
+        <translation>Configuración del eje</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="23"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="23"/>
         <source>Horizontal</source>
-        <translation>Horizontální</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="23"/>
         <source>Vertical</source>
-        <translation>Vertikální</translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="26"/>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="32"/>
         <source>Left</source>
-        <translation>Levá</translation>
+        <translation>Izquierda</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="33"/>
         <source>Right</source>
-        <translation>Pravá</translation>
+        <translation>Derecha</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="35"/>
         <source>Side</source>
-        <translation>Strana</translation>
+        <translation>Lado</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="39"/>
         <source>Channels and Units</source>
-        <translation>Kanály a jednotky</translation>
+        <translation>Canales y unidades</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="40"/>
         <source>Axis Name</source>
-        <translation>Název osy</translation>
+        <translation>Nombre del eje</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="42"/>
         <source>Show in Graph</source>
-        <translation>Ukaž v grafu</translation>
+        <translation>Mostrar en el gráfico</translation>
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Zobrazit v grafu</translation>
+        <translation type="vanished">Mostrar en el gráfico</translation>
     </message>
 </context>
 <context>
     <name>ButtonLine</name>
     <message>
         <source>Menu</source>
-        <translation type="vanished">Nabídka</translation>
+        <translation type="vanished">Menú</translation>
     </message>
     <message>
         <source>Frequency</source>
-        <translation type="vanished">Frekvence</translation>
+        <translation type="vanished">Frecuencia</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="vanished">Čas</translation>
+        <translation type="vanished">Tiempo</translation>
     </message>
     <message>
         <source>Hz</source>
@@ -257,169 +257,169 @@
     <message>
         <location filename="../ButtonLine.cpp" line="88"/>
         <source>Start</source>
-        <translation>Start</translation>
+        <translation>Iniciar</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="95"/>
         <source>Sample</source>
-        <translation>Vzorek</translation>
+        <translation>Muestra</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="99"/>
         <location filename="../ButtonLine.cpp" line="304"/>
         <source>Pause</source>
-        <translation>Pauza</translation>
+        <translation>Pausar</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="103"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation>Detener</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="235"/>
         <source>New</source>
-        <translation>Nový</translation>
+        <translation>Nuevo</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="238"/>
         <source>Open...</source>
-        <translation>Otevřít...</translation>
+        <translation>Abrir...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="239"/>
         <source>Open without Values...</source>
-        <translation>Otevřít bez hodnot...</translation>
+        <translation>Abrir sin valores...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="240"/>
         <source>Recently Used Files</source>
-        <translation>Nedávno použité soubory</translation>
+        <translation>Archivos recientes</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="245"/>
         <source>Save As...</source>
-        <translation>Uložit jako...</translation>
+        <translation>Guardar como...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="246"/>
         <source>Save without Values As...</source>
-        <translation>Uložit bez hodnot jako...</translation>
+        <translation>Guardar sin valores como...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="248"/>
         <source>Export to PNG...</source>
-        <translation>Exportovat do PNG...</translation>
+        <translation>Exportar a PNG...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="249"/>
         <source>Export Current Measurement to CSV...</source>
-        <translation>Exportovat aktuální měření do CSV...</translation>
+        <translation>Exportar medición actual a CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="250"/>
         <source>Export All Measurements to CSV...</source>
-        <translation>Exportovat všechna měření do CSV...</translation>
+        <translation>Exportar todas las mediciones a CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="252"/>
         <source>Settings...</source>
-        <translation>Nastavení...</translation>
+        <translation>Configuración...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="253"/>
         <source>About...</source>
-        <translation>O programu...</translation>
+        <translation>Acerca de...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="303"/>
         <source>Continue</source>
-        <translation>Pokračovat</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Open with values?</source>
-        <translation type="vanished">Otevřít s naměřenými hodnotami?</translation>
+        <translation type="vanished">¿Abrir con valores?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="vanished">Ano</translation>
+        <translation type="vanished">Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="vanished">Ne</translation>
+        <translation type="vanished">No</translation>
     </message>
     <message>
         <source>Just template without values has been stored.</source>
-        <translation type="vanished">Byla uložena pouze šablona bez naměřených hodnot.</translation>
+        <translation type="vanished">Solo se ha guardado la plantilla sin valores.</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="vanished">Uložit jako</translation>
+        <translation type="vanished">Guardar como</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="vanished">Otevřít</translation>
+        <translation type="vanished">Abrir</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="243"/>
         <source>Save</source>
-        <translation>Uložit</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <source>Save As</source>
-        <translation type="vanished">Uložit jako</translation>
+        <translation type="vanished">Guardar como</translation>
     </message>
     <message>
         <source>Export to PNG</source>
-        <translation type="vanished">Exportovat do PNG</translation>
+        <translation type="vanished">Exportar a PNG</translation>
     </message>
     <message>
         <source>Export Current Measurement to CSV</source>
-        <translation type="vanished">Exportovat aktuální měření do CSV</translation>
+        <translation type="vanished">Exportar medición actual a CSV</translation>
     </message>
     <message>
         <source>Export All Measurements to CSV</source>
-        <translation type="vanished">Exportovat všechna měření do CSV</translation>
+        <translation type="vanished">Exportar todas las mediciones a CSV</translation>
     </message>
     <message>
         <source>Export to CSV</source>
-        <translation type="vanished">Exportovat do CSV</translation>
+        <translation type="vanished">Exportar a CSV</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="82"/>
         <source>Panels</source>
-        <translation>Panely</translation>
+        <translation>Paneles</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="73"/>
         <source>File</source>
-        <translation>Soubor</translation>
+        <translation>Archivo</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="76"/>
         <source>Measurements</source>
-        <translation>Měření</translation>
+        <translation>Mediciones</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="79"/>
         <source>View</source>
-        <translation>Zobrazení</translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="85"/>
         <source>Axes</source>
-        <translation>Osy</translation>
+        <translation>Ejes</translation>
     </message>
     <message>
         <source>Graph</source>
-        <translation type="vanished">Graf</translation>
+        <translation type="vanished">Gráfico</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">Zobrazit vše</translation>
+        <translation type="vanished">Mostrar todo</translation>
     </message>
     <message>
         <source>Show None</source>
-        <translation type="vanished">Skrýt vše</translation>
+        <translation type="vanished">Ocultar todo</translation>
     </message>
     <message>
         <source>s</source>
@@ -427,29 +427,29 @@
     </message>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Připojeno</translation>
+        <translation type="vanished">Conectado</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Odpojeno</translation>
+        <translation type="vanished">Desconectado</translation>
     </message>
 </context>
 <context>
     <name>Channel</name>
     <message>
         <source>n/a</source>
-        <translation type="vanished">n/a</translation>
+        <translation type="vanished">n/d</translation>
     </message>
     <message>
         <source>hidden</source>
-        <translation type="vanished">skrytý</translation>
+        <translation type="vanished">oculto</translation>
     </message>
 </context>
 <context>
     <name>ChannelBase</name>
     <message>
         <source>n/a</source>
-        <translation type="vanished">n/a</translation>
+        <translation type="vanished">n/d</translation>
     </message>
 </context>
 <context>
@@ -457,37 +457,37 @@
     <message>
         <location filename="../ChannelMenu.cpp" line="20"/>
         <source>Panels</source>
-        <translation>Panely</translation>
+        <translation>Paneles</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="50"/>
         <source>Graph</source>
-        <translation>Graf</translation>
+        <translation>Gráfico</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="61"/>
         <source>All Channels</source>
-        <translation>Všechny kanály</translation>
+        <translation>Todos los canales</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="69"/>
         <source>No Channels</source>
-        <translation>Žádné kanály</translation>
+        <translation>Sin canales</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="77"/>
         <source>Add Virtual Channel</source>
-        <translation>Přidat virtuální kanál</translation>
+        <translation>Añadir canal virtual</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="107"/>
         <source>Edit</source>
-        <translation>Editovat</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="114"/>
         <source>Remove</source>
-        <translation>Odstranit</translation>
+        <translation>Eliminar</translation>
     </message>
 </context>
 <context>
@@ -495,361 +495,361 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="166"/>
         <source>Channel settings</source>
-        <translation>Nastavení kanálu</translation>
+        <translation>Configuración del canal</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="226"/>
         <source>Title</source>
-        <translation>Název</translation>
+        <translation>Título</translation>
     </message>
     <message>
         <source>Selected</source>
-        <translation type="vanished">Vybraný</translation>
+        <translation type="vanished">Seleccionado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="229"/>
         <location filename="../ChannelSettings.cpp" line="914"/>
         <source>Units</source>
-        <translation>Jednotky</translation>
+        <translation>Unidades</translation>
     </message>
     <message>
         <source>To right side</source>
-        <translation type="vanished">Na pravou stranu</translation>
+        <translation type="vanished">Al lado derecho</translation>
     </message>
     <message>
         <source>Store</source>
-        <translation type="vanished">Ulož</translation>
+        <translation type="vanished">Guardar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="995"/>
         <source>Shape</source>
-        <translation>Tvar</translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="971"/>
         <source>Cross</source>
-        <translation>Kříž</translation>
+        <translation>Cruz</translation>
     </message>
     <message>
         <source>Only one horizontal channel is supported. Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
-        <translation type="obsolete"> </translation>
+        <translation type="obsolete">Solo se admite un canal horizontal. El eje &apos;%1&apos; ha sido asignado al canal &apos;%2&apos;</translation>
     </message>
     <message>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
-        <translation type="obsolete">Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
+        <translation type="obsolete">El eje &apos;%1&apos; ha sido asignado al canal &apos;%2&apos;</translation>
     </message>
     <message>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;.</source>
-        <translation type="vanished">Osa &apos;%1&apos; byla přiřazena ke kanálu&apos;%2&apos;.</translation>
+        <translation type="vanished">El eje &apos;%1&apos; ha sido asignado al canal &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation type="vanished">Aceptar</translation>
     </message>
     <message>
         <source>Don&apos;t show it again</source>
-        <translation type="vanished">Příště nezobrazuj</translation>
+        <translation type="vanished">No mostrar de nuevo</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation type="vanished">Muestras</translation>
     </message>
     <message>
         <source>Time From Start</source>
-        <translation type="vanished">Doba od startu</translation>
+        <translation type="vanished">Tiempo desde el inicio</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Reálný čas</translation>
+        <translation type="vanished">Tiempo real</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="855"/>
         <source>No Line</source>
-        <translation>Žádná čára</translation>
+        <translation>Sin línea</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="856"/>
         <source>Solid Line</source>
-        <translation>Plná čára</translation>
+        <translation>Línea continua</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="857"/>
         <source>Dash Line</source>
-        <translation>Přerušovaná čára</translation>
+        <translation>Línea de trazos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="858"/>
         <source>Dot Line</source>
-        <translation>Tečkovaná čára</translation>
+        <translation>Línea de puntos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="859"/>
         <source>Dash Dot Line</source>
-        <translation>Přerušovaná tečkovaná čára</translation>
+        <translation>Línea de trazo y punto</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="860"/>
         <source>Dash Dot Dot Line</source>
-        <translation>Přerušovaná dvojitě tečkovaná čára</translation>
+        <translation>Línea de trazo y dos puntos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="863"/>
         <source>Pen Style</source>
-        <translation>Styl pera</translation>
+        <translation>Estilo de línea</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="913"/>
         <source>Style</source>
-        <translation>Styl</translation>
+        <translation>Estilo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="891"/>
         <source>Microseconds</source>
-        <translation>Mikrosekundy</translation>
+        <translation>Microsegundos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="63"/>
         <source>Current</source>
-        <translation>Proud</translation>
+        <translation>Corriente</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="67"/>
         <source>Humidity</source>
-        <translation>Vlhkost</translation>
+        <translation>Humedad</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="65"/>
         <source>Pressure</source>
-        <translation>Tlak</translation>
+        <translation>Presión</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="42"/>
         <source>Offset</source>
-        <translation>Posun</translation>
+        <translation>Desplazamiento (Offset)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="44"/>
         <source>Linear</source>
-        <translation>Lineární</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="46"/>
         <source>Quadratic</source>
-        <translation>Kvadratická</translation>
+        <translation>Cuadrática</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="59"/>
         <source>Temperature</source>
-        <translation>Teplota</translation>
+        <translation>Temperatura</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="61"/>
         <source>Voltage</source>
-        <translation>Napětí</translation>
+        <translation>Voltaje</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="70"/>
         <source>RAW</source>
-        <translation></translation>
+        <translation>RAW</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="72"/>
         <source>Acceleration</source>
-        <translation>Zrychlení</translation>
+        <translation>Aceleración</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="74"/>
         <source>Magnetic Field Intensity</source>
-        <translation>Intenzita magnetického pole</translation>
+        <translation>Intensidad del campo magnético</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="76"/>
         <source>Force</source>
-        <translation>Síla</translation>
+        <translation>Fuerza</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="78"/>
         <source>UV Index</source>
-        <translation></translation>
+        <translation>Índice UV</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="81"/>
         <source>pH</source>
-        <translation></translation>
+        <translation>pH</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="83"/>
         <source>Conductivity</source>
-        <translation>Vodivost</translation>
+        <translation>Conductividad</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="85"/>
         <source>Illuminace</source>
-        <translation>Osvětlení</translation>
+        <translation>Iluminancia</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="87"/>
         <source>Concentration</source>
-        <translation>Koncentrace</translation>
+        <translation>Concentración</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="89"/>
         <source>Distance</source>
-        <translation>Vzdálenost</translation>
+        <translation>Distancia</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="92"/>
         <source>Velocity</source>
-        <translation>Rychlost</translation>
+        <translation>Velocidad</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="94"/>
         <source>Trigger</source>
-        <translation>Trigger (0/1)</translation>
+        <translation>Disparador (0/1)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="96"/>
         <source>Sound intensity level</source>
-        <translation>Intenzita zvuku</translation>
+        <translation>Nivel de intensidad sonora</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="98"/>
         <source>Altitude</source>
-        <translation>Nadmořská výška</translation>
+        <translation>Altitud</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="100"/>
         <source>Dewpoint</source>
-        <translation>Rosný bod</translation>
+        <translation>Punto de rocío</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="103"/>
         <source>Concentration (ppm)</source>
-        <translation>Koncentrace (ppm)</translation>
+        <translation>Concentración (ppm)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="105"/>
         <source>Concentration (%)</source>
-        <translation>Koncentrace (%)</translation>
+        <translation>Concentración (%)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="107"/>
         <source>UV Intensity</source>
-        <translation>Intenzita UV</translation>
+        <translation>Intensidad UV</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="109"/>
         <source>Accel X</source>
-        <translation>Zrychlení X</translation>
+        <translation>Aceleración X</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="111"/>
         <source>Accel Y</source>
-        <translation>Zrychlení Y</translation>
+        <translation>Aceleración Y</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="114"/>
         <source>Accel Z</source>
-        <translation>Zrychlení Z</translation>
+        <translation>Aceleración Z</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="116"/>
         <source>Mag X</source>
-        <translation></translation>
+        <translation>Mag X</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="118"/>
         <source>Mag Y</source>
-        <translation></translation>
+        <translation>Mag Y</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="120"/>
         <source>Mag Z</source>
-        <translation></translation>
+        <translation>Mag Z</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="122"/>
         <source>Heading</source>
-        <translation>Směr</translation>
+        <translation>Rumbo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="125"/>
         <source>Roll</source>
-        <translation>Náklon</translation>
+        <translation>Alabeo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="127"/>
         <source>Pitch</source>
-        <translation>Stoupání</translation>
+        <translation>Cabeceo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="129"/>
         <source>Pulse duration (On)</source>
-        <translation>Délka pulzu (1)</translation>
+        <translation>Duración del pulso (1)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="131"/>
         <source>Pulse duration (Off)</source>
-        <translation>Délka pulzu (0)</translation>
+        <translation>Duración del pulso (0)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="133"/>
         <source>Period (Rising)</source>
-        <translation>Perioda (vzest. h.)</translation>
+        <translation>Período (Flanco de subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="136"/>
         <source>Period (Falling)</source>
-        <translation>Perioda (sest. h.)</translation>
+        <translation>Período (Flanco de bajada)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="138"/>
         <source>Frequency (Rising)</source>
-        <translation>Frekvence (vzest. h.)</translation>
+        <translation>Frecuencia (Flanco de subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="140"/>
         <source>Frequency (Falling)</source>
-        <translation>Frekvence (sest. h.)</translation>
+        <translation>Frecuencia (Flanco de bajada)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="142"/>
         <source>Frequency</source>
-        <translation>Frekvence</translation>
+        <translation>Frecuencia</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="144"/>
         <source>Pulse count (Rising)</source>
-        <translation>Počet pulzů (vzest. h.)</translation>
+        <translation>Conteo de pulsos (Flanco de subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="146"/>
         <source>Length</source>
-        <translation>Délka</translation>
+        <translation>Longitud</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="148"/>
         <source>Salinity (ppm)</source>
-        <translation>Slanost (ppm)</translation>
+        <translation>Salinidad (ppm)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="150"/>
         <source>Radioactivity (cpm)</source>
-        <translation>Radioaktivita (cpm)</translation>
+        <translation>Radiactividad (cpm)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="152"/>
         <source>Turbidity</source>
-        <translation>Zákal (NTU)</translation>
+        <translation>Turbidez (NTU)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="154"/>
         <source>Trigger count</source>
-        <translation>Trigger (počítadlo)</translation>
+        <translation>Contador de disparos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="184"/>
@@ -859,259 +859,258 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="193"/>
         <source>Original</source>
-        <translation>Původní</translation>
+        <translation>Original</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="194"/>
         <source>n/a</source>
-        <translation>n/a</translation>
+        <translation>n/d</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="299"/>
         <source>Undefined</source>
-        <translation>Nedefinovaný</translation>
+        <translation>No definido</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="394"/>
         <source>Sensor Port</source>
-        <translation>Port čidla</translation>
+        <translation>Puerto del sensor</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="292"/>
         <source>Sensor Name</source>
-        <translatorcomment>lépe Typ čidla</translatorcomment>
-        <translation>Označení čidla</translation>
+        <translation>Nombre del sensor</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="396"/>
         <source>Sensor Quantity</source>
-        <translation>Veličina</translation>
+        <translation>Magnitud</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="519"/>
         <source>Correction Type</source>
-        <translation>Typ korekce</translation>
+        <translation>Tipo de corrección</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="536"/>
         <source>Measured</source>
-        <translation>Naměřená</translation>
+        <translation>Medido</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="537"/>
         <source>Expected</source>
-        <translation>Očekávaná</translation>
+        <translation>Esperado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="539"/>
         <source>Point 1</source>
-        <translation>Hodnota 1</translation>
+        <translation>Valor 1</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="540"/>
         <source>Point 2</source>
-        <translation>Hodnota 2</translation>
+        <translation>Valor 2</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="541"/>
         <source>Point 3</source>
-        <translation>Hodnota 3</translation>
+        <translation>Valor 3</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="649"/>
         <source>Source Measurement</source>
-        <translation>Zdrojové měření</translation>
+        <translation>Medición de origen</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="650"/>
         <source>Source Channel</source>
-        <translation>Zdrojový kanál</translation>
+        <translation>Canal de origen</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="768"/>
         <source>Current Value</source>
-        <translation>Aktuální hodnota</translation>
+        <translation>Valor actual</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1262"/>
         <source>Value correction changes performed on a virtual channel are applied to the original channel as well. Continue?</source>
-        <translation>Změny korekce hodnot prováděné na virtuálním kanálu jsou aplikovány i na původná kanál. Pokračiovat?</translation>
+        <translation>Los cambios de corrección de valor realizados en un canal virtual también se aplican al canal original. ¿Continuar?</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1263"/>
         <source>Continue</source>
-        <translation>Pokračovat</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Show all marks</source>
-        <translation type="vanished">Ukázat všechny značky</translation>
+        <translation type="vanished">Mostrar todas las marcas</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="892"/>
         <source>Miliseconds</source>
-        <translation>Milisekundy</translation>
+        <translation>Milisegundos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="893"/>
         <source>Seconds</source>
-        <translation>Sekundy</translation>
+        <translation>Segundos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="894"/>
         <source>Minuts</source>
-        <translation>Minuty</translation>
+        <translation>Minutos</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="895"/>
         <source>Hours</source>
-        <translation>Hodiny</translation>
+        <translation>Horas</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="896"/>
         <source>Days</source>
-        <translation>Dny</translation>
+        <translation>Días</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="900"/>
         <source>day.month.year</source>
-        <translation>den.měsíc.rok</translation>
+        <translation>día.mes.año</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="901"/>
         <source>day.month.hour:minute</source>
-        <translation>den.měsíc.hodina:minuta</translation>
+        <translation>día.mes.hora:minuto</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="902"/>
         <source>hour:minute:second</source>
-        <translation>hodina:minuta:sekunda</translation>
+        <translation>hora:minuto:segundo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="903"/>
         <source>minute:second.milisecond</source>
-        <translation>minuta:sekunda.milisekunda</translation>
+        <translation>minuto:segundo.milisegundo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="915"/>
         <source>Format</source>
-        <translation>Formát</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="937"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
-        <translation>Kanál s časovým formátem musí být umístěm na samostatnou osu.Prosím, vyberte jednu z dostupných.</translation>
+        <translation>El canal con formato de tiempo debe colocarse en un eje separado. Por favor, elija uno.</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="40"/>
         <location filename="../ChannelSettings.cpp" line="970"/>
         <source>None</source>
-        <translation>Žádný</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="869"/>
         <source>All Marks</source>
-        <translation>Značky</translation>
+        <translation>Marcas</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="972"/>
         <source>Plus</source>
-        <translation>Plus</translation>
+        <translation>Más</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="973"/>
         <source>Circle</source>
-        <translation>Kružnice</translation>
+        <translation>Círculo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="974"/>
         <source>Disc</source>
-        <translation>Kruh</translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="975"/>
         <source>Square</source>
-        <translation>Čtverec</translation>
+        <translation>Cuadrado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="976"/>
         <source>Diamond</source>
-        <translation>Diamant</translation>
+        <translation>Diamante</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="977"/>
         <source>Star</source>
-        <translation>Hvězda</translation>
+        <translation>Estrella</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="978"/>
         <source>Triangle</source>
-        <translation>Trojúhelník</translation>
+        <translation>Triángulo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="979"/>
         <source>Inverted Triangle</source>
-        <translation>Obrácený trojúhelník</translation>
+        <translation>Triángulo invertido</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="980"/>
         <source>Cross and Square</source>
-        <translation>Kříž a čtverec</translation>
+        <translation>Cruz y cuadrado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="981"/>
         <source>Plus and Square</source>
-        <translation>Plus a čtverec</translation>
+        <translation>Más y cuadrado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="982"/>
         <source>Cross and Circle</source>
-        <translation>Kříž a kruh</translation>
+        <translation>Cruz y círculo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="983"/>
         <source>Plus and Circle</source>
-        <translation>Plus a kruh</translation>
+        <translation>Más y círculo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="984"/>
         <source>Peace</source>
-        <translation>Mír</translation>
+        <translation>Paz</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1002"/>
         <source>New Axis...</source>
-        <translation>Nová osa...</translation>
+        <translation>Nuevo eje...</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1037"/>
         <source>Axis</source>
-        <translation>Osa</translation>
+        <translation>Eje</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1066"/>
         <source>Port %1</source>
-        <translation>Port %1</translation>
+        <translation>Puerto %1</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1082"/>
         <source>Entered different expected values for one meassured.</source>
-        <translation>Zadány různé očekávané hodnoty pro jedno měření.</translation>
+        <translation>Se introdujeron diferentes valores esperados para una medición.</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1153"/>
         <source>Current value is not a number.</source>
-        <translation>Aktuální hodnota není číselná.</translation>
+        <translation>El valor actual no es un número.</translation>
     </message>
 </context>
 <context>
     <name>ChannelSideBar</name>
     <message>
         <source>sample</source>
-        <translation type="vanished">vzorek</translation>
+        <translation type="vanished">muestra</translation>
     </message>
     <message>
         <source>channel %1</source>
-        <translation type="vanished">kanál %1</translation>
+        <translation type="vanished">canal %1</translation>
     </message>
 </context>
 <context>
@@ -1119,7 +1118,7 @@
     <message>
         <location filename="../ChannelWidget.cpp" line="284"/>
         <source>n/a</source>
-        <translation>n/a</translation>
+        <translation>n/d</translation>
     </message>
 </context>
 <context>
@@ -1138,109 +1137,109 @@
     </message>
     <message>
         <source>minutes</source>
-        <translation type="vanished">minut</translation>
+        <translation type="vanished">minutos</translation>
     </message>
     <message>
         <source>hours</source>
-        <translation type="vanished">hodin</translation>
+        <translation type="vanished">horas</translation>
     </message>
     <message>
         <source>days</source>
-        <translation type="vanished">dní</translation>
+        <translation type="vanished">días</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation type="vanished">Muestras</translation>
     </message>
     <message>
         <source>Sample</source>
-        <translation type="vanished">Vzorek</translation>
+        <translation type="vanished">Muestra</translation>
     </message>
     <message>
         <source>Time Offset</source>
-        <translation type="vanished">Časový rozdíl</translation>
+        <translation type="vanished">Tiempo desde el inicio</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Reálný čas</translation>
+        <translation type="vanished">Tiempo real</translation>
     </message>
 </context>
 <context>
     <name>ConnectivityLabel</name>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Připojeno</translation>
+        <translation type="vanished">Conectado</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Odpojeno</translation>
+        <translation type="vanished">Desconectado</translation>
     </message>
 </context>
 <context>
     <name>Console</name>
     <message>
         <source>Console</source>
-        <translation type="vanished">Pokračovat</translation>
+        <translation type="vanished">Consola</translation>
     </message>
 </context>
 <context>
     <name>DisplayWidget</name>
     <message>
         <source>n/a</source>
-        <translation type="vanished">n/a</translation>
+        <translation type="vanished">n/d</translation>
     </message>
 </context>
 <context>
     <name>FileDialog</name>
     <message>
         <source>Open</source>
-        <translation type="vanished">Otevřít</translation>
+        <translation type="vanished">Abrir</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Uložit</translation>
+        <translation type="vanished">Guardar</translation>
     </message>
     <message>
         <source>Go Up</source>
-        <translation type="vanished">Jít nahoru</translation>
+        <translation type="vanished">Subir</translation>
     </message>
     <message>
         <source>Add Directory</source>
-        <translation type="vanished">Přidat adresář</translation>
+        <translation type="vanished">Añadir directorio</translation>
     </message>
     <message>
         <source>Directory alredy contains subdirectory with the same name.</source>
-        <translation type="vanished">Adresář už obsahuje podadresář se stejným jménem.</translation>
+        <translation type="vanished">El directorio ya contiene un subdirectorio con el mismo nombre.</translation>
     </message>
     <message>
         <source>Directory already contains file with the same name. Rewrite it?</source>
-        <translation type="vanished">Adresář už obsahuje soubor se stejným názvem. Přepsat ho?</translation>
+        <translation type="vanished">El directorio ya contiene un archivo con el mismo nombre. ¿Sobrescribirlo?</translation>
     </message>
     <message>
         <source>Rewrite</source>
-        <translation type="vanished">Přepiš</translation>
+        <translation type="vanished">Sobrescribir</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
 </context>
 <context>
     <name>FormDialogBase</name>
     <message>
         <source>Store</source>
-        <translation type="vanished">Ulož</translation>
+        <translation type="vanished">Guardar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
 </context>
 <context>
     <name>FormDialogColor</name>
     <message>
         <source>Color</source>
-        <translation type="vanished">Barva</translation>
+        <translation type="vanished">Color</translation>
     </message>
 </context>
 <context>
@@ -1248,128 +1247,128 @@
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="24"/>
         <source>Settings</source>
-        <translation>Nastavení</translation>
+        <translation>Configuración</translation>
     </message>
     <message>
         <source>Show Store/Cancel buttons</source>
-        <translation type="vanished">Zobraz tlačítka Uložit/Zrušit</translation>
+        <translation type="vanished">Mostrar botones Guardar/Cancelar</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="69"/>
         <source>Apply Changes by a Dialog Closing</source>
-        <translation>Aplikovat změny při zavření dialogu</translation>
+        <translation>Aplicar cambios al cerrar el cuadro de diálogo</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="80"/>
         <source>Channel graph pen width</source>
-        <translation>Tloušťka pera pro grafy</translation>
+        <translation>Grosor de la línea del gráfico</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="91"/>
         <source>Channel size factor</source>
-        <translation>Faktor zvětšení kanálu</translation>
+        <translation>Factor de ampliación del canal</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="97"/>
         <source>Horizontal</source>
-        <translation>Horizontální</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="98"/>
         <source>Vertical</source>
-        <translation>Vertikální</translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="100"/>
         <source>Menu Orientation</source>
-        <translation>Orientace menu</translation>
+        <translation>Orientación del menú</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="104"/>
         <source>Menu on Demand</source>
-        <translation>Menu na vyžádání</translation>
+        <translation>Menú a pedido</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="111"/>
         <source>Hide All Channels</source>
-        <translation>Skrýt všechny kanály</translation>
+        <translation>Ocultar todos los canales</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="118"/>
         <source>Open recent measurement at startup</source>
-        <translation>Otevřít poslední měření po spuštění</translation>
+        <translation>Abrir la última medición al inicio</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="132"/>
         <source>Preferred Directory</source>
-        <translation>Preferovaná složka</translation>
+        <translation>Directorio preferido</translation>
     </message>
     <message>
         <source>Limit Directory</source>
-        <translation type="vanished">Preferovaný adresář</translation>
+        <translation type="vanished">Directorio preferido</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="139"/>
         <source>Select directory</source>
-        <translation>Vyber adresář</translation>
+        <translation>Seleccionar directorio</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="155"/>
         <source>Show Debug Window</source>
-        <translation>Debugovací okno</translation>
+        <translation>Mostrar ventana de depuración</translation>
     </message>
     <message>
         <source>Show Console</source>
-        <translation type="vanished">Ukaž konzoli</translation>
+        <translation type="vanished">Mostrar consola</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="162"/>
         <source>Use Bluetooth</source>
-        <translation>Používat bluetooth</translation>
+        <translation>Utilizar Bluetooth</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="182"/>
         <source>Language</source>
-        <translation>Jazyk</translation>
+        <translation>Idioma</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="191"/>
         <source>Unit Brackets</source>
-        <translation>Závorky jednotek</translation>
+        <translation>Paréntesis de unidades</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="198"/>
         <source>The language change will take effect after a restart of the application.</source>
-        <translation>Změna jazyka se projeví až po restartu aplikace.</translation>
+        <translation>El cambio de idioma surtirá efecto tras reiniciar la aplicación.</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="214"/>
         <source>Estbilished connection will be lost. Continue?</source>
-        <translation>Navázané spojení bude ztraceno. Pokračovat?</translation>
+        <translation>La conexión establecida se perderá. ¿Continuar?</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="215"/>
         <source>Continue</source>
-        <translation>Pokračovat</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Estbilished connection will be disconnected. Continue?</source>
-        <translation type="obsolete"> </translation>
+        <translation type="obsolete">La conexión establecida se desconectará. ¿Continuar?</translation>
     </message>
 </context>
 <context>
     <name>Graph</name>
     <message>
         <source>samples</source>
-        <translation type="vanished">vzorky</translation>
+        <translation type="vanished">muestras</translation>
     </message>
     <message>
         <source>channel %1</source>
-        <translation type="vanished">kanál %1</translation>
+        <translation type="vanished">canal %1</translation>
     </message>
     <message>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
-        <translation type="vanished">Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
+        <translation type="vanished">Algunas muestras no se transfirieron. Probablemente la frecuencia de muestreo es demasiado alta para tantos canales.</translation>
     </message>
 </context>
 <context>
@@ -1377,130 +1376,129 @@
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="487"/>
         <source>Axis %1</source>
-        <translation>Osa %1</translation>
+        <translation>Eje %1</translation>
     </message>
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="610"/>
         <source>Horizontal</source>
-        <translation>Horizontální</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="620"/>
         <source>Vertical</source>
-        <translation>Vertikální</translation>
+        <translation>Vertical</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>Horizontal</source>
-        <translation type="vanished">Horizontální</translation>
+        <translation type="vanished">Horizontal</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="vanished">Vertikální</translation>
+        <translation type="vanished">Vertical</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation type="vanished">Muestras</translation>
     </message>
     <message>
         <source>Channel %1</source>
-        <translation type="vanished">Kanál %1</translation>
+        <translation type="vanished">Canal %1</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="114"/>
         <source>Menu</source>
-        <translation>Nabídka</translation>
+        <translation>Menú</translation>
     </message>
     <message>
         <source>Selected file has not been open.</source>
-        <translation type="vanished">Vybraný soubor nebyl otevřen.</translation>
+        <translation type="vanished">El archivo seleccionado no se ha abierto.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="374"/>
         <source>Selected file is not possible to open.</source>
-        <translation>Vybraný soubor není možné otevřít.</translation>
+        <translation>No es posible abrir el archivo seleccionado.</translation>
     </message>
     <message>
         <source>Unsuported file version</source>
-        <translation type="vanished">Nepodporovaná verze souboru</translation>
+        <translation type="vanished">Versión de archivo no compatible</translation>
     </message>
     <message>
         <source>File %1 is corrupted.</source>
-        <translation type="vanished">Soubor %1 je poškozen.</translation>
+        <translation type="vanished">El archivo %1 está dañado.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="361"/>
         <source>Selected file %1 is corrupted. All data must not be available.</source>
-        <translation>Soubor %1 je poškozený. Nemusí být čitelná všechna data.</translation>
+        <translation>El archivo %1 está dañado. Es posible que no todos los datos estén disponibles.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="387"/>
         <source>Unsuported file version (%1)</source>
-        <translation>Nepodporovaná verze souboru (%1)</translation>
+        <translation>Versión de archivo no compatible (%1)</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="521"/>
         <source>Continue</source>
-        <translation>Pokračovat</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="570"/>
         <source>Just template without values has been stored.</source>
-        <translation>Byla uložena pouze šablona bez naměřených hodnot.</translation>
+        <translation>Solo se ha guardado la plantilla sin valores.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="627"/>
         <source>Open with values?</source>
-        <translation>Otevřít s naměřenými hodnotami?</translation>
+        <translation>¿Abrir con valores?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="627"/>
         <source>Yes</source>
-        <translation>Ano</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="627"/>
         <source>No</source>
-        <translation>Ne</translation>
+        <translation>No</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="644"/>
         <source>Gui and value changes were not saved. Realy exit?</source>
-        <translation>Změny v prostředí ani v hodnotách nebyly uloženy. Přesto odejít?</translation>
+        <translation>No se guardaron los cambios en la interfaz ni en los valores. ¿Realmente desea salir?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="646"/>
         <source>Gui changes were not saved. Realy exit?</source>
-        <translation>Změny v prostředí nebyly uloženy. Přesto odejít?</translation>
+        <translation>No se guardaron los cambios en la interfaz. ¿Realmente desea salir?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="648"/>
         <source>Value changes were not saved. Realy exit?</source>
-        <translation>Změny v hodnotách nebyly uloženy. Přesto odejít?</translation>
+        <translation>No se guardaron los cambios en los valores. ¿Realmente desea salir?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="722"/>
         <source>The measurement &apos;%1&apos; is in progress.</source>
-        <translation>Měření &apos;%1&apos; stále probíhá.</translation>
+        <translation>La medición &apos;%1&apos; está en curso.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="726"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
-        <translation>Měření &apos;%1&apos; již obsahuje data. Opravdu ho chcete odstranit?</translation>
+        <translation>La medición &apos;%1&apos; ya contiene datos. ¿Realmente desea eliminarla?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="731"/>
         <source>Ghost displayed in another measurements will be removed too.</source>
-        <translatorcomment>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translatorcomment>
-        <translation>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translation>
+        <translation>El canal virtual que se muestra en otras mediciones también se eliminará.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="749"/>
         <location filename="../MainWindow.cpp" line="763"/>
         <source>Remove</source>
-        <translation>Odstranit</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <source></source>
@@ -1508,45 +1506,45 @@
     </message>
     <message>
         <source>Gui and value changes were not saved.</source>
-        <translation type="vanished">Změny v prostředí ani hodnoty nebyly uloženy.</translation>
+        <translation type="vanished">No se guardaron los cambios en la interfaz ni en los valores.</translation>
     </message>
     <message>
         <source>Gui changes were not saved.</source>
-        <translation type="vanished">Změny v prostředí nebyly uloženy. </translation>
+        <translation type="vanished">No se guardaron los cambios en la interfaz.</translation>
     </message>
     <message>
         <source>Value changes were not saved.</source>
-        <translation type="vanished">Změny hodnot nebyly uloženy.</translation>
+        <translation type="vanished">No se guardaron los cambios en los valores.</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="659"/>
         <source>Realy exit?</source>
-        <translation>Opravdu ukončit?</translation>
+        <translation>¿Realmente desea salir?</translation>
     </message>
     <message>
         <location filename="../MainWindow.cpp" line="662"/>
         <source>Exit</source>
-        <translation>Ukončit</translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <source>Gui neither value changes were not saved. Quit anyway?</source>
-        <translation type="vanished">Změny v prostředí ani v hodnotách nebyly uloženy, přesto odejít?</translation>
+        <translation type="vanished">No se guardaron los cambios en la interfaz ni en los valores. ¿Salir de todos modos?</translation>
     </message>
     <message>
         <source>Gui changes were not saved. Quit anyway?</source>
-        <translation type="vanished">Změny v prostředí nebyly uloženy, přesto odejít?</translation>
+        <translation type="vanished">No se guardaron los cambios en la interfaz. ¿Salir de todos modos?</translation>
     </message>
     <message>
         <source>Value changes were not saved. Quit anyway?</source>
-        <translation type="vanished">Změny v hodnotách nebyly uloženy, přesto odejít?</translation>
+        <translation type="vanished">No se guardaron los cambios en los valores. ¿Salir de todos modos?</translation>
     </message>
     <message>
         <source>Realy quit?</source>
-        <translation type="vanished">Opravdu odejít?</translation>
+        <translation type="vanished">¿Realmente desea salir?</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="vanished">Odejít</translation>
+        <translation type="vanished">Salir</translation>
     </message>
 </context>
 <context>
@@ -1554,57 +1552,57 @@
     <message>
         <location filename="../Measurement.cpp" line="54"/>
         <source>Measurement %1</source>
-        <translation>Měření %1</translation>
+        <translation>Medición %1</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="101"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
-        <translation>Měření &apos;%1&apos; bylo ukončeno kvůli problému se spojením.</translation>
+        <translation>La medición &apos;%1&apos; se ha interrumpido debido a un problema de conectividad.</translation>
     </message>
     <message>
         <source>Command with wrong checksum recieved.</source>
-        <translation type="vanished">Přijat příkaz s chybným kontrolním součtem.</translation>
+        <translation type="vanished">Se ha recibido un comando con una suma de comprobación incorrecta.</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="208"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
-        <translation>Měření &apos;%1&apos; právě probíhá. Ukončit toto měření?</translation>
+        <translation>La medición &apos;%1&apos; ya está en curso. ¿Interrumpirla?</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="209"/>
         <source>Terminate</source>
-        <translation>Ukončit</translation>
+        <translation>Interrumpir</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="190"/>
         <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
-        <translation>Některé vzorky nebyly přeneseny. Vzorkovací frekvence je pravděpodobně příliš vysoká pro takové množství kanálů.</translation>
+        <translation>Algunas muestras no se transfirieron. Probablemente la frecuencia de muestreo es demasiado alta para tantos canales.</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="195"/>
         <source>Some values was wrongly transfered and has not been stored.</source>
-        <translation>Některé hodnoty byly špatně přeneseny a nebyly uloženy.</translation>
+        <translation>Algunos valores se transfirieron incorrectamente y no se han guardado.</translation>
     </message>
     <message>
         <source>Horizontal</source>
-        <translation type="vanished">Horizontální</translation>
+        <translation type="vanished">Horizontal</translation>
     </message>
     <message>
         <source>Vertical</source>
-        <translation type="vanished">Vertikální</translation>
+        <translation type="vanished">Vertical</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation type="vanished">Muestras</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="416"/>
         <source>Channel %1</source>
-        <translation>Kanál %1</translation>
+        <translation>Canal %1</translation>
     </message>
 </context>
 <context>
@@ -1612,76 +1610,76 @@
     <message>
         <location filename="../MeasurementMenu.cpp" line="23"/>
         <source>Measurements</source>
-        <translation>Měření</translation>
+        <translation>Mediciones</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="41"/>
         <source>Edit</source>
-        <translation>Editovat</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="46"/>
         <source>Remove</source>
-        <translation>Odstranit</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="72"/>
         <source>Add New</source>
-        <translation>Přidat nové</translation>
+        <translation>Añadir nueva</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="78"/>
         <source>Clone Selected</source>
-        <translation>Klonovat vybrané</translation>
+        <translation>Clonar seleccionada</translation>
     </message>
     <message>
         <source>The measurement &apos;%1&apos; is in progress. Really remove it?</source>
-        <translation type="vanished">Měření &apos;%1&apos; právě probíhá. Opravdu ho chcete odstranit?</translation>
+        <translation type="vanished">La medición &apos;%1&apos; está en curso. ¿Realmente desea eliminarla?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zruš</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
     <message>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
-        <translation type="vanished">Měření &apos;%1&apos; již obsahuje data. Opravdu ho chcete odstranit?</translation>
+        <translation type="vanished">La medición &apos;%1&apos; ya contiene datos. ¿Realmente desea eliminarla?</translation>
     </message>
 </context>
 <context>
     <name>MeasurementSettings</name>
     <message>
         <source>Edit measurement...</source>
-        <translation type="vanished">Editace měření...</translation>
+        <translation type="vanished">Editar medición...</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="16"/>
         <source>Measurement Setting</source>
-        <translation>Nastavení měření</translation>
+        <translation>Configuración de medición</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="26"/>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="29"/>
         <source>Periodical</source>
-        <translation>Periodický</translation>
+        <translation>Periódica</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="30"/>
         <source>On Demand</source>
-        <translation>Na vyžádání</translation>
+        <translation>A pedido</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="33"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="42"/>
         <source>Period</source>
-        <translation>Perioda</translation>
+        <translation>Período</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="45"/>
@@ -1692,26 +1690,26 @@
         <location filename="../MeasurementSettings.cpp" line="46"/>
         <source>Sec</source>
         <comment>seconds</comment>
-        <translation>Sec</translation>
+        <translation>Seg</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="49"/>
         <source>Units</source>
-        <translation>Jednotky</translation>
+        <translation>Unidades</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="57"/>
         <source>Show Marks</source>
-        <translation>Ukázat značky</translation>
+        <translation>Mostrar marcas</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="96"/>
         <source>Period must be a positive integer.</source>
-        <translation>Nastavte celé kladné číslo.</translation>
+        <translation>El período debe ser un número entero positivo.</translation>
     </message>
     <message>
         <source>Period must be a positive number.</source>
-        <translation type="vanished">Perioda musí být kladné číslo.</translation>
+        <translation type="vanished">El período debe ser un número positivo.</translation>
     </message>
 </context>
 <context>
@@ -1719,14 +1717,14 @@
     <message>
         <location filename="../MyMessageBox.cpp" line="18"/>
         <source>Cancel</source>
-        <translation>Zrušit</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
     <name>Plot</name>
     <message>
         <source>Axis %1</source>
-        <translation type="vanished">Osa %1</translation>
+        <translation type="vanished">Eje %1</translation>
     </message>
 </context>
 <context>
@@ -1734,85 +1732,85 @@
     <message>
         <location filename="../PlotContextMenu.cpp" line="45"/>
         <source>Zoom in</source>
-        <translation>Přiblížit</translation>
+        <translation>Acercar</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="46"/>
         <source>Zoom out</source>
-        <translation>Oddálit</translation>
+        <translation>Alejar</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="47"/>
         <source>Zoom to fit</source>
-        <translation>Přizpůsobit</translation>
+        <translation>Ajustar a la ventana</translation>
     </message>
     <message>
         <source>Sample Value</source>
-        <translation type="vanished">Hodnota vzorku</translation>
+        <translation type="vanished">Valor de la muestra</translation>
     </message>
     <message>
         <source>Auto Range Border</source>
-        <translation type="obsolete">Automatický </translation>
+        <translation type="obsolete">Límite de selección automático</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="49"/>
         <source>Follow Mode</source>
-        <translation>Režim sledování</translation>
+        <translation>Modo de seguimiento</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="53"/>
         <source>Sample</source>
-        <translation>Vzorek</translation>
+        <translation>Muestra</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="55"/>
         <source>Auto Selection Border</source>
-        <translation>Automatická hranice výběru</translation>
+        <translation>Límite de selección automático</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="57"/>
         <source>Left Selection Border</source>
-        <translation>Levá hranice výběru</translation>
+        <translation>Límite de selección izquierdo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="59"/>
         <source>Right Selection Border</source>
-        <translation>Pravá hranice výběru</translation>
+        <translation>Límite de selección derecho</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="63"/>
         <source>Delta</source>
-        <translation>Rozdíl</translation>
+        <translation>Diferencia (Delta)</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="64"/>
         <source>Maximum</source>
-        <translation>Maximum</translation>
+        <translation>Máximo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="65"/>
         <source>Minimum</source>
-        <translation>Minimum</translation>
+        <translation>Mínimo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="66"/>
         <source>Mean</source>
-        <translation>Průměr</translation>
+        <translation>Media</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="67"/>
         <source>Median</source>
-        <translation>Medián</translation>
+        <translation>Mediana</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="68"/>
         <source>Variance</source>
-        <translation>Rozptyl</translation>
+        <translation>Varianza</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="69"/>
         <source>Standard Deviation</source>
-        <translation>Směrodatná odchylka</translation>
+        <translation>Desviación estándar</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="70"/>
@@ -1824,106 +1822,106 @@
     <name>PortListDialog</name>
     <message>
         <source>Hardware connection</source>
-        <translation type="obsolete">Připojení </translation>
+        <translation type="obsolete">Conexión de hardware</translation>
     </message>
     <message>
         <source>Please, select a port with a comatible device.</source>
-        <translation type="vanished">Vyberte port s kompatibilním zařízením.</translation>
+        <translation type="vanished">Por favor, seleccione un puerto con un dispositivo compatible.</translation>
     </message>
     <message>
         <source>Scanning...</source>
-        <translation type="vanished">Skenování...</translation>
+        <translation type="vanished">Buscando...</translation>
     </message>
     <message>
         <source>Openning...</source>
-        <translation type="vanished">Otevírání...</translation>
+        <translation type="vanished">Abriendo...</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding properly. Please, check a device connection and the port read/write permitions.</source>
-        <translation type="obsolete">Vybraný pory </translation>
+        <translation type="obsolete">El puerto seleccionado no responde correctamente. Compruebe la conexión del dispositivo y los permisos de lectura/escritura del puerto.</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="62"/>
         <source>Refresh</source>
-        <translation>Obnovit</translation>
+        <translation>Actualizar</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="19"/>
         <source>Device connecting</source>
-        <translation>Připojování zařízení</translation>
+        <translation>Conectando el dispositivo</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="34"/>
         <source>Please, select a comatible device port.</source>
-        <translation>Vyberte kompatibilní port zařízení. </translation>
+        <translation>Seleccione un puerto de dispositivo compatible.</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="65"/>
         <source>Work Offline</source>
-        <translation>Pracovat odpojený</translation>
+        <translation>Trabajar sin conexión</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding. Please, check a device connection and the port read/write permitions.</source>
-        <translation type="vanished">Vybraný port neodpovídá. Prosím, zkontrolujte spojení se zařízením a přístupová práva.</translation>
+        <translation type="vanished">El puerto seleccionado no responde. Compruebe la conexión del dispositivo y los permisos de lectura/escritura del puerto.</translation>
     </message>
     <message>
         <source>Skip</source>
-        <translation type="vanished">Přeskočit</translation>
+        <translation type="vanished">Omitir</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Zavřít</translation>
+        <translation type="vanished">Cerrar</translation>
     </message>
 </context>
 <context>
     <name>PortListWidget</name>
     <message>
         <source>preferred</source>
-        <translation type="vanished">preferovaný</translation>
+        <translation type="vanished">preferido</translation>
     </message>
     <message>
         <source>the port doesn&apos;t respond properly. Please, check if the device is connected and the port read/write permitions.</source>
-        <translation type="vanished">Port neodpovídá podle očekávání. Zkontrolujte, prosím, připojení zařízení a nastavení oprávnění pro čtení a zápis.</translation>
+        <translation type="vanished">El puerto no responde correctamente. Compruebe si el dispositivo está conectado y los permisos de lectura/escritura del puerto.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>Match</source>
-        <translation type="obsolete">Odpovídající</translation>
+        <translation type="obsolete">Coincidencia</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="44"/>
         <source>Recognized</source>
-        <translation>Rozpoznaný</translation>
+        <translation>Reconocido</translation>
     </message>
     <message>
         <source>Last time used</source>
-        <translation type="vanished">Naposledy použitý</translation>
+        <translation type="vanished">Último uso</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="48"/>
         <source>Identified</source>
-        <translation>Identifikovaný</translation>
+        <translation>Identificado</translation>
     </message>
     <message>
         <source>Doesn&apos;t Answer</source>
-        <translation type="vanished">Neodpovídá</translation>
+        <translation type="vanished">No responde</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="46"/>
         <source>Last</source>
-        <translation>Poslední</translation>
+        <translation>Último</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="61"/>
         <source>Bluetooth</source>
-        <translation>bluetooth</translation>
+        <translation>Bluetooth</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="63"/>
         <source>Serial Port</source>
-        <translation>sériový port</translation>
+        <translation>Puerto serie</translation>
     </message>
 </context>
 <context>
@@ -1942,27 +1940,27 @@
     </message>
     <message>
         <source>minutes</source>
-        <translation type="vanished">minut</translation>
+        <translation type="vanished">minutos</translation>
     </message>
     <message>
         <source>hours</source>
-        <translation type="vanished">hodin</translation>
+        <translation type="vanished">horas</translation>
     </message>
     <message>
         <source>days</source>
-        <translation type="vanished">dní</translation>
+        <translation type="vanished">días</translation>
     </message>
     <message>
         <source>Samples</source>
-        <translation type="vanished">Vzorky</translation>
+        <translation type="vanished">Muestras</translation>
     </message>
     <message>
         <source>Time Offset</source>
-        <translation type="vanished">Čas od startu</translation>
+        <translation type="vanished">Tiempo desde el inicio</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Skutečný čas</translation>
+        <translation type="vanished">Tiempo real</translation>
     </message>
 </context>
 <context>
@@ -1985,39 +1983,39 @@
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="67"/>
         <source>minutes</source>
-        <translation>minut</translation>
+        <translation>minutos</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="69"/>
         <source>hours</source>
-        <translation>hodin</translation>
+        <translation>horas</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="71"/>
         <source>days</source>
-        <translation>dní</translation>
+        <translation>días</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="92"/>
         <source>Samples</source>
-        <translation>Vzorky</translation>
+        <translation>Muestras</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="94"/>
         <source>Time Offset</source>
-        <translation>Čas od startu</translation>
+        <translation>Tiempo desde el inicio</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="96"/>
         <source>Real Time</source>
-        <translation>Reálný čas</translation>
+        <translation>Tiempo real</translation>
     </message>
 </context>
 <context>
     <name>SerialPort</name>
     <message>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation type="vanished">Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartuj aplikaci.</translation>
+        <translation type="vanished">Trabaja en modo sin conexión. Para establecer una conexión, vuelva a conectar el dispositivo y reinicie la aplicación.</translation>
     </message>
 </context>
 <context>
@@ -2025,12 +2023,12 @@
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="26"/>
         <source>Store</source>
-        <translation>Uložit</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="30"/>
         <source>Cancel</source>
-        <translation>Zrušit</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -2038,12 +2036,12 @@
     <message>
         <location filename="../bases/FormDialogColor.cpp" line="33"/>
         <source>Color</source>
-        <translation>Barva</translation>
+        <translation>Color</translation>
     </message>
     <message>
         <location filename="../bases/FormDialogColor.cpp" line="38"/>
         <source>Color Picker</source>
-        <translation>Výběr barev</translation>
+        <translation>Selector de color</translation>
     </message>
 </context>
 <context>
@@ -2051,12 +2049,12 @@
     <message>
         <location filename="../file/AddDirDialog.cpp" line="10"/>
         <source>Add Directory</source>
-        <translation>Přidat adresář</translation>
+        <translation>Añadir directorio</translation>
     </message>
     <message>
         <location filename="../file/AddDirDialog.cpp" line="13"/>
         <source>Directory Name</source>
-        <translation>Název adresáře</translation>
+        <translation>Nombre del directorio</translation>
     </message>
 </context>
 <context>
@@ -2064,42 +2062,42 @@
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="62"/>
         <source>Go Up</source>
-        <translation>Jít nahoru</translation>
+        <translation>Subir</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="69"/>
         <source>Add Directory</source>
-        <translation>Přidat adresář</translation>
+        <translation>Añadir directorio</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="121"/>
         <source>Open</source>
-        <translation>Otevřít</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="123"/>
         <source>Save</source>
-        <translation>Uložit</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="125"/>
         <source>Select</source>
-        <translation>Vybrat</translation>
+        <translation>Seleccionar</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="144"/>
         <source>Directory alredy contains subdirectory with the same name.</source>
-        <translation>Adresář už obsahuje podadresář se stejným jménem.</translation>
+        <translation>El directorio ya contiene un subdirectorio con el mismo nombre.</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="151"/>
         <source>Directory already contains file with the same name. Rewrite it?</source>
-        <translation>Adresář už obsahuje soubor se stejným názvem. Přepsat ho?</translation>
+        <translation>El directorio ya contiene un archivo con el mismo nombre. ¿Sobrescribirlo?</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="152"/>
         <source>Rewrite</source>
-        <translation>Přepsat</translation>
+        <translation>Sobrescribir</translation>
     </message>
 </context>
 <context>
@@ -2107,91 +2105,91 @@
     <message>
         <location filename="../hw/HwConnector.cpp" line="289"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation>Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartujte aplikaci.</translation>
+        <translation>Trabaja en modo sin conexión. Para establecer una conexión, vuelva a conectar el dispositivo y reinicie la aplicación.</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="368"/>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
-        <translation>Vybraný port nemůže být otevřen. Je používán jiným procesem nebo je zařízení odpojeno.</translation>
+        <translation>El puerto seleccionado no se puede abrir. Lo está usando otro proceso o un dispositivo está desconectado.</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="397"/>
         <source>The selected port isn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation>Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte oprávnění přístupu k portu  pro čtení a zápis.</translation>
+        <translation>El puerto seleccionado no responde como se esperaba. Compruebe los permisos de lectura/escritura del puerto.</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="408"/>
         <source>Detected an old firmware version. Sensor settings will not be supported.</source>
-        <translation>Byl rozpoznán starší firmware. Nastavení portů a sensorů pomocí dialogu nebude k dispozici.</translation>
+        <translation>Se detectó una versión antigua del firmware. No se admitirá la configuración del sensor desde la interfaz.</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="580"/>
         <source>Offline</source>
-        <translation>Odpojeno</translation>
+        <translation>Desconectado</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="582"/>
         <source>Scanning</source>
-        <translation>Skenování</translation>
+        <translation>Buscando</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="584"/>
         <source>Searched</source>
-        <translation>Prohledáno</translation>
+        <translation>Buscado</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="586"/>
         <source>Opening</source>
-        <translation>Otevírání</translation>
+        <translation>Abriendo</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="588"/>
         <source>Verification</source>
-        <translation>Ověřování</translation>
+        <translation>Verificación</translation>
     </message>
     <message>
         <location filename="../hw/HwConnector.cpp" line="590"/>
         <source>Connected</source>
-        <translation>Připojeno</translation>
+        <translation>Conectado</translation>
     </message>
 </context>
 <context>
     <name>hw::HwSink</name>
     <message>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation type="vanished">Pracujete v odpojeném režimu. Pro navázání spojení odpojte a znovu připojte zažízení a restartujte aplikaci.</translation>
+        <translation type="vanished">Trabaja en modo sin conexión. Para establecer una conexión, vuelva a conectar el dispositivo y reinicie la aplicación.</translation>
     </message>
     <message>
         <source>Selected port is byssy. It is probably oppened by another process.</source>
-        <translation type="vanished">Vybraný port je zaneprázdněný. Je pravděpodobně otevřený jiným procesem.</translation>
+        <translation type="vanished">El puerto seleccionado está ocupado. Probablemente lo haya abierto otro proceso.</translation>
     </message>
     <message>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
-        <translation type="vanished">Vybraný port nemůže být otevřen. Je používán jiným procesem nebo je zařízení odpojeno.</translation>
+        <translation type="vanished">El puerto seleccionado no se puede abrir. Lo está usando otro proceso o un dispositivo está desconectado.</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation type="vanished">Vybraný port neodpovídá podle očekávání. Prosím, zkontrolujte oprávnění přístupu k portu  pro čtení a zápis.</translation>
+        <translation type="vanished">El puerto seleccionado no responde como se esperaba. Compruebe los permisos de lectura/escritura del puerto.</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="vanished">Odpojeno</translation>
+        <translation type="vanished">Desconectado</translation>
     </message>
     <message>
         <source>Scanning</source>
-        <translation type="vanished">Skenování</translation>
+        <translation type="vanished">Buscando</translation>
     </message>
     <message>
         <source>Opening</source>
-        <translation type="vanished">Otevírání</translation>
+        <translation type="vanished">Abriendo</translation>
     </message>
     <message>
         <source>Verification</source>
-        <translation type="vanished">Verifikace</translation>
+        <translation type="vanished">Verificación</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Připojeno</translation>
+        <translation type="vanished">Conectado</translation>
     </message>
 </context>
 <context>
@@ -2199,224 +2197,224 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="30"/>
         <source>Generic (AD 10bit)</source>
-        <translation>Obecné čidlo (převodník A/D 10bit)</translation>
+        <translation>Genérico (Convertidor A/D 10 bits)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="32"/>
         <source>Thermometer (DS18B20)</source>
-        <translation>Teploměr digitální (DS18B20)</translation>
+        <translation>Termómetro digital (DS18B20)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="34"/>
         <source>Pressure + Thermometer + Hygrometer (BME280)</source>
-        <translation>Tlak + teplota + vlhkost (BME280)</translation>
+        <translation>Presión + Termómetro + Higrómetro (BME280)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="36"/>
         <source>Thermometer (K-Type, MAX6675)</source>
-        <translation>Teploměr (typu K, MAX6675)</translation>
+        <translation>Termómetro (Termopar tipo K, MAX6675)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="38"/>
         <source>Accelerometer + Magnetometer (LSM303DLHC)</source>
-        <translation>Akcelerometr + magnetometr (LSM303DLHC)</translation>
+        <translation>Acelerómetro + Magnetómetro (LSM303DLHC)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="40"/>
         <source>IR Thermometer (MLX90614)</source>
-        <translation>IR teploměr (MLX90614)</translation>
+        <translation>Termómetro IR (MLX90614)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="42"/>
         <source>Pressure sensor (MPX5700DP)</source>
-        <translation>Tlakoměr (MPX5700DP)</translation>
+        <translation>Sensor de presión (MPX5700DP)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="44"/>
         <source>Force sensor (HX711)</source>
-        <translation>Siloměr (HX711)</translation>
+        <translation>Sensor de fuerza (HX711)</translation>
     </message>
     <message>
         <source>EKG sensor (AD8232)</source>
-        <translation type="vanished">EKG čidlo (AD8232)</translation>
+        <translation type="vanished">Sensor de ECG (AD8232)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="46"/>
         <source>ECG sensor (AD8232)</source>
-        <translation>EKG čidlo (AD8232)</translation>
+        <translation>Sensor de ECG (AD8232)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="48"/>
         <source>Color sensor (TCS3200)</source>
-        <translation>Kolorimetr RGB(C) (TCS3200)</translation>
+        <translation>Colorímetro RGB(C) (TCS3200)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="50"/>
         <source>UV sensor (GUVA-S12SD)</source>
-        <translation>UV záření (GUVA-S12SD)</translation>
+        <translation>Sensor UV (GUVA-S12SD)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="52"/>
         <source>UV sensor (VEML6070)</source>
-        <translation>UV záření (VEML6070)</translation>
+        <translation>Sensor UV (VEML6070)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="54"/>
         <source>pH sensor</source>
-        <translation>pH čidlo</translation>
+        <translation>Sensor de pH</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="56"/>
         <source>ORP sensor</source>
-        <translation>ORP čidlo</translation>
+        <translation>Sensor ORP (Redox)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="58"/>
         <source>Conductivity sensor</source>
-        <translation>Elektrická vodivost (roztok)</translation>
+        <translation>Sensor de conductividad eléctrica</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="60"/>
         <source>Turbidity sensor (TS-300B)</source>
-        <translation>Turbidimetr (TS-300B)</translation>
+        <translation>Sensor de turbidez (TS-300B)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="62"/>
         <source>DC Voltage sensor 0-25 V (voltage divider)</source>
-        <translation>DC el. napětí 0-25 V (napěťový dělič)</translation>
+        <translation>Sensor de voltaje CC 0-25 V (Divisor de voltaje)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="64"/>
         <source>AC/DC Current sensor 0-5 A (ACS712)</source>
-        <translation>AC/DC el. proud 0-5 A (ACS712)</translation>
+        <translation>Sensor de corriente CA/CC 0-5 A (ACS712)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="66"/>
         <source>AC/DC Current sensor 0-30 A (ACS712)</source>
-        <translation>AC/DC el. proud 0-30 A (ACS712)</translation>
+        <translation>Sensor de corriente CA/CC 0-30 A (ACS712)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="68"/>
         <source>Voltage + Current sensor (HX711)</source>
-        <translation>Napětí + proud (HX711)</translation>
+        <translation>Sensor de Voltaje + Corriente (HX711)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="70"/>
         <source>Light sensor (photoresistor)</source>
-        <translation>Iintenzita světla (fotorezistor)</translation>
+        <translation>Intensidad luminosa (Fotorresistencia)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="72"/>
         <source>Light sensor (BH1750 luxmeter)</source>
-        <translation>Intenzita světla - luxmetr (BH1750)</translation>
+        <translation>Intensidad luminosa - luxómetro (BH1750)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="74"/>
         <source>CO2 gas sensor (MH-Z16)</source>
-        <translation>CO2 - čidlo plynu (MH-Z16)</translation>
+        <translation>Sensor de gas CO2 (MH-Z16)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="76"/>
         <source>O2 gas sensor (ME2-O2)</source>
-        <translation>O2 - čidlo plynu (ME2-O2)</translation>
+        <translation>Sensor de gas O2 (ME2-O2)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="78"/>
         <source>Motion/distance US sensor (SR-HC04)</source>
-        <translation>Pohyb/vzdálenost - US (SR-HC04)</translation>
+        <translation>Movimiento/distancia ultrasónico (SR-HC04)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="96"/>
         <source>Motion/distance laser sensor (VL53L0X)</source>
-        <translation>Pohyb/vzdálenost - laser (VL53L0X)</translation>
+        <translation>Movimiento/distancia láser (VL53L0X)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="104"/>
         <source>Color sensor (TCS34725)</source>
-        <translation>Kolorimetr - čidlo barev (TCS34725)</translation>
+        <translation>Colorímetro (TCS34725)</translation>
     </message>
     <message>
         <source>Ultrasonic motion sensor (SR-HC04)</source>
-        <translation type="vanished">Ultrazvukové čidlo vzdálenosti a pohybu (SR-HC04)</translation>
+        <translation type="vanished">Sensor de movimiento ultrasónico (SR-HC04)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="80"/>
         <source>Photogate (810H)</source>
-        <translation>Fotobrána (810H)</translation>
+        <translation>Fotopuerta (810H)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="90"/>
         <source>Smoke/Combustible Gas (MQ-2)</source>
-        <translation>Hořlavé plyny/kouř (MQ-2)</translation>
+        <translation>Humo/Gases combustibles (MQ-2)</translation>
     </message>
     <message>
         <source>Laser ranging sensor (VL53L0X)</source>
-        <translation type="vanished">Laserový dálkoměr (VL53L0X)</translation>
+        <translation type="vanished">Sensor de distancia láser (VL53L0X)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="98"/>
         <source>Output module M040</source>
-        <translation>Výstupní/vstupní modul M040</translation>
+        <translation>Módulo de entrada/salida M040</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="100"/>
         <source>Timer GPIO 01</source>
-        <translation>Časovač GPIO 01</translation>
+        <translation>Temporizador (Timer) GPIO 01</translation>
     </message>
     <message>
         <source>Timer GPIO 02</source>
-        <translation type="vanished">Časovač GPIO 02</translation>
+        <translation type="vanished">Temporizador (Timer) GPIO 02</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="102"/>
         <source>Length sensor (Caliper)</source>
-        <translation>Dilatometr (posuvné měřítko)</translation>
+        <translation>Sensor de longitud (Calibre)</translation>
     </message>
     <message>
         <source>Timer GPIO02</source>
-        <translation type="vanished">Časovač GPIO 02</translation>
+        <translation type="vanished">Temporizador (Timer) GPIO 02</translation>
     </message>
     <message>
         <source>Ultrasonic motion sensor (SR-04)</source>
-        <translation type="vanished">Ultrazvukové čidlo vzdálenosti a pohybu (SR-HC04)</translation>
+        <translation type="vanished">Sensor de movimiento ultrasónico (SR-04)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="82"/>
         <source>Heart rate sensor (simple)</source>
-        <translation>Srdeční tep (jednoduché čidlo)</translation>
+        <translation>Frecuencia cardíaca (pulsómetro simple)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="84"/>
         <source>Magnetic field sensor</source>
-        <translation>Intenzita magnetického pole</translation>
+        <translation>Sensor de campo magnético</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="86"/>
         <source>Thermometer + Hygrometer (DHT11)</source>
-        <translation>Teploměr + vlhkoměr (DHT11)</translation>
+        <translation>Termómetro + Higrómetro (DHT11)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="88"/>
         <source>Alcohol gas sensor (MQ-3)</source>
-        <translation>Alkoholy - čidlo plynu (MQ-3)</translation>
+        <translation>Sensor de vapores de alcohol (MQ-3)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="92"/>
         <source>Particle/Dust sensor (DSM501)</source>
-        <translation>Prachové částice (DSM501)</translation>
+        <translation>Sensor de partículas/polvo (DSM501)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="94"/>
         <source>Sound sensor (microphone)</source>
-        <translation>Intenzita zvuku (mikrofon)</translation>
+        <translation>Intensidad sonora (micrófono)</translation>
     </message>
     <message>
         <source>Laser ranging sensor‎ (VL53L0X)</source>
-        <translation type="vanished">Laserový dálkoměr‎ (VL53L0X)</translation>
+        <translation type="vanished">Sensor de distancia láser (VL53L0X)</translation>
     </message>
     <message>
         <source>Timer</source>
-        <translation type="vanished">Časovač</translation>
+        <translation type="vanished">Temporizador</translation>
     </message>
 </context>
 <context>
@@ -2424,17 +2422,17 @@
     <message>
         <location filename="../main.cpp" line="25"/>
         <source>Open file.</source>
-        <translation>Otevři soubor.</translation>
+        <translation>Abrir archivo.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="25"/>
         <source>directory</source>
-        <translation>složka</translation>
+        <translation>directorio</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="29"/>
         <source>Modifier for opening file without values (just measurement template).</source>
-        <translation>Modifikátor pro otevření souboru bez hodnot (pouze jako šablona pro měření).</translation>
+        <translation>Modificador para abrir un archivo sin valores (solo como plantilla de medición).</translation>
     </message>
 </context>
 </TS>

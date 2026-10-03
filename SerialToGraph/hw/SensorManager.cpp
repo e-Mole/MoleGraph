@@ -100,6 +100,8 @@ namespace hw
             return tr("Timer GPIO 01");
         if (sensorName == "Length sensor (Caliper)")
             return tr("Length sensor (Caliper)");
+        if (sensorName == "Color sensor (TCS34725)")
+            return tr("Color sensor (TCS34725)");
         qWarning() << QString("unsupported sensor name %1").arg(sensorName);
         return sensorName;
     }

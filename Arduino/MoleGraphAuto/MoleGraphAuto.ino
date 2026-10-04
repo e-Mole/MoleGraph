@@ -1,8 +1,42 @@
+/*
+ * ============================================================================
+ * MoleGraphAuto - Arduino Firmware for MoleGraph Data Acquisition System
+ * ============================================================================
+ *
+ * PROJECT: MoleGraph - Open-Source School Probeware & STEM Toolkit
+ * WEBSITE: https://www.molegraph.eu
+ *
+ * HARDWARE:
+ *   - Microcontroller: Arduino NANO (ATmega328)
+ *   - Expansion: MoleGraph Shield U01 with 4x RJ12 sensor ports
+ *   - Connectivity: Bluetooth HC-05 module + USB serial
+ *   - Supported Sensors: 30+ sensor types (temperature, pressure, distance,
+ *     acceleration, pH, CO2, oxygen, heart rate, color, UV, etc.)
+ *
+ * FEATURES:
+ *   - Multi-channel simultaneous sampling (up to 8 independent channels)
+ *   - Two sampling modes: Periodical (continuous) & On-Demand
+ *   - Support for I2C, OneWire, PWM, and analog (0-5V) sensor protocols
+ *   - Servo motor control on ports 2 & 3
+ *   - Built-in sensor calibration via desktop application
+ *   - Real-time data transmission to desktop/mobile applications
+ *
+ * COMMUNICATION:
+ *   - Serial protocol (115200 baud) via USB or Bluetooth
+ *   - Instruction-based command set (see serialProcess() and core.h)
+ *   - Synchronization with the desktop application for measurements
+ *
+ * FW VERSION: 4.4
+ * PROTOCOL VERSION: ATG_5 (Arduino-to-Graph protocol version)
+ *
+ * ============================================================================
+ */
+
 #include "core.h"
 #include <OneWire.h>
 #include <Wire.h>
 
-#define VERSION "ATG_5" //arduino to graph version
+#define VERSION "ATG_5" // arduino to graph protocol version
 
 uint32_t oldTime = 0;
 
@@ -77,7 +111,7 @@ void loop() {
           }
           scan();
           sendValues();
-          while ((uint32_t)(newTime - time) >= period) { // in some cases can "update" and another processing take longer time that is reqiured period it is necessary to increase time properly and inform the App
+          while ((uint32_t)(newTime - time) >= period) { // in some cases can "update" and another processing take longer time that is reqiured period it is necessary to increase time properly and inf[...]
             time += period;
             missedSamples = true;
           }

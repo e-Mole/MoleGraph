@@ -26,18 +26,18 @@ Open-source Arduino library for custom firmware development with **MoleGraph** s
 
 ### Microcontroller
 - **Arduino NANO** (ATmega328P) — primary platform
-- Compatible with Arduino UNO, Mega, and other variants with sufficient memory
+- Compatible with Arduino UNO or other ATmega328P platforms
 
 ### Optional: MoleGraph Shield U01
 - 4x RJ12 sensor ports
 - Battery voltage monitoring LEDs (red = low, green = ok)
-- Status indicator LED
-- Button input with 4 selectable levels
+- Status/connection indicator LED
+- 4 buttons
 
 ### Connectivity
 - **USB Serial** (CH340 or FT232 chip) — 115200 baud
 - **Bluetooth HC-05 module** (optional) — wireless communication
-- **Note:** Arduino NANO has only one serial connection; operates in exclusive mode (USB **or** Bluetooth, not simultaneously)
+- **Note:** Arduino NANO has only one hw serial connection; operates in exclusive mode (USB **or** Bluetooth, not simultaneously)
 
 ### Supported Sensors
 Via I2C, OneWire, PWM, and analog (0–5V) protocols:

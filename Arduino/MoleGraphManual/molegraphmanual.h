@@ -1,3 +1,77 @@
+/*
+ * ============================================================================
+ * MoleGraphManual - Arduino Library for MoleGraph School Probeware System
+ * ============================================================================
+ *
+ * PROJECT: MoleGraph - Open-Source School Probeware & STEM Toolkit
+ * WEBSITE: https://www.molegraph.eu
+ *
+ * HARDWARE:
+ *   - Microcontroller: Arduino NANO (ATmega328)
+ *   - Expansion: MoleGraph Shield U01 with 4x RJ12 sensor ports (optional)
+ *   - Connectivity: USB serial or Bluetooth HC-05 module (exclusive mode)
+ *   - Supported Sensors: 30+ sensor types (temperature, pressure, distance,
+ *     acceleration, pH, CO2, oxygen, heart rate, color, UV, etc.)
+ *
+ * FEATURES:
+ *   - Multi-channel simultaneous sampling (up to 8 independent channels)
+ *   - Two sampling modes: Periodical (continuous) & On-Demand
+ *   - Support for I2C, OneWire, PWM, and analog (0-5V) sensor protocols
+ *   - Servo motor control on ports 2 & 3
+ *   - Callback-based architecture for custom firmware development
+ *   - Real-time data transmission to desktop/mobile applications
+ *   - Integration with external actuators (LEDs, speakers, motors)
+ *
+ * COMMUNICATION:
+ *   - Serial protocol (115200 baud) via USB or Bluetooth (not simultaneous)
+ *   - Instruction-based command set (see enum Instructions)
+ *   - Synchronization with the desktop application for measurements
+ *
+ * BASIC USAGE (without MoleGraph Shield U01):
+ *   #include <molegraphmanual.h>
+ *
+ *   MoleGraphManual moleGraph;
+ *
+ *   void updateGraphChannels(void) {
+ *     int value = analogRead(A0);
+ *     moleGraph.setChannelValue(1, value);
+ *   }
+ *
+ *   void setup() {
+ *     moleGraph.init();
+ *     moleGraph.setSendingCallback(&updateGraphChannels);
+ *   }
+ *
+ *   void loop() {
+ *     moleGraph.process();
+ *   }
+ *
+ * BASIC USAGE (with MoleGraph Shield U01):
+ *   #define SYSTEM  // Enable shield hardware features (battery monitoring, LEDs, buttons)
+ *   #include <molegraphmanual.h>
+ *
+ *   MoleGraphManual moleGraph;
+ *
+ *   void updateGraphChannels(void) {
+ *     int value = analogRead(PORT_1A);  // Use shield port definitions
+ *     moleGraph.setChannelValue(1, value);
+ *   }
+ *
+ *   void setup() {
+ *     moleGraph.init();  // Initializes shield hardware (battery LEDs, status LED)
+ *     moleGraph.setSendingCallback(&updateGraphChannels);
+ *   }
+ *
+ *   void loop() {
+ *     moleGraph.process();  // Handles serial commands, updates LEDs, monitors battery
+ *   }
+ *
+ * FW VERSION: 4.4
+ * PROTOCOL VERSION: ATG_4 (Arduino-to-Graph protocol version)
+ *
+ * ============================================================================
+ */
+
 #ifndef MoleGraphManual_h
 #define MoleGraphManual_h
 
@@ -120,7 +194,7 @@ class MoleGraphManual {
         uint8_t result = runtem.getBatt();  
         return result;
       }
-            
+             
       void setPullup(uint8_t index, bool pull) {
         if (index > 0 && index <= 4) {
           if (pull) {

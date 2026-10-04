@@ -13,15 +13,16 @@ Open-source firmware for **MoleGraph** school probeware system with 30+ built-in
 - ✅ Built-in sensor calibration via desktop application
 - ✅ Real-time data transmission to desktop/mobile applications
 - ✅ Easy sensor configuration without code editing
+- ✅ And more... :-)
 
 ### When to Use
 
 | Use **MoleGraphAuto** | Use **MoleGraphManual** |
 |:---|:---|
 | Standard measurements with built-in sensors | Custom firmware with simultaneous data transmission |
-| Classroom experiments & STEM education | Actuator control (servos, motors, etc.) |
+| Classroom experiments & STEM education | STEM education & Actuator control (servos, motors, etc.) |
 | Automatic sensor calibration via app | Advanced experimental designs |
-| Plug-and-play measurements | Visual programming (Blockly@rduino) |
+| Simple measurements, no coding | Visual programming (Blockly@rduino), text coding |
 
 ---
 
@@ -36,13 +37,13 @@ Open-source firmware for **MoleGraph** school probeware system with 30+ built-in
 - 4x RJ12 sensor ports (mandatory for most sensors)
 - Battery voltage monitoring LEDs (red = low, green = ok)
 - Status indicator LED
-- Button input with 4 selectable levels
+- 4 input Buttons
 - Dedicated pins for servo control and power management
 
 ### Connectivity
 - **USB Serial** (CH340 or FT232 chip) — 115200 baud
 - **Bluetooth HC-05 module** (optional) — wireless communication
-- **Note:** Arduino NANO has only one serial connection; operates in exclusive mode (USB **or** Bluetooth, not simultaneously)
+- **Note:** Arduino NANO has only one hw serial connection; operates in exclusive mode (USB **or** Bluetooth, not simultaneously)
 
 ### Supported Sensors
 30+ sensor types organized by category:
@@ -64,7 +65,7 @@ Open-source firmware for **MoleGraph** school probeware system with 30+ built-in
 3. Select: **Board** → Arduino NANO, **Processor** → ATmega328P
 4. Click **Upload**
 
-### Option 2: Pre-compiled Hex File (Advanced)
+### Option 2: Pre-compiled Hex File (Advanced but simple way)
 Use a hex programmer to upload pre-compiled firmware directly to the Arduino.
 
 ---
@@ -127,7 +128,7 @@ The color sensor has two firmware profiles optimized for different measurement s
 **Switching profiles:**
 If you need PROFILE_MONITOR but get "memory exceeded" error:
 1. Keep only essential sensors enabled in config.h
-2. Disable chemistry sensors, gas sensors, or other non-essential measurements
+2. Disable accelerometer, UV sensor, chemistry sensors, gas sensors, or other non-essential measurements
 3. Recompile
 
 ### Distance Sensor Configuration (VL53L0X/VL53L1X)
@@ -151,7 +152,7 @@ Two hardware versions available with different range and features.
 #define ENABLE_VL53L0X          // ENABLED
     #define USE_VL53L1X         // ENABLED
 ```
-- Range: Up to 4 meters
+- Range: Up to 4 meters (in reality 2 m)
 - Higher accuracy, extended range
 - **Use for:** Long-distance measurements, larger spaces
 - Requires same memory footprint as VL53L0X
@@ -167,7 +168,7 @@ Simply comment/uncomment the `#define USE_VL53L1X` line on line 19.
 2. **Connect MoleGraph Shield U01** to Arduino
 3. **Attach a sensor** to one of the 4 RJ12 ports
 4. **Connect to desktop app** via USB or Bluetooth
-5. **Select sensor type** in the app (auto-detected if configured correctly)
+5. **Select sensor** in the MoleGraph app (Sensor dialog in Panels)
 6. **Start measuring**
 
 ---
@@ -177,21 +178,22 @@ Simply comment/uncomment the `#define USE_VL53L1X` line on line 19.
 ### Compilation Error: "Memory Exceeded"
 **Solution:** Disable unused sensors in `config.h`
 ```cpp
-//#define ENABLE_MQ2              // Comment out unused gas sensor
-//#define ENABLE_ORP              // Comment out unused chemistry sensor
+//#define ENABLE_LSM303DLHC       // Comment out unused accelerometer sensor
+//#define ENABLE_MLX90614         // Comment out unused IR thermometer
 ```
 
 ### Arduino IDE Shows "Board Not Found"
 **Solution:** 
 1. Check USB cable (data cable, not charge-only)
 2. Install CH340 drivers if using clone Arduino NANO
-3. Select Board: Arduino NANO, Processor: ATmega328P
+3. Select Board: Arduino NANO, Processor: ATmega328P (on old NANO switch to "old bootloader")
 
-### Sensor Not Detected
+### Sensor Not Working (nothing in MoleGraph app plot/panel)
 1. Check physical RJ12 connection
 2. In `config.h`, verify the sensor's `#define ENABLE_...` is NOT commented out
 3. Recompile and upload firmware
-4. Restart desktop app and re-scan ports
+4. Restart desktop app reconect MoleGraph U01 unit
+5. Re-connect sensor
 
 ### Color Sensor Calibration Issues
 - **PROFILE_BASIC:** Single-click on white surface (paper, wall) to calibrate
@@ -300,5 +302,5 @@ A: Double-click the Reset button on Arduino NANO quickly to enter bootloader mod
 
 **Last Updated**: 2026  
 **Protocol Version**: ATG_5  
-**Firmware Version**: 4.4  
+**Firmware Version**: See MoleGraphAuto.ino file  
 **Supported Sensors**: 30+

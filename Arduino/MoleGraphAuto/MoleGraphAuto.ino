@@ -111,7 +111,7 @@ void loop() {
           }
           scan();
           sendValues();
-          while ((uint32_t)(newTime - time) >= period) { // in some cases can "update" and another processing take longer time that is reqiured period it is necessary to increase time properly and inf[...]
+          while ((uint32_t)(newTime - time) >= period) { // in some cases can "update" and another processing take longer time that is reqiured period it is necessary to increase time properly and inform the App
             time += period;
             missedSamples = true;
           }

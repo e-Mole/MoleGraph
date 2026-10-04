@@ -26,12 +26,15 @@ WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
 # Tedy z "1.2-beta" udělá "1.2", z "1.2.1-rc1" udělá "1.2.1"
 WIN_NUMERIC_VERSION ~= s/-.*//
 VERSION = $$WIN_NUMERIC_VERSION
+# Nastaveno fixně  - test verze z Git
+#VERSION = 4.3.1.0
 
 QMAKE_TARGET_COMPANY = e-Mole
 QMAKE_TARGET_PRODUCT = "$$TARGET ($$GIT_VERSION_TAG)"
+#QMAKE_TARGET_PRODUCT = "MoleGraph (4.3-beta2)" #test only - problem with PRODUCT_NAME in windows title (resolved after switching fo debug mode and back to release mode)
 DEFINES += "PRODUCT_NAME=\"\\\"$$QMAKE_TARGET_PRODUCT\\\"\""
 QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
-QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2022 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 

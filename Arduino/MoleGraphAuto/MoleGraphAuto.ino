@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * MoleGraphAuto - Arduino Firmware for MoleGraph Data Acquisition System
+ * MoleGraphAuto - Arduino Firmware for MoleGraph School Probeware System
  * ============================================================================
  *
  * PROJECT: MoleGraph - Open-Source School Probeware & STEM Toolkit

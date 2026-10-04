@@ -228,10 +228,10 @@ Simply comment/uncomment the `#define USE_VL53L1X` line on line 19.
 | Status LED | 13 |
 | Battery ADC Input | A7 |
 | Button ADC Input | A6 |
-| Servo Port 1 (SG90, etc.) | 2* |
-| Servo Port 2 (SG90, etc.) | 3* |
+| Servo Port 1 (SG90, etc.) | 10 |
+| Servo Port 2 (SG90, etc.) | 9 |
 
-*Note: Pins 2 & 3 shared with LED outputs; use carefully or disable LEDs if needed
+*Note: There is no dialog window in MoleGraph app to controll servos
 
 ---
 
@@ -257,15 +257,15 @@ The firmware automatically synchronizes with the desktop app:
 
 ## 🎓 Educational Use
 
-**Recommended sensor combinations for common experiments:**
+**Example sensor combinations for common experiments:**
 
 | Experiment | Required Sensors | Config Notes |
 |:-----------|:-----------------|:------------|
 | Weather Station | BME280 (temp/pressure/humidity), BH1750 (light), VEML6070 (UV) | Disable chemical sensors |
 | Color Analysis | TCS34725, BH1750 | Use PROFILE_BASIC to save memory |
 | Motion Study | VL53L0X, LSM303DLHC (accelerometer) | Enable both kinematics sensors |
-| Plant Growth | DS18B20 (temp), BME280 (humidity), BH1750 (light) | Simple setup, low memory |
-| Water Quality | pH, conductivity, turbidity, O₂ | Keep chemistry sensors only |
+| Plant Growth | DS18B20 (temp), BME280 (humidity), BH1750 (light), CO₂ sensor, O₂ sensor | Simple setup, low memory |
+| Water Quality | pH, conductivity, turbidity | Keep chemistry sensors only |
 
 ---
 

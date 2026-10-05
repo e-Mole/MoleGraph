@@ -1,0 +1,3 @@
+[submodule "Arduino/MoleGraphManual"]
+	path = Arduino/MoleGraphManual
+	url = https://github.com/e-Mole/MoleGraphManual.git

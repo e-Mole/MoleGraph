@@ -18,7 +18,7 @@ This project is based on research outcomes from a doctoral dissertation thesis a
 - **Journal Article:** [MoleGraph: A Tool for Developing Scientific and Digital Skills in Schools](https://doi.org/10.54779/chl20250208)
 - **Journal Article:** [Molegraph: DIY Sensors for School Experiments and Their Comparison with Commercial Options](https://doi.org/10.54779/chl20250357)
 - **Conference Paper:** [DIY or Commercial Sensors for STEM Teaching?](https://doi.org/10.1088/1742-6596/3037/1/012007)
-- 
+
 ## 🏗️ Hardware Architecture & Modular Construction
 The system is built on the **Arduino platform**, specifically utilizing the **Arduino NANO** (ATmega328) microcontroller and an **HC-05 Bluetooth module** for wireless connectivity.
 

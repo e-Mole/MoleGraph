@@ -12,6 +12,13 @@ By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes so
 ---
 <img src="docs/img_readme/MoleGraph-intro.jpg" alt="MoleGraph in action" />
 
+### 🎓 Academic Background
+This project is based on research outcomes from a doctoral dissertation thesis at Charles University Prague. It explores the implementation of open-source probeware systems in STEM education.
+- **Dissertation Thesis (CUNI Repository):** [A Tool for STEM Education: Open-Source and School Probeware Systems](https://dspace.cuni.cz/handle/20.500.11956/211517)
+- **Journal Article:** [MoleGraph: A Tool for Developing Scientific and Digital Skills in Schools](https://doi.org/10.54779/chl20250208)
+- **Journal Article:** [Molegraph: DIY Sensors for School Experiments and Their Comparison with Commercial Options](https://doi.org/10.54779/chl20250357)
+- **Conference Paper:** [DIY or Commercial Sensors for STEM Teaching?](https://doi.org/10.1088/1742-6596/3037/1/012007)
+- 
 ## 🏗️ Hardware Architecture & Modular Construction
 The system is built on the **Arduino platform**, specifically utilizing the **Arduino NANO** (ATmega328) microcontroller and an **HC-05 Bluetooth module** for wireless connectivity.
 

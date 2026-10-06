@@ -15,20 +15,31 @@ jobs:
       - name: Stáhni zdrojové kódy
         uses: actions/checkout@v4
 
-      # Android build vyžaduje Javu (pro Qt 5.15 je standardem Java 11)
       - name: Nastavení Java JDK 11
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      # Instalujeme Qt, ale tentokrát s cílem 'android' a architekturou pro moderní mobily
+      # ==========================================
+      # TOTO JE TEN NOVÝ KROK, KTERÝ ŘEŠÍ CHYBU
+      # ==========================================
+      - name: Příprava Android prostředí (NDK r21)
+        run: |
+          # Potvrdí licence a stáhne starší NDK (r21), které Qt 5.15 potřebuje
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;21.4.7075529"
+          
+          # Nastaví systémové proměnné, aby Qmake věděl, kam má sáhnout
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/21.4.7075529" >> $GITHUB_ENV
+
       - name: Instalace Qt 5.15.2 pro Android
         uses: jurplel/install-qt-action@v4
         with:
           version: '5.15.2'
           target: 'android'
-          
+
       - name: Vytvoř Build složku
         run: mkdir build
         working-directory: ./SerialToGraph
@@ -40,13 +51,12 @@ jobs:
       - name: Kompilace C++ kódu (make)
         run: |
           make -j$(nproc)
-          # Tento příkaz připraví strukturu složek a konfigurační .json pro balení
           make install INSTALL_ROOT=android-build
         working-directory: ./SerialToGraph/build
 
       - name: Sestavení APK (androiddeployqt)
         run: |
-          # Vezme zkompilované C++, obalí ho Javou a vyrobí instalační APK balíček
+          # Spustí balení s opraveným prostředím
           androiddeployqt --input android-MoleGraph-deployment-settings.json --output android-build --gradle
         working-directory: ./SerialToGraph/build
 
@@ -54,5 +64,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Android-APK
-          # Hvězdičky zajistí, že to najde .apk soubor, ať už se jmenuje jakkoliv
           path: SerialToGraph/build/android-build/**/*.apk

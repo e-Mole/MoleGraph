@@ -1,0 +1,59 @@
+name: Build MoleGraph App (Android Test)
+
+on:
+  push:
+    paths:
+      - 'SerialToGraph/**'
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Kompilace pro Android (Qt 5.15)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Stáhni zdrojové kódy
+        uses: actions/checkout@v4
+
+      # Android build vyžaduje Javu (pro Qt 5.15 je standardem Java 11)
+      - name: Nastavení Java JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      # Instalujeme Qt, ale tentokrát s cílem 'android' a architekturou pro moderní mobily
+      - name: Instalace Qt 5.15.2 pro Android
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          target: 'android'
+          arch: 'android_arm64_v8a' 
+
+      - name: Vytvoř Build složku
+        run: mkdir build
+        working-directory: ./SerialToGraph
+
+      - name: Qmake konfigurace
+        run: qmake ../SerialToGraph.pro CONFIG+=release
+        working-directory: ./SerialToGraph/build
+
+      - name: Kompilace C++ kódu (make)
+        run: |
+          make -j$(nproc)
+          # Tento příkaz připraví strukturu složek a konfigurační .json pro balení
+          make install INSTALL_ROOT=android-build
+        working-directory: ./SerialToGraph/build
+
+      - name: Sestavení APK (androiddeployqt)
+        run: |
+          # Vezme zkompilované C++, obalí ho Javou a vyrobí instalační APK balíček
+          androiddeployqt --input android-libMoleGraph.so-deployment-settings.json --output android-build --gradle
+        working-directory: ./SerialToGraph/build
+
+      - name: Ulož výsledek jako Artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoleGraph-Android-APK
+          # Hvězdičky zajistí, že to najde .apk soubor, ať už se jmenuje jakkoliv
+          path: SerialToGraph/build/android-build/**/*.apk

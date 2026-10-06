@@ -1,0 +1,47 @@
+name: Build MoleGraph App (Windows Test)
+
+# Kdy se má akce spustit:
+on:
+  push:
+    paths:
+      - 'SerialToGraph/**' # Spustí se při úpravě kódu aplikace
+  workflow_dispatch:       # Přidá tlačítko pro ruční spuštění (geniální pro testování!)
+
+jobs:
+  build-windows:
+    name: Kompilace pro Windows (Qt 5.15)
+    runs-on: windows-latest
+
+    steps:
+      - name: Stáhni zdrojové kódy
+        uses: actions/checkout@v4
+
+      - name: Instalace Qt 5.15.2 (MinGW)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw81' # Použijeme MinGW kompilátor
+
+      - name: Vytvoř Build složku
+        run: mkdir build
+        working-directory: ./SerialToGraph
+
+      - name: Qmake konfigurace
+        run: qmake ../SerialToGraph.pro CONFIG+=release
+        working-directory: ./SerialToGraph/build
+
+      - name: Kompilace (mingw32-make)
+        run: mingw32-make
+        working-directory: ./SerialToGraph/build
+
+      - name: Zabalení závislostí (windeployqt)
+        run: windeployqt release/SerialToGraph.exe
+        working-directory: ./SerialToGraph/build
+
+      - name: Ulož výsledek jako Artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoleGraph-Windows-Test
+          path: SerialToGraph/build/release/

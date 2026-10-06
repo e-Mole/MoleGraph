@@ -28,8 +28,7 @@ jobs:
         with:
           version: '5.15.2'
           target: 'android'
-          arch: 'android_arm64_v8a' 
-
+          
       - name: Vytvoř Build složku
         run: mkdir build
         working-directory: ./SerialToGraph

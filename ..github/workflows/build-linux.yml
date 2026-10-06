@@ -1,0 +1,86 @@
+name: Build MoleGraph App (Linux Test)
+
+on:
+  push:
+    paths:
+      - 'SerialToGraph/**' # Spustí se při úpravě
+  workflow_dispatch:       # Tlačítko pro ruční spuštění
+
+jobs:
+  build-linux:
+    name: Kompilace pro Linux (Qt 5.15)
+    
+    # Použijeme Ubuntu 20.04 (zaručuje maximální kompatibilitu AppImage i se starými PC)
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Stáhni zdrojové kódy
+        uses: actions/checkout@v4
+
+      - name: Instalace základních Linux nástrojů
+        run: sudo apt-get update && sudo apt-get install -y build-essential libgl1-mesa-dev
+
+      - name: Instalace Qt 5.15.2
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          host: 'linux'
+          target: 'desktop'
+
+      - name: Vytvoř Build složku
+        run: mkdir build
+        working-directory: ./SerialToGraph
+
+      - name: Qmake konfigurace
+        run: qmake ../SerialToGraph.pro CONFIG+=release
+        working-directory: ./SerialToGraph/build
+
+      - name: Kompilace (make)
+        # Parametr -j urychlí kompilaci použitím více jader procesoru
+        run: make -j$(nproc)
+        working-directory: ./SerialToGraph/build
+
+      - name: Příprava struktury pro balení
+        run: |
+          # Vytvoření standardní linuxové struktury adresářů
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
+          
+          # 1. Zkopíruje zkompilovanou binárku
+          cp build/MoleGraph AppDir/usr/bin/
+          
+          # 2. Vytvoření zástupce (.desktop soubor), kterého AppImage vyžaduje
+          cat <<EOF > AppDir/usr/share/applications/MoleGraph.desktop
+          [Desktop Entry]
+          Type=Application
+          Name=MoleGraph
+          Exec=MoleGraph
+          Icon=MoleGraph
+          Categories=Education;Science;
+          Terminal=false
+          EOF
+          
+          # 3. Zkopíruje vaši existující SVG ikonu z repozitáře
+          cp MoleGraph.svg AppDir/usr/share/icons/hicolor/scalable/apps/MoleGraph.svg
+          
+        working-directory: ./SerialToGraph
+
+      - name: Vytvoření finálního AppImage
+        run: |
+          # Stáhne balicí nástroj
+          wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+          
+          # AppImage vyžaduje informaci o verzi
+          export VERSION=4.4.2
+          
+          # Spustí balení.
+          ./linuxdeployqt-continuous-x86_64.AppImage AppDir/usr/share/applications/MoleGraph.desktop -appimage -unsupported-allow-new-glibc
+        working-directory: ./SerialToGraph
+
+      - name: Ulož výsledek jako Artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoleGraph-Linux
+          path: SerialToGraph/MoleGraph*.AppImage

@@ -36,12 +36,20 @@ jobs:
         run: mingw32-make
         working-directory: ./SerialToGraph/build
 
-      - name: Zabalení závislostí (windeployqt)
-        run: windeployqt release/SerialToGraph.exe
+      - name: Příprava čistého balíčku (windeployqt)
+        run: |
+          # Vytvoří čistou složku pro distribuci, aby se nepletl balast z kompilace
+          mkdir deploy
+          
+          # Najde váš hotový MoleGraph.exe a přesune ho do složky deploy
+          Get-ChildItem -Path . -Filter "MoleGraph.exe" -Recurse | Copy-Item -Destination deploy\
+          
+          # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
+          windeployqt deploy\MoleGraph.exe
         working-directory: ./SerialToGraph/build
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
-          name: MoleGraph-Windows-Test
-          path: SerialToGraph/build/release/
+          name: MoleGraph-Windows
+          path: SerialToGraph/build/deploy/

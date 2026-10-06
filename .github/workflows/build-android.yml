@@ -47,7 +47,7 @@ jobs:
       - name: Sestavení APK (androiddeployqt)
         run: |
           # Vezme zkompilované C++, obalí ho Javou a vyrobí instalační APK balíček
-          androiddeployqt --input android-libMoleGraph.so-deployment-settings.json --output android-build --gradle
+          androiddeployqt --input android-MoleGraph-deployment-settings.json --output android-build --gradle
         working-directory: ./SerialToGraph/build
 
       - name: Ulož výsledek jako Artefakt

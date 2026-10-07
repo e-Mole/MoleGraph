@@ -50,7 +50,7 @@ jobs:
           Copy-Item -Path "..\sensors" -Destination "deploy\sensors" -Recurse
           
           # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
-          windeployqt deploy\MoleGraph.exe
+          windeployqt --no-translations --no-angle --no-opengl-sw release/MoleGraph.exe
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace Inno Setup Instalátoru

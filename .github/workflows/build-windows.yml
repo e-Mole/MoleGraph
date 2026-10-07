@@ -13,8 +13,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Stáhni zdrojové kódy
+      - name: Checkout kód
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # <--- TOHLE POTŘEBUJEME PRO SKRIPT
 
       - name: Instalace Qt 5.15.2 (MinGW)
         uses: jurplel/install-qt-action@v4

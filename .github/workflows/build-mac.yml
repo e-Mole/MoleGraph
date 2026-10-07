@@ -30,7 +30,8 @@ jobs:
         working-directory: ./SerialToGraph
 
       - name: Qmake konfigurace
-        run: qmake ../SerialToGraph.pro CONFIG+=release
+        # Změnili jsme jen tento jeden řádek, přidali jsme QMAKE_LIBS_OPENGL
+        run: qmake ../SerialToGraph.pro CONFIG+=release "QMAKE_LIBS_OPENGL = -framework OpenGL"
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace (make)

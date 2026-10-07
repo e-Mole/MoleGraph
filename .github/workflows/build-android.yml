@@ -52,7 +52,7 @@ jobs:
         working-directory: ./SerialToGraph
 
       - name: Qmake konfigurace
-        run: qmake ../SerialToGraph.pro CONFIG+=release
+        run: qmake ../SerialToGraph.pro CONFIG+=release "ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64"
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace C++ kódu (make)

@@ -44,6 +44,9 @@ jobs:
           # Najde váš hotový MoleGraph.exe a přesune ho do složky deploy
           Get-ChildItem -Path . -Filter "MoleGraph.exe" -Recurse | Copy-Item -Destination deploy\
           
+          # Nakopíruje celou složku sensors k .exe
+          Copy-Item -Path "..\sensors" -Destination "deploy\sensors" -Recurse
+          
           # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
           windeployqt deploy\MoleGraph.exe
         working-directory: ./SerialToGraph/build

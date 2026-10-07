@@ -45,6 +45,9 @@ jobs:
           mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
           
           cp build/MoleGraph AppDir/usr/bin/
+
+          # Nakopíruje složku sensors vedle binárky
+          cp -r sensors AppDir/usr/bin/
           
           cat <<EOF > AppDir/usr/share/applications/MoleGraph.desktop
           [Desktop Entry]

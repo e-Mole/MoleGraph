@@ -44,12 +44,25 @@ jobs:
           # Najde váš hotový MoleGraph.exe a přesune ho do složky deploy
           Get-ChildItem -Path . -Filter "MoleGraph.exe" -Recurse | Copy-Item -Destination deploy\
           
+          # Nakopíruje celou složku sensors k .exe
+          Copy-Item -Path "..\sensors" -Destination "deploy\sensors" -Recurse
+          
           # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
           windeployqt deploy\MoleGraph.exe
         working-directory: ./SerialToGraph/build
+
+      - name: Kompilace Inno Setup Instalátoru
+        # Přepneme se do složky se zdrojovým kódem (tam, kde je náš installer.iss)
+        working-directory: ./SerialToGraph
+        run: |
+          # Vytvoříme zástupce na deploy složku k našemu ISS souboru
+          Copy-Item -Path "build\deploy" -Destination "deploy" -Recurse
+          
+          # Spustíme kompilátor Inno Setupu (na GitHub Windows serverech je už předinstalovaný!)
+          iscc installer.iss        
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Windows
-          path: SerialToGraph/build/deploy/
+          path: SerialToGraph/deploy/MoleGraph-Installer.exe

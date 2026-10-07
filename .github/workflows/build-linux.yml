@@ -2,9 +2,9 @@ name: Build MoleGraph App (Linux Test)
 
 on:
   push:
-    paths:
-      - 'SerialToGraph/**'
-  workflow_dispatch:
+    tags:
+      - 'v*' # Spustí kompilaci POUZE tehdy, když se vytvoří tag začínající na "v"
+  workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
 
 jobs:
   build-linux:

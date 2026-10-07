@@ -3,14 +3,13 @@ name: Build MoleGraph App (Linux Test)
 on:
   push:
     paths:
-      - 'SerialToGraph/**' # Spustí se při úpravě
-  workflow_dispatch:       # Tlačítko pro ruční spuštění
+      - 'SerialToGraph/**'
+  workflow_dispatch:
 
 jobs:
   build-linux:
     name: Kompilace pro Linux (Qt 5.15)
-    
-    # Použijeme Ubuntu 20.04 (zaručuje maximální kompatibilitu AppImage i se starými PC)
+    # Zůstáváme na moderním systému, který funguje!
     runs-on: ubuntu-22.04
 
     steps:
@@ -18,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Instalace základních Linux nástrojů
-        run: sudo apt-get update && sudo apt-get install -y build-essential libgl1-mesa-dev patchelf libfuse2 file
+        run: sudo apt-get update && sudo apt-get install -y build-essential libgl1-mesa-dev patchelf libfuse2
 
       - name: Instalace Qt 5.15.2
         uses: jurplel/install-qt-action@v4
@@ -36,21 +35,17 @@ jobs:
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace (make)
-        # Parametr -j urychlí kompilaci použitím více jader procesoru
         run: make -j$(nproc)
         working-directory: ./SerialToGraph/build
 
       - name: Příprava struktury pro balení
         run: |
-          # Vytvoření standardní linuxové struktury adresářů
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
           
-          # 1. Zkopíruje zkompilovanou binárku
           cp build/MoleGraph AppDir/usr/bin/
           
-          # 2. Vytvoření zástupce (.desktop soubor), kterého AppImage vyžaduje
           cat <<EOF > AppDir/usr/share/applications/MoleGraph.desktop
           [Desktop Entry]
           Type=Application
@@ -61,23 +56,28 @@ jobs:
           Terminal=false
           EOF
           
-          # 3. Zkopíruje vaši existující SVG ikonu z repozitáře
           cp MoleGraph.svg AppDir/usr/share/icons/hicolor/scalable/apps/MoleGraph.svg
-          
         working-directory: ./SerialToGraph
 
-      - name: Vytvoření finálního AppImage
+      - name: Vytvoření moderního AppImage (linuxdeploy)
         run: |
-          # Stáhne balicí nástroj
-          wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+          # 1. Stáhneme hlavní moderní nástroj linuxdeploy
+          wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          chmod a+x linuxdeploy-x86_64.AppImage
           
-          # AppImage vyžaduje informaci o verzi
+          # 2. Stáhneme oficiální Qt plugin pro tento nástroj
+          wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+          chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
+          
           export VERSION=4.4.2
           
-          # Spustí balení s explicitly určenou cestou k Qmake a s podporou nového Ubuntu
-          ./linuxdeployqt-continuous-x86_64.AppImage AppDir/usr/share/applications/MoleGraph.desktop -appimage -unsupported-allow-new-glibc -qmake=$QT_ROOT_DIR/bin/qmake
+          # 3. Spustíme balení. Nástroj automaticky zavolá Qt plugin, 
+          # sesbírá knihovny a vyrobí finální AppImage, aniž by se ptal na věk sytému!
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
         working-directory: ./SerialToGraph
+        env:
+          # Tento plugin potřebuje vědět, kde je Qmake, aby našel knihovny
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4

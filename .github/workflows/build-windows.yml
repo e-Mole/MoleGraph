@@ -49,8 +49,17 @@ jobs:
           # Nakopíruje celou složku sensors k .exe
           Copy-Item -Path "..\sensors" -Destination "deploy\sensors" -Recurse
           
-          # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
-          windeployqt --no-translations --no-angle --no-opengl-sw release/MoleGraph.exe
+      - name: Přibalení Qt knihoven a promazání balastu
+        run: |
+          # 1. Necháme Qt přibalit všechno, co považuje za nutné
+          windeployqt release/MoleGraph.exe
+          
+          # 2. Hrubou silou vymažeme 38MB nepotřebný balast
+          Remove-Item -Path "release\translations" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "release\D3Dcompiler_47.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "release\libGLESv2.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "release\opengl32sw.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "release\libEGL.dll" -Force -ErrorAction SilentlyContinue
         working-directory: ./SerialToGraph/build
       
       - name: Příprava doplňkových souborů

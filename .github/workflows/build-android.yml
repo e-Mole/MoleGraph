@@ -20,7 +20,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-
       - name: Příprava Android prostředí (NDK r21 a oprava SDK)
         run: |
           # Potvrdí licence
@@ -29,11 +28,14 @@ jobs:
           # Stáhne NDK r21 a plně kompatibilní Android SDK 33
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;21.4.7075529" "platforms;android-33" "build-tools;33.0.2"
           
-          # TOTO JE TEN TRIK: Smažeme příliš nové SDK (34, 35, 36), 
-          # kvůli kterým generátor Qt padá na chybě "ext19"
-          rm -rf $ANDROID_HOME/platforms/android-34*
-          rm -rf $ANDROID_HOME/platforms/android-35*
-          rm -rf $ANDROID_HOME/platforms/android-36*
+          # ULTIMÁTNÍ ČISTKA: Schováme si android-33 do bezpečí
+          mv $ANDROID_HOME/platforms/android-33 $HOME/android-33-safe
+          
+          # Smažeme ÚPLNĚ VŠECHNY verze Androidu, co tam GitHub má (34, 35, 36, 37...)
+          rm -rf $ANDROID_HOME/platforms/android-*
+          
+          # Vrátíme naši jedinou bezpečnou verzi zpět
+          mv $HOME/android-33-safe $ANDROID_HOME/platforms/android-33
           
           # Nastaví systémové proměnné
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV

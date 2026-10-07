@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Stáhni zdrojové kódy
+      - name: Stáhnutí kódu (Checkout)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Stáhne i historii a tagy pro git describe
 
       - name: Nastavení Java JDK 11
         uses: actions/setup-java@v4
@@ -49,6 +51,18 @@ jobs:
 
       - name: Vytvoř Build složku
         run: mkdir build
+        working-directory: ./SerialToGraph
+      
+      - name: Generování verze (GitVersion.h)
+        run: |
+          # Použijeme stejný příkaz jako púvodní Windows skript
+          VERSION=$(git describe --always --tags --dirty)
+          
+          # Zapíšeme to do souboru
+          echo "#ifndef VERSION_H" > GitVersion.h
+          echo "#define VERSION_H" >> GitVersion.h
+          echo "#define GIT_VERSION \"$VERSION\"" >> GitVersion.h
+          echo "#endif //VERSION_H" >> GitVersion.h
         working-directory: ./SerialToGraph
 
       - name: Qmake konfigurace

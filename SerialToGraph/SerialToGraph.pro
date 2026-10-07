@@ -20,7 +20,7 @@ GIT_VERSION_TAG = $$system(git describe --tags --abbrev=0)
 GIT_VERSION_TAG ~= s/^v//
 isEmpty(GIT_VERSION_TAG) {
 #    GIT_VERSION_TAG = 4.3.2
-    GIT_VERSION_TAG = VERSION
+    GIT_VERSION_TAG = $$VERSION
 }
 WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
 # Regulární výraz: Odstranit vše od první pomlčky dál (včetně ní)

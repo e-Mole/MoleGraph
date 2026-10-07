@@ -52,25 +52,28 @@ jobs:
         working-directory: ./SerialToGraph
 
       - name: Qmake konfigurace
-        run: qmake ../SerialToGraph.pro CONFIG+=release "ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64"
+        # Čte ABIS přímo z opraveného .pro souboru
+        run: qmake ../SerialToGraph.pro CONFIG+=release
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace C++ kódu (make)
         run: |
           make -j$(nproc)
           make install INSTALL_ROOT=android-build
+          
+          # Přibalíme složku sensors pro Android
+          mkdir -p android-build/assets
+          cp -r ../sensors android-build/assets/
         working-directory: ./SerialToGraph/build
 
-      - name: Sestavení APK (androiddeployqt)
-        run: |
-          # Spustí balení s opraveným prostředím
-          androiddeployqt --input android-MoleGraph-deployment-settings.json --output android-build --gradle
+      - name: Zabalení do APK (androiddeployqt)
+        run: androiddeployqt --input android-libMoleGraph.so-deployment-settings.json --output android-build --android-platform android-34 --jdk /usr/lib/jvm/java-17-openjdk-amd64 --gradle
         working-directory: ./SerialToGraph/build
 
-      - name: Příprava APK k odeslání
+      - name: Příprava APK k podepsání
         run: |
           mkdir -p apk_output
-          # Zkopíruje ho s názvem "unsigned", protože ještě není podepsané
+          # Najde vytvořené APK a vykopíruje ho s názvem "unsigned"
           find SerialToGraph/build/android-build -name "*.apk" -exec cp {} apk_output/MoleGraph-unsigned.apk \;
 
       - name: Podepsání APK
@@ -83,12 +86,11 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
         env:
-          # Vynutíme použití nejnovějšího dostupného Android SDK pro podpis
           BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Přejmenování finálního APK
         run: |
-          # Akce sign-android-release nám vrátí cestu k podepsanému souboru, přejmenujeme ho načisto
+          # Vezme podepsaný soubor a přejmenuje ho načisto pro uživatele
           mv ${{steps.sign_app.outputs.signedReleaseFile}} apk_output/MoleGraph.apk
 
       - name: Ulož výsledek jako Artefakt

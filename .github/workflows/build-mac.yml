@@ -41,6 +41,9 @@ jobs:
 
       - name: Zabalení pro Mac (macdeployqt)
         run: |
+          # Nakopíruje složku sensors dovnitř .app svazku
+          cp -r ../sensors MoleGraph.app/Contents/MacOS/
+          
           # macdeployqt vezme hotovou aplikaci, narve do ní knihovny a vyrobí DMG
           macdeployqt MoleGraph.app -dmg
         working-directory: ./SerialToGraph/build

@@ -15,11 +15,12 @@ DEFINES += TARGET=\\\"$$TARGET\\\"
 
 TEMPLATE = app
 
-#VERSION = 4.3
+VERSION = 4.3.2
 GIT_VERSION_TAG = $$system(git describe --tags --abbrev=0)
 GIT_VERSION_TAG ~= s/^v//
 isEmpty(GIT_VERSION_TAG) {
-    GIT_VERSION_TAG = 1.0.0.0
+#    GIT_VERSION_TAG = 4.3.2
+    GIT_VERSION_TAG = VERSION
 }
 WIN_NUMERIC_VERSION = $$GIT_VERSION_TAG
 # Regulární výraz: Odstranit vše od první pomlčky dál (včetně ní)
@@ -34,7 +35,7 @@ QMAKE_TARGET_PRODUCT = "$$TARGET ($$GIT_VERSION_TAG)"
 #QMAKE_TARGET_PRODUCT = "MoleGraph (4.3-beta2)" #test only - problem with PRODUCT_NAME in windows title (resolved after switching fo debug mode and back to release mode)
 DEFINES += "PRODUCT_NAME=\"\\\"$$QMAKE_TARGET_PRODUCT\\\"\""
 QMAKE_TARGET_DESCRIPTION = "School Probeware system based on Arduino"
-QMAKE_TARGET_COPYRIGHT = Copyright (c) 2022 e-Mole
+QMAKE_TARGET_COPYRIGHT = Copyright (c) 2024 e-Mole
 QMAKE_CXXFLAGS += -Werror=return-type
 QMAKE_CXXFLAGS += -Wno-sign-compare
 

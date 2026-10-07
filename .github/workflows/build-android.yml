@@ -2,9 +2,9 @@ name: Build MoleGraph App (Android Test)
 
 on:
   push:
-    paths:
-      - 'SerialToGraph/**'
-  workflow_dispatch:
+    tags:
+      - 'v*' # Spustí kompilaci POUZE tehdy, když se vytvoří tag začínající na "v"
+  workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
 
 jobs:
   build-android:
@@ -52,7 +52,7 @@ jobs:
         working-directory: ./SerialToGraph
 
       - name: Qmake konfigurace
-        run: qmake ../SerialToGraph.pro CONFIG+=release
+        run: qmake ../SerialToGraph.pro CONFIG+=release "ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64"
         working-directory: ./SerialToGraph/build
 
       - name: Kompilace C++ kódu (make)
@@ -67,8 +67,32 @@ jobs:
           androiddeployqt --input android-MoleGraph-deployment-settings.json --output android-build --gradle
         working-directory: ./SerialToGraph/build
 
+      - name: Příprava APK k odeslání
+        run: |
+          mkdir -p apk_output
+          # Zkopíruje ho s názvem "unsigned", protože ještě není podepsané
+          find SerialToGraph/build/android-build -name "*.apk" -exec cp {} apk_output/MoleGraph-unsigned.apk \;
+
+      - name: Podepsání APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: apk_output
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        env:
+          # Vynutíme použití nejnovějšího dostupného Android SDK pro podpis
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      - name: Přejmenování finálního APK
+        run: |
+          # Akce sign-android-release nám vrátí cestu k podepsanému souboru, přejmenujeme ho načisto
+          mv ${{steps.sign_app.outputs.signedReleaseFile}} apk_output/MoleGraph.apk
+
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Android-APK
-          path: SerialToGraph/build/android-build/**/*.apk
+          path: apk_output/MoleGraph.apk

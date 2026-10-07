@@ -2,16 +2,13 @@ name: Build MoleGraph App (macOS Test)
 
 on:
   push:
-    paths:
-      - 'SerialToGraph/**'
-  workflow_dispatch:
+    tags:
+      - 'v*' # Spustí kompilaci POUZE tehdy, když se vytvoří tag začínající na "v"
+  workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
 
 jobs:
   build-mac:
     name: Kompilace pro macOS (Qt 5.15)
-    # Používáme macos-13 (Intel architektura), protože starší Qt 5.15 
-    # se na ní kompiluje spolehlivěji než na nejnovějších ARM čipech.
-    # Uživatelům s novými Macy (M1/M2/M3) to díky systému Rosetta poběží bez problémů.
     runs-on: macos-latest 
 
     steps:

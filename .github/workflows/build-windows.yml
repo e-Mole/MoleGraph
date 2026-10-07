@@ -3,9 +3,9 @@ name: Build MoleGraph App (Windows Test)
 # Kdy se má akce spustit:
 on:
   push:
-    paths:
-      - 'SerialToGraph/**' # Spustí se při úpravě kódu aplikace
-  workflow_dispatch:       # Přidá tlačítko pro ruční spuštění (geniální pro testování!)
+    tags:
+      - 'v*' # Spustí kompilaci POUZE tehdy, když se vytvoří tag začínající na "v"
+  workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
 
 jobs:
   build-windows:

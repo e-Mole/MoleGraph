@@ -67,8 +67,15 @@ jobs:
           androiddeployqt --input android-MoleGraph-deployment-settings.json --output android-build --gradle
         working-directory: ./SerialToGraph/build
 
+      - name: Příprava APK k odeslání
+        run: |
+          mkdir -p apk_output
+          # Najde jakékoliv vytvořené APK (ať už debug nebo release) a zkopíruje ho s čistým názvem
+          find SerialToGraph/build/android-build -name "*.apk" -exec cp {} apk_output/MoleGraph.apk \;
+
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Android-APK
-          path: SerialToGraph/build/android-build/**/*.apk
+          # Odkazujeme už jen na tento jeden konkrétní soubor, takže ve stáhnutém ZIPu nebude žádná změť složek
+          path: apk_output/MoleGraph.apk

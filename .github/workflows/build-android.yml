@@ -70,12 +70,29 @@ jobs:
       - name: Příprava APK k odeslání
         run: |
           mkdir -p apk_output
-          # Najde jakékoliv vytvořené APK (ať už debug nebo release) a zkopíruje ho s čistým názvem
-          find SerialToGraph/build/android-build -name "*.apk" -exec cp {} apk_output/MoleGraph.apk \;
+          # Zkopíruje ho s názvem "unsigned", protože ještě není podepsané
+          find SerialToGraph/build/android-build -name "*.apk" -exec cp {} apk_output/MoleGraph-unsigned.apk \;
+
+      - name: Podepsání APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: apk_output
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        env:
+          # Vynutíme použití nejnovějšího dostupného Android SDK pro podpis
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      - name: Přejmenování finálního APK
+        run: |
+          # Akce sign-android-release nám vrátí cestu k podepsanému souboru, přejmenujeme ho načisto
+          mv ${{steps.sign_app.outputs.signedReleaseFile}} apk_output/MoleGraph.apk
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Android-APK
-          # Odkazujeme už jen na tento jeden konkrétní soubor, takže ve stáhnutém ZIPu nebude žádná změť složek
           path: apk_output/MoleGraph.apk

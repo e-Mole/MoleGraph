@@ -52,6 +52,12 @@ jobs:
           # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
           windeployqt --no-translations --no-angle --no-opengl-sw release/MoleGraph.exe
         working-directory: ./SerialToGraph/build
+      
+      - name: Příprava doplňkových souborů
+        run: |
+          # Zkopíruje licenci z hlavního adresáře projektu k hotovému EXE souboru
+          cp ../LICENSE.txt release/
+        working-directory: ./SerialToGraph/build
 
       - name: Kompilace Inno Setup Instalátoru
         # Přepneme se do složky se zdrojovým kódem (tam, kde je náš installer.iss)

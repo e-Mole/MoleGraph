@@ -73,14 +73,17 @@ jobs:
 
       - name: Kompilace a zabalení (Fat APK)
         run: |
-          # 1. Zkompilujeme všechny architektury bezpečně (jednu po druhé bez -j)
-          make
+          # 1. Zkompilujeme první architekturu na všech jádrech
+          make armeabi-v7a-all -j$(nproc)
           
-          # 2. Vložíme senzory do složky android/assets (Qt si to vezme díky ANDROID_PACKAGE_SOURCE_DIR v .pro)
+          # 2. Až první skončí, zkompilujeme druhou architekturu na všech jádrech
+          make arm64-v8a-all -j$(nproc)
+          
+          # 3. Vložíme senzory do složky android/assets
           mkdir -p ../android/assets
           cp -r ../sensors ../android/assets/
           
-          # 3. Necháme Qt vygenerovat finální velké APK
+          # 4. Necháme Qt vygenerovat finální velké APK (to už je rychlé)
           make apk
         working-directory: ./SerialToGraph/build
 

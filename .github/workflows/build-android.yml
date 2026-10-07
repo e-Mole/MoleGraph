@@ -72,7 +72,7 @@ jobs:
 
       - name: Kompilace C++ kódu (make)
         run: |
-          make -j$(nproc)
+          make
           make install INSTALL_ROOT=android-build
           
           # Přibalíme složku sensors pro Android

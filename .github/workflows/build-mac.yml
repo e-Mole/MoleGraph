@@ -12,8 +12,10 @@ jobs:
     runs-on: macos-latest 
 
     steps:
-      - name: Stáhni zdrojové kódy
+      - name: Stáhnutí kódu (Checkout)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Stáhne i historii a tagy pro git describe
 
       - name: Instalace Qt 5.15.2
         uses: jurplel/install-qt-action@v4

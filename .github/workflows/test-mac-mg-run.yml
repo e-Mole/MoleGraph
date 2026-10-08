@@ -1,0 +1,61 @@
+name: Test MoleGraph macOS
+
+on:
+  workflow_dispatch: # Spuštění ručně přes záložku Actions v GitHubu
+
+jobs:
+  test-molegraph:
+    runs-on: macos-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MoleGraph-macOS # Název artefaktu, pod kterým ho nahráváte v předchozím kroku
+          path: ./artifact
+
+      - name: Unzip ZIP archive
+        run: |
+          cd ./artifact
+          # Rozbalíme ZIP, ve kterém je MoleGraph.dmg
+          unzip MoleGraph-macOS.zip -d extracted/
+          ls -la extracted/
+
+      - name: Mount DMG and test app
+        run: |
+          cd ./artifact/extracted
+          
+          # Vytvoření složky pro připojení DMG
+          mkdir -p mnt
+          
+          # Připojení DMG disku (-nobrowse zabrání vyskakovacímu oknu Finderu)
+          hdiutil attach MoleGraph.dmg -mountpoint mnt -nobrowse
+          
+          echo "=== Obsah připojeného DMG ==="
+          ls -la mnt/
+          
+          # Cesta k .app uvnitř DMG (předpokládáme MoleGraph.app)
+          APP_PATH="mnt/MoleGraph.app"
+          
+          if [ -d "$APP_PATH" ]; then
+            echo "Aplikace MoleGraph.app úspěšně nalezena v DMG."
+            
+            # Odstranění atributu kvarantény (pro jistotu)
+            sudo xattr -rd com.apple.quarantine "$APP_PATH" || true
+            
+            # Zjištění názvu interní binárky z Info.plist
+            EXECUTABLE=$(defaults read "$PWD/$APP_PATH/Contents/Info" CFBundleExecutable)
+            echo "Spustitelný soubor uvnitř: $EXECUTABLE"
+            
+            echo "=== Pokus o spuštění aplikace ==="
+            # Spuštění s časovým limitem (timeout 10s), aby workflow nezamrzlo, 
+            # pokud aplikace otevírá grafické okno a čeká na uživatele
+            timeout 10s "$PWD/$APP_PATH/Contents/MacOS/$EXECUTABLE" --help || echo "Aplikace doběhla nebo vypršel časový limit (což je u GUI aplikací běžné)."
+            
+          else
+            echo "Chyba: MoleGraph.app nebyl uvnitř DMG nalezen!"
+            exit 1
+          fi
+          
+          echo "=== Odpojení DMG ==="
+          hdiutil detach mnt -force

@@ -1,4 +1,4 @@
-name: Build MoleGraph App (Flatpak Test)
+name: Build MoleGraph App (Linux Flatpak Test)
 
 on:
   push:
@@ -25,6 +25,7 @@ jobs:
       - name: Generování GitVersion.h pro Flatpak
         working-directory: ./SerialToGraph
         run: |
+          git config --global --add safe.directory /__w/MoleGraph/MoleGraph
           VERSION_TAG=$(git describe --tags --always)
           cat <<EOF > GitVersion.h
           #ifndef VERSION_H 

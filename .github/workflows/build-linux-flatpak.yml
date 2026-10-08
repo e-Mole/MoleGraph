@@ -1,0 +1,86 @@
+name: Build MoleGraph App (Flatpak Test)
+
+on:
+  push:
+    branches:
+      - main # Spustí kompilaci při každém pushnutí do hlavní větve pro rychlé testování
+  workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
+
+jobs:
+  build-linux-flatpak:
+    name: Kompilace pro Linux (Flatpak Qt 5.15)
+    runs-on: ubuntu-latest
+    
+    # Oficiální kontejner Flathub s předinstalovaným Qt 5.15 LTS a SDK prostředí
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-5.15-23.08
+      options: --privileged # Nutné pro interní sandbox (bubblewrap) při sestavování
+
+    steps:
+      - name: Stáhni zdrojové kódy
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Nutná historie pro vyčtení verze z tagů Gitu
+
+      - name: Generování GitVersion.h pro Flatpak
+        working-directory: ./SerialToGraph
+        run: |
+          VERSION_TAG=$(git describe --tags --always)
+          cat <<EOF > GitVersion.h
+          #ifndef VERSION_H 
+          #define VERSION_H  
+          #define GIT_VERSION "$VERSION_TAG" 
+          #endif //VERSION_H
+          EOF
+
+      - name: Vytvoření Flatpak manifestu na vyžádání
+        run: |
+          cat <<EOF > org.molegraph.MoleGraph.json
+          {
+              "id": "org.molegraph.MoleGraph",
+              "runtime": "org.kde.Platform",
+              "runtime-version": "5.15-23.08",
+              "sdk": "org.kde.Sdk",
+              "command": "MoleGraph",
+              "finish-args": [
+                  "--share=ipc",
+                  "--socket=x11",
+                  "--socket=wayland",
+                  "--device=all"
+              ],
+              "modules": [
+                  {
+                      "name": "molegraph",
+                      "buildsystem": "qmake",
+                      "subdir": "SerialToGraph",
+                      "sources": [
+                          {
+                              "type": "dir",
+                              "path": "."
+                          }
+                      ],
+                      "post-install": [
+                          "mkdir -p /app/bin",
+                          "cp -r sensors /app/bin/",
+                          "mkdir -p /app/share/applications",
+                          "echo -e '[Desktop Entry]\nType=Application\nName=MoleGraph\nExec=MoleGraph\nIcon=org.molegraph.MoleGraph\nCategories=Education;Science;\nTerminal=false\nComment=MoleGraph is a multi-platform application used to record and visualize data from the Arduino based school probeware MoleGraph system' > /app/share/applications/org.molegraph.MoleGraph.desktop",
+                          "mkdir -p /app/share/icons/hicolor/scalable/apps",
+                          "cp MoleGraph.svg /app/share/icons/hicolor/scalable/apps/org.molegraph.MoleGraph.svg"
+                      ]
+                  }
+              ]
+          }
+          EOF
+
+      - name: Sestavení Flatpak balíčku
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: org.molegraph.MoleGraph.json
+          bundle: MoleGraph.flatpak
+          cache: true
+
+      - name: Ulož Flatpak jako Artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoleGraph-Linux-Flatpak
+          path: MoleGraph.flatpak

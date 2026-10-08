@@ -60,16 +60,21 @@ jobs:
                               "path": "."
                           }
                       ],
+                      "build-options" : {
+                          "env": {
+                              "INSTALL_ROOT": "/app"
+                          }
+                      },
                       "post-install": [
-                          "mkdir -p /app/bin",
-                          "cp MoleGraph /app/bin/MoleGraph",
+                          "install -d /app/bin",
+                          "install -m 755 MoleGraph /app/bin/MoleGraph || install -m 755 ./*/MoleGraph /app/bin/MoleGraph || echo 'Error: MoleGraph binary not found!'",
                           "cp -r sensors /app/bin/ 2>/dev/null || cp -r ../sensors /app/bin/ 2>/dev/null || true",
-                          "mkdir -p /app/share/applications",
+                          "install -d /app/share/applications",
                           "echo -e '[Desktop Entry]\nType=Application\nName=MoleGraph\nExec=MoleGraph\nIcon=eu.molegraph.MoleGraph\nCategories=Education;Science;\nTerminal=false\nComment=MoleGraph is a multi-platform application used to record and visualize data from the Arduino based school probeware MoleGraph system' > /app/share/applications/eu.molegraph.MoleGraph.desktop",
-                          "mkdir -p /app/share/icons/hicolor/scalable/apps",
-                          "cp MoleGraph.svg /app/share/icons/hicolor/scalable/apps/eu.molegraph.MoleGraph.svg",
-                          "mkdir -p /app/share/metainfo",
-                          "cp ../eu.molegraph.MoleGraph.metainfo.xml /app/share/metainfo/eu.molegraph.MoleGraph.metainfo.xml"
+                          "install -d /app/share/icons/hicolor/scalable/apps",
+                          "install -m 644 MoleGraph.svg /app/share/icons/hicolor/scalable/apps/eu.molegraph.MoleGraph.svg || echo 'Icon not found!'",
+                          "install -d /app/share/metainfo",
+                          "install -m 644 ../eu.molegraph.MoleGraph.metainfo.xml /app/share/metainfo/eu.molegraph.MoleGraph.metainfo.xml || echo 'Metainfo not found!'"
                       ]
                   }
               ]

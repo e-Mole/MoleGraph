@@ -1,0 +1,80 @@
+name: Test MoleGraph macOS & Screenshot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-molegraph:
+    runs-on: macos-latest
+
+    steps:
+      - name: Download artifact from specific run
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          run_id: 37696392679
+          name: MoleGraph-macOS
+          path: ./artifact
+          # Akce to sama rozbalí, v ./artifact bude rovnou MoleGraph.dmg
+
+      # Krok "Unzip ZIP archive" jsme smazali, už není potřeba
+
+      - name: Mount DMG, run app and take screenshot
+        run: |
+          cd ./artifact
+          
+          # Pro jistotu vypíšeme obsah, abychom viděli DMG
+          echo "=== Obsah složky artifact po stažení ==="
+          ls -la
+          
+          mkdir -p mnt
+          
+      - name: Mount DMG, run app, log and screenshot
+        run: |
+          cd ./artifact
+          mkdir -p mnt
+          hdiutil attach MoleGraph.dmg -mountpoint mnt -nobrowse
+          
+          APP_PATH="mnt/MoleGraph.app"
+          
+          if [ -d "$APP_PATH" ]; then
+            echo "Kopíruji do /tmp..."
+            cp -R "$APP_PATH" /tmp/
+            sudo xattr -rd com.apple.quarantine /tmp/MoleGraph.app || true
+            
+            echo "Spouštím aplikaci přes nativní macOS open..."
+            # Příkaz open zajistí, že systém aplikaci správně zaregistruje v GUI
+            open /tmp/MoleGraph.app
+            
+            echo "Čekám 10 sekund na načtení GUI..."
+            sleep 10
+            
+            echo "Vynucuji zobrazení okna v popředí přes AppleScript..."
+            # Tento skript "klikne" na aplikaci a vyvolá ji do popředí
+            osascript -e 'tell application "MoleGraph" to activate' || true
+            sleep 2
+            
+            echo "Pořizuji screenshot obrazovky..."
+            screencapture -x ../app_screenshot.png
+            
+            echo "=== SYSTÉMOVÉ LOGY MACOS (poslední 2 minuty) ==="
+            # Vyfiltrujeme systémové logy macOS pouze pro náš proces MoleGraph
+            log show --predicate 'process MATCHES "MoleGraph"' --last 2m | tail -n 50 || true
+            echo "================================================"
+            
+            echo "Ukončuji aplikaci..."
+            pkill -f "MoleGraph" || true
+            
+          else
+            echo "Chyba: MoleGraph.app nebyl v DMG nalezen!"
+            exit 1
+          fi
+          
+          # Úklid
+          hdiutil detach mnt -force
+
+      - name: Upload Screenshot Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshot
+          path: app_screenshot.png
+          retention-days: 1

@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Stáhni zdrojové kódy
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Nutná historie pro vyčtení verze z tagů Gitu!
 
       - name: Instalace základních Linux nástrojů
         run: sudo apt-get update && sudo apt-get install -y build-essential libgl1-mesa-dev patchelf libfuse2
@@ -30,6 +32,20 @@ jobs:
         run: mkdir build
         working-directory: ./SerialToGraph
 
+      - name: Generování GitVersion.h pro Linux
+        working-directory: ./SerialToGraph
+        run: |
+          # Vyčteme tag z Gitu přímo v Linuxu
+          VERSION_TAG=$(git describe --tags --always)
+          
+          # Vygenerujeme nový GitVersion.h (ve win to dělal .bat)
+          cat <<EOF > GitVersion.h
+          #ifndef VERSION_H 
+          #define VERSION_H  
+          #define GIT_VERSION "$VERSION_TAG" 
+          #endif //VERSION_H
+          EOF
+          
       - name: Qmake konfigurace
         run: qmake ../SerialToGraph.pro CONFIG+=release
         working-directory: ./SerialToGraph/build
@@ -41,28 +57,25 @@ jobs:
       - name: Příprava struktury pro balení
         run: |
           mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/applications
-          mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
           
+          # Nakopíruje binárku a složku sensors
           cp build/MoleGraph AppDir/usr/bin/
-
-          # Nakopíruje složku sensors vedle binárky
           cp -r sensors AppDir/usr/bin/
           
-          cat <<EOF > AppDir/usr/share/applications/MoleGraph.desktop
+          # Vytvoříme .desktop s komentářem přímo v SerialToGraph (ne uvnitř AppDir)
+          cat <<EOF > MoleGraph.desktop
           [Desktop Entry]
           Type=Application
           Name=MoleGraph
           Exec=MoleGraph
+          Comment=MoleGraph is a multi-platform application used to record and visualize data from the Arduino based school probeware MoleGraph system
           Icon=MoleGraph
           Categories=Education;Science;
           Terminal=false
           EOF
-          
-          cp MoleGraph.svg AppDir/usr/share/icons/hicolor/scalable/apps/MoleGraph.svg
         working-directory: ./SerialToGraph
 
-      - name: Vytvoření moderního AppImage (linuxdeploy)
+      - name: Vytvoření AppImage (linuxdeploy)
         run: |
           # 1. Stáhneme hlavní moderní nástroj linuxdeploy
           wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
@@ -72,18 +85,21 @@ jobs:
           wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
           chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
           
-          export VERSION=4.4.2
+          # 3. Získáme verzi z Gitu (aby aplikace uvnitř věděla, jaká je verze)
+          export VERSION=$(git describe --tags --always | sed 's/^v//')
           
-          # 3. Spustíme balení. Nástroj automaticky zavolá Qt plugin, 
-          # sesbírá knihovny a vyrobí finální AppImage, aniž by se ptal na věk sytému!
-          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+          # 4. Spustíme balení
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir -d MoleGraph.desktop -i MoleGraph.svg --plugin qt --output appimage
+          
+          # 5. Přejmenujeme ten ošklivý technický název na čistý "MoleGraph.AppImage"
+          mv MoleGraph*.AppImage MoleGraph.AppImage
         working-directory: ./SerialToGraph
         env:
-          # Tento plugin potřebuje vědět, kde je Qmake, aby našel knihovny
           QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Linux
-          path: SerialToGraph/MoleGraph*.AppImage
+          # Tady už hledáme jen náš hezky přejmenovaný soubor
+          path: SerialToGraph/MoleGraph.AppImage

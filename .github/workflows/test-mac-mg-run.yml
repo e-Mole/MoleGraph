@@ -8,11 +8,12 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+      - name: Download artifact from specific run
+        uses: dawidd6/action-download-artifact@v3
         with:
-          name: MoleGraph-macOS # Název artefaktu, pod kterým ho nahráváte v předchozím kroku
-          path: ./artifact
+         run_id: 37696392679 # ID z URL
+         name: MoleGraph-macOS # Přesný název artefaktu z buildovacího workflow
+         path: ./artifact
 
       - name: Unzip ZIP archive
         run: |

@@ -39,32 +39,39 @@ jobs:
         working-directory: ./SerialToGraph/build
 
       - name: Příprava čistého balíčku (windeployqt)
-        run: |
-          # Vytvoří čistou složku pro distribuci, aby se nepletl balast z kompilace
-          mkdir deploy
-          
-          # Najde váš hotový MoleGraph.exe a přesune ho do složky deploy
-          Get-ChildItem -Path . -Filter "MoleGraph.exe" -Recurse | Copy-Item -Destination deploy\
-          
-          # Nakopíruje celou složku sensors k .exe
-          Copy-Item -Path "..\sensors" -Destination "deploy\sensors" -Recurse
-          
-          # Doplní všechny potřebné Qt knihovny a DLL přímo k .exe souboru
-          windeployqt deploy\MoleGraph.exe
-        working-directory: ./SerialToGraph/build
-
-      - name: Kompilace Inno Setup Instalátoru
-        # Přepneme se do složky se zdrojovým kódem (tam, kde je náš installer.iss)
         working-directory: ./SerialToGraph
         run: |
-          # Vytvoříme zástupce na deploy složku k našemu ISS souboru
-          Copy-Item -Path "build\deploy" -Destination "deploy" -Recurse
+          # 1. Vytvoří čistou složku deploy hned vedle installer.iss
+          mkdir deploy
           
-          # Spustíme kompilátor Inno Setupu (na GitHub Windows serverech je už předinstalovaný!)
+          # 2. Vyzvedne čistý EXE soubor z build/release a vloží ho do deploy
+          Copy-Item -Path "build\release\MoleGraph.exe" -Destination "deploy\"
+          
+          # 3. Nakopíruje senzory (ze SerialToGraph)
+          Copy-Item -Path "sensors" -Destination "deploy\sensors" -Recurse
+          
+          # 4. Vloží licenci do deploy
+          Copy-Item -Path "LICENSE.txt" -Destination "deploy\"
+          
+          # 5. Necháme Qt přibalit DLL knihovny PŘÍMO k .exe do složky deploy/
+          windeployqt deploy/MoleGraph.exe
+          
+          # 6. Smažeme 35MB zbytečného balastu z Qt
+          Remove-Item -Path "deploy\translations" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "deploy\D3Dcompiler_47.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "deploy\libGLESv2.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "deploy\opengl32sw.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "deploy\libEGL.dll" -Force -ErrorAction SilentlyContinue
+
+      - name: Kompilace Inno Setup Instalátoru
+        working-directory: ./SerialToGraph
+        run: |
+          # Složka deploy je připravená plná čistých dat, můžeme rovnou balit!
           iscc installer.iss        
 
       - name: Ulož výsledek jako Artefakt
         uses: actions/upload-artifact@v4
         with:
           name: MoleGraph-Windows
+          # Artefakt se uloží z Output složky nebo z deploy, podle toho kam Inno Setup zapisuje výsledek
           path: SerialToGraph/deploy/MoleGraph-Installer.exe

@@ -37,29 +37,32 @@ jobs:
           APP_PATH="mnt/MoleGraph.app"
           
           if [ -d "$APP_PATH" ]; then
-            echo "Aplikace nalezena, kopíruji do /tmp..."
+            echo "Kopíruji do /tmp..."
             cp -R "$APP_PATH" /tmp/
             sudo xattr -rd com.apple.quarantine /tmp/MoleGraph.app || true
             
-            EXECUTABLE=$(defaults read "/tmp/MoleGraph.app/Contents/Info" CFBundleExecutable)
-            echo "Spouštím binárku na pozadí a ukládám log..."
-            
-            # Spuštění na pozadí (&) a přesměrování výpisu do souboru app.log
-            "/tmp/MoleGraph.app/Contents/MacOS/$EXECUTABLE" > ../app.log 2>&1 &
-            APP_PID=$!
+            echo "Spouštím aplikaci přes nativní macOS open..."
+            # Příkaz open zajistí, že systém aplikaci správně zaregistruje v GUI
+            open /tmp/MoleGraph.app
             
             echo "Čekám 10 sekund na načtení GUI..."
             sleep 10
             
-            echo "=== VÝPIS LOGU APLIKACE ==="
-            cat ../app.log
-            echo "==========================="
+            echo "Vynucuji zobrazení okna v popředí přes AppleScript..."
+            # Tento skript "klikne" na aplikaci a vyvolá ji do popředí
+            osascript -e 'tell application "MoleGraph" to activate' || true
+            sleep 2
             
             echo "Pořizuji screenshot obrazovky..."
             screencapture -x ../app_screenshot.png
             
+            echo "=== SYSTÉMOVÉ LOGY MACOS (poslední 2 minuty) ==="
+            # Vyfiltrujeme systémové logy macOS pouze pro náš proces MoleGraph
+            log show --predicate 'process MATCHES "MoleGraph"' --last 2m | tail -n 50 || true
+            echo "================================================"
+            
             echo "Ukončuji aplikaci..."
-            kill $APP_PID || true
+            pkill -f "MoleGraph" || true
             
           else
             echo "Chyba: MoleGraph.app nebyl v DMG nalezen!"

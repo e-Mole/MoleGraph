@@ -1,7 +1,7 @@
-name: Test MoleGraph macOS
+name: Test MoleGraph macOS & Screenshot
 
 on:
-  workflow_dispatch: # Spuštění ručně přes záložku Actions v GitHubu
+  workflow_dispatch:
 
 jobs:
   test-molegraph:
@@ -11,52 +11,59 @@ jobs:
       - name: Download artifact from specific run
         uses: dawidd6/action-download-artifact@v3
         with:
-         run_id: 37696392679 # ID z URL
-         name: MoleGraph-macOS # Přesný název artefaktu z buildovacího workflow
-         path: ./artifact
+          run_id: 37696392679
+          name: MoleGraph-macOS
+          path: ./artifact
+          # Akce to sama rozbalí, v ./artifact bude rovnou MoleGraph.dmg
 
-      - name: Unzip ZIP archive
+      # Krok "Unzip ZIP archive" jsme smazali, už není potřeba
+
+      - name: Mount DMG, run app and take screenshot
         run: |
           cd ./artifact
-          # Rozbalíme ZIP, ve kterém je MoleGraph.dmg
-          unzip MoleGraph-macOS.zip -d extracted/
-          ls -la extracted/
-
-      - name: Mount DMG and test app
-        run: |
-          cd ./artifact/extracted
           
-          # Vytvoření složky pro připojení DMG
+          # Pro jistotu vypíšeme obsah, abychom viděli DMG
+          echo "=== Obsah složky artifact po stažení ==="
+          ls -la
+          
           mkdir -p mnt
           
-          # Připojení DMG disku (-nobrowse zabrání vyskakovacímu oknu Finderu)
+          # Připojení DMG disku přímo z kořene ./artifact
+          echo "=== Připojuji DMG ==="
           hdiutil attach MoleGraph.dmg -mountpoint mnt -nobrowse
           
-          echo "=== Obsah připojeného DMG ==="
-          ls -la mnt/
-          
-          # Cesta k .app uvnitř DMG (předpokládáme MoleGraph.app)
           APP_PATH="mnt/MoleGraph.app"
           
           if [ -d "$APP_PATH" ]; then
-            echo "Aplikace MoleGraph.app úspěšně nalezena v DMG."
+            echo "Aplikace nalezena, kopíruji do /tmp pro bezpečné spuštění..."
+            cp -R "$APP_PATH" /tmp/
             
-            # Odstranění atributu kvarantény (pro jistotu)
-            sudo xattr -rd com.apple.quarantine "$APP_PATH" || true
+            # Odstranění kvarantény
+            sudo xattr -rd com.apple.quarantine /tmp/MoleGraph.app || true
             
-            # Zjištění názvu interní binárky z Info.plist
-            EXECUTABLE=$(defaults read "$PWD/$APP_PATH/Contents/Info" CFBundleExecutable)
-            echo "Spustitelný soubor uvnitř: $EXECUTABLE"
+            echo "Spouštím aplikaci v GUI režimu..."
+            open /tmp/MoleGraph.app
             
-            echo "=== Pokus o spuštění aplikace ==="
-            # Spuštění s časovým limitem (timeout 10s), aby workflow nezamrzlo, 
-            # pokud aplikace otevírá grafické okno a čeká na uživatele
-            timeout 10s "$PWD/$APP_PATH/Contents/MacOS/$EXECUTABLE" --help || echo "Aplikace doběhla nebo vypršel časový limit (což je u GUI aplikací běžné)."
+            echo "Čekám 5 sekund na vykreslení GUI..."
+            sleep 5
+            
+            echo "Pořizuji screenshot obrazovky..."
+            screencapture -x ../app_screenshot.png
+            
+            echo "Ukončuji aplikaci..."
+            pkill -f "MoleGraph" || true
             
           else
-            echo "Chyba: MoleGraph.app nebyl uvnitř DMG nalezen!"
+            echo "Chyba: MoleGraph.app nebyl v DMG nalezen!"
             exit 1
           fi
           
-          echo "=== Odpojení DMG ==="
+          # Úklid
           hdiutil detach mnt -force
+
+      - name: Upload Screenshot Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshot
+          path: app_screenshot.png
+          retention-days: 1

@@ -28,7 +28,7 @@ jobs:
           
           mkdir -p mnt
           
-      - name: Mount DMG, run app and catch logs
+      - name: Mount DMG, run app, log and screenshot
         run: |
           cd ./artifact
           mkdir -p mnt
@@ -41,12 +41,25 @@ jobs:
             cp -R "$APP_PATH" /tmp/
             sudo xattr -rd com.apple.quarantine /tmp/MoleGraph.app || true
             
-            # Zjištění názvu spustitelného souboru uvnitř aplikace
             EXECUTABLE=$(defaults read "/tmp/MoleGraph.app/Contents/Info" CFBundleExecutable)
-            echo "Spouštím binárku napřímo: $EXECUTABLE"
+            echo "Spouštím binárku na pozadí a ukládám log..."
             
-            # Spuštění binárky napřímo, timeout ukončí proces po 15 vteřinách
-            timeout 15s "/tmp/MoleGraph.app/Contents/MacOS/$EXECUTABLE" || echo "Aplikace doběhla nebo vypršel časový limit."
+            # Spuštění na pozadí (&) a přesměrování výpisu do souboru app.log
+            "/tmp/MoleGraph.app/Contents/MacOS/$EXECUTABLE" > ../app.log 2>&1 &
+            APP_PID=$!
+            
+            echo "Čekám 10 sekund na načtení GUI..."
+            sleep 10
+            
+            echo "=== VÝPIS LOGU APLIKACE ==="
+            cat ../app.log
+            echo "==========================="
+            
+            echo "Pořizuji screenshot obrazovky..."
+            screencapture -x ../app_screenshot.png
+            
+            echo "Ukončuji aplikaci..."
+            kill $APP_PID || true
             
           else
             echo "Chyba: MoleGraph.app nebyl v DMG nalezen!"

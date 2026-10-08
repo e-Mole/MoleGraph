@@ -11,7 +11,7 @@ jobs:
       - name: Download artifact from specific run
         uses: dawidd6/action-download-artifact@v3
         with:
-          run_id: 37696392679
+          run_id: 37787075943
           name: MoleGraph-macOS
           path: ./artifact
           # Akce to sama rozbalí, v ./artifact bude rovnou MoleGraph.dmg

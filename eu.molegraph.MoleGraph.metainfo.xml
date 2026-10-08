@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>eu.molegraph.MoleGraph</id>
+  
+  <name>MoleGraph</name>
+  <summary>Open-Source School Probeware and STEM Toolkit</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  
+  <developer id="eu.molegraph">
+    <name>MoleGraph Team</name>
+  </developer>
+  
+  <description>
+    <p>
+      MoleGraph is an open-source, low-cost school probeware system designed for hands-on STEM education. 
+      Unlike commercial "black box" solutions, it follows a "white box" approach, allowing students and 
+      teachers to understand the inner workings of measurement technology, electronics, and sensor calibration.
+    </p>
+    <p>
+      The software coordinates with open-source hardware hardware based on the popular Arduino NANO and UNO 
+      microcontrollers, managing up to 8 independent channels simultaneously with real-time graphs, 
+      multiple Y-axes, and built-in calibration tools. It is highly suitable for classroom physics, 
+      chemistry, and biology experiments.
+    </p>
+  </description>
+
+  
+  <launchable type="desktop-id">eu.molegraph.MoleGraph.desktop</launchable>
+  
+  <url type="homepage">https://www.molegraph.eu</url>
+  <url type="bugtracker">https://github.com/e-Mole/MoleGraph/issues</url>
+  <url type="vcs-browser">https://github.com/e-Mole/MoleGraph</url>
+  
+  <categories>
+    <category>Education</category>
+    <category>Science</category>
+    <category>Physics</category>
+  </categories>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>MoleGraph application analyzing data in real-time</caption>
+      <image type="source">https://raw.githubusercontent.com/e-Mole/MoleGraph/refs/heads/master/docs/img_readme/MoleGraph-intro.jpg</image>
+    </screenshot>
+    <screenshot>
+      <caption>Evolution of the MoleGraph hardware setups</caption>
+      <image type="source">https://raw.githubusercontent.com/e-Mole/MoleGraph/refs/heads/master/docs/img_readme/MoleGraph-devel_in_time.jpg</image>
+    </screenshot>
+    <screenshot>
+      <caption>Custom designed expansion PCB MoleGraph Shield</caption>
+      <image type="source">https://raw.githubusercontent.com/e-Mole/MoleGraph/refs/heads/master/docs/img_readme/MoleGraph-shield.jpg</image>
+    </screenshot>
+  </screenshots>
+  
+  <provides>
+    <binary>MoleGraph</binary>
+  </provides>
+  
+  <content_rating type="oars-1.1" />
+</component>

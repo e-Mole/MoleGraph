@@ -2,8 +2,8 @@ name: Build MoleGraph App (Flatpak Test)
 
 on:
   push:
-    branches:
-      - main # Spustí kompilaci při každém pushnutí do hlavní větve pro rychlé testování
+    tags:
+      - 'v*' # Spustí kompilaci POUZE tehdy, když se vytvoří tag začínající na "v"
   workflow_dispatch: # Ponechá možnost spouštět to ručně tlačítkem z webu
 
 jobs:
@@ -35,9 +35,9 @@ jobs:
 
       - name: Vytvoření Flatpak manifestu na vyžádání
         run: |
-          cat <<EOF > org.molegraph.MoleGraph.json
+          cat <<EOF > eu.molegraph.MoleGraph.json
           {
-              "id": "org.molegraph.MoleGraph",
+              "id": "eu.molegraph.MoleGraph",
               "runtime": "org.kde.Platform",
               "runtime-version": "5.15-23.08",
               "sdk": "org.kde.Sdk",
@@ -63,9 +63,11 @@ jobs:
                           "mkdir -p /app/bin",
                           "cp -r sensors /app/bin/",
                           "mkdir -p /app/share/applications",
-                          "echo -e '[Desktop Entry]\nType=Application\nName=MoleGraph\nExec=MoleGraph\nIcon=org.molegraph.MoleGraph\nCategories=Education;Science;\nTerminal=false\nComment=MoleGraph is a multi-platform application used to record and visualize data from the Arduino based school probeware MoleGraph system' > /app/share/applications/org.molegraph.MoleGraph.desktop",
+                          "echo -e '[Desktop Entry]\nType=Application\nName=MoleGraph\nExec=MoleGraph\nIcon=eu.molegraph.MoleGraph\nCategories=Education;Science;\nTerminal=false\nComment=MoleGraph is a multi-platform application used to record and visualize data from the Arduino based school probeware MoleGraph system' > /app/share/applications/eu.molegraph.MoleGraph.desktop",
                           "mkdir -p /app/share/icons/hicolor/scalable/apps",
-                          "cp MoleGraph.svg /app/share/icons/hicolor/scalable/apps/org.molegraph.MoleGraph.svg"
+                          "cp MoleGraph.svg /app/share/icons/hicolor/scalable/apps/eu.molegraph.MoleGraph.svg",
+                          "mkdir -p /app/share/metainfo",
+                          "cp eu.molegraph.MoleGraph.metainfo.xml /app/share/metainfo/eu.molegraph.MoleGraph.metainfo.xml"
                       ]
                   }
               ]
@@ -75,7 +77,7 @@ jobs:
       - name: Sestavení Flatpak balíčku
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          manifest-path: org.molegraph.MoleGraph.json
+          manifest-path: eu.molegraph.MoleGraph.json
           bundle: MoleGraph.flatpak
           cache: true
 

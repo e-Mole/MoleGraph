@@ -252,4 +252,10 @@ ANDROID_ABIS = armeabi-v7a arm64-v8a
 
 macx {
     QMAKE_INFO_PLIST = Info.plist
+
+    # Intel Mac + new M1/M2/M3 Macy (Universal Binary)
+    #QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+
+    # minimal system version
+    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
 }

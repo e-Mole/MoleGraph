@@ -19,8 +19,8 @@
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>NSSupportsAutomaticGraphicsSwitching</key>
-    <true/>
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>This app requires Bluetooth to communicate with supported devices.</string>
+    <true/>
 </dict>
 </plist>

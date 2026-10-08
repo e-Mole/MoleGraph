@@ -28,30 +28,25 @@ jobs:
           
           mkdir -p mnt
           
-          # Připojení DMG disku přímo z kořene ./artifact
-          echo "=== Připojuji DMG ==="
+      - name: Mount DMG, run app and catch logs
+        run: |
+          cd ./artifact
+          mkdir -p mnt
           hdiutil attach MoleGraph.dmg -mountpoint mnt -nobrowse
           
           APP_PATH="mnt/MoleGraph.app"
           
           if [ -d "$APP_PATH" ]; then
-            echo "Aplikace nalezena, kopíruji do /tmp pro bezpečné spuštění..."
+            echo "Aplikace nalezena, kopíruji do /tmp..."
             cp -R "$APP_PATH" /tmp/
-            
-            # Odstranění kvarantény
             sudo xattr -rd com.apple.quarantine /tmp/MoleGraph.app || true
             
-            echo "Spouštím aplikaci v GUI režimu..."
-            open /tmp/MoleGraph.app
+            # Zjištění názvu spustitelného souboru uvnitř aplikace
+            EXECUTABLE=$(defaults read "/tmp/MoleGraph.app/Contents/Info" CFBundleExecutable)
+            echo "Spouštím binárku napřímo: $EXECUTABLE"
             
-            echo "Čekám 5 sekund na vykreslení GUI..."
-            sleep 10
-            
-            echo "Pořizuji screenshot obrazovky..."
-            screencapture -x ../app_screenshot.png
-            
-            echo "Ukončuji aplikaci..."
-            pkill -f "MoleGraph" || true
+            # Spuštění binárky napřímo, timeout ukončí proces po 15 vteřinách
+            timeout 15s "/tmp/MoleGraph.app/Contents/MacOS/$EXECUTABLE" || echo "Aplikace doběhla nebo vypršel časový limit."
             
           else
             echo "Chyba: MoleGraph.app nebyl v DMG nalezen!"

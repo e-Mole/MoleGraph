@@ -3,7 +3,7 @@
      a vizualizaci data ze školního mìøicího systému MoleGraph
      postaveného na mikrokontroléru Arduino NANO a BT modulu HC-05.
     
-     Copyright (C) 2016 e-Mole.cz
+     Copyright (C) 2022 e-Mole.cz
 
      Tento program je svobodný software: mùžete jej dále distribuovat
      a/nebo upravovat za podmínek GNU General Public License, 

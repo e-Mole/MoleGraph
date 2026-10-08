@@ -1,19 +1,19 @@
-    
-    MoleGraph is a multi-platform application used to record 
-    and visualize data from the school probeware MoleGraph system 
-    built on the Arduino NANO microcontroller and BT module HC-05.
+     
+    MoleGraph to wieloplatformowa aplikacja s³u¿¹ca do rejestrowania
+    i wizualizacji danych z systemu szkolnych przyrz¹dów pomiarowych MoleGraph,
+    zbudowanego w oparciu o mikrokontroler Arduino NANO i modu³ BT HC-05.
     
     Copyright (C) 2022  e-Mole.cz
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    Ten program jest wolnym oprogramowaniem: mo¿esz go rozpowszechniaæ
+    i/lub modyfikowaæ zgodnie z warunkami Powszechnej Licencji Publicznej GNU
+    opublikowanej przez Free Software Foundation, w wersji 3 lub dowolnej
+    póŸniejszej.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Program jest rozpowszechniany w nadziei, ¿e bêdzie u¿yteczny,
+    ale BEZ JAKIEJKOLWIEK GWARANCJI; nawet bez dorozumianej gwarancji
+    PRZYDATNOŒCI HANDLOWEJ lub PRZYDATNOŒCI DO OKREŒLONEGO CELU.
+    Wiêcej informacji mo¿na znaleŸæ w Powszechnej Licencji Publicznej GNU.
 
 --------------------------------------------------------------------------------
                     GNU GENERAL PUBLIC LICENSE

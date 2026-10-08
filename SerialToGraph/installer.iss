@@ -4,7 +4,7 @@
 #define MyAppName "MoleGraph"
 #define MyAppVersion "4.3-beta3"
 #define MyAppPublisher "e-Mole"
-#define MyAppURL "https://www.molegraph.cz"
+#define MyAppURL "https://www.molegraph.eu"
 #define MyAppExeName "MoleGraph.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".mogr"
@@ -38,12 +38,29 @@ WizardStyle=modern
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "installer_assets\license-en.txt"
 Name: "czech"; MessagesFile: "compiler:Languages\Czech.isl"; LicenseFile: "installer_assets\license-cs.txt"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"; LicenseFile: "installer_assets\license-pl.txt"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"; LicenseFile: "installer_assets\license-it.txt"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"; LicenseFile: "installer_assets\license-es.txt"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"; LicenseFile: "installer_assets\license-pt.txt"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"; LicenseFile: "installer_assets\license-fr.txt"
+Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"; LicenseFile: "installer_assets\license-hu.txt"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: "installer_assets\license-de.txt"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
 Source: "deploy\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Přidáme kopírování textových licencí (uživatel dostane na disk obě)
+Source: "installer_assets\license-en.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-cs.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-pl.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-it.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-es.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-pt.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-fr.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-hu.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installer_assets\license-de.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

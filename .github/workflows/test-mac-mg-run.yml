@@ -45,7 +45,7 @@ jobs:
             open /tmp/MoleGraph.app
             
             echo "Čekám 5 sekund na vykreslení GUI..."
-            sleep 5
+            sleep 10
             
             echo "Pořizuji screenshot obrazovky..."
             screencapture -x ../app_screenshot.png

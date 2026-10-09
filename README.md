@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows%20|%20Android%20|%20Linux%20|%20macOS-blue)
 ![Hardware](https://img.shields.io/badge/hardware-Arduino%20|%20DIY%20|%203D%20Print-orange)
 
-**MoleGraph** is an open-source, low-cost school probeware system designed for **hands-on STEM education**. Unlike commercial "black box" solutions, it follows a **"white box" approach**, allowing students and teachers to understand the inner workings of measurement technology, electronics, and sensor calibration. Multi-language user interface: English, Czech, (German, French, Spanish, Polish, Portuguese, Italian, and Hungarian - MS Windows only).
+**MoleGraph** is an open-source, low-cost school probeware system designed for **hands-on STEM education**. Unlike commercial "black box" solutions, it follows a **"white box" approach**, allowing students and teachers to understand the inner workings of measurement technology, electronics, and sensor calibration. Multi-language user interface: English, Czech, (German, French, Spanish, Polish, Portuguese, Italian, and Hungarian).
 
 By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes soldering, 3D printing, and component sourcing—users develop deep technological literacy and critical thinking skills.
 

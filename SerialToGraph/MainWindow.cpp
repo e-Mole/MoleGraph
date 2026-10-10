@@ -130,8 +130,6 @@ MainWindow::MainWindow(const QApplication &application, QString fileNameToOpen, 
     connect(m_measurementTabs, SIGNAL(currentChanged(int)), this, SLOT(currentMeasurementChanged(int)));
     ConfirmMeasurement(CreateNewMeasurement(true));
 
-    m_hwConnector.StartSearching();
-
     if (fileNameToOpen.length() != 0)
     {
         qDebug() << "opening " << fileNameToOpen;
@@ -995,4 +993,9 @@ void MainWindow::channelEditingRejected()
     ChannelSettings *settings = (ChannelSettings *) sender();
     _DisconnectChannelSettings(settings);
     settings->GetGraphicsContainer()->RejectGhostChannel();
+}
+
+void MainWindow::StartHwSearching()
+{
+    m_hwConnector.StartSearching();
 }

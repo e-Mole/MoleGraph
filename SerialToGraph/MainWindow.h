@@ -72,6 +72,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QApplication const &application, QString fileNameToOpen, bool openWithoutValues, QWidget *parent = 0);
     ~MainWindow();
+    void StartHwSearching(); //called from the event loop after the window is shown
 
     Measurement *CreateNewMeasurement(bool initializeAxesAndChannels);
     Measurement *CloneCurrentMeasurement();

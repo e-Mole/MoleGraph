@@ -3,6 +3,7 @@
 #include <hw/PortInfo.h>
 #include <QBluetoothAddress>
 #include <QBluetoothDeviceInfo>
+#include <QBluetoothLocalDevice>
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QBluetoothServer>
 #include <QBluetoothSocket>
@@ -15,38 +16,57 @@ namespace hw
 BluetoothUnix::BluetoothUnix(QObject *parent) :
     PortBase(parent),
     m_socket(NULL),
-    m_discoveryAgent(
-        new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this)),
+    m_discoveryAgent(nullptr), //created lazily, see StartPortSearching
     m_timeout(new QTimer(this))
 {
     m_timeout->setSingleShot(true);
     connect(m_timeout, SIGNAL(timeout()), this, SLOT(connected()));
-
-    connect(
-        m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
-        this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
 }
 
 BluetoothUnix::~BluetoothUnix()
 {
-    m_discoveryAgent->stop();
+    StopPortSearching();
     Close();
 }
 
 bool BluetoothUnix::StartPortSearching()
 {
+    //Without a usable adapter BlueZ/D-Bus calls block for tens of seconds,
+    //so check the adapter first and fail fast.
+    auto localDevices = QBluetoothLocalDevice::allDevices();
+    if (localDevices.isEmpty())
+    {
+        qDebug() << "Bluetooth: no adapter found";
+        return false;
+    }
+
+    QBluetoothLocalDevice localDevice(localDevices.first().address());
+    if (localDevice.hostMode() == QBluetoothLocalDevice::HostPoweredOff)
+    {
+        qDebug() << "Bluetooth: adapter is powered off";
+        return false;
+    }
+
+    if (m_discoveryAgent == nullptr)
+    {
+        m_discoveryAgent = new QBluetoothServiceDiscoveryAgent(QBluetoothAddress(), this);
+        connect(
+            m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+            this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+    }
     m_discoveryAgent->start();
     return true; //searching is in progress
 }
 
 void BluetoothUnix::StopPortSearching()
 {
-    m_discoveryAgent->stop();
+    if (m_discoveryAgent)
+        m_discoveryAgent->stop();
 }
 
 bool BluetoothUnix::IsSearchingActive()
 {
-    return m_discoveryAgent->isActive();
+    return m_discoveryAgent && m_discoveryAgent->isActive();
 }
 
 void BluetoothUnix::serviceDiscovered(QBluetoothServiceInfo const &info)

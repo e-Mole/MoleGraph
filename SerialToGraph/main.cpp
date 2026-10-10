@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include <GlobalSettings.h>
 #include <QStyleFactory>
+#include <QTimer>
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +50,8 @@ int main(int argc, char *argv[])
     //QApplication::setStyle(QStyleFactory::create("fusion"));
     MainWindow w(a, fileName, parser.isSet(withoutValuesOption));
     w.show();
+    //hardware search must not block the first paint
+    QTimer::singleShot(0, &w, [&w]() { w.StartHwSearching(); });
 
 	return a.exec();
 }

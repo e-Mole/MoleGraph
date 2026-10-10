@@ -490,10 +490,12 @@ void HwConnector::CreateHwInstances()
     connect(m_serialPort, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
 #else
 #   if not defined (Q_OS_WIN32)
-        disconnect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
-        disconnect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
-        delete m_bluetooth;
-        m_bluetooth = nullptr;
+        if (m_bluetooth) {
+            disconnect(m_bluetooth, SIGNAL(portOpeningFinished()), this, SLOT(portOpeningFinished()));
+            disconnect(m_bluetooth, SIGNAL(deviceFound(hw::PortInfo)), this, SLOT(deviceFound(hw::PortInfo)));
+            delete m_bluetooth;
+            m_bluetooth = nullptr;
+        }
 
         if (GlobalSettings::GetInstance().GetUseBluetooth()){
             m_bluetooth = new BluetoothUnix(this);

@@ -218,7 +218,8 @@ android{
 }
 
 unix:!android{
-    QT += serialport
+    # dbus is needed by BluetoothUnix to check whether org.bluez is running
+    QT += serialport dbus
     SOURCES += hw/SerialPort.cpp \
         hw/BluetoothUnix.cpp
     HEADERS += hw/SerialPort.h \

@@ -7,11 +7,55 @@
 #include <QBluetoothServiceDiscoveryAgent>
 #include <QBluetoothServer>
 #include <QBluetoothSocket>
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
+#include <QDir>
 #include <QTimer>
 #include <QThread>
 #include <QDebug>
 namespace hw
 {
+
+static bool HasUsableBluetoothAdapter()
+{
+    // Fast fail on Linux when there is no adapter or BlueZ is not running.
+    // This avoids expensive Qt Bluetooth discovery calls that can block for tens of seconds.
+    QDir sysfs("/sys/class/bluetooth");
+    if (!sysfs.exists())
+    {
+        qDebug() << "Bluetooth: no /sys/class/bluetooth directory";
+        return false;
+    }
+
+    const QStringList adapters = sysfs.entryList(QStringList() << "hci*", QDir::Dirs | QDir::NoDotAndDotDot);
+    if (adapters.isEmpty())
+    {
+        qDebug() << "Bluetooth: no HCI adapter present";
+        return false;
+    }
+
+    QDBusConnection bus = QDBusConnection::systemBus();
+    if (!bus.isConnected())
+    {
+        qDebug() << "Bluetooth: system D-Bus is not connected";
+        return false;
+    }
+
+    QDBusConnectionInterface *iface = bus.interface();
+    if (!iface)
+    {
+        qDebug() << "Bluetooth: no D-Bus interface available";
+        return false;
+    }
+
+    if (!iface->isServiceRegistered(QStringLiteral("org.bluez")))
+    {
+        qDebug() << "Bluetooth: org.bluez is not running";
+        return false;
+    }
+
+    return true;
+}
 
 BluetoothUnix::BluetoothUnix(QObject *parent) :
     PortBase(parent),
@@ -31,8 +75,11 @@ BluetoothUnix::~BluetoothUnix()
 
 bool BluetoothUnix::StartPortSearching()
 {
-    //Without a usable adapter BlueZ/D-Bus calls block for tens of seconds,
-    //so check the adapter first and fail fast.
+    if (!HasUsableBluetoothAdapter())
+    {
+        return false;
+    }
+
     auto localDevices = QBluetoothLocalDevice::allDevices();
     if (localDevices.isEmpty())
     {

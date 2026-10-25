@@ -26,7 +26,7 @@
  *   - Instruction-based command set (see serialProcess() and core.h)
  *   - Synchronization with the desktop application for measurements
  *
- * FW VERSION: 4.4
+ * FW VERSION: 4.5
  * PROTOCOL VERSION: ATG_5 (Arduino-to-Graph protocol version)
  *
  * ============================================================================

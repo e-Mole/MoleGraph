@@ -114,7 +114,7 @@ class TCS34725 : public Sensor {
     bool led_state;
     uint32_t last_click_time;
     uint32_t last_process_time; // Shield against MoleGraph core 100ms spam bug    
-    uint8_t led_pin; // Variable for the LED control pin    
+    uint8_t led_pin, pin_digi; // Variable for the LED control pin and INT trigger   
 
     bool initSensor();
     void readData();

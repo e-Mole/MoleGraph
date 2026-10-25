@@ -97,8 +97,11 @@ TCS34725::TCS34725(uint32_t _period, uint8_t _port) : Sensor(_period, _port) {
   last_click_time = 0;
   last_process_time = 0;
 
-  led_pin = PORTS[_port][1]; 
+  led_pin = PORTS[_port][0]; 
   pinMode(led_pin, OUTPUT);
+  //pin pro INT - v budoucnu pro trigger - rozsvítilo se/zhasnulo se
+  pin_digi = PORTS[_port][1];
+  pinMode(pin_digi, INPUT_PULLUP);
   
   led_state = TCS34725_LED_DEFAULT_ON;
   digitalWrite(led_pin, led_state ? HIGH : LOW);
@@ -124,9 +127,15 @@ float TCS34725::read(uint8_t _spec) {
     // --- NEW ADDITION FOR SPECTROPHOTOMETRY ---
     // Exporting raw 16-bit values for external analytical calculations.
     // Implicit cast to float safely preserves precision for 16-bit integers.
-    case 3: result = raw_r; break; // Raw Red
-    case 4: result = raw_g; break; // Raw Green
-    case 5: result = raw_b; break; // Raw Blue
+#ifdef PROFILE_SPECTRO
+    case 3: result = raw_r; break; // Surová data pro analytickou chemii
+    case 4: result = raw_g; break; 
+    case 5: result = raw_b; break; 
+#else 
+    case 3: result = raw_r * r_coeff; break; // Vypočte se až ve chvíli odesílání
+    case 4: result = raw_g * g_coeff; break; 
+    case 5: result = raw_b * b_coeff; break; 
+#endif
     case 6: result = raw_c; break; // Raw Clear (Total light)
     case 7: result = rgb_illum; break; // Total illumination in lux from RGB values
     // ------------------------------------------

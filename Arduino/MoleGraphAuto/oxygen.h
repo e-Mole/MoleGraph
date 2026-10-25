@@ -9,8 +9,11 @@ class Oxygen : public Sensor {
     Oxygen(uint32_t, uint8_t);
     virtual bool process();
     virtual float read(uint8_t);
+    virtual void calibrate();
   protected:
     uint8_t pin;
+  private:
+    float calib_raw;    
 };
 
 #endif

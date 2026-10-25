@@ -500,18 +500,19 @@
             "components": [
                 {
                     "correction": "None",
-                    "quantity": "Concentration (ppm)",
-                    "unit": "ppm"
-                },
-                {
-                    "correction": "None",
                     "quantity": "Concentration (%)",
                     "unit": "%"
+                },                
+				{
+                    "correction": "None",
+                    "quantity": "Concentration (ppm)",
+                    "unit": "ppm"
                 }
             ],
-            "enabled": false,
+            "enabled": true,
             "id": 20,
-            "name": "O2 gas sensor (ME2-O2)"
+            "name": "O2 gas sensor (SGX-VOX)" ,
+            "note": "Measuring range 0..100 %. Resolution 0.15 %, accuracy ±0.5 %. Maximum sampling rate around 1 kHz. Electrolyte absorbs acid gases (like CO2 and SO2)​, which increases the flux of oxygen to the electrode (artificially enhanced oxygen signal of approximately 0.3% per 1% of present CO2, concentrations above 25% CO2 is not suitable). Lifetime: over 2 years of continuous exposure to normal air."
         },
         {
             "components": [

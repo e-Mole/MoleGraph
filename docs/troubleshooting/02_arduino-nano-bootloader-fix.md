@@ -7,6 +7,7 @@ This procedure serves as a verified guide for working with a new Arduino Nano, e
 ## 1. Configuration in boards.txt (One-time setup)
 Modify the `boards.txt` configuration file in your Arduino IDE (located in the `hardware/arduino/avr/` folder) so that the Arduino Nano utilizes the parameters of a proven Arduino Uno (Optiboot, maximum firmware memory capacity of 32256 bytes):
 
+```properties
 nano.name=Arduino Nano
 
 nano.upload.tool=avrdude
@@ -35,6 +36,7 @@ nano.menu.cpu.atmega328.bootloader.extended_fuses=0xFD
 nano.menu.cpu.atmega328.bootloader.file=optiboot/optiboot_atmega328.hex
 
 nano.menu.cpu.atmega328.build.mcu=atmega328p
+```
 
 ---
 
@@ -48,11 +50,11 @@ nano.menu.cpu.atmega328.build.mcu=atmega328p
 ## 3. Connecting to the ISP Programmer (Arduino as ISP)
 1. Take a second, fully functional Arduino and upload the **ArduinoISP** example sketch to it.
 2. Connect the programmer to the new target Nano via the SPI bus:
-   * 5V -> 5V, GND -> GND
-   * Pin 10 (programmer) -> RESET (Nano)
-   * Pin 11 (programmer) -> MOSI (Nano / pin 11)
-   * Pin 12 (programmer) -> MISO (Nano / pin 12)
-   * Pin 13 (programmer) -> SCK (Nano / pin 13)
+   * **5V** -> 5V, **GND** -> GND
+   * **Pin 10** (programmer) -> **RESET** (Nano)
+   * **Pin 11** (programmer) -> **MOSI** (Nano / pin 11)
+   * **Pin 12** (programmer) -> **MISO** (Nano / pin 12)
+   * **Pin 13** (programmer) -> **SCK** (Nano / pin 13)
 
 ---
 

@@ -7,6 +7,7 @@ Tento postup slouží jako ověřený návod pro práci s novým Arduino Nano, z
 ## 1. Nastavení v souboru boards.txt (Jednorázově)
 Upravte konfigurační soubor `boards.txt` vašeho Arduino IDE (ve složce `hardware/arduino/avr/`), aby Arduino Nano využívalo parametry prověřeného Arduina Uno (Optiboot, kapacita paměti pro FW 32256 bajtů):
 
+```properties
 nano.name=Arduino Nano
 
 nano.upload.tool=avrdude
@@ -35,6 +36,7 @@ nano.menu.cpu.atmega328.bootloader.extended_fuses=0xFD
 nano.menu.cpu.atmega328.bootloader.file=optiboot/optiboot_atmega328.hex
 
 nano.menu.cpu.atmega328.build.mcu=atmega328p
+```
 
 ---
 
@@ -48,11 +50,11 @@ nano.menu.cpu.atmega328.build.mcu=atmega328p
 ## 3. Připojení k ISP programátoru (Arduino jako ISP)
 1. Vezměte druhé, plně funkční Arduino, nahrajte do něj příklad **ArduinoISP**.
 2. Propojte programátor s novým cílovým Nanem přes SPI sběrnici:
-   * 5V -> 5V, GND -> GND
-   * Pin 10 (prog) -> RESET (Nano)
-   * Pin 11 (prog) -> MOSI (Nano / pin 11)
-   * Pin 12 (prog) -> MISO (Nano / pin 12)
-   * Pin 13 (prog) -> SCK (Nano / pin 13)
+   * **5V** -> 5V, **GND** -> GND
+   * **Pin 10** (prog) -> **RESET** (Nano)
+   * **Pin 11** (prog) -> **MOSI** (Nano / pin 11)
+   * **Pin 12** (prog) -> **MISO** (Nano / pin 12)
+   * **Pin 13** (prog) -> **SCK** (Nano / pin 13)
 
 ---
 
@@ -84,7 +86,7 @@ nano.menu.cpu.atmega328.build.mcu=atmega328p
 1. Ukončete/odpojte MoleGraph.
 2. Otevřete Arduino IDE a zkuste do tohoto Nano nahrát kód **standardní cestou přes USB** (kliknutím na šipku Nahrát).
 3. Ověřte, že upload proběhne a deska po resetu bez problémů naskočí.
-4. Nyní můžete experimentovat s potřebnými čidly (soubor config.h) - zapněte všechna čidla, která potřebujete a zkuste FW nahrát do Arduina klasicky z Arduino IDE (pokud se vejdete do 32256 B, mělo by nahrání proběhnout bez problémů).  
+4. Nyní můžete experimentovat s potřebnými čidly (soubor `config.h`) - zapněte všechna čidla, která potřebujete a zkuste FW nahrát do Arduina klasicky z Arduino IDE (pokud se vejdete do 32256 B, mělo by nahrání proběhnout bez problémů).  
 
 ---
 

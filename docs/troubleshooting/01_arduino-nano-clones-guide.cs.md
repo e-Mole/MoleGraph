@@ -27,4 +27,4 @@ Některé levné čínské klony mají ošizený oddělovací kondenzátor na re
 ---
 
 > **Tip pro učitele a laboratoře:** 
-> Pokud stavíte krabicové projekty, u kterých je tlačítko Reset špatně přístupné, vyplatí se buď investovat o desítku či dvě víc do kvalitnějších klonů s 100% spolehlivým auto-resetem, nebo u kritických desek předem ověřit, že zvládají nahrávání na první dobrou bez nutnosti sahat na hardware.
+> Pokud stavíte "zakrabičkované" projekty jako je MoleGraph, u kterých je tlačítko Reset špatně přístupné, vyplatí se buď investovat do kvalitnějších klonů s 100% spolehlivým auto-resetem, nebo u kritických desek předem ověřit, že zvládají nahrávání na první dobrou bez nutnosti sahat na hardware.

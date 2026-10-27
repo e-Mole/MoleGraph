@@ -16,5 +16,9 @@ Welcome to the troubleshooting section. This directory contains practical, step-
   *Explains the golden rule of HW calibration (valid only per session) and provides exact workflows for calibrating sensors like Force, Oxygen, and Color in different recording modes.*
   *(🇨🇿 [Česká verze zde](03_hardware-sensor-calibration.cs.md))*  
 
+* **[04. Optimizing Arduino Memory: Enabling/Disabling Sensors (config.h)](04_memory-optimization-config.md)**
+  *Step-by-step guide on how to save Arduino Nano memory by commenting out unused sensors in the Arduino IDE.*
+  *(🇨🇿 [Česká verze zde](04_memory-optimization-config.cs.md))*
+
 ---
 *Note: We keep our structural documentation in English for the international open-source community. Localized guides (like Czech) are available directly below the English files, marked with a `.cs.md` extension.*

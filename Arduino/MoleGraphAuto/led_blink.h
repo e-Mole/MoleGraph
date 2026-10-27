@@ -8,6 +8,8 @@ class LedBlink : public Sensor {
   public:
     LedBlink(uint32_t, uint8_t);
     virtual bool process();
+    virtual void  calibrate();    
+    //void stop() override;
   private:
     uint8_t   pin;
 };

@@ -20,7 +20,7 @@ class Sensor {
     Sensor(uint32_t, uint8_t);
     virtual  ~Sensor();
     virtual void start(uint32_t);
-    void stop();
+    void stop(); //add "virtual" - test for LED module
     bool processData();
     bool isDataReady() { return dataReady; } //will be set/reset in processData method
     virtual float read(uint8_t);

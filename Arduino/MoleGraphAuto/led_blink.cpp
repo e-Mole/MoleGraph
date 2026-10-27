@@ -14,3 +14,14 @@ bool LedBlink::process() {
   }
   return 0;
 }
+
+void LedBlink::calibrate() {
+  digitalWrite(pin, 0);
+}
+
+/*
+void LedBlink::stop() {
+  Sensor::stop();
+  digitalWrite(pin, LOW); // LED OFF
+}
+*/

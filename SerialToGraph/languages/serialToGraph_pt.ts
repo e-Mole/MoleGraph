@@ -23,11 +23,11 @@
     <name>AddDirDialog</name>
     <message>
         <source>Add Directory</source>
-        <translation type="vanished">Adicionar diretório</translation>
+        <translation type="vanished">Adicionar Diretório</translation>
     </message>
     <message>
         <source>Directory Name</source>
-        <translation type="vanished">Nome do diretório</translation>
+        <translation type="vanished">Nome do Diretório</translation>
     </message>
 </context>
 <context>
@@ -46,11 +46,11 @@
     </message>
     <message>
         <source>Add a New Axis</source>
-        <translation type="vanished">Adicionar um novo eixo</translation>
+        <translation type="vanished">Adicionar Novo Eixo</translation>
     </message>
     <message>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation type="vanished">Todos os canais atribuídos ao eixo &apos;%1&apos; serão movidos para um eixo &apos;%2&apos;.</translation>
+        <translation type="vanished">Todos os canais atribuídos ao eixo &apos;%1&apos; serão movidos para o eixo &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>Remove anyway</source>
@@ -73,24 +73,24 @@
     <message>
         <location filename="../AxisChooseDialog.cpp" line="48"/>
         <source>New Axis...</source>
-        <translation>Novo eixo...</translation>
+        <translation>Novo Eixo...</translation>
     </message>
     <message>
         <location filename="../AxisChooseDialog.cpp" line="34"/>
         <source>There might be just one channel on a horizontal axis. Values of a hannel &apos;%1&apos; are shown in a time format and therefore must be assigned to an empty axis. Please, choose one.</source>
-        <translation>Pode haver apenas um canal no eixo horizontal. Os valores do canal &apos;%1&apos; são exibidos num formato de tempo e, portanto, devem ser atribuídos a um eixo vazio. Por favor, escolha um.</translation>
+        <translation>Apenas pode haver um canal num eixo horizontal. Os valores do canal &apos;%1&apos; são mostrados num formato de tempo e devem ser atribuídos a um eixo vazio. Por favor, escolha um.</translation>
     </message>
     <message>
         <location filename="../AxisChooseDialog.cpp" line="40"/>
         <source>There might be just one channel on a horizontal axis. Please, chose a different one for a channel &apos;%1&apos;.</source>
-        <translation>Pode haver apenas um canal num eixo horizontal. Por favor, escolha um eixo diferente para o canal &apos;%1&apos;.</translation>
+        <translation>Apenas pode haver um canal num eixo horizontal. Por favor, escolha um diferente para o canal &apos;%1&apos;.</translation>
     </message>
 </context>
 <context>
     <name>AxisEditDialog</name>
     <message>
         <source>Edit Axis...</source>
-        <translation type="vanished">Editar eixo...</translation>
+        <translation type="vanished">Editar Eixo...</translation>
     </message>
     <message>
         <source>Type</source>
@@ -126,11 +126,11 @@
     </message>
     <message>
         <source>Channels and Units</source>
-        <translation type="vanished">Canais e unidades</translation>
+        <translation type="vanished">Canais e Unidades</translation>
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Mostrar no gráfico</translation>
+        <translation type="vanished">Mostrar no Gráfico</translation>
     </message>
 </context>
 <context>
@@ -153,12 +153,12 @@
     <message>
         <location filename="../AxisMenu.cpp" line="58"/>
         <source>Add New</source>
-        <translation>Adicionar novo</translation>
+        <translation>Adicionar Novo</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="101"/>
         <source>All channels assigned to the axis &apos;%1&apos; will be moved to an axis &apos;%2&apos;.</source>
-        <translation>Todos os canais atribuídos ao eixo &apos;%1&apos; serão movidos para um eixo &apos;%2&apos;.</translation>
+        <translation>Todos os canais atribuídos ao eixo &apos;%1&apos; serão movidos para o eixo &apos;%2&apos;.</translation>
     </message>
     <message>
         <location filename="../AxisMenu.cpp" line="103"/>
@@ -174,12 +174,12 @@
     <name>AxisSettings</name>
     <message>
         <source>Edit Axis...</source>
-        <translation type="obsolete">Editar eixo...</translation>
+        <translation type="obsolete">Editar Eixo...</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="17"/>
         <source>Axis Setting</source>
-        <translation>Configurações do eixo</translation>
+        <translation>Definições do Eixo</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="23"/>
@@ -219,21 +219,21 @@
     <message>
         <location filename="../AxisSettings.cpp" line="39"/>
         <source>Channels and Units</source>
-        <translation>Canais e unidades</translation>
+        <translation>Canais e Unidades</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="40"/>
         <source>Axis Name</source>
-        <translation>Nome do eixo</translation>
+        <translation>Nome do Eixo</translation>
     </message>
     <message>
         <location filename="../AxisSettings.cpp" line="42"/>
         <source>Show in Graph</source>
-        <translation>Mostrar no gráfico</translation>
+        <translation>Mostrar no Gráfico</translation>
     </message>
     <message>
         <source>Display in Graph</source>
-        <translation type="vanished">Mostrar no gráfico</translation>
+        <translation type="vanished">Mostrar no Gráfico</translation>
     </message>
 </context>
 <context>
@@ -268,7 +268,7 @@
         <location filename="../ButtonLine.cpp" line="99"/>
         <location filename="../ButtonLine.cpp" line="304"/>
         <source>Pause</source>
-        <translation>Pausar</translation>
+        <translation>Pausa</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="103"/>
@@ -288,22 +288,22 @@
     <message>
         <location filename="../ButtonLine.cpp" line="239"/>
         <source>Open without Values...</source>
-        <translation>Abrir sem valores...</translation>
+        <translation>Abrir sem Valores...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="240"/>
         <source>Recently Used Files</source>
-        <translation>Arquivos recentes</translation>
+        <translation>Ficheiros Usados Recentemente</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="245"/>
         <source>Save As...</source>
-        <translation>Guardar como...</translation>
+        <translation>Guardar Como...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="246"/>
         <source>Save without Values As...</source>
-        <translation>Guardar sem valores como...</translation>
+        <translation>Guardar sem Valores Como...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="248"/>
@@ -313,17 +313,17 @@
     <message>
         <location filename="../ButtonLine.cpp" line="249"/>
         <source>Export Current Measurement to CSV...</source>
-        <translation>Exportar medição atual para CSV...</translation>
+        <translation>Exportar Medição Atual para CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="250"/>
         <source>Export All Measurements to CSV...</source>
-        <translation>Exportar todas as medições para CSV...</translation>
+        <translation>Exportar Todas as Medições para CSV...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="252"/>
         <source>Settings...</source>
-        <translation>Configurações...</translation>
+        <translation>Definições...</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="253"/>
@@ -353,7 +353,7 @@
     </message>
     <message>
         <source>Save as</source>
-        <translation type="vanished">Guardar como</translation>
+        <translation type="vanished">Guardar Como</translation>
     </message>
     <message>
         <source>Open</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Save As</source>
-        <translation type="vanished">Guardar como</translation>
+        <translation type="vanished">Guardar Como</translation>
     </message>
     <message>
         <source>Export to PNG</source>
@@ -374,11 +374,11 @@
     </message>
     <message>
         <source>Export Current Measurement to CSV</source>
-        <translation type="vanished">Exportar medição atual para CSV</translation>
+        <translation type="vanished">Exportar Medição Atual para CSV</translation>
     </message>
     <message>
         <source>Export All Measurements to CSV</source>
-        <translation type="vanished">Exportar todas as medições para CSV</translation>
+        <translation type="vanished">Exportar Todas as Medições para CSV</translation>
     </message>
     <message>
         <source>Export to CSV</source>
@@ -392,7 +392,7 @@
     <message>
         <location filename="../ButtonLine.cpp" line="73"/>
         <source>File</source>
-        <translation>Arquivo</translation>
+        <translation>Ficheiro</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="76"/>
@@ -402,7 +402,7 @@
     <message>
         <location filename="../ButtonLine.cpp" line="79"/>
         <source>View</source>
-        <translation>Exibir</translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <location filename="../ButtonLine.cpp" line="85"/>
@@ -415,11 +415,11 @@
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">Mostrar tudo</translation>
+        <translation type="vanished">Mostrar Tudo</translation>
     </message>
     <message>
         <source>Show None</source>
-        <translation type="vanished">Ocultar tudo</translation>
+        <translation type="vanished">Ocultar Tudo</translation>
     </message>
     <message>
         <source>s</source>
@@ -427,11 +427,11 @@
     </message>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Conectado</translation>
+        <translation type="vanished">Ligado</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Desconectado</translation>
+        <translation type="vanished">Desligado</translation>
     </message>
 </context>
 <context>
@@ -467,17 +467,17 @@
     <message>
         <location filename="../ChannelMenu.cpp" line="61"/>
         <source>All Channels</source>
-        <translation>Todos os canais</translation>
+        <translation>Todos os Canais</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="69"/>
         <source>No Channels</source>
-        <translation>Nenhum canal</translation>
+        <translation>Nenhum Canal</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="77"/>
         <source>Add Virtual Channel</source>
-        <translation>Adicionar canal virtual</translation>
+        <translation>Adicionar Canal Virtual</translation>
     </message>
     <message>
         <location filename="../ChannelMenu.cpp" line="107"/>
@@ -495,7 +495,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="166"/>
         <source>Channel settings</source>
-        <translation>Configurações do canal</translation>
+        <translation>Definições do canal</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="226"/>
@@ -508,7 +508,7 @@
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="229"/>
-        <location filename="../ChannelSettings.cpp" line="914"/>
+        <location filename="../ChannelSettings.cpp" line="915"/>
         <source>Units</source>
         <translation>Unidades</translation>
     </message>
@@ -525,26 +525,26 @@
         <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="995"/>
+        <location filename="../ChannelSettings.cpp" line="996"/>
         <source>Shape</source>
         <translation>Forma</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="971"/>
+        <location filename="../ChannelSettings.cpp" line="972"/>
         <source>Cross</source>
         <translation>Cruz</translation>
     </message>
     <message>
         <source>Only one horizontal channel is supported. Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
-        <translation type="obsolete">Apenas um canal horizontal é suportado. O eixo &apos;%1&apos; foi atribuído a um canal &apos;%2&apos;</translation>
+        <translation type="obsolete">Apenas um canal horizontal é suportado. O eixo &apos;%1&apos; foi atribuído ao canal &apos;%2&apos;</translation>
     </message>
     <message>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;</source>
-        <translation type="obsolete">O eixo &apos;%1&apos; foi atribuído a um canal &apos;%2&apos;</translation>
+        <translation type="obsolete">O eixo &apos;%1&apos; foi atribuído ao canal &apos;%2&apos;</translation>
     </message>
     <message>
         <source>Axis &apos;%1&apos; has been assigned to a channel &apos;%2&apos;.</source>
-        <translation type="vanished">O eixo &apos;%1&apos; foi atribuído a um canal &apos;%2&apos;.</translation>
+        <translation type="vanished">O eixo &apos;%1&apos; foi atribuído ao canal &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>OK</source>
@@ -560,54 +560,54 @@
     </message>
     <message>
         <source>Time From Start</source>
-        <translation type="vanished">Tempo desde o início</translation>
+        <translation type="vanished">Tempo desde o Início</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Tempo real</translation>
-    </message>
-    <message>
-        <location filename="../ChannelSettings.cpp" line="855"/>
-        <source>No Line</source>
-        <translation>Sem linha</translation>
+        <translation type="vanished">Tempo Real</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="856"/>
-        <source>Solid Line</source>
-        <translation>Linha contínua</translation>
+        <source>No Line</source>
+        <translation>Sem Linha</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="857"/>
-        <source>Dash Line</source>
-        <translation>Linha tracejada</translation>
+        <source>Solid Line</source>
+        <translation>Linha Contínua</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="858"/>
-        <source>Dot Line</source>
-        <translation>Linha pontilhada</translation>
+        <source>Dash Line</source>
+        <translation>Linha Tracejada</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="859"/>
-        <source>Dash Dot Line</source>
-        <translation>Linha traço-ponto</translation>
+        <source>Dot Line</source>
+        <translation>Linha Pontilhada</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="860"/>
+        <source>Dash Dot Line</source>
+        <translation>Linha Traço-Ponto</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="861"/>
         <source>Dash Dot Dot Line</source>
-        <translation>Linha traço-dois-pontos</translation>
+        <translation>Linha Traço-Ponto-Ponto</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="863"/>
+        <location filename="../ChannelSettings.cpp" line="864"/>
         <source>Pen Style</source>
-        <translation>Estilo da linha</translation>
+        <translation>Estilo do Traço</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="913"/>
+        <location filename="../ChannelSettings.cpp" line="914"/>
         <source>Style</source>
         <translation>Estilo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="891"/>
+        <location filename="../ChannelSettings.cpp" line="892"/>
         <source>Microseconds</source>
         <translation>Microssegundos</translation>
     </message>
@@ -619,7 +619,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="67"/>
         <source>Humidity</source>
-        <translation>Umidade</translation>
+        <translation>Humidade</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="65"/>
@@ -629,7 +629,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="42"/>
         <source>Offset</source>
-        <translation>Deslocamento (Offset)</translation>
+        <translation>Deslocamento</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="44"/>
@@ -654,7 +654,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="70"/>
         <source>RAW</source>
-        <translation>RAW (Bruto)</translation>
+        <translation>RAW</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="72"/>
@@ -664,7 +664,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="74"/>
         <source>Magnetic Field Intensity</source>
-        <translation>Intensidade do campo magnético</translation>
+        <translation>Intensidade do Campo Magnético</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="76"/>
@@ -714,7 +714,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="96"/>
         <source>Sound intensity level</source>
-        <translation>Nível de intensidade sonora</translation>
+        <translation>Nível de Intensidade Sonora</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="98"/>
@@ -724,7 +724,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="100"/>
         <source>Dewpoint</source>
-        <translation>Ponto de orvalho</translation>
+        <translation>Ponto de Orvalho</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="103"/>
@@ -774,47 +774,47 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="122"/>
         <source>Heading</source>
-        <translation>Rumo (Heading)</translation>
+        <translation>Direção</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="125"/>
         <source>Roll</source>
-        <translation>Rolagem (Roll)</translation>
+        <translation>Rotação (Roll)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="127"/>
         <source>Pitch</source>
-        <translation>Arfagem (Pitch)</translation>
+        <translation>Inclinação (Pitch)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="129"/>
         <source>Pulse duration (On)</source>
-        <translation>Duração do pulso (1)</translation>
+        <translation>Duração do pulso (Ligado)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="131"/>
         <source>Pulse duration (Off)</source>
-        <translation>Duração do pulso (0)</translation>
+        <translation>Duração do pulso (Desligado)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="133"/>
         <source>Period (Rising)</source>
-        <translation>Período (Borda de subida)</translation>
+        <translation>Período (Subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="136"/>
         <source>Period (Falling)</source>
-        <translation>Período (Borda de descida)</translation>
+        <translation>Período (Descida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="138"/>
         <source>Frequency (Rising)</source>
-        <translation>Frequência (Borda de subida)</translation>
+        <translation>Frequência (Subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="140"/>
         <source>Frequency (Falling)</source>
-        <translation>Frequência (Borda de descida)</translation>
+        <translation>Frequência (Descida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="142"/>
@@ -824,7 +824,7 @@
     <message>
         <location filename="../ChannelSettings.cpp" line="144"/>
         <source>Pulse count (Rising)</source>
-        <translation>Contagem de pulsos (Borda de subida)</translation>
+        <translation>Contagem de pulsos (Subida)</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="146"/>
@@ -867,77 +867,78 @@
         <translation>n/d</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="299"/>
+        <location filename="../ChannelSettings.cpp" line="300"/>
         <source>Undefined</source>
         <translation>Indefinido</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="394"/>
+        <location filename="../ChannelSettings.cpp" line="395"/>
         <source>Sensor Port</source>
-        <translation>Porta do sensor</translation>
+        <translation>Porta do Sensor</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="292"/>
+        <location filename="../ChannelSettings.cpp" line="293"/>
         <source>Sensor Name</source>
-        <translation>Nome do sensor</translation>
+        <translatorcomment>lépe Typ čidla</translatorcomment>
+        <translation>Nome do Sensor</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="396"/>
+        <location filename="../ChannelSettings.cpp" line="397"/>
         <source>Sensor Quantity</source>
-        <translation>Grandeza do sensor</translation>
+        <translation>Grandeza Medida</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="519"/>
+        <location filename="../ChannelSettings.cpp" line="520"/>
         <source>Correction Type</source>
-        <translation>Tipo de correção</translation>
+        <translation>Tipo de Correção</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="536"/>
+        <location filename="../ChannelSettings.cpp" line="537"/>
         <source>Measured</source>
         <translation>Medido</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="537"/>
+        <location filename="../ChannelSettings.cpp" line="538"/>
         <source>Expected</source>
         <translation>Esperado</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="539"/>
+        <location filename="../ChannelSettings.cpp" line="540"/>
         <source>Point 1</source>
         <translation>Ponto 1</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="540"/>
+        <location filename="../ChannelSettings.cpp" line="541"/>
         <source>Point 2</source>
         <translation>Ponto 2</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="541"/>
+        <location filename="../ChannelSettings.cpp" line="542"/>
         <source>Point 3</source>
         <translation>Ponto 3</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="649"/>
-        <source>Source Measurement</source>
-        <translation>Medição de origem</translation>
-    </message>
-    <message>
         <location filename="../ChannelSettings.cpp" line="650"/>
+        <source>Source Measurement</source>
+        <translation>Medição de Origem</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="651"/>
         <source>Source Channel</source>
-        <translation>Canal de origem</translation>
+        <translation>Canal de Origem</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="768"/>
+        <location filename="../ChannelSettings.cpp" line="769"/>
         <source>Current Value</source>
-        <translation>Valor atual</translation>
-    </message>
-    <message>
-        <location filename="../ChannelSettings.cpp" line="1262"/>
-        <source>Value correction changes performed on a virtual channel are applied to the original channel as well. Continue?</source>
-        <translation>As alterações de correção de valor feitas num canal virtual também são aplicadas ao canal original. Continuar?</translation>
+        <translation>Valor Atual</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="1263"/>
+        <source>Value correction changes performed on a virtual channel are applied to the original channel as well. Continue?</source>
+        <translation>As alterações de correção de valor efetuadas num canal virtual também são aplicadas ao canal original. Continuar?</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="1264"/>
         <source>Continue</source>
         <translation>Continuar</translation>
     </message>
@@ -946,158 +947,158 @@
         <translation type="vanished">Mostrar todas as marcas</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="892"/>
+        <location filename="../ChannelSettings.cpp" line="893"/>
         <source>Miliseconds</source>
         <translation>Milissegundos</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="893"/>
+        <location filename="../ChannelSettings.cpp" line="894"/>
         <source>Seconds</source>
         <translation>Segundos</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="894"/>
+        <location filename="../ChannelSettings.cpp" line="895"/>
         <source>Minuts</source>
         <translation>Minutos</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="895"/>
+        <location filename="../ChannelSettings.cpp" line="896"/>
         <source>Hours</source>
         <translation>Horas</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="896"/>
+        <location filename="../ChannelSettings.cpp" line="897"/>
         <source>Days</source>
         <translation>Dias</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="900"/>
+        <location filename="../ChannelSettings.cpp" line="901"/>
         <source>day.month.year</source>
         <translation>dia.mês.ano</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="901"/>
+        <location filename="../ChannelSettings.cpp" line="902"/>
         <source>day.month.hour:minute</source>
         <translation>dia.mês.hora:minuto</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="902"/>
+        <location filename="../ChannelSettings.cpp" line="903"/>
         <source>hour:minute:second</source>
         <translation>hora:minuto:segundo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="903"/>
+        <location filename="../ChannelSettings.cpp" line="904"/>
         <source>minute:second.milisecond</source>
         <translation>minuto:segundo.milissegundo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="915"/>
+        <location filename="../ChannelSettings.cpp" line="916"/>
         <source>Format</source>
         <translation>Formato</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="937"/>
+        <location filename="../ChannelSettings.cpp" line="938"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
         <translation>O canal de formato de tempo deve ser colocado num eixo separado. Por favor, escolha um.</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="40"/>
-        <location filename="../ChannelSettings.cpp" line="970"/>
+        <location filename="../ChannelSettings.cpp" line="971"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="869"/>
+        <location filename="../ChannelSettings.cpp" line="870"/>
         <source>All Marks</source>
-        <translation>Todas as marcas</translation>
-    </message>
-    <message>
-        <location filename="../ChannelSettings.cpp" line="972"/>
-        <source>Plus</source>
-        <translation>Mais (+)</translation>
+        <translation>Todas as Marcas</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="973"/>
+        <source>Plus</source>
+        <translation>Mais</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="974"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="974"/>
+        <location filename="../ChannelSettings.cpp" line="975"/>
         <source>Disc</source>
         <translation>Disco</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="975"/>
+        <location filename="../ChannelSettings.cpp" line="976"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="976"/>
+        <location filename="../ChannelSettings.cpp" line="977"/>
         <source>Diamond</source>
         <translation>Losango</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="977"/>
+        <location filename="../ChannelSettings.cpp" line="978"/>
         <source>Star</source>
         <translation>Estrela</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="978"/>
+        <location filename="../ChannelSettings.cpp" line="979"/>
         <source>Triangle</source>
         <translation>Triângulo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="979"/>
-        <source>Inverted Triangle</source>
-        <translation>Triângulo invertido</translation>
-    </message>
-    <message>
         <location filename="../ChannelSettings.cpp" line="980"/>
-        <source>Cross and Square</source>
-        <translation>Cruz e quadrado</translation>
+        <source>Inverted Triangle</source>
+        <translation>Triângulo Invertido</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="981"/>
-        <source>Plus and Square</source>
-        <translation>Mais e quadrado</translation>
+        <source>Cross and Square</source>
+        <translation>Cruz e Quadrado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="982"/>
-        <source>Cross and Circle</source>
-        <translation>Cruz e círculo</translation>
+        <source>Plus and Square</source>
+        <translation>Mais e Quadrado</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="983"/>
-        <source>Plus and Circle</source>
-        <translation>Mais e círculo</translation>
+        <source>Cross and Circle</source>
+        <translation>Cruz e Círculo</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="984"/>
+        <source>Plus and Circle</source>
+        <translation>Mais e Círculo</translation>
+    </message>
+    <message>
+        <location filename="../ChannelSettings.cpp" line="985"/>
         <source>Peace</source>
-        <translation>Símbolo da paz</translation>
+        <translation>Paz</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1002"/>
+        <location filename="../ChannelSettings.cpp" line="1003"/>
         <source>New Axis...</source>
-        <translation>Novo eixo...</translation>
+        <translation>Novo Eixo...</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1037"/>
+        <location filename="../ChannelSettings.cpp" line="1038"/>
         <source>Axis</source>
         <translation>Eixo</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1066"/>
+        <location filename="../ChannelSettings.cpp" line="1067"/>
         <source>Port %1</source>
         <translation>Porta %1</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1082"/>
+        <location filename="../ChannelSettings.cpp" line="1083"/>
         <source>Entered different expected values for one meassured.</source>
-        <translation>Foram inseridos diferentes valores esperados para uma única medição.</translation>
+        <translation>Foram introduzidos diferentes valores esperados para uma medição.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1153"/>
+        <location filename="../ChannelSettings.cpp" line="1154"/>
         <source>Current value is not a number.</source>
         <translation>O valor atual não é um número.</translation>
     </message>
@@ -1157,29 +1158,29 @@
     </message>
     <message>
         <source>Time Offset</source>
-        <translation type="vanished">Tempo desde o início</translation>
+        <translation type="vanished">Tempo desde o Início</translation>
     </message>
     <message>
         <source>Real Time</source>
-        <translation type="vanished">Tempo real</translation>
+        <translation type="vanished">Tempo Real</translation>
     </message>
 </context>
 <context>
     <name>ConnectivityLabel</name>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Conectado</translation>
+        <translation type="vanished">Ligado</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="vanished">Desconectado</translation>
+        <translation type="vanished">Desligado</translation>
     </message>
 </context>
 <context>
     <name>Console</name>
     <message>
         <source>Console</source>
-        <translation type="vanished">Console</translation>
+        <translation type="vanished">Consola</translation>
     </message>
 </context>
 <context>
@@ -1205,7 +1206,7 @@
     </message>
     <message>
         <source>Add Directory</source>
-        <translation type="vanished">Adicionar diretório</translation>
+        <translation type="vanished">Adicionar Diretório</translation>
     </message>
     <message>
         <source>Directory alredy contains subdirectory with the same name.</source>
@@ -1213,7 +1214,7 @@
     </message>
     <message>
         <source>Directory already contains file with the same name. Rewrite it?</source>
-        <translation type="vanished">O diretório já contém um arquivo com o mesmo nome. Substituir?</translation>
+        <translation type="vanished">O diretório já contém um ficheiro com o mesmo nome. Substituir?</translation>
     </message>
     <message>
         <source>Rewrite</source>
@@ -1241,107 +1242,134 @@
         <source>Color</source>
         <translation type="vanished">Cor</translation>
     </message>
-    <message>
-        <source>Color Picker</source>
-        <translation type="vanished">Seletor de cor</translation>
-    </message>
 </context>
 <context>
     <name>GlobalSettingsDialog</name>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="24"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Definições</translation>
+    </message>
+    <message>
+        <source>Show Store/Cancel buttons</source>
+        <translation type="vanished">Mostrar botões Guardar/Cancelar</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="69"/>
         <source>Apply Changes by a Dialog Closing</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar Alterações ao Fechar o Diálogo</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="80"/>
         <source>Channel graph pen width</source>
-        <translation type="unfinished"></translation>
+        <translation>Espessura da linha do gráfico do canal</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="91"/>
         <source>Channel size factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Fator de tamanho do canal</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="97"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="98"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertical</translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="100"/>
         <source>Menu Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Orientação do Menu</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="104"/>
         <source>Menu on Demand</source>
-        <translation type="unfinished"></translation>
+        <translation>Menu a Pedido</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="111"/>
         <source>Hide All Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar Todos os Canais</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="118"/>
         <source>Open recent measurement at startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir medição recente no arranque</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="132"/>
         <source>Preferred Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Diretório Preferido</translation>
+    </message>
+    <message>
+        <source>Limit Directory</source>
+        <translation type="vanished">Limitar Diretório</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="139"/>
         <source>Select directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar diretório</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="155"/>
         <source>Show Debug Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Janela de Depuração</translation>
+    </message>
+    <message>
+        <source>Show Console</source>
+        <translation type="vanished">Mostrar Consola</translation>
     </message>
     <message>
         <location filename="../GlobalSettingsDialog.cpp" line="162"/>
         <source>Use Bluetooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar Bluetooth</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="182"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="187"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="191"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="196"/>
         <source>Unit Brackets</source>
-        <translation type="unfinished"></translation>
+        <translation>Parênteses das Unidades</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="198"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="203"/>
         <source>The language change will take effect after a restart of the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>A alteração de idioma terá efeito após reiniciar a aplicação.</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="214"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="219"/>
         <source>Estbilished connection will be lost. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>A ligação estabelecida será perdida. Continuar?</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="215"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="220"/>
         <source>Continue</source>
-        <translation type="unfinished">Continuar</translation>
+        <translation>Continuar</translation>
+    </message>
+    <message>
+        <source>Estbilished connection will be disconnected. Continue?</source>
+        <translation type="obsolete">A ligação estabelecida será desligada. Continuar?</translation>
+    </message>
+</context>
+<context>
+    <name>Graph</name>
+    <message>
+        <source>samples</source>
+        <translation type="vanished">amostras</translation>
+    </message>
+    <message>
+        <source>channel %1</source>
+        <translation type="vanished">canal %1</translation>
+    </message>
+    <message>
+        <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
+        <translation type="vanished">Algumas amostras não foram transferidas. A taxa de amostragem é provavelmente demasiado alta para tantos canais.</translation>
     </message>
 </context>
 <context>
@@ -1349,111 +1377,176 @@
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="487"/>
         <source>Axis %1</source>
-        <translation type="unfinished">Eixo %1</translation>
+        <translation>Eixo %1</translation>
     </message>
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="610"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../graphics/GraphicsContainer.cpp" line="620"/>
         <source>Vertical</source>
-        <translation type="unfinished">Vertical</translation>
+        <translation>Vertical</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
+        <source>Horizontal</source>
+        <translation type="vanished">Horizontal</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation type="vanished">Vertical</translation>
+    </message>
+    <message>
+        <source>Samples</source>
+        <translation type="vanished">Amostras</translation>
+    </message>
+    <message>
+        <source>Channel %1</source>
+        <translation type="vanished">Canal %1</translation>
+    </message>
+    <message>
         <location filename="../MainWindow.cpp" line="114"/>
         <source>Menu</source>
-        <translation type="unfinished">Menu</translation>
+        <translation>Menu</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="361"/>
-        <source>Selected file %1 is corrupted. All data must not be available.</source>
-        <translation type="unfinished"></translation>
+        <source>Selected file has not been open.</source>
+        <translation type="vanished">O ficheiro selecionado não foi aberto.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="374"/>
+        <location filename="../MainWindow.cpp" line="384"/>
         <source>Selected file is not possible to open.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o ficheiro selecionado.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="387"/>
+        <source>Unsuported file version</source>
+        <translation type="vanished">Versão de ficheiro não suportada</translation>
+    </message>
+    <message>
+        <source>File %1 is corrupted.</source>
+        <translation type="vanished">O ficheiro %1 está corrompido.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="371"/>
+        <source>Selected file %1 is corrupted. All data must not be available.</source>
+        <translation>O ficheiro selecionado %1 está corrompido. Nem todos os dados poderão estar disponíveis.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="397"/>
         <source>Unsuported file version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão de ficheiro não suportada (%1)</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="521"/>
+        <location filename="../MainWindow.cpp" line="531"/>
         <source>Continue</source>
-        <translation type="unfinished">Continuar</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="570"/>
+        <location filename="../MainWindow.cpp" line="580"/>
         <source>Just template without values has been stored.</source>
-        <translation type="unfinished">Apenas o modelo sem valores foi guardado.</translation>
+        <translation>Apenas o modelo sem valores foi guardado.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>Open with values?</source>
-        <translation type="unfinished">Abrir com valores?</translation>
+        <translation>Abrir com valores?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>Yes</source>
-        <translation type="unfinished">Sim</translation>
+        <translation>Sim</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>No</source>
-        <translation type="unfinished">Não</translation>
+        <translation>Não</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="644"/>
+        <location filename="../MainWindow.cpp" line="654"/>
         <source>Gui and value changes were not saved. Realy exit?</source>
-        <translation type="unfinished"></translation>
+        <translation>As alterações de interface e valores não foram guardadas. Sair mesmo assim?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="646"/>
+        <location filename="../MainWindow.cpp" line="656"/>
         <source>Gui changes were not saved. Realy exit?</source>
-        <translation type="unfinished"></translation>
+        <translation>As alterações de interface não foram guardadas. Sair mesmo assim?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="648"/>
+        <location filename="../MainWindow.cpp" line="658"/>
         <source>Value changes were not saved. Realy exit?</source>
-        <translation type="unfinished"></translation>
+        <translation>As alterações de valores não foram guardadas. Sair mesmo assim?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="659"/>
-        <source>Realy exit?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MainWindow.cpp" line="662"/>
-        <source>Exit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MainWindow.cpp" line="722"/>
+        <location filename="../MainWindow.cpp" line="732"/>
         <source>The measurement &apos;%1&apos; is in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>A medição &apos;%1&apos; está em curso.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="726"/>
+        <location filename="../MainWindow.cpp" line="736"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
-        <translation type="unfinished"></translation>
+        <translation>A medição &apos;%1&apos; já contém dados. Deseja mesmo removê-la?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="731"/>
+        <location filename="../MainWindow.cpp" line="741"/>
         <source>Ghost displayed in another measurements will be removed too.</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translatorcomment>
+        <translation>O canal virtual apresentado noutras medições também será removido.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="749"/>
-        <location filename="../MainWindow.cpp" line="763"/>
+        <location filename="../MainWindow.cpp" line="759"/>
+        <location filename="../MainWindow.cpp" line="773"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
+    </message>
+    <message>
+        <source></source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gui and value changes were not saved.</source>
+        <translation type="vanished">As alterações de interface e valores não foram guardadas.</translation>
+    </message>
+    <message>
+        <source>Gui changes were not saved.</source>
+        <translation type="vanished">As alterações de interface não foram guardadas.</translation>
+    </message>
+    <message>
+        <source>Value changes were not saved.</source>
+        <translation type="vanished">As alterações de valores não foram guardadas.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="669"/>
+        <source>Realy exit?</source>
+        <translation>Sair mesmo assim?</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cpp" line="672"/>
+        <source>Exit</source>
+        <translation>Sair</translation>
+    </message>
+    <message>
+        <source>Gui neither value changes were not saved. Quit anyway?</source>
+        <translation type="vanished">As alterações de interface e valores não foram guardadas. Sair mesmo assim?</translation>
+    </message>
+    <message>
+        <source>Gui changes were not saved. Quit anyway?</source>
+        <translation type="vanished">As alterações de interface não foram guardadas. Sair mesmo assim?</translation>
+    </message>
+    <message>
+        <source>Value changes were not saved. Quit anyway?</source>
+        <translation type="vanished">As alterações de valores não foram guardadas. Sair mesmo assim?</translation>
+    </message>
+    <message>
+        <source>Realy quit?</source>
+        <translation type="vanished">Sair mesmo assim?</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="vanished">Sair</translation>
     </message>
 </context>
 <context>
@@ -1461,37 +1554,57 @@
     <message>
         <location filename="../Measurement.cpp" line="54"/>
         <source>Measurement %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Medição %1</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="101"/>
         <source>Measurement &apos;%1&apos; has been terminated because of a connectivity issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>A medição &apos;%1&apos; foi terminada devido a um problema de ligação.</translation>
     </message>
     <message>
-        <location filename="../Measurement.cpp" line="190"/>
-        <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Measurement.cpp" line="195"/>
-        <source>Some values was wrongly transfered and has not been stored.</source>
-        <translation type="unfinished"></translation>
+        <source>Command with wrong checksum recieved.</source>
+        <translation type="vanished">Recebido comando com checksum errado.</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="208"/>
         <source>The measurement &apos;%1&apos; is alread in progress. Terminate it?</source>
-        <translation type="unfinished"></translation>
+        <translation>A medição &apos;%1&apos; já está em curso. Terminar?</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="209"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Cancelar</translation>
+    </message>
+    <message>
+        <location filename="../Measurement.cpp" line="190"/>
+        <source>Some samples was not transfered. The sample rate is probably too high for so many channels.</source>
+        <translation>Algumas amostras não foram transferidas. A taxa de amostragem é provavelmente demasiado alta para tantos canais.</translation>
+    </message>
+    <message>
+        <location filename="../Measurement.cpp" line="195"/>
+        <source>Some values was wrongly transfered and has not been stored.</source>
+        <translation>Alguns valores foram transferidos incorretamente e não foram guardados.</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation type="vanished">Horizontal</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation type="vanished">Vertical</translation>
+    </message>
+    <message>
+        <source>Samples</source>
+        <translation type="vanished">Amostras</translation>
     </message>
     <message>
         <location filename="../Measurement.cpp" line="416"/>
         <source>Channel %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Canal %1</translation>
     </message>
 </context>
 <context>
@@ -1499,86 +1612,106 @@
     <message>
         <location filename="../MeasurementMenu.cpp" line="23"/>
         <source>Measurements</source>
-        <translation type="unfinished">Medições</translation>
+        <translation>Medições</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="41"/>
         <source>Edit</source>
-        <translation type="unfinished">Editar</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="46"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="72"/>
         <source>Add New</source>
-        <translation type="unfinished">Adicionar novo</translation>
+        <translation>Adicionar Nova</translation>
     </message>
     <message>
         <location filename="../MeasurementMenu.cpp" line="78"/>
         <source>Clone Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Clonar Selecionada</translation>
+    </message>
+    <message>
+        <source>The measurement &apos;%1&apos; is in progress. Really remove it?</source>
+        <translation type="vanished">A medição &apos;%1&apos; está em curso. Deseja mesmo removê-la?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Cancelar</translation>
+    </message>
+    <message>
+        <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
+        <translation type="vanished">A medição &apos;%1&apos; já contém dados. Deseja mesmo removê-la?</translation>
     </message>
 </context>
 <context>
     <name>MeasurementSettings</name>
     <message>
+        <source>Edit measurement...</source>
+        <translation type="vanished">Editar medição...</translation>
+    </message>
+    <message>
         <location filename="../MeasurementSettings.cpp" line="16"/>
         <source>Measurement Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Definições da Medição</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="26"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="29"/>
         <source>Periodical</source>
-        <translation type="unfinished"></translation>
+        <translation>Periódico</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="30"/>
         <source>On Demand</source>
-        <translation type="unfinished"></translation>
+        <translation>A Pedido</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="33"/>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="42"/>
         <source>Period</source>
-        <translation type="unfinished"></translation>
+        <translation>Período</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="45"/>
         <source>Hz</source>
-        <translation type="unfinished">Hz</translation>
+        <translation>Hz</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="46"/>
         <source>Sec</source>
         <comment>seconds</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seg</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="49"/>
         <source>Units</source>
-        <translation type="unfinished">Unidades</translation>
+        <translation>Unidades</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="57"/>
         <source>Show Marks</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Marcas</translation>
     </message>
     <message>
         <location filename="../MeasurementSettings.cpp" line="96"/>
         <source>Period must be a positive integer.</source>
-        <translation type="unfinished"></translation>
+        <translation>O período deve ser um número inteiro positivo.</translation>
+    </message>
+    <message>
+        <source>Period must be a positive number.</source>
+        <translation type="vanished">O período deve ser um número positivo.</translation>
     </message>
 </context>
 <context>
@@ -1586,7 +1719,14 @@
     <message>
         <location filename="../MyMessageBox.cpp" line="18"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
+    </message>
+</context>
+<context>
+    <name>Plot</name>
+    <message>
+        <source>Axis %1</source>
+        <translation type="vanished">Eixo %1</translation>
     </message>
 </context>
 <context>
@@ -1594,133 +1734,235 @@
     <message>
         <location filename="../PlotContextMenu.cpp" line="45"/>
         <source>Zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="46"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="47"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar à janela</translation>
+    </message>
+    <message>
+        <source>Sample Value</source>
+        <translation type="vanished">Valor da Amostra</translation>
+    </message>
+    <message>
+        <source>Auto Range Border</source>
+        <translation type="obsolete">Limite Automático</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="49"/>
         <source>Follow Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de Acompanhamento</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="53"/>
         <source>Sample</source>
-        <translation type="unfinished">Amostra</translation>
+        <translation>Amostra</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="55"/>
         <source>Auto Selection Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Seleção Automático</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="57"/>
         <source>Left Selection Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Seleção Esquerdo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="59"/>
         <source>Right Selection Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Seleção Direito</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="63"/>
         <source>Delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Delta (Diferença)</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="64"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Máximo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="65"/>
         <source>Minimum</source>
-        <translation type="unfinished"></translation>
+        <translation>Mínimo</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="66"/>
         <source>Mean</source>
-        <translation type="unfinished"></translation>
+        <translation>Média</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="67"/>
         <source>Median</source>
-        <translation type="unfinished"></translation>
+        <translation>Mediana</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="68"/>
         <source>Variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Variância</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="69"/>
         <source>Standard Deviation</source>
-        <translation type="unfinished"></translation>
+        <translation>Desvio Padrão</translation>
     </message>
     <message>
         <location filename="../PlotContextMenu.cpp" line="70"/>
         <source>Sum</source>
-        <translation type="unfinished"></translation>
+        <translation>Soma</translation>
     </message>
 </context>
 <context>
     <name>PortListDialog</name>
     <message>
-        <location filename="../PortListDialog.cpp" line="19"/>
-        <source>Device connecting</source>
-        <translation type="unfinished"></translation>
+        <source>Hardware connection</source>
+        <translation type="obsolete">Ligação de Hardware</translation>
     </message>
     <message>
-        <location filename="../PortListDialog.cpp" line="34"/>
-        <source>Please, select a comatible device port.</source>
-        <translation type="unfinished"></translation>
+        <source>Please, select a port with a comatible device.</source>
+        <translation type="vanished">Por favor, selecione uma porta com um dispositivo compatível.</translation>
+    </message>
+    <message>
+        <source>Scanning...</source>
+        <translation type="vanished">A digitalizar...</translation>
+    </message>
+    <message>
+        <source>Openning...</source>
+        <translation type="vanished">A abrir...</translation>
+    </message>
+    <message>
+        <source>Selected port doesn&apos;t responding properly. Please, check a device connection and the port read/write permitions.</source>
+        <translation type="obsolete">A porta selecionada não responde como esperado. Por favor, verifique a ligação do dispositivo e as permissões de leitura/escrita da porta.</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="62"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar</translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="19"/>
+        <source>Device connecting</source>
+        <translation>A ligar dispositivo</translation>
+    </message>
+    <message>
+        <location filename="../PortListDialog.cpp" line="34"/>
+        <source>Please, select a comatible device port.</source>
+        <translation>Por favor, selecione uma porta de dispositivo compatível.</translation>
     </message>
     <message>
         <location filename="../PortListDialog.cpp" line="65"/>
         <source>Work Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Trabalhar Offline</translation>
+    </message>
+    <message>
+        <source>Selected port doesn&apos;t responding. Please, check a device connection and the port read/write permitions.</source>
+        <translation type="vanished">A porta selecionada não responde. Por favor, verifique a ligação do dispositivo e as permissões de leitura/escrita da porta.</translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <translation type="vanished">Ignorar</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="vanished">Fechar</translation>
+    </message>
+</context>
+<context>
+    <name>PortListWidget</name>
+    <message>
+        <source>preferred</source>
+        <translation type="vanished">preferido</translation>
+    </message>
+    <message>
+        <source>the port doesn&apos;t respond properly. Please, check if the device is connected and the port read/write permitions.</source>
+        <translation type="vanished">a porta não responde como esperado. Por favor, verifique se o dispositivo está ligado e as permissões de leitura/escrita da porta.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="44"/>
-        <source>Recognized</source>
-        <translation type="unfinished"></translation>
+        <source>Match</source>
+        <translation type="obsolete">Corresponder</translation>
     </message>
     <message>
-        <location filename="../hw/PortInfo.cpp" line="46"/>
-        <source>Last</source>
-        <translation type="unfinished"></translation>
+        <location filename="../hw/PortInfo.cpp" line="44"/>
+        <source>Recognized</source>
+        <translation>Reconhecido</translation>
+    </message>
+    <message>
+        <source>Last time used</source>
+        <translation type="vanished">Última vez utilizado</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="48"/>
         <source>Identified</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificado</translation>
+    </message>
+    <message>
+        <source>Doesn&apos;t Answer</source>
+        <translation type="vanished">Não Responde</translation>
+    </message>
+    <message>
+        <location filename="../hw/PortInfo.cpp" line="46"/>
+        <source>Last</source>
+        <translation>Último</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="61"/>
         <source>Bluetooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth</translation>
     </message>
     <message>
         <location filename="../hw/PortInfo.cpp" line="63"/>
         <source>Serial Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Porta Série</translation>
+    </message>
+</context>
+<context>
+    <name>SampleChannel</name>
+    <message>
+        <source>μs</source>
+        <translation type="vanished">μs</translation>
+    </message>
+    <message>
+        <source>ms</source>
+        <translation type="vanished">ms</translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation type="vanished">s</translation>
+    </message>
+    <message>
+        <source>minutes</source>
+        <translation type="vanished">minutos</translation>
+    </message>
+    <message>
+        <source>hours</source>
+        <translation type="vanished">horas</translation>
+    </message>
+    <message>
+        <source>days</source>
+        <translation type="vanished">dias</translation>
+    </message>
+    <message>
+        <source>Samples</source>
+        <translation type="vanished">Amostras</translation>
+    </message>
+    <message>
+        <source>Time Offset</source>
+        <translation type="vanished">Tempo desde o Início</translation>
+    </message>
+    <message>
+        <source>Real Time</source>
+        <translation type="vanished">Tempo Real</translation>
     </message>
 </context>
 <context>
@@ -1728,47 +1970,54 @@
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="61"/>
         <source>μs</source>
-        <translation type="unfinished">μs</translation>
+        <translation>μs</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="63"/>
         <source>ms</source>
-        <translation type="unfinished">ms</translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="65"/>
         <source>s</source>
-        <translation type="unfinished">s</translation>
+        <translation>s</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="67"/>
         <source>minutes</source>
-        <translation type="unfinished">minutos</translation>
+        <translation>minutos</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="69"/>
         <source>hours</source>
-        <translation type="unfinished">horas</translation>
+        <translation>horas</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="71"/>
         <source>days</source>
-        <translation type="unfinished">dias</translation>
+        <translation>dias</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="92"/>
         <source>Samples</source>
-        <translation type="unfinished">Amostras</translation>
+        <translation>Amostras</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="94"/>
         <source>Time Offset</source>
-        <translation type="unfinished">Tempo desde o início</translation>
+        <translation>Tempo desde o Início</translation>
     </message>
     <message>
         <location filename="../graphics/SampleChannelProxy.cpp" line="96"/>
         <source>Real Time</source>
-        <translation type="unfinished">Tempo real</translation>
+        <translation>Tempo Real</translation>
+    </message>
+</context>
+<context>
+    <name>SerialPort</name>
+    <message>
+        <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
+        <translation type="vanished">Está a trabalhar em modo offline. Para estabelecer uma ligação, por favor, volte a ligar o dispositivo e reinicie a aplicação.</translation>
     </message>
 </context>
 <context>
@@ -1776,12 +2025,12 @@
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="26"/>
         <source>Store</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../bases/FormDialogBase.cpp" line="30"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -1789,12 +2038,12 @@
     <message>
         <location filename="../bases/FormDialogColor.cpp" line="33"/>
         <source>Color</source>
-        <translation type="unfinished">Cor</translation>
+        <translation>Cor</translation>
     </message>
     <message>
         <location filename="../bases/FormDialogColor.cpp" line="38"/>
         <source>Color Picker</source>
-        <translation type="unfinished">Seletor de cor</translation>
+        <translation>Seletor de Cores</translation>
     </message>
 </context>
 <context>
@@ -1802,12 +2051,12 @@
     <message>
         <location filename="../file/AddDirDialog.cpp" line="10"/>
         <source>Add Directory</source>
-        <translation>Adicionar diretório</translation>
+        <translation>Adicionar Diretório</translation>
     </message>
     <message>
         <location filename="../file/AddDirDialog.cpp" line="13"/>
         <source>Directory Name</source>
-        <translation>Nome do diretório</translation>
+        <translation>Nome do Diretório</translation>
     </message>
 </context>
 <context>
@@ -1820,7 +2069,7 @@
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="69"/>
         <source>Add Directory</source>
-        <translation>Adicionar diretório</translation>
+        <translation>Adicionar Diretório</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="121"/>
@@ -1845,7 +2094,7 @@
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="151"/>
         <source>Directory already contains file with the same name. Rewrite it?</source>
-        <translation>O diretório já contém um arquivo com o mesmo nome. Substituir?</translation>
+        <translation>O diretório já contém um ficheiro com o mesmo nome. Substituir?</translation>
     </message>
     <message>
         <location filename="../file/OwnFileDialog.cpp" line="152"/>
@@ -1856,85 +2105,89 @@
 <context>
     <name>hw::HwConnector</name>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="289"/>
+        <location filename="../hw/HwConnector.cpp" line="290"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation>Está a trabalhar em modo offline. Para estabelecer uma conexão, reconecte o dispositivo e reinicie o aplicativo.</translation>
+        <translation>Está a trabalhar em modo offline. Para estabelecer uma ligação, por favor, volte a ligar o dispositivo e reinicie a aplicação.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="368"/>
+        <location filename="../hw/HwConnector.cpp" line="370"/>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
-        <translation>A porta selecionada não pode ser aberta. Está a ser utilizada por outro processo ou um dispositivo está desconectado.</translation>
+        <translation>Não é possível abrir a porta selecionada. Está a ser utilizada por outro processo ou o dispositivo está desligado.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="397"/>
         <source>The selected port isn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation>A porta selecionada não está a responder como esperado. Verifique as permissões de leitura/escrita da porta.</translation>
+        <translation type="vanished">A porta selecionada não responde como esperado. Por favor, verifique as permissões de leitura/escrita da porta.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="408"/>
+        <location filename="../hw/HwConnector.cpp" line="404"/>
+        <source>The selected port isn&apos;t responding as expected. Please, check port read/write permissions.</source>
+        <translation>A porta selecionada não responde como esperado. Por favor, verifique as permissões de leitura/escrita da porta.</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwConnector.cpp" line="427"/>
         <source>Detected an old firmware version. Sensor settings will not be supported.</source>
-        <translation>Foi detetada uma versão antiga de firmware. As configurações do sensor não serão suportadas através da interface.</translation>
+        <translation>Foi detetada uma versão de firmware antiga. As definições do sensor não serão suportadas.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="580"/>
+        <location filename="../hw/HwConnector.cpp" line="627"/>
         <source>Offline</source>
-        <translation>Desconectado</translation>
+        <translation>Offline</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="582"/>
+        <location filename="../hw/HwConnector.cpp" line="629"/>
         <source>Scanning</source>
-        <translation>Procurando</translation>
+        <translation>A digitalizar</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="584"/>
+        <location filename="../hw/HwConnector.cpp" line="631"/>
         <source>Searched</source>
-        <translation>Procurado</translation>
+        <translation>Pesquisado</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="586"/>
+        <location filename="../hw/HwConnector.cpp" line="633"/>
         <source>Opening</source>
-        <translation>Abrindo</translation>
+        <translation>A abrir</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="588"/>
+        <location filename="../hw/HwConnector.cpp" line="635"/>
         <source>Verification</source>
         <translation>Verificação</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="590"/>
+        <location filename="../hw/HwConnector.cpp" line="637"/>
         <source>Connected</source>
-        <translation>Conectado</translation>
+        <translation>Ligado</translation>
     </message>
 </context>
 <context>
     <name>hw::HwSink</name>
     <message>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
-        <translation type="vanished">Está a trabalhar em modo offline. Para estabelecer uma conexão, reconecte o dispositivo e reinicie o aplicativo.</translation>
+        <translation type="vanished">Está a trabalhar em modo offline. Para estabelecer uma ligação, por favor, volte a ligar o dispositivo e reinicie a aplicação.</translation>
     </message>
     <message>
         <source>Selected port is byssy. It is probably oppened by another process.</source>
-        <translation type="vanished">A porta selecionada está ocupada. Provavelmente foi aberta por outro processo.</translation>
+        <translation type="vanished">A porta selecionada está ocupada. Provavelmente está a ser utilizada por outro processo.</translation>
     </message>
     <message>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
-        <translation type="vanished">A porta selecionada não pode ser aberta. Está a ser utilizada por outro processo ou um dispositivo está desconectado.</translation>
+        <translation type="vanished">Não é possível abrir a porta selecionada. Está a ser utilizada por outro processo ou o dispositivo está desligado.</translation>
     </message>
     <message>
         <source>Selected port doesn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation type="vanished">A porta selecionada não está a responder como esperado. Verifique as permissões de leitura/escrita da porta.</translation>
+        <translation type="vanished">A porta selecionada não responde como esperado. Por favor, verifique as permissões de leitura/escrita da porta.</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="vanished">Desconectado</translation>
+        <translation type="vanished">Offline</translation>
     </message>
     <message>
         <source>Scanning</source>
-        <translation type="vanished">Procurando</translation>
+        <translation type="vanished">A digitalizar</translation>
     </message>
     <message>
         <source>Opening</source>
-        <translation type="vanished">Abrindo</translation>
+        <translation type="vanished">A abrir</translation>
     </message>
     <message>
         <source>Verification</source>
@@ -1942,7 +2195,7 @@
     </message>
     <message>
         <source>Connected</source>
-        <translation type="vanished">Conectado</translation>
+        <translation type="vanished">Ligado</translation>
     </message>
 </context>
 <context>
@@ -1950,12 +2203,12 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="30"/>
         <source>Generic (AD 10bit)</source>
-        <translation>Genérico (Conversor A/D 10 bits)</translation>
+        <translation>Genérico (AD 10bit)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="32"/>
         <source>Thermometer (DS18B20)</source>
-        <translation>Termómetro digital (DS18B20)</translation>
+        <translation>Termómetro (DS18B20)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="34"/>
@@ -1965,7 +2218,7 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="36"/>
         <source>Thermometer (K-Type, MAX6675)</source>
-        <translation>Termómetro (Termopar Tipo-K, MAX6675)</translation>
+        <translation>Termómetro (Tipo K, MAX6675)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="38"/>
@@ -1999,7 +2252,7 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="48"/>
         <source>Color sensor (TCS3200)</source>
-        <translation>Colorímetro RGB(C) (TCS3200)</translation>
+        <translation>Sensor de cor (TCS3200)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="50"/>
@@ -2019,12 +2272,12 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="56"/>
         <source>ORP sensor</source>
-        <translation>Sensor ORP (Redox)</translation>
+        <translation>Sensor ORP</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="58"/>
         <source>Conductivity sensor</source>
-        <translation>Sensor de condutividade elétrica</translation>
+        <translation>Sensor de condutividade</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="60"/>
@@ -2034,7 +2287,7 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="62"/>
         <source>DC Voltage sensor 0-25 V (voltage divider)</source>
-        <translation>Sensor de tensão DC 0-25 V (Divisor de tensão)</translation>
+        <translation>Sensor de tensão DC 0-25 V (divisor de tensão)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="64"/>
@@ -2054,12 +2307,12 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="70"/>
         <source>Light sensor (photoresistor)</source>
-        <translation>Intensidade luminosa (Fotorresistência)</translation>
+        <translation>Sensor de luz (fotorresistência)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="72"/>
         <source>Light sensor (BH1750 luxmeter)</source>
-        <translation>Intensidade luminosa - luxímetro (BH1750)</translation>
+        <translation>Sensor de luz (luxímetro BH1750)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="74"/>
@@ -2068,23 +2321,37 @@
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="76"/>
+        <source>O2 gas sensor (SGX-VOX)</source>
+        <translation>Sensor de gás O2 (SGX-VOX)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="106"/>
+        <source>Chemistry Colorimeter (TCS34725)</source>
+        <translation>Colorímetro Químico (TCS34725)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="108"/>
+        <source>Output LED module</source>
+        <translation>Módulo de saída LED</translation>
+    </message>
+    <message>
         <source>O2 gas sensor (ME2-O2)</source>
-        <translation>Sensor de gás O2 (ME2-O2)</translation>
+        <translation type="vanished">Sensor de gás O2 (ME2-O2)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="78"/>
         <source>Motion/distance US sensor (SR-HC04)</source>
-        <translation>Movimento/distância ultrassónico (SR-HC04)</translation>
+        <translation>Sensor de movimento/distância US (SR-HC04)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="96"/>
         <source>Motion/distance laser sensor (VL53L0X)</source>
-        <translation>Movimento/distância a laser (VL53L0X)</translation>
+        <translation>Sensor de movimento/distância a laser (VL53L0X)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="104"/>
         <source>Color sensor (TCS34725)</source>
-        <translation>Colorímetro (TCS34725)</translation>
+        <translation>Sensor de cor (TCS34725)</translation>
     </message>
     <message>
         <source>Ultrasonic motion sensor (SR-HC04)</source>
@@ -2093,30 +2360,30 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="80"/>
         <source>Photogate (810H)</source>
-        <translation>Fotoporta (810H)</translation>
+        <translation>Porta ótica (Photogate 810H)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="90"/>
         <source>Smoke/Combustible Gas (MQ-2)</source>
-        <translation>Fumos/Gases combustíveis (MQ-2)</translation>
+        <translation>Fumo/Gás Combustível (MQ-2)</translation>
     </message>
     <message>
         <source>Laser ranging sensor (VL53L0X)</source>
-        <translation type="vanished">Sensor de distância a laser (VL53L0X)</translation>
+        <translation type="vanished">Sensor de medição a laser (VL53L0X)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="98"/>
         <source>Output module M040</source>
-        <translation>Módulo de entrada/saída M040</translation>
+        <translation>Módulo de saída M040</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="100"/>
         <source>Timer GPIO 01</source>
-        <translation>Temporizador (Timer) GPIO 01</translation>
+        <translation>Temporizador GPIO 01</translation>
     </message>
     <message>
         <source>Timer GPIO 02</source>
-        <translation type="vanished">Temporizador (Timer) GPIO 02</translation>
+        <translation type="vanished">Temporizador GPIO 02</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="102"/>
@@ -2125,7 +2392,7 @@
     </message>
     <message>
         <source>Timer GPIO02</source>
-        <translation type="vanished">Temporizador (Timer) GPIO 02</translation>
+        <translation type="vanished">Temporizador GPIO 02</translation>
     </message>
     <message>
         <source>Ultrasonic motion sensor (SR-04)</source>
@@ -2134,7 +2401,7 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="82"/>
         <source>Heart rate sensor (simple)</source>
-        <translation>Frequência cardíaca (pulsómetro simples)</translation>
+        <translation>Sensor de ritmo cardíaco (simples)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="84"/>
@@ -2149,7 +2416,7 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="88"/>
         <source>Alcohol gas sensor (MQ-3)</source>
-        <translation>Sensor de vapores de álcool (MQ-3)</translation>
+        <translation>Sensor de gás de álcool (MQ-3)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="92"/>
@@ -2159,11 +2426,11 @@
     <message>
         <location filename="../hw/SensorManager.cpp" line="94"/>
         <source>Sound sensor (microphone)</source>
-        <translation>Intensidade sonora (microfone)</translation>
+        <translation>Sensor de som (microfone)</translation>
     </message>
     <message>
         <source>Laser ranging sensor‎ (VL53L0X)</source>
-        <translation type="vanished">Sensor de distância a laser (VL53L0X)</translation>
+        <translation type="vanished">Sensor de medição a laser (VL53L0X)</translation>
     </message>
     <message>
         <source>Timer</source>
@@ -2173,19 +2440,19 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="25"/>
+        <location filename="../main.cpp" line="27"/>
         <source>Open file.</source>
-        <translation>Abrir arquivo.</translation>
+        <translation>Abrir ficheiro.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="25"/>
+        <location filename="../main.cpp" line="27"/>
         <source>directory</source>
         <translation>diretório</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="29"/>
+        <location filename="../main.cpp" line="31"/>
         <source>Modifier for opening file without values (just measurement template).</source>
-        <translation>Modificador para abrir arquivo sem valores (apenas como modelo de medição).</translation>
+        <translation>Modificador para abrir o ficheiro sem valores (apenas modelo de medição).</translation>
     </message>
 </context>
 </TS>

@@ -39,6 +39,7 @@
 #include "caliper.h"
 #include "tcs34725.h"
 #include "oxygen.h"
+#include "tcs34725-spectro.h"
 
 // Uncomment to enable printing out nice debug messages.
 //#define DEBUG
@@ -72,14 +73,15 @@ enum SensorType {
   SENSOR_FORCE        = 7,    // D007 Silomer s HX711                                         // OK
   SENSOR_AD8232       = 10,   // A010 EKG AD8232                                              // OK
 //SENSOR_TCS3200      = 11,   // C011 Cidlo barev TCS3200                                     // --- ABANDONED
-  SENSOR_TCS34725     = 11,   // I011 Cidlo barev TCS34725                                    // TEST
+  SENSOR_TCS34725     = 11,   // I011 Cidlo barev TCS34725                                    // OK
   SENSOR_GUVA_S12SD   = 13,   // A013 Cidlo UV zareni GUVA-S12SD                              // ---
   SENSOR_PH           = 14,   // A014 Cidlo pH                                                // OK
   SENSOR_CON          = 15,   // C015 Cidlo vodivosti                                         // OK
   SENSOR_UI           = 16,   // C016 Voltmetr a ampermetr s HX711                            // ---
   SENSOR_LUX          = 18,   // A018 Cidlo intenzity osvetleni                               // OK
   SENSOR_CO2          = 19,   // C019 Cidlo oxidu uhliciteho MH-Z16, PWM out                  // OK
-  SENSOR_O2           = 20,   // A020 Cidlo kysliku ME2-O2                                    // ---
+//SENSOR_O2           = 20,   // A020 Cidlo kysliku ME2-O2                                    // --- ABANDONED
+  SENSOR_O2           = 20,   // A020 Cidlo kysliku SGX-VOX                                   // OK  
   SENSOR_SRF04        = 21,   // D021 Cidlo pohybu (vraci: vzdalenost + rychlost + zrychleni) // OK
   SENSOR_PULS         = 22,   // A022 Cidlo srdecniho tepu                                    // OK
   SENSOR_MAGNETOMETR  = 23,   // A023 Cidlo magnetickeho pole                                 // OK
@@ -102,13 +104,14 @@ enum SensorType {
   SENSOR_B_BOARD      = 40,   // M040 Výstupní/vývojový modul - nepájivé pole                 // --- NEW    
   SENSOR_SPIRO        = 41,   // A041 Spirometr (tlakoměr MPXV7002DP)                         // --- NEW    
   SENSOR_GEIGER       = 42,   // D042 Geiger (RadiationD v1.1 module)                         // --- NEW          
+  SENSOR_SPECTRO      = 43,   // I043 Cidlo barev TCS34725 v roli spectrofotometru            // --- NEW
   
   SENSOR_AD           = 101,  // A101 Analogovy vstup 0-5V                                    // OK
  // SENSOR_SHARP        = 102,  // A102 Snimac vzdalenosti Sharp GD2D120                      // --- ABANDONED
   SENSOR_TIMER        = 103,  // D103 Delka pulsu, perioda a frekvence, citac signalu 0/1     // OK
   SENSOR_VL53L0X      = 105,  // I105 Dalkomer VL53L0X                                        // OK
   SENSOR_HX711        = 107,  // HX711 24bit AD converter for tensometers
-  SENSOR_LED          = 200,  // LED module for sample frequency testing 
+  SENSOR_LED          = 200,  // LED module for sampling frequency testing 
 };
 
 enum ScanType

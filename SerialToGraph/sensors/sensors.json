@@ -239,6 +239,22 @@
     {
       "id" : 52,
       "name" : "Clear"
+    },
+    {
+      "id" : 53,
+      "name" : "T (Red)"
+    },
+    {
+      "id" : 54,
+      "name" : "T (Green)"
+    },
+    {
+      "id" : 55,
+      "name" : "T (Blue)"
+    },
+    {
+      "id" : 56,
+      "name" : "T (Clear)"
     }		
   ],
     "sensors": [
@@ -280,7 +296,7 @@
             "enabled": true,
             "id": 101,
             "name": "Generic (AD 10bit)",
-            "note": "Arduino NANO AD 10-bit converter as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1]."
+            "note": "Arduino NANO AD 10-bit converter as RAW value [0-1023], input voltage [0-5 V] or trigger [0/1] and trigger count. Press the hardware F button to set an RAW offset based on the current reading (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -324,7 +340,7 @@
             "enabled": true,
             "id": 34,
             "name": "Thermometer (K-Type, MAX6675)",
-            "note": "Measuring range -200..+1200 °C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500."
+            "note": "Measuring range -200..+1200 °C. Resolution 0.25 °C, accuracy around ±2 °C. Maximum sampling rate 4 Hz. Error state (no thermocouple) send value -500.  Press the hardware F button to set an offset based on the current reading (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -387,7 +403,7 @@
             "enabled": true,
             "id": 6,
             "name": "Pressure sensor (MPX5700DP)",
-            "note": "Measuring range: 0..750 kPa. Resolution 0.7 kPa (10-bit), accuracy ±2.5 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 125 °C."
+            "note": "Measuring range: 0..750 kPa. Resolution 0.7 kPa (10-bit), accuracy ±2.5 %. Maximum sampling rate 1000 Hz. Operating Temperature: -40 to 125 °C.  Press the hardware F button to set an offset based on the current reading (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -512,7 +528,7 @@
             "enabled": true,
             "id": 20,
             "name": "O2 gas sensor (SGX-VOX)" ,
-            "note": "Measuring range 0..100 %. Resolution 0.15 %, accuracy ±0.5 %. Maximum sampling rate around 1 kHz. Electrolyte absorbs acid gases (like CO2 and SO2)​, which increases the flux of oxygen to the electrode (artificially enhanced oxygen signal of approximately 0.3% per 1% of present CO2, concentrations above 25% CO2 is not suitable). Lifetime: over 2 years of continuous exposure to normal air."
+            "note": "Measuring range 0..100 %. Resolution 0.15 %, accuracy ±0.5 %. Maximum sampling rate around 1 kHz. Electrolyte absorbs acid gases (like CO2 and SO2)​, which increases the flux of oxygen to the electrode (artificially enhanced oxygen signal of approximately 0.3% per 1% of present CO2, concentrations above 25% CO2 is not suitable). Lifetime: over 2 years of continuous exposure to normal air. For calibration to 21 % use the hardware F button on MoleGraph U01 unit (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -545,7 +561,7 @@
             "enabled": true,
             "id": 36,
             "name": "Smoke/Combustible Gas (MQ-2)",
-            "note": "Measuring range 0..10 000 ppm. Resolution 10 ppm (10-bit), accuracy around ±15 %. Analog output - calibration is needed!"
+            "note": "Measuring range 0..10 000 ppm. Resolution 10 ppm (10-bit), accuracy around ±15 %. Analog output - calibration is needed!  Press the hardware F button to set an offset based on the current reading (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -578,7 +594,7 @@
             "enabled": true,
             "id": 25,
             "name": "Alcohol gas sensor (MQ-3)",
-            "note": "Measuring range 25..500 ppm. Resolution 2.5 ppm (10-bit), accuracy around ±10 ppm. Analog output - calibration is needed!"
+            "note": "Measuring range 25..500 ppm. Resolution 2.5 ppm (10-bit), accuracy around ±10 ppm. Analog output - calibration is needed!  Press the hardware F button to set an offset based on the current reading (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -864,7 +880,7 @@
             "enabled": true,
             "id": 11,
             "name": "Color sensor (TCS34725)",
-			"note": "High-sensitivity color sensor with an IR-blocking filter for accurate human-eye color perception. Configured with 60x gain (low lighting conditions) and 101 ms integration time. Outputs real-time HSV (Hue, Saturation, Brightness) values. Maximum sampling rate: 10 Hz."
+                        "note": "High-sensitivity color sensor with an IR-blocking filter for accurate human-eye color perception. Configured with 60x gain (low lighting conditions) and 101 ms integration time. Outputs real-time HSV (Hue, Saturation, Brightness) values. Maximum sampling rate: 10 Hz. In BASIC mode, single-click the hardware F button (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode) for White calibration, or double-click to toggle the sensor illumination LED."
         },
         {
             "components": [
@@ -998,7 +1014,7 @@
             "enabled": true,
             "id": 7,
             "name": "Force sensor (HX711)",
-            "note": "24-Bit Analog-to-Digital Converter (ADC) for Weigh Scales. Full scale differential input range ±0.5(AVDD/GAIN) V."
+            "note": "24-Bit Analog-to-Digital Converter (ADC) for Weigh Scales. Full scale differential input range ±0.5(AVDD/GAIN) V. To TARE, press the hardware F button (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
         },
         {
             "components": [
@@ -1106,6 +1122,54 @@
             "components": [
                 {
                     "correction": "None",
+                    "quantity": "T (Red)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "T (Green)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "T (Blue)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "T (Clear)",
+                    "unit": "%"
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Red",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Green",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Blue",
+                    "unit": ""
+                },
+                {
+                    "correction": "None",
+                    "quantity": "Clear",
+                    "unit": ""
+                }                
+            ],
+            "enabled": true,
+            "id": 43,
+            "name": "Chemistry Colorimeter (TCS34725)",
+                        "note": "High-sensitivity color sensor with an IR-blocking filter as colorimeter/spectrophotometer. Press the hardware F button (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode) once to save the Light reference (battery LED 1 blink red), and press it again within 30 seconds to save the Dark reference (battery LED 1 blink green). Sensor measures transmittance across individual RGB channels and total channel C, while also providing RAW RGB+C data values."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
                     "quantity": "Pulse duration (On)",
                     "unit": "s"
                 },
@@ -1143,7 +1207,20 @@
             "enabled": true,
             "id": 103,
             "name": "Timer GPIO 01",
-            "note": "Measuring range up to 2 kHz. Timer is set for GPIO 01 only."
+            "note": "Measuring range up to 2 kHz. Timer is set for GPIO 01 only. To reset Pulse count to 0 press the hardware F button on MoleGraph U01 unit (in PAUSE mode during <Periodical> sampling or at any time in <On Demand> mode)."
+        },
+        {
+            "components": [
+                {
+                    "correction": "None",
+                    "quantity": "RAW",
+                    "unit": ""
+                }
+            ],
+            "enabled": true,
+            "id": 200,
+            "name": "Output LED module",
+            "note": "LED module for sampling frequency testing. Only LED on GPIO01"
         },
         {
             "components": [

@@ -171,6 +171,10 @@ Sensor* createSensor(SensorType _type, uint32_t _period, uint8_t _port) {
     #ifdef ENABLE_O2
       case SENSOR_O2: return new Oxygen(_period, _port);    
     #endif
+
+    #ifdef ENABLE_SPECTRO
+      case SENSOR_SPECTRO: return new TCS34725_Spectro(_period, _port);
+    #endif
     
     #ifdef ENABLE_B_BOARD
       //case SENSOR_B_BOARD //now for programming only

@@ -508,7 +508,7 @@
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="229"/>
-        <location filename="../ChannelSettings.cpp" line="914"/>
+        <location filename="../ChannelSettings.cpp" line="915"/>
         <source>Units</source>
         <translation>Mértékegységek</translation>
     </message>
@@ -525,12 +525,12 @@
         <translation type="vanished">Mégse</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="995"/>
+        <location filename="../ChannelSettings.cpp" line="996"/>
         <source>Shape</source>
         <translation>Alakzat</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="971"/>
+        <location filename="../ChannelSettings.cpp" line="972"/>
         <source>Cross</source>
         <translation>Kereszt</translation>
     </message>
@@ -567,47 +567,47 @@
         <translation type="vanished">Valós idő</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="855"/>
+        <location filename="../ChannelSettings.cpp" line="856"/>
         <source>No Line</source>
         <translation>Nincs vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="856"/>
+        <location filename="../ChannelSettings.cpp" line="857"/>
         <source>Solid Line</source>
         <translation>Folytonos vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="857"/>
+        <location filename="../ChannelSettings.cpp" line="858"/>
         <source>Dash Line</source>
         <translation>Szaggatott vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="858"/>
+        <location filename="../ChannelSettings.cpp" line="859"/>
         <source>Dot Line</source>
         <translation>Pontozott vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="859"/>
+        <location filename="../ChannelSettings.cpp" line="860"/>
         <source>Dash Dot Line</source>
         <translation>Pont-vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="860"/>
+        <location filename="../ChannelSettings.cpp" line="861"/>
         <source>Dash Dot Dot Line</source>
         <translation>Pont-pont-vonal</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="863"/>
+        <location filename="../ChannelSettings.cpp" line="864"/>
         <source>Pen Style</source>
         <translation>Vonalstílus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="913"/>
+        <location filename="../ChannelSettings.cpp" line="914"/>
         <source>Style</source>
         <translation>Stílus</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="891"/>
+        <location filename="../ChannelSettings.cpp" line="892"/>
         <source>Microseconds</source>
         <translation>Mikroszekundum</translation>
     </message>
@@ -867,78 +867,78 @@
         <translation>n/a</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="299"/>
+        <location filename="../ChannelSettings.cpp" line="300"/>
         <source>Undefined</source>
         <translation>Nem definiált</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="394"/>
+        <location filename="../ChannelSettings.cpp" line="395"/>
         <source>Sensor Port</source>
         <translation>Szenzorport</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="292"/>
+        <location filename="../ChannelSettings.cpp" line="293"/>
         <source>Sensor Name</source>
         <translatorcomment>jobb: A szenzor típusa</translatorcomment>
         <translation>Szenzor neve</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="396"/>
+        <location filename="../ChannelSettings.cpp" line="397"/>
         <source>Sensor Quantity</source>
         <translation>Mért mennyiség</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="519"/>
+        <location filename="../ChannelSettings.cpp" line="520"/>
         <source>Correction Type</source>
         <translation>Korrekció típusa</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="536"/>
+        <location filename="../ChannelSettings.cpp" line="537"/>
         <source>Measured</source>
         <translation>Mért</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="537"/>
+        <location filename="../ChannelSettings.cpp" line="538"/>
         <source>Expected</source>
         <translation>Várt</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="539"/>
+        <location filename="../ChannelSettings.cpp" line="540"/>
         <source>Point 1</source>
         <translation>1. pont</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="540"/>
+        <location filename="../ChannelSettings.cpp" line="541"/>
         <source>Point 2</source>
         <translation>2. pont</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="541"/>
+        <location filename="../ChannelSettings.cpp" line="542"/>
         <source>Point 3</source>
         <translation>3. pont</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="649"/>
+        <location filename="../ChannelSettings.cpp" line="650"/>
         <source>Source Measurement</source>
         <translation>Forrásmérés</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="650"/>
+        <location filename="../ChannelSettings.cpp" line="651"/>
         <source>Source Channel</source>
         <translation>Forráscsatorna</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="768"/>
+        <location filename="../ChannelSettings.cpp" line="769"/>
         <source>Current Value</source>
         <translation>Aktuális érték</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1262"/>
+        <location filename="../ChannelSettings.cpp" line="1263"/>
         <source>Value correction changes performed on a virtual channel are applied to the original channel as well. Continue?</source>
         <translation>A virtuális csatornán végzett értékkorrekciók az eredeti csatornára is alkalmazásra kerülnek. Folytatja?</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1263"/>
+        <location filename="../ChannelSettings.cpp" line="1264"/>
         <source>Continue</source>
         <translation>Folytatás</translation>
     </message>
@@ -947,158 +947,158 @@
         <translation type="vanished">Összes jelölés megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="892"/>
+        <location filename="../ChannelSettings.cpp" line="893"/>
         <source>Miliseconds</source>
         <translation>Milliszekundum</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="893"/>
+        <location filename="../ChannelSettings.cpp" line="894"/>
         <source>Seconds</source>
         <translation>Másodperc</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="894"/>
+        <location filename="../ChannelSettings.cpp" line="895"/>
         <source>Minuts</source>
         <translation>Perc</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="895"/>
+        <location filename="../ChannelSettings.cpp" line="896"/>
         <source>Hours</source>
         <translation>Óra</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="896"/>
+        <location filename="../ChannelSettings.cpp" line="897"/>
         <source>Days</source>
         <translation>Nap</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="900"/>
+        <location filename="../ChannelSettings.cpp" line="901"/>
         <source>day.month.year</source>
         <translation>nap.hónap.év</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="901"/>
+        <location filename="../ChannelSettings.cpp" line="902"/>
         <source>day.month.hour:minute</source>
         <translation>nap.hónap.óra:perc</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="902"/>
+        <location filename="../ChannelSettings.cpp" line="903"/>
         <source>hour:minute:second</source>
         <translation>óra:perc:másodperc</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="903"/>
+        <location filename="../ChannelSettings.cpp" line="904"/>
         <source>minute:second.milisecond</source>
         <translation>perc:másodperc.milliszekundum</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="915"/>
+        <location filename="../ChannelSettings.cpp" line="916"/>
         <source>Format</source>
         <translation>Formátum</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="937"/>
+        <location filename="../ChannelSettings.cpp" line="938"/>
         <source>Time format channel must be placed on a separate axis. Please, choose one.</source>
         <translation>Az időformátumú csatornát külön tengelyre kell helyezni. Kérjük, válasszon egyet.</translation>
     </message>
     <message>
         <location filename="../ChannelSettings.cpp" line="40"/>
-        <location filename="../ChannelSettings.cpp" line="970"/>
+        <location filename="../ChannelSettings.cpp" line="971"/>
         <source>None</source>
         <translation>Nincs</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="869"/>
+        <location filename="../ChannelSettings.cpp" line="870"/>
         <source>All Marks</source>
         <translation>Összes jelölés</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="972"/>
+        <location filename="../ChannelSettings.cpp" line="973"/>
         <source>Plus</source>
         <translation>Plusz</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="973"/>
+        <location filename="../ChannelSettings.cpp" line="974"/>
         <source>Circle</source>
         <translation>Kör</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="974"/>
+        <location filename="../ChannelSettings.cpp" line="975"/>
         <source>Disc</source>
         <translation>Korong</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="975"/>
+        <location filename="../ChannelSettings.cpp" line="976"/>
         <source>Square</source>
         <translation>Négyzet</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="976"/>
+        <location filename="../ChannelSettings.cpp" line="977"/>
         <source>Diamond</source>
         <translation>Rombusz</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="977"/>
+        <location filename="../ChannelSettings.cpp" line="978"/>
         <source>Star</source>
         <translation>Csillag</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="978"/>
+        <location filename="../ChannelSettings.cpp" line="979"/>
         <source>Triangle</source>
         <translation>Háromszög</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="979"/>
+        <location filename="../ChannelSettings.cpp" line="980"/>
         <source>Inverted Triangle</source>
         <translation>Fordított háromszög</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="980"/>
+        <location filename="../ChannelSettings.cpp" line="981"/>
         <source>Cross and Square</source>
         <translation>Kereszt és négyzet</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="981"/>
+        <location filename="../ChannelSettings.cpp" line="982"/>
         <source>Plus and Square</source>
         <translation>Plusz és négyzet</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="982"/>
+        <location filename="../ChannelSettings.cpp" line="983"/>
         <source>Cross and Circle</source>
         <translation>Kereszt és kör</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="983"/>
+        <location filename="../ChannelSettings.cpp" line="984"/>
         <source>Plus and Circle</source>
         <translation>Plusz és kör</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="984"/>
+        <location filename="../ChannelSettings.cpp" line="985"/>
         <source>Peace</source>
         <translation>Békejel</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1002"/>
+        <location filename="../ChannelSettings.cpp" line="1003"/>
         <source>New Axis...</source>
         <translation>Új tengely...</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1037"/>
+        <location filename="../ChannelSettings.cpp" line="1038"/>
         <source>Axis</source>
         <translation>Tengely</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1066"/>
+        <location filename="../ChannelSettings.cpp" line="1067"/>
         <source>Port %1</source>
         <translation>%1. port</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1082"/>
+        <location filename="../ChannelSettings.cpp" line="1083"/>
         <source>Entered different expected values for one meassured.</source>
         <translation>Egy méréshez eltérő várt értékeket adott meg.</translation>
     </message>
     <message>
-        <location filename="../ChannelSettings.cpp" line="1153"/>
+        <location filename="../ChannelSettings.cpp" line="1154"/>
         <source>Current value is not a number.</source>
         <translation>Az aktuális érték nem szám.</translation>
     </message>
@@ -1328,27 +1328,27 @@
         <translation>Bluetooth használata</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="182"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="187"/>
         <source>Language</source>
         <translation>Nyelv</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="191"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="196"/>
         <source>Unit Brackets</source>
         <translation>Mértékegységek zárójelezése</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="198"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="203"/>
         <source>The language change will take effect after a restart of the application.</source>
         <translation>A nyelv módosítása az alkalmazás újraindítása után lép érvénybe.</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="214"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="219"/>
         <source>Estbilished connection will be lost. Continue?</source>
         <translation>A létrehozott kapcsolat meg fog szakadni. Folytatja?</translation>
     </message>
     <message>
-        <location filename="../GlobalSettingsDialog.cpp" line="215"/>
+        <location filename="../GlobalSettingsDialog.cpp" line="220"/>
         <source>Continue</source>
         <translation>Folytatás</translation>
     </message>
@@ -1418,7 +1418,7 @@
         <translation type="vanished">A kiválasztott fájlt nem sikerült megnyitni.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="374"/>
+        <location filename="../MainWindow.cpp" line="384"/>
         <source>Selected file is not possible to open.</source>
         <translation>A kiválasztott fájl nem nyitható meg.</translation>
     </message>
@@ -1431,74 +1431,74 @@
         <translation type="vanished">A(z) %1 fájl sérült.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="361"/>
+        <location filename="../MainWindow.cpp" line="371"/>
         <source>Selected file %1 is corrupted. All data must not be available.</source>
         <translation>A(z) %1 kiválasztott fájl sérült. Előfordulhat, hogy nem minden adat érhető el.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="387"/>
+        <location filename="../MainWindow.cpp" line="397"/>
         <source>Unsuported file version (%1)</source>
         <translation>Nem támogatott fájlverzió (%1)</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="521"/>
+        <location filename="../MainWindow.cpp" line="531"/>
         <source>Continue</source>
         <translation>Folytatás</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="570"/>
+        <location filename="../MainWindow.cpp" line="580"/>
         <source>Just template without values has been stored.</source>
         <translation>Csak az értékek nélküli sablon lett mentve.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>Open with values?</source>
         <translation>Megnyitja a mért értékekkel?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>Yes</source>
         <translation>Igen</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="627"/>
+        <location filename="../MainWindow.cpp" line="637"/>
         <source>No</source>
         <translation>Nem</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="644"/>
+        <location filename="../MainWindow.cpp" line="654"/>
         <source>Gui and value changes were not saved. Realy exit?</source>
         <translation>A felületi és értékmódosítások nem lettek mentve. Valóban kilép?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="646"/>
+        <location filename="../MainWindow.cpp" line="656"/>
         <source>Gui changes were not saved. Realy exit?</source>
         <translation>A felület módosításai nem lettek mentve. Valóban kilép?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="648"/>
+        <location filename="../MainWindow.cpp" line="658"/>
         <source>Value changes were not saved. Realy exit?</source>
         <translation>Az értékmódosítások nem lettek mentve. Valóban kilép?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="722"/>
+        <location filename="../MainWindow.cpp" line="732"/>
         <source>The measurement &apos;%1&apos; is in progress.</source>
         <translation>A(z) „%1” mérés folyamatban van.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="726"/>
+        <location filename="../MainWindow.cpp" line="736"/>
         <source>The measurement &apos;%1&apos; alread contains data. Really remove it?</source>
         <translation>A(z) „%1” mérés már tartalmaz adatokat. Valóban eltávolítja?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="731"/>
+        <location filename="../MainWindow.cpp" line="741"/>
         <source>Ghost displayed in another measurements will be removed too.</source>
         <translatorcomment>Virtuální kanál zobrazený v rámci jiného měření bude také odstraněn.</translatorcomment>
         <translation>A más mérésekben megjelenő szellemkép is eltávolításra kerül.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="749"/>
-        <location filename="../MainWindow.cpp" line="763"/>
+        <location filename="../MainWindow.cpp" line="759"/>
+        <location filename="../MainWindow.cpp" line="773"/>
         <source>Remove</source>
         <translation>Eltávolítás</translation>
     </message>
@@ -1519,12 +1519,12 @@
         <translation type="vanished">Az értékmódosítások nem lettek mentve.</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="659"/>
+        <location filename="../MainWindow.cpp" line="669"/>
         <source>Realy exit?</source>
         <translation>Valóban kilép?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="662"/>
+        <location filename="../MainWindow.cpp" line="672"/>
         <source>Exit</source>
         <translation>Kilépés</translation>
     </message>
@@ -2105,52 +2105,56 @@
 <context>
     <name>hw::HwConnector</name>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="289"/>
+        <location filename="../hw/HwConnector.cpp" line="290"/>
         <source>You are working in an offline mode. To estabilish a connection, please, reconnect the device and restart the application.</source>
         <translation>Offline módban dolgozik. A kapcsolat létrehozásához csatlakoztassa újra az eszközt, majd indítsa újra az alkalmazást.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="368"/>
+        <location filename="../hw/HwConnector.cpp" line="370"/>
         <source>Selected port can not be opened. It is used by another process or a device is disconnected.</source>
         <translation>A kiválasztott port nem nyitható meg. Egy másik folyamat használja, vagy az eszköz le van választva.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="397"/>
         <source>The selected port isn&apos;t responding as expected. Please, check port read/write permitions.</source>
-        <translation>A kiválasztott port nem a várt módon válaszol. Ellenőrizze a port olvasási/írási jogosultságait.</translation>
+        <translation type="vanished">A kiválasztott port nem a várt módon válaszol. Ellenőrizze a port olvasási/írási jogosultságait.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="408"/>
+        <location filename="../hw/HwConnector.cpp" line="404"/>
+        <source>The selected port isn&apos;t responding as expected. Please, check port read/write permissions.</source>
+        <translation>A kiválasztott port nem a várt módon válaszol. Kérjük, ellenőrizze a port olvasási/írási jogosultságait.</translation>
+    </message>
+    <message>
+        <location filename="../hw/HwConnector.cpp" line="427"/>
         <source>Detected an old firmware version. Sensor settings will not be supported.</source>
         <translation>Régi firmware-verzió észlelve. A szenzorbeállítások nem lesznek támogatottak.</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="580"/>
+        <location filename="../hw/HwConnector.cpp" line="627"/>
         <source>Offline</source>
         <translation>Offline</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="582"/>
+        <location filename="../hw/HwConnector.cpp" line="629"/>
         <source>Scanning</source>
         <translation>Keresés</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="584"/>
+        <location filename="../hw/HwConnector.cpp" line="631"/>
         <source>Searched</source>
         <translation>Keresés befejezve</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="586"/>
+        <location filename="../hw/HwConnector.cpp" line="633"/>
         <source>Opening</source>
         <translation>Megnyitás</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="588"/>
+        <location filename="../hw/HwConnector.cpp" line="635"/>
         <source>Verification</source>
         <translation>Ellenőrzés</translation>
     </message>
     <message>
-        <location filename="../hw/HwConnector.cpp" line="590"/>
+        <location filename="../hw/HwConnector.cpp" line="637"/>
         <source>Connected</source>
         <translation>Csatlakoztatva</translation>
     </message>
@@ -2317,8 +2321,22 @@
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="76"/>
+        <source>O2 gas sensor (SGX-VOX)</source>
+        <translation>O2 gázérzékelő (SGX-VOX)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="106"/>
+        <source>Chemistry Colorimeter (TCS34725)</source>
+        <translation>Kémiai koloriméter (TCS34725)</translation>
+    </message>
+    <message>
+        <location filename="../hw/SensorManager.cpp" line="108"/>
+        <source>Output LED module</source>
+        <translation>Kimeneti LED modul</translation>
+    </message>
+    <message>
         <source>O2 gas sensor (ME2-O2)</source>
-        <translation>O₂-gázérzékelő (ME2-O2)</translation>
+        <translation type="vanished">O₂-gázérzékelő (ME2-O2)</translation>
     </message>
     <message>
         <location filename="../hw/SensorManager.cpp" line="78"/>
@@ -2422,17 +2440,17 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="25"/>
+        <location filename="../main.cpp" line="27"/>
         <source>Open file.</source>
         <translation>Fájl megnyitása.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="25"/>
+        <location filename="../main.cpp" line="27"/>
         <source>directory</source>
         <translation>mappa</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="29"/>
+        <location filename="../main.cpp" line="31"/>
         <source>Modifier for opening file without values (just measurement template).</source>
         <translation>Módosító az értékek nélküli fájl (csak mérési sablon) megnyitásához.</translation>
     </message>

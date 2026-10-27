@@ -72,8 +72,8 @@ namespace hw
             return tr("Light sensor (BH1750 luxmeter)");
         if (sensorName == "CO2 gas sensor (MH-Z16)")
             return tr("CO2 gas sensor (MH-Z16)");
-        if (sensorName == "O2 gas sensor (ME2-O2)")
-            return tr("O2 gas sensor (ME2-O2)");
+        if (sensorName == "O2 gas sensor (SGX-VOX)")
+            return tr("O2 gas sensor (SGX-VOX)");
         if (sensorName == "Motion/distance US sensor (SR-HC04)")
             return tr("Motion/distance US sensor (SR-HC04)");
         if (sensorName == "Photogate (810H)")
@@ -102,6 +102,10 @@ namespace hw
             return tr("Length sensor (Caliper)");
         if (sensorName == "Color sensor (TCS34725)")
             return tr("Color sensor (TCS34725)");
+        if (sensorName == "Chemistry Colorimeter (TCS34725)")
+            return tr("Chemistry Colorimeter (TCS34725)");
+        if (sensorName == "Output LED module")
+            return tr("Output LED module");
         qWarning() << QString("unsupported sensor name %1").arg(sensorName);
         return sensorName;
     }

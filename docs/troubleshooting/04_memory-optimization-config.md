@@ -22,7 +22,7 @@ In this file, you enable or disable sensors by adding or removing two forward sl
   `//#define ENABLE_FORCE`
 
 ### Step 3: Disable Unused Sensors (Example: Accelerometer)
-Complex sensors, like the LSM303DLHC accelerometer, require heavy mathematical calculations and consume a massive amount of memory. If you are not using it today, turn it off!
+Complex sensors, like the LSM303DLHC accelerometer, require heavy mathematical calculations and consume a massive amount of memory. If you are not using it, turn it off!
 
 Scroll down to `--- 2. MECHANICS & PHYSICS ---` and find the accelerometer line.
 
@@ -38,7 +38,7 @@ Scroll down to `--- 2. MECHANICS & PHYSICS ---` and find the accelerometer line.
 *Tip: Simply type `//` at the very beginning of the line.*
 
 ### Step 4: Compile and Upload
-1. Go through the entire `config.h` file and disable (`//`) all sensors you don't physically have connected to your MoleGraph unit.
+1. Go through the entire `config.h` file and disable (`//`) all sensors you don't use with your MoleGraph unit.
 2. Leave only your currently used sensors enabled (without `//`).
 3. Click the **Verify** (Checkmark) button in the top left corner of the Arduino IDE to ensure the compiled code fits within the memory limit.
 4. Click the **Upload** (Arrow) button to flash the optimized firmware to your Arduino Nano.

@@ -5,7 +5,7 @@ Ačkoliv je klasická kalibrace k dispozici v nastavení měřicího kanálu př
 Nejčastější příklady:
 * **Siloměr:** Nulování senzoru (tára).
 * **Čidlo kyslíku (O2):** Nastavení na atmosférickou referenční hodnotu (21 %).
-* **Čidlo barev (TCS34725):** Nastavení referencí (1. stisk = bílá reference, 2. stisk = černá reference).
+* **Čidlo barev (TCS34725):** Nastavení referencí (dle módu čidla např.: 1. stisk = bílá reference, nebo 1. stisk = bílá reference, 2. stisk = černá reference).
 
 ---
 

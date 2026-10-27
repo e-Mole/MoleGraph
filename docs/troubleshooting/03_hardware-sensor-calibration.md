@@ -5,7 +5,7 @@ While standard calibration options are available in the measurement channel sett
 Common examples include:
 * **Force Sensor:** Zeroing the scale (Tare).
 * **Oxygen Sensor (O2):** Calibrating to the atmospheric baseline (21%).
-* **Color Sensor (TCS34725):** Setting references (1st press = White reference, 2nd press = Black reference).
+* **Color Sensor (TCS34725):** Setting references (depens on sensor mode: 1st press = White reference, or 1st press = White reference, 2nd press = Black reference).
 
 ---
 

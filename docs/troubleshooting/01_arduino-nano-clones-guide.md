@@ -17,7 +17,7 @@ If you want to save money by purchasing non-original clones, it pays off to care
 Often, the board itself is fine, but the physical connection is compromised. We have seen many cases where a cable technically transfers data, but still fails under load due to worn-out contacts, poor shielding, or extremely thin wires (high resistance).
 
 * **Use a high-quality cable:** Avoid using random, old USB cables found in a drawer. A poor cable causes voltage drops that make the Arduino freeze during firmware uploads or erratic sensor readings. Use a robust, thick, and well-shielded USB cable.
-* **Use the right USB port:** Avoid front-panel USB ports on desktop PC cases and cheap, unpowered USB hubs. Always plug the Arduino directly into the rear USB ports on the motherboard to ensure maximum stable power delivery and an uninterrupted data lane.
+* **Try a different USB port:** The USB port on your computer (especially on laptops) might have a poor physical contact or hidden internal issues. From our experience, it is very common that one USB port causes upload failures, while the port right next to it works perfectly fine—even if there is no clear explanation why. If you encounter issues, simply try plugging the cable into a different port.
 
 ---
 

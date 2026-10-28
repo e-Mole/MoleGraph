@@ -75,13 +75,15 @@
             margin-top: 40px;
             margin-bottom: 20px;
         }
+        
+        /* Žlutý nápovědní box */
         .info-box {
-            background: #ddf4ff;
+            background: #fff8c5;
             padding: 15px 20px;
             border-radius: 6px;
             margin-bottom: 20px;
-            color: #0969da;
-            border: 1px solid #54aeff;
+            color: #24292f;
+            border: 1px solid #e6cc7a;
             font-size: 0.95em;
         }
         .info-box p { margin: 0; }
@@ -99,7 +101,7 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            align-items: center;
+            align-items: flex-start; /* Zarovnání nahoru */
         }
         .tool-action {
             flex: 0 0 250px;
@@ -110,10 +112,10 @@
         }
         .tool-desc strong { color: #24292f; }
 
-        /* Tlačítka */
+        /* Decentní teplá oranžová tlačítka */
         .btn {
             display: inline-block;
-            background: #2da44e;
+            background: #e69145; 
             color: white;
             text-decoration: none;
             padding: 10px 20px;
@@ -124,11 +126,7 @@
             width: 80%;
             box-sizing: border-box;
         }
-        .btn:hover { background: #2c974b; }
-        .btn-blue { background: #0969da; }
-        .btn-blue:hover { background: #0550ae; }
-        .btn-purple { background: #8250df; }
-        .btn-purple:hover { background: #6639ba; }
+        .btn:hover { background: #d67f33; }
 
         /* Mobilní rozložení */
         @media (max-width: 600px) {
@@ -176,10 +174,10 @@
         <div class="tool-list">
             <div class="tool-row">
                 <div class="tool-action">
-                    <a href="URL_ZDE_COLOR_LAB" class="btn btn-purple">Color Laboratory</a>
+                    <a href="URL_ZDE_COLOR_LAB" class="btn">Color Laboratory</a>
                 </div>
                 <div class="tool-desc">
-                    <strong>Analýza a simulace barev.</strong> Nástroj pro analýzu CSV dat naměřených senzorem MoleGraph[cite: 1]. Umožňuje zkoumat měření vyzařovaného světla (např. z monitoru) i odraženého světla (z papíru)[cite: 1]. Žáci se zde seznámí se základními barevnými modely jako jsou HSV, RGB, CMYK či CIELAB a mohou využít modul pro simulaci míchání barev a výpočet odchylky reálných vzorků (ΔE)[cite: 1].
+                    <strong>Analýza a simulace barev.</strong> Nástroj pro analýzu dat naměřených senzorem MoleGraph, který k detekci využívá přesné čidlo barev TCS34725. Pro správnou funkčnost laboratoře je nutné, aby nahraný datový soubor (.CSV) obsahoval hodnoty Odstín (Hue), Sytost (Saturation) a Jas (Lightness). Žáci se zde seznámí se základními modely (HSV, RGB, CMYK, CIELAB), mohou zkoumat měření vyzařovaného i odraženého světla a využít modul pro simulaci míchání barev a výpočet odchylky reálných vzorků (ΔE).
                 </div>
             </div>
         </div>
@@ -204,7 +202,7 @@
 
             <div class="tool-row">
                 <div class="tool-action">
-                    <a href="URL_ZDE_VYVOJARSKY_EDITOR" class="btn btn-blue">JSON Editor<br><small>(Pro vývojáře)</small></a>
+                    <a href="URL_ZDE_VYVOJARSKY_EDITOR" class="btn">JSON Editor<br><small>(Pro vývojáře)</small></a>
                 </div>
                 <div class="tool-desc">
                     <strong>Kompletní kontrola.</strong> Plnohodnotný editor pro pokročilé úpravy na vývojářské úrovni. Nezbytný nástroj, pokud máte upravený firmware <i>MoleGraphAuto</i> s vlastními čidly a potřebujete je korektně přidat do aplikace.

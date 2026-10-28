@@ -1,1 +1,182 @@
-Test
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoleGraph Nástroje</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; 
+            background-color: #f6f8fa;
+            color: #24292f;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+        .container {
+            flex: 1;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Hlavička a přepínač jazyků */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d0d7de;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 { margin: 0; font-size: 2em; }
+        .lang-switch {
+            text-decoration: none;
+            background: white;
+            padding: 8px 16px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            color: #57606a;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .lang-switch:hover { background: #f3f4f6; color: #24292f; }
+
+        /* Úvodní text */
+        .intro {
+            background: #ddf4ff;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            color: #0969da;
+            border: 1px solid #54aeff;
+        }
+        .intro p { margin: 0; }
+
+        /* Responzivní seznam nástrojů (nahrazuje tabulku) */
+        .tool-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .tool-row {
+            display: flex;
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            align-items: center; /* Na PC zarovná tlačítko a text na střed */
+        }
+        .tool-action {
+            flex: 0 0 250px; /* Pevná šířka levého sloupce na PC */
+        }
+        .tool-desc {
+            flex: 1;
+            color: #57606a;
+        }
+        .tool-desc strong { color: #24292f; }
+
+        /* Tlačítka pro nástroje */
+        .btn {
+            display: inline-block;
+            background: #2da44e;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.2s;
+            text-align: center;
+            width: 80%;
+            box-sizing: border-box;
+        }
+        .btn:hover { background: #2c974b; }
+        .btn-blue { background: #0969da; }
+        .btn-blue:hover { background: #0550ae; }
+        .btn-purple { background: #8250df; }
+        .btn-purple:hover { background: #6639ba; }
+
+        /* Změna rozložení pro mobilní telefony */
+        @media (max-width: 600px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .tool-row { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .tool-action { flex: none; width: 100%; border-right: none; }
+            .btn { width: 100%; }
+        }
+
+        /* Patička */
+        footer {
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid #d0d7de;
+            color: #57606a;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 40px;
+        }
+        footer a { color: #0969da; text-decoration: none; font-weight: 500; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>MoleGraph - On-line nástroje</h1>
+            <a href="../en/" class="lang-switch">🇬🇧 Switch to English</a>
+        </div>
+
+        <div class="intro">
+            <p><strong>Věděli jste?</strong> Nabídku čidel v aplikaci MoleGraph si můžete snadno přizpůsobit. Vše řídí konfigurační soubor <code>sensors.json</code>. Zde připravené editory vám umožní tento soubor snadno upravit a následně jím nahradit ten původní ve složce <i>sensors</i>.</p>
+        </div>
+
+        <div class="tool-list">
+            
+            <!-- Nástroj 1: Učitelé -->
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="URL_ZDE_UCITELSKY_EDITOR" class="btn">Sensor Editor<br><small>(Pro učitele)</small></a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Zjednodušte žákům práci.</strong> Umožňuje skrýt nepoužívaná čidla, upravit texty zobrazené v aplikaci nebo změnit kalibrační hodnoty. Ideální, pokud chcete menším dětem (např. 1. stupeň ZŠ) zobrazit jen fyzicky dostupná čidla.
+                </div>
+            </div>
+
+            <!-- Nástroj 2: Vývojáři -->
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="URL_ZDE_VYVOJARSKY_EDITOR" class="btn btn-blue">JSON Editor<br><small>(Pro vývojáře)</small></a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Kompletní kontrola.</strong> Plnohodnotný editor pro pokročilé úpravy na vývojářské úrovni. Nezbytný nástroj, pokud máte upravený firmware <i>MoleGraphAuto</i> s vlastními čidly a potřebujete je korektně přidat do aplikace.
+                </div>
+            </div>
+
+            <!-- Nástroj 3: Color Lab -->
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="URL_ZDE_COLOR_LAB" class="btn btn-purple">Color Laboratory</a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Hravé experimenty.</strong> Interaktivní prostředí pro žáky, kde mohou zkoumat barvy, hrát si s jejich mícháním a objevovat fyzikální zákonitosti zábavnou formou.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Patička -->
+    <footer>
+        <a href="https://github.com/e-mole/MoleGraph" target="_blank">MoleGraph GitHub Repository</a>
+    </footer>
+
+</body>
+</html>

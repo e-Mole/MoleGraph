@@ -59,7 +59,7 @@ nano.menu.cpu.atmega328.build.mcu=atmega328p
 ---
 
 ## 4. AVRDUDESS and Verification of Fuses & Lock bits
-1. Launch AVRDUDESS, select the `Arduino as ISP` programmer and the `ATmega328P` MCU.
+1. Launch [AVRDUDESS](https://github.com/ZakKemble/AVRDUDESS/releases), select the `Arduino as ISP` programmer and the `ATmega328P` MCU.
 2. Check and write the correct fuse values:
    * **Low Fuse (L):** `0xFF`
    * **High Fuse (H):** `0xDE` (enables 500B bootloader and BOD at 2.7V)

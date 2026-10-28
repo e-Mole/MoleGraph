@@ -12,19 +12,27 @@ By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes so
 ---
 <img src="docs/img_readme/MoleGraph-intro.jpg" alt="MoleGraph in action" />
 
-### 🎓 Academic Background
-This project is based on research outcomes from a doctoral dissertation thesis at Charles University Prague. It explores the implementation of open-source probeware systems in STEM education.
-- **Dissertation Thesis (CUNI Repository):** [A Tool for STEM Education: Open-Source and School Probeware Systems](https://dspace.cuni.cz/handle/20.500.11956/211517)
-- **Journal Article:** [MoleGraph: A Tool for Developing Scientific and Digital Skills in Schools](https://doi.org/10.54779/chl20250208)
-- **Journal Article:** [Molegraph: DIY Sensors for School Experiments and Their Comparison with Commercial Options](https://doi.org/10.54779/chl20250357)
-- **Conference Paper:** [DIY or Commercial Sensors for STEM Teaching?](https://doi.org/10.1088/1742-6596/3037/1/012007)
+## 🛠️ Online Tools
+We provide a set of interactive online tools that run directly and securely in your web browser. Available in both **English and Czech**:
+
+👉 **[MoleGraph Online Tools Hub](https://e-mole.github.io/MoleGraph/)**
+- **Color Laboratory:** An interactive environment for color analysis and simulation (HSV, RGB, CMYK, CIELAB) designed for data measured by the TCS34725 sensor.
+- **Sensor Editor (Teachers):** A simplified tool to hide unused sensors or modify text labels for younger students.
+- **JSON Config Editor (Developers):** An advanced editor for customizing the `sensors.json` file when adding new sensors to custom firmware.
+
+---
 
 ## 🏗️ Hardware Architecture & Modular Construction
 The system is built on the **Arduino platform**, specifically utilizing the **Arduino NANO** (ATmega328) microcontroller and an **HC-05 Bluetooth module** for wireless connectivity.
 
-* **[MoleGraph Shield U01](https://www.e-mole.cz/diy/molegraph-shield):** A custom-designed expansion PCB that features **standard RJ12 connectors** for robust and reliable sensor connectivity, replacing unstable breadboard wires.
-* **Mechanical Compatibility:** All components are housed in **[3D-printed cases (MoleBoxes)](https://www.e-mole.cz/diy/molebox)** that are fully compatible with the **[m-BITBEAM](https://www.e-mole.cz/diy/m-bitbeam) and BITBEAM** open-source construction sets.
-* **LEGO Integration:** These cases share dimensions and hole spacing with **LEGO Technic**, allowing sensors to be integrated directly into robotic and mechanical models.
+- **[MoleGraph Shield U01](https://www.e-mole.cz/diy/molegraph-shield):** A custom-designed expansion PCB that features **standard RJ12 connectors** for robust and reliable sensor connectivity, replacing unstable breadboard wires.
+
+- **Sensor Catalog:** A complete overview of currently supported sensors, including their descriptions and basic specifications, is available in the **[MoleGraph Sensor Catalog](https://www.e-mole.cz/diy/molegraph/sensors)**.
+
+- **Mechanical Compatibility:** All components are housed in **[3D-printed cases (MoleBoxes)](https://www.e-mole.cz/diy/molebox)** that are fully compatible with the **[m-BITBEAM](https://www.e-mole.cz/diy/m-bitbeam) and BITBEAM** open-source construction sets.
+
+- **LEGO Integration:** These cases share dimensions and hole spacing with **LEGO Technic**, allowing sensors to be integrated directly into robotic and mechanical models.
+
 
 ---
 
@@ -65,17 +73,30 @@ MoleGraph facilitates a smooth transition from basic measurements (**`MoleGraphA
 ### 1. Visual Programming
 Beginners can use **[Blockly@rduino](https://github.com/e-Mole/Arduino)** with a custom MoleGraph extension (and **`MoleGraphManual` library**) to build programs graphically, automatically generating standard Arduino (C++) code.
 
+👉 **[Launch Blockly@rduino in Browser](https://e-mole.github.io/Arduino)** *(Defaults to Arduino Nano, available in EN/CZ)*
+
 ### 2. Advanced Coding
 The **`MoleGraphManual` library** allows for custom firmware development in the Arduino IDE, enabling simultaneous data transmission and control of external actuators.
 
 ### 3. Robotics
 Highly compatible with projects like the [**"Fretka" robot**](https://www.e-mole.cz/clanek/bezdratova-komunikace-pro-fretku), which can transmit real-time sensor data wirelessly to the MoleGraph application.
 
+---
+
+## 🎓 Academic Background
+This project is based on research outcomes from a doctoral dissertation thesis at Charles University Prague. It explores the implementation of open-source probeware systems in STEM education.
+- **Dissertation Thesis (CUNI Repository):** [A Tool for STEM Education: Open-Source and School Probeware Systems](https://dspace.cuni.cz/handle/20.500.11956/211517)
+
+- **Journal Article:** [MoleGraph: A Tool for Developing Scientific and Digital Skills in Schools](https://doi.org/10.54779/chl20250208)
+
+- **Journal Article:** [Molegraph: DIY Sensors for School Experiments and Their Comparison with Commercial Options](https://doi.org/10.54779/chl20250357)
+
+- **Conference Paper:** [DIY or Commercial Sensors for STEM Teaching?](https://doi.org/10.1088/1742-6596/3037/1/012007)
+
+---
 
 ## Different Arduino and MoleGraph setups
-
 <img src="docs/img_readme/MoleGraph-devel_in_time.jpg" alt="MoleGraph in action" />
 
 ## MoleGraph shield
-
 <img src="docs/img_readme/MoleGraph-shield.jpg" alt="MoleGraph shield" />

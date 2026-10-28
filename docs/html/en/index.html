@@ -1,1 +1,77 @@
-Test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoleGraph Tools</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <noscript>
+            <div class="no-js-warning">
+                ⚠️ You must have JavaScript enabled in your browser for these tools to function properly.
+            </div>
+        </noscript>
+
+        <div class="header">
+            <h1>MoleGraph - On-line tools</h1>
+            <a href="../cs/" class="lang-switch">🇨🇿 Přepnout do češtiny</a>
+        </div>
+
+        <div class="main-intro">
+            A hub for MoleGraph measuring system online tools. All listed applications run locally and securely right in your web browser.
+        </div>
+
+        <!-- SEKCE 1: ŽÁCI -->
+        <h2>For Students</h2>
+        <div class="tool-list">
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="MoleGraph_Color_Lab_en.html" class="btn">Color Laboratory</a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Color analysis and simulation.</strong> A tool for analyzing data measured by the MoleGraph sensor, which uses a precise TCS34725 color sensor for detection. For the laboratory to function correctly, the uploaded data file (.CSV) must contain Hue, Saturation, and Lightness values. Students will familiarize themselves with basic models (HSV, RGB, CMYK, CIELAB), can explore measurements of emitted and reflected light, and use a module for simulating color mixing and calculating the deviation of real samples (ΔE).
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKCE 2: UČITELÉ A VÝVOJÁŘI -->
+        <h2>For Teachers and Developers</h2>
+        
+        <div class="info-box">
+            <p><strong>Did you know?</strong> You can easily customize the sensor menu in the MoleGraph application. Everything is controlled by the <code>sensors.json</code> configuration file. The editors provided here allow you to visually modify this file and subsequently replace the original one in the <i>sensors</i> folder.</p>
+        </div>
+
+        <div class="tool-list">
+            
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="MoleGraph_Sensor_Editor_en.html" class="btn">Sensor Editor<br><small>(For Teachers)</small></a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Simplify work for students.</strong> Allows you to hide unused sensors, modify texts displayed in the application, or change calibration values. Ideal if you want to show only physically available sensors to younger children (e.g., primary school).
+                </div>
+            </div>
+
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="MoleGraph_JSON_Editor_en.html" class="btn">JSON Editor<br><small>(For Developers)</small></a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Complete control.</strong> A full-featured editor for advanced modifications at the developer level. An essential tool if you have customized the <i>MoleGraphAuto</i> firmware with your own sensors and need to add them correctly to the application.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Patička -->
+    <footer>
+        <a href="https://github.com/e-mole/MoleGraph" target="_blank">MoleGraph GitHub Repository</a>
+    </footer>
+
+</body>
+</html>

@@ -18,12 +18,22 @@
         window.location.replace(targetPath);
     </script>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; 
             text-align: center; 
-            margin-top: 10vh; 
             background-color: #f6f8fa;
-            color: #24292f; 
+            color: #24292f;
+            display: flex;
+            flex-direction: column; /* Umožní přilepit patičku dolů */
+        }
+        .content {
+            flex: 1; /* Zabere veškerý volný prostor nad patičkou */
+            margin-top: 10vh;
         }
         h1 {
             font-size: 2em;
@@ -43,7 +53,7 @@
             color: #57606a;
             line-height: 1.5;
         }
-        a { 
+        .btn { 
             display: inline-block;
             background: white;
             padding: 12px 24px;
@@ -55,21 +65,44 @@
             border: 1px solid #d0d7de;
             transition: background 0.2s, border-color 0.2s;
         }
-        a:hover { 
+        .btn:hover { 
             background: #f3f4f6;
             border-color: #0969da;
+        }
+        footer {
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid #d0d7de;
+            color: #57606a;
+            font-size: 0.9em;
+        }
+        footer a {
+            color: #0969da;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>MoleGraph on-line tools</h1>
-    
-    <div class="fallback">
-        <p>Loading... If you are not redirected automatically, please choose your language:<br>
-        Načítání... Pokud nebudete automaticky přesměrováni, vyberte si jazyk:</p>
+    <div class="content">
+        <h1>MoleGraph on-line tools</h1>
         
-        <a href="html/cs/">🇨🇿 Čeština</a>
-        <a href="html/en/">🇬🇧 English</a>
+        <div class="fallback">
+            <p>Loading... If you are not redirected automatically, please choose your language:<br>
+            Načítání... Pokud nebudete automaticky přesměrováni, vyberte si jazyk:</p>
+            
+            <!-- Třída btn kvůli odlišení od odkazu v patičce -->
+            <a href="html/cs/" class="btn">🇨🇿 Čeština</a>
+            <a href="html/en/" class="btn">🇬🇧 English</a>
+        </div>
     </div>
+
+    <!-- Patička webu -->
+    <footer>
+        <a href="https://github.com/e-mole/MoleGraph" target="_blank">MoleGraph GitHub Repository</a>
+    </footer>
 </body>
 </html>

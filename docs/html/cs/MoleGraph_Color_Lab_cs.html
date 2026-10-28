@@ -1,0 +1,503 @@
+﻿<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>MoleGraph Barevná laboratoř</title>
+    <!-- Zahrnuto knihovny pro CSV (PapaParse) a Grafy (Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #2c3e50; margin-bottom: 5px; text-align: center; }
+        .subtitle { color: #555; margin-bottom: 20px; font-size: 0.9em; text-align: center; }
+        .subtitle a { color: #3498db; text-decoration: none; }
+        
+        /* 3-Column Layout pro ovládací tlačítka */
+        #control-panel { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 1000px; margin-bottom: 20px; }
+        .control-column { flex: 1 1 0; min-width: 200px; background: white; padding: 12px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #dee2e6; display: flex; flex-direction: column; align-items: center; }
+        .section-title { font-size: 0.95rem; font-weight: bold; color: #34495e; margin-bottom: 10px; text-align: center; border-bottom: 2px solid #bdc3c7; padding-bottom: 5px; width: 100%; }
+        .button-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        
+        /* Kompaktnější tlačítka */
+        button { padding: 6px 12px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; transition: 0.2s; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 0.85rem; }
+        .btn-basic { background: #e74c3c; }
+        .btn-fine { background: #3498db; }
+        .btn-gray { background: #7f8c8d; }
+        .btn-print { background: #8e44ad; }
+        .btn-mixer { background: #27ae60; }
+        button:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
+        button:active { transform: translateY(0); }
+
+        #dashboard { width: 100%; max-width: 1000px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 0 20px 0; display: none; flex-wrap: wrap; justify-content: space-around; gap: 20px; box-sizing: border-box; }
+        .wheel-box { display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: bold; color: #555; }
+        .wheel-container { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 2px solid #bdc3c7; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .wheel-hue { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 180deg at 50% 50%, cyan, blue, magenta, red, yellow, lime, cyan); }
+        .wheel-white { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, white 0%, transparent 70%); }
+        .wheel-black { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, black 0%, transparent 70%); }
+        .marker { position: absolute; width: 12px; height: 12px; background: white; border: 2px solid black; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; transition: all 0.1s; top: 50%; left: 50%; box-shadow: 0 0 3px rgba(0,0,0,0.5); }
+        
+        .readouts { display: flex; flex-direction: column; gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #dee2e6; min-width: 320px; }
+        .readout-row { display: flex; justify-content: space-between; font-family: monospace; font-size: 1rem; gap: 15px; }
+        .readout-col { display: flex; flex-direction: column; }
+        #color-swatch-container { width: 100%; height: 40px; border-radius: 5px; border: 1px solid #ccc; overflow: hidden; display: flex; }
+        .swatch-half { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; text-shadow: 1px 1px 2px black; font-weight: bold;}
+        
+        #drop-zone { width: 100%; max-width: 1000px; height: 50px; border: 3px dashed #3498db; border-radius: 10px; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #2980b9; cursor: pointer; margin: 5px 0 10px 0; transition: 0.2s; box-sizing: border-box; }
+        #drop-zone:hover { background-color: #e1e8ed; }
+        #drop-zone.dragover { background-color: #d6eaf8; border-color: #2980b9; }
+        
+        #file-info { font-weight: bold; color: #2c3e50; font-size: 0.95rem; margin-bottom: 15px; display: none; text-align: center; }
+        
+        #charts-wrapper { width: 100%; max-width: 1000px; display: none; flex-direction: column; gap: 20px; }
+        .chart-container { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); height: 300px; }
+        
+        /* Delta E Section Styles */
+        #delta-e-section { width: 100%; max-width: 1000px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; display: none; box-sizing: border-box; }
+        #delta-e-section select { padding: 8px; font-size: 0.95rem; border-radius: 5px; border: 1px solid #bdc3c7; margin-bottom: 15px; width: 100%; max-width: 400px; cursor: pointer; }
+        .delta-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .delta-table th, .delta-table td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        .delta-table th { background: #f8f9fa; font-weight: bold; color: #333; }
+        .color-preview { display: inline-block; width: 30px; height: 30px; border-radius: 4px; border: 1px solid #bdc3c7; vertical-align: middle; margin-right: 10px; box-shadow: inset 0 0 2px rgba(0,0,0,0.1); }
+        .delta-good { color: #27ae60; font-weight: bold; }
+        .delta-warn { color: #f39c12; font-weight: bold; }
+        .delta-bad { color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>MoleGraph Color Laboratory</h1>
+    <div class="subtitle">Bezplatný open-source DIY školní měřicí systém MoleGraph | <a href="https://www.e-mole.cz/diy/molegraph-shield" target="_blank">molegraph-shield</a></div>
+
+    <!-- UI SECTIONS (3-Column Layout) -->
+    <div id="control-panel">
+        <div class="control-column">
+            <div class="section-title">Měření vyzařovaného světla</div>
+            <div class="button-group">
+                <button class="btn-basic" onclick="openPattern('basic')">Základní škála</button>
+                <button class="btn-fine" onclick="openPattern('fine')">Jemná škála</button>
+                <button class="btn-gray" onclick="openPattern('gray')">Šedá škála</button>
+            </div>
+        </div>
+        
+        <div class="control-column">
+            <div class="section-title">Měření odraženého světla</div>
+            <div class="button-group">
+                <button class="btn-print" onclick="openPrintPreview()">Tisková škála (CMYK PDF)</button>
+            </div>
+        </div>
+
+        <div class="control-column">
+            <div class="section-title">Teorie a simulace</div>
+            <div class="button-group">
+                <button class="btn-mixer" onclick="openMixer()">Míchání barev</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DROP ZONE -->
+    <div id="drop-zone">Přetáhněte sem CSV soubor (MoleGraph)...</div>
+    <div id="file-info">📄 Aktuální soubor: <span id="file-name"></span></div>
+    
+    <input type="file" id="file-input" accept=".csv" style="display: none;">
+
+    <div id="dashboard">
+        <div class="wheel-box">
+            <span>Sytost (okraj = 100 %)</span>
+            <div class="wheel-container"><div class="wheel-hue"></div><div class="wheel-white"></div><div id="marker-sat" class="marker"></div></div>
+        </div>
+        <div class="readouts">
+            <div id="color-swatch-container"><div id="swatch-pure" class="swatch-half">ČISTÁ</div><div id="swatch-real" class="swatch-half">REÁLNÁ</div></div>
+            <div class="readout-row">
+                <div class="readout-col" title="HSV (Barevný model senzoru)">
+                    <span>H: <span id="val-h">0</span>°</span>
+                    <span>S: <span id="val-s">0</span>%</span>
+                    <span>V: <span id="val-v">0</span>%</span>
+                </div>
+                <div class="readout-col" title="RGB (Vyzařované světlo - Monitor)">
+                    <span>R: <span id="val-r">0</span></span>
+                    <span>G: <span id="val-g">0</span></span>
+                    <span>B: <span id="val-b">0</span></span>
+                </div>
+                <div class="readout-col" style="color: #8e44ad;" title="CIELAB (Lidské vnímání)">
+                    <span>L*: <span id="val-lab-l">0</span></span>
+                    <span>a*: <span id="val-lab-a">0</span></span>
+                    <span>b*: <span id="val-lab-b">0</span></span>
+                </div>
+                <div class="readout-col" style="color: #d35400;" title="CMYK (Odražené světlo - Papír)">
+                    <span>C: <span id="val-c">0</span>%</span>
+                    <span>M: <span id="val-m">0</span>%</span>
+                    <span>Y: <span id="val-y">0</span>%</span>
+                    <span>K: <span id="val-k">0</span>%</span>
+                </div>
+            </div>
+        </div>
+        <div class="wheel-box">
+            <span id="val-scale-label">Jas (okraj = 100 %)</span>
+            <div class="wheel-container"><div class="wheel-hue"></div><div class="wheel-black"></div><div id="marker-val" class="marker"></div></div>
+        </div>
+    </div>
+
+    <div id="charts-wrapper">
+        <div class="chart-container"><canvas id="satChart"></canvas></div>
+        <div class="chart-container"><canvas id="valChart"></canvas></div>
+    </div>
+
+    <!-- DELTA E SECTION -->
+    <div id="delta-e-section">
+        <h2 style="margin-top:0; color:#2c3e50;">Analýza přesnosti vzorků (ΔE)</h2>
+        <p style="font-size: 0.9rem; color: #555;">Porovnání naměřených dat s matematicky ideálními hodnotami (standard CIE76). Vyberte škálu, která odpovídá vašemu nahranému CSV.</p>
+        <select id="ref-scale" onchange="evaluateDeltaE()">
+            <option value="none">-- Vyberte referenční škálu pro analýzu --</option>
+            <option value="basic">Základní škála (Monitor, 8 barev)</option>
+            <option value="cmyk">Tisková škála (CMYK papír, 9 barev)</option>
+            <option value="fine">Jemná škála (Odstín po 30°, 14 vzorků)</option>
+            <option value="gray">Šedá škála (Kroky po 10 %, 11 vzorků)</option>
+        </select>
+        <div id="delta-e-table-container"></div>
+    </div>
+
+    <script>
+        // --- Color Conversion Functions ---
+        function hslToRgb(h, s, l) { s /= 100; l /= 100; const k = n => (n + h / 30) % 12; const a = s * Math.min(l, 1 - l); const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); return [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))]; }
+        function hsvToRgb(h, s, v) { s /= 100; v /= 100; let c = v * s; let x = c * (1 - Math.abs((h / 60) % 2 - 1)); let m = v - c; let r=0,g=0,b=0; if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;} return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)]; }
+        function rgbToLab(r, g, b) { let r_ = r / 255, g_ = g / 255, b_ = b / 255; r_ = (r_ > 0.04045) ? Math.pow((r_ + 0.055) / 1.055, 2.4) : r_ / 12.92; g_ = (g_ > 0.04045) ? Math.pow((g_ + 0.055) / 1.055, 2.4) : g_ / 12.92; b_ = (b_ > 0.04045) ? Math.pow((b_ + 0.055) / 1.055, 2.4) : b_ / 12.92; let x = (r_ * 0.4124 + g_ * 0.3576 + b_ * 0.1805) / 0.95047; let y = (r_ * 0.2126 + g_ * 0.7152 + b_ * 0.0722) / 1.00000; let z = (r_ * 0.0193 + g_ * 0.1192 + b_ * 0.9505) / 1.08883; x = (x > 0.008856) ? Math.pow(x, 1/3) : (7.787 * x) + 16/116; y = (y > 0.008856) ? Math.pow(y, 1/3) : (7.787 * y) + 16/116; z = (z > 0.008856) ? Math.pow(z, 1/3) : (7.787 * z) + 16/116; return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]; }
+        function rgbToCmyk(r, g, b) { let c = 1 - (r / 255); let m = 1 - (g / 255); let y = 1 - (b / 255); let k = Math.min(c, m, y); if (k === 1) return [0, 0, 0, 100]; return [ Math.round(((c - k) / (1 - k)) * 100), Math.round(((m - k) / (1 - k)) * 100), Math.round(((y - k) / (1 - k)) * 100), Math.round(k * 100) ]; }
+        function calcDeltaE(lab1, lab2) { return Math.sqrt(Math.pow(lab1[0]-lab2[0],2) + Math.pow(lab1[1]-lab2[1],2) + Math.pow(lab1[2]-lab2[2],2)); }
+
+        // --- Dynamic Reference Scales for Delta E ---
+        function getRefData(type) {
+            if (type === 'basic') {
+                return [
+                    {name: 'Červená', rgb: [255,0,0], targetVal: 'H:0, S:100, V:100', ctx: 'RGB: 255, 0, 0'},
+                    {name: 'Zelená', rgb: [0,255,0], targetVal: 'H:120, S:100, V:100', ctx: 'RGB: 0, 255, 0'},
+                    {name: 'Modrá', rgb: [0,0,255], targetVal: 'H:240, S:100, V:100', ctx: 'RGB: 0, 0, 255'},
+                    {name: 'Azurová', rgb: [0,255,255], targetVal: 'H:180, S:100, V:100', ctx: 'RGB: 0, 255, 255'},
+                    {name: 'Purpurová', rgb: [255,0,255], targetVal: 'H:300, S:100, V:100', ctx: 'RGB: 255, 0, 255'},
+                    {name: 'Žlutá', rgb: [255,255,0], targetVal: 'H:60, S:100, V:100', ctx: 'RGB: 255, 255, 0'},
+                    {name: 'Černá', rgb: [0,0,0], targetVal: 'H:-, S:0, V:0', ctx: 'RGB: 0, 0, 0'},
+                    {name: 'Bílá', rgb: [255,255,255], targetVal: 'H:-, S:0, V:100', ctx: 'RGB: 255, 255, 255'}
+                ];
+            } else if (type === 'cmyk') {
+                return [
+                    {name: 'Bílá (Papír)', rgb: [255,255,255], targetVal: 'H:-, S:0, V:100', ctx: 'C:0 M:0 Y:0 K:0'},
+                    {name: 'Azurová (C)', rgb: [0,255,255], targetVal: 'H:180, S:100, V:100', ctx: 'C:100 M:0 Y:0 K:0'},
+                    {name: 'Purpurová (M)', rgb: [255,0,255], targetVal: 'H:300, S:100, V:100', ctx: 'C:0 M:100 Y:0 K:0'},
+                    {name: 'Žlutá (Y)', rgb: [255,255,0], targetVal: 'H:60, S:100, V:100', ctx: 'C:0 M:0 Y:100 K:0'},
+                    {name: 'Červená (M+Y)', rgb: [255,0,0], targetVal: 'H:0, S:100, V:100', ctx: 'C:0 M:100 Y:100 K:0'},
+                    {name: 'Zelená (C+Y)', rgb: [0,255,0], targetVal: 'H:120, S:100, V:100', ctx: 'C:100 M:0 Y:100 K:0'},
+                    {name: 'Modrá (C+M)', rgb: [0,0,255], targetVal: 'H:240, S:100, V:100', ctx: 'C:100 M:100 Y:0 K:0'},
+                    {name: 'Černá (Složená)', rgb: [30,30,30], targetVal: 'H:-, S:0, V:12', ctx: 'C:100 M:100 Y:100 K:0'},
+                    {name: 'Černá (K)', rgb: [0,0,0], targetVal: 'H:-, S:0, V:0', ctx: 'C:0 M:0 Y:0 K:100'}
+                ];
+            } else if (type === 'fine') {
+                let ref = [];
+                ref.push({name: 'Černá', rgb: [0,0,0], targetVal: 'H:-, S:0, V:0', ctx: 'RGB: 0, 0, 0'});
+                ref.push({name: 'Bílá', rgb: [255,255,255], targetVal: 'H:-, S:0, V:100', ctx: 'RGB: 255, 255, 255'});
+                for(let i=0; i<360; i+=30) {
+                    let rgb = hslToRgb(i,100,50);
+                    ref.push({name: `Odstín ${i}°`, rgb: rgb, targetVal: `H:${i}, S:100, V:100`, ctx: `RGB: ${rgb.join(', ')}`});
+                }
+                return ref;
+            } else if (type === 'gray') {
+                let ref = [];
+                for(let i=0; i<=100; i+=10) {
+                    let c = Math.round(i * 2.55);
+                    ref.push({name: `Šedá ${i}% Jas`, rgb: [c,c,c], targetVal: `H:-, S:0, V:${i}`, ctx: `RGB: ${c}, ${c}, ${c}`});
+                }
+                return ref;
+            }
+            return [];
+        }
+
+        // --- CMYK Preview Popup Logic ---
+        function openPrintPreview() {
+            let win = window.open("", "_blank");
+            let html = `<html><head><title>CMYK Náhled terče</title>
+            <style>
+                body { font-family:'Segoe UI', sans-serif; background: #ecf0f1; margin:0; padding:20px; text-align:center; }
+                .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+                h1 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                .warning-box { background-color: #fdf2e9; border-left: 5px solid #e67e22; padding: 15px; margin: 20px 0; text-align: left; color: #d35400; font-weight: bold; }
+                .download-btn { display: inline-block; background: #8e44ad; color: white; text-decoration: none; padding: 18px 40px; font-size: 1.3rem; border-radius: 8px; font-weight: bold; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; }
+                .download-btn:hover { background: #9b59b6; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+                .preview-section { margin-top: 40px; text-align: left; }
+                .preview-section h2 { color: #34495e; font-size: 1.5rem; }
+                .preview-section h3 { color: #7f8c8d; font-size: 1.1rem; margin-top: 25px; }
+                .grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start; }
+                .patch-container { display: flex; flex-direction: column; align-items: center; width: 140px; }
+                .patch { width: 100px; height: 100px; border: 1px solid #333; border-radius: 4px; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); margin-bottom: 10px; }
+                .patch-info { font-size: 0.8rem; color: #555; text-align: center; line-height: 1.4; font-family: monospace; }
+                .patch-title { font-weight: bold; color: #2c3e50; margin-bottom: 5px; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; }
+            </style>
+            </head><body>
+            <div class="container">
+                <h1>Měřicí terč pro CMYK tisk</h1>
+                <div class="warning-box">
+                    ⚠️ TUTO WEBOVOU STRÁNKU NETISKNĚTE!<br>
+                    Webové prohlížeče nedokážou správně zpracovat barevné profily CMYK. Přímý tisk tohoto HTML by převedl čisté CMYK barvy na složené RGB směsi, což by znehodnotilo měření.
+                </div>
+                <p style="font-size: 1.1rem; color: #555;">Stáhněte si prosím níže profesionálně vygenerované PDF. Vytiskněte jej v měřítku 100 % a v ovladači tiskárny vypněte veškerá "automatická vylepšení barev".</p>
+                
+                <a href="https://www.e-mole.cz/system/files/molegraph/MG-ColorLab-CMYK-calibration.pdf" target="_blank" class="download-btn">⬇ Stáhnout oficiální CMYK PDF terč</a>
+                
+                <div class="preview-section">
+                    <h2>Náhled obsahu terče (celkem 34 políček)</h2>
+                    <p style="color: #7f8c8d;">Oficiální PDF obsahuje následující testovací škály připravené pro měření senzorem:</p>
+                    
+                    <div style="background-color: #e8f4f8; border-left: 5px solid #3498db; padding: 15px; margin-bottom: 25px; text-align: left; color: #2c3e50; font-size: 0.95rem;">
+                        ℹ️ <b>Poznámka k barevným prostorům:</b> Níže uvedené hodnoty CMYK jsou teoretické matematické převody z RGB. Skutečná procenta tiskových bodů CMYK se budou lišit v závislosti na konkrétním ICC profilu vaší tiskárny (např. FOGRA39) a fyzických limitech gamutu.
+                    </div>
+                    
+                    <h3>1. Tisková škála (Základní CMYK)</h3>
+                    <div class="grid">`;
+                    const patches = [
+                        {n:'Bílá (Papír)', rgb:[255,255,255], cmyk:'C:0 M:0 Y:0 K:0', hsv:'H:-, S:0, V:100'},
+                        {n:'Azurová', rgb:[0,255,255], cmyk:'C:100 M:0 Y:0 K:0', hsv:'H:180, S:100, V:100'},
+                        {n:'Purpurová', rgb:[255,0,255], cmyk:'C:0 M:100 Y:0 K:0', hsv:'H:300, S:100, V:100'},
+                        {n:'Žlutá', rgb:[255,255,0], cmyk:'C:0 M:0 Y:100 K:0', hsv:'H:60, S:100, V:100'},
+                        {n:'Červená', rgb:[255,0,0], cmyk:'C:0 M:100 Y:100 K:0', hsv:'H:0, S:100, V:100'},
+                        {n:'Zelená', rgb:[0,255,0], cmyk:'C:100 M:0 Y:100 K:0', hsv:'H:120, S:100, V:100'},
+                        {n:'Modrá', rgb:[0,0,255], cmyk:'C:100 M:100 Y:0 K:0', hsv:'H:240, S:100, V:100'},
+                        {n:'Černá (CMY)', rgb:[30,30,30], cmyk:'C:100 M:100 Y:100 K:0', hsv:'H:-, S:0, V:12'},
+                        {n:'Černá (K)', rgb:[0,0,0], cmyk:'C:0 M:0 Y:0 K:100', hsv:'H:-, S:0, V:0'}
+                    ];
+                    patches.forEach(p => { 
+                        html += `<div class="patch-container">
+                                    <div title="${p.n}" class="patch" style="background:rgb(${p.rgb.join(',')})"></div>
+                                    <div class="patch-title">${p.n}</div>
+                                    <div class="patch-info">
+                                        CMYK: ${p.cmyk}<br>
+                                        RGB: ${p.rgb.join(', ')}<br>
+                                        HSV: ${p.hsv}
+                                    </div>
+                                 </div>`; 
+                    });
+                    html += `</div>
+                    
+                    <h3>2. Jemná škála (Odstín)</h3>
+                    <div class="grid">`;
+                    
+                    let cmykBlack = rgbToCmyk(0,0,0);
+                    html += `<div class="patch-container"><div title="Černá" class="patch" style="background:black"></div><div class="patch-title">Černá</div><div class="patch-info">CMYK: C:${cmykBlack[0]} M:${cmykBlack[1]} Y:${cmykBlack[2]} K:${cmykBlack[3]}<br>RGB: 0, 0, 0<br>HSV: H:-, S:0, V:0</div></div>`;
+                    
+                    let cmykWhite = rgbToCmyk(255,255,255);
+                    html += `<div class="patch-container"><div title="Bílá" class="patch" style="background:white; border: 1px solid #ccc;"></div><div class="patch-title">Bílá</div><div class="patch-info">CMYK: C:${cmykWhite[0]} M:${cmykWhite[1]} Y:${cmykWhite[2]} K:${cmykWhite[3]}<br>RGB: 255, 255, 255<br>HSV: H:-, S:0, V:100</div></div>`;
+                    
+                    for(let i=0; i<360; i+=30) {
+                        let rgb = hslToRgb(i, 100, 50);
+                        let cmyk = rgbToCmyk(rgb[0], rgb[1], rgb[2]);
+                        html += `<div class="patch-container"><div title="Odstín ${i}°" class="patch" style="background:hsl(${i},100%,50%)"></div><div class="patch-title">Odstín ${i}°</div><div class="patch-info">CMYK: C:${cmyk[0]} M:${cmyk[1]} Y:${cmyk[2]} K:${cmyk[3]}<br>RGB: ${rgb.join(', ')}<br>HSV: H:${i}, S:100, V:100</div></div>`;
+                    }
+                    html += `</div>
+
+                    <h3>3. Šedá škála</h3>
+                    <div class="grid">`;
+                    for(let i=0; i<=100; i+=10) {
+                        let v = i * 2.55 | 0;
+                        let cmyk = rgbToCmyk(v, v, v);
+                        html += `<div class="patch-container"><div title="${i}% Jas" class="patch" style="background:rgb(${v},${v},${v})"></div><div class="patch-title">V: ${i}%</div><div class="patch-info">CMYK: C:${cmyk[0]} M:${cmyk[1]} Y:${cmyk[2]} K:${cmyk[3]}<br>RGB: ${v}, ${v}, ${v}<br>HSV: H:-, S:0, V:${i}</div></div>`;
+                    }
+                    html += `</div>
+                </div>
+            </div>
+            </body></html>`;
+            win.document.write(html);
+            win.document.close();
+        }
+
+        // --- Monitor Measurement Scales Logic ---
+        function openPattern(type) {
+            let win = window.open("", "_blank");
+            let html = `<html><head><title>Měřicí škála</title></head><body style="margin:0; display:flex; min-height:100vh; overflow:hidden;">`;
+            
+            if(type === 'basic') {
+                const data = [{c:'red',h:0}, {c:'green',h:120}, {c:'blue',h:240}, {c:'cyan',h:180}, {c:'magenta',h:300}, {c:'yellow',h:60}, {c:'black',h:0}, {c:'white',h:0}];
+                data.forEach(d => { 
+                    const rgb = (d.c=='black'||d.c=='white')?(d.c=='white'?[255,255,255]:[0,0,0]):hslToRgb(d.h,100,50); 
+                    const hsv = (d.c=='black'||d.c=='white')?(d.c=='white'?'H:- S:0 V:100':'H:- S:0 V:0'):`H:${d.h}° S:100 V:100`; 
+                    html += `<div style="flex:1; background:${d.c}; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; color:${(d.c=='white'||d.c=='yellow'||d.c=='cyan')?'black':'white'}; font-size:14px; font-weight:bold; padding-bottom:20px;">RGB:[${rgb.join(',')}]<br>${hsv}</div>`; 
+                });
+            } else if(type === 'fine') {
+                html += `<div style="flex:1; background:black; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; color:white; font-size:14px; font-weight:bold; padding-bottom:20px; text-align:center;">RGB:[0,0,0]<br>Černá</div>`;
+                html += `<div style="flex:1; background:white; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; color:black; font-size:14px; font-weight:bold; padding-bottom:20px; text-align:center;">RGB:[255,255,255]<br>Bílá</div>`;
+                for(let i=0; i<360; i+=30) { 
+                    const rgb = hslToRgb(i,100,50); 
+                    html += `<div style="flex:1; background:hsl(${i}, 100%, 50%); display:flex; flex-direction:column; justify-content:flex-end; align-items:center; font-size:14px; font-weight:bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); color:white; padding-bottom:20px; text-align:center;">RGB:[${rgb.join(',')}]<br>H:${i}°<br>S:100 V:100</div>`; 
+                }
+            } else if(type === 'gray') {
+                for(let i=0; i<=100; i+=10) {
+                    let v = i * 2.55 | 0;
+                    html += `<div style="flex:1; background:rgb(${v},${v},${v}); display:flex; flex-direction:column; justify-content:flex-end; align-items:center; color:${i>50?'black':'white'}; font-size:14px; font-weight:bold; padding-bottom:20px; text-align:center;">V:${i}%<br>RGB:[${v},${v},${v}]</div>`;
+                }
+            } 
+            win.document.write(html + `</body></html>`);
+            win.document.close();
+        }
+
+        // --- Mixer Logic ---
+        function openMixer() {
+            let win = window.open("", "_blank", "width=850,height=750");
+            win.document.write(`<html lang="cs"><head><title>Subtraktivní míchání barev</title><style>body{font-family:'Segoe UI',sans-serif;text-align:center;padding:20px;background:#f4f7f6;margin:0}.box{background:white;padding:15px;border-radius:10px;box-shadow:0 4px 6px rgba(0,0,0,0.1);margin-bottom:15px}.target-container{display:flex;justify-content:center;gap:30px;margin-bottom:15px}.color-patch{width:150px;height:100px;border:2px solid #ccc;border-radius:8px}.row{display:flex;align-items:center;margin-bottom:8px;font-weight:bold}input[type=range]{flex-grow:1;margin:0 15px;cursor:pointer}input[type=number]{width:60px;font-weight:bold;border:1px solid #ccc;border-radius:4px;padding:4px;text-align:center}.divider{border:0;border-top:1px solid #eee;margin:15px 0}</style></head><body><h2 style="margin-top:0;">Míchání barev (Světlo vs. Inkoust)</h2><div class="target-container"><div><p style="margin:5px 0;font-weight:bold;">Cílová oblast:</p><div id="target" class="color-patch" style="background:rgb(255,255,255);border-color:#2c3e50;"></div></div><div><p style="margin:5px 0;font-weight:bold;">Kalibrace (Bílý papír):</p><div class="color-patch" style="background:white;"></div></div></div><div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;"><div class="box" style="flex:1;min-width:350px;"><h3 style="margin-top:0;color:#c0392b;">RGB / HSV (Monitor)</h3><div style="margin-bottom:15px;"><div class="row">R: <input type="range" id="r" value="255" min="0" max="255" oninput="rgbChanged()"><input type="number" id="rn" value="255" oninput="numChanged('rgb')"></div><div class="row">G: <input type="range" id="g" value="255" min="0" max="255" oninput="rgbChanged()"><input type="number" id="gn" value="255" oninput="numChanged('rgb')"></div><div class="row">B: <input type="range" id="b" value="255" min="0" max="255" oninput="rgbChanged()"><input type="number" id="bn" value="255" oninput="numChanged('rgb')"></div></div><hr class="divider"><div><div class="row">H: <input type="range" id="h" value="0" min="0" max="360" oninput="hsvChanged()"><input type="number" id="hn" value="0" oninput="numChanged('hsv')"></div><div class="row">S: <input type="range" id="s" value="0" min="0" max="100" oninput="hsvChanged()"><input type="number" id="sn" value="0" oninput="numChanged('hsv')"></div><div class="row">V: <input type="range" id="v" value="100" min="0" max="100" oninput="hsvChanged()"><input type="number" id="vn" value="100" oninput="numChanged('hsv')"></div></div></div><div class="box" style="flex:1;min-width:350px;"><h3 style="margin-top:0;color:#2980b9;">Model CMY (Tisk)</h3><div class="row" style="color:#0097a7;">C: <input type="range" id="c" value="0" min="0" max="100" oninput="cmyChanged()"><input type="number" id="cn" value="0" oninput="numChanged('cmy')"></div><div class="row" style="color:#c2185b;">M: <input type="range" id="m" value="0" min="0" max="100" oninput="cmyChanged()"><input type="number" id="mn" value="0" oninput="numChanged('cmy')"></div><div class="row" style="color:#fbc02d;">Y: <input type="range" id="y" value="0" min="0" max="100" oninput="cmyChanged()"><input type="number" id="yn" value="0" oninput="numChanged('cmy')"></div></div></div><script>function hsvToRgb(h,s,v){s/=100;v/=100;let c=v*s;let x=c*(1-Math.abs((h/60)%2-1));let m=v-c;let r=0,g=0,b=0;if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}return[Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)];}function rgbToHsv(r,g,b){r/=255;g/=255;b/=255;let max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0,s=(max===0?0:d/max),v=max;if(max!==min){if(max===r)h=(g-b)/d+(g<b?6:0);else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h/=6;}return[Math.round(h*360),Math.round(s*100),Math.round(v*100)];}function updateAll(r,g,b,source){r=Math.max(0,Math.min(255,Math.round(r)));g=Math.max(0,Math.min(255,Math.round(g)));b=Math.max(0,Math.min(255,Math.round(b)));document.getElementById('target').style.backgroundColor='rgb('+r+','+g+','+b+')';if(source!=='rgb'){document.getElementById('r').value=r;document.getElementById('rn').value=r;document.getElementById('g').value=g;document.getElementById('gn').value=g;document.getElementById('b').value=b;document.getElementById('bn').value=b;}if(source!=='hsv'){let hsv=rgbToHsv(r,g,b);document.getElementById('h').value=hsv[0];document.getElementById('hn').value=hsv[0];document.getElementById('s').value=hsv[1];document.getElementById('sn').value=hsv[1];document.getElementById('v').value=hsv[2];document.getElementById('vn').value=hsv[2];}if(source!=='cmy'){let c=Math.round((1-r/255)*100);let m=Math.round((1-g/255)*100);let y=Math.round((1-b/255)*100);document.getElementById('c').value=c;document.getElementById('cn').value=c;document.getElementById('m').value=m;document.getElementById('mn').value=m;document.getElementById('y').value=y;document.getElementById('yn').value=y;}}function rgbChanged(){let r=parseInt(document.getElementById('r').value),g=parseInt(document.getElementById('g').value),b=parseInt(document.getElementById('b').value);document.getElementById('rn').value=r;document.getElementById('gn').value=g;document.getElementById('bn').value=b;updateAll(r,g,b,'rgb');}function hsvChanged(){let h=parseInt(document.getElementById('h').value),s=parseInt(document.getElementById('s').value),v=parseInt(document.getElementById('v').value);document.getElementById('hn').value=h;document.getElementById('sn').value=s;document.getElementById('vn').value=v;let rgb=hsvToRgb(h,s,v);updateAll(rgb[0],rgb[1],rgb[2],'hsv');}function cmyChanged(){let c=parseInt(document.getElementById('c').value),m=parseInt(document.getElementById('m').value),y=parseInt(document.getElementById('y').value);document.getElementById('cn').value=c;document.getElementById('mn').value=m;document.getElementById('yn').value=y;let r=Math.round(255*(1-c/100)),g=Math.round(255*(1-m/100)),b=Math.round(255*(1-y/100));updateAll(r,g,b,'cmy');}function numChanged(type){if(type==='rgb'){document.getElementById('r').value=document.getElementById('rn').value;document.getElementById('g').value=document.getElementById('gn').value;document.getElementById('b').value=document.getElementById('bn').value;rgbChanged();}if(type==='hsv'){document.getElementById('h').value=document.getElementById('hn').value;document.getElementById('s').value=document.getElementById('sn').value;document.getElementById('v').value=document.getElementById('vn').value;hsvChanged();}if(type==='cmy'){document.getElementById('c').value=document.getElementById('cn').value;document.getElementById('m').value=document.getElementById('mn').value;document.getElementById('y').value=document.getElementById('yn').value;cmyChanged();}}<\/script></body></html>`);
+            win.document.close();
+        }
+
+        // --- Core Application Logic ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const dashboard = document.getElementById('dashboard');
+        const chartsWrapper = document.getElementById('charts-wrapper');
+        const deltaSection = document.getElementById('delta-e-section');
+        let satChart = null, valChart = null, globalData = [], currentMaxVScale = 100;
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        
+        dropZone.addEventListener('drop', (e) => { 
+            e.preventDefault(); 
+            dropZone.classList.remove('dragover'); 
+            if (e.dataTransfer.files.length > 0) {
+                document.getElementById('file-name').innerText = e.dataTransfer.files[0].name;
+                document.getElementById('file-info').style.display = 'block';
+                processFile(e.dataTransfer.files[0]); 
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => { 
+            if (e.target.files.length > 0) {
+                document.getElementById('file-name').innerText = e.target.files[0].name;
+                document.getElementById('file-info').style.display = 'block';
+                processFile(e.target.files[0]); 
+            }
+        });
+
+        function processFile(file) { Papa.parse(file, { complete: function(results) { analyzeData(results.data); } }); }
+
+        function evaluateDeltaE() {
+            const scaleType = document.getElementById('ref-scale').value;
+            const container = document.getElementById('delta-e-table-container');
+            if(scaleType === 'none' || globalData.length === 0) { container.innerHTML = ''; return; }
+            
+            const refData = getRefData(scaleType);
+            let html = `<table class="delta-table"><tr><th>Vzorek č.</th><th>Ideální reference (Cíl)</th><th>Naměřená data (Senzor)</th><th>ΔE (CIE76)</th><th>Hodnocení</th></tr>`;
+            
+            let limit = Math.min(globalData.length, refData.length);
+            for(let i=0; i<limit; i++) {
+                const ref = refData[i];
+                const d = globalData[i];
+                const measRgb = hsvToRgb(d.h, d.s, d.v);
+                
+                const refLab = rgbToLab(ref.rgb[0], ref.rgb[1], ref.rgb[2]);
+                const measLab = rgbToLab(measRgb[0], measRgb[1], measRgb[2]);
+                
+                const de = calcDeltaE(refLab, measLab).toFixed(1);
+                
+                let evalClass = '', evalText = '';
+                if(de < 5.0) { evalClass = 'delta-good'; evalText = 'Výborná shoda'; }
+                else if(de < 15.0) { evalClass = 'delta-warn'; evalText = 'Přijatelná odchylka'; }
+                else { evalClass = 'delta-bad'; evalText = 'Velký rozdíl'; }
+
+                html += `<tr>
+                    <td><b>${i+1}. ${ref.name}</b><br><span style="font-size:0.8rem; color:#666;">${ref.ctx}</span></td>
+                    <td><div class="color-preview" style="background:rgb(${ref.rgb.join(',')});"></div><b>${ref.targetVal}</b></td>
+                    <td><div class="color-preview" style="background:rgb(${measRgb.join(',')});"></div> H:${d.h.toFixed(0)}°, S:${d.s.toFixed(0)}%, V:${d.v.toFixed(0)}%</td>
+                    <td class="${evalClass}">${de}</td>
+                    <td class="${evalClass}">${evalText}</td>
+                </tr>`;
+            }
+            
+            if(globalData.length !== refData.length) {
+                html += `<tr><td colspan="5" style="text-align:center; color:#e74c3c; font-size:0.9rem;"><b>Varování:</b> Nesoulad počtu vzorků! Načtené CSV: ${globalData.length}, Očekáváno pro škálu: ${refData.length}</td></tr>`;
+            }
+            
+            html += `</table>`;
+            container.innerHTML = html;
+        }
+
+        function updateDashboard(index) {
+            if (!globalData[index]) return;
+            const d = globalData[index];
+            const rgb = hsvToRgb(d.h, d.s, d.v);
+            const lab = rgbToLab(rgb[0], rgb[1], rgb[2]); 
+            const cmyk = rgbToCmyk(rgb[0], rgb[1], rgb[2]);
+            
+            document.getElementById('val-h').innerText = d.h.toFixed(0);
+            document.getElementById('val-s').innerText = d.s.toFixed(0);
+            document.getElementById('val-v').innerText = d.v.toFixed(1);
+            document.getElementById('val-r').innerText = rgb[0];
+            document.getElementById('val-g').innerText = rgb[1];
+            document.getElementById('val-b').innerText = rgb[2];
+            document.getElementById('val-lab-l').innerText = lab[0].toFixed(1);
+            document.getElementById('val-lab-a').innerText = lab[1].toFixed(1);
+            document.getElementById('val-lab-b').innerText = lab[2].toFixed(1);
+            document.getElementById('val-c').innerText = cmyk[0];
+            document.getElementById('val-m').innerText = cmyk[1];
+            document.getElementById('val-y').innerText = cmyk[2];
+            document.getElementById('val-k').innerText = cmyk[3];
+
+            document.getElementById('swatch-pure').style.backgroundColor = `hsl(${d.h}, ${d.s}%, 50%)`;
+            document.getElementById('swatch-real').style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+            
+            const angleRad = (d.h - 90) * (Math.PI / 180);
+            const rSat = (d.s / 100) * 75; 
+            document.getElementById('marker-sat').style.left = `${75 + rSat * Math.cos(angleRad)}px`;
+            document.getElementById('marker-sat').style.top = `${75 + rSat * Math.sin(angleRad)}px`;
+            let safeV = d.v > currentMaxVScale ? currentMaxVScale : d.v;
+            const rVal = (safeV / currentMaxVScale) * 75;
+            document.getElementById('marker-val').style.left = `${75 + rVal * Math.cos(angleRad)}px`;
+            document.getElementById('marker-val').style.top = `${75 + rVal * Math.sin(angleRad)}px`;
+        }
+
+        function analyzeData(data) {
+            let headerIndex = -1, idxHue = -1, idxSat = -1, idxLight = -1;
+            for (let i = 0; i < data.length; i++) {
+                let row = data[i]; let found = false;
+                for (let j = 0; j < row.length; j++) {
+                    if (typeof row[j] !== 'string') continue;
+                    let c = row[j].toLowerCase();
+                    // Rozsirena detekce sloupcu pro EN i CZ hlavicky CSV
+                    if (c.includes('hue') || c.includes('odst')) { idxHue = j; found = true; }
+                    else if (c.includes('sat') || c.includes('syt')) { idxSat = j; found = true; }
+                    else if (c.includes('ligh') || c.includes('brigh') || c.includes('val') || c.includes('jas') || c.includes('svět')) { idxLight = j; found = true; }
+                }
+                if (found && !row.includes('html')) { headerIndex = i; break; }
+            }
+            if (idxHue === -1) return alert("Sloupec s hodnotou Odstínu (Hue) nebyl v CSV souboru nalezen.");
+            globalData = []; let labels = [], dataSat = [], dataLight = [], colorsBar = [], maxV = 0;
+            for (let i = headerIndex + 1; i < data.length; i++) {
+                let row = data[i]; if (row.length < 2) continue;
+                let h = parseFloat(row[idxHue].replace(',', '.')), s = idxSat !== -1 ? parseFloat(row[idxSat].replace(',', '.')) : 0, v = idxLight !== -1 ? parseFloat(row[idxLight].replace(',', '.')) : 0;
+                if (!isNaN(h)) {
+                    globalData.push({h: h, s: s, v: v});
+                    labels.push(`Vzorek ${i - headerIndex}`);
+                    dataSat.push(s); dataLight.push(v);
+                    colorsBar.push(`hsl(${h}, 100%, 50%)`);
+                    if (v > maxV) maxV = v;
+                }
+            }
+            currentMaxVScale = Math.ceil((maxV || 100) / 10) * 10;
+            if(currentMaxVScale < 10) currentMaxVScale = Math.ceil(maxV + 1);
+            
+            document.getElementById('val-scale-label').innerText = `Jas (okraj = ${currentMaxVScale} %)`;
+            dashboard.style.display = 'flex';
+            deltaSection.style.display = 'block';
+            
+            // Nastaveni tabulky zpet do vychoziho (prazdneho) stavu
+            let sel = document.getElementById('ref-scale');
+            sel.value = 'none';
+
+            updateDashboard(0);
+            drawCharts(labels, dataSat, dataLight, colorsBar);
+            evaluateDeltaE();
+        }
+
+        function drawCharts(labels, dataSat, dataLight, colorsBar) {
+            chartsWrapper.style.display = 'flex';
+            if (satChart) satChart.destroy(); if (valChart) valChart.destroy();
+            const opts = { responsive: true, maintainAspectRatio: false, onHover: (e, act) => { if (act.length > 0) updateDashboard(act[0].index); }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y + ' %'; } } } } };
+            satChart = new Chart(document.getElementById('satChart'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Sytost', data: dataSat, backgroundColor: colorsBar, borderWidth: 1 }] }, options: { ...opts, scales: { y: { max: 100 } }, plugins: { ...opts.plugins, title: { display: true, text: 'Sytost (Barva sloupce ukazuje naměřený ODSTÍN)', font: { size: 16 } } } } });
+            valChart = new Chart(document.getElementById('valChart'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Jas', data: dataLight, backgroundColor: '#f1c40f', borderWidth: 1 }] }, options: { ...opts, scales: { y: { max: currentMaxVScale } }, plugins: { ...opts.plugins, title: { display: true, text: 'Jas / Světlost', font: { size: 16 } } } } });
+        }
+    </script>
+</body>
+</html>

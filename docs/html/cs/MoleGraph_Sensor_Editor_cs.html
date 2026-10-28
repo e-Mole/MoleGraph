@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="cs"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>MoleGraph - Nastavení pro učitele</title>
+    <style>
+        :root { --primary: #4a90e2; --bg: #f0f2f5; --card-bg: #ffffff; --text: #333; --success: #27ae60; --warning: #f59e0b; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; color: var(--text); }
+        .container { max-width: 1000px; margin: auto; }
+        
+        /* Drag & Drop Area */
+        #drop-zone { border: 2px dashed #bbb; border-radius: 12px; padding: 40px; text-align: center; background: #fff; transition: 0.3s; cursor: pointer; margin-bottom: 20px; }
+        #drop-zone.hover { border-color: var(--primary); background: #eef6ff; }
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search-bar { padding: 10px; border-radius: 6px; border: 1px solid #ccc; width: 300px; font-size: 1rem; }
+        
+        /* Sensor Cards */
+        .sensor-card { background: var(--card-bg); border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; border-left: 6px solid #ccc; transition: 0.2s; }
+        .sensor-card.enabled { border-left-color: var(--primary); }
+        .sensor-card.disabled { opacity: 0.7; background: #fafafa; }
+        
+        /* Modifikovaný stav karty */
+        .sensor-card.modified { border-left-color: var(--warning); box-shadow: 0 2px 12px rgba(245, 158, 11, 0.2); }
+        .badge-modified { background: #fef3c7; color: #d97706; font-size: 0.75em; padding: 3px 8px; border-radius: 4px; margin-left: 10px; border: 1px solid #fde68a; font-weight: bold; }
+        
+        .card-header { padding: 15px; display: flex; align-items: center; gap: 15px; background: #fcfcfc; border-bottom: 1px solid #eee; cursor: pointer; }
+        .card-header:hover { background: #f5f5f5; }
+        
+        .card-content { padding: 20px; display: none; background: white; border-top: 1px solid #eee; }
+        .sensor-card.open .card-content { display: block; }
+        .sensor-card.open { box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: scale(1.01); }
+        
+        .note-area { width: 100%; height: 60px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-size: 0.9em; background: #fff; box-sizing: border-box; }
+        
+        /* Components (Quantities) */
+        .comp-item { border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
+        .comp-header { background: #f8f9fa; padding: 10px 15px; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9em; align-items: center; }
+        .comp-header:hover { background: #eef2f5; }
+        .comp-content { padding: 15px; background: #fff; display: none; border-top: 1px solid #e9ecef; }
+        .comp-item.open .comp-content { display: block; }
+        
+        /* Odlišení typu kalibrace (Badge) */
+        .badge-corr { font-size: 0.85em; padding: 4px 8px; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+        .badge-corr.none { background: #e2e8f0; color: #64748b; } 
+        .badge-corr.active { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; box-shadow: 0 1px 3px rgba(3, 105, 161, 0.1); } 
+        
+        /* Calibration Rows */
+        .cal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-top: 8px; padding: 8px; background: #fdfdfd; border: 1px dashed #ddd; border-radius: 4px; }
+        
+        /* Controls */
+        .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-save { background: var(--success); color: white; }
+        .btn-save:hover { background: #219150; }
+        .btn-edit { background: #eee; color: #444; font-size: 0.8em; padding: 5px 12px; }
+        
+        .toggle-label { font-size: 0.85em; font-weight: bold; color: #666; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        input[type="number"] { padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 100px; }
+        .unit-input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 80px; font-weight: bold; }
+        select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Odkazy */
+        .header-links a { color: var(--primary); text-decoration: none; transition: 0.2s; }
+        .header-links a:hover { text-decoration: underline; color: #357ebd; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-actions">
+        <div>
+            <h1 style="margin-bottom: 5px; margin-top: 0;">👨‍🏫 MoleGraph Editor Senzorů <small style="font-size: 0.5em; color: #666; font-weight: normal;">(JSON editor)</small></h1>
+            <div class="header-links" style="font-size: 0.85em; color: #666;">
+                🔗 <a href="https://github.com/e-Mole/MoleGraph" target="_blank" style="font-weight: bold;">Projekt na GitHubu</a> &nbsp;|&nbsp; 
+                📄 <a href="https://raw.githubusercontent.com/e-Mole/MoleGraph/refs/heads/master/SerialToGraph/sensors/sensors.json" target="_blank">Výchozí sensors.json</a>
+            </div>
+        </div>
+        <button class="btn btn-save" id="downloadBtn" style="display:none;" onclick="downloadJSON()">💾 Stáhnout sensors.json</button>
+    </div>
+
+    <div id="drop-zone">
+        <p><strong>Přetáhněte soubor sensors.json sem</strong><br>nebo klikněte pro výběr souboru z počítače</p>
+        <input type="file" id="fileInput" style="display:none" accept=".json">
+    </div>
+
+    <div id="search-container" style="display:none; margin-bottom:20px;">
+        <input type="text" class="search-bar" id="search" placeholder="Hledat senzory..." oninput="renderDashboard()">
+    </div>
+
+    <div id="dashboard"></div>
+</div>
+
+<script>
+let sensorsData = null;
+let originalFileName = "sensors.json";
+let openCards = new Set();
+let openComps = new Set();
+let modifiedSensors = new Set(); 
+
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('fileInput');
+
+// Drag & Drop
+dropZone.onclick = () => fileInput.click();
+dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('hover'); };
+dropZone.ondragleave = () => dropZone.classList.remove('hover');
+dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('hover'); handleFile(e.dataTransfer.files[0]); };
+fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+function handleFile(file) {
+    if (!file) return;
+    originalFileName = file.name;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            sensorsData = JSON.parse(e.target.result);
+            modifiedSensors.clear(); 
+            document.getElementById('drop-zone').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'block';
+            document.getElementById('search-container').style.display = 'block';
+            renderDashboard();
+        } catch(err) { alert("Neplatný soubor JSON."); }
+    };
+    reader.readAsText(file);
+}
+
+// Okamžitý vizuální update
+function markAsModified(sIdx) {
+    modifiedSensors.add(sIdx);
+    const card = document.getElementById(`sensor-card-${sIdx}`);
+    if (card && !card.classList.contains('modified')) {
+        card.classList.add('modified');
+        const headerTitle = card.querySelector('.card-header strong');
+        if (headerTitle && !card.querySelector('.badge-modified')) {
+            headerTitle.insertAdjacentHTML('afterend', '<span class="badge-modified">✏️ Upraveno</span>');
+        }
+    }
+}
+
+function renderDashboard() {
+    const container = document.getElementById('dashboard');
+    const filter = document.getElementById('search').value.toLowerCase();
+    container.innerHTML = '';
+
+    if (!sensorsData) return;
+
+    sensorsData.sensors.forEach((s, sIdx) => {
+        // Skrytí systémového senzoru s ID 0
+        if (s.id === 0) return;
+
+        if (!s.name.toLowerCase().includes(filter)) return;
+
+        const isModified = modifiedSensors.has(sIdx);
+        const card = document.createElement('div');
+        
+        card.id = `sensor-card-${sIdx}`;
+        card.className = `sensor-card ${s.enabled ? 'enabled' : 'disabled'} ${openCards.has(sIdx) ? 'open' : ''} ${isModified ? 'modified' : ''}`;
+        
+        card.innerHTML = `
+            <div class="card-header" onclick="toggleCard(${sIdx})">
+                <input type="checkbox" ${s.enabled ? 'checked' : ''} onclick="event.stopPropagation(); updateEnabled(${sIdx}, this.checked)">
+                <span class="toggle-label" onclick="event.stopPropagation();">Zobrazit v aplikaci</span>
+                <strong style="font-size: 1.1em; margin-left:10px;">${s.name}</strong>
+                ${isModified ? '<span class="badge-modified">✏️ Upraveno</span>' : ''}
+                <button class="btn btn-edit" style="margin-left:auto">${openCards.has(sIdx) ? 'Zavřít' : 'Nastavení'}</button>
+            </div>
+            <div class="card-content">
+                <label style="font-size: 0.85em; font-weight: bold; color: #555;">Poznámky pro učitele / Instrukce:</label>
+                <textarea class="note-area" oninput="updateS(${sIdx}, 'note', this.value)">${s.note || ''}</textarea>
+                
+                <div style="margin:15px 0 10px 0; font-weight: bold; color: #444;">Veličiny a kalibrace:</div>
+                ${s.components.map((c, cIdx) => renderComponent(sIdx, cIdx, c)).join('')}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderComponent(sIdx, cIdx, comp) {
+    const compId = `${sIdx}-${cIdx}`;
+    const isOpen = openComps.has(compId);
+    const isCalibrated = comp.correction !== "None";
+    const calClass = isCalibrated ? "active" : "none";
+    
+    return `
+        <div class="comp-item ${isOpen ? 'open' : ''}">
+            <div class="comp-header" onclick="toggleComp('${compId}')">
+                <div>
+                    <strong>${comp.quantity}</strong> 
+                    <span style="color:#888; margin-left:10px;">[ ${comp.unit || 'bez jednotky'} ]</span>
+                </div>
+                <div>
+                    <span class="badge-corr ${calClass}">Kalibrace: ${comp.correction}</span>
+                    <span style="margin-left: 10px; color: #888;">${isOpen ? '▼' : '▶'}</span>
+                </div>
+            </div>
+            <div class="comp-content" onclick="event.stopPropagation();">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div>
+                        <label style="font-size: 0.85em; font-weight:bold;">Jednotka: </label>
+                        <input type="text" class="unit-input" value="${comp.unit}" oninput="updateC(${sIdx}, ${cIdx}, 'unit', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85em; font-weight:bold;">Typ kalibrace: </label>
+                        <select onchange="changeCorrection(${sIdx}, ${cIdx}, this.value)">
+                            <option value="None" ${comp.correction === 'None' ? 'selected' : ''}>Žádná (Přímý výstup)</option>
+                            <option value="Offset" ${comp.correction === 'Offset' ? 'selected' : ''}>Posun / Offset (+a) [1 bod]</option>
+                            <option value="Linear" ${comp.correction === 'Linear' ? 'selected' : ''}>Lineární (bx+a) [2 body]</option>
+                            <option value="Quadratic" ${comp.correction === 'Quadratic' ? 'selected' : ''}>Kvadratická (cx²+bx+a) [3 body]</option>
+                        </select>
+                    </div>
+                </div>
+                ${renderCalibration(sIdx, cIdx, comp)}
+            </div>
+        </div>
+    `;
+}
+
+function renderCalibration(sIdx, cIdx, comp) {
+    if (comp.correction === "None" || !comp.points) {
+        return `<div style="color: #888; font-style: italic; font-size: 0.9em; text-align: center; padding: 10px;">Pro tento typ nejsou vyžadovány žádné kalibrační body.</div>`;
+    }
+    
+    let html = `<div style="font-size: 0.85em; font-weight: bold; margin-bottom: 5px; color: #555;">Kalibrační body:</div>`;
+    
+    html += comp.points.map((p, pIdx) => `
+        <div class="cal-row">
+            <div>Vstup (Surová data) <br><input type="number" step="any" value="${p[0]}" oninput="updateP(${sIdx}, ${cIdx}, ${pIdx}, 0, this.value)"></div>
+            <div>Požadovaný výstup (${comp.unit || 'hodnota'}) <br><input type="number" step="any" value="${p[1]}" oninput="updateP(${sIdx}, ${cIdx}, ${pIdx}, 1, this.value)"></div>
+        </div>
+    `).join('');
+    
+    return html;
+}
+
+// Změna kalibrace
+function changeCorrection(sIdx, cIdx, val) {
+    const comp = sensorsData.sensors[sIdx].components[cIdx];
+    comp.correction = val;
+    
+    if (val === "None") { delete comp.points; } 
+    else if (val === "Offset") { comp.points = [[0, 0]]; } 
+    else if (val === "Linear") { comp.points = [[0, 0], [1024, 1000]]; } 
+    else if (val === "Quadratic") { comp.points = [[0, 0], [512, 500], [1024, 1000]]; }
+    
+    markAsModified(sIdx);
+    renderDashboard(); 
+}
+
+// UI Toggles
+function toggleCard(sIdx) {
+    if (openCards.has(sIdx)) openCards.delete(sIdx);
+    else openCards.add(sIdx);
+    renderDashboard();
+}
+
+function toggleComp(compId) {
+    if (openComps.has(compId)) openComps.delete(compId);
+    else openComps.add(compId);
+    renderDashboard();
+}
+
+// Data updates
+function updateEnabled(sIdx, val) { 
+    sensorsData.sensors[sIdx].enabled = val; 
+    markAsModified(sIdx);
+    const card = document.getElementById(`sensor-card-${sIdx}`);
+    if (card) {
+        card.classList.toggle('enabled', val);
+        card.classList.toggle('disabled', !val);
+    }
+}
+
+function updateS(sIdx, f, v) { 
+    sensorsData.sensors[sIdx][f] = v; 
+    markAsModified(sIdx); 
+} 
+
+function updateC(sIdx, cIdx, f, v) { 
+    sensorsData.sensors[sIdx].components[cIdx][f] = v; 
+    markAsModified(sIdx); 
+}
+
+function updateP(sIdx, cIdx, pIdx, axis, v) { 
+    let num = v === "" ? 0 : parseFloat(v);
+    sensorsData.sensors[sIdx].components[cIdx].points[pIdx][axis] = num; 
+    markAsModified(sIdx); 
+}
+
+// Export dat
+function downloadJSON() {
+    const blob = new Blob([JSON.stringify(sensorsData, null, 4)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = originalFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+
+</body></html>

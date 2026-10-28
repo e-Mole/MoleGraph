@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>MoleGraph Configurator - Developer Mode</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #e74c3c; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 20px; color: #333; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        
+        /* Odkazy */
+        .header-links a { color: var(--accent); text-decoration: none; transition: 0.2s; }
+        .header-links a:hover { text-decoration: underline; color: #217dbb; }
+
+        /* Top Controls */
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        textarea { width: 100%; height: 120px; font-family: 'Consolas', monospace; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; padding: 10px; font-size: 12px; }
+        
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; position: sticky; top: 0; }
+        td { border-bottom: 1px solid #eee; padding: 10px; vertical-align: top; }
+        
+        /* Sensor and Components */
+        .sensor-header { background: #edf2f7; font-weight: bold; }
+        .sensor-info { font-size: 0.85em; color: #555; width: 350px; border-right: 1px solid #eee; }
+        .sensor-info textarea { height: 80px; font-size: 0.9em; margin-top: 5px; width: 95%; }
+        
+        .comp-table { margin: 0; width: 100%; border: none; }
+        .comp-row:hover { background: #fdfdfd; }
+
+        /* Calibration Points */
+        .points-editor { display: flex; flex-direction: column; gap: 5px; background: #fff9db; padding: 8px; border-radius: 6px; border: 1px solid #ffe066; min-width: 180px; }
+        .point-pair { display: flex; gap: 4px; align-items: center; margin-bottom: 2px; }
+        .point-pair input { width: 60px !important; padding: 2px; font-size: 0.9em; }
+        
+        /* Buttons */
+        .btn { padding: 10px 18px; cursor: pointer; border: none; border-radius: 6px; color: white; font-weight: 600; transition: all 0.2s; }
+        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-load { background: var(--accent); }
+        .btn-save { background: var(--success); }
+        .btn-new-sensor { background: #673ab7; }
+        .btn-add { background: var(--primary); font-size: 0.8em; padding: 6px 10px; }
+        .btn-del { background: var(--danger); font-size: 0.7em; padding: 4px 8px; }
+        .btn-activate { background: #94a3b8; font-size: 0.75em; padding: 5px; color: white; border-radius: 4px; cursor: pointer; border: none; }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; background: #e2e8f0; color: #4a5568; margin-right: 5px; }
+        input[type="text"], input[type="number"], select { border: 1px solid #cbd5e0; border-radius: 4px; padding: 6px; width: 100%; box-sizing: border-box; }
+        input.sensor-name { width: 350px; font-weight: bold; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="margin-bottom: 20px;">
+        <h1 style="margin-bottom: 5px; margin-top: 0;">🔬 MoleGraph JSON Editor <small style="font-size: 0.5em; vertical-align: middle; color: #666;">v2.1 Developer</small></h1>
+        <div class="header-links" style="font-size: 0.85em; color: #666;">
+            🔗 <a href="https://github.com/e-Mole/MoleGraph" target="_blank" style="font-weight: bold;">GitHub Project</a> &nbsp;|&nbsp; 
+            📄 <a href="https://raw.githubusercontent.com/e-Mole/MoleGraph/refs/heads/master/SerialToGraph/sensors/sensors.json" target="_blank">Default sensors.json</a>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="btn btn-load" onclick="loadJSON()">📂 Load JSON</button>
+        <button class="btn btn-save" onclick="saveJSON()">💾 Generate JSON</button>
+        <button class="btn btn-new-sensor" onclick="addNewSensor()">➕ Add New Sensor</button>
+        <div style="margin-left: auto; text-align: right;">
+            <span id="status" style="font-weight: bold; color: var(--success);"></span>
+        </div>
+    </div>
+
+    <textarea id="jsonInput" placeholder="Paste your sensors.json content here and click Load..."></textarea>
+
+    <table id="mainTable">
+        <thead>
+            <tr>
+                <th width="350">Sensor &amp; Description (Note)</th>
+                <th>Quantity</th>
+                <th>Correction</th>
+                <th>Unit</th>
+                <th>Calibration Points [x, y]</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr><td colspan="6" style="text-align:center; padding: 40px; color: #999;">No data. Paste JSON and click Load.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+let activeData = null;
+
+function loadJSON() {
+    try {
+        const val = document.getElementById('jsonInput').value;
+        if(!val.trim()) return alert("Please paste JSON text!");
+        activeData = JSON.parse(val);
+        render();
+        document.getElementById('status').innerText = "Data loaded successfully";
+    } catch (e) { 
+        alert("JSON parsing error: " + e.message); 
+    }
+}
+
+function render() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    if(!activeData) return;
+
+    activeData.sensors.forEach((s, sIdx) => {
+        const hRow = document.createElement('tr');
+        hRow.className = 'sensor-header';
+        hRow.innerHTML = `
+            <td colspan="5">
+                <span class="badge">ID: <input type="number" value="${s.id}" onchange="updateS(${sIdx}, 'id', parseInt(this.value))" style="width:60px; display:inline; border:none; background:transparent; font-weight:bold;"></span>
+                <input type="text" class="sensor-name" value="${s.name}" onchange="updateS(${sIdx}, 'name', this.value)">
+                <label style="margin-left:20px; font-size: 0.8em; cursor:pointer">
+                    <input type="checkbox" ${s.enabled ? 'checked' : ''} onchange="updateS(${sIdx}, 'enabled', this.checked)"> Enabled
+                </label>
+            </td>
+            <td>
+                <button class="btn btn-add" onclick="addComp(${sIdx})">+ Component</button>
+                <button class="btn btn-del" onclick="deleteSensor(${sIdx})" style="margin-left:5px">Delete Sensor</button>
+            </td>
+        `;
+        tbody.appendChild(hRow);
+
+        const dRow = document.createElement('tr');
+        dRow.innerHTML = `
+            <td class="sensor-info">
+                <strong>Technical Notes:</strong><br>
+                <textarea onchange="updateS(${sIdx}, 'note', this.value)" placeholder="Enter parameters, accuracy, ranges...">${s.note || ''}</textarea>
+            </td>
+            <td colspan="5" style="padding: 0;">
+                <table class="comp-table">
+                    ${s.components.map((c, cIdx) => `
+                        <tr class="comp-row">
+                            <td width="20%">${createSelect('quantities', c.quantity, v => updateC(sIdx, cIdx, 'quantity', v))}</td>
+                            <td width="20%">${createSelect('corrections', c.correction, v => updateCorrection(sIdx, cIdx, v))}</td>
+                            <td width="15%"><input type="text" value="${c.unit}" onchange="updateC(${sIdx}, ${cIdx}, 'unit', this.value)" placeholder="Unit"></td>
+                            <td width="30%">${renderPoints(sIdx, cIdx, c)}</td>
+                            <td width="15%"><button class="btn btn-del" onclick="delComp(${sIdx}, ${cIdx})">Remove</button></td>
+                        </tr>
+                    `).join('')}
+                </table>
+            </td>
+        `;
+        tbody.appendChild(dRow);
+    });
+}
+
+function renderPoints(sIdx, cIdx, comp) {
+    const points = comp.points;
+    const correction = comp.correction;
+
+    if (!points || !Array.isArray(points)) {
+        return `<button class="btn-activate" onclick="activateCalibration(${sIdx}, ${cIdx})">Activate Calibration (Points)</button>`;
+    }
+
+    let html = '<div class="points-editor">';
+    points.forEach((p, pIdx) => {
+        html += `
+            <div class="point-pair">
+                <input type="number" step="any" value="${p[0]}" onchange="updatePoint(${sIdx}, ${cIdx}, ${pIdx}, 0, this.value)" title="Raw Value (x)">
+                <input type="number" step="any" value="${p[1]}" onchange="updatePoint(${sIdx}, ${cIdx}, ${pIdx}, 1, this.value)" title="Target Value (y)">
+                <button class="btn-del" onclick="delPoint(${sIdx}, ${cIdx}, ${pIdx})">x</button>
+            </div>`;
+    });
+    html += `<button class="btn-add" style="background: #aaa; width: 100%; margin-top:5px;" onclick="addPoint(${sIdx}, ${cIdx})">+ Add Point</button></div>`;
+    return html;
+}
+
+function updateS(sIdx, f, v) { activeData.sensors[sIdx][f] = v; }
+function updateC(sIdx, cIdx, f, v) { activeData.sensors[sIdx].components[cIdx][f] = v; }
+
+function updateCorrection(sIdx, cIdx, val) {
+    activeData.sensors[sIdx].components[cIdx].correction = val;
+    if (val !== "None" && !activeData.sensors[sIdx].components[cIdx].points) {
+        activateCalibration(sIdx, cIdx);
+    } else {
+        render();
+    }
+}
+
+function activateCalibration(sIdx, cIdx) {
+    const comp = activeData.sensors[sIdx].components[cIdx];
+    if (comp.correction === "Quadratic") {
+        comp.points = [[0,0], [512, 500], [1024, 1000]];
+    } else {
+        comp.points = [[0,0], [1024, 1000]];
+    }
+    render();
+}
+
+function updatePoint(sIdx, cIdx, pIdx, axis, v) { 
+    activeData.sensors[sIdx].components[cIdx].points[pIdx][axis] = parseFloat(v); 
+}
+
+function addPoint(sIdx, cIdx) { 
+    if(!activeData.sensors[sIdx].components[cIdx].points) activeData.sensors[sIdx].components[cIdx].points = [];
+    activeData.sensors[sIdx].components[cIdx].points.push([0, 0]); 
+    render(); 
+}
+
+function delPoint(sIdx, cIdx, pIdx) { 
+    activeData.sensors[sIdx].components[cIdx].points.splice(pIdx, 1); 
+    render(); 
+}
+
+function addComp(sIdx) { 
+    activeData.sensors[sIdx].components.push({correction:"None", quantity:"RAW", unit:""}); 
+    render(); 
+}
+
+function delComp(sIdx, cIdx) { 
+    if(confirm("Really delete this component?")) {
+        activeData.sensors[sIdx].components.splice(cIdx, 1); 
+        render(); 
+    }
+}
+
+function addNewSensor() {
+    if(!activeData) return alert("Load JSON first!");
+    const maxId = activeData.sensors.length > 0 ? Math.max(...activeData.sensors.map(s => s.id)) : 100;
+    activeData.sensors.push({
+        id: maxId + 1,
+        name: "New Sensor",
+        enabled: true,
+        note: "",
+        components: [{ correction: "None", quantity: "RAW", unit: "" }]
+    });
+    render();
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+function deleteSensor(sIdx) {
+    if(confirm("Delete the entire sensor?")) {
+        activeData.sensors.splice(sIdx, 1);
+        render();
+    }
+}
+
+function createSelect(type, curr, cb) {
+    const opts = activeData[type].map(i => `<option value="${i.name}" ${i.name===curr?'selected':''}>${i.name}</option>`).join('');
+    const id = 'sel' + Math.random().toString(36).substr(2,7);
+    setTimeout(()=> { 
+        const el = document.getElementById(id); 
+        if(el) el.onchange = e => cb(e.target.value); 
+    }, 1);
+    return `<select id="${id}">${opts}</select>`;
+}
+
+function saveJSON() {
+    if(!activeData) return;
+    document.getElementById('jsonInput').value = JSON.stringify(activeData, null, 4);
+    document.getElementById('status').innerText = "JSON generated in text area above";
+    setTimeout(() => { document.getElementById('status').innerText = ""; }, 3000);
+}
+</script>
+
+
+</body></html>

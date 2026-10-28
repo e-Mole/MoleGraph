@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoleGraph on-line tools</title>
+    <script>
+        // Zjistí jazyk prohlížeče uživatele
+        var userLang = navigator.language || navigator.userLanguage;
+        var targetPath = "html/en/"; // Angličtina jako výchozí
+        
+        // Pokud je prohlížeč český nebo slovenský, přesměrujeme do CS verze
+        if (userLang.startsWith("cs") || userLang.startsWith("sk")) {
+            targetPath = "html/cs/";
+        }
+        
+        // Provede přesměrování
+        window.location.replace(targetPath);
+    </script>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 10vh; 
+            background-color: #f6f8fa;
+            color: #24292f; 
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .fallback { 
+            margin-top: 30px; 
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: inline-block;
+            max-width: 90%;
+        }
+        p {
+            margin-bottom: 25px;
+            color: #57606a;
+            line-height: 1.5;
+        }
+        a { 
+            display: inline-block;
+            background: white;
+            padding: 12px 24px;
+            color: #0969da; 
+            text-decoration: none; 
+            font-weight: bold; 
+            border-radius: 6px;
+            margin: 10px; 
+            border: 1px solid #d0d7de;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        a:hover { 
+            background: #f3f4f6;
+            border-color: #0969da;
+        }
+    </style>
+</head>
+<body>
+    <h1>MoleGraph on-line tools</h1>
+    
+    <div class="fallback">
+        <p>Loading... If you are not redirected automatically, please choose your language:<br>
+        Načítání... Pokud nebudete automaticky přesměrováni, vyberte si jazyk:</p>
+        
+        <a href="html/cs/">🇨🇿 Čeština</a>
+        <a href="html/en/">🇬🇧 English</a>
+    </div>
+</body>
+</html>

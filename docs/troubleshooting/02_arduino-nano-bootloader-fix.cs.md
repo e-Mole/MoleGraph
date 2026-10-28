@@ -59,7 +59,7 @@ nano.menu.cpu.atmega328.build.mcu=atmega328p
 ---
 
 ## 4. AVRDUDESS a kontrola Fuses & Lock bits
-1. Spusťte AVRDUDESS, zvolte programátor `Arduino as ISP` a MCU `ATmega328P`.
+1. Spusťte [AVRDUDESS](https://github.com/ZakKemble/AVRDUDESS/releases), zvolte programátor `Arduino as ISP` a MCU `ATmega328P`.
 2. Zkontrolujte a zapište správné hodnoty pojistek:
    * **Low Fuse (L):** `0xFF`
    * **High Fuse (H):** `0xDE` (zapíná 500B bootloader a BOD na 2.7V)

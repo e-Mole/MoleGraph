@@ -34,7 +34,7 @@
             align-items: center;
             border-bottom: 2px solid #d0d7de;
             padding-bottom: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         h1 { margin: 0; font-size: 2em; }
         .lang-switch {
@@ -49,18 +49,44 @@
         }
         .lang-switch:hover { background: #f3f4f6; color: #24292f; }
 
-        /* Úvodní text */
-        .intro {
-            background: #ddf4ff;
-            padding: 20px;
+        /* Varování pro vypnutý JS */
+        .no-js-warning {
+            background-color: #ffebe9;
+            border: 1px solid #ff8182;
+            color: #cf222e;
+            padding: 15px;
             border-radius: 6px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Úvodní texty a nadpisy sekcí */
+        .main-intro {
+            color: #57606a;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 1.4em;
+            color: #24292f;
+            border-bottom: 1px solid #d0d7de;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #ddf4ff;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
             color: #0969da;
             border: 1px solid #54aeff;
+            font-size: 0.95em;
         }
-        .intro p { margin: 0; }
+        .info-box p { margin: 0; }
 
-        /* Responzivní seznam nástrojů (nahrazuje tabulku) */
+        /* Responzivní seznam nástrojů */
         .tool-list {
             display: flex;
             flex-direction: column;
@@ -73,10 +99,10 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            align-items: center; /* Na PC zarovná tlačítko a text na střed */
+            align-items: center;
         }
         .tool-action {
-            flex: 0 0 250px; /* Pevná šířka levého sloupce na PC */
+            flex: 0 0 250px;
         }
         .tool-desc {
             flex: 1;
@@ -84,7 +110,7 @@
         }
         .tool-desc strong { color: #24292f; }
 
-        /* Tlačítka pro nástroje */
+        /* Tlačítka */
         .btn {
             display: inline-block;
             background: #2da44e;
@@ -104,11 +130,11 @@
         .btn-purple { background: #8250df; }
         .btn-purple:hover { background: #6639ba; }
 
-        /* Změna rozložení pro mobilní telefony */
+        /* Mobilní rozložení */
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: flex-start; gap: 15px; }
             .tool-row { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .tool-action { flex: none; width: 100%; border-right: none; }
+            .tool-action { flex: none; width: 100%; }
             .btn { width: 100%; }
         }
 
@@ -129,18 +155,44 @@
 <body>
 
     <div class="container">
+        
+        <noscript>
+            <div class="no-js-warning">
+                ⚠️ Pro správné fungování těchto nástrojů musíte mít ve svém prohlížeči povolený JavaScript.
+            </div>
+        </noscript>
+
         <div class="header">
             <h1>MoleGraph - On-line nástroje</h1>
             <a href="../en/" class="lang-switch">🇬🇧 Switch to English</a>
         </div>
 
-        <div class="intro">
-            <p><strong>Věděli jste?</strong> Nabídku čidel v aplikaci MoleGraph si můžete snadno přizpůsobit. Vše řídí konfigurační soubor <code>sensors.json</code>. Zde připravené editory vám umožní tento soubor snadno upravit a následně jím nahradit ten původní ve složce <i>sensors</i>.</p>
+        <div class="main-intro">
+            Rozcestník online nástrojů pro měřicí systém MoleGraph. Všechny uvedené aplikace běží lokálně a bezpečně přímo ve vašem internetovém prohlížeči.
+        </div>
+
+        <!-- SEKCE 1: ŽÁCI -->
+        <h2>Pro žáky</h2>
+        <div class="tool-list">
+            <div class="tool-row">
+                <div class="tool-action">
+                    <a href="URL_ZDE_COLOR_LAB" class="btn btn-purple">Color Laboratory</a>
+                </div>
+                <div class="tool-desc">
+                    <strong>Analýza a simulace barev.</strong> Nástroj pro analýzu CSV dat naměřených senzorem MoleGraph[cite: 1]. Umožňuje zkoumat měření vyzařovaného světla (např. z monitoru) i odraženého světla (z papíru)[cite: 1]. Žáci se zde seznámí se základními barevnými modely jako jsou HSV, RGB, CMYK či CIELAB a mohou využít modul pro simulaci míchání barev a výpočet odchylky reálných vzorků (ΔE)[cite: 1].
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKCE 2: UČITELÉ A VÝVOJÁŘI -->
+        <h2>Pro učitele a vývojáře</h2>
+        
+        <div class="info-box">
+            <p><strong>Věděli jste?</strong> Nabídku čidel v aplikaci MoleGraph si můžete snadno přizpůsobit. Vše řídí konfigurační soubor <code>sensors.json</code>. Zde připravené editory vám umožní tento soubor vizuálně upravit a následně jím nahradit ten původní ve složce <i>sensors</i>.</p>
         </div>
 
         <div class="tool-list">
             
-            <!-- Nástroj 1: Učitelé -->
             <div class="tool-row">
                 <div class="tool-action">
                     <a href="URL_ZDE_UCITELSKY_EDITOR" class="btn">Sensor Editor<br><small>(Pro učitele)</small></a>
@@ -150,23 +202,12 @@
                 </div>
             </div>
 
-            <!-- Nástroj 2: Vývojáři -->
             <div class="tool-row">
                 <div class="tool-action">
                     <a href="URL_ZDE_VYVOJARSKY_EDITOR" class="btn btn-blue">JSON Editor<br><small>(Pro vývojáře)</small></a>
                 </div>
                 <div class="tool-desc">
                     <strong>Kompletní kontrola.</strong> Plnohodnotný editor pro pokročilé úpravy na vývojářské úrovni. Nezbytný nástroj, pokud máte upravený firmware <i>MoleGraphAuto</i> s vlastními čidly a potřebujete je korektně přidat do aplikace.
-                </div>
-            </div>
-
-            <!-- Nástroj 3: Color Lab -->
-            <div class="tool-row">
-                <div class="tool-action">
-                    <a href="URL_ZDE_COLOR_LAB" class="btn btn-purple">Color Laboratory</a>
-                </div>
-                <div class="tool-desc">
-                    <strong>Hravé experimenty.</strong> Interaktivní prostředí pro žáky, kde mohou zkoumat barvy, hrát si s jejich mícháním a objevovat fyzikální zákonitosti zábavnou formou.
                 </div>
             </div>
 

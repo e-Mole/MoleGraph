@@ -16,6 +16,7 @@ By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes so
 We provide a set of interactive online tools that run directly and securely in your web browser. Available in both **English and Czech**:
 
 👉 **[MoleGraph Online Tools Hub](https://e-mole.github.io/MoleGraph/)**
+- **Chemistry Laboratory:** An interactive environment for spectrophotometric analysis (Beer-Lambert law, transmittance, absorbance, and RGBC channel comparison) designed for data measured by the TCS34725 sensor.
 - **Color Laboratory:** An interactive environment for color analysis and simulation (HSV, RGB, CMYK, CIELAB) designed for data measured by the TCS34725 sensor.
 - **Sensor Editor (Teachers):** A simplified tool to hide unused sensors or modify text labels for younger students.
 - **JSON Config Editor (Developers):** An advanced editor for customizing the `sensors.json` file when adding new sensors to custom firmware.

@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MoleGraph Chemistry Laboratory: Spectrophotometry</title>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; margin: 0; }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
+        .subtitle { color: #555; text-align: center; margin-bottom: 20px; font-size: 0.9em; }
+        
+        .layout-container { display: flex; flex-direction: column; gap: 20px; max-width: 1500px; margin: 0 auto; transition: 0.3s; }
+        .layout-left { display: flex; flex-direction: column; gap: 15px; transition: 0.3s; }
+        .layout-right { display: flex; flex-direction: column; gap: 15px; transition: 0.3s; }
+        
+        /* Default "Standard" mode: Two columns on large screens */
+        .layout-container.mode-standard { flex-direction: column; }
+        @media(min-width: 1024px) {
+            .layout-container.mode-standard { flex-direction: row; align-items: flex-start; }
+            .layout-container.mode-standard .layout-left { flex: 1.2; min-width: 0; }
+            .layout-container.mode-standard .layout-right { flex: 1; min-width: 0; position: sticky; top: 20px; }
+        }
+        
+        /* Analytical mode: Full width (1 column vertically) everywhere */
+        .layout-container.mode-analytic { flex-direction: column; }
+        .layout-container.mode-analytic .layout-left { width: 100%; }
+        .layout-container.mode-analytic .layout-right { width: 100%; position: static; }
+        
+        .step-title { background: #34495e; color: white; padding: 12px 20px; border-radius: 8px; margin: 0; font-size: 1.2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .drop-zone { width: 100%; height: 70px; border: 3px dashed #3498db; border-radius: 10px; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #2980b9; cursor: pointer; transition: 0.2s; box-sizing: border-box;}
+        .drop-zone:hover { background-color: #e1e8ed; }
+        .drop-zone.dragover { background-color: #d6eaf8; border-color: #2980b9; }
+        
+        .file-info { text-align: center; color: #2c3e50; font-weight: bold; font-size: 0.95rem; margin-top: -5px; margin-bottom: 5px; }
+        
+        .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        th, td { padding: 8px; text-align: center; border-bottom: 1px solid #ddd; position: relative; }
+        th { background-color: #f8f9fa; color: #2c3e50; font-size: 0.85rem; }
+        input.conc-input { width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; color: #2c3e50;}
+        .result-conc { font-weight: bold; color: #c0392b; font-size: 1.1em; }
+        
+        .channel-selector { display: flex; gap: 15px; justify-content: center; margin: 15px auto 25px auto; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 1500px; }
+        .channel-selector label { font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 5px; transition: 0.2s;}
+        .channel-selector label:hover { background: #e9ecef; }
+        
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 5px; }
+        .dot-green { background-color: #2ecc71; box-shadow: 0 0 4px #2ecc71; }
+        .dot-red { background-color: #e74c3c; box-shadow: 0 0 4px #e74c3c; }
+        .dot-yellow { background-color: #f1c40f; box-shadow: 0 0 4px #f1c40f; }
+        .dot-black { background-color: #333; box-shadow: 0 0 4px #333; }
+        
+        .info-box { background: #e8f4f8; border-left: 4px solid #3498db; padding: 10px 15px; margin-bottom: 15px; font-size: 0.9rem; }
+        .equation { font-size: 1.1rem; font-weight: bold; color: #2c3e50; text-align: center; margin: 10px 0; padding: 10px; background: #fdfefe; border: 1px dashed #bdc3c7; border-radius: 5px; }
+        .epsilon-info { font-size: 0.95rem; color: #16a085; text-align: center; margin-top: 5px; font-weight: bold; }
+        
+        .btn-group { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
+        .btn { padding: 10px 20px; font-weight: bold; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+        .btn-pdf { background-color: #8e44ad; }
+        .btn-png { background-color: #2980b9; }
+        .btn-compare { background-color: #f39c12; }
+        .btn-save { background-color: #27ae60; }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        
+        .accordion { background-color: #eee; color: #444; cursor: pointer; padding: 15px; width: 100%; border: none; text-align: left; outline: none; font-size: 1rem; font-weight: bold; border-radius: 5px; transition: 0.4s; margin-top: 20px; }
+        .active, .accordion:hover { background-color: #ccc; }
+        .panel-accordion { padding: 0 15px; background-color: white; display: none; overflow: hidden; border: 1px solid #eee; border-top: none; border-radius: 0 0 5px 5px; }
+        .color-patch { width: 50px; height: 50px; border-radius: 5px; border: 1px solid #ccc; display: inline-block; vertical-align: middle; }
+        .color-info { display: inline-block; vertical-align: middle; margin-left: 15px; }
+        
+        /* Analytical mode */
+        .mode-selector { margin-bottom: 20px; text-align: center; }
+        .mode-btn { background-color: #2c3e50; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 0 5px; transition: 0.2s; }
+        .mode-btn.active { background-color: #27ae60; }
+        .mode-btn:hover { filter: brightness(1.2); }
+        
+        .view-options { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; font-size: 0.9rem; background: #e8f8f5; padding: 10px; border-radius: 8px; border: 1px solid #1abc9c; }
+        .view-options label { cursor: pointer; font-weight: bold; color: #16a085; }
+        
+        .diff-col { background-color: #fcf3cf; }
+        .raw-col { background-color: #e8f8f5; }
+        .hw-col { background-color: #fef9e7; }
+        
+        .warning-icon { color: #f39c12; font-weight: bold; font-size: 1.1em; cursor: help; margin-left: 5px; border-bottom: 1px dotted #f39c12; }
+        
+        /* Modal Overlay for RGBC comparison */
+        #compare-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; display: none; overflow-y: auto; padding: 30px; box-sizing: border-box; }
+        .close-btn { position: absolute; top: 20px; right: 30px; background: #c0392b; color: white; font-size: 1.2rem; font-weight: bold; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
+        .close-btn:hover { background: #a93226; }
+        
+        .chart-toggle-btn { background-color: #8e44ad; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; transition: 0.2s; }
+        .chart-toggle-btn:hover { filter: brightness(1.1); }
+
+        /* Project Drop Zone */
+        #project-load-container { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        #drop-zone-project { width: 100%; max-width: 600px; padding: 10px; border: 2px dashed #2ecc71; border-radius: 8px; background-color: #eafaf1; color: #27ae60; font-weight: bold; text-align: center; cursor: pointer; transition: 0.2s; }
+        #drop-zone-project:hover { background-color: #d5f5e3; }
+        #drop-zone-project.dragover { background-color: #abebc6; border-color: #2ecc71; }
+        
+        /* Tisk */
+        @media screen {
+            .print-only { display: none !important; }
+        }
+        
+        @media print {
+            @page { size: landscape; margin: 1cm; }
+            body { background: white; padding: 0; font-size: 10pt; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            span.print-only { display: inline !important; font-weight: bold; }
+            
+            .layout-container { display: flex; flex-direction: row; gap: 15px; max-width: 100%; width: 100%; align-items: flex-start; }
+            .layout-container.mode-analytic { flex-direction: column; }
+            
+            .layout-left { flex: 1.5; } 
+            .layout-right { flex: 1; position: static; }
+            
+            .panel { box-shadow: none; border: 1px solid #aaa; margin-bottom: 15px; padding: 10px; page-break-inside: avoid; }
+            .step-title { background: white; color: black; border-bottom: 2px solid #333; box-shadow: none; padding: 5px 0; margin-top: 10px; font-size: 12pt; font-weight: bold; }
+            
+            table { border-collapse: collapse; width: 100%; font-size: 8pt; }
+            th, td { border: 1px solid #aaa; padding: 4px; }
+            th { background-color: #eee; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            #canvas-container { height: 400px !important; page-break-inside: avoid; display: block; }
+            
+            .diff-col { background-color: #fcf3cf !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .raw-col { background-color: #e8f8f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .hw-col { background-color: #fef9e7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="print-only" style="margin-top:0;">Protocol: Spectrophotometric Determination of Concentration</h1>
+    <h1 class="no-print">MoleGraph Chemistry Laboratory: Spectrophotometry</h1>
+    <div class="subtitle no-print">Data processing for determining the concentration of colored solutions (v. 1.0), primarily intended for data from the TCS34725 sensor </div>
+    
+    <!-- Load Project -->
+    <div id="project-load-container" class="no-print">
+        <div id="drop-zone-project">
+            📂 Load Saved Project (.json) - Drag & Drop or Click
+        </div>
+        <input type="file" id="file-project" accept=".json" style="display: none;">
+        <div id="file-name-project" class="file-info no-print" style="display:none;">📄 <span></span></div>
+    </div>
+
+    <!-- Tools -->
+    <div id="advanced-tools" style="display:none;">
+        <div class="mode-selector no-print" id="mode-selector-div" style="display:none;">
+            <span style="font-weight:bold; margin-right:10px;">Display Mode:</span>
+            <button class="mode-btn active" id="btn-mode-standard" onclick="setAppMode('standard')">Standard</button>
+            <button class="mode-btn" id="btn-mode-analytic" onclick="setAppMode('analytic')">Analytical (Comparison of RAW vs HW Transmittance)</button>
+        </div>
+        
+        <div class="view-options no-print" id="analytic-options-div" style="display:none;">
+            <span style="font-weight:bold; margin-right:10px; color:#2c3e50;">Show sections in table:</span>
+            <label><input type="checkbox" id="chk-trans" checked onchange="recalculateAll()"> Transmittance</label>
+            <label><input type="checkbox" id="chk-abs" checked onchange="recalculateAll()"> Absorbance</label>
+        </div>
+        
+        <div class="channel-selector no-print" id="channel-radios">
+            <span style="font-weight:bold; margin-right:10px;">Analytical Channel:</span>
+            <label style="color:#7f8c8d;"><input type="radio" name="channel" value="Clear" checked onchange="recalculateAll()"> Clear (Full Spectrum)</label>
+            <label style="color:#c0392b;"><input type="radio" name="channel" value="Red" onchange="recalculateAll()"> Red</label>
+            <label style="color:#27ae60;"><input type="radio" name="channel" value="Green" onchange="recalculateAll()"> Green</label>
+            <label style="color:#2980b9;"><input type="radio" name="channel" value="Blue" onchange="recalculateAll()"> Blue</label>
+        </div>
+    </div>
+    
+    <div class="layout-container mode-standard" id="main-layout">
+        <!-- LEFT COLUMN: TABLES -->
+        <div class="layout-left">
+            <div class="step-title">Step 1: Measured Data (Calibration)</div>
+            <div id="drop-zone-calib" class="drop-zone no-print">Upload data (CSV) - Drag and drop or click</div>
+            <input type="file" id="file-calib" accept=".csv" style="display: none;">
+            <div id="file-name-calib" class="file-info no-print" style="display:none;">📄 <span></span></div>
+            
+            <div class="panel" id="panel-calib" style="display:none;">
+                <h2 id="experiment-title-calib" style="margin-top:0; color:#2980b9;">Dataset (Calibration)</h2>
+                <div class="info-box no-print" id="info-box-calib">
+                    <b>Instructions:</b> 
+                    <span id="instr-blank">1. Select the row containing the <b>Blank sample</b>.<br></span>
+                    <span id="instr-step-num">2.</span> For known samples, enter their concentration (use a dot or comma as a decimal separator).<br>
+                    <span id="instr-step-num2">3.</span> Samples with an empty concentration field will be ignored in calculations.<br>
+<span style="font-size: 0.8em; color: #7f8c8d; display: block; margin-top: 5px;">
+    <em>Note: For our purposes, we do not use dark current calibration because the TCS34725 sensor reliably returns zero when covered.</em>
+</span>
+                </div>
+                <table id="table-calib">
+                    <thead id="thead-calib">
+                        <!-- Dynamically generated -->
+                    </thead>
+                    <tbody id="tbody-calib"></tbody>
+                </table>
+                
+                <button class="accordion no-print" id="acc-btn">Physical Color Analysis of the Solution</button>
+                <div class="panel-accordion no-print" id="acc-panel">
+                    <div style="margin: 15px 0;">
+                        <div id="color-patch" class="color-patch" style="background: white;"></div>
+                        <div class="color-info">
+                            <strong>Estimated Solution Color (Hue):</strong> <span id="color-hue">--</span>°<br>
+                            <strong>Measurement Recommendation:</strong> <span id="color-recom">--</span><br>
+                            <span style="font-size: 0.8em; color: #7f8c8d;">(Note: Color estimation and recommendation work reliably only when the sample is illuminated by a white, broad-spectrum LED.)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-title">Step 2: Measurement of Unknown Samples (Optional)</div>
+            <div id="drop-zone-unknown" class="drop-zone no-print">Upload additional unknown samples (CSV) - Drag and drop or click</div>
+            <input type="file" id="file-unknown" accept=".csv" style="display: none;">
+            <div id="file-name-unknown" class="file-info no-print" style="display:none;">📄 <span></span></div>
+            
+            <div class="panel" id="panel-unknown" style="display:none;">
+                <h2 id="experiment-title-unknown" style="margin-top:0; color:#2980b9;">Dataset (Unknown Samples)</h2>
+                <div class="info-box no-print">
+                    <b>Instructions:</b> This table automatically calculates concentrations based on the equation from Step 1. Its values do not affect the calibration line.
+                </div>
+                <table id="table-unknown">
+                    <thead id="thead-unknown">
+                        <!-- Dynamically generated -->
+                    </thead>
+                    <tbody id="tbody-unknown"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- RIGHT COLUMN: GRAPH -->
+        <div class="layout-right">
+            <div class="step-title">Results and Graph</div>
+            <div class="panel" id="panel-results">
+                <div id="equation-container">
+                    <div class="equation" id="equation-display">Waiting for calibration data...</div>
+                    <div class="equation" id="equation-display-hw" style="display:none; color: #d35400;"></div>
+                </div>
+                
+                <div id="canvas-container" style="position: relative; height: 480px; width: 100%; background: white;">
+                    <canvas id="calibrationChart"></canvas>
+                </div>
+                
+                <div id="epsilon-container" style="margin-top: 10px; margin-bottom: 15px;">
+                    <div class="epsilon-info" id="epsilon-display" style="display:none;"></div>
+                    <div class="epsilon-info" id="epsilon-display-hw" style="display:none; color: #e67e22;"></div>
+                </div>
+                
+                <button class="chart-toggle-btn no-print" id="btn-toggle-chart" onclick="toggleChartType()">📈 Switch Graph to Transmittance</button>
+                
+                <!-- AKORDEON PRO TEORII -->
+                <button class="accordion no-print" id="theory-btn" style="margin-top: 5px; background-color: #d6eaf8; color: #2980b9; border: 1px solid #3498db;">📘 Background Theory: Why Absorbance?</button>
+                <div class="panel-accordion no-print" id="theory-panel" style="border: 1px solid #3498db; border-top: none;">
+ <div style="margin: 15px 0; font-size: 0.95rem; line-height: 1.5;">
+    <p><b>Transmittance (T)</b><br>
+    Expresses the transmittance of a solution. It is the ratio of the light intensity that passed through the sample (<i>I</i>) to the light intensity that entered it from the light source (<i>I₀</i>):</p>
+    <div class="equation">T = I / I₀</div>
+    <p>It is often given in percentages (0–100%). However, as the concentration of a substance increases, transmittance does not decrease linearly, but exponentially.</p>
+    
+    <p><b>Absorbance (A)</b><br>
+    Describes how much light the solution absorbed. We obtain it by converting transmittance using the negative decadic logarithm:</p>
+    <div class="equation">A = -log₁₀(T)</div>
+    
+    <p><b>Why do we plot the graph using Absorbance and not Transmittance?</b><br>
+    Thanks to this conversion, the <b>Beer-Lambert Law</b> applies. It states that absorbance, unlike transmittance, is <i>directly proportional</i> to concentration. Thus, we get an easily readable line in the graph described by the equation:</p>
+    <div class="equation">A = &epsilon; &middot; c &middot; l</div>
+    
+    <p>Where <b>c</b> is concentration, <b>l</b> is the path length (cuvette thickness), and <b>&epsilon;</b> is a specific constant, the <b>molar attenuation coefficient</b>, indicating how strongly a substance absorbs light of a given color. The higher it is, the more sensitive the measurement is even for low concentrations.<br>
+    <b>Practical application:</b> If we use a standard cuvette with a thickness of exactly <i>l</i> = 1 cm, the equation simplifies to <i>A = &epsilon; &middot; c</i>. <b>The slope of our calibration line then corresponds directly to the coefficient &epsilon;.</b> If we know its value from tables, we can calculate the unknown concentration without needing to create a calibration curve!</p>
+</div>
+                </div>
+                
+                <div class="btn-group no-print">
+                    <button class="btn btn-pdf" onclick="window.print()">🖨️ Print Protocol</button>
+                    <button class="btn btn-png" onclick="exportChartPNG()">🖼️ Download Graph (PNG)</button>
+                    <button class="btn btn-compare" onclick="openCompareModal()">📊 Compare RGBC Channels</button>
+                    <button class="btn btn-save" onclick="saveProjectJSON()">💾 Save Project (.json)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for channel comparison -->
+    <div id="compare-modal" class="no-print">
+        <button class="close-btn" onclick="closeCompareModal()">Close Comparison ✖</button>
+        <h1 style="color:#2c3e50;">Spectral Analysis: Comparison of RGBC Channels</h1>
+        <div class="subtitle" id="compare-subtitle">Visual demonstration of the effect of wavelength (light color) selection on the slope and accuracy of calibration.</div>
+        
+        <div class="panel" style="max-width: 1400px; margin: 0 auto;">
+            <div style="position: relative; height: 500px; width: 100%; background: white;">
+                <canvas id="compareChart"></canvas>
+            </div>
+            
+            <h3 style="margin-top: 30px; color:#2980b9; text-align:center;">Calculated concentrations of unknown samples across different channels</h3>
+            <table id="table-compare">
+                <thead id="thead-compare"></thead>
+                <tbody id="tbody-compare"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        let calibData = [];
+        let unknownData = [];
+        let calibBlankIndex = 0;
+        let chartInstance = null;
+        let compareChartInstance = null;
+        
+        // Data modes
+        let hasRawData = false;
+        let hasHwData = false;
+        let appMode = "standard";
+        let isRawBase = true;
+        let showTransmittanceChart = false;
+        
+        let expTitleCalib = "Calibration Data";
+        let expTitleUnknown = "Unknown samples";
+        let currentDecimalPrecision = 2;
+        let currentTransPrecision = 2;
+        let currentAbsPrecision = 4;
+        
+        window.onbeforeprint = function() { document.querySelector(".print-only").style.display = "block"; };
+        window.onafterprint = function() { document.querySelector(".print-only").style.display = "none"; };
+        
+        document.getElementById("acc-btn").addEventListener("click", function() {
+            this.classList.toggle("active");
+            let panel = document.getElementById("acc-panel");
+            panel.style.display = (panel.style.display === "block") ? "none" : "block";
+        });
+        
+        document.getElementById("theory-btn").addEventListener("click", function() {
+            this.classList.toggle("active");
+            let panel = document.getElementById("theory-panel");
+            panel.style.display = (panel.style.display === "block") ? "none" : "block";
+        });
+        
+        function toggleChartType() {
+            showTransmittanceChart = !showTransmittanceChart;
+            let btn = document.getElementById("btn-toggle-chart");
+            if(showTransmittanceChart) {
+                btn.innerHTML = "📉 Switch Graph to Absorbance";
+                btn.style.backgroundColor = "#e67e22";
+            } else {
+                btn.innerHTML = "📈 Switch Graph to Transmittance";
+                btn.style.backgroundColor = "#8e44ad";
+            }
+            drawChart();
+        }
+        
+        function setAppMode(mode) {
+            appMode = mode;
+            document.getElementById("btn-mode-standard").classList.remove("active");
+            document.getElementById("btn-mode-analytic").classList.remove("active");
+            document.getElementById("btn-mode-" + mode).classList.add("active");
+            
+            let optDiv = document.getElementById("analytic-options-div");
+            let layout = document.getElementById("main-layout");
+            
+            if(mode === "analytic") {
+                document.getElementById("instr-blank").style.display = "inline";
+                document.getElementById("instr-step-num").innerText = "2.";
+                document.getElementById("instr-step-num2").innerText = "3.";
+                document.getElementById("equation-display-hw").style.display = "block";
+                document.getElementById("epsilon-display-hw").style.display = "block";
+                optDiv.style.display = "flex";
+                
+                layout.classList.remove("mode-standard");
+                layout.classList.add("mode-analytic");
+            } else {
+                document.getElementById("instr-blank").style.display = isRawBase ? "inline" : "none";
+                document.getElementById("instr-step-num").innerText = isRawBase ? "2." : "1.";
+                document.getElementById("instr-step-num2").innerText = isRawBase ? "3." : "2.";
+                document.getElementById("equation-display-hw").style.display = "none";
+                document.getElementById("epsilon-display-hw").style.display = "none";
+                optDiv.style.display = "none";
+                
+                layout.classList.remove("mode-analytic");
+                layout.classList.add("mode-standard");
+            }
+            
+            buildTableHeaders();
+            recalculateAll();
+        }
+        
+        function setupDropZone(zoneId, inputId, processCallback) {
+            const dropZone = document.getElementById(zoneId);
+            const fileInput = document.getElementById(inputId);
+            
+            function handleFile(file) {
+                document.getElementById("file-name-" + zoneId.replace("drop-zone-", "")).style.display = "block";
+                document.getElementById("file-name-" + zoneId.replace("drop-zone-", "")).querySelector("span").innerText = file.name;
+                
+                if (zoneId === "drop-zone-project") {
+                    document.getElementById("file-name-calib").style.display = "none";
+                    document.getElementById("file-name-unknown").style.display = "none";
+                } else {
+                    document.getElementById("file-name-project").style.display = "none";
+                }
+                
+                processCallback(file);
+            }
+            
+            dropZone.addEventListener("click", () => fileInput.click());
+            dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
+            dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+            dropZone.addEventListener("drop", (e) => { 
+                e.preventDefault(); 
+                dropZone.classList.remove("dragover"); 
+                if (e.dataTransfer.files.length > 0) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            fileInput.addEventListener("change", (e) => { 
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+                fileInput.value = ""; 
+            });
+        }
+        
+        setupDropZone("drop-zone-calib", "file-calib", (f) => processFile(f, "calib"));
+        setupDropZone("drop-zone-unknown", "file-unknown", (f) => processFile(f, "unknown"));
+        setupDropZone("drop-zone-project", "file-project", (f) => processProjectFile(f));
+        
+        function processProjectFile(file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let project = JSON.parse(e.target.result);
+                    
+                    if (!project.calibData) throw new Error("Invalid format");
+                    
+                    calibData = project.calibData;
+                    unknownData = project.unknownData || [];
+                    expTitleCalib = project.expTitleCalib || "Calibration Data";
+                    expTitleUnknown = project.expTitleUnknown || "Unknown samples";
+                    hasRawData = project.hasRawData || false;
+                    hasHwData = project.hasHwData || false;
+                    isRawBase = project.isRawBase !== undefined ? project.isRawBase : true;
+                    showTransmittanceChart = project.showTransmittanceChart || false;
+                    calibBlankIndex = project.calibBlankIndex !== undefined ? project.calibBlankIndex : 0;
+                    
+                    document.getElementById("experiment-title-calib").innerText = expTitleCalib;
+                    document.getElementById("experiment-title-unknown").innerText = expTitleUnknown;
+                    
+                    document.getElementById("advanced-tools").style.display = "block";
+                    if (hasRawData && hasHwData) {
+                        document.getElementById("mode-selector-div").style.display = "block";
+                    } else {
+                        document.getElementById("mode-selector-div").style.display = "none";
+                    }
+                    
+                    let radios = document.getElementsByName("channel");
+                    for(let i=0; i<radios.length; i++) {
+                        radios[i].checked = (radios[i].value === (project.selectedChannel || "Clear"));
+                    }
+                    
+                    let btn = document.getElementById("btn-toggle-chart");
+                    if(showTransmittanceChart) {
+                        btn.innerHTML = "📉 Switch Graph to Absorbance";
+                        btn.style.backgroundColor = "#e67e22";
+                    } else {
+                        btn.innerHTML = "📈 Switch Graph to Transmittance";
+                        btn.style.backgroundColor = "#8e44ad";
+                    }
+                    
+                    setAppMode(project.appMode || "standard");
+                    
+                    document.getElementById("panel-calib").style.display = "block";
+                    if (unknownData.length > 0) {
+                        document.getElementById("panel-unknown").style.display = "block";
+                    } else {
+                        document.getElementById("panel-unknown").style.display = "none";
+                    }
+                    
+                    recalculateAll();
+                } catch (err) {
+                    alert("Error loading project. Ensure the file is a valid JSON generated by this application.");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        window.saveProjectJSON = function() {
+            if(calibData.length === 0) {
+                alert("There is no calibration data to save.");
+                return;
+            }
+            let project = {
+                appVersion: "1.0",
+                expTitleCalib: expTitleCalib,
+                expTitleUnknown: expTitleUnknown,
+                calibData: calibData,
+                unknownData: unknownData,
+                calibBlankIndex: calibBlankIndex,
+                hasRawData: hasRawData,
+                hasHwData: hasHwData,
+                isRawBase: isRawBase,
+                appMode: appMode,
+                selectedChannel: getActiveChannel(),
+                showTransmittanceChart: showTransmittanceChart
+            };
+            
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(project, null, 2));
+            let downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            let safeName = expTitleCalib.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+            downloadAnchorNode.setAttribute("download", "MoleGraph_" + (safeName || "project") + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function processFile(file, type) {
+            Papa.parse(file, {
+                delimiter: ";",
+                skipEmptyLines: true,
+                complete: function(results) { parseCSVData(results.data, type); }
+            });
+        }
+        
+        function parseCSVData(rows, type) {
+            let headerIdx = -1;
+            for(let i=0; i<rows.length; i++){
+                let rStr = rows[i].join("").toLowerCase();
+                if(rStr.includes("red") || rStr.includes("clear")) { headerIdx = i; break; }
+            }
+            if(headerIdx === -1) { 
+                alert("Color columns not found in CSV!"); return; 
+            }
+            
+            if (headerIdx > 0) {
+                let firstLine = rows[0].join("").replace(/;/g, "").trim();
+                if (firstLine !== "") {
+                    if (type === "calib") {
+                        expTitleCalib = firstLine;
+                        document.getElementById("experiment-title-calib").innerText = expTitleCalib;
+                    } else {
+                        expTitleUnknown = firstLine;
+                        document.getElementById("experiment-title-unknown").innerText = expTitleUnknown;
+                    }
+                }
+            }
+            
+            let headers = rows[headerIdx].map(h => h.trim().toLowerCase());
+            let idxRawR = headers.findIndex(h => h === "red" || h === "r_raw");
+            let idxRawG = headers.findIndex(h => h === "green" || h === "g_raw");
+            let idxRawB = headers.findIndex(h => h === "blue" || h === "b_raw");
+            let idxRawC = headers.findIndex(h => h === "clear" || h === "c_raw");
+            
+            let idxTrR = headers.findIndex(h => h.includes("t (red)") || h.includes("t(red)"));
+            let idxTrG = headers.findIndex(h => h.includes("t (green)") || h.includes("t(green)"));
+            let idxTrB = headers.findIndex(h => h.includes("t (blue)") || h.includes("t(blue)"));
+            let idxTrC = headers.findIndex(h => h.includes("t (clear)") || h.includes("t(clear)"));
+            
+            hasRawData = (idxRawR !== -1 && idxRawC !== -1);
+            hasHwData = (idxTrR !== -1 && idxTrC !== -1);
+            
+            if (!hasRawData && !hasHwData) {
+                alert("Missing required data (RAW or T%) for analysis."); return;
+            }
+            
+            if (type === "calib") {
+                isRawBase = hasRawData; // Prefer RAW if available as base
+                
+                document.getElementById("advanced-tools").style.display = "block";
+                
+                if (hasRawData && hasHwData) {
+                    document.getElementById("mode-selector-div").style.display = "block";
+                } else {
+                    document.getElementById("mode-selector-div").style.display = "none";
+                    appMode = "standard";
+                }
+                setAppMode(appMode);
+            }
+            
+            let dataArray = [];
+            let maxC = -1;
+            let maxCIdx = 0;
+            
+            for(let i = headerIdx + 1; i < rows.length; i++) {
+                let r = rows[i];
+                if(r.length < 2) continue; 
+                
+                let rawObj = { R: 0, G: 0, B: 0, C: 0 };
+                let hwObj = { R: 0, G: 0, B: 0, C: 0 };
+                let isValidRow = false;
+                
+                if (hasRawData) {
+                    rawObj.R = parseFloat(r[idxRawR].replace(",", "."));
+                    rawObj.G = parseFloat(r[idxRawG].replace(",", "."));
+                    rawObj.B = parseFloat(r[idxRawB].replace(",", "."));
+                    rawObj.C = parseFloat(r[idxRawC].replace(",", "."));
+                    if (!isNaN(rawObj.C)) isValidRow = true;
+                }
+                
+                if (hasHwData) {
+                    hwObj.R = parseFloat(r[idxTrR].replace(",", "."));
+                    hwObj.G = parseFloat(r[idxTrG].replace(",", "."));
+                    hwObj.B = parseFloat(r[idxTrB].replace(",", "."));
+                    hwObj.C = parseFloat(r[idxTrC].replace(",", "."));
+                    if (!isNaN(hwObj.C)) isValidRow = true;
+                }
+                
+                if (!isValidRow) continue;
+                
+                dataArray.push({ id: i - headerIdx, raw: rawObj, hw: hwObj, concInput: "" });
+                
+                // Find max C for blank. If RAW, find max RAW C.
+                if (hasRawData) {
+                    if(rawObj.C > maxC) { maxC = rawObj.C; maxCIdx = dataArray.length - 1; }
+                } else {
+                    if(hwObj.C > maxC) { maxC = hwObj.C; maxCIdx = dataArray.length - 1; }
+                }
+            }
+            
+            if (type === "calib") {
+                calibData = dataArray;
+                calibBlankIndex = maxCIdx;
+                document.getElementById("panel-calib").style.display = "block";
+            } else {
+                if(calibData.length === 0) { alert("Please upload calibration data first (Step 1)."); return; }
+                unknownData = dataArray;
+                document.getElementById("panel-unknown").style.display = "block";
+            }
+            
+            recalculateAll();
+        }
+        
+        function buildTableHeaders() {
+            let ch = getActiveChannel();
+            let headCalib = document.getElementById("thead-calib");
+            let headUnknown = document.getElementById("thead-unknown");
+            
+            let showTrans = document.getElementById("chk-trans") ? document.getElementById("chk-trans").checked : true;
+            let showAbs = document.getElementById("chk-abs") ? document.getElementById("chk-abs").checked : true;
+            
+            if (appMode === "analytic") {
+                // Headers pro kalibraci
+                let thT = showTrans ? `
+                    <th class="raw-col" title="Accurately calculated from Blank">T (RAW) [%]</th>
+                    <th class="hw-col" title="Sensor value">T (HW) [%]</th>
+                    <th class="diff-col" title="Difference T_HW - T_RAW">Δ T [%]</th>` : '';
+                
+                let thA = showAbs ? `
+                    <th class="raw-col" title="Absorbance (RAW)">A (RAW)</th>
+                    <th class="hw-col" title="Absorbance (HW)">A (HW)</th>
+                    <th class="diff-col" title="Difference A_HW - A_RAW">Δ A</th>` : '';
+                    
+                // Calibration (cleaned up, without reverse calculations)
+                headCalib.innerHTML = `
+                    <tr>
+                        <th id="th-blank" class="no-print" title="Blank sample">Blank</th>
+                        <th>Sample</th>
+                        <th class="raw-col">RAW Signal (${ch})</th>
+                        ${thT}
+                        ${thA}
+                        <th style="min-width: 100px;">Given Conc. (c) [mol/l]</th>
+                    </tr>
+                `;
+                
+                // Unknown samples (contain full concentration analysis)
+                headUnknown.innerHTML = `
+                    <tr>
+                        <th>Sample</th>
+                        <th class="raw-col">RAW Signal (${ch})</th>
+                        ${thT}
+                        ${thA}
+                        <th class="raw-col" title="Recalculated from RAW curve">c (RAW) [mol/l]</th>
+                        <th class="hw-col" title="Recalculated from HW curve">c (HW) [mol/l]</th>
+                        <th class="diff-col" title="Absolute difference">Δ c</th>
+                        <th class="diff-col" title="Relative concentration error">Error [%]</th>
+                    </tr>
+                `;
+            } else {
+                let sigName = isRawBase ? `RAW Signal (${ch})` : `Transmittance T (%) (${ch})`;
+                let absName = `Absorbance A (${ch})`;
+                let blankTh = isRawBase ? `<th id="th-blank" class="no-print" title="Blank sample for I0 determination">Blank</th>` : ``;
+                
+                headCalib.innerHTML = `
+                    <tr>
+                        ${blankTh}
+                        <th>Sample</th>
+                        <th class="signal-header">${sigName}</th>
+                        <th class="abs-header">${absName}</th>
+                        <th>Concentration (c) [mol/l]</th>
+                    </tr>
+                `;
+                headUnknown.innerHTML = `
+                    <tr>
+                        <th>Sample</th>
+                        <th class="signal-header">${sigName}</th>
+                        <th class="abs-header">${absName}</th>
+                        <th>Calculated Conc. (c) [mol/l]</th>
+                    </tr>
+                `;
+            }
+        }
+        
+        function getTrafficLightHtml(val, ch, isRaw) {
+            if (val <= 0) return "<span class='dot dot-black' title='Zero transmittance (Darkness or completely opaque sample).'></span>";
+            if (isRaw) {
+                let lowWarn = ch === "Clear" ? 3000 : 1000; 
+                if(val > 65000) return "<span class='dot dot-red' title='Saturation! Sensor is overexposed.'></span>";
+                if(val < lowWarn) return "<span class='dot dot-yellow' title='Weak signal. Risk of noise.'></span>";
+                return "<span class='dot dot-green' title='Ideal signal range.'></span>";
+            } else {
+                if(val > 105) return "<span class='dot dot-red' title='Error: Transmittance over 105%'></span>";
+                if(val < 1) return "<span class='dot dot-yellow' title='Weak signal: Transmittance below 1%'></span>";
+                return "<span class='dot dot-green' title='Ideal range.'></span>";
+            }
+        }
+        
+        function calculateAbsorbance(val, blankVal, isRaw) {
+            if (val <= 0) return "> 3.0";
+            if (isRaw && blankVal <= 0) return "> 3.0";
+            let t = isRaw ? (val / blankVal) : (val / 100);
+            if (t > 1.05) t = 1.05; 
+            return -Math.log10(t);
+        }
+        
+        function calculateTransmittancePercent(val, blankVal) {
+            if (blankVal <= 0) return 0;
+            return (val / blankVal) * 100;
+        }
+        
+        function updateDecimalPrecision() {
+            let maxDecimals = 0;
+            calibData.forEach(row => {
+                let valStr = (row.concInput || "").toString().trim().replace(",", ".");
+                if(valStr !== "") {
+                    let parts = valStr.split(".");
+                    if(parts.length > 1) {
+                        let numDecimals = parts[1].length;
+                        if(numDecimals > maxDecimals) maxDecimals = numDecimals;
+                    }
+                }
+            });
+            currentDecimalPrecision = Math.max(2, maxDecimals + 1);
+            currentTransPrecision = Math.max(2, currentDecimalPrecision);
+            currentAbsPrecision = Math.max(4, currentDecimalPrecision + 1);
+        }
+        
+        window.updateConc = function(el, idx) {
+            calibData[idx].concInput = el.value;
+            el.nextElementSibling.innerText = el.value || "-";
+            updateDecimalPrecision();
+            
+            updateTablesUIOnly(); 
+        }
+        
+        window.setCalibBlank = function(idx) {
+            calibBlankIndex = idx;
+            recalculateAll();
+        }
+        
+        window.recalculateAll = function() {
+            buildTableHeaders();
+            updateDecimalPrecision();
+            renderCalibTable();
+            renderUnknownTable();
+            updateAnalysis();
+        }
+        
+        function updateTablesUIOnly() {
+            renderUnknownTable();
+            drawChart();
+        }
+        
+        function getActiveChannel() {
+            let radios = document.getElementsByName("channel");
+            for(let i=0; i<radios.length; i++) { if(radios[i].checked) return radios[i].value; }
+            return "Clear";
+        }
+        
+        function renderCalibTable() {
+            let tbody = document.getElementById("tbody-calib");
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            let ch = getActiveChannel();
+            if(calibData.length === 0) return;
+            
+            let blankRaw = calibData[calibBlankIndex].raw[ch.charAt(0)];
+            
+            let showTrans = document.getElementById("chk-trans") ? document.getElementById("chk-trans").checked : true;
+            let showAbs = document.getElementById("chk-abs") ? document.getElementById("chk-abs").checked : true;
+            
+            calibData.forEach((row, idx) => {
+                let rRaw = row.raw[ch.charAt(0)];
+                let rHw = row.hw[ch.charAt(0)];
+                
+                let absRaw = calculateAbsorbance(rRaw, blankRaw, true);
+                let absHw = calculateAbsorbance(rHw, 100, false);
+                
+                let isBlankRow = (appMode === "analytic" || isRawBase) && (idx === calibBlankIndex);
+                let isChecked = isBlankRow ? "checked" : "";
+                
+                let tr = document.createElement("tr");
+                if (isBlankRow) tr.style.backgroundColor = "#fdf2e9";
+                
+                let concHtml = "<input type='text' inputmode='decimal' class='conc-input no-print' value='" + row.concInput + "' oninput='updateConc(this, " + idx + ")' placeholder='?'>";
+                concHtml += "<span class='print-only' style='display:none;'>" + (row.concInput || "-") + "</span>";
+                
+                let tPrecise = calculateTransmittancePercent(rRaw, blankRaw);
+                if (idx === calibBlankIndex) tPrecise = 100.0;
+                
+                let absOut = "-";
+                if (appMode === "analytic") {
+                    let diffT = rHw - tPrecise;
+                    
+                    let absRawStr = typeof absRaw === "number" ? absRaw.toFixed(currentAbsPrecision) : absRaw;
+                    let absHwStr = typeof absHw === "number" ? absHw.toFixed(currentAbsPrecision) : absHw;
+                    if (idx === calibBlankIndex) absRawStr = "0." + "0".repeat(currentAbsPrecision) + " (Ref)";
+                    
+                    let diffA = "-";
+                    if (typeof absRaw === "number" && typeof absHw === "number") {
+                        diffA = (absHw - absRaw).toFixed(currentAbsPrecision);
+                    }
+                    
+                    if(typeof absRaw === "number" && absRaw > 1.5) absRawStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    if(typeof absHw === "number" && absHw > 1.5) absHwStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    
+                    let tdT = showTrans ? `
+                        <td class="raw-col">${tPrecise.toFixed(currentTransPrecision)}</td>
+                        <td class="hw-col">${rHw.toFixed(currentTransPrecision)}</td>
+                        <td class="diff-col" style="color: ${Math.abs(diffT)>0.5?'#c0392b':'#333'};">${diffT > 0 ? "+":""}${diffT.toFixed(currentTransPrecision)}</td>` : "";
+                        
+                    let tdA = showAbs ? `
+                        <td class="raw-col" style="font-weight:bold;">${absRawStr}</td>
+                        <td class="hw-col" style="font-weight:bold;">${absHwStr}</td>
+                        <td class="diff-col">${diffA > 0 ? "+":""}${diffA}</td>` : "";
+                    
+                    tr.innerHTML = 
+                        "<td class='no-print'><input type='radio' name='blankRadio' " + isChecked + " onchange='setCalibBlank(" + idx + ")'></td>" +
+                        "<td>" + row.id + "</td>" +
+                        "<td class='raw-col' style='font-family: monospace;'>" + getTrafficLightHtml(rRaw, ch, true) + " " + rRaw.toFixed(0) + "</td>" +
+                        tdT + tdA +
+                        "<td>" + concHtml + "</td>";
+                } else {
+                    let mainVal = isRawBase ? rRaw : rHw;
+                    let mainAbs = isRawBase ? absRaw : absHw;
+                    let absStr = typeof mainAbs === "number" ? mainAbs.toFixed(currentAbsPrecision) : mainAbs;
+                    if(isRawBase && idx === calibBlankIndex) absStr = "0." + "0".repeat(currentAbsPrecision) + " (Ref)";
+                    
+                    if(typeof mainAbs === "number" && mainAbs > 1.5) absStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    
+                    let valDisplay = isRawBase ? mainVal.toFixed(0) : mainVal.toFixed(currentTransPrecision);
+                    let blankTd = isRawBase 
+                        ? "<td class='no-print'><input type='radio' name='blankRadio' " + isChecked + " onchange='setCalibBlank(" + idx + ")'></td>"
+                        : "";
+                        
+                    tr.innerHTML = 
+                        blankTd +
+                        "<td>" + row.id + "</td>" +
+                        "<td style='font-family: monospace; font-size:1.1em;'>" + getTrafficLightHtml(mainVal, ch, isRawBase) + " " + valDisplay + "</td>" +
+                        "<td style='font-weight:bold;'>" + absStr + "</td>" +
+                        "<td>" + concHtml + "</td>";
+                }
+                tbody.appendChild(tr);
+            });
+            drawChart();
+        }
+        
+        function renderUnknownTable() {
+            let tbody = document.getElementById("tbody-unknown");
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            if(unknownData.length === 0 || calibData.length === 0) return;
+            
+            let ch = getActiveChannel();
+            let blankRaw = calibData[calibBlankIndex].raw[ch.charAt(0)];
+            let regRaw = calculateRegression(ch, true);
+            let regHw = calculateRegression(ch, false);
+            
+            let showTrans = document.getElementById("chk-trans") ? document.getElementById("chk-trans").checked : true;
+            let showAbs = document.getElementById("chk-abs") ? document.getElementById("chk-abs").checked : true;
+            
+            unknownData.forEach((row, idx) => {
+                let rRaw = row.raw[ch.charAt(0)];
+                let rHw = row.hw[ch.charAt(0)];
+                
+                let absRaw = calculateAbsorbance(rRaw, blankRaw, true);
+                let absHw = calculateAbsorbance(rHw, 100, false);
+                
+                let tr = document.createElement("tr");
+                
+                if (appMode === "analytic") {
+                    let tPrecise = calculateTransmittancePercent(rRaw, blankRaw);
+                    let diffT = rHw - tPrecise;
+                    let absRawStr = typeof absRaw === "number" ? absRaw.toFixed(currentAbsPrecision) : absRaw;
+                    let absHwStr = typeof absHw === "number" ? absHw.toFixed(currentAbsPrecision) : absHw;
+                    
+                    let diffA = "-";
+                    if (typeof absRaw === "number" && typeof absHw === "number") {
+                        diffA = (absHw - absRaw).toFixed(currentAbsPrecision);
+                    }
+                    
+                    if(typeof absRaw === "number" && absRaw > 1.5) absRawStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    if(typeof absHw === "number" && absHw > 1.5) absHwStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    
+                    let cRawStr = "-";
+                    let cHwStr = "-";
+                    let cDiffStr = "-";
+                    let cErrStr = "-";
+                    
+                    if(regRaw && typeof absRaw === "number") {
+                        let cR = (absRaw - regRaw.intercept) / regRaw.slope;
+                        cRawStr = "<span class='result-conc'>" + cR.toFixed(currentDecimalPrecision) + "</span>";
+                        
+                        if(regHw && typeof absHw === "number") {
+                            let cH = (absHw - regHw.intercept) / regHw.slope;
+                            cHwStr = "<span class='result-conc'>" + cH.toFixed(currentDecimalPrecision) + "</span>";
+                            
+                            cDiffStr = Math.abs(cH - cR).toFixed(currentDecimalPrecision + 1);
+                            if(cR !== 0) {
+                                cErrStr = ((Math.abs(cH - cR) / Math.abs(cR)) * 100).toFixed(1) + " %";
+                            }
+                        }
+                    }
+                    
+                    let tdT = showTrans ? `
+                        <td class="raw-col">${tPrecise.toFixed(currentTransPrecision)}</td>
+                        <td class="hw-col">${rHw.toFixed(currentTransPrecision)}</td>
+                        <td class="diff-col" style="color: ${Math.abs(diffT)>0.5?'#c0392b':'#333'};">${diffT > 0 ? "+":""}${diffT.toFixed(currentTransPrecision)}</td>` : "";
+                        
+                    let tdA = showAbs ? `
+                        <td class="raw-col" style="font-weight:bold;">${absRawStr}</td>
+                        <td class="hw-col" style="font-weight:bold;">${absHwStr}</td>
+                        <td class="diff-col">${diffA > 0 ? "+":""}${diffA}</td>` : "";
+                        
+                    tr.innerHTML = 
+                        "<td>s. " + row.id + "</td>" +
+                        "<td class='raw-col' style='font-family: monospace;'>" + getTrafficLightHtml(rRaw, ch, true) + " " + rRaw.toFixed(0) + "</td>" +
+                        tdT + tdA +
+                        "<td class='raw-col'>" + cRawStr + "</td>" +
+                        "<td class='hw-col'>" + cHwStr + "</td>" +
+                        "<td class='diff-col'>" + cDiffStr + "</td>" +
+                        "<td class='diff-col' style='color: #c0392b; font-weight: bold;'>" + cErrStr + "</td>";
+                } else {
+                    let mainVal = isRawBase ? rRaw : rHw;
+                    let mainAbs = isRawBase ? absRaw : absHw;
+                    let reg = isRawBase ? regRaw : regHw;
+                    
+                    let absStr = typeof mainAbs === "number" ? mainAbs.toFixed(currentAbsPrecision) : mainAbs;
+                    if(typeof mainAbs === "number" && mainAbs > 1.5) absStr += " <span class='warning-icon' title='The absorbance value exceeds the optimal linearity limit (A > 1.5). The sample is too dark and the measurement may be inaccurate.'>⚠️</span>";
+                    
+                    let concStr = "-";
+                    if(reg && typeof mainAbs === "number") {
+                        let c = (mainAbs - reg.intercept) / reg.slope;
+                        concStr = "<span class='result-conc'>" + c.toFixed(currentDecimalPrecision) + "</span>";
+                    }
+                    
+                    let valDisplay = isRawBase ? mainVal.toFixed(0) : mainVal.toFixed(currentTransPrecision);
+                    tr.innerHTML = 
+                        "<td>s. " + row.id + "</td>" +
+                        "<td style='font-family: monospace; font-size:1.1em;'>" + getTrafficLightHtml(mainVal, ch, isRawBase) + " " + valDisplay + "</td>" +
+                        "<td style='font-weight:bold;'>" + absStr + "</td>" +
+                        "<td>" + concStr + "</td>";
+                }
+                
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function calculateRegression(ch, useRaw) {
+            if (calibData.length === 0) return null;
+            let blankRaw = calibData[calibBlankIndex].raw[ch.charAt(0)];
+            
+            let points = [];
+            calibData.forEach((row, idx) => {
+                if(useRaw && idx === calibBlankIndex) return;
+                
+                let rawVal = useRaw ? row.raw[ch.charAt(0)] : row.hw[ch.charAt(0)];
+                let abs = calculateAbsorbance(rawVal, useRaw ? blankRaw : 100, useRaw);
+                let valStr = (row.concInput || "").toString().replace(",", ".");
+                let parsed = parseFloat(valStr);
+                
+                if(row.concInput.trim() !== "" && typeof abs === "number" && !isNaN(parsed)) {
+                    points.push({ x: parsed, y: abs, t: calculateTransmittancePercent(rawVal, useRaw ? blankRaw : 100) });
+                }
+            });
+            
+            let n = points.length;
+            if(n < 2) return null;
+            let sumX=0, sumY=0, sumXY=0, sumXX=0, sumYY=0;
+            points.forEach(p => {
+                sumX += p.x; sumY += p.y;
+                sumXY += p.x * p.y; sumXX += p.x * p.x; sumYY += p.y * p.y;
+            });
+            let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+            let intercept = (sumY - slope * sumX) / n;
+            
+            let yMean = sumY / n;
+            let ssTot = 0, ssRes = 0;
+            points.forEach(p => {
+                let yPred = slope * p.x + intercept;
+                ssTot += (p.y - yMean) * (p.y - yMean);
+                ssRes += (p.y - yPred) * (p.y - yPred);
+            });
+            let r2 = ssTot === 0 ? 1 : 1 - (ssRes / ssTot);
+            return { slope, intercept, r2, points };
+        }
+        
+        const drawLabelsPlugin = {
+            id: "drawLabels",
+            afterDatasetsDraw: function(chart, args, options) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    if (dataset.label.includes("Calculated concentration") || dataset.label.includes("Calculated")) {
+                        const meta = chart.getDatasetMeta(i);
+                        meta.data.forEach((element, index) => {
+                            const point = dataset.data[index];
+                            ctx.fillStyle = dataset.borderColor;
+                            ctx.font = "bold 12px sans-serif";
+                            ctx.fillText(point.label, element.x + 10, element.y - 10);
+                        });
+                    }
+                });
+            }
+        };
+        
+        function drawChart() {
+            let ch = getActiveChannel();
+            if(calibData.length === 0) return;
+            let blankRaw = calibData[calibBlankIndex].raw[ch.charAt(0)];
+            
+            let datasets = [];
+            let allX = [];
+            let allY = [];
+            
+            document.getElementById("equation-display-hw").style.display = "none";
+            document.getElementById("epsilon-display-hw").style.display = "none";
+            
+            function processDataset(useRaw, colorMain, colorSec, namePrefix, targetEqId, targetEpsId) {
+                let calibPts = [];
+                let unknownPts = [];
+                
+                let reg = calculateRegression(ch, useRaw);
+                
+                calibData.forEach((row, idx) => {
+                    if(useRaw && idx === calibBlankIndex) return;
+                    let rawVal = useRaw ? row.raw[ch.charAt(0)] : row.hw[ch.charAt(0)];
+                    let abs = calculateAbsorbance(rawVal, useRaw ? blankRaw : 100, useRaw);
+                    let tPrecise = calculateTransmittancePercent(rawVal, useRaw ? blankRaw : 100);
+                    
+                    if(typeof abs !== "number") return;
+                    
+                    let valStr = (row.concInput || "").toString().replace(",", ".");
+                    let parsed = parseFloat(valStr);
+                    
+                    if(row.concInput.trim() !== "" && !isNaN(parsed)) {
+                        let plotY = showTransmittanceChart ? tPrecise : abs;
+                        calibPts.push({ x: parsed, y: plotY, label: "s. " + row.id });
+                        allX.push(parsed); allY.push(plotY);
+                    }
+                });
+                
+                unknownData.forEach((row) => {
+                    let rawVal = useRaw ? row.raw[ch.charAt(0)] : row.hw[ch.charAt(0)];
+                    let abs = calculateAbsorbance(rawVal, useRaw ? blankRaw : 100, useRaw);
+                    let tPrecise = calculateTransmittancePercent(rawVal, useRaw ? blankRaw : 100);
+                    
+                    if(typeof abs === "number") {
+                        unknownPts.push({ abs: abs, t: tPrecise, label: "s. " + row.id });
+                    }
+                });
+                
+                let calcUnknownPts = [];
+                let formulaText = "";
+                
+                if(reg && !isNaN(reg.slope) && reg.slope !== 0) {
+                    let sign = reg.intercept >= 0 ? "+" : "-";
+                    formulaText = "A = " + reg.slope.toFixed(4) + "c " + sign + " " + Math.abs(reg.intercept).toFixed(4) + "  (R² = " + reg.r2.toFixed(3) + ")";
+                    
+                    let eqEl = document.getElementById(targetEqId);
+                    let epsEl = document.getElementById(targetEpsId);
+                    
+                    let prefixHtml = appMode === "analytic" ? (useRaw ? "<b>RAW (Precise):</b> " : "<b>HW (Rounded):</b> ") : "";
+                    
+                    eqEl.innerHTML = prefixHtml + "A = " + reg.slope.toFixed(4) + "c " + sign + " " + Math.abs(reg.intercept).toFixed(4) + " &nbsp;&nbsp; <span style='color:#7f8c8d; font-size:0.9em;'>(R² = " + reg.r2.toFixed(3) + ")</span>";
+                    eqEl.style.display = "block";
+                    
+                    // Ocekavana tloustka kyvety = 1 cm
+                    epsEl.innerHTML = "Derived molar attenuation coefficient for a standard cuvette (<i>l</i> = 1 cm): &epsilon; = " + reg.slope.toFixed(2) + " l&middot;mol⁻¹&middot;cm⁻¹";
+                    epsEl.style.display = "block";
+                    
+                    unknownPts.forEach(u => {
+                        let c = (u.abs - reg.intercept) / reg.slope;
+                        let plotY = showTransmittanceChart ? u.t : u.abs;
+                        calcUnknownPts.push({ x: c, y: plotY, label: u.label });
+                        allX.push(c); allY.push(plotY);
+                    });
+                } else {
+                    if (targetEqId === "equation-display") {
+                        document.getElementById("equation-display").innerText = "To generate the line, enter the concentration for at least 2 calibration samples.";
+                        document.getElementById("epsilon-display").style.display = "none";
+                    }
+                }
+                
+                datasets.push({
+                    label: namePrefix === "Calibration" ? "Calibration (Known concentration)" : namePrefix + " (Known)",
+                    data: calibPts,
+                    backgroundColor: colorMain,
+                    pointRadius: 6,
+                    type: "scatter"
+                });
+                
+                datasets.push({
+                    label: namePrefix === "Calibration" ? "Samples (Calculated concentration)" : namePrefix + " (Calculated)",
+                    data: calcUnknownPts,
+                    backgroundColor: colorSec,
+                    borderColor: colorSec,
+                    pointStyle: "crossRot", 
+                    pointRadius: 8,
+                    pointBorderWidth: 3,
+                    type: "scatter"
+                });
+                
+                if(reg && calibPts.length > 0 && !showTransmittanceChart) {
+                    let minX = Math.min(...allX, 0); 
+                    let maxX = Math.max(...allX) * 1.1; 
+                    if (maxX === 0) maxX = 1;
+                    datasets.push({
+                        label: namePrefix + " (Trendline)",
+                        data: [{x: minX, y: reg.slope * minX + reg.intercept}, {x: maxX, y: reg.slope * maxX + reg.intercept}],
+                        borderColor: colorMain,
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        type: "line",
+                        fill: false,
+                        pointRadius: 0
+                    });
+                }
+                
+                if(reg && calibPts.length > 0 && showTransmittanceChart) {
+                    let minX = Math.min(...allX, 0); 
+                    let maxX = Math.max(...allX) * 1.1; 
+                    if (maxX === 0) maxX = 1;
+                    
+                    let curveData = [];
+                    let steps = 50;
+                    for(let i=0; i<=steps; i++) {
+                        let cx = minX + (maxX - minX) * (i/steps);
+                        let ca = reg.slope * cx + reg.intercept;
+                        let ct = Math.pow(10, -ca) * 100;
+                        curveData.push({x: cx, y: ct});
+                    }
+                    
+                    datasets.push({
+                        label: namePrefix + " (Exponential trend)",
+                        data: curveData,
+                        borderColor: colorMain,
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        type: "line",
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0.4
+                    });
+                }
+                
+                return formulaText;
+            }
+            
+            let formulaTitles = [];
+            
+            if (appMode === "analytic") {
+                let formRaw = processDataset(true, "#2980b9", "#e74c3c", "RAW", "equation-display", "epsilon-display"); 
+                let formHw = processDataset(false, "#f39c12", "#8e44ad", "HW T%", "equation-display-hw", "epsilon-display-hw"); 
+                formulaTitles.push("RAW: " + formRaw);
+                formulaTitles.push("HW: " + formHw);
+            } else {
+                let form = processDataset(isRawBase, "#3498db", "#e74c3c", "Calibration", "equation-display", "epsilon-display");
+                formulaTitles.push(form);
+            }
+            
+            let yAxisTitle = showTransmittanceChart ? "Transmittance T (%)" : "Absorbance (A)";
+            
+            if(chartInstance) chartInstance.destroy();
+            const ctx = document.getElementById("calibrationChart").getContext("2d");
+            chartInstance = new Chart(ctx, {
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: [expTitleCalib, ...formulaTitles],
+                            font: { size: 14 }
+                        },
+                        legend: { position: "bottom" },
+                        tooltip: { 
+                            callbacks: { 
+                                label: (ctx) => {
+                                    let l = ctx.raw.label ? ctx.raw.label + ": " : "";
+                                    if (showTransmittanceChart) {
+                                        return l + "c=" + ctx.raw.x.toFixed(currentDecimalPrecision) + ", T=" + ctx.raw.y.toFixed(currentTransPrecision) + "%";
+                                    } else {
+                                        return l + "c=" + ctx.raw.x.toFixed(currentDecimalPrecision) + ", A=" + ctx.raw.y.toFixed(currentAbsPrecision);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { type: "linear", position: "bottom", title: { display: true, text: "Concentration (c)", font: { size: 14, weight: "bold" } } },
+                        y: { title: { display: true, text: yAxisTitle, font: { size: 14, weight: "bold" } } }
+                    }
+                },
+                plugins: [drawLabelsPlugin]
+            });
+        }
+        
+        function updateAnalysis() {
+            if(calibData.length === 0) return;
+            
+            let darkestIdx = -1;
+            let maxDarkness = -1;
+            
+            calibData.forEach((row, i) => {
+                if(isRawBase && i === calibBlankIndex) return;
+                
+                let refR = isRawBase ? calibData[calibBlankIndex].raw.R : 100;
+                let refG = isRawBase ? calibData[calibBlankIndex].raw.G : 100;
+                let refB = isRawBase ? calibData[calibBlankIndex].raw.B : 100;
+                
+                if(refR <= 0 || refG <= 0 || refB <= 0) return;
+                
+                let rVal = isRawBase ? row.raw.R : row.hw.R;
+                let gVal = isRawBase ? row.raw.G : row.hw.G;
+                let bVal = isRawBase ? row.raw.B : row.hw.B;
+                
+                let tAvg = ((rVal / refR) + (gVal / refG) + (bVal / refB)) / 3.0;
+                if (tAvg <= 0.01) return; 
+                
+                let pseudoAbsorbance = -Math.log10(tAvg);
+                if(pseudoAbsorbance > maxDarkness) { 
+                    maxDarkness = pseudoAbsorbance; 
+                    darkestIdx = i; 
+                }
+            });
+            
+            if(darkestIdx === -1) return;
+            let sample = calibData[darkestIdx];
+            
+            let refR = isRawBase ? calibData[calibBlankIndex].raw.R : 100;
+            let refG = isRawBase ? calibData[calibBlankIndex].raw.G : 100;
+            let refB = isRawBase ? calibData[calibBlankIndex].raw.B : 100;
+            
+            let sR = isRawBase ? sample.raw.R : sample.hw.R;
+            let sG = isRawBase ? sample.raw.G : sample.hw.G;
+            let sB = isRawBase ? sample.raw.B : sample.hw.B;
+            
+            let rC = Math.min(255, Math.max(0, (sR / refR) * 255)) || 255;
+            let gC = Math.min(255, Math.max(0, (sG / refG) * 255)) || 255;
+            let bC = Math.min(255, Math.max(0, (sB / refB) * 255)) || 255;
+            
+            document.getElementById("color-patch").style.backgroundColor = "rgb(" + Math.round(rC) + "," + Math.round(gC) + "," + Math.round(bC) + ")";
+            
+            let r=rC/255, g=gC/255, b=bC/255;
+            let max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+            let h=0;
+            if(max!==min){
+                if(max===r) h=(g-b)/d+(g<b?6:0);
+                else if(max===g) h=(b-r)/d+2;
+                else h=(r-g)/d+4;
+                h/=6;
+            }
+            let hueDeg = Math.round(h * 360);
+            document.getElementById("color-hue").innerText = hueDeg;
+            
+            let recom = "";
+            if (hueDeg >= 330 || hueDeg < 30) recom = "The red solution absorbs GREEN and BLUE colors. Select the Green or Blue channel for analysis.";
+            else if (hueDeg >= 30 && hueDeg < 90) recom = "The yellow/orange solution absorbs BLUE color. Select the Blue channel for analysis.";
+            else if (hueDeg >= 90 && hueDeg < 170) recom = "The green solution absorbs RED and BLUE colors. Select the Red or Blue channel for analysis.";
+            else if (hueDeg >= 170 && hueDeg < 260) recom = "The blue solution absorbs RED and YELLOW colors. Select the Red channel for analysis.";
+            else recom = "The violet solution absorbs GREEN color. Select the Green channel for analysis.";
+            document.getElementById("color-recom").innerText = recom;
+        }
+        
+        // LOGIC FOR RGBC COMPARISON MODAL
+        function openCompareModal() {
+            if(calibData.length === 0 || unknownData.length === 0) {
+                alert("To compare channels, first upload calibration data and unknown samples, and enter concentrations.");
+                return;
+            }
+            let useRaw = appMode === "analytic" ? true : isRawBase;
+            
+            let calibReady = false;
+            ["Red", "Green", "Blue", "Clear"].forEach(ch => {
+                if (calculateRegression(ch, useRaw) != null) calibReady = true;
+            });
+            if (!calibReady) {
+                alert("To display the comparison, first enter the concentration for at least 2 calibration samples.");
+                return;
+            }
+            
+            document.getElementById("compare-modal").style.display = "block";
+            document.body.style.overflow = "hidden";
+            
+            let txtBase = useRaw ? "RAW signal (precise)" : "Transmittance (from hardware)";
+            document.getElementById("compare-subtitle").innerText = "Visual demonstration of the effect of wavelength (light color) selection on the slope and accuracy of calibration. Calculated from: " + txtBase;
+            
+            drawCompareChart(useRaw);
+            renderCompareTable(useRaw);
+        }
+        
+        function closeCompareModal() {
+            document.getElementById("compare-modal").style.display = "none";
+            document.body.style.overflow = "auto";
+            if(compareChartInstance) {
+                compareChartInstance.destroy();
+                compareChartInstance = null;
+            }
+        }
+        
+        function drawCompareChart(useRaw) {
+            if(compareChartInstance) compareChartInstance.destroy();
+            
+            let channels = ["Red", "Green", "Blue", "Clear"];
+            let colors = { "Red": "#e74c3c", "Green": "#2ecc71", "Blue": "#3498db", "Clear": "#7f8c8d" };
+            
+            let datasets = [];
+            let allX = [];
+            let allY = [];
+            
+            channels.forEach(ch => {
+                let blankRaw = calibData[calibBlankIndex].raw[ch.charAt(0)];
+                let reg = calculateRegression(ch, useRaw);
+                
+                let calibPts = [];
+                calibData.forEach((row, idx) => {
+                    if(useRaw && idx === calibBlankIndex) return;
+                    let rawVal = useRaw ? row.raw[ch.charAt(0)] : row.hw[ch.charAt(0)];
+                    let abs = calculateAbsorbance(rawVal, useRaw ? blankRaw : 100, useRaw);
+                    let valStr = (row.concInput || "").toString().replace(",", ".");
+                    let parsed = parseFloat(valStr);
+                    if(row.concInput.trim() !== "" && typeof abs === "number" && !isNaN(parsed)) {
+                        calibPts.push({ x: parsed, y: abs });
+                        allX.push(parsed);
+                        allY.push(abs);
+                    }
+                });
+                
+                datasets.push({
+                    label: ch + " (Known)",
+                    data: calibPts,
+                    backgroundColor: colors[ch],
+                    pointRadius: 5,
+                    type: "scatter"
+                });
+                
+                if (reg && calibPts.length > 0) {
+                    let minX = Math.min(...allX, 0);
+                    let maxX = Math.max(...allX) * 1.1;
+                    if (maxX === 0) maxX = 1;
+                    
+                    datasets.push({
+                        label: "Trend (" + ch + ")",
+                        data: [{x: minX, y: reg.slope * minX + reg.intercept}, {x: maxX, y: reg.slope * maxX + reg.intercept}],
+                        borderColor: colors[ch],
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        type: "line",
+                        fill: false,
+                        pointRadius: 0
+                    });
+                }
+            });
+            
+            const ctx = document.getElementById("compareChart").getContext("2d");
+            compareChartInstance = new Chart(ctx, {
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: "Spectral comparison of RGBC calibration curves", font: { size: 16 } },
+                        tooltip: { callbacks: { label: (ctx) => "c=" + ctx.raw.x.toFixed(currentDecimalPrecision) + ", A=" + ctx.raw.y.toFixed(currentAbsPrecision) } }
+                    },
+                    scales: {
+                        x: { type: "linear", position: "bottom", title: { display: true, text: "Concentration (c)", font: { weight: "bold" } } },
+                        y: { title: { display: true, text: "Absorbance (A)", font: { weight: "bold" } } }
+                    }
+                }
+            });
+        }
+        
+        function renderCompareTable(useRaw) {
+            let thead = document.getElementById("thead-compare");
+            let tbody = document.getElementById("tbody-compare");
+            let colors = { "Red": "#e74c3c", "Green": "#2ecc71", "Blue": "#3498db", "Clear": "#7f8c8d" };
+            
+            let regs = {
+                "Red": calculateRegression("Red", useRaw),
+                "Green": calculateRegression("Green", useRaw),
+                "Blue": calculateRegression("Blue", useRaw),
+                "Clear": calculateRegression("Clear", useRaw)
+            };
+            
+            let headHtml = "<tr><th>Sample</th>";
+            ["Red", "Green", "Blue", "Clear"].forEach(ch => {
+                let reg = regs[ch];
+                let eqHtml = "";
+                if (reg && reg.slope !== 0) {
+                    let sign = reg.intercept >= 0 ? "+" : "-";
+                    eqHtml = `<br><span style="font-size: 0.85em; font-weight: normal; color: #555;">A=<b>${reg.slope.toFixed(4)}</b>c${sign}${Math.abs(reg.intercept).toFixed(4)}</span>`;
+                }
+                headHtml += `<th style="color: ${colors[ch]};">c (${ch}) [mol/l]${eqHtml}</th>`;
+            });
+            headHtml += "</tr>";
+            thead.innerHTML = headHtml;
+            
+            tbody.innerHTML = "";
+            
+            let blanks = {
+                "Red": calibData[calibBlankIndex].raw["R"],
+                "Green": calibData[calibBlankIndex].raw["G"],
+                "Blue": calibData[calibBlankIndex].raw["B"],
+                "Clear": calibData[calibBlankIndex].raw["C"]
+            };
+            
+            unknownData.forEach((row, idx) => {
+                let tr = document.createElement("tr");
+                let tdHtml = "<td>s. " + row.id + "</td>";
+                
+                ["Red", "Green", "Blue", "Clear"].forEach(ch => {
+                    let rawVal = useRaw ? row.raw[ch.charAt(0)] : row.hw[ch.charAt(0)];
+                    let abs = calculateAbsorbance(rawVal, useRaw ? blanks[ch] : 100, useRaw);
+                    let reg = regs[ch];
+                    
+                    let cStr = "-";
+                    if (reg && typeof abs === "number" && reg.slope !== 0) {
+                        let c = (abs - reg.intercept) / reg.slope;
+                        cStr = c.toFixed(currentDecimalPrecision);
+                    }
+                    tdHtml += "<td style='font-weight:bold;'>" + cStr + "</td>";
+                });
+                
+                tr.innerHTML = tdHtml;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        window.exportChartPNG = function() {
+            let canvas = document.getElementById("calibrationChart");
+            let destCanvas = document.createElement("canvas");
+            destCanvas.width = canvas.width;
+            destCanvas.height = canvas.height;
+            let destCtx = destCanvas.getContext("2d");
+            destCtx.fillStyle = "#FFFFFF";
+            destCtx.fillRect(0,0,destCanvas.width, destCanvas.height);
+            destCtx.drawImage(canvas, 0, 0);
+            let link = document.createElement("a");
+            let safeName = expTitleCalib.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+            link.download = "MoleGraph_Graf_" + (safeName || "kalibrace") + ".png";
+            link.href = destCanvas.toDataURL("image/png");
+            link.click();
+        }
+    </script>
+</body>
+</html>

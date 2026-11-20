@@ -7,6 +7,8 @@
 
 **MoleGraph** is an open-source, low-cost school probeware system designed for **hands-on STEM education**. Unlike commercial "black box" solutions, it follows a **"white box" approach**, allowing students and teachers to understand the inner workings of measurement technology, electronics, and sensor calibration. Multi-language user interface: English, Czech, German, French, Spanish, Polish, Portuguese, Italian, and Hungarian.
 
+> 🌐 **New — MoleGraph Web (PWA & Android):** Try the next-generation web application directly in your browser at **[www.molegraph.cloud](https://www.molegraph.cloud)** (no installation needed on PC; native Android `.apk` available).
+
 By engaging in the **DIY (Do-It-Yourself) assembly process**—which includes soldering, 3D printing, and component sourcing—users develop deep technological literacy and critical thinking skills.
 
 ---
